@@ -1,6 +1,9 @@
 [project]
 name = "swedesweets"
 version = "0.1.0"
+dependencies = [
+    "django>=5.0",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

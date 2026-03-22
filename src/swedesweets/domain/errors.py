@@ -1,6 +1,10 @@
 class DomainError(Exception):
-    """Base domain exception."""
+    pass
 
 
 class ValidationError(DomainError):
-    """Invalid entity state."""
+    pass
+
+
+class BusinessRuleError(DomainError):
+    pass
