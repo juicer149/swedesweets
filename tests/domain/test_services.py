@@ -1,53 +1,59 @@
 import pytest
-from uuid import uuid4
 
-from swedesweets.domain.services import create_order
-from swedesweets.domain.assortment import StoreAssortment, StoreProduct
+from swedesweets.domain import create_order
 from swedesweets.domain.errors import ValidationError, BusinessRuleError
 
 
-def test_create_order_success():
-    store_id = uuid4()
-    product_id = uuid4()
-
-    assortment = StoreAssortment(
-        store_id=store_id,
-        items=(
-            StoreProduct(
-                id=uuid4(),
-                store_id=store_id,
-                product_id=product_id,
-            ),
-        ),
-    )
+def test_create_order_success(store, products):
+    product = products[0]
 
     order = create_order(
-        store_id=store_id,
-        assortment=assortment,
-        requested_items=[(product_id, 3)],
+        store_id=store.id,
+        requested_items=[(product.id, 3)],
     )
 
     assert len(order.items) == 1
-    assert order.items[0].quantity == 3
+    assert order.items[0].quantity.value == 3
 
 
-def test_create_order_invalid_product():
-    store_id = uuid4()
+def test_create_order_aggregates_duplicates(store, products):
+    product = products[0]
 
-    assortment = StoreAssortment(store_id=store_id, items=())
+    order = create_order(
+        store_id=store.id,
+        requested_items=[
+            (product.id, 2),
+            (product.id, 3),
+        ],
+    )
 
-    with pytest.raises(BusinessRuleError):
+    assert len(order.items) == 1
+    assert order.items[0].quantity.value == 5
+
+
+def test_create_order_empty_fails(store):
+    with pytest.raises(ValidationError):
         create_order(
-            store_id=store_id,
-            assortment=assortment,
-            requested_items=[(uuid4(), 1)],
+            store_id=store.id,
+            requested_items=[],
         )
 
 
-def test_create_order_empty_fails():
+def test_create_order_invalid_quantity_zero(store, products):
+    product = products[0]
+
     with pytest.raises(ValidationError):
         create_order(
-            store_id=uuid4(),
-            assortment=StoreAssortment(store_id=uuid4(), items=()),
-            requested_items=[],
+            store_id=store.id,
+            requested_items=[(product.id, 0)],
+        )
+
+
+def test_create_order_exceeds_max_quantity(store, products):
+    product = products[0]
+
+    with pytest.raises(BusinessRuleError):
+        create_order(
+            store_id=store.id,
+            requested_items=[(product.id, 100)],
         )

@@ -2,7 +2,7 @@ import pytest
 from uuid import uuid4
 from datetime import datetime, timezone
 
-from swedesweets.domain.order import Order, OrderItem
+from swedesweets.domain import Order, OrderItem, Quantity
 from swedesweets.domain.errors import ValidationError
 
 
@@ -15,13 +15,17 @@ def now():
 # ------------------------
 
 def test_order_item_valid():
-    item = OrderItem(product_id=uuid4(), quantity=2)
-    assert item.quantity == 2
+    item = OrderItem(
+        product_id=uuid4(),
+        quantity=Quantity(2),
+    )
+
+    assert item.quantity.value == 2
 
 
 def test_order_item_invalid_quantity():
     with pytest.raises(ValidationError):
-        OrderItem(product_id=uuid4(), quantity=0)
+        Quantity(0)
 
 
 # ------------------------
@@ -33,7 +37,9 @@ def test_order_creation():
         id=uuid4(),
         store_id=uuid4(),
         created_at=now(),
-        items=(OrderItem(product_id=uuid4(), quantity=1),),
+        items=(
+            OrderItem(product_id=uuid4(), quantity=Quantity(1)),
+        ),
     )
 
     assert len(order.items) == 1
@@ -46,4 +52,14 @@ def test_order_must_have_items():
             store_id=uuid4(),
             created_at=now(),
             items=(),
+        )
+
+
+def test_order_requires_timezone():
+    with pytest.raises(ValidationError):
+        Order(
+            id=uuid4(),
+            store_id=uuid4(),
+            created_at=datetime.now(),  # ❌ no timezone
+            items=(OrderItem(product_id=uuid4(), quantity=Quantity(1)),),
         )
