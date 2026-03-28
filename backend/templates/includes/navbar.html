@@ -1,0 +1,52 @@
+<nav style="
+  background-color: white;
+  border-bottom: 1px solid #eee;
+">
+  <div style="
+    max-width: 900px;
+    margin: auto;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  ">
+
+    <!-- LOGO = HOME -->
+    <a href="{% url 'pages:home' %}" style="
+      text-decoration:none;
+      font-weight:700;
+      font-size:1.1rem;
+      color:black;
+    ">
+      SwedeSweets
+    </a>
+
+    <!-- NAV LINKS -->
+    <div>
+      <a href="{% url 'product_list' %}" style="
+        margin-right:12px;
+        {% if '/products/' in request.path %}
+          font-weight:700;
+          text-decoration: underline;
+        {% endif %}
+      ">
+        Products
+      </a>
+
+      <a href="#" style="margin-right:12px;">About</a>
+      <a href="#" style="margin-right:12px;">Contact</a>
+    </div>
+
+    <!-- LOGIN -->
+    <a href="/login" style="
+      background:black;
+      color:white;
+      padding:6px 10px;
+      border-radius:6px;
+      text-decoration:none;
+    ">
+      Login
+    </a>
+
+  </div>
+</nav>

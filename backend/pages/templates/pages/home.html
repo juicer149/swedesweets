@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}
+  SwedeSweets
+{% endblock %}
+
+{% block content %}
+
+<section style="text-align:center; padding:60px 20px;">
+
+  <h1 style="font-size:2rem; margin-bottom:10px;">
+    Swedish candy. Delivered simply.
+  </h1>
+
+  <p>
+    Authentic pick & mix sweets for retail stores in France.
+  </p>
+
+  <div style="margin-top:20px;">
+
+    <a href="/login" style="
+      display:inline-block;
+      padding:10px 16px;
+      background:black;
+      color:white;
+      text-decoration:none;
+      border-radius:8px;
+      margin-right:10px;
+    ">
+      Start order
+    </a>
+
+    <a href="{% url 'product_list' %}">
+      Browse products
+    </a>
+
+  </div>
+
+</section>
+
+<section style="text-align:center; margin-top:40px;">
+  <p>
+    Born in Chamonix. Inspired by Sweden.
+  </p>
+</section>
+
+{% endblock %}

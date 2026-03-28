@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ product.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+<a href="{% url 'product_list' %}">← Back</a>
+
+{% if not product.is_active %}
+  <div style="
+    background:#fff3cd;
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:10px;
+  ">
+    Not available for ordering
+  </div>
+{% endif %}
+
+{% if product.image %}
+  <img src="{{ product.image.url }}" style="width:100%;border-radius:8px;">
+{% endif %}
+
+<h2>{{ product.name|title }}</h2>
+<p>#{{ product.code }}</p>
+
+{% if product.description %}
+  <h3>Description</h3>
+  <p>{{ product.description }}</p>
+{% endif %}
+
+{% if product.ingredients %}
+  <h3>Ingredients</h3>
+  <p>{{ product.ingredients }}</p>
+{% endif %}
+
+</div>
+{% endblock %}
