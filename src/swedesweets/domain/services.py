@@ -1,150 +1,86 @@
-#! src/swedesweets/domain/services.py
-"""
-Domain services.
+from __future__ import annotations
 
-Purpose:
-- Orchestrate domain behavior
-- Apply business rules
-- Convert external input into domain objects
+from datetime import datetime
+from uuid import UUID
 
-Design:
-- Stateless
-- Side-effect free
-- Framework-independent
-"""
-
-from collections import defaultdict
-from datetime import datetime, timezone
-from typing import Iterable
-from uuid import UUID, uuid4
-
-from ._validation import require_uuid
-from .draft import OrderDraft
-from .errors import BusinessRuleError, ValidationError
-from .order import Order, OrderItem
-from .policies import enforce_max_quantity
-from .value_objects import Quantity
+from .errors import ValidationError
+from .normalize import normalize_fulfilled_items, normalize_requested_items
+from .orders import FulfilledItem, FulfilledOrder, RequestedItem, RequestedOrder
+from .value_objects import OrderId, ProductId, Quantity, StoreId, require_aware
 
 
-def now() -> datetime:
-    """Return current UTC time."""
-    return datetime.now(timezone.utc)
-
-
-# ------------------------
-# Draft
-# ------------------------
-
-
-def create_draft(*, store_id: UUID, delivery_at: datetime) -> OrderDraft:
-    """Create a new empty draft.
-
-    Entry point for building an order over time.
-    """
-    return OrderDraft.empty(
-        store_id=store_id,
-        delivery_at=delivery_at,
-    )
-
-
-def update_draft(
+def create_requested_order(
     *,
-    draft: OrderDraft,
-    product_id: UUID,
-    qty: int,
-    current_time: datetime,
-) -> OrderDraft:
-    """Update quantity for one product in a draft.
-
-    Responsibilities:
-    - enforce cutoff rule
-    - enforce quantity limits
-    - delegate actual state change to the draft
-    """
-    if not draft.can_modify(current_time):
-        raise BusinessRuleError("order can no longer be modified")
-
-    enforce_max_quantity(qty)
-
-    return draft.set_quantity(product_id, qty)
-
-
-# ------------------------
-# Finalize
-# ------------------------
-
-
-def finalize_draft(*, draft: OrderDraft) -> Order:
-    """Convert a draft into a finalized order.
-
-    Important:
-    - Enforces cutoff rule
-    - Rejects empty drafts
-    - Produces an immutable snapshot
-    """
-    current_time = now()
-
-    if not draft.can_modify(current_time):
-        raise BusinessRuleError("cannot finalize after cutoff")
-
-    if not draft.items:
-        raise ValidationError("cannot finalize empty order")
-
-    items = tuple(
-        OrderItem(product_id=product_id, quantity=quantity)
-        for product_id, quantity in draft.items.items()
-    )
-
-    return Order(
-        id=uuid4(),
-        store_id=draft.store_id,
-        created_at=current_time,
-        items=items,
-    )
-
-
-# ------------------------
-# Direct order (fallback)
-# ------------------------
-
-
-def create_order(
-    *,
+    requested_order_id: UUID,
     store_id: UUID,
-    requested_items: Iterable[tuple[UUID, int]],
-) -> Order:
-    """Create an order directly from raw input.
-
-    Use cases:
-    - tests
-    - simple integrations
-    - fallback flow without drafts
-
-    Important:
-    - Aggregates duplicate product entries
-    - Enforces business rules
+    created_at: datetime,
+    items: list[tuple[UUID, int]],  # [(product_id, qty)]
+) -> RequestedOrder:
     """
-    aggregated: dict[UUID, int] = defaultdict(int)
+    Build a RequestedOrder snapshot from primitives.
+    """
+    require_aware(created_at)
 
-    for product_id, qty in requested_items:
-        require_uuid(product_id, field="product_id")
-        enforce_max_quantity(qty)
-        aggregated[product_id] += qty
+    if len(items) == 0:
+        raise ValidationError("items cannot be empty")
 
-    if not aggregated:
-        raise ValidationError("order must contain items")
+    requested_items = tuple(
+        RequestedItem(product_id=ProductId(pid), quantity=Quantity(qty))
+        for pid, qty in items
+    )
+    requested_items = normalize_requested_items(requested_items)
 
-    items = tuple(
-        OrderItem(
-            product_id=product_id,
-            quantity=Quantity(qty),
-        )
-        for product_id, qty in aggregated.items()
+    return RequestedOrder(
+        requested_order_id=OrderId(requested_order_id),
+        store_id=StoreId(store_id),
+        created_at=created_at,
+        items=requested_items,
     )
 
-    return Order(
-        id=uuid4(),
-        store_id=store_id,
-        created_at=now(),
-        items=items,
+
+def fulfill_requested_order(
+    *,
+    fulfilled_order_id: UUID,
+    requested: RequestedOrder,
+    packed_at: datetime,
+    items: list[tuple[UUID, int]],  # what was actually packed
+    packing_notes: str = "",
+) -> FulfilledOrder:
+    """
+    Build a FulfilledOrder snapshot linked to a RequestedOrder.
+    """
+    require_aware(packed_at)
+
+    if len(items) == 0:
+        raise ValidationError("items cannot be empty")
+
+    fulfilled_items = tuple(
+        FulfilledItem(product_id=ProductId(pid), quantity=Quantity(qty))
+        for pid, qty in items
+    )
+    fulfilled_items = normalize_fulfilled_items(fulfilled_items)
+
+    return FulfilledOrder(
+        fulfilled_order_id=OrderId(fulfilled_order_id),
+        requested_order_id=requested.requested_order_id,
+        packed_at=packed_at,
+        delivered_at=None,
+        items=fulfilled_items,
+        packing_notes=packing_notes,
+    )
+
+
+def mark_delivered(*, fulfilled: FulfilledOrder, delivered_at: datetime) -> FulfilledOrder:
+    """
+    Return a new FulfilledOrder snapshot with delivered_at set.
+    """
+    require_aware(delivered_at)
+
+    return FulfilledOrder(
+        fulfilled_order_id=fulfilled.fulfilled_order_id,
+        requested_order_id=fulfilled.requested_order_id,
+        packed_at=fulfilled.packed_at,
+        delivered_at=delivered_at,
+        items=fulfilled.items,
+        packing_notes=fulfilled.packing_notes,
     )

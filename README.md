@@ -35,18 +35,14 @@ SwedeSweets provides:
 Instead of:
 
 ```
-
 "Need 3 cola, 2 sour..."
-
 ```
 
 Stores submit structured orders:
 
 ```
-
 Product 42 → Quantity 3
 Product 17 → Quantity 2
-
 ```
 
 ---
@@ -55,20 +51,8 @@ Product 17 → Quantity 2
 
 The system is built with a clear separation of concerns:
 
-```
-
-src/
-└── swedesweets/
-└── domain/      # Pure business logic (no Django)
-
-```
-```
-
-backend/             # Django (web layer, DB, API)
-
-````
-
----
+- `src/swedesweets/domain/` — **pure business logic** (no Django)
+- `backend/` — Django (web/API layer + database)
 
 ### Domain Layer
 
@@ -76,60 +60,77 @@ The domain is:
 
 - framework-independent
 - fully testable
-- based on explicit business rules
+- focused on explicit business rules
+
+The core workflow is modeled as two immutable snapshots:
+
+- `RequestedOrder` — store intent (what the store asked for)
+- `FulfilledOrder` — supplier fact (what was actually packed/accepted)
+
+A fulfilled order can later be marked delivered by setting `delivered_at`.
 
 Key concepts:
 
-- `Store`
-- `Product`
-- `Order`
-- `OrderItem`
+- `RequestedOrder`, `RequestedItem`
+- `FulfilledOrder`, `FulfilledItem`
+- value objects: `Quantity`, `OrderId`, `StoreId`, `ProductId`
 
----
+Notes:
 
-### Value Objects
+- Orders are **ASAP** (no delivery date in v0.1).
+- Supplier can record `packing_notes` on the fulfilled order.
+- Differences between requested vs fulfilled can be computed via a domain diff.
 
-Primitive types are replaced with domain-specific types:
+### Ports & Use Cases
 
-- `ProductCode`
-- `Quantity`
+The domain exposes small interfaces (“ports”) for persistence/time, and pure use-cases:
 
-This ensures:
-
-- valid data
-- clearer intent
-- fewer bugs
+- `RequestedOrderRepository`, `FulfilledOrderRepository`
+- `Clock`, `UnitOfWork` (optional)
+- use cases: `request_order`, `pack_order`, `deliver_order`
 
 ---
 
 ## Features (v0.1)
 
-- create orders
-- structured order items (product + quantity)
-- simple store model
-- product catalog support (via code + name)
+- store can create **requested orders**
+- supplier can pack/accept a requested order into a **fulfilled order**
+- supplier can mark fulfilled orders as delivered (`delivered_at`)
+- diff between requested vs fulfilled (useful for rare out-of-stock cases)
+- product catalog managed via Django admin (Django layer)
 
 ---
 
 ## Out of Scope (for now)
 
-- order status / lifecycle
-- inventory management
+- authentication & permissions (store_id is provided by client for MVP)
+- inventory management / stock levels
 - pricing logic
-- authentication & permissions
+- customer-facing B2C merch flow (hoodies, t-shirts)
 - notifications
+- partial deliveries (1 request → multiple shipments)
+
+---
+
+## API (high-level)
+
+The Django API is responsible for:
+
+- product catalog endpoints
+- creating requested orders
+- supplier packing + delivery actions
+
+(Exact endpoints may change while the v0.1 web layer is implemented.)
 
 ---
 
 ## Testing
 
-The domain is fully tested using `pytest`.
-
-Run tests:
+Run all tests:
 
 ```bash
 pytest
-````
+```
 
 With coverage:
 
@@ -155,16 +156,27 @@ pip install -e .
 pip install pytest pytest-cov
 ```
 
+### Run Django locally
+
+```bash
+cd backend
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Admin:
+
+- `http://127.0.0.1:8000/admin/`
+
 ---
 
 ## Development Philosophy
 
-This project follows a few core principles:
-
-* **Keep it simple**
-* **Model only what is needed now**
-* **Make invalid states unrepresentable**
-* **Separate domain from framework**
+- **Keep it simple**
+- **Model only what is needed now**
+- **Make invalid states unrepresentable**
+- **Separate domain from framework**
 
 ---
 
@@ -172,11 +184,12 @@ This project follows a few core principles:
 
 Future versions may include:
 
-* order history
-* delivery planning
-* product categorization (tags)
-* store-specific personalization
-* admin interface
+- authentication (derive store_id from logged-in user)
+- order history per store
+- richer supplier fulfillment (per-item missing reasons / substitutions)
+- partial deliveries (shipments)
+- B2C merch ordering flow (hoodies/t-shirts)
+- improved UI
 
 ---
 

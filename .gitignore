@@ -1,29 +1,55 @@
+# =========================
 # Virtual environment
+# =========================
 .venv/
 
+# =========================
 # Python
+# =========================
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 
+# =========================
 # Packaging
+# =========================
 dist/
 build/
 *.egg-info/
 
+# =========================
 # Testing
+# =========================
 .coverage
 htmlcov/
 .pytest_cache/
 
+# =========================
 # Django
+# =========================
 db.sqlite3
+backend/db.sqlite3
 
+# Media uploads (IMPORTANT)
+backend/media/
+
+# Static files (if collected)
+staticfiles/
+
+# =========================
 # Environment variables
+# =========================
 .env
 
+# =========================
 # Editor / OS
+# =========================
 .vscode/
 .idea/
 .DS_Store
+
+# =========================
+# Misc
+# =========================
+*.log

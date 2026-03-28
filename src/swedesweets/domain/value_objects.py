@@ -1,82 +1,43 @@
-#! src/swedesweets/domain/value_objects.py
-"""
-Value objects.
-
-Purpose:
-- Encapsulate primitive values with validation
-- Make invalid states unrepresentable
-- Improve readability and correctness
-
-Design:
-- Immutable (frozen=True)
-- Validated at construction time
-- No business rules here, only intrinsic constraints
-"""
+from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
+from uuid import UUID
 
 from .errors import ValidationError
 
 
-@dataclass(frozen=True)
-class ProductCode:
-    """User-facing product identifier.
-
-    Example: "42"
-    Used in UI and communication instead of UUID.
+def require_aware(dt: datetime) -> datetime:
     """
-
-    value: int
-
-    def __post_init__(self) -> None:
-        if not isinstance(self.value, int):
-            raise ValidationError("product code must be int")
-
-        if self.value <= 0:
-            raise ValidationError("product code must be > 0")
-
-    def __int__(self) -> int:
-        return self.value
-
-    def __str__(self) -> str:
-        return str(self.value)
+    Require timezone-aware datetime to avoid silent timezone bugs.
+    Recommend using UTC everywhere.
+    """
+    if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
+        raise ValidationError("datetime must be timezone-aware (e.g. timezone.utc)")
+    return dt
 
 
 @dataclass(frozen=True)
 class Quantity:
-    """Represents a strictly positive quantity.
-
-    Design:
-    - Zero is not allowed
-    - Removal should be handled outside with explicit behavior
-    """
-
     value: int
 
     def __post_init__(self) -> None:
         if not isinstance(self.value, int):
-            raise ValidationError("quantity must be int")
-
+            raise ValidationError("Quantity must be an int")
         if self.value <= 0:
-            raise ValidationError("quantity must be > 0")
+            raise ValidationError("Quantity must be > 0")
 
-    def add(self, other: "Quantity") -> "Quantity":
-        return Quantity(self.value + other.value)
 
-    def subtract(self, other: "Quantity") -> "Quantity":
-        """Return a new Quantity after subtraction.
+@dataclass(frozen=True)
+class StoreId:
+    value: UUID
 
-        Note:
-        - Cannot result in zero or negative
-        - Removal should be handled outside this value object
-        """
-        result = self.value - other.value
-        if result <= 0:
-            raise ValidationError("quantity cannot be <= 0")
-        return Quantity(result)
 
-    def __int__(self) -> int:
-        return self.value
+@dataclass(frozen=True)
+class ProductId:
+    value: UUID
 
-    def __str__(self) -> str:
-        return str(self.value)
+
+@dataclass(frozen=True)
+class OrderId:
+    value: UUID

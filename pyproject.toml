@@ -3,7 +3,21 @@ name = "swedesweets"
 version = "0.1.0"
 dependencies = [
     "django>=5.0",
+    "pillow>=10.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=9.0",
+    "pytest-cov>=7.0",
+    "pytest-django>=4.8",
 ]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "backend.settings"
+pythonpath = ["backend"]
+django_find_project = false
+python_files = ["test_*.py"]
