@@ -33,7 +33,16 @@
         Products
       </a>
 
-      <a href="#" style="margin-right:12px;">About</a>
+      <a href="{% url 'pages:about' %}" style="
+        margin-right:12px;
+        {% if '/about/' in request.path %}
+          font-weight:700;
+          text-decoration: underline;
+        {% endif %}
+      ">
+        About
+      </a>
+
       <a href="#" style="margin-right:12px;">Contact</a>
     </div>
 

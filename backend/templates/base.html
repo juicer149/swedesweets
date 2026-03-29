@@ -4,11 +4,15 @@
   <title>{% block title %}SwedeSweets{% endblock %}</title>
 
   <style>
+    /* =========================================================
+       GLOBAL RESET / BASE
+    ========================================================= */
     body {
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       margin: 0;
       background: #f5f5f5;
     }
+
     a {
       text-decoration: none;
       color: inherit;
@@ -30,6 +34,65 @@
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
+
+    /* =========================================================
+       FORM SYSTEM (NYTT)
+    ========================================================= */
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 0.95rem;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: black;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 12px 16px;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    ::placeholder {
+      color: #999;
+    }
+
   </style>
 </head>
 

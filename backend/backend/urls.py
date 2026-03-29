@@ -7,7 +7,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("", include("pages.urls")),  # Home page and other static pages
-    path("products/", include("catalog.urls")),
+    path("products/", include("catalog.urls")),  # Product listing and details
+    path("", include("partner_request.urls")),  # Partner application form
 ]
 
 if settings.DEBUG:

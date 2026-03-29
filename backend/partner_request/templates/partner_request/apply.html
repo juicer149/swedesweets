@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Become a partner
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <h1>Become a partner</h1>
+
+  <p>
+    Tell us about your store and we’ll get back to you shortly.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- CONTACT PERSON -->
+    <div>
+      <label for="name">Contact person (full name)</label>
+      <input 
+        id="name"
+        type="text" 
+        name="name" 
+        placeholder="e.g. Marco Dupont" 
+        required
+      >
+    </div>
+
+    <!-- STORE NAME -->
+    <div>
+      <label for="store_name">Store name</label>
+      <input 
+        id="store_name"
+        type="text" 
+        name="store_name" 
+        placeholder="e.g. Chamonix Candy Shop" 
+        required
+      >
+    </div>
+
+    <!-- EMAIL -->
+    <div>
+      <label for="email">Email address</label>
+      <input 
+        id="email"
+        type="email" 
+        name="email" 
+        placeholder="e.g. hello@store.com"
+        autocomplete="email"
+        required
+      >
+    </div>
+
+    <!-- PHONE -->
+    <div>
+      <label for="phone">Phone number</label>
+      <input 
+        id="phone"
+        type="text" 
+        name="phone" 
+        placeholder="e.g. +33 6 12 34 56 78"
+      >
+    </div>
+
+    <!-- ADDRESS -->
+    <div>
+      <label for="address">Store address</label>
+      <textarea 
+        id="address"
+        name="address" 
+        placeholder="e.g. 12 Rue de la Gare, 74400 Chamonix, France"
+        required
+      ></textarea>
+    </div>
+
+    <!-- MESSAGE -->
+    <div>
+      <label for="message">Anything we should know? (optional)</label>
+      <textarea 
+        id="message"
+        name="message"
+        placeholder="Tell us about your store, customers, or interest"
+      ></textarea>
+    </div>
+
+    <button type="submit">
+      Send request
+    </button>
+
+  </form>
+
+</div>
+{% endblock %}

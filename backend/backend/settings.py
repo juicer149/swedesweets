@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "catalog",
 #    "ordering",
     "pages",
+    "partner_request",
 
     # Django apps
     'django.contrib.admin',
