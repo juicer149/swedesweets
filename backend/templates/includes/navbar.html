@@ -1,59 +1,33 @@
-<nav style="
-  background-color: white;
-  border-bottom: 1px solid #eee;
-">
-  <div style="
-    max-width: 900px;
-    margin: auto;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  ">
+<nav class="navbar">
+  <div class="navbar-inner">
 
-    <!-- LOGO = HOME -->
-    <a href="{% url 'pages:home' %}" style="
-      text-decoration:none;
-      font-weight:700;
-      font-size:1.1rem;
-      color:black;
-    ">
+    <!-- LOGO -->
+    <a href="{% url 'pages:home' %}" class="logo">
       SwedeSweets
     </a>
 
     <!-- NAV LINKS -->
-    <div>
-      <a href="{% url 'product_list' %}" style="
-        margin-right:12px;
-        {% if '/products/' in request.path %}
-          font-weight:700;
-          text-decoration: underline;
-        {% endif %}
-      ">
+    <div class="nav-links">
+
+      <a href="{% url 'product_list' %}"
+         class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
         Products
       </a>
 
-      <a href="{% url 'pages:about' %}" style="
-        margin-right:12px;
-        {% if '/about/' in request.path %}
-          font-weight:700;
-          text-decoration: underline;
-        {% endif %}
-      ">
+      <a href="{% url 'pages:about' %}"
+         class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
         About
       </a>
 
-      <a href="#" style="margin-right:12px;">Contact</a>
+      <a href="{% url 'pages:contact' %}"
+         class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+        Contact
+      </a>
+
     </div>
 
     <!-- LOGIN -->
-    <a href="/login" style="
-      background:black;
-      color:white;
-      padding:6px 10px;
-      border-radius:6px;
-      text-decoration:none;
-    ">
+    <a href="/login" class="login-button">
       Login
     </a>
 

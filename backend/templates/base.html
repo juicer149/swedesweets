@@ -7,6 +7,7 @@
     /* =========================================================
        GLOBAL RESET / BASE
     ========================================================= */
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       margin: 0;
@@ -35,8 +36,55 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 
+
     /* =========================================================
-       FORM SYSTEM (NYTT)
+       NAVBAR SYSTEM
+    ========================================================= */
+
+    .navbar {
+      background: white;
+      border-bottom: 1px solid #eee;
+    }
+
+    .navbar-inner {
+      max-width: 900px;
+      margin: auto;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: black;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-link {
+      font-size: 0.95rem;
+    }
+
+    .nav-link.active {
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    .login-button {
+      background: black;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+
+    /* =========================================================
+       FORM SYSTEM
     ========================================================= */
 
     form {
@@ -91,6 +139,160 @@
 
     ::placeholder {
       color: #999;
+    }
+
+
+    /* =========================================================
+       PAGE SYSTEM
+    ========================================================= */
+
+    .page-section {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .page-section--narrow {
+      padding: 30px 20px;
+    }
+
+    .page-section--spaced {
+      margin-top: 60px;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+
+    /* =========================================================
+       BUTTON SYSTEM
+    ========================================================= */
+
+    .button {
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+    }
+
+    .button-primary {
+      background: black;
+      color: white;
+    }
+
+    .button-secondary {
+      border: 1px solid black;
+      color: black;
+    }
+
+    .button + .button {
+      margin-left: 10px;
+    }
+
+
+    /* =========================================================
+       SPACING SYSTEM
+    ========================================================= */
+
+    .stack {
+      margin-top: 30px;
+    }
+
+    .stack > * + * {
+      margin-top: 16px;
+    }
+
+
+    /* =========================================================
+       CATALOG SYSTEM
+    ========================================================= */
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+    }
+
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      text-align: center;
+      transition: transform 0.08s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .card-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .card-code {
+      font-size: 0.75rem;
+      color: #777;
+    }
+
+    .no-image {
+      height: 90px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: #777;
+    }
+
+
+    /* =========================================================
+       PRODUCT DETAIL
+    ========================================================= */
+
+    .product-image {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .product-meta {
+      color: #777;
+      font-size: 0.85rem;
+    }
+
+    .product-section {
+      margin-top: 20px;
+    }
+
+    .notice {
+      background: #fff3cd;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
     }
 
   </style>

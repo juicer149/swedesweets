@@ -17,3 +17,12 @@ def about(request):
     Contains information about the company and its mission.
     """
     return render(request, "pages/about.html")
+
+
+def contact(request):
+    """
+    Contact page for SwedeSweets.
+
+    Contains contact information for users to reach out.
+    """
+    return render(request, "pages/contact.html")

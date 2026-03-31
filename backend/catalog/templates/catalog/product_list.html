@@ -1,92 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}    Products
+{% block title %}
+Products
 {% endblock %}
 
 {% block content %}
 <div class="container">
 
-<h1>Products</h1>
+  <h1>Products</h1>
 
-{% for category in categories %}
-    <h2>{{ category.name|title }}</h2>
+  {% for category in categories %}
 
-    <div class="grid">
+    <div class="stack">
+
+      <h2>{{ category.name|title }}</h2>
+
+      <div class="grid">
+
         {% for product in category.active_products %}
 
-            <a href="{{ product.get_absolute_url }}" class="card-link">
-                <div class="card">
+          <a href="{{ product.get_absolute_url }}" class="card-link">
 
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}">
-                    {% else %}
-                        <div class="no-image">No image</div>
-                    {% endif %}
+            <div class="card">
 
-                    <div class="name">
-                        {{ product.name|title }}
-                    </div>
+              {% if product.image %}
+                <img src="{{ product.image.url }}">
+              {% else %}
+                <div class="no-image">No image</div>
+              {% endif %}
 
-                    <div class="code">
-                        #{{ product.code }}
-                    </div>
+              <div class="card-name">
+                {{ product.name|title }}
+              </div>
 
-                </div>
-            </a>
+              <div class="card-code">
+                #{{ product.code }}
+              </div>
+
+            </div>
+
+          </a>
 
         {% endfor %}
+
+      </div>
+
     </div>
-{% endfor %}
 
-<style>
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-}
-
-.card-link {
-    text-decoration: none;
-    color: inherit;
-}
-
-.card {
-    background: white;
-    border-radius: 10px;
-    padding: 6px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
-    text-align: center;
-}
-
-.card img {
-    width: 100%;
-    height: 110px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.name {
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-top: 6px;
-}
-
-.code {
-    font-size: 0.75rem;
-    color: #666;
-}
-
-.no-image {
-    height: 100px;
-    background: #ddd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    color: #666;
-}
-</style>
+  {% endfor %}
 
 </div>
 {% endblock %}
