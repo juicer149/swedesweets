@@ -1,14 +1,32 @@
 {% extends "base.html" %}
 
+{% block title %}
+  Thank you — SwedeSweets
+{% endblock %}
+
 {% block content %}
-<div class="container">
 
-  <h1>Thank you</h1>
+<section class="page-section">
+  <article class="container">
 
-  <p>
-    Your request has been received.  
-    We’ll get back to you shortly.
-  </p>
+    <div class="stack">
 
-</div>
+      <h1 class="page-title">Thank you</h1>
+
+      <p class="page-subtitle">
+        Your request has been received.  
+        We’ll get back to you shortly.
+      </p>
+
+      <div>
+        <a href="{% url 'pages:home' %}" class="button button-secondary">
+          Back to homepage
+        </a>
+      </div>
+
+    </div>
+
+  </article>
+</section>
+
 {% endblock %}

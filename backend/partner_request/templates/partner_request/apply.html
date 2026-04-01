@@ -5,91 +5,101 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
 
-  <h1>Become a partner</h1>
+<section class="page-section">
+  <article class="container">
 
-  <p>
-    Tell us about your store and we’ll get back to you shortly.
-  </p>
+    <h1 class="page-title">Become a partner</h1>
 
-  <form method="post">
-    {% csrf_token %}
+    <p class="page-subtitle">
+      Tell us about your store and we’ll get back to you shortly.
+    </p>
 
-    <!-- CONTACT PERSON -->
-    <div>
-      <label for="name">Contact person (full name)</label>
-      <input 
-        id="name"
-        type="text" 
-        name="name" 
-        placeholder="e.g. Marco Dupont" 
-        required
-      >
-    </div>
+    <form method="post">
+      {% csrf_token %}
 
-    <!-- STORE NAME -->
-    <div>
-      <label for="store_name">Store name</label>
-      <input 
-        id="store_name"
-        type="text" 
-        name="store_name" 
-        placeholder="e.g. Chamonix Candy Shop" 
-        required
-      >
-    </div>
+      <div class="stack">
 
-    <!-- EMAIL -->
-    <div>
-      <label for="email">Email address</label>
-      <input 
-        id="email"
-        type="email" 
-        name="email" 
-        placeholder="e.g. hello@store.com"
-        autocomplete="email"
-        required
-      >
-    </div>
+        <!-- CONTACT PERSON -->
+        <div>
+          <label for="name">Contact person (full name)</label>
+          <input
+            id="name"
+            type="text"
+            name="name"
+            placeholder="e.g. Marco Dupont"
+            required
+          >
+        </div>
 
-    <!-- PHONE -->
-    <div>
-      <label for="phone">Phone number</label>
-      <input 
-        id="phone"
-        type="text" 
-        name="phone" 
-        placeholder="e.g. +33 6 12 34 56 78"
-      >
-    </div>
+        <!-- STORE NAME -->
+        <div>
+          <label for="store_name">Store name</label>
+          <input
+            id="store_name"
+            type="text"
+            name="store_name"
+            placeholder="e.g. Chamonix Candy Shop"
+            required
+          >
+        </div>
 
-    <!-- ADDRESS -->
-    <div>
-      <label for="address">Store address</label>
-      <textarea 
-        id="address"
-        name="address" 
-        placeholder="e.g. 12 Rue de la Gare, 74400 Chamonix, France"
-        required
-      ></textarea>
-    </div>
+        <!-- EMAIL -->
+        <div>
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="e.g. hello@store.com"
+            autocomplete="email"
+            required
+          >
+        </div>
 
-    <!-- MESSAGE -->
-    <div>
-      <label for="message">Anything we should know? (optional)</label>
-      <textarea 
-        id="message"
-        name="message"
-        placeholder="Tell us about your store, customers, or interest"
-      ></textarea>
-    </div>
+        <!-- PHONE -->
+        <div>
+          <label for="phone">Phone number</label>
+          <input
+            id="phone"
+            type="text"
+            name="phone"
+            placeholder="e.g. +33 6 12 34 56 78"
+          >
+        </div>
 
-    <button type="submit">
-      Send request
-    </button>
+        <!-- ADDRESS -->
+        <div>
+          <label for="address">Store address</label>
+          <textarea
+            id="address"
+            name="address"
+            placeholder="e.g. 12 Rue de la Gare, 74400 Chamonix, France"
+            required
+          ></textarea>
+        </div>
 
-  </form>
+        <!-- MESSAGE -->
+        <div>
+          <label for="message">Anything we should know? (optional)</label>
+          <textarea
+            id="message"
+            name="message"
+            placeholder="Tell us about your store, customers, or interest"
+          ></textarea>
+        </div>
 
-</div>
+      </div>
+
+      <div class="stack">
+        <button type="submit">
+          Send request
+        </button>
+      </div>
+
+    </form>
+
+  </article>
+</section>
+
 {% endblock %}

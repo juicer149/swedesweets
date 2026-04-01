@@ -187,6 +187,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 Planned extensions:
 
+* Next/previous product navigation
 * search and filtering (tags)
 * better mobile UI (cards, sections, chips)
 * product variants (sizes, packs)

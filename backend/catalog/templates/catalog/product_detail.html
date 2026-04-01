@@ -1,47 +1,56 @@
 {% extends "base.html" %}
 
 {% block title %}
-{{ product.name }}
+  {{ product.name }}
 {% endblock %}
 
 {% block content %}
-<div class="container">
 
-  <a href="{% url 'product_list' %}">← Back</a>
+<section class="page-section page-section--narrow">
+  <article class="container">
 
-  {% if not product.is_active %}
-    <div class="notice">
-      Not available for ordering
+    <!-- BACK -->
+    <div class="left">
+      <a href="{% url 'product_list' %}" class="link back-link">
+        ← Back
+      </a>
     </div>
-  {% endif %}
 
-  {% if product.image %}
-    <img src="{{ product.image.url }}" class="product-image">
-  {% endif %}
-
-  <div class="stack">
-
-    <h2>{{ product.name|title }}</h2>
-
-    <p class="product-meta">
-      #{{ product.code }}
-    </p>
-
-    {% if product.description %}
-      <div class="product-section">
-        <h3>Description</h3>
-        <p>{{ product.description }}</p>
+    {% if not product.is_active %}
+      <div class="notice">
+        Not available for ordering
       </div>
     {% endif %}
 
-    {% if product.ingredients %}
-      <div class="product-section">
-        <h3>Ingredients</h3>
-        <p>{{ product.ingredients }}</p>
-      </div>
+    {% if product.image %}
+      <img src="{{ product.image.url }}" class="product-image">
     {% endif %}
 
-  </div>
+    <div class="stack">
 
-</div>
+      <h1 class="page-title">{{ product.name|title }}</h1>
+
+      <p class="product-meta">
+        #{{ product.code }}
+      </p>
+
+      {% if product.description %}
+        <section class="product-section">
+          <h3>Description</h3>
+          <p>{{ product.description }}</p>
+        </section>
+      {% endif %}
+
+      {% if product.ingredients %}
+        <section class="product-section">
+          <h3>Ingredients</h3>
+          <p>{{ product.ingredients }}</p>
+        </section>
+      {% endif %}
+
+    </div>
+
+  </article>
+</section>
+
 {% endblock %}

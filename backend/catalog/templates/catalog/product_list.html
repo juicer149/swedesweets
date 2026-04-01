@@ -1,53 +1,56 @@
 {% extends "base.html" %}
-
 {% block title %}
-Products
+  Products
 {% endblock %}
 
 {% block content %}
-<div class="container">
 
-  <h1>Products</h1>
+<section class="page-section page-section--narrow">
+  <section class="container">
 
-  {% for category in categories %}
+    <h1 class="page-title">Products</h1>
 
-    <div class="stack">
+    {% for category in categories %}
 
-      <h2>{{ category.name|title }}</h2>
+      <section class="stack">
 
-      <div class="grid">
+        <h2>{{ category.name|title }}</h2>
 
-        {% for product in category.active_products %}
+        <div class="grid">
 
-          <a href="{{ product.get_absolute_url }}" class="card-link">
+          {% for product in category.active_products %}
 
-            <div class="card">
+            <a href="{{ product.get_absolute_url }}" class="card-link">
 
-              {% if product.image %}
-                <img src="{{ product.image.url }}">
-              {% else %}
-                <div class="no-image">No image</div>
-              {% endif %}
+              <article class="card">
 
-              <div class="card-name">
-                {{ product.name|title }}
-              </div>
+                {% if product.image %}
+                  <img src="{{ product.image.url }}">
+                {% else %}
+                  <div class="no-image">No image</div>
+                {% endif %}
 
-              <div class="card-code">
-                #{{ product.code }}
-              </div>
+                <div class="card-name">
+                  {{ product.name|title }}
+                </div>
 
-            </div>
+                <div class="card-code">
+                  #{{ product.code }}
+                </div>
 
-          </a>
+              </article>
 
-        {% endfor %}
+            </a>
 
-      </div>
+          {% endfor %}
 
-    </div>
+        </div>
 
-  {% endfor %}
+      </section>
 
-</div>
+    {% endfor %}
+
+  </section>
+</section>
+
 {% endblock %}

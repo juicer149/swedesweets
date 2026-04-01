@@ -5,35 +5,49 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
 
-  <h1>Contact</h1>
+<section class="page-section">
+  <section class="container">
 
-  <p>
-    Feel free to reach out — we'd love to hear from you.
-  </p>
+    <h1 class="page-title">Contact</h1>
 
-  <div class="stack">
-
-    <p>
-      <strong>Email</strong><br>
-      info@swedesweets.se
+    <p class="page-subtitle">
+      We'd love to hear from you — whether you're a store, partner, or just curious.
     </p>
 
-    <p>
-      <strong>Phone</strong><br>
-      +46 (73) 975 61 95
-    </p>
+    <div class="stack">
 
-    <p>
-      <strong>Address</strong><br>
-      SwedeSweets<br>
-      Route d'Argentière<br>
-      744 00 Chamonix<br>
-      France
-    </p>
+      <div class="contact-block">
+        <div class="contact-label">Email</div>
+        <div class="contact-value">
+          <a href="mailto:info@swedesweets.se" class="link">
+            info@swedesweets.se
+          </a>
+        </div>
+      </div>
 
-  </div>
+      <div class="contact-block">
+        <div class="contact-label">Phone</div>
+        <div class="contact-value">
+          <a href="tel:+46739756195" class="link">
+            +46 (73) 975 61 95
+          </a>
+        </div>
+      </div>
 
-</div>
+      <div class="contact-block">
+        <div class="contact-label">Address</div>
+        <div class="contact-value">
+          SwedeSweets<br>
+          Route d'Argentière<br>
+          744 00 Chamonix<br>
+          France
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</section>
+
 {% endblock %}
