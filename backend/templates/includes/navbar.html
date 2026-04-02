@@ -24,12 +24,29 @@
         Contact
       </a>
 
+      {% if not request.user.is_authenticated %}
+        <a href="{% url 'apply' %}"
+           class="nav-link {% if request.resolver_match.url_name == 'apply' %}active{% endif %}">
+          Apply
+        </a>
+      {% endif %}
+
     </div>
 
-    <!-- LOGIN -->
-    <a href="/login" class="login-button">
-      Login
-    </a>
+    <!-- RIGHT SIDE -->
+    {% if request.user.is_authenticated %}
+
+      <a href="{% url 'portal' %}" class="login-button">
+        Portal
+      </a>
+
+    {% else %}
+
+      <a href="{% url 'login' %}" class="login-button">
+        Login
+      </a>
+
+    {% endif %}
 
   </div>
 </nav>

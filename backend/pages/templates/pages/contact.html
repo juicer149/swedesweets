@@ -7,44 +7,85 @@
 {% block content %}
 
 <section class="page-section">
-  <section class="container">
+  <section class="container left">
 
     <h1 class="page-title">Contact</h1>
 
     <p class="page-subtitle">
-      We'd love to hear from you — whether you're a store, partner, or just curious.
+      Find answers to common questions below — or reach out directly if needed.
     </p>
 
+    <!-- FAQ -->
     <div class="stack">
 
-      <div class="contact-block">
-        <div class="contact-label">Email</div>
-        <div class="contact-value">
-          <a href="mailto:info@swedesweets.se" class="link">
-            info@swedesweets.se
-          </a>
-        </div>
-      </div>
+      <details class="faq-item">
+        <summary>Where can I buy your products?</summary>
+        <p class="faq-answer">
+          We work with selected retail stores. A store locator will be available soon.
+        </p>
+      </details>
 
-      <div class="contact-block">
-        <div class="contact-label">Phone</div>
-        <div class="contact-value">
-          <a href="tel:+46739756195" class="link">
-            +46 (73) 975 61 95
-          </a>
-        </div>
-      </div>
+      <details class="faq-item">
+        <summary>Do you sell online?</summary>
+        <p class="faq-answer">
+          Not at the moment — our products are available through partner stores.
+        </p>
+      </details>
 
-      <div class="contact-block">
-        <div class="contact-label">Address</div>
-        <div class="contact-value">
-          SwedeSweets<br>
-          Route d'Argentière<br>
-          744 00 Chamonix<br>
-          France
-        </div>
-      </div>
+      <details class="faq-item">
+        <summary>Can I buy SwedeSweets products as a private customer?</summary>
+        <p class="faq-answer">
+          Our products are currently available through partner stores.
+          A store locator will be available soon.
+        </p>
+      </details>
 
+      <details class="faq-item">
+        <summary>Do you offer wholesale?</summary>
+        <p class="faq-answer">
+          Yes — if you run a store, you can apply to become a partner.
+          <a href="{% url 'apply' %}" class="link">Apply here</a>.
+        </p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do you sell merch?</summary>
+        <p class="faq-answer">
+          Yes — we occasionally release limited merch like t-shirts and hoodies.
+          Stay tuned for updates.
+        </p>
+      </details>
+
+    </div>
+
+    <!-- CONTACT -->
+    <div class="stack">
+
+      <p class="page-subtitle">
+        Still need help?
+      </p>
+
+      <p>
+        <a href="mailto:info@swedesweets.se" class="link">
+          info@swedesweets.se
+        </a>
+      </p>
+
+      <p>
+        <a href="tel:+46739756195" class="link">
+          +46 (73) 975 61 95
+        </a>
+      </p>
+
+    </div>
+
+    <!-- ADDRESS -->
+    <div class="stack">
+      <p class="page-subtitle">
+        SwedeSweets<br>
+        157 Route des Pècles<br>        74400 Chamonix-Mont-Blanc<br>
+        France
+      </p>
     </div>
 
   </section>

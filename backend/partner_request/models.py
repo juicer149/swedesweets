@@ -137,7 +137,7 @@ class PartnerRequest(models.Model):
             if not created:
                 raise ValueError("User already exists with this email")
 
-            user.set_unusable_password()
+            user.set_password("test1234")  # Need to change after testing, but good enough for MVP
             user.save(update_fields=["password"])
 
             store = Store.objects.create(

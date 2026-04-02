@@ -1,28 +1,37 @@
 {% extends "base.html" %}
 
 {% block title %}
-  Become a partner
+  Partner application
 {% endblock %}
 
 {% block content %}
 
 <section class="page-section">
-  <article class="container">
+  <article class="container left">
 
     <h1 class="page-title">Become a partner</h1>
 
     <p class="page-subtitle">
-      Tell us about your store and we’ll get back to you shortly.
+      For stores and retailers interested in carrying SwedeSweets products.
     </p>
+
+    <!-- Alternative path -->
+    <div class="stack">
+      <p>
+        Just have a question?
+        <a href="{% url 'pages:contact' %}" class="link">
+          Contact us instead
+        </a>
+      </p>
+    </div>
 
     <form method="post">
       {% csrf_token %}
 
       <div class="stack">
 
-        <!-- CONTACT PERSON -->
-        <div>
-          <label for="name">Contact person (full name)</label>
+        <div class="form-field">
+          <label for="name">Contact person</label>
           <input
             id="name"
             type="text"
@@ -31,8 +40,7 @@
           >
         </div>
 
-        <!-- STORE NAME -->
-        <div>
+        <div class="form-field">
           <label for="store_name">Store name</label>
           <input
             id="store_name"
@@ -42,8 +50,7 @@
           >
         </div>
 
-        <!-- EMAIL -->
-        <div>
+        <div class="form-field">
           <label for="email">Email address</label>
           <input
             id="email"
@@ -55,8 +62,7 @@
           >
         </div>
 
-        <!-- PHONE -->
-        <div>
+        <div class="form-field">
           <label for="phone">Phone number</label>
           <input
             id="phone"
@@ -66,23 +72,21 @@
           >
         </div>
 
-        <!-- ADDRESS -->
-        <div>
+        <div class="form-field">
           <label for="address">Store address</label>
           <textarea
             id="address"
             name="address"
-            placeholder="e.g. 12 Rue de la Gare, 74400 Chamonix, France"
+            placeholder="e.g. 12 Rue de la Gare, 74400 Chamonix"
           ></textarea>
         </div>
 
-        <!-- MESSAGE -->
-        <div>
-          <label for="message">Anything we should know?</label>
+        <div class="form-field">
+          <label for="message">Message</label>
           <textarea
             id="message"
             name="message"
-            placeholder="Tell us about your store, customers, or interest"
+            placeholder="Tell us about your store or interest"
           ></textarea>
         </div>
 

@@ -18,9 +18,13 @@
   </p>
 
   <div class="stack">
-    <a href="/apply/" class="button button-secondary">
+    <a href="{% url 'apply' %}" class="button button-secondary">
       Become a partner
     </a>
+
+    <p class="page-subtitle">
+      For stores and retailers
+    </p>
   </div>
 
 </section>
@@ -57,7 +61,7 @@
 </section>
 
 
-<!-- CTA -->
+<!-- CTA (B2C placeholder) -->
 <section class="page-section page-section--spaced">
 
   <h3>Ready to try it yourself?</h3>
@@ -77,13 +81,28 @@
 </section>
 
 
-<!-- B2B LOGIN -->
+<!-- B2B ENTRY -->
 <section class="page-section page-section--narrow">
 
-  <p class="page-subtitle">
-    Are you a partner?
-    <a href="/login">Login here</a>
-  </p>
+  {% if request.user.is_authenticated %}
+
+    <p class="page-subtitle">
+      Welcome back —
+      <a href="{% url 'portal' %}" class="link">
+        go to your portal
+      </a>
+    </p>
+
+  {% else %}
+
+    <p class="page-subtitle">
+      Are you a partner?
+      <a href="{% url 'login' %}" class="link">
+        Login here
+      </a>
+    </p>
+
+  {% endif %}
 
 </section>
 

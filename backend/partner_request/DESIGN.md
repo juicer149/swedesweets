@@ -7,13 +7,15 @@ The `partner_request` module handles inbound interest from potential retail part
 It acts as the **entry point into the B2B system**, before accounts and ordering.
 
 This module is intentionally simple:
+
 - Accept data from external users (stores)
 - Persist requests
-- Allow internal review and approval
+- Allow internal review and decision
 
 It does NOT:
+
 - Authenticate users
-- Create accounts automatically
+- Automatically create accounts
 - Handle ordering logic
 
 ---
@@ -24,15 +26,31 @@ A `PartnerRequest` represents:
 
 > "A store expressing interest in becoming a customer"
 
-It is a **temporary, pre-account state**.
+It is a **temporary, pre-account state** at the boundary of the system.
 
-Lifecycle:
+External input is:
+
+- incomplete
+- untrusted
+- inconsistent
+
+This module captures that safely before entering the core system.
+
+---
+
+## Lifecycle
 
 ```
 
-NEW → processed → (converted to Store)
+PENDING → APPROVED → (creates User + Store)
+PENDING → REJECTED
 
 ```
+
+Key idea:
+
+- A request is never mutated into a Store
+- It is **converted** into internal entities
 
 ---
 
@@ -40,58 +58,73 @@ NEW → processed → (converted to Store)
 
 ### 1. Separation of Concerns
 
-- `partner_request` handles **inbound interest only**
-- `accounts` handles **actual customers (Store)**
+- `partner_request` handles **external input**
+- `accounts` handles **internal customers (Store/User)**
 - `ordering` handles **business operations**
 
-This avoids:
-- premature coupling
-- complex flows in a single module
+This keeps boundaries clean and avoids coupling.
 
 ---
 
-### 2. Explicit State
+### 2. Explicit State (State Machine)
 
-We use:
+We use an explicit status field:
 
 ```python
-is_processed = BooleanField(default=False)
+status = ("pending", "approved", "rejected")
 ```
-
-instead of deleting or mutating records.
 
 Why:
 
-* preserves history
-* enables audit trail
-* keeps logic simple
+* avoids ambiguous boolean flags
+* models real business decisions
+* makes transitions explicit
+* easy to extend later
 
 ---
 
-### 3. Write-Optimized Model
+### 3. Boundary Normalization
 
-This model is:
+All emails are normalized:
 
-* append-heavy (many inserts)
-* rarely updated
+```text
+lowercase + trimmed
+```
 
-Therefore:
+Why:
 
-* simple fields
-* no foreign keys
-* no heavy constraints
+* email acts as identity
+* prevents duplicate users due to casing differences
+* ensures consistent lookups
 
 ---
 
 ### 4. Human-in-the-loop
 
-Approval is manual (via admin).
+Approval is manual (via Django admin).
 
 Why:
 
 * early stage product
 * avoids premature automation
-* supports flexible business decisions
+* allows flexible business decisions
+
+---
+
+### 5. Minimal Relationships
+
+* No foreign keys during input phase
+* Only after approval:
+
+```text
+PartnerRequest → created_store
+```
+
+Why:
+
+* keeps write-path simple
+* avoids premature coupling
+* preserves audit trail
 
 ---
 
@@ -99,21 +132,23 @@ Why:
 
 ```python
 PartnerRequest:
-    name            # contact person
-    store_name      # business identity
+    name
+    store_name
     email
     phone
     address
     message
     created_at
-    is_processed
+    status
+    created_store   # set only if approved
 ```
 
 ### Notes
 
-* `address` is required → needed for logistics feasibility
-* `phone` is optional → not always provided
-* `message` is optional → marketing/context
+* Only `email` is required at submission time
+* Other fields can be completed by admin
+* `address` is required before approval
+* `message` is optional, capped in size
 
 ---
 
@@ -146,77 +181,70 @@ POST /apply/
 
 Admin reviews requests via Django admin:
 
-* filter by `is_processed`
-* inspect request
-* contact store manually
+* inspect incoming request
+* complete missing data
+* approve → creates User + Store
+* reject → marks as rejected
 
-Future step:
+Approval is explicit and safe:
 
-* create `Store` from request
+* prevents duplicate users
+* requires minimum valid data
+* runs inside a transaction
+
+---
+
+## Conversion (Core Operation)
+
+Approval performs:
+
+```text
+PartnerRequest → User + Store
+```
+
+Rules:
+
+* email is normalized and used as username
+* user must not already exist
+* store is created and linked
+* request is marked as approved
+
+This is the **only place where external data becomes internal truth**.
+
+---
+
+## Deletion Policy
+
+* Pending / rejected requests can be deleted
+* Approved requests cannot be deleted
+
+Why:
+
+* approved requests created real system entities
+* they are part of system history
+* deleting them breaks traceability
 
 ---
 
 ## Future Extensions
 
-### 1. Approval Action
-
-Admin action:
-
-```
-Approve → create Store → mark processed
-```
-
----
-
-### 2. Email Integration
-
-* confirmation email (user)
-* notification email (internal)
-
----
-
-### 3. Validation Layer
-
-* basic form validation (Django Forms)
-* email/phone normalization
-
----
-
-### 4. Geo / Logistics
-
-* distance filtering
-* delivery feasibility
-
----
-
-### 5. CRM-lite features
-
-* tagging requests
-* status beyond boolean (e.g. contacted, rejected)
-
----
-
-## Why Separate App?
-
-Even though it is small, `partner_request` is its own app because:
-
-* distinct domain boundary
-* different lifecycle than accounts
-* easier to evolve independently
+* Email notifications (confirmation / internal alerts)
+* Password setup flow (instead of temporary passwords)
+* Extended status (e.g. contacted, on_hold)
+* CRM features (tagging, notes)
+* Geo / logistics validation
 
 ---
 
 ## Philosophy
 
-This module follows:
-
 > "Start simple, keep boundaries clear, evolve when needed."
 
-It is intentionally minimal:
+This module is intentionally minimal:
 
-* no abstractions
-* no premature patterns
-* no hidden magic
+* no signals
+* no hidden logic
+* no premature abstractions
 
 ---
 
@@ -224,8 +252,8 @@ It is intentionally minimal:
 
 `partner_request` is:
 
-* the first touchpoint for new customers
-* a write-focused, simple system
+* the system boundary for new customers
+* a controlled entry into the domain
 * a bridge between marketing and operations
 
-It will grow only when real needs appear.
+It ensures that **only validated, explicit decisions create real accounts**.

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container">
+
+  <h1>Portal</h1>
+
+  {% if store %}
+    <h2>{{ store.name }}</h2>
+    <p>{{ store.address }}</p>
+    <p>{{ store.phone }}</p>
+  {% else %}
+    <p>No store connected to this account.</p>
+  {% endif %}
+
+  <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+  </form>
+
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Login
+{% endblock %}
+
+{% block content %}
+<section class="page-section page-section--narrow">
+
+  <div class="container left">
+
+    <h1 class="page-title">Login</h1>
+
+    <p class="page-subtitle">
+      Access your store portal
+    </p>
+
+    <!--  Error feedback -->
+    {% if form.errors %}
+      <div class="alert alert-error">
+        Invalid email or password
+      </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-field">
+        <label for="id_username">Email</label>
+        <input
+          id="id_username"
+          type="text"
+          name="username"
+          placeholder="you@example.com"
+          autocomplete="username"
+          required
+        >
+      </div>
+
+      <div class="form-field">
+        <label for="id_password">Password</label>
+        <input
+          id="id_password"
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <button type="submit">
+        Login
+      </button>
+
+    </form>
+
+  </div>
+
+</section>
+{% endblock %}

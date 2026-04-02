@@ -1,0 +1,38 @@
+<footer class="page-section page-section--narrow">
+
+  <div class="page-subtitle">
+
+    <!-- COMPANY -->
+    <p>
+      <strong>SwedeSweets</strong><br>
+      157 Route des Pècles<br>
+      74400 Chamonix-Mont-Blanc<br>
+      France
+    </p>
+
+    <!-- CONTACT -->
+    <p>
+      <a href="mailto:info@swedesweets.se" class="link">
+        info@swedesweets.se
+      </a><br>
+
+      <a href="tel:+46739756195" class="link">
+        +46 (73) 975 61 95
+      </a>
+    </p>
+
+    <!-- NAV -->
+    <p>
+      <a href="{% url 'pages:contact' %}" class="link">Contact</a>
+      ·
+      <a href="{% url 'apply' %}" class="link">Apply</a>
+
+      {% if not request.user.is_authenticated %}
+        ·
+        <a href="{% url 'login' %}" class="link">Login</a>
+      {% endif %}
+    </p>
+
+  </div>
+
+</footer>
