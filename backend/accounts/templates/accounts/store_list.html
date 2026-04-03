@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Find sweets — SwedeSweets
+{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+  <section class="container">
+
+    <!-- HEADER -->
+    <div class="center">
+      <h1 class="page-title">Find sweets</h1>
+
+      <p class="page-subtitle">
+        Discover stores near you that carry SwedeSweets.
+      </p>
+    </div>
+
+    {% if stores %}
+
+      <!-- LIST -->
+      <div class="stack left">
+
+        {% for store in stores %}
+          <div class="store-card">
+
+            <div class="store-name">
+              {{ store.name }}
+            </div>
+
+            <div class="store-address">
+              {{ store.address }}
+            </div>
+
+            <div class="store-actions">
+              <a
+                href="https://www.google.com/maps/search/?api=1&query={{ store.address|urlencode }}"
+                target="_blank"
+                class="button button-secondary"
+              >
+                View on map
+              </a>
+            </div>
+
+          </div>
+        {% endfor %}
+
+      </div>
+
+    {% else %}
+
+      <div class="stack center">
+
+        <div class="notice">
+          No stores available yet.
+        </div>
+
+        <p>
+          Want to carry SwedeSweets?
+          <a href="{% url 'apply' %}" class="link">Apply here</a>
+        </p>
+
+      </div>
+
+    {% endif %}
+
+  </section>
+</section>
+
+{% endblock %}

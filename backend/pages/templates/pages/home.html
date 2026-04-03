@@ -8,67 +8,71 @@
 
 <!-- HERO -->
 <section class="page-section">
+  <div class="container center">
 
-  <h1 class="page-title">
-    Swedish candy. Delivered simply.
-  </h1>
+    <h1 class="page-title">
+      Swedish candy. Delivered simply.
+    </h1>
 
-  <p>
-    Authentic pick & mix sweets, available in stores across France.
-  </p>
-
-  <div class="stack">
-    <a href="{% url 'apply' %}" class="button button-secondary">
-      Become a partner
-    </a>
-
-    <p class="page-subtitle">
-      For stores and retailers
+    <p>
+      Authentic pick & mix sweets, available in stores across France.
     </p>
-  </div>
 
+    <div class="stack">
+      <a href="{% url 'apply' %}" class="button button-secondary">
+        Become a partner
+      </a>
+
+      <p class="page-subtitle">
+        For stores and retailers
+      </p>
+    </div>
+
+  </div>
 </section>
 
 
-<!-- BRAND LINE -->
+<!-- BRAND -->
 <section class="page-section page-section--narrow">
+  <div class="container center">
 
-  <p class="page-subtitle">
-    Born in Chamonix. Inspired by Sweden.
-  </p>
+    <p class="page-subtitle">
+      Born in Chamonix. Inspired by Sweden.
+    </p>
 
+  </div>
 </section>
 
 
 <!-- HOW TO -->
 <section class="page-section page-section--spaced">
+  <div class="container center">
 
-  <h2>How to build your perfect mix</h2>
+    <h2>How to build your perfect mix</h2>
 
-  <p class="page-subtitle">
-    A simple guide to creating your own pick & mix experience.
-  </p>
+    <p class="page-subtitle">
+      A simple guide to creating your own pick & mix experience.
+    </p>
 
-  <div class="stack">
-
-    <p><strong>1.</strong> Start with your favorites</p>
-    <p><strong>2.</strong> Mix sweet and sour</p>
-    <p><strong>3.</strong> Try something new</p>
-    <p><strong>4.</strong> Share and enjoy</p>
+    <div class="stack">
+      <p><strong>1.</strong> Start with your favorites</p>
+      <p><strong>2.</strong> Mix sweet and sour</p>
+      <p><strong>3.</strong> Try something new</p>
+      <p><strong>4.</strong> Share and enjoy</p>
+    </div>
 
   </div>
-
 </section>
 
 
-<!-- CTA (B2C placeholder) -->
+<!-- CTA -->
 <section class="page-section page-section--spaced">
+  <div class="container center">
 
-  <h3>Ready to try it yourself?</h3>
+    <h3>Ready to try it yourself?</h3>
 
-  <div class="stack">
-    <div>
-      <a href="#" class="button button-primary">
+    <div class="stack">
+      <a href="{% url 'store_list' %}" class="button button-primary">
         Find your nearest store
       </a>
 
@@ -76,34 +80,36 @@
         Shop merch
       </a>
     </div>
-  </div>
 
+  </div>
 </section>
 
 
-<!-- B2B ENTRY -->
+<!-- B2B -->
 <section class="page-section page-section--narrow">
+  <div class="container center">
 
-  {% if request.user.is_authenticated %}
+    {% if request.user.is_authenticated %}
 
-    <p class="page-subtitle">
-      Welcome back —
-      <a href="{% url 'portal' %}" class="link">
-        go to your portal
-      </a>
-    </p>
+      <p class="page-subtitle">
+        Welcome back —
+        <a href="{% url 'portal' %}" class="link">
+          go to your portal
+        </a>
+      </p>
 
-  {% else %}
+    {% else %}
 
-    <p class="page-subtitle">
-      Are you a partner?
-      <a href="{% url 'login' %}" class="link">
-        Login here
-      </a>
-    </p>
+      <p class="page-subtitle">
+        Are you a partner?
+        <a href="{% url 'login' %}" class="link">
+          Login here
+        </a>
+      </p>
 
-  {% endif %}
+    {% endif %}
 
+  </div>
 </section>
 
 {% endblock %}
