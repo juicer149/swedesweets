@@ -1,7 +1,7 @@
 <footer class="footer">
-
   <div class="footer-inner">
 
+    <!-- COMPANY -->
     <p>
       <strong>SwedeSweets</strong><br>
       157 Route des Pècles<br>
@@ -9,6 +9,7 @@
       France
     </p>
 
+    <!-- CONTACT -->
     <p>
       <a href="mailto:info@swedesweets.se" class="link">
         info@swedesweets.se
@@ -19,17 +20,17 @@
       </a>
     </p>
 
-    <p>
+    <!-- NAV -->
+    <nav class="footer-nav">
       <a href="{% url 'pages:contact' %}" class="link">Contact</a>
-      ·
+      <span class="footer-sep">·</span>
       <a href="{% url 'apply' %}" class="link">Apply</a>
 
       {% if not request.user.is_authenticated %}
-        ·
+        <span class="footer-sep">·</span>
         <a href="{% url 'login' %}" class="link">Login</a>
       {% endif %}
-    </p>
+    </nav>
 
   </div>
-
 </footer>

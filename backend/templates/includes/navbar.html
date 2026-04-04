@@ -1,17 +1,17 @@
 <nav class="navbar">
   <div class="navbar-inner">
 
-    <!-- LOGO -->
+    <!-- LEFT -->
     <a href="{% url 'pages:home' %}" class="logo">
       SwedeSweets
     </a>
 
-    <!-- MOBILE MENU BUTTON -->
-    <div class="menu-toggle">
+    <!-- MOBILE TOGGLE -->
+    <button class="menu-toggle" type="button" aria-label="Toggle menu">
       ☰
-    </div>
+    </button>
 
-    <!-- NAV LINKS -->
+    <!-- CENTER -->
     <div class="nav-links">
 
       <a href="{% url 'product_list' %}"
@@ -41,11 +41,21 @@
         </a>
       {% endif %}
 
-      <!-- MOBILE LOGIN (visas i dropdown) -->
       {% if request.user.is_authenticated %}
-        <a href="{% url 'portal' %}" class="nav-link mobile-only">
+        <a href="{% url 'portal' %}"
+           class="nav-link {% if request.resolver_match.url_name == 'portal' %}active{% endif %}">
           Portal
         </a>
+      {% endif %}
+
+      <!-- MOBILE AUTH -->
+      {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" class="mobile-only logout-inline">
+          {% csrf_token %}
+          <button type="submit" class="nav-link nav-link-button">
+            Logout
+          </button>
+        </form>
       {% else %}
         <a href="{% url 'login' %}" class="nav-link mobile-only">
           Login
@@ -54,16 +64,21 @@
 
     </div>
 
-    <!-- DESKTOP RIGHT SIDE -->
-    {% if request.user.is_authenticated %}
-      <a href="{% url 'portal' %}" class="login-button">
-        Portal
-      </a>
-    {% else %}
-      <a href="{% url 'login' %}" class="login-button">
-        Login
-      </a>
-    {% endif %}
+    <!-- RIGHT -->
+    <div class="auth">
+      {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="login-button">
+            Logout
+          </button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="login-button">
+          Login
+        </a>
+      {% endif %}
+    </div>
 
   </div>
 </nav>
