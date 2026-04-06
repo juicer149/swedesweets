@@ -1,56 +1,64 @@
 {% extends "base.html" %}
 
 {% block title %}
-  {{ product.name }}
+  {{ product.name }} — SwedeSweets
 {% endblock %}
 
 {% block content %}
-
-<section class="page-section page-section--narrow">
-  <article class="container">
-
-    <!-- BACK -->
-    <div class="left">
-      <a href="{% url 'product_list' %}" class="link back-link">
-        ← Back
-      </a>
-    </div>
+<section class="page-section">
+  <article class="container left">
+    <a href="{% url 'catalog:product_list' %}" class="link back-link">
+      ← Back to products
+    </a>
 
     {% if not product.is_active %}
-      <div class="notice">
-        Not available for ordering
+      <div class="product-status">
+        <div class="notice">
+          Not available for ordering.
+        </div>
       </div>
     {% endif %}
 
-    {% if product.image %}
-      <img src="{{ product.image.url }}" class="product-image">
-    {% endif %}
+    <div class="product-detail-layout">
+      <aside class="card product-detail-media">
+        <div class="product-detail-image-wrap">
+          {% if product.image %}
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.name }}"
+              class="product-detail-image"
+            >
+          {% else %}
+            <div class="product-detail-placeholder">No image</div>
+          {% endif %}
+        </div>
+      </aside>
 
-    <div class="stack">
+      <section>
+        <h1 class="page-title">{{ product.name|title }}</h1>
+        <p class="product-meta">#{{ product.code }}</p>
 
-      <h1 class="page-title">{{ product.name|title }}</h1>
+        <div class="product-sections">
+          {% if product.description %}
+            <section class="product-section">
+              <h2 class="product-section-title">Description</h2>
+              <div class="product-section-content">
+                {{ product.description }}
+              </div>
+            </section>
+          {% endif %}
 
-      <p class="product-meta">
-        #{{ product.code }}
-      </p>
-
-      {% if product.description %}
-        <section class="product-section">
-          <h3>Description</h3>
-          <p>{{ product.description }}</p>
-        </section>
-      {% endif %}
-
-      {% if product.ingredients %}
-        <section class="product-section">
-          <h3>Ingredients</h3>
-          <p>{{ product.ingredients }}</p>
-        </section>
-      {% endif %}
-
+          {% if product.ingredients %}
+            <section class="product-section">
+              <h2 class="product-section-title">Ingredients</h2>
+              <div class="product-section-content">
+                {{ product.ingredients }}
+              </div>
+            </section>
+          {% endif %}
+        </div>
+      </section>
     </div>
-
   </article>
 </section>
-
 {% endblock %}

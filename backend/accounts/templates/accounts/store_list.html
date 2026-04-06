@@ -5,11 +5,8 @@
 {% endblock %}
 
 {% block content %}
-
 <section class="page-section">
   <section class="container">
-
-    <!-- HEADER -->
     <div class="center">
       <h1 class="page-title">Find sweets</h1>
 
@@ -19,13 +16,9 @@
     </div>
 
     {% if stores %}
-
-      <!-- LIST -->
       <div class="stack left">
-
         {% for store in stores %}
-          <div class="store-card">
-
+          <div class="card card-soft card-hover">
             <div class="store-name">
               {{ store.name }}
             </div>
@@ -43,16 +36,11 @@
                 View on map
               </a>
             </div>
-
           </div>
         {% endfor %}
-
       </div>
-
     {% else %}
-
       <div class="stack center">
-
         <div class="notice">
           No stores available yet.
         </div>
@@ -61,12 +49,8 @@
           Want to carry SwedeSweets?
           <a href="{% url 'apply' %}" class="link">Apply here</a>
         </p>
-
       </div>
-
     {% endif %}
-
   </section>
 </section>
-
 {% endblock %}

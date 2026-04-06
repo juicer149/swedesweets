@@ -4,36 +4,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (!toggle || !nav) return;
 
-  // Toggle menu
-  toggle.addEventListener("click", (e) => {
-    e.stopPropagation(); // viktigt för click-outside
-    nav.classList.toggle("open");
+  function closeMenu() {
+    nav.classList.remove("open");
+    toggle.textContent = "☰";
+    toggle.setAttribute("aria-expanded", "false");
+  }
 
-    // switch icon based on menu state
-    toggle.textContent = nav.classList.contains("open") ? "✕" : "☰";
-  });
+  function openMenu() {
+    nav.classList.add("open");
+    toggle.textContent = "✕";
+    toggle.setAttribute("aria-expanded", "true");
+  }
 
-  // Close menu when clicking a link
-  document.querySelectorAll(".nav-link").forEach(link => {
-    link.addEventListener("click", () => {
-      nav.classList.remove("open");
-      toggle.textContent = "☰";
-    });
-  });
+  toggle.addEventListener("click", function (event) {
+    event.stopPropagation();
 
-  // Close menu when clicking outside
-  document.addEventListener("click", (e) => {
-    if (!nav.contains(e.target) && !toggle.contains(e.target)) {
-      nav.classList.remove("open");
-      toggle.textContent = "☰";
+    if (nav.classList.contains("open")) {
+      closeMenu();
+    } else {
+      openMenu();
     }
   });
 
-  // ESC key to close menu
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      nav.classList.remove("open");
-      toggle.textContent = "☰";
+  document.querySelectorAll(".nav-link").forEach(function (link) {
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("click", function (event) {
+    if (!nav.contains(event.target) && !toggle.contains(event.target)) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      closeMenu();
     }
   });
 });

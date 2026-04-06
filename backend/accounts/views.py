@@ -1,12 +1,12 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+from ordering.read.selectors import latest_order_for_store
 
 from .models import Store
 
 
 def store_list(request):
-    """Shows a list of all active Stores with an address."""
-
     stores = (
         Store.objects
         .filter(is_active=True)
@@ -15,24 +15,22 @@ def store_list(request):
         .order_by("name")
     )
 
-    return render(request, "accounts/store_list.html", {
-        "stores": stores
-        })
+    return render(request, "accounts/store_list.html", {"stores": stores})
 
 
 @login_required
 def portal(request):
-    """
-    Authenticated entry point.
-
-    Shows the Store connected to the logged-in user.
-    """
-
     store = getattr(request.user, "store", None)
+
+    last_order = None
+    if store:
+        last_order = latest_order_for_store(store)
 
     return render(
         request,
         "accounts/portal.html",
-        {"store": store},
+        {
+            "store": store,
+            "last_order": last_order,
+        },
     )
-

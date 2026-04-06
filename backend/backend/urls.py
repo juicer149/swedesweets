@@ -12,10 +12,14 @@ urlpatterns = [
         auth_views.LoginView.as_view(template_name="auth/login.html"), 
         name="login"
         ),
-    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path(
+        "logout/", 
+        auth_views.LogoutView.as_view(next_page="pages:home"), 
+        name="logout"
+        ),
 
     path("", include("accounts.urls")), 
-
+    path("", include("ordering.urls")),
     path("", include("pages.urls")),  # Home page and other static pages
     path("products/", include("catalog.urls")),  # Product listing and details
     path("", include("partner_request.urls")),  # Partner application form

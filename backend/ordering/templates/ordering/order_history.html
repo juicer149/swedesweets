@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Order history — SwedeSweets
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container left">
+    <div class="orders-page-header">
+      <div>
+        <h1 class="page-title">Order history</h1>
+        <p class="page-subtitle">{{ store.name }}</p>
+      </div>
+
+      <a href="{% url 'order_create' %}" class="button button-primary">
+        New order
+      </a>
+    </div>
+
+    {% if open_orders or delivered_orders %}
+      {% if open_orders %}
+        <section class="orders-group">
+          <h2 class="section-title">Open orders</h2>
+
+          <div class="stack">
+            {% for order in open_orders %}
+              <article class="card card-soft card-hover">
+                <div class="order-card-date">
+                  {{ order.created_at|date:"Y-m-d H:i" }}
+                </div>
+
+                <div class="order-card-status">
+                  <span class="status-dot status-{{ order.status }}"></span>
+                  <span>{{ order.get_status_display }}</span>
+                </div>
+
+                <div class="order-card-meta">
+                  {{ order.line_count }} products · {{ order.total_quantity }} units
+                </div>
+
+                <div class="order-card-actions">
+                  <a href="{% url 'order_detail' order.id %}" class="button button-secondary">
+                    View order
+                  </a>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      {% if delivered_orders %}
+        <section class="orders-group">
+          <h2 class="section-title">Delivered</h2>
+
+          <div class="stack">
+            {% for order in delivered_orders %}
+              <article class="card card-soft card-hover">
+                <div class="order-card-date">
+                  {{ order.created_at|date:"Y-m-d H:i" }}
+                </div>
+
+                <div class="order-card-status">
+                  <span class="status-dot status-{{ order.status }}"></span>
+                  <span>{{ order.get_status_display }}</span>
+                </div>
+
+                <div class="order-card-meta">
+                  {{ order.line_count }} products · {{ order.total_quantity }} units
+                </div>
+
+                <div class="order-card-actions">
+                  <a href="{% url 'order_detail' order.id %}" class="button button-secondary">
+                    View order
+                  </a>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    {% else %}
+      <div class="stack">
+        <div class="notice">
+          No orders yet.
+        </div>
+
+        <p>
+          <a href="{% url 'order_create' %}" class="link">Place your first order</a>
+        </p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

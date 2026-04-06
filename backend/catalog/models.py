@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class ProductCategory(models.Model):
@@ -52,7 +53,6 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     ingredients = models.TextField(blank=True)
 
-    # Optional product metadata
     weight_grams = models.PositiveIntegerField(
         null=True,
         blank=True,
@@ -97,6 +97,6 @@ class Product(models.Model):
         """
         Canonical URL for this product.
 
-        Keeps routing logic out of templates.
+        Keeps routing logic out of templates and avoids hardcoded paths.
         """
-        return f"/products/{self.id}/"
+        return reverse("catalog:product_detail", kwargs={"product_id": self.id})

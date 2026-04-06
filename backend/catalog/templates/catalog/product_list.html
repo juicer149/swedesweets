@@ -1,56 +1,58 @@
 {% extends "base.html" %}
+
 {% block title %}
-  Products
+  Products — SwedeSweets
 {% endblock %}
 
 {% block content %}
-
-<section class="page-section page-section--narrow">
-  <section class="container">
-
-    <h1 class="page-title">Products</h1>
+<section class="page-section">
+  <section class="container left">
+    <div class="catalog-header">
+      <h1 class="page-title">Products</h1>
+      <p class="page-subtitle">
+        Current catalog for store ordering.
+      </p>
+    </div>
 
     {% for category in categories %}
+      <section class="catalog-group stack">
+        <h2 class="catalog-group-title">{{ category.name|title }}</h2>
 
-      <section class="stack">
-
-        <h2>{{ category.name|title }}</h2>
-
-        <div class="grid">
-
+        <div class="catalog-grid">
           {% for product in category.active_products %}
+            <a href="{{ product.get_absolute_url }}" class="catalog-link">
+              <article class="card card-hover product-card">
+                <div class="product-card-media">
+                  {% if product.image %}
+                    <img
+                      src="{{ product.image.url }}"
+                      alt="{{ product.name }}"
+                      class="product-card-image"
+                    >
+                  {% else %}
+                    <div class="product-card-placeholder">No image</div>
+                  {% endif %}
+                </div>
 
-            <a href="{{ product.get_absolute_url }}" class="card-link">
-
-              <article class="card">
-
-                {% if product.image %}
-                  <img src="{{ product.image.url }}">
-                {% else %}
-                  <div class="no-image">No image</div>
-                {% endif %}
-
-                <div class="card-name">
+                <div class="product-card-name">
                   {{ product.name|title }}
                 </div>
 
-                <div class="card-code">
+                <div class="product-card-code">
                   #{{ product.code }}
                 </div>
-
               </article>
-
             </a>
-
           {% endfor %}
-
         </div>
-
       </section>
-
+    {% empty %}
+      <div class="stack">
+        <div class="notice">
+          No products available right now.
+        </div>
+      </div>
     {% endfor %}
-
   </section>
 </section>
-
 {% endblock %}

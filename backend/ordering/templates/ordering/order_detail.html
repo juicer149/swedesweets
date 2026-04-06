@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Order details — SwedeSweets
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container left">
+    <a href="{% url 'order_history' %}" class="link back-link">
+      ← Back to order history
+    </a>
+
+    <div class="card order-detail-shell">
+      <div class="order-detail-header">
+        <div>
+          <h1 class="page-title">Order details</h1>
+          <p class="page-subtitle">{{ store.name }}</p>
+        </div>
+
+        <div class="badge">
+          <span class="status-dot status-{{ order.status }}"></span>
+          <span>{{ order.get_status_display }}</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="order-summary-item">
+          <div class="order-summary-label">Placed</div>
+          <div class="order-summary-value">{{ order.created_at|date:"Y-m-d H:i" }}</div>
+        </div>
+
+        <div class="order-summary-item">
+          <div class="order-summary-label">Products</div>
+          <div class="order-summary-value">{{ order.line_count }}</div>
+        </div>
+
+        <div class="order-summary-item">
+          <div class="order-summary-label">Total quantity</div>
+          <div class="order-summary-value">{{ order.total_quantity }}</div>
+        </div>
+      </div>
+
+      <section class="order-items-section">
+        <h2 class="section-title">Ordered items</h2>
+
+        <div class="stack">
+          {% for item in order.items.all %}
+            <article class="card card-hover">
+              <div class="order-item-top">
+                <div class="order-item-code">#{{ item.product_code }}</div>
+                <div class="order-item-qty">Qty {{ item.quantity }}</div>
+              </div>
+
+              <div class="order-item-name">{{ item.product_name }}</div>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+
+      <div class="order-detail-footer">
+        <div class="order-detail-id-label">Order ID</div>
+        <div class="order-detail-id-value">{{ order.id }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

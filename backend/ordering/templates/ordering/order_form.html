@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}
+  New order — SwedeSweets
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container left">
+    <div class="orders-page-header">
+      <div>
+        <h1 class="page-title">New order</h1>
+        <p class="page-subtitle">{{ store.name }}</p>
+      </div>
+
+      <a href="{% url 'order_history' %}" class="button button-secondary">
+        Back to history
+      </a>
+    </div>
+
+    {% if form.errors %}
+      <div class="alert alert-error">
+        <ul>
+          {% for field_name, errors in form.errors.items %}
+            {% for error in errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="post" class="stack">
+      {% csrf_token %}
+
+      {% regroup form.rows by category_name as category_groups %}
+
+      {% for group in category_groups %}
+        <section class="card card-soft">
+          <div class="order-category-header">
+            <h2 class="section-title">{{ group.grouper|default:"Other" }}</h2>
+          </div>
+
+          <div class="order-category-body">
+            {% for row in group.list %}
+              <div class="order-form-row">
+                <div class="order-form-product">
+                  <div class="order-form-code">{{ row.product_code }}</div>
+                  <label for="qty_{{ row.product_id }}" class="order-form-name">
+                    {{ row.product_name }}
+                  </label>
+                </div>
+
+                <div class="order-form-quantity">
+                  <label for="qty_{{ row.product_id }}" class="order-form-quantity-label">
+                    Qty
+                  </label>
+                  <input
+                    id="qty_{{ row.product_id }}"
+                    name="qty_{{ row.product_id }}"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value="{{ row.entered_quantity }}"
+                    class="order-qty-input"
+                  >
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+      {% endfor %}
+
+      <div>
+        <button type="submit" class="button button-primary">
+          Place order
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

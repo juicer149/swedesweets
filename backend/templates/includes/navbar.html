@@ -1,20 +1,20 @@
 <nav class="navbar">
   <div class="navbar-inner">
-
-    <!-- LEFT -->
     <a href="{% url 'pages:home' %}" class="logo">
       SwedeSweets
     </a>
 
-    <!-- MOBILE TOGGLE -->
-    <button class="menu-toggle" type="button" aria-label="Toggle menu">
+    <button
+      class="menu-toggle"
+      type="button"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+    >
       ☰
     </button>
 
-    <!-- CENTER -->
     <div class="nav-links">
-
-      <a href="{% url 'product_list' %}"
+      <a href="{% url 'catalog:product_list' %}"
          class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
         Products
       </a>
@@ -48,7 +48,6 @@
         </a>
       {% endif %}
 
-      <!-- MOBILE AUTH -->
       {% if request.user.is_authenticated %}
         <form method="post" action="{% url 'logout' %}" class="mobile-only logout-inline">
           {% csrf_token %}
@@ -61,10 +60,8 @@
           Login
         </a>
       {% endif %}
-
     </div>
 
-    <!-- RIGHT -->
     <div class="auth">
       {% if request.user.is_authenticated %}
         <form method="post" action="{% url 'logout' %}">
@@ -79,6 +76,5 @@
         </a>
       {% endif %}
     </div>
-
   </div>
 </nav>

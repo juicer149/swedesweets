@@ -1,89 +1,58 @@
 import uuid
+
 from django.db import models
 
 from accounts.models import Store
-from catalog.models import Product
 
 
-class RequestedOrder(models.Model):
+class Order(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        PACKED = "packed", "Packed"
+        DELIVERED = "delivered", "Delivered"
+
     id = models.UUIDField(
-            primary_key=True, 
-            default=uuid.uuid4, 
-            editable=False
-            )
-    store = models.ForeignKey(
-            Store, 
-            on_delete=models.PROTECT, 
-            related_name="requested_orders"
-            )
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self) -> str:
-        return f"{self.store.name} {self.created_at.isoformat()}"
-
-
-class RequestedOrderItem(models.Model):
-    requested_order = models.ForeignKey(
-            RequestedOrder, 
-            on_delete=models.CASCADE, 
-            related_name="items"
-            )
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-
-    # snapshots for traceability
-    product_code = models.PositiveIntegerField()
-    product_name = models.CharField(max_length=200)
-
-    requested_qty = models.PositiveIntegerField()
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["requested_order", "product"],
-                name="uniq_requested_item_per_product",
-            )
-        ]
-
-
-class FulfilledOrder(models.Model):
-    id = models.UUIDField(
-            primary_key=True, 
-            default=uuid.uuid4, 
-            editable=False
-            )
-
-    requested_order = models.OneToOneField(
-        RequestedOrder,
-        on_delete=models.PROTECT,
-        related_name="fulfilled_order",
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
     )
 
-    packed_at = models.DateTimeField(auto_now_add=True)
-    delivered_at = models.DateTimeField(null=True, blank=True)
-    packing_notes = models.TextField(blank=True)
+    store = models.ForeignKey(
+        Store,
+        on_delete=models.PROTECT,
+        related_name="orders",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
 
     def __str__(self) -> str:
-        return f"Fulfilled {self.requested_order_id}"
+        return f"Order {self.id} ({self.store.name})"
 
 
-class FulfilledOrderItem(models.Model):
-    fulfilled_order = models.ForeignKey(
-            FulfilledOrder, 
-            on_delete=models.CASCADE, 
-            related_name="items"
-            )
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+class OrderItem(models.Model):
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="items",
+    )
 
-    # snapshots
     product_code = models.PositiveIntegerField()
     product_name = models.CharField(max_length=200)
-
-    fulfilled_qty = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField()
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["fulfilled_order", "product"],
-                name="uniq_fulfilled_item_per_product",
+                fields=["order", "product_code"],
+                name="uniq_product_per_order",
             )
         ]
+
+    def __str__(self) -> str:
+        return f"{self.product_name} x{self.quantity}"

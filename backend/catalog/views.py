@@ -1,21 +1,13 @@
-from django.shortcuts import render, get_object_or_404
-from django.db.models import Prefetch
-from .models import ProductCategory, Product
+from django.shortcuts import render
+
+from .read.selectors import (
+    get_product_detail,
+    list_active_products_grouped_by_category,
+)
 
 
 def product_list(request):
-    """
-    Display active products grouped by category.
-
-    Acts as the main browsing view for store users (mobile-first).
-    """
-    categories = ProductCategory.objects.all().prefetch_related(
-            Prefetch(
-                "products",
-                queryset=Product.objects.filter(is_active=True),
-                to_attr="active_products"
-            )
-        )
+    categories = list_active_products_grouped_by_category()
 
     return render(
         request,
@@ -23,13 +15,9 @@ def product_list(request):
         {"categories": categories},
     )
 
-def product_detail(request, product_id):
-    """
-    Display details for a single product.
 
-    Acts as the main product detail view for store users (mobile-first).
-    """
-    product = get_object_or_404(Product, id=product_id)
+def product_detail(request, product_id):
+    product = get_product_detail(product_id=product_id)
 
     return render(
         request,

@@ -22,7 +22,7 @@ INSTALLED_APPS = [
     # local apps
     "accounts",
     "catalog",
-#    "ordering",
+    "ordering",
     "pages",
     "partner_request",
 

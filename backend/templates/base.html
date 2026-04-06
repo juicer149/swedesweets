@@ -1,17 +1,23 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}SwedeSweets{% endblock %}</title>
 
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+
+  <link rel="stylesheet" href="{% static 'css/ordering.css' %}">
+  <link rel="stylesheet" href="{% static 'css/catalog.css' %}">
+
 </head>
 
 <body>
-
   {% include "includes/navbar.html" %}
 
-  <main>
+  <main class="site-main">
     <div class="page-wrapper">
       {% block content %}{% endblock %}
     </div>
@@ -20,6 +26,5 @@
   {% include "includes/footer.html" %}
 
   <script src="{% static 'js/main.js' %}"></script>
-
 </body>
 </html>

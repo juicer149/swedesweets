@@ -1,34 +1,23 @@
 from django.contrib import admin
 
-from .models import (
-    FulfilledOrder,
-    FulfilledOrderItem,
-    RequestedOrder,
-    RequestedOrderItem,
-)
+from .models import Order, OrderItem
 
 
-class RequestedOrderItemInline(admin.TabularInline):
-    model = RequestedOrderItem
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
     extra = 0
 
 
-@admin.register(RequestedOrder)
-class RequestedOrderAdmin(admin.ModelAdmin):
-    list_display = ("id", "store", "created_at")
-    list_filter = ("created_at",)
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ("id", "store", "status", "created_at")
+    list_filter = ("status", "created_at")
     search_fields = ("id", "store__name", "store__user__username")
-    inlines = [RequestedOrderItemInline]
+    ordering = ("-created_at",)
+    inlines = [OrderItemInline]
 
 
-class FulfilledOrderItemInline(admin.TabularInline):
-    model = FulfilledOrderItem
-    extra = 0
-
-
-@admin.register(FulfilledOrder)
-class FulfilledOrderAdmin(admin.ModelAdmin):
-    list_display = ("id", "requested_order", "packed_at", "delivered_at")
-    list_filter = ("packed_at", "delivered_at")
-    search_fields = ("id", "requested_order__id", "requested_order__store__name")
-    inlines = [FulfilledOrderItemInline]
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ("order", "product_name", "quantity")
+    search_fields = ("order__id", "product_name")
