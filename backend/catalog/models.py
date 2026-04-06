@@ -4,9 +4,14 @@ from django.urls import reverse
 
 class ProductCategory(models.Model):
     """
-    High-level grouping of products for UI presentation.
+    High-level grouping of products for catalog presentation.
 
-    Used to organize products into sections (e.g. "Candy", "Chips").
+    Examples:
+    - Pick and mix candy
+    - Chips
+
+    Categories express the primary product family, not cross-cutting traits
+    such as "sour" or "vegan". Those belong in tags.
     """
 
     name = models.CharField(max_length=100, unique=True)
@@ -22,9 +27,17 @@ class ProductCategory(models.Model):
 
 class ProductTag(models.Model):
     """
-    Flexible labels for products (e.g. "Sour", "Vegan", "New").
+    Cross-cutting descriptive label for products.
 
-    Used for filtering, metadata, and future UI enhancements.
+    Examples:
+    - Sour
+    - Sweet
+    - Chocolate
+    - Vegan
+    - New
+
+    Tags are intended for filtering and richer catalog presentation.
+    They complement categories rather than replace them.
     """
 
     name = models.CharField(max_length=50, unique=True)
@@ -38,13 +51,29 @@ class ProductTag(models.Model):
 
 class Product(models.Model):
     """
-    Product in the B2B catalog used for store ordering.
+    Current product truth for the B2B catalog.
 
-    Managed via admin and acts as the source of truth for available items.
+    RESPONSIBILITY:
+    - represent the current live product state
+    - provide metadata for browsing and ordering
+    - act as source data when orders snapshot product information
 
-    Orders store snapshots (code/name) to preserve history.
-    Additional optional metadata (weight, units per box) is used for
-    better product understanding in the UI.
+    IMPORTANT BOUNDARY:
+    `catalog` owns current product truth.
+    `ordering` owns historical order truth.
+
+    VISIBILITY VS ORDERABILITY:
+    - `is_visible`: whether the product should be shown in the catalog UI
+    - `is_orderable`: whether stores may order it right now
+
+    These are intentionally separate because a product may still be visible
+    while temporarily unavailable for ordering, for example when stock is out.
+
+    OPTIONAL METADATA:
+    - `weight_grams` is useful when weight matters, such as pick and mix candy
+    - `units_per_box` is useful when packaging count matters, such as chips
+
+    Not all product families need both fields.
     """
 
     code = models.PositiveIntegerField(unique=True, db_index=True)
@@ -56,13 +85,13 @@ class Product(models.Model):
     weight_grams = models.PositiveIntegerField(
         null=True,
         blank=True,
-        help_text="Weight per unit in grams",
+        help_text="Optional product weight metadata in grams.",
     )
 
     units_per_box = models.PositiveIntegerField(
         null=True,
         blank=True,
-        help_text="Number of units per box",
+        help_text="Optional packaging metadata: number of sellable units in one box.",
     )
 
     category = models.ForeignKey(
@@ -79,7 +108,14 @@ class Product(models.Model):
         related_name="products",
     )
 
-    is_active = models.BooleanField(default=True)
+    is_visible = models.BooleanField(
+        default=True,
+        help_text="Whether the product is shown in the catalog UI.",
+    )
+    is_orderable = models.BooleanField(
+        default=True,
+        help_text="Whether stores may currently order the product.",
+    )
 
     image = models.ImageField(
         upload_to="products/",
@@ -95,8 +131,6 @@ class Product(models.Model):
 
     def get_absolute_url(self) -> str:
         """
-        Canonical URL for this product.
-
-        Keeps routing logic out of templates and avoids hardcoded paths.
+        Canonical public URL for this product.
         """
         return reverse("catalog:product_detail", kwargs={"product_id": self.id})

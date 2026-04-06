@@ -3,27 +3,41 @@ from django.shortcuts import render
 
 from ordering.read.selectors import latest_order_for_store
 
-from .models import Store
+from .read.selectors import public_store_locator_entries
 
 
 def store_list(request):
-    stores = (
-        Store.objects
-        .filter(is_active=True)
-        .exclude(address__isnull=True)
-        .exclude(address="")
-        .order_by("name")
-    )
+    """
+    Public store locator page.
 
-    return render(request, "accounts/store_list.html", {"stores": stores})
+    Shows active stores with a usable address so visitors can find
+    retail locations that carry SwedeSweets products.
+    """
+    return render(
+        request,
+        "accounts/store_list.html",
+        {"stores": public_store_locator_entries()},
+    )
 
 
 @login_required
 def portal(request):
+    """
+    Partner portal landing page for the currently logged-in store user.
+
+    Responsibility:
+    - resolve the Store linked to the authenticated user
+    - show a minimal portal overview
+    - expose recent ordering information through read selectors
+
+    Non-responsibility:
+    - perform ordering writes
+    - enforce domain rules belonging to the ordering app
+    """
     store = getattr(request.user, "store", None)
 
     last_order = None
-    if store:
+    if store and store.is_active:
         last_order = latest_order_for_store(store)
 
     return render(

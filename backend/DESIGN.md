@@ -1,240 +1,428 @@
-# SwedeSweets — Design Notes (v0.1)
+# SwedeSweets Backend — System Design
+## Purpose
+This project is a Django-based MVP for a B2B web application used by a small company
+that imports Swedish sweets to France and delivers to retail stores.
 
-Date: 2026-03-24
+The system has two main public/business surfaces:
 
-This document captures the current design decisions for SwedeSweets v0.1.
-The goal is to keep the system simple, professional, and mobile-friendly while
-preserving a clean separation between **domain** (pure business rules) and
-**Django** (web + persistence).
+- a **public marketing/catalog surface**
+- a **partner portal** for authenticated stores to place orders and view order history
 
----
+There is also a small **public partner interest form** for stores that want to become resellers.
 
-## Goals
+The project uses Django because it provides a fast and reliable MVP foundation:
 
-### Product goals
-- Replace an unstructured SMS ordering process with structured orders.
-- Stores can log in quickly (mobile-first) and place restocking requests.
-- Supplier can pack/confirm what was actually delivered.
-- Keep v0.1 minimal but forward-compatible.
+- authentication
+- admin
+- ORM
+- migrations
+- templates
+- routing
 
-### Engineering goals
-- Keep the **domain layer framework-independent** and fully testable.
-- Make invalid states hard/impossible to represent.
-- Keep Django as an adapter layer (DB + views/API), not the source of business rules.
-
----
-
-## Domain Layer
-
-Location: `src/swedesweets/domain/`
-
-### Core workflow model
-
-We model ordering as two immutable snapshots:
-
-1. **RequestedOrder** (store intent)
-   - created by the store
-   - includes `created_at`
-   - includes requested items (`product_id`, `quantity`)
-
-2. **FulfilledOrder** (supplier fact)
-   - created by the supplier when packing/accepting the order
-   - includes `packed_at`
-   - includes `delivered_at` (nullable)
-   - includes `packing_notes` (free text for deviations / out-of-stock notes)
-   - includes fulfilled items (`product_id`, `quantity`)
-
-Delivery is modeled by creating a new fulfilled snapshot where `delivered_at` is set
-(`mark_delivered()` returns a new instance).
-
-### Why Requested vs Fulfilled?
-- High traceability: “what was requested” vs “what was actually delivered”
-- Enables robust handling of out-of-stock and mistakes without mutating history
-- Makes supplier UX easy: start from requested quantities, then adjust
-
-### Diff
-We provide a domain diff between requested and fulfilled items.
-
-- diff is computed per `product_id` with summed quantities
-- we do **not** use `set()` diff due to quantities and duplicates
-
-### Duplicates / Normalization
-The domain is tolerant to duplicate lines (same product repeated), because data can
-arrive from UI/API/integrations.
-
-- domain normalizes items by summing quantities per product and sorting
-- DB layer may enforce uniqueness per order+product for data integrity
-
-### Value objects
-We use value objects for domain correctness:
-- `Quantity` must be `int` and `> 0`
-- IDs: `StoreId`, `ProductId`, `OrderId` wrap UUID
-- datetimes must be timezone-aware (UTC recommended)
-
-### Ports & Use Cases
-To keep the domain isolated from Django, we define ports:
-
-- `RequestedOrderRepository`
-- `FulfilledOrderRepository`
-- `Clock`
-- `UnitOfWork` (optional)
-
-Use cases (orchestration, still framework-independent):
-- `request_order`
-- `pack_order`
-- `deliver_order`
-- `get_order_diff`
-
-We also maintain small in-memory adapters for tests:
-- `FixedClock`, `InMemoryRequestedOrders`, `InMemoryFulfilledOrders`, `NoopUnitOfWork`
-
-### Testing strategy
-Domain has:
-- unit tests for invariants + diff
-- workflow-like tests for full requested → fulfilled → delivered flows
-- use-case tests using the in-memory adapters
+The goal is to keep Django’s strengths while still maintaining explicit boundaries,
+clear contracts, and stable business history.
 
 ---
 
-## Django Layer (v0.1 plan)
+## Core design philosophy
 
-Location: `backend/`
+This project prefers:
 
-Django is the web + persistence adapter.
-It should map DB data to/from domain concepts, and enforce authentication/permissions.
+- clear app boundaries
+- explicit read/write separation where it pays off
+- minimal hidden behavior
+- stable historical data
+- admin-managed writes until a real workflow needs more structure
+- simple code paths over framework magic
 
-### Apps
-We use separate apps to keep responsibilities clear:
+A practical summary:
 
-- `accounts` — store accounts (B2B)
-- `catalog` — products + category/tags/images
-- `ordering` — requested orders + fulfilled orders
+> use Django for delivery speed, but keep business structure explicit
 
-A future B2C merch flow (hoodies/t-shirts) should live in a separate app
-(e.g. `merch` or `shop`) with different UX/payment and likely without store login.
+This means:
 
----
-
-## Authentication / Accounts (B2B)
-
-### Decision: one login per store (v0.1)
-Currently one person (store manager) sends SMS orders; therefore v0.1 uses **one account per store**.
-
-Implementation:
-- Use Django built-in `User` (sessions auth)
-- Create a `Store` model as a profile linked via `OneToOneField(User)`
-- Admin creates store accounts initially (no public signup)
-- Store has metadata: `name`, `phone`, `address`, `is_active`
-
-Supplier access:
-- Supplier users are handled as Django users with `is_staff=True` (v0.1)
-
-Rationale:
-- fast and professional login UX
-- controlled onboarding (B2B)
-- minimal risk of random users placing orders
+- views should stay thin
+- queries should live in selectors when they are real reads
+- write flows should become explicit actions/use cases when they matter
+- domain rules should be expressed in small policies/value objects/errors where useful
+- historical order data should be snapshotted, not lazily derived from current catalog state
 
 ---
 
-## Catalog / Products
+## System overview
 
-### Categories + Tags
-Products should be easily browsable on mobile.
+The project is split into a handful of focused apps:
 
-We model:
-- `ProductCategory` (single main category, sorted, for sectioning: candy/chips/drinks)
-- `ProductTag` (ManyToMany) for attributes and filters:
-  - sweet/sour/chocolate
-  - gluten-free/lactose-free
-  - etc.
+- `pages`
+- `partner_request`
+- `accounts`
+- `catalog`
+- `ordering`
 
-Rationale:
-- Category gives a stable primary grouping (best for mobile)
-- Tags enable flexible filtering and future requirements
+Each app owns a small, understandable part of the system.
 
-### Product image (avatar)
-Products can optionally have a single image for faster selection.
+### `pages`
+Thin public content pages.
 
-Decision:
-- `Product.image` is **optional**
-- no snapshotting of image in orders (image is only for browsing at order time)
-- single image is sufficient for v0.1
-- merch might later require multiple images and belongs in a separate app
+Examples:
+- homepage
+- about
+- contact
 
-Implementation:
-- `ImageField(upload_to="product-images/", null=True, blank=True)`
-- use Pillow
-- configure `MEDIA_URL` and `MEDIA_ROOT` for local dev
+No business logic, no models, no persistence.
 
----
+### `partner_request`
+Public inbound app for store interest requests.
 
-## Ordering / Persistence (Django models)
+Purpose:
+- accept a simple partner request from a store
+- store it safely
+- let admin review and mark it handled
 
-We store orders in Django in a way that is compatible with the domain workflow.
+It is intentionally **not** an onboarding engine and does not create users or stores.
 
-### Requested order
-- `RequestedOrderModel`
-  - UUID PK
-  - FK to `Store`
-  - `created_at`
+### `accounts`
+Owns the internal `Store` entity and store-facing access.
 
-- `RequestedOrderItemModel`
-  - FK to requested order
-  - FK to Product
-  - `requested_qty`
-  - snapshot fields: `product_code`, `product_name`
-  - uniqueness constraint (requested_order, product)
+Purpose:
+- connect Django `User` to internal store identity
+- provide store portal access
+- provide public store locator data
 
-### Fulfilled order
-- `FulfilledOrderModel`
-  - UUID PK
-  - OneToOne to requested order
-  - `packed_at`
-  - `delivered_at` (nullable)
-  - `packing_notes` (text)
+The name `accounts` is historical; in practice the app also owns the `Store` concept.
 
-- `FulfilledOrderItemModel`
-  - FK to fulfilled order
-  - FK to Product
-  - `fulfilled_qty`
-  - snapshot fields: `product_code`, `product_name`
-  - uniqueness constraint (fulfilled_order, product)
+### `catalog`
+Owns current product truth.
 
-Rationale for snapshot fields:
-- product names/codes may change in the catalog, but order history remains readable
+Purpose:
+- manage products, categories, and tags
+- decide which products are visible
+- decide which products are orderable
+- expose read selectors for catalog browsing and ordering
+
+`catalog` represents **current** truth.
+
+### `ordering`
+Owns order placement and order history.
+
+Purpose:
+- parse order submissions
+- validate ordering rules
+- create orders and order-item snapshots
+- expose order history and detail reads
+
+`ordering` represents **historical** truth.
 
 ---
 
-## UI (v0.1 intent)
+## Key boundaries
 
-### Store UI
-- mobile-first page for placing a requested order
-- uses Django session auth (login required)
-- products displayed with category sections and optional images
-- quantities default to 0, user sets desired qty
-- submit creates a requested order + items (qty > 0)
+### Public request vs internal store truth
 
-### Supplier UI
-- staff-only pages
-- list requested orders that are not delivered
-- pack view defaults packed qty = requested qty and allows adjustment
-- optional `packing_notes` for deviations
-- deliver action sets `delivered_at`
+A partner interest request is not the same thing as a store.
+
+- `partner_request` stores public, external, potentially messy inbound data
+- `accounts.Store` is internal, trusted system truth
+
+These must remain separate.
+
+### Current catalog truth vs historical order truth
+
+The catalog may change over time:
+
+- names can change
+- visibility can change
+- orderability can change
+- categories or metadata can change
+
+Orders must not change retroactively.
+
+Therefore:
+
+- `catalog` owns live product data
+- `ordering` snapshots business-relevant product data into `OrderItem`
+
+This is one of the most important design rules in the project.
+
+### Authentication vs business identity
+
+Django `User` is used for authentication.
+`Store` is used for business identity inside the system.
+
+For the current MVP, each store maps to exactly one user:
+
+- one store
+- one login
+- one ordering identity
+
+This is a deliberate simplification for the current business situation, not a universal domain truth.
 
 ---
 
-## Explicit Non-goals (v0.1)
-- public signup / self-serve onboarding
-- complex permissions model beyond store vs staff
-- inventory/stock management
-- pricing / invoicing
-- notifications
-- partial deliveries (1 requested order → multiple shipments)
+## Current business assumptions
+
+The current business is small and operationally simple:
+
+- only a few partner stores
+- one responsible manager per store
+- store orders are currently replaced from SMS to web
+- products include both loose candy and packaged products like chips
+
+This has influenced several design decisions:
+
+### One user per store
+A one-to-one relation between `User` and `Store` is enough for now.
+
+### Admin-managed store creation
+Stores and users are created manually in admin.
+
+### Public partner requests are passive
+A partner request is just a lead/inbox entry, not a provisioning workflow.
+
+### Product metadata is mixed and partially optional
+Different product families need different metadata:
+
+- loose candy: weight may matter more
+- chips: units per box may matter more
+
+The schema therefore stays permissive and descriptive.
 
 ---
 
-## Future evolution ideas
-- multiple users per store (if needed)
-- richer fulfillment: per-item missing reasons, substitutions
-- partial deliveries / shipment model
-- merch/B2C app with separate checkout/payment
+## App interaction map
+
+A simplified view of how the apps depend on each other:
+
+- `pages`
+  - links to `accounts`, `catalog`, `partner_request`
+
+- `partner_request`
+  - independent inbound boundary
+  - no coupling to `Store` provisioning
+
+- `accounts`
+  - owns `Store`
+  - partner portal entrypoint
+  - public store locator
+
+- `catalog`
+  - owns current product truth
+  - exposes selectors for visible/orderable products
+
+- `ordering`
+  - depends on `Store`
+  - reads current products from `catalog`
+  - creates stable historical snapshots
+
+The important dependency direction is:
+
+- `ordering` may read from `catalog`
+- `catalog` must not know about orders
+
+---
+
+## Read/write structure
+
+Not every app needs the same internal architecture.
+
+This project uses deeper structure only where it pays off.
+
+### Apps that stay simple
+- `pages`
+- `partner_request`
+
+These apps are mostly straightforward HTTP + template or form handling.
+
+### Apps with light read structure
+- `accounts`
+- `catalog`
+
+These apps benefit from `read/selectors.py` because they expose meaningful query surfaces:
+- public store locator
+- catalog reads
+- orderable product lists
+
+### App with explicit read/write/domain structure
+- `ordering`
+
+This app is the most business-critical and therefore benefits from explicit layers:
+
+- `read/selectors.py`
+- `write/parsing.py`
+- `write/commands.py`
+- `write/actions.py`
+- `domain/errors.py`
+- `domain/policies.py`
+- `domain/value_objects.py`
+
+The point is not architectural ceremony.
+The point is to make the order flow explicit and stable.
+
+---
+
+## Why not use Django models for all business logic?
+
+Django models are useful persistence objects, but not every business workflow fits naturally
+inside model methods.
+
+This project prefers:
+
+- model methods for small, local behavior
+- selectors for reads
+- explicit write functions for multi-step workflows
+- value objects and policies for small invariants
+
+This avoids turning models into “god objects” while still keeping the system lightweight.
+
+---
+
+## Routing philosophy
+
+The root URL configuration is intentionally small and direct.
+
+The site has a few clear route groups:
+
+- public pages
+- public catalog
+- public partner request
+- store portal
+- order pages
+- admin
+- auth
+
+The goal is that URL ownership remains obvious without introducing unnecessary indirection.
+
+---
+
+## Templates philosophy
+
+Templates are server-rendered and intentionally simple.
+
+They should:
+
+- present data clearly
+- avoid embedding business rules
+- rely on selectors / views to provide already-shaped data
+- remain understandable without tracing hidden context builders
+
+The project prefers readability over clever templating.
+
+---
+
+## Admin philosophy
+
+Django admin is used as the operational back office.
+
+Current admin responsibilities include:
+
+- product maintenance
+- category/tag maintenance
+- store maintenance
+- partner request review
+- order inspection / maintenance
+
+The current principle is:
+
+> use admin until a real dedicated workflow is justified
+
+This keeps the MVP small and practical.
+
+---
+
+## Important invariants across the system
+
+### Orders must remain historically stable
+Order items snapshot product data.
+
+### Inactive stores must not place orders
+Protected both near the request boundary and inside the write path.
+
+### Orders must contain at least one line
+Empty orders are invalid.
+
+### Box counts must be sensible
+Ordering counts are expressed in boxes, not units, and are validated explicitly.
+
+### Public inbound requests must not create internal entities automatically
+`partner_request` is an inbox, not a provisioning engine.
+
+### Current visibility and current orderability are different concerns
+`catalog.Product` models them separately.
+
+---
+
+## Current simplifications (intentional MVP decisions)
+
+These are not accidents; they are deliberate:
+
+- one `User` per `Store`
+- manual store/user creation in admin
+- no custom user model
+- no separate membership model yet
+- no catalog write use-case layer yet
+- no advanced order status workflow yet
+- no dedicated geographic/location app yet
+- no pricing model in catalog yet
+- no asynchronous/background processing
+
+These choices are acceptable because they match the actual current business complexity.
+
+---
+
+## Likely future evolutions
+
+The design leaves room for these later changes:
+
+### `accounts`
+- multiple users per store via a membership model
+
+### `catalog`
+- richer visibility/orderability rules
+- import/sync workflows
+- richer filtering via tags
+
+### `ordering`
+- explicit status transitions
+- admin fulfillment workflow
+- exports / internal reporting
+- ordering by product code as a faster input mode
+
+### public store locator
+- embedded map
+- coordinates / pins
+- public-listing-specific fields
+- possibly a dedicated app later if that concern grows
+
+### partner onboarding
+- more structured contact/review workflow if volume increases
+
+---
+
+## Testing philosophy
+
+Tests should focus first on business-critical seams, not just coverage for its own sake.
+
+Highest-value tests:
+
+- order placement action
+- order form parsing
+- catalog orderable/visible selectors
+- partner request form normalization/validation
+- access rules around store portal / order pages
+
+The main goal is to protect invariants and boundaries.
+
+---
+
+## Summary
+
+This project uses Django pragmatically:
+
+- fast delivery through built-in framework features
+- explicit structure where business logic becomes important
+- stable boundaries between apps
+- clear distinction between current truth and historical truth
+
+In one sentence:
+
+> SwedeSweets is a Django MVP with explicit domain boundaries, simple operational workflows, and stable order history.

@@ -11,7 +11,7 @@
       ← Back to products
     </a>
 
-    {% if not product.is_active %}
+    {% if not product.is_orderable %}
       <div class="product-status">
         <div class="notice">
           Not available for ordering.

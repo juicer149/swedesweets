@@ -3,26 +3,20 @@ from django.shortcuts import render
 
 def home(request):
     """
-    Homepage for SwedeSweets.
-
-    Acts as entrypoint to the site
+    Render the public homepage.
     """
-    return render(request, "pages/home.html") 
+    return render(request, "pages/home.html")
 
 
 def about(request):
     """
-    About page for SwedeSweets.
-
-    Contains information about the company and its mission.
+    Render the public about page.
     """
     return render(request, "pages/about.html")
 
 
 def contact(request):
     """
-    Contact page for SwedeSweets.
-
-    Contains contact information for users to reach out.
+    Render the public contact page.
     """
     return render(request, "pages/contact.html")

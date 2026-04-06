@@ -1,162 +1,121 @@
-from django.contrib.auth import get_user_model
 from django.core.validators import MaxLengthValidator
-from django.db import models, transaction
-
-User = get_user_model()
+from django.db import models
+from django.utils import timezone
 
 
 class PartnerRequest(models.Model):
     """
-    Incoming request from a potential retail partner.
+    Public inbound lead from a potential retail partner.
 
-    Boundary model:
-    - Accepts external, messy, incomplete input
-    - Normalizes and validates minimally
-    - Converted manually into internal entities (User + Store)
+    DESIGN:
+    - This is a boundary model, not an internal business entity.
+    - It stores external contact data from a public form.
+    - It does not create users, stores, or permissions.
+    - Internal onboarding remains an explicit manual admin action outside this app.
 
-    LIFECYCLE:
-        pending  -> approved
-        pending  -> rejected
+    RESPONSIBILITY:
+    - Persist incoming partner interest safely
+    - Normalize identity-like input where useful (email)
+    - Track whether admin has handled the request
 
-    KEY DESIGN:
-    - Email is identity boundary → always normalized
-    - Approval is explicit (no signals, no magic)
-    - Store/User are system truth
+    NON-RESPONSIBILITY:
+    - Approval/rejection workflows tied to provisioning
+    - Auth/account creation
+    - Store lifecycle management
     """
 
-    class Status(models.TextChoices):
-        PENDING = "pending", "Pending"
-        APPROVED = "approved", "Approved"
-        REJECTED = "rejected", "Rejected"
-
-    name = models.CharField(max_length=200, blank=True)
-    store_name = models.CharField(max_length=200, blank=True)
-
-    email = models.EmailField(db_index=True)
-    phone = models.CharField(max_length=50, blank=True)
-
-    address = models.CharField(max_length=500, blank=True)
+    name = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Name of the contact person.",
+    )
+    store_name = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Name of the interested store or retailer.",
+    )
+    email = models.EmailField(
+        db_index=True,
+        help_text="Primary contact email address.",
+    )
+    phone = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="Optional phone number.",
+    )
+    address = models.CharField(
+        max_length=500,
+        blank=True,
+        help_text="Optional store address.",
+    )
     message = models.TextField(
         blank=True,
         validators=[MaxLengthValidator(2000)],
+        help_text="Optional free-text message.",
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    status = models.CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.PENDING,
+    is_processed = models.BooleanField(
+        default=False,
+        help_text="Whether admin has handled this request.",
     )
-
-    created_store = models.OneToOneField(
-        "accounts.Store",
+    processed_at = models.DateTimeField(
         null=True,
         blank=True,
-        on_delete=models.SET_NULL,
-        related_name="source_request",
+        help_text="Timestamp when the request was marked as handled.",
+    )
+    admin_notes = models.TextField(
+        blank=True,
+        validators=[MaxLengthValidator(2000)],
+        help_text="Internal notes for admin use only.",
     )
 
-    # -------------------------
-    # Normalization
-    # -------------------------
-
-    def normalize_email(self) -> str:
-        return (self.email or "").strip().lower()
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Partner request"
+        verbose_name_plural = "Partner requests"
 
     def save(self, *args, **kwargs):
         """
-        Normalize email at persistence boundary.
+        Normalize email at the persistence boundary.
 
-        This guarantees:
-        - No casing bugs
-        - Consistent identity checks
+        Why here:
+        - keeps storage consistent regardless of form/admin entry path
+        - avoids casing bugs in admin search and manual review
         """
         if self.email:
-            self.email = self.normalize_email()
+            self.email = self.email.strip().lower()
         super().save(*args, **kwargs)
 
-    # -------------------------
-    # State helpers
-    # -------------------------
-
-    @property
-    def is_pending(self) -> bool:
-        return self.status == self.Status.PENDING
-
-    @property
-    def is_approved(self) -> bool:
-        return self.status == self.Status.APPROVED
-
-    @property
-    def is_rejected(self) -> bool:
-        return self.status == self.Status.REJECTED
-
-    def is_ready_for_approval(self) -> bool:
+    def mark_processed(self) -> None:
         """
-        Minimal business rule for MVP:
-        - email
-        - store_name
-        - address
+        Mark the request as handled.
+
+        This is intentionally small and local:
+        - it only updates the request's own state
+        - it does not trigger provisioning side effects
         """
-        return bool(self.email and self.store_name and self.address)
+        if self.is_processed:
+            return
 
-    # -------------------------
-    # Transitions
-    # -------------------------
+        self.is_processed = True
+        self.processed_at = timezone.now()
+        self.save(update_fields=["is_processed", "processed_at"])
 
-    def approve(self) -> None:
+    def mark_unprocessed(self) -> None:
         """
-        Convert PartnerRequest → User + Store.
+        Re-open the request for admin review.
 
-        Guarantees:
-        - Atomic operation
-        - No duplicate users
-        - Clean identity (email normalized)
+        Useful when a request was marked handled by mistake.
         """
+        if not self.is_processed:
+            return
 
-        if not self.is_pending:
-            raise ValueError("Only pending requests can be approved")
-
-        if not self.is_ready_for_approval():
-            raise ValueError("Missing required data for approval")
-
-        from accounts.models import Store
-
-        email = self.normalize_email()
-
-        with transaction.atomic():
-            user, created = User.objects.get_or_create(
-                username=email,
-                defaults={
-                    "email": email,
-                    "first_name": self.name,
-                },
-            )
-
-            if not created:
-                raise ValueError("User already exists with this email")
-
-            user.set_password("test1234")  # Need to change after testing, but good enough for MVP
-            user.save(update_fields=["password"])
-
-            store = Store.objects.create(
-                user=user,
-                name=self.store_name,
-                phone=self.phone,
-                address=self.address,
-            )
-
-            self.created_store = store
-            self.status = self.Status.APPROVED
-            self.save(update_fields=["created_store", "status"])
-
-    def reject(self) -> None:
-        if not self.is_pending:
-            raise ValueError("Only pending requests can be rejected")
-
-        self.status = self.Status.REJECTED
-        self.save(update_fields=["status"])
+        self.is_processed = False
+        self.processed_at = None
+        self.save(update_fields=["is_processed", "processed_at"])
 
     def __str__(self) -> str:
-        return f"{self.store_name or 'Unknown store'} ({self.email})"
+        label = self.store_name or self.name or "Unknown partner request"
+        return f"{label} ({self.email})"

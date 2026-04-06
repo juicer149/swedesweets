@@ -1,8 +1,12 @@
-def is_product_orderable(*, is_active: bool) -> bool:
+def is_product_visible(*, is_visible: bool) -> bool:
     """
-    Minimal catalog rule for whether a product may be ordered.
+    Minimal catalog rule for whether a product should appear in catalog UI.
+    """
+    return is_visible
 
-    Right now a product is orderable if it is active.
-    Future rules can be added here without changing callers.
+
+def is_product_orderable(*, is_orderable: bool) -> bool:
     """
-    return is_active
+    Minimal catalog rule for whether a product may be ordered right now.
+    """
+    return is_orderable

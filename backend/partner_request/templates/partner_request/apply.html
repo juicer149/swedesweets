@@ -15,7 +15,6 @@
       For stores and retailers interested in carrying SwedeSweets products.
     </p>
 
-    <!-- Alternative path -->
     <div class="stack">
       <p>
         Just have a question?
@@ -25,69 +24,63 @@
       </p>
     </div>
 
-    <form method="post">
+    <form method="post" novalidate>
       {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="form-errors">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
 
       <div class="stack">
 
         <div class="form-field">
-          <label for="name">Contact person</label>
-          <input
-            id="name"
-            type="text"
-            name="name"
-            placeholder="e.g. Marco Dupont"
-          >
+          <label for="{{ form.name.id_for_label }}">Contact person</label>
+          {{ form.name }}
+          {% if form.name.errors %}
+            <div class="form-errors">{{ form.name.errors }}</div>
+          {% endif %}
         </div>
 
         <div class="form-field">
-          <label for="store_name">Store name</label>
-          <input
-            id="store_name"
-            type="text"
-            name="store_name"
-            placeholder="e.g. Chamonix Candy Shop"
-          >
+          <label for="{{ form.store_name.id_for_label }}">Store name</label>
+          {{ form.store_name }}
+          {% if form.store_name.errors %}
+            <div class="form-errors">{{ form.store_name.errors }}</div>
+          {% endif %}
         </div>
 
         <div class="form-field">
-          <label for="email">Email address</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            placeholder="e.g. hello@store.com"
-            autocomplete="email"
-            required
-          >
+          <label for="{{ form.email.id_for_label }}">Email address</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="form-errors">{{ form.email.errors }}</div>
+          {% endif %}
         </div>
 
         <div class="form-field">
-          <label for="phone">Phone number</label>
-          <input
-            id="phone"
-            type="text"
-            name="phone"
-            placeholder="e.g. +33 6 12 34 56 78"
-          >
+          <label for="{{ form.phone.id_for_label }}">Phone number</label>
+          {{ form.phone }}
+          {% if form.phone.errors %}
+            <div class="form-errors">{{ form.phone.errors }}</div>
+          {% endif %}
         </div>
 
         <div class="form-field">
-          <label for="address">Store address</label>
-          <textarea
-            id="address"
-            name="address"
-            placeholder="e.g. 12 Rue de la Gare, 74400 Chamonix"
-          ></textarea>
+          <label for="{{ form.address.id_for_label }}">Store address</label>
+          {{ form.address }}
+          {% if form.address.errors %}
+            <div class="form-errors">{{ form.address.errors }}</div>
+          {% endif %}
         </div>
 
         <div class="form-field">
-          <label for="message">Message</label>
-          <textarea
-            id="message"
-            name="message"
-            placeholder="Tell us about your store or interest"
-          ></textarea>
+          <label for="{{ form.message.id_for_label }}">Message</label>
+          {{ form.message }}
+          {% if form.message.errors %}
+            <div class="form-errors">{{ form.message.errors }}</div>
+          {% endif %}
         </div>
 
       </div>
@@ -97,7 +90,6 @@
           Send request
         </button>
       </div>
-
     </form>
 
   </div>

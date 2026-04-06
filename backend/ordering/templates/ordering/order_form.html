@@ -53,7 +53,7 @@
 
                 <div class="order-form-quantity">
                   <label for="qty_{{ row.product_id }}" class="order-form-quantity-label">
-                    Qty
+                    Boxes
                   </label>
                   <input
                     id="qty_{{ row.product_id }}"
@@ -61,7 +61,7 @@
                     type="number"
                     min="0"
                     step="1"
-                    value="{{ row.entered_quantity }}"
+                    value="{{ row.entered_boxes }}"
                     class="order-qty-input"
                   >
                 </div>

@@ -15,13 +15,13 @@
       Find answers to common questions below — or reach out directly if needed.
     </p>
 
-    <!-- FAQ -->
     <div class="stack">
 
       <details class="faq-item">
         <summary>Where can I buy your products?</summary>
         <p class="faq-answer">
-          We work with selected retail stores. A store locator will be available soon.
+          We work with selected retail stores.
+          <a href="{% url 'store_list' %}" class="link">Find a store here</a>.
         </p>
       </details>
 
@@ -36,7 +36,7 @@
         <summary>Can I buy SwedeSweets products as a private customer?</summary>
         <p class="faq-answer">
           Our products are currently available through partner stores.
-          A store locator will be available soon.
+          <a href="{% url 'store_list' %}" class="link">Find a store here</a>.
         </p>
       </details>
 
@@ -51,14 +51,12 @@
       <details class="faq-item">
         <summary>Do you sell merch?</summary>
         <p class="faq-answer">
-          Yes — we occasionally release limited merch like t-shirts and hoodies.
-          Stay tuned for updates.
+          Not at the moment.
         </p>
       </details>
 
     </div>
 
-    <!-- CONTACT -->
     <div class="stack">
 
       <p class="page-subtitle">
@@ -79,7 +77,6 @@
 
     </div>
 
-    <!-- ADDRESS -->
     <div class="stack">
       <p class="page-subtitle">
         SwedeSweets<br>

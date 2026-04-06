@@ -11,9 +11,10 @@ from .policies import (
     ensure_store_is_active,
     ensure_unique_product_ids,
 )
-from .value_objects import Quantity
+from .value_objects import BoxQuantity
 
 __all__ = [
+    "BoxQuantity",
     "DuplicateProduct",
     "EmptyOrder",
     "InvalidProductSelection",
@@ -23,5 +24,4 @@ __all__ = [
     "ensure_order_has_lines",
     "ensure_store_is_active",
     "ensure_unique_product_ids",
-    "Quantity",
 ]

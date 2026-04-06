@@ -5,6 +5,7 @@ from catalog.read.selectors import list_orderable_products
 
 from .authz import require_active_store, require_request_store
 from .domain.errors import OrderingError
+from .models import Order
 from .read.selectors import get_order_for_store, list_store_orders
 from .write.actions import place_order
 from .write.parsing import empty_order_form, parse_order_form
@@ -12,6 +13,16 @@ from .write.parsing import empty_order_form, parse_order_form
 
 @login_required
 def order_create(request):
+    """
+    Display and process the order form for the authenticated store.
+
+    DESIGN:
+    - resolve store from request
+    - load orderable catalog projection
+    - parse submitted quantities into a command
+    - execute the write action
+    - render validation errors without leaking write-layer exceptions directly
+    """
     store = require_request_store(request)
     require_active_store(store)
 
@@ -60,6 +71,13 @@ def order_create(request):
 
 @login_required
 def order_history(request):
+    """
+    Show historical orders for the authenticated store.
+
+    Orders are split into:
+    - open orders: pending / packed
+    - delivered orders: completed history
+    """
     store = require_request_store(request)
     orders = list_store_orders(store)
 
@@ -67,7 +85,7 @@ def order_history(request):
     delivered_orders = []
 
     for order in orders:
-        if order.status == "delivered":
+        if order.status == Order.Status.DELIVERED:
             delivered_orders.append(order)
         else:
             open_orders.append(order)
@@ -85,6 +103,9 @@ def order_history(request):
 
 @login_required
 def order_detail(request, order_id):
+    """
+    Show one order belonging to the authenticated store.
+    """
     store = require_request_store(request)
     order = get_order_for_store(store, order_id)
 

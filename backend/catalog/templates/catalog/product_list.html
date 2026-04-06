@@ -19,7 +19,7 @@
         <h2 class="catalog-group-title">{{ category.name|title }}</h2>
 
         <div class="catalog-grid">
-          {% for product in category.active_products %}
+          {% for product in category.visible_products %}
             <a href="{{ product.get_absolute_url }}" class="catalog-link">
               <article class="card card-hover product-card">
                 <div class="product-card-media">

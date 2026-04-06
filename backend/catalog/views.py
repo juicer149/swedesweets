@@ -2,12 +2,15 @@ from django.shortcuts import render
 
 from .read.selectors import (
     get_product_detail,
-    list_active_products_grouped_by_category,
+    list_visible_products_grouped_by_category,
 )
 
 
 def product_list(request):
-    categories = list_active_products_grouped_by_category()
+    """
+    Public catalog page showing visible products grouped by category.
+    """
+    categories = list_visible_products_grouped_by_category()
 
     return render(
         request,
@@ -17,6 +20,9 @@ def product_list(request):
 
 
 def product_detail(request, product_id):
+    """
+    Public product detail page for one visible product.
+    """
     product = get_product_detail(product_id=product_id)
 
     return render(

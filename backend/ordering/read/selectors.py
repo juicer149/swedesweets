@@ -17,7 +17,7 @@ def list_store_orders(store):
         store.orders
         .annotate(
             line_count=Count("items"),
-            total_quantity=Coalesce(Sum("items__quantity"), 0),
+            total_boxes=Coalesce(Sum("items__boxes"), 0),
         )
         .order_by("-created_at")
     )
@@ -29,7 +29,7 @@ def get_order_for_store(store, order_id):
         .prefetch_related("items")
         .annotate(
             line_count=Count("items"),
-            total_quantity=Coalesce(Sum("items__quantity"), 0),
+            total_boxes=Coalesce(Sum("items__boxes"), 0),
         ),
         pk=order_id,
     )

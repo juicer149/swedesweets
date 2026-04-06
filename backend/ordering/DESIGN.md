@@ -1,180 +1,237 @@
-# Ordering Design
+# ordering
+`ordering` is responsible for order placement and order history for authenticated stores.
+
+This is the most business-critical app in the system. The rules and history here must be stable, clear, and easy to follow.
+
 ## Purpose
 
-The `ordering` app owns the store ordering workflow.
+The app replaces today’s manual SMS-based ordering with a simple partner flow where a store can:
 
-It is responsible for:
+- place a new order
+- view its order history
+- view details for a single order
 
-- creating orders from store input
-- storing immutable order snapshots
-- exposing order history and latest-order reads
-- enforcing ordering-specific business rules
+## Core Idea
 
-It is **not** the source of truth for products. Product availability and product data come from `catalog`.
+An order is **not** a reference to today’s catalog.  
+An order is a **historical snapshot** of what the store actually ordered at a specific point in time.
 
----
+This means old orders must not change just because the catalog changes later.
 
-## Core mental model
+## Responsibilities
 
-`Store -> places -> Order -> contains -> OrderItems`
+The app is responsible for:
 
-An `Order` is a persisted fact:
-- it belongs to one store
-- it has a creation time
-- it has a current status
-- it contains snapshot line items
+- receiving order input from the partner portal
+- validating order contents
+- creating orders and order lines
+- preserving a historical snapshot of product data
+- exposing read selectors for order history and order details
+- expressing ordering-related domain errors and invariants
 
-An `OrderItem` is also a fact:
-- product identity is copied into the item at order time
-- later catalog changes must not rewrite history
+## Non-responsibilities
 
----
+The app is not responsible for:
 
-## Architecture inside the app
+- authenticating users (`accounts`)
+- deciding which products are publicly available in the catalog (`catalog`)
+- receiving public partner inquiries (`partner_request`)
 
-The app is split into three internal areas:
+## Domain Language
 
-### `write/`
-Handles state changes.
+### Store
+The store that places the order.
 
-Examples:
-- parse submitted order quantities
-- validate write input
-- create `Order` + `OrderItem`
-- run DB transaction
+### Order
+An aggregate that belongs to exactly one store.
 
-Typical flow:
-`request.POST -> parsing -> command -> action -> ORM write`
+### OrderItem
+A historical snapshot line within an order.
 
-### `read/`
-Handles queries and view-oriented reads.
+### Boxes
+The number of boxes ordered for a given product.
 
-Examples:
-- latest order for a store
-- order history for a store
-
-This side does not change state.
-
-### `domain/`
-Shared business meaning and invariants.
+This matters:
+`boxes` means **number of boxes**, not number of individual consumer units.
 
 Examples:
-- quantity must be > 0
-- inactive store cannot place orders
-- an order must contain at least one line
-- the same product must not appear twice in one order
+- 3 boxes of pick-and-mix candy
+- 2 boxes of chips, where each box contains multiple units
 
-`domain/` is shared by the app, but is used mostly by `write/`.
+### Product code
+The business-facing product identifier that stores recognize.
 
----
+Even though internal write flows currently use `product_id` technically, the product code is the most important business identity in order history.
 
-## File responsibilities
+## Architecture
 
-### Top-level
-- `models.py`: persistence schema for `Order` and `OrderItem`
-- `views.py`: HTTP adapter only
-- `urls.py`: route definitions
-- `admin.py`: admin configuration
-- `authz.py`: request/store access checks near the web layer
+The app is split into clear layers.
 
-### `write/`
-- `commands.py`: typed input/result objects for write flow
-- `parsing.py`: raw form data -> internal write structures
-- `actions.py`: write use cases such as `place_order`
+### `views.py`
+The HTTP layer.
 
-### `read/`
-- `selectors.py`: read queries such as order history and latest order
+Responsibilities:
+- read the request
+- fetch the current store
+- call parsing/read/write functions
+- render templates or redirect
 
-### `domain/`
-- `errors.py`: domain-specific exceptions
-- `policies.py`: business rules
-- `value_objects.py`: small validated types such as `Quantity`
+Views should not carry business rules beyond what is necessary.
 
----
+### `authz.py`
+Access control close to the HTTP edge.
 
-## Boundary with `catalog`
+Responsibilities:
+- ensure that the request user is linked to a store
+- stop obviously invalid access early
 
-`ordering` does not own products.
+### `read/selectors.py`
+Read models and queries.
 
-`catalog` is responsible for:
-- product source of truth
-- which products exist
-- whether a product is active/orderable
-- product metadata such as code, name, category
+Responsibilities:
+- fetch order history
+- fetch the latest order
+- fetch a single order for a store
+- annotate read data such as `line_count` and `total_boxes`
 
-`ordering` may read product data from `catalog` when building an order,
-but once the order is created, it stores product snapshots locally in `OrderItem`.
+### `write/parsing.py`
+Input interpretation for the order form.
 
-Rule of thumb:
-- product truth lives in `catalog`
-- order truth lives in `ordering`
+Responsibilities:
+- parse the matrix-style form product by product
+- validate user-facing input errors
+- build an explicit, immutable form-state object
 
-If a selector such as `list_orderable_products()` is only used to read active products, it conceptually belongs to `catalog`.
-It may temporarily exist as a local wrapper in `ordering/read/selectors.py` for convenience, but the long-term home is `catalog`.
+This is not the same thing as final domain validation.
 
----
+### `write/commands.py`
+Small explicit DTO-like objects for the write flow.
 
-## Order lifecycle
+Responsibilities:
+- carry the write intent in a clear format
+- separate HTTP/form data from the write use case
 
-Current MVP lifecycle:
+### `write/actions.py`
+The use-case layer.
+
+Responsibilities:
+- execute `place_order`
+- load store and products
+- protect invariants
+- create the order and item snapshots atomically
+
+### `domain/errors.py`
+Domain-specific errors.
+
+Examples:
+- empty order
+- invalid box quantity
+- inactive store
+- invalid product selection
+
+### `domain/policies.py`
+Small, pure business rules that do not need the ORM.
+
+### `domain/value_objects.py`
+Small types with their own invariants.
+
+Example:
+- `BoxQuantity`
+
+## Important Invariants
+
+### 1. An order must contain at least one line
+It must not be possible to create empty orders.
+
+### 2. An inactive store must not be allowed to place orders
+This is protected both near the request edge and in the write layer.
+
+### 3. Box quantity must be valid
+The box quantity must be:
+- an integer
+- greater than zero
+- not unreasonably large according to the current limit
+
+### 4. The same product must not appear multiple times in the same order
+This is protected both logically and in the database.
+
+### 5. Order history must remain stable
+Order lines snapshot the product data needed to understand what was ordered, even if the catalog changes later.
+
+## Snapshot Principle
+
+`OrderItem` stores not only a reference to a product, but also a snapshot of the product data relevant at the time of ordering, for example:
+
+- product code
+- product name
+- category
+- weight
+- units per box
+- number of boxes ordered
+
+This makes the history deterministic and audit-friendly.
+
+## Why not just use catalog objects directly?
+
+Because the catalog is present-time data.
+
+Ordering needs historical data.
+
+If a product later:
+- changes name
+- changes category
+- changes pack size
+- is deactivated
+
+old orders should still continue to describe what was actually ordered at that time.
+
+## Why not just use Django Forms?
+
+The order UI is a matrix with one field per product, not a natural `ModelForm` case.
+
+That is why the app uses an explicit parsing layer and an immutable form-state object:
+
+- `OrderFormRow`
+- `ParsedOrderForm`
+
+This makes the flow clearer than trying to force everything into standard Django form magic.
+
+## Current Status Model
+
+Order status is currently simple:
 
 - `pending`
 - `packed`
 - `delivered`
 
-The status is modeled as one field with a linear progression.
+This is enough for the MVP.
 
-Why not multiple booleans?
-Because multiple booleans allow invalid combinations and do not express a single current state clearly.
+The next likely step is to make status transitions more explicit so that invalid jumps cannot happen by mistake.
 
-Why not a bitmask?
-Because the lifecycle is linear, not combinatorial.
+## Future Development
 
----
+Likely next steps:
 
-## Invariants
+- explicit transition logic for order status
+- better admin/workflow support for packing and delivery
+- possible export or admin order overview
+- possibly faster ordering via product code as primary input
+- possibly a more advanced max-box rule depending on product or category
 
-Important invariants in ordering:
+## Design Principles
 
-- a store user must have a store
-- an inactive store cannot place orders
-- an order must contain at least one line
-- quantity must be a positive integer
-- one product may appear only once per order
-- orders are not edited after creation
-- product code/name are copied into `OrderItem` at creation time
+### Clear contracts before magic
+The order flow should be easy to follow from request to persistence.
 
----
+### Read and write are kept separate
+Queries should not carry write logic, and write use cases should not be shaped by templates.
 
-## Why snapshot order items exist
+### History must remain stable
+The present-day catalog and historical order data are different things and should be treated differently.
 
-`OrderItem` stores:
-- `product_code`
-- `product_name`
-- `quantity`
+### Small rules at the right level
+- user-friendly errors in parsing
+- hard invariants in the domain/use case layer
+- access rules close to the request edge
 
-instead of relying on a live foreign key to `Product`.
-
-This preserves historical accuracy:
-- if a product is renamed later, old orders still show the old name
-- if catalog metadata changes, past orders remain true to what was ordered
-
----
-
-## Design philosophy
-
-This app prefers:
-
-- explicit flows over hidden framework magic
-- small, named stages over large views
-- immutable order facts over in-place editing
-- simple status progression over premature complexity
-- clarity over cleverness
-
-The goal is that a developer should be able to point at the pipeline and say:
-
-- this is request parsing
-- this is business validation
-- this is the write action
-- this is the read query
-- this is the persistence model
+This makes the system robust without making it heavy.

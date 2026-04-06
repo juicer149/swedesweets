@@ -1,259 +1,91 @@
-# Partner Request Module
+# partner_request
+`partner_request` is the public inbound app for expressions of interest from potential retail partners.
 
 ## Purpose
 
-The `partner_request` module handles inbound interest from potential retail partners.
+The app exists to receive simple external contact data from stores or retailers who are interested in selling SwedeSweets products. It functions as a controlled “inbox” for leads coming from the public website.
 
-It acts as the **entry point into the B2B system**, before accounts and ordering.
+This is **not** an internal onboarding engine and **not** a workflow for creating accounts or stores.
 
-This module is intentionally simple:
+## Responsibilities
 
-- Accept data from external users (stores)
-- Persist requests
-- Allow internal review and decision
+The app is responsible for:
 
-It does NOT:
+- displaying a public form
+- validating and normalizing input through Django forms
+- storing partner requests in the database
+- giving admins a simple interface to read, search, filter, and mark requests as processed
 
-- Authenticate users
-- Automatically create accounts
-- Handle ordering logic
+## Non-responsibilities
 
----
+The app is **not** responsible for:
 
-## Conceptual Model
+- creating `User`
+- creating `Store`
+- approving or rejecting partners in the business-domain sense
+- assigning permissions
+- triggering account onboarding or password flows
 
-A `PartnerRequest` represents:
-
-> "A store expressing interest in becoming a customer"
-
-It is a **temporary, pre-account state** at the boundary of the system.
-
-External input is:
-
-- incomplete
-- untrusted
-- inconsistent
-
-This module captures that safely before entering the core system.
-
----
-
-## Lifecycle
-
-```
-
-PENDING → APPROVED → (creates User + Store)
-PENDING → REJECTED
-
-```
-
-Key idea:
-
-- A request is never mutated into a Store
-- It is **converted** into internal entities
-
----
+If a partner request leads to a business relationship, that happens manually outside this app, for example by an admin later creating a store and account in the system’s internal models.
 
 ## Design Principles
 
-### 1. Separation of Concerns
+### 1. Clear boundary between external input and internal truth
+`PartnerRequest` represents external, untrusted, public input.  
+`Store` and `User` represent internal, trusted state.
 
-- `partner_request` handles **external input**
-- `accounts` handles **internal customers (Store/User)**
-- `ordering` handles **business operations**
+These should not be directly coupled within this app.
 
-This keeps boundaries clean and avoids coupling.
+### 2. Simplicity over workflow
+For the current business, there is no need for a state machine for approval or rejection.  
+It is enough to distinguish between:
 
----
+- new / unprocessed
+- processed
 
-### 2. Explicit State (State Machine)
+This is expressed through `is_processed` and `processed_at`.
 
-We use an explicit status field:
+### 3. Forms as a boundary
+HTTP input should be validated in `forms.py`, not written directly from `request.POST` into the model.  
+This makes validation, error handling, and normalization clearer and safer.
 
-```python
-status = ("pending", "approved", "rejected")
-```
-
-Why:
-
-* avoids ambiguous boolean flags
-* models real business decisions
-* makes transitions explicit
-* easy to extend later
-
----
-
-### 3. Boundary Normalization
-
-All emails are normalized:
-
-```text
-lowercase + trimmed
-```
-
-Why:
-
-* email acts as identity
-* prevents duplicate users due to casing differences
-* ensures consistent lookups
-
----
-
-### 4. Human-in-the-loop
-
-Approval is manual (via Django admin).
-
-Why:
-
-* early stage product
-* avoids premature automation
-* allows flexible business decisions
-
----
-
-### 5. Minimal Relationships
-
-* No foreign keys during input phase
-* Only after approval:
-
-```text
-PartnerRequest → created_store
-```
-
-Why:
-
-* keeps write-path simple
-* avoids premature coupling
-* preserves audit trail
-
----
+### 4. Admin without side effects
+The admin interface is used for review and follow-up, not provisioning.  
+Admin actions in this app should therefore remain small and local, for example marking a request as processed.
 
 ## Data Model
 
-```python
-PartnerRequest:
-    name
-    store_name
-    email
-    phone
-    address
-    message
-    created_at
-    status
-    created_store   # set only if approved
-```
+A `PartnerRequest` contains only contact and context data, for example:
 
-### Notes
+- contact person
+- store name
+- email
+- phone
+- address
+- message
+- created timestamp
+- processed status
+- internal admin notes
 
-* Only `email` is required at submission time
-* Other fields can be completed by admin
-* `address` is required before approval
-* `message` is optional, capped in size
+This is enough to support manual follow-up without introducing unnecessary complexity.
 
----
+## Practical Usage
 
-## Request Flow
+Typical flow:
 
-### 1. User submits form
+1. A store submits the form on the website
+2. The request is stored in the database
+3. An admin sees it in Django admin
+4. The admin contacts the store or ignores it
+5. The admin marks the request as processed
+6. If a business relationship begins, the account and store are created separately in internal apps
 
-```
-POST /apply/
-```
+## Future Development
 
-### 2. View layer
+If needed, the app could later be extended with things like:
 
-* extracts POST data
-* creates `PartnerRequest`
+- spam protection / rate limiting / honeypot
+- email notification to admins
+- additional review statuses such as `contacted` or `archived`
 
-### 3. Database
-
-* row inserted via Django ORM
-
-### 4. Redirect
-
-```
-→ /thanks/
-```
-
----
-
-## Admin Workflow
-
-Admin reviews requests via Django admin:
-
-* inspect incoming request
-* complete missing data
-* approve → creates User + Store
-* reject → marks as rejected
-
-Approval is explicit and safe:
-
-* prevents duplicate users
-* requires minimum valid data
-* runs inside a transaction
-
----
-
-## Conversion (Core Operation)
-
-Approval performs:
-
-```text
-PartnerRequest → User + Store
-```
-
-Rules:
-
-* email is normalized and used as username
-* user must not already exist
-* store is created and linked
-* request is marked as approved
-
-This is the **only place where external data becomes internal truth**.
-
----
-
-## Deletion Policy
-
-* Pending / rejected requests can be deleted
-* Approved requests cannot be deleted
-
-Why:
-
-* approved requests created real system entities
-* they are part of system history
-* deleting them breaks traceability
-
----
-
-## Future Extensions
-
-* Email notifications (confirmation / internal alerts)
-* Password setup flow (instead of temporary passwords)
-* Extended status (e.g. contacted, on_hold)
-* CRM features (tagging, notes)
-* Geo / logistics validation
-
----
-
-## Philosophy
-
-> "Start simple, keep boundaries clear, evolve when needed."
-
-This module is intentionally minimal:
-
-* no signals
-* no hidden logic
-* no premature abstractions
-
----
-
-## Summary
-
-`partner_request` is:
-
-* the system boundary for new customers
-* a controlled entry into the domain
-* a bridge between marketing and operations
-
-It ensures that **only validated, explicit decisions create real accounts**.
+But such additions should only be made when they reflect a real workflow in the business.

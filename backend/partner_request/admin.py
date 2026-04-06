@@ -1,167 +1,94 @@
-from django.contrib import admin, messages
-from django.contrib.auth import get_user_model
+from django.contrib import admin
 
 from .models import PartnerRequest
-
-User = get_user_model()
 
 
 @admin.register(PartnerRequest)
 class PartnerRequestAdmin(admin.ModelAdmin):
     """
-    Admin review surface for onboarding.
+    Admin review surface for public partner requests.
 
-    Responsibilities:
-    - Review external input
-    - Decide approve/reject
-    - Prevent invalid system states
+    DESIGN:
+    - Admin reviews requests manually
+    - Admin may mark them handled/unhandled
+    - This admin does not create accounts or stores
+
+    Why:
+    - keeps public inbound data separate from internal provisioning
+    - avoids privileged side effects in admin bulk actions
     """
 
     list_display = (
         "store_name",
+        "name",
         "email",
-        "status",
-        "is_ready",
-        "has_existing_user",
-        "created_store",
+        "phone",
+        "is_processed",
+        "created_at",
+        "processed_at",
+    )
+    list_filter = (
+        "is_processed",
         "created_at",
     )
-
-    list_filter = ("status",)
-    search_fields = ("store_name", "email", "name")
-
+    search_fields = (
+        "store_name",
+        "name",
+        "email",
+        "phone",
+        "address",
+        "message",
+        "admin_notes",
+    )
     readonly_fields = (
-        "status",
-        "created_store",
         "created_at",
+        "processed_at",
     )
-
-    actions = ("approve_requests", "reject_requests")
-
     ordering = ("-created_at",)
 
-    # -------------------------
-    # Display helpers
-    # -------------------------
-
-    @admin.display(boolean=True, description="Ready")
-    def is_ready(self, obj: PartnerRequest) -> bool:
-        return obj.is_ready_for_approval()
-
-    @admin.display(boolean=True, description="User exists")
-    def has_existing_user(self, obj: PartnerRequest) -> bool:
-        return User.objects.filter(
-            username=obj.email.strip().lower()
-        ).exists()
-
-    # -------------------------
-    # Actions
-    # -------------------------
-
-    @admin.action(description="Approve selected requests")
-    def approve_requests(self, request, queryset):
-        success = 0
-        failed = 0
-
-        for obj in queryset:
-            try:
-                if obj.status == PartnerRequest.Status.APPROVED:
-                    raise ValueError("Already approved")
-
-                if obj.status == PartnerRequest.Status.REJECTED:
-                    raise ValueError("Already rejected")
-
-                if not obj.is_ready_for_approval():
-                    raise ValueError("Missing required data")
-
-                if User.objects.filter(
-                    username=obj.email.strip().lower()
-                ).exists():
-                    raise ValueError(
-                        "User already exists → use existing account"
-                    )
-
-                obj.approve()
-                success += 1
-
-            except Exception as exc:
-                failed += 1
-                self.message_user(
-                    request,
-                    f"[{obj.email}] {exc}",
-                    level=messages.ERROR,
+    fieldsets = (
+        (
+            "Partner contact",
+            {
+                "fields": (
+                    "name",
+                    "store_name",
+                    "email",
+                    "phone",
+                    "address",
+                    "message",
                 )
-
-        if success:
-            self.message_user(
-                request,
-                f"{success} request(s) approved.",
-                level=messages.SUCCESS,
-            )
-
-        if failed:
-            self.message_user(
-                request,
-                f"{failed} request(s) failed — see errors above.",
-                level=messages.WARNING,
-            )
-
-    @admin.action(description="Reject selected requests")
-    def reject_requests(self, request, queryset):
-        success = 0
-        failed = 0
-
-        for obj in queryset:
-            try:
-                if obj.status == PartnerRequest.Status.REJECTED:
-                    raise ValueError("Already rejected")
-
-                if obj.status == PartnerRequest.Status.APPROVED:
-                    raise ValueError("Already approved")
-
-                obj.reject()
-                success += 1
-
-            except Exception as exc:
-                failed += 1
-                self.message_user(
-                    request,
-                    f"[{obj.email}] {exc}",
-                    level=messages.ERROR,
+            },
+        ),
+        (
+            "Review",
+            {
+                "fields": (
+                    "is_processed",
+                    "processed_at",
+                    "admin_notes",
                 )
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "fields": ("created_at",),
+            },
+        ),
+    )
 
-        if success:
-            self.message_user(
-                request,
-                f"{success} request(s) rejected.",
-                level=messages.SUCCESS,
-            )
+    actions = (
+        "mark_processed",
+        "mark_unprocessed",
+    )
 
-        if failed:
-            self.message_user(
-                request,
-                f"{failed} request(s) failed — see errors above.",
-                level=messages.WARNING,
-            )
+    @admin.action(description="Mark selected requests as processed")
+    def mark_processed(self, request, queryset):
+        for obj in queryset:
+            obj.mark_processed()
 
-    # -------------------------
-    # Deletion control
-    # -------------------------
-
-    def delete_queryset(self, request, queryset):
-        blocked = queryset.filter(status=PartnerRequest.Status.APPROVED)
-        allowed = queryset.exclude(status=PartnerRequest.Status.APPROVED)
-
-        if blocked.exists():
-            self.message_user(
-                request,
-                "Cannot delete approved requests.",
-                level=messages.ERROR,
-            )
-
-        super().delete_queryset(request, allowed)
-
-    def has_delete_permission(self, request, obj=None):
-        if obj and obj.status == PartnerRequest.Status.APPROVED:
-            return False
-        return super().has_delete_permission(request, obj)
+    @admin.action(description="Mark selected requests as unprocessed")
+    def mark_unprocessed(self, request, queryset):
+        for obj in queryset:
+            obj.mark_unprocessed()
