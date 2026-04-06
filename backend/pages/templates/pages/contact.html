@@ -21,7 +21,7 @@
         <summary>Where can I buy your products?</summary>
         <p class="faq-answer">
           We work with selected retail stores.
-          <a href="{% url 'store_list' %}" class="link">Find a store here</a>.
+          <a href="{% url 'accounts:store_list' %}" class="link">Find a store here</a>.
         </p>
       </details>
 
@@ -36,7 +36,7 @@
         <summary>Can I buy SwedeSweets products as a private customer?</summary>
         <p class="faq-answer">
           Our products are currently available through partner stores.
-          <a href="{% url 'store_list' %}" class="link">Find a store here</a>.
+          <a href="{% url 'accounts:store_list' %}" class="link">Find a store here</a>.
         </p>
       </details>
 
@@ -44,7 +44,7 @@
         <summary>Do you offer wholesale?</summary>
         <p class="faq-answer">
           Yes — if you run a store, you can apply to become a partner.
-          <a href="{% url 'apply' %}" class="link">Apply here</a>.
+          <a href="{% url 'partner_request:apply' %}" class="link">Apply here</a>.
         </p>
       </details>
 

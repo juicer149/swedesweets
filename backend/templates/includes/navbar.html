@@ -19,7 +19,7 @@
         Products
       </a>
 
-      <a href="{% url 'store_list' %}"
+      <a href="{% url 'accounts:store_list' %}"
          class="nav-link {% if request.resolver_match.url_name == 'store_list' %}active{% endif %}">
         Find sweets
       </a>
@@ -35,14 +35,14 @@
       </a>
 
       {% if not request.user.is_authenticated %}
-        <a href="{% url 'apply' %}"
+        <a href="{% url 'partner_request:apply' %}"
            class="nav-link {% if request.resolver_match.url_name == 'apply' %}active{% endif %}">
           Apply
         </a>
       {% endif %}
 
       {% if request.user.is_authenticated %}
-        <a href="{% url 'portal' %}"
+        <a href="{% url 'accounts:portal' %}"
            class="nav-link {% if request.resolver_match.url_name == 'portal' %}active{% endif %}">
           Portal
         </a>

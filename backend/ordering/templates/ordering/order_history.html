@@ -13,7 +13,7 @@
         <p class="page-subtitle">{{ store.name }}</p>
       </div>
 
-      <a href="{% url 'order_create' %}" class="button button-primary">
+      <a href="{% url 'ordering:order_create' %}" class="button button-primary">
         New order
       </a>
     </div>
@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="order-card-actions">
-                  <a href="{% url 'order_detail' order.id %}" class="button button-secondary">
+                  <a href="{% url 'ordering:order_detail' order.id %}" class="button button-secondary">
                     View order
                   </a>
                 </div>
@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="order-card-actions">
-                  <a href="{% url 'order_detail' order.id %}" class="button button-secondary">
+                  <a href="{% url 'ordering:order_detail' order.id %}" class="button button-secondary">
                     View order
                   </a>
                 </div>
@@ -87,7 +87,7 @@
         </div>
 
         <p>
-          <a href="{% url 'order_create' %}" class="link">Place your first order</a>
+          <a href="{% url 'ordering:order_create' %}" class="link">Place your first order</a>
         </p>
       </div>
     {% endif %}

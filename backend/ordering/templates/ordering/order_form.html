@@ -13,7 +13,7 @@
         <p class="page-subtitle">{{ store.name }}</p>
       </div>
 
-      <a href="{% url 'order_history' %}" class="button button-secondary">
+      <a href="{% url 'ordering:order_history' %}" class="button button-secondary">
         Back to history
       </a>
     </div>
@@ -21,10 +21,8 @@
     {% if form.errors %}
       <div class="alert alert-error">
         <ul>
-          {% for field_name, errors in form.errors.items %}
-            {% for error in errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
+          {% for error in form.errors %}
+            <li>{{ error }}</li>
           {% endfor %}
         </ul>
       </div>

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Store portal — SwedeSweets
+{% endblock %}
+
+{% block content %}
+<section class="page-section">
+  <div class="container left">
+
+    <h1 class="page-title">Welcome back, {{ store.name }}</h1>
+
+    <div class="stack">
+      <div class="card card-soft">
+        <p class="eyebrow">Last order</p>
+
+        {% if last_order %}
+          <p>{{ last_order.created_at|date:"Y-m-d H:i" }}</p>
+        {% else %}
+          <p>No orders yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <div class="stack">
+          <a href="{% url 'ordering:order_create' %}" class="button button-primary">
+            Refill stock
+          </a>
+
+          <a href="{% url 'ordering:order_history' %}" class="button button-secondary">
+            Order history
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {% if not store.is_active %}
+      <div class="stack">
+        <div class="alert alert-error">
+          Your account is currently paused.
+          Please contact SwedeSweets.
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

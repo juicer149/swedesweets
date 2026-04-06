@@ -56,7 +56,7 @@ def order_create(request):
                 status=400,
             )
 
-        return redirect("order_history")
+        return redirect("ordering:order_history")
 
     form = empty_order_form(products)
     return render(
