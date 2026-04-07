@@ -12,7 +12,7 @@
       <div>
         <h1 class="page-title">Staff portal</h1>
         <p class="page-subtitle">
-          Internal overview for orders and partner requests.
+          Internal overview for operations, incoming partner requests, and account provisioning.
         </p>
       </div>
 
@@ -27,6 +27,30 @@
       <div class="stack">
         <p><strong>Open orders:</strong> {{ open_order_count }}</p>
         <p><strong>Unprocessed partner requests:</strong> {{ unprocessed_partner_request_count }}</p>
+      </div>
+    </section>
+
+    <section class="card card-soft">
+      <h2 class="section-title">Provisioning</h2>
+
+      <div class="stack">
+        <p>
+          Create new internal staff accounts and new store-linked partner accounts.
+        </p>
+
+        <div class="stack">
+          <a href="{% url 'accounts:account_create_choice' %}" class="button button-primary">
+            Create account
+          </a>
+
+          <a href="{% url 'accounts:create_store_account' %}" class="button button-secondary">
+            Create store account
+          </a>
+
+          <a href="{% url 'accounts:create_staff_account' %}" class="button button-secondary">
+            Create staff account
+          </a>
+        </div>
       </div>
     </section>
 

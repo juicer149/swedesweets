@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
@@ -7,6 +8,7 @@ from .authz import (
     require_staff_user,
     require_store_user,
 )
+from .forms import StaffAccountCreateForm, StoreAccountCreateForm
 from .read.selectors import (
     count_staff_open_orders,
     count_staff_unprocessed_partner_requests,
@@ -15,6 +17,7 @@ from .read.selectors import (
     list_staff_unprocessed_partner_requests,
     public_store_locator_entries,
 )
+from .write.dispatch import dispatch_account_creation
 
 
 def store_list(request):
@@ -58,15 +61,6 @@ def portal(request):
 def store_portal(request):
     """
     Portal for store-linked partner accounts.
-
-    Responsibility:
-    - resolve the Store linked to the authenticated user
-    - show store-facing overview data
-    - act as entrypoint into ordering
-
-    Non-responsibility:
-    - staff operations
-    - system administration
     """
     store = require_store_user(request)
     context = get_store_portal_snapshot(store)
@@ -82,10 +76,6 @@ def store_portal(request):
 def staff_portal(request):
     """
     Internal staff portal.
-
-    This is the lightweight operational surface for internal users who need to
-    monitor open orders and incoming partner requests without using full Django
-    admin for every task.
     """
     require_staff_user(request)
 
@@ -100,4 +90,65 @@ def staff_portal(request):
         request,
         "accounts/staff_portal.html",
         context,
+    )
+
+
+@login_required
+def account_create_choice(request):
+    """
+    Staff-only entrypoint for explicit account provisioning.
+    """
+    require_staff_user(request)
+    return render(request, "accounts/account_create_choice.html")
+
+
+@login_required
+def create_store_account_view(request):
+    """
+    Staff-only workflow for creating a store-linked account.
+    """
+    require_staff_user(request)
+
+    if request.method == "POST":
+        form = StoreAccountCreateForm(request.POST)
+        if form.is_valid():
+            store = dispatch_account_creation(form.to_command())
+            messages.success(
+                request,
+                f"Store account created for {store.name}.",
+            )
+            return redirect("accounts:staff_portal")
+    else:
+        form = StoreAccountCreateForm()
+
+    return render(
+        request,
+        "accounts/create_store_account.html",
+        {"form": form},
+    )
+
+
+@login_required
+def create_staff_account_view(request):
+    """
+    Staff-only workflow for creating an internal staff account.
+    """
+    require_staff_user(request)
+
+    if request.method == "POST":
+        form = StaffAccountCreateForm(request.POST)
+        if form.is_valid():
+            user = dispatch_account_creation(form.to_command())
+            messages.success(
+                request,
+                f"Staff account created for {user.username}.",
+            )
+            return redirect("accounts:staff_portal")
+    else:
+        form = StaffAccountCreateForm()
+
+    return render(
+        request,
+        "accounts/create_staff_account.html",
+        {"form": form},
     )

@@ -8,14 +8,25 @@ class StoreAdmin(admin.ModelAdmin):
     """
     Admin surface for internal store records.
 
-    Admin is still the current provisioning path for stores in the MVP:
-    - create a normal Django user
-    - create a Store
-    - link the Store to that user
+    `Store` is the trusted internal business entity for a partner retailer.
 
-    The portal/access model now distinguishes between:
-    - store accounts (linked to Store, not staff)
-    - internal staff accounts (staff users, no Store required)
+    CURRENT ROLE OF ADMIN:
+    - inspect and maintain Store records
+    - correct store data when needed
+    - manage store activation state
+
+    PROVISIONING NOTE:
+    Account provisioning is no longer purely an admin concern. The project now
+    has an explicit internal account-creation flow for creating:
+    - store accounts
+    - staff accounts
+
+    Django admin still remains the deeper maintenance surface, but it is not
+    the only operational path anymore.
+
+    IMPORTANT CONCEPTUAL BOUNDARY:
+    - store accounts are normal users linked to a Store
+    - staff accounts are internal users with `is_staff=True`
     """
 
     list_display = ("name", "user", "phone", "is_active", "created_at")

@@ -47,6 +47,7 @@ A staff user uses the staff portal to:
 - monitor open orders
 - review incoming partner requests
 - access operational shortcuts
+- create store and staff accounts through the internal provisioning flow
 
 ### Admin user
 
@@ -82,7 +83,7 @@ This app is responsible for:
 - exposing the public store locator
 - dispatching authenticated users to the correct portal
 - exposing minimal read selectors for store and staff portal overviews
-- protecting store-only and staff-only views through small authz helpers
+- provisioning new store and staff accounts through an explicit internal workflow
 
 ---
 
@@ -94,9 +95,6 @@ This app is not responsible for:
 - product truth (`catalog`)
 - order write logic (`ordering`)
 - full system administration (`/admin/`)
-
-`accounts` decides **who the authenticated actor is and where they should land**.
-It does not own the deeper business workflows of catalog management or order writing.
 
 ---
 
@@ -111,37 +109,17 @@ It dispatches users based on account type:
 - store user -> store portal
 - staff user -> staff portal
 
-If an authenticated user is neither a store user nor a staff user,
-the app currently renders a fallback page.
-
 ### Store portal
 
 Dedicated surface for external partner stores.
-
-Responsibilities:
-
-- show store-facing overview data
-- link into ordering flows
-- act as the normal authenticated home for store accounts
 
 ### Staff portal
 
 Dedicated surface for internal operational work.
 
-Responsibilities:
-
-- show open orders
-- show unprocessed partner requests
-- provide a lighter operational surface than full Django admin
-
 ### `/admin/`
 
 Remains the system administration surface, separate from the business-facing portals.
-
-This split is intentional:
-
-- `/portal/` is the authenticated business entrypoint
-- `/admin/` is the technical / maintenance surface
 
 ---
 
@@ -152,14 +130,6 @@ usable addresses.
 
 This is a read concern and lives in `read/selectors.py`.
 
-The locator is currently simple:
-
-- only active stores are shown
-- a store must have a usable address
-- the result is shaped for presentation
-
-This is intentionally lightweight, but leaves room for future map/pin/location work.
-
 ---
 
 ## Internal structure
@@ -168,22 +138,9 @@ This is intentionally lightweight, but leaves room for future map/pin/location w
 
 Owns `Store`.
 
-The `Store` model is internal, trusted system truth for a retail partner that is
-allowed to act in the system.
-
 ### `authz.py`
 
 Helpers for identifying user type and protecting staff/store-only views.
-
-Examples:
-
-- `is_store_user(user)`
-- `is_staff_user(user)`
-- `require_store_user(request)`
-- `require_staff_user(request)`
-
-These helpers keep access intent explicit and avoid scattering the same checks
-through multiple views.
 
 ### `read/selectors.py`
 
@@ -193,7 +150,34 @@ Read selectors for:
 - store portal snapshot
 - staff portal overview
 
-This keeps query logic out of views when the read has meaning of its own.
+### `domain/`
+
+Small domain language for account provisioning and role semantics.
+
+Current contents include:
+
+- `roles.py`
+- `errors.py`
+
+This keeps account-type language explicit without overbuilding a full domain layer.
+
+### `write/`
+
+Explicit account provisioning workflow.
+
+Current contents include:
+
+- `commands.py`
+- `actions.py`
+- `dispatch.py`
+
+This layer exists because account creation is now a real multi-step use case.
+
+### `forms.py`
+
+HTTP-boundary validation for internal account creation.
+
+Forms validate raw input and convert it into typed commands.
 
 ### `views.py`
 
@@ -203,44 +187,45 @@ HTTP adapters for:
 - smart portal dispatch
 - store portal
 - staff portal
-
-Views in this app should stay thin and should not absorb deeper business rules
-from other apps.
+- account creation flows
 
 ---
 
-## Why there is no `write/` yet
+## Account creation pipeline
 
-Account creation and provisioning are still admin-managed.
+The internal provisioning flow follows a small explicit pipeline:
 
-A future `write/` package becomes justified when the project introduces an
-explicit internal flow for creating:
+`account type -> form -> command -> dispatch -> action`
+
+This keeps concerns separated:
+
+- forms validate HTTP input
+- commands describe intent
+- dispatch selects the right handler
+- actions perform model creation
+
+This avoids burying multi-step provisioning logic directly inside views or model methods.
+
+---
+
+## Why `domain/` and `write/` now exist
+
+Earlier versions of the app could stay simpler because provisioning was fully manual.
+
+Now there is a real internal workflow for creating:
 
 - store accounts
 - staff accounts
 
-At that point it would make sense to model use cases such as:
+That justifies:
 
-- `create_store_account`
-- `create_staff_account`
+- a small domain language (`AccountType`, `StaffAccessLevel`)
+- explicit commands
+- explicit actions
+- explicit dispatch
 
-Right now that would be premature structure, because the workflow still lives in
-manual admin operations.
-
----
-
-## Relationship to Django admin
-
-The current provisioning path is still:
-
-1. create a Django `User`
-2. if it is a store account, create a linked `Store`
-3. if it is an internal account, mark it as staff as needed
-
-This is workable for the current MVP, but is also one of the clearest current
-friction points in the system.
-
-That friction is a good signal for future improvement, not a reason to overbuild early.
+The goal is not abstraction for its own sake.
+The goal is to make account provisioning readable, stable, and easy to evolve.
 
 ---
 
@@ -251,9 +236,9 @@ The system intentionally keeps these assumptions for now:
 - one store account per store
 - one Django `User` model
 - staff/admin distinction still handled through Django staff/superuser flags
-- account provisioning still done manually
+- store/staff creation still relatively small and staff-operated
 - no custom user model
-- no explicit internal role model beyond store-vs-staff
+- no separate membership model yet
 
 These are acceptable for the current business size.
 
@@ -261,57 +246,52 @@ These are acceptable for the current business size.
 
 ## Important invariants inside this app
 
-### A store user must be linked to a `Store`
+### A store account must create both a `User` and a linked `Store`
 
-The store portal assumes a real business identity, not just an authenticated user.
+A store login without a real `Store` identity is invalid for the current model.
 
-### A staff user does not need a `Store`
+### A store account must not be a staff account
 
-Internal users are not partner stores and should not be forced through store-only flows.
+Store users and staff users represent different actors.
 
-### Store users and staff users should land in different work surfaces
+### A staff account must be internal
 
-This is now enforced by portal dispatch.
+Staff users are not required to have a `Store`.
 
-### Public store listing is a read concern, not a domain mutation concern
+### Portal dispatch must reflect account type
 
-The locator should not contain hidden side effects or provisioning logic.
+Store users belong in the store portal.
+Staff users belong in the staff portal.
+
+### Store creation should be atomic
+
+The system must not leave behind a half-created user/store pair.
 
 ---
 
 ## Likely next evolution
 
-The next likely step is a small internal account-creation flow where staff can
-choose whether a new account is:
+Possible future extensions:
 
-- a store account
-- a staff account
-
-and the system creates the correct linked objects and flags explicitly.
-
-That would likely justify adding a `write/` package with explicit use cases.
-
-Other plausible future changes:
-
-- a clearer distinction between staff and admin
-- richer store/account lifecycle handling
-- more than one user per store via a membership model
-- a dedicated location/store-locator concern if mapping becomes significant
+- richer distinction between staff/admin beyond current Django flags
+- multiple users per store via a membership model
+- a dedicated store-role model if store-side permissions become richer
+- redirects from account creation to created-object detail views
+- tighter integration between staff portal and provisioning flows
 
 ---
 
 ## Summary
 
-`accounts` is no longer just a place to hold `Store`.
-
-It is the app that connects:
+`accounts` is the app that connects:
 
 - authentication
 - store identity
 - staff identity
 - portal routing
 - public store discovery
+- explicit account provisioning
 
 In one sentence:
 
-> `accounts` owns who the authenticated actor is, what business identity they represent, and which portal surface they should enter.
+> `accounts` owns who the authenticated actor is, what business identity they represent, where they should land, and how new internal/store accounts are provisioned.

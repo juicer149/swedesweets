@@ -1,17 +1,40 @@
 {% extends "base.html" %}
 
 {% block title %}
-  No store connected — SwedeSweets
+  Portal access unavailable — SwedeSweets
 {% endblock %}
 
 {% block content %}
 <section class="page-section">
-  <div class="container left">
-    <div class="card">
-      <h1 class="page-title">No store connected</h1>
+  <div class="container center">
+    <div class="card card-soft">
+
+      <h1 class="page-title">Portal access unavailable</h1>
+
       <p class="page-subtitle">
-        This account is not linked to a store and does not have access to the store portal.
+        This account is not currently set up for portal access.
       </p>
+
+      <div class="stack">
+        <p>
+          If you expected to access the store portal, your account may not be fully configured yet.
+        </p>
+
+        <p>
+          Please contact SwedeSweets if you believe this is a mistake.
+        </p>
+      </div>
+
+      <div class="stack">
+        <a href="{% url 'pages:contact' %}" class="button button-primary">
+          Contact us
+        </a>
+
+        <a href="{% url 'pages:home' %}" class="button button-secondary">
+          Back to homepage
+        </a>
+      </div>
+
     </div>
   </div>
 </section>

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
+from accounts.domain.roles import StaffAccessLevel
 from accounts.models import Store
 
 User = get_user_model()
@@ -119,3 +120,122 @@ class AccountsViewTests(TestCase):
         stores = list(response.context["stores"])
         self.assertEqual(len(stores), 1)
         self.assertEqual(stores[0]["name"], "Store One")
+
+    def test_account_create_choice_requires_staff(self):
+        self.client.login(username="store@example.com", password="testpass123")
+        response = self.client.get(reverse("accounts:account_create_choice"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_account_create_choice_renders_for_staff(self):
+        self.client.login(username="staff@example.com", password="testpass123")
+        response = self.client.get(reverse("accounts:account_create_choice"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_create_store_account_creates_user_and_store(self):
+        self.client.login(username="staff@example.com", password="testpass123")
+
+        response = self.client.post(
+            reverse("accounts:create_store_account"),
+            {
+                "username": "newstore",
+                "email": "newstore@example.com",
+                "password1": "strong-pass-123",
+                "password2": "strong-pass-123",
+                "store_name": "New Store",
+                "phone": "+33 1 23 45 67 89",
+                "address": "12 Rue Example, Paris",
+                "is_active": "on",
+            },
+        )
+
+        self.assertRedirects(response, reverse("accounts:staff_portal"))
+        user = User.objects.get(username="newstore")
+        store = Store.objects.get(user=user)
+
+        self.assertEqual(user.email, "newstore@example.com")
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+        self.assertEqual(store.name, "New Store")
+        self.assertTrue(store.is_active)
+
+    def test_create_staff_account_creates_restricted_staff_user(self):
+        self.client.login(username="staff@example.com", password="testpass123")
+
+        response = self.client.post(
+            reverse("accounts:create_staff_account"),
+            {
+                "username": "opsuser",
+                "email": "ops@example.com",
+                "password1": "strong-pass-123",
+                "password2": "strong-pass-123",
+                "access_level": StaffAccessLevel.RESTRICTED,
+            },
+        )
+
+        self.assertRedirects(response, reverse("accounts:staff_portal"))
+        user = User.objects.get(username="opsuser")
+
+        self.assertTrue(user.is_staff)
+        self.assertFalse(user.is_superuser)
+        self.assertFalse(hasattr(user, "store"))
+
+    def test_create_staff_account_creates_full_staff_user(self):
+        self.client.login(username="staff@example.com", password="testpass123")
+
+        response = self.client.post(
+            reverse("accounts:create_staff_account"),
+            {
+                "username": "adminuser",
+                "email": "adminuser@example.com",
+                "password1": "strong-pass-123",
+                "password2": "strong-pass-123",
+                "access_level": StaffAccessLevel.FULL,
+            },
+        )
+
+        self.assertRedirects(response, reverse("accounts:staff_portal"))
+        user = User.objects.get(username="adminuser")
+
+        self.assertTrue(user.is_staff)
+        self.assertTrue(user.is_superuser)
+
+    def test_create_store_account_rejects_duplicate_username(self):
+        self.client.login(username="staff@example.com", password="testpass123")
+
+        response = self.client.post(
+            reverse("accounts:create_store_account"),
+            {
+                "username": "store@example.com",
+                "email": "another@example.com",
+                "password1": "strong-pass-123",
+                "password2": "strong-pass-123",
+                "store_name": "Duplicate Store",
+                "phone": "",
+                "address": "Some address",
+                "is_active": "on",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "A user with this username already exists.")
+
+    def test_create_store_account_rejects_password_mismatch(self):
+        self.client.login(username="staff@example.com", password="testpass123")
+
+        response = self.client.post(
+            reverse("accounts:create_store_account"),
+            {
+                "username": "anotherstore",
+                "email": "anotherstore@example.com",
+                "password1": "strong-pass-123",
+                "password2": "wrong-pass-123",
+                "store_name": "Another Store",
+                "phone": "",
+                "address": "Some address",
+                "is_active": "on",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "The two passwords do not match.")
+        self.assertFalse(User.objects.filter(username="anotherstore").exists())
