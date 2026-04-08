@@ -9,13 +9,27 @@
   <div class="container left">
 
     <a href="{% url 'accounts:account_create_choice' %}" class="link back-link">
-      ← Back to account creation
+      ← Back to account provisioning
     </a>
 
     <h1 class="page-title">Create staff account</h1>
     <p class="page-subtitle">
       Create an internal staff login.
     </p>
+
+    <div class="card card-soft">
+      <h2 class="section-title">Access levels</h2>
+      <div class="stack">
+        <p>
+          <strong>Restricted</strong> staff use the operations portal only.
+          They should not have access to Django admin or account provisioning.
+        </p>
+        <p>
+          <strong>Full</strong> staff may use the staff portal, create accounts,
+          and access Django admin.
+        </p>
+      </div>
+    </div>
 
     {% if form.non_field_errors %}
       <div class="alert alert-error">

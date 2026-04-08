@@ -7,7 +7,7 @@ The system has three main surfaces:
 
 - a **public marketing/catalog surface**
 - a **store portal** for authenticated partner stores to place orders and view order history
-- a **staff portal** for internal users to monitor operational work such as open orders, partner requests, and account provisioning
+- a **staff portal** for internal users to monitor operational work, manage accounts, and access deeper maintenance tools when needed
 
 There is also a small **public partner interest form** for stores that want to become resellers.
 
@@ -34,7 +34,7 @@ This project prefers:
 - minimal hidden behavior
 - stable historical data
 - simple code paths over framework magic
-- admin-backed operations until a dedicated workflow clearly becomes worth it
+- lightweight operational workflows before building custom backoffice systems
 
 A practical summary:
 
@@ -43,9 +43,9 @@ A practical summary:
 This means:
 
 - views should stay thin
-- queries should live in selectors when they are real reads
-- write flows should become explicit actions/use cases when they matter
-- domain rules should be expressed in small policies, value objects, errors, and enums where useful
+- selectors should own meaningful reads
+- multi-step workflows should become explicit actions/use cases
+- domain rules should be expressed in small, named concepts where useful
 - historical order data should be snapshotted, not lazily derived from current catalog state
 
 ---
@@ -64,9 +64,7 @@ Each app owns a small, understandable part of the system.
 
 ### `pages`
 
-Thin public content pages.
-
-Examples:
+Thin public content pages such as:
 
 - homepage
 - about
@@ -88,20 +86,17 @@ It is intentionally **not** an onboarding engine and does not create users or st
 
 ### `accounts`
 
-Owns the internal `Store` entity and authenticated account-facing entry surfaces.
+Owns internal account identity and authenticated entry surfaces.
 
 Purpose:
 
-- connect Django `User` to internal store identity
-- distinguish between store users and internal staff users
+- connect Django `User` to business identity
+- model partner stores through `Store`
+- model internal staff through `StaffAccount`
+- distinguish between store users, restricted staff, and full staff
 - expose a smart authenticated portal entrypoint
-- provide store portal access
-- provide staff portal access
 - provide public store locator data
-- provide an explicit internal account provisioning flow for store and staff accounts
-
-The name `accounts` is historical; in practice the app also owns the `Store` concept,
-authenticated user routing, and account provisioning.
+- provide internal account provisioning flows
 
 ### `catalog`
 
@@ -133,15 +128,11 @@ Purpose:
 
 ## User types and work surfaces
 
-The project currently uses Django’s default `User` model, but users are interpreted in two primary ways:
+The project uses Django’s default `User` model for authentication, but business role is interpreted through the `accounts` app.
 
 ### Store user
 
-A store user is:
-
-- a normal Django user
-- linked to exactly one `Store`
-- not an internal staff account
+A store user is linked to exactly one `Store`.
 
 This user uses the **store portal** to:
 
@@ -149,97 +140,76 @@ This user uses the **store portal** to:
 - view order history
 - view order details
 
-### Staff user
+### Restricted staff user
 
-A staff user is:
+A restricted staff user is linked to a `StaffAccount` with restricted access.
 
-- an internal Django user
-- `is_staff=True`
-- not required to be linked to a `Store`
-
-This user uses the **staff portal** to:
+This user uses the **restricted staff portal** to:
 
 - monitor open orders
-- monitor unprocessed partner requests
-- create store and staff accounts through the internal provisioning flow
-- jump into Django admin for deeper maintenance
+- monitor incoming partner requests
+- perform lightweight internal operational work
 
-### Admin user
+Restricted staff should work through the portal, not through Django admin.
 
-An admin user is a staff user with broader privileges, typically:
+### Full staff user
 
-- `is_staff=True`
-- `is_superuser=True`
+A full staff user is linked to a `StaffAccount` with full access.
 
-Admins use Django admin for full system configuration and maintenance.
+This user uses the **full staff portal** to:
 
-### Important distinction
+- monitor open orders
+- monitor incoming partner requests
+- create store and staff accounts
+- access Django admin for deeper maintenance
 
-These are different operational roles:
+### Admin access
 
-- store users perform external partner work
-- staff users perform internal operational work
-- admin users perform internal technical/system work
+Django admin access is now treated as an infrastructure concern, not the primary role model.
 
-The current system does **not** yet model these as separate custom user classes.
-Instead, it uses:
+In practice:
 
-- `Store` linkage for store identity
-- Django `is_staff` / `is_superuser` flags for internal access
+- store users do not access admin
+- restricted staff do not access admin
+- full staff may access admin
 
 ---
 
 ## Portal model
 
-Authenticated users do not all share the same destination anymore.
+Authenticated users do not all share the same destination.
 
 ### `/portal/`
 
-This is now a **smart authenticated entrypoint**.
+This is a smart authenticated entrypoint.
 
-It dispatches based on user type:
+It dispatches based on business role:
 
 - store user -> store portal
-- staff user -> staff portal
+- restricted staff -> restricted staff portal
+- full staff -> full staff portal
 - other authenticated user -> fallback page
 
 ### Store portal
 
-The store portal is the partner-facing workspace.
+Partner-facing workspace for stores.
 
-Responsibilities:
+### Restricted staff portal
 
-- show store-facing overview data
-- link to order creation
-- link to order history
+Internal operational surface for limited staff work.
 
-### Staff portal
+### Full staff portal
 
-The staff portal is a lightweight internal operational surface.
-
-Responsibilities:
-
-- show recent open orders
-- show recent unprocessed partner requests
-- provide entrypoints into account provisioning
-- act as a simpler operational landing page than full Django admin
+Internal operational surface for broader staff work, including provisioning and admin access.
 
 ### `/admin/`
 
-Django admin remains the full system administration surface.
-
-Responsibilities:
-
-- product maintenance
-- category/tag maintenance
-- store maintenance
-- partner request review
-- order inspection / maintenance
+Django admin remains the full maintenance surface for deeper editing and inspection.
 
 This separation is deliberate:
 
-- `/portal/` is a user-facing business entrypoint
-- `/admin/` is a full system maintenance surface
+- `/portal/` is the main business-facing work surface
+- `/admin/` is the deeper maintenance surface
 
 ---
 
@@ -249,7 +219,7 @@ This separation is deliberate:
 
 A partner interest request is not the same thing as a store.
 
-- `partner_request` stores public, external, potentially messy inbound data
+- `partner_request` stores public inbound data
 - `accounts.Store` is internal, trusted system truth
 
 These must remain separate.
@@ -270,40 +240,27 @@ Therefore:
 - `catalog` owns live product data
 - `ordering` snapshots business-relevant product data into `OrderItem`
 
-This is one of the most important design rules in the project.
-
 ### Authentication vs business identity
 
 Django `User` is used for authentication.
-`Store` is used for business identity inside the system.
 
-For the current MVP, each store maps to exactly one user:
+Business identity is expressed through:
 
-- one store
-- one login
-- one ordering identity
-
-This is a deliberate simplification for the current business situation, not a universal domain truth.
+- `Store` for partner stores
+- `StaffAccount` for internal staff
 
 ### Store users vs staff users
 
-Store users and staff users are not just permission variants of the same workflow.
-
-They do different jobs and should have different surfaces:
-
-- store users should not be forced through internal operational pages
-- staff users should not land in store-only pages such as "No store connected"
+Store users and staff users do different jobs and should not be forced through the same workflow.
 
 This is why portal dispatch exists.
 
-### Provisioning flow vs model maintenance
+### Provisioning flow vs deep maintenance
 
-Creating accounts is now treated as an explicit internal workflow, not just a manual admin habit.
+Creating accounts is now an explicit internal workflow.
 
-- `accounts.write` owns account provisioning use cases
-- Django admin still owns deep maintenance and correction work
-
-This keeps account creation explicit without forcing all operational work into admin.
+- `accounts.write` owns account provisioning
+- Django admin remains available for deeper maintenance and correction
 
 ---
 
@@ -317,7 +274,7 @@ The current business is small and operationally simple:
 - products include both loose candy and packaged products like chips
 - internal users mainly need lightweight operational visibility, not a full custom backoffice yet
 
-This has influenced several design decisions:
+This has influenced several design decisions.
 
 ### One user per store
 
@@ -327,11 +284,9 @@ A one-to-one relation between `User` and `Store` is enough for now.
 
 Users and stores are created by internal staff through explicit internal flows.
 
-Django admin is still available for deeper maintenance and correction, but is no longer the only provisioning path.
-
 ### Public partner requests are passive
 
-A partner request is just a lead/inbox entry, not a provisioning workflow.
+A partner request is a lead/inbox entry, not a provisioning workflow.
 
 ### Product metadata is mixed and partially optional
 
@@ -353,14 +308,14 @@ A simplified view of how the apps depend on each other:
 
 - `partner_request`
   - independent inbound boundary
-  - no coupling to `Store` provisioning
+  - no coupling to store provisioning
 
 - `accounts`
   - owns `Store`
+  - owns `StaffAccount`
   - owns portal dispatch
-  - owns store portal and staff portal entry surfaces
   - exposes public store locator reads
-  - owns explicit staff-driven account provisioning
+  - owns internal account provisioning
 
 - `catalog`
   - owns current product truth
@@ -371,7 +326,7 @@ A simplified view of how the apps depend on each other:
   - reads current products from `catalog`
   - creates stable historical snapshots
 
-The important dependency direction is:
+Important dependency direction:
 
 - `ordering` may read from `catalog`
 - `catalog` must not know about orders
@@ -395,65 +350,48 @@ These apps are mostly straightforward HTTP + template or form handling.
 
 - `catalog`
 
-#### `catalog`
-
-- `read/selectors.py` for browsing and orderable product reads
-- small domain rules for product visibility/orderability
-
-### Apps with explicit read/authz/provisioning structure
-
-- `accounts`
-
-`accounts` now benefits from a slightly richer internal structure because it owns:
-
-- user-type checks
-- portal dispatch
-- public store locator reads
-- store portal reads
-- staff portal reads
-- internal account provisioning
-
-Current internal structure includes:
-
-- `authz.py` for account-type checks and access helpers
-- `read/selectors.py` for public store locator and portal read models
-- `forms.py` for account provisioning HTTP input
-- `domain/` for account-type language and provisioning errors
-- `write/` for explicit account creation commands, dispatch, and actions
-
-### App with explicit read/write/domain structure
-
-- `ordering`
-
-This app is the most business-critical and therefore benefits from explicit layers:
+`catalog` benefits from:
 
 - `read/selectors.py`
-- `write/parsing.py`
-- `write/commands.py`
-- `write/actions.py`
-- `domain/errors.py`
-- `domain/policies.py`
-- `domain/value_objects.py`
+- small domain rules for visibility and orderability
 
-The point is not architectural ceremony.
-The point is to make the order flow explicit and stable.
+### Apps with richer workflow structure
+
+- `accounts`
+- `ordering`
+
+`accounts` now owns:
+
+- role resolution
+- portal dispatch
+- public store locator reads
+- staff/store account provisioning
+
+`ordering` owns the most business-critical workflow and therefore benefits from explicit:
+
+- reads
+- parsing
+- commands
+- actions
+- domain rules
+
+The point is not ceremony.
+The point is to make important flows explicit and stable.
 
 ---
 
 ## Why not use Django models for all business logic?
 
-Django models are useful persistence objects, but not every business workflow fits naturally
-inside model methods.
+Django models are useful persistence objects, but not every business workflow fits naturally inside model methods.
 
 This project prefers:
 
 - model methods for small, local behavior
 - selectors for reads
 - explicit write functions for multi-step workflows
-- value objects and policies for small invariants
-- authz helpers for user-type routing and access control
-- forms for HTTP input validation
-- typed commands for explicit workflow intent
+- authz helpers for role-based routing and access control
+- forms for HTTP-boundary validation
+- typed commands for workflow intent
 
 This avoids turning models into “god objects” while still keeping the system lightweight.
 
@@ -475,7 +413,7 @@ The site has a few clear route groups:
 - admin
 - auth
 
-The goal is that URL ownership remains obvious without introducing unnecessary indirection.
+The goal is that URL ownership remains obvious without unnecessary indirection.
 
 ### Namespaced route ownership
 
@@ -502,29 +440,28 @@ They should:
 
 - present data clearly
 - avoid embedding business rules
-- rely on selectors / views to provide already-shaped data
-- remain understandable without tracing hidden context builders
+- rely on selectors and views to provide already-shaped data
+- remain understandable without hidden context builders
 
 The project prefers readability over clever templating.
 
 ### Template responsibility split
 
-Authenticated templates are intentionally separated by user type and workflow:
+Authenticated templates are intentionally separated by user type:
 
-- `accounts/store_portal.html`
-- `accounts/staff_portal.html`
-- `accounts/no_store_connected.html`
-- `accounts/account_create_choice.html`
-- `accounts/create_store_account.html`
-- `accounts/create_staff_account.html`
+- store portal
+- restricted staff portal
+- full staff portal
+- fallback/no-access page
+- account provisioning pages
 
-This is preferable to one shared portal template full of role branches or one giant provisioning template full of account-type conditionals.
+This is preferable to one shared portal template full of role branches.
 
 ---
 
 ## Admin philosophy
 
-Django admin is used as the operational and technical back office.
+Django admin is used as the technical back office.
 
 Current admin responsibilities include:
 
@@ -532,18 +469,16 @@ Current admin responsibilities include:
 - category/tag maintenance
 - store maintenance
 - partner request review
-- order inspection / maintenance
+- order inspection and maintenance
 
 The current principle is:
 
-> use admin until a real dedicated workflow is justified
-
-However, the project now also acknowledges that some internal daily work is better served by a lighter portal than by full Django admin. That is the reason the staff portal exists.
+> use admin for deep maintenance, but not for every daily workflow
 
 So the current operational split is:
 
-- **staff portal** for lightweight operational overview and account provisioning
-- **Django admin** for full maintenance and deep editing
+- **staff portal** for daily operational work and provisioning
+- **Django admin** for deeper maintenance and editing
 
 ---
 
@@ -563,7 +498,7 @@ Empty orders are invalid.
 
 ### Box counts must be sensible
 
-Ordering counts are expressed in boxes, not units, and are validated explicitly.
+Ordering counts are expressed in boxes, not units.
 
 ### Public inbound requests must not create internal entities automatically
 
@@ -573,59 +508,54 @@ Ordering counts are expressed in boxes, not units, and are validated explicitly.
 
 `catalog.Product` models them separately.
 
-### Store users and staff users should land in different work surfaces
+### Portal landing must match business role
 
-Store users belong in the store portal.
-Staff users belong in the staff portal.
-
-### A store account should not be treated as an internal staff account
-
-This is an important conceptual boundary even though the current implementation still uses Django’s default `User`.
+- store users belong in the store portal
+- restricted staff belong in the restricted staff portal
+- full staff belong in the full staff portal
 
 ### Store account creation must create a real `Store`
 
-A store login without a linked `Store` is invalid for the current business model.
+A store login without a linked `Store` is invalid.
 
-### Store account creation should be atomic
+### Staff account creation must create a real `StaffAccount`
 
-The system must not leave behind a half-created user/store pair.
+Internal staff identity should not live only in Django flags.
 
-### Staff account creation should be explicit about internal access level
+### Provisioning should be atomic
 
-Internal staff provisioning should use explicit role semantics rather than ad-hoc flags spread through views.
+The system must not leave behind half-created account structures.
 
 ---
 
 ## Current simplifications (intentional MVP decisions)
 
-These are not accidents; they are deliberate:
+These are deliberate:
 
 - one `User` per `Store`
+- one `StaffAccount` per internal staff user
 - no custom user model
 - no separate membership model yet
-- no explicit internal role model beyond `is_staff` / `is_superuser`
 - no store-side role model beyond one store user
 - no catalog write use-case layer yet
 - no advanced order status workflow yet
-- no dedicated geographic/location app yet
+- no dedicated location app yet
 - no pricing model in catalog yet
 - no asynchronous/background processing
 
-These choices are acceptable because they match the actual current business complexity.
+These choices are acceptable because they match the current business complexity.
 
 ---
 
 ## Likely future evolutions
 
-The design leaves room for these later changes:
-
 ### `accounts`
 
-- richer distinction between restricted staff and full staff/admin
-- create store account and redirect into richer follow-up flows
-- possibly multiple users per store via a membership model
+- richer operational actions for restricted staff
+- richer distinction between full staff and super-admin
+- multiple users per store via a membership model
 - store-side roles if one store later needs more than one user
-- richer permission modelling beyond Django’s current flags
+- richer permission modelling if internal roles grow
 
 ### `catalog`
 
@@ -637,7 +567,7 @@ The design leaves room for these later changes:
 
 - explicit status transitions
 - internal fulfillment workflow beyond simple status edits
-- exports / internal reporting
+- exports and reporting
 - ordering by product code as a faster input mode
 
 ### public store locator
@@ -663,7 +593,7 @@ Highest-value tests:
 - order form parsing
 - catalog orderable/visible selectors
 - partner request form normalization/validation
-- access rules around store portal / staff portal / order pages
+- access rules around portal and order pages
 - portal dispatch by user type
 - store/staff account provisioning flow
 
@@ -679,7 +609,7 @@ This project uses Django pragmatically:
 - explicit structure where business logic becomes important
 - stable boundaries between apps
 - clear distinction between current truth and historical truth
-- separate work surfaces for store users and internal staff users
+- distinct operational surfaces for stores and internal staff
 - explicit internal provisioning for store and staff accounts
 
 In one sentence:

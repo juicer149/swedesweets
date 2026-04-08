@@ -3,12 +3,21 @@ from .errors import (
     DuplicateAccountIdentity,
     UnsupportedAccountCommand,
 )
-from .roles import AccountType, StaffAccessLevel
+from .roles import (
+    AccountRole,
+    StaffAccessLevel,
+    RoleSpec,
+    ROLE_SPECS,
+    get_role_spec,
+)
 
 __all__ = [
     "AccountProvisioningError",
     "DuplicateAccountIdentity",
     "UnsupportedAccountCommand",
-    "AccountType",
+    "AccountRole",
     "StaffAccessLevel",
+    "RoleSpec",
+    "ROLE_SPECS",
+    "get_role_spec",
 ]

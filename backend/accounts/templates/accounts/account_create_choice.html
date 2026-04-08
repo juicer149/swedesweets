@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 
 {% block title %}
-  Create account — SwedeSweets
+  Account provisioning — SwedeSweets
 {% endblock %}
 
 {% block content %}
 <section class="page-section">
   <div class="container left">
 
-    <h1 class="page-title">Create account</h1>
+    <a href="{% url 'accounts:staff_portal' %}" class="link back-link">
+      ← Back to staff portal
+    </a>
+
+    <h1 class="page-title">Account provisioning</h1>
     <p class="page-subtitle">
-      Choose which kind of account you want to provision.
+      Create new store accounts and internal staff accounts.
     </p>
 
     <div class="stack">
@@ -27,7 +31,8 @@
       <article class="card card-soft">
         <h2 class="section-title">Staff account</h2>
         <p>
-          Create an internal staff login with either full or restricted access.
+          Create an internal staff login with either restricted operational access
+          or full staff/admin access.
         </p>
         <a href="{% url 'accounts:create_staff_account' %}" class="button button-secondary">
           Create staff account

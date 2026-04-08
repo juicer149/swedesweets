@@ -10,12 +10,6 @@ COMMAND_HANDLER = {
 
 
 def dispatch_account_creation(command):
-    """
-    Dispatch account creation based on concrete command type.
-
-    This keeps branching explicit and table-driven rather than spreading
-    `if isinstance(...)` checks through views.
-    """
     handler = COMMAND_HANDLER.get(type(command))
     if handler is None:
         raise UnsupportedAccountCommand(

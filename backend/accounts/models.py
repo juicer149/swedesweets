@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 
+from .domain.roles import StaffAccessLevel
+
 
 class Store(models.Model):
     """
@@ -12,19 +14,8 @@ class Store(models.Model):
 
     DESIGN:
     - Independent from public partner requests
-    - Created manually by admin for the current MVP
-    - One-to-one with Django User for MVP simplicity
-
-    WHY THE 1:1 RELATION:
-    The current business setup is small: each store effectively has one
-    responsible manager using one login for ordering. Because of that,
-    a one-user-per-store model keeps the system simple and explicit.
-
-    INVARIANTS:
-    - A Store must always be linked to a Django User
-    - Only active stores should use the ordering portal
-    - A store may be active internally without necessarily being shown
-      publicly forever; public listing rules currently live in read selectors
+    - Created through internal provisioning workflows
+    - One-to-one with Django User for current MVP simplicity
     """
 
     user = models.OneToOneField(
@@ -46,3 +37,38 @@ class Store(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class StaffAccount(models.Model):
+    """
+    Internal staff identity owned by the business domain.
+
+    This model exists because Django's built-in flags are infrastructure-level
+    concerns and are not expressive enough for the business distinction between:
+
+    - restricted operational staff
+    - full staff/admin
+
+    IMPORTANT:
+    - Restricted staff should use the staff portal, but not Django admin
+    - Full staff may use both the staff portal and Django admin
+    """
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="staff_account",
+    )
+    access_level = models.CharField(
+        max_length=20,
+        choices=StaffAccessLevel.choices(),
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["user__username"]
+        verbose_name = "Staff account"
+        verbose_name_plural = "Staff accounts"
+
+    def __str__(self) -> str:
+        return f"{self.user.username} ({self.access_level})"

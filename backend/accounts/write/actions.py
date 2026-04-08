@@ -3,7 +3,7 @@ from django.db import IntegrityError, transaction
 
 from accounts.domain.errors import DuplicateAccountIdentity
 from accounts.domain.roles import StaffAccessLevel
-from accounts.models import Store
+from accounts.models import StaffAccount, Store
 
 from .commands import CreateStaffAccountCommand, CreateStoreAccountCommand
 
@@ -28,14 +28,6 @@ def _ensure_unique_identity(*, username: str, email: str) -> None:
 
 @transaction.atomic
 def create_store_account(command: CreateStoreAccountCommand):
-    """
-    Create a store-linked account atomically.
-
-    Guarantees:
-    - the created user is not staff
-    - a linked Store is created
-    - no half-created user/store pair remains on failure
-    """
     username = _normalize_username(command.username)
     email = _normalize_email(command.email)
 
@@ -57,35 +49,37 @@ def create_store_account(command: CreateStoreAccountCommand):
             is_active=command.is_active,
         )
     except IntegrityError as exc:
-        raise DuplicateAccountIdentity("Could not create store account due to duplicate identity.") from exc
+        raise DuplicateAccountIdentity(
+            "Could not create store account due to duplicate identity."
+        ) from exc
 
     return store
 
 
+@transaction.atomic
 def create_staff_account(command: CreateStaffAccountCommand):
-    """
-    Create an internal staff account.
-
-    CURRENT ACCESS MAPPING:
-    - FULL -> staff + superuser
-    - RESTRICTED -> staff only
-    """
     username = _normalize_username(command.username)
     email = _normalize_email(command.email)
 
     _ensure_unique_identity(username=username, email=email)
 
-    is_superuser = command.access_level == StaffAccessLevel.FULL
+    is_full_staff = command.access_level == StaffAccessLevel.FULL
 
     try:
         user = User.objects.create_user(
             username=username,
             email=email,
             password=command.password,
-            is_staff=True,
-            is_superuser=is_superuser,
+            is_staff=is_full_staff,
+            is_superuser=is_full_staff,
+        )
+        staff_account = StaffAccount.objects.create(
+            user=user,
+            access_level=command.access_level,
         )
     except IntegrityError as exc:
-        raise DuplicateAccountIdentity("Could not create staff account due to duplicate identity.") from exc
+        raise DuplicateAccountIdentity(
+            "Could not create staff account due to duplicate identity."
+        ) from exc
 
-    return user
+    return staff_account

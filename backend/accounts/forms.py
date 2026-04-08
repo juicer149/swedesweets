@@ -8,19 +8,6 @@ User = get_user_model()
 
 
 class BaseAccountCreateForm(forms.Form):
-    """
-    Shared HTTP boundary for account creation forms.
-
-    Responsibilities:
-    - validate raw user input
-    - normalize common identity fields
-    - confirm password consistency
-
-    Non-responsibility:
-    - create Django models directly
-    - enforce workflow-side effects
-    """
-
     username = forms.CharField(max_length=150)
     email = forms.EmailField()
     password1 = forms.CharField(widget=forms.PasswordInput)
@@ -50,13 +37,6 @@ class BaseAccountCreateForm(forms.Form):
 
 
 class StoreAccountCreateForm(BaseAccountCreateForm):
-    """
-    Form for creating a store-linked account.
-
-    This form captures both authentication identity and the minimal Store data
-    needed for the current one-user-per-store MVP model.
-    """
-
     store_name = forms.CharField(max_length=200)
     phone = forms.CharField(max_length=50, required=False)
     address = forms.CharField(widget=forms.Textarea)
@@ -75,18 +55,8 @@ class StoreAccountCreateForm(BaseAccountCreateForm):
 
 
 class StaffAccountCreateForm(BaseAccountCreateForm):
-    """
-    Form for creating an internal staff account.
-
-    Staff access is currently expressed through an explicit access level enum
-    rather than ad-hoc boolean flags in the view.
-    """
-
     access_level = forms.ChoiceField(
-        choices=[
-            (StaffAccessLevel.FULL, "Full"),
-            (StaffAccessLevel.RESTRICTED, "Restricted"),
-        ]
+        choices=StaffAccessLevel.choices()
     )
 
     def clean_access_level(self) -> StaffAccessLevel:

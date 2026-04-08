@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from .authz import (
-    is_staff_user,
-    is_store_user,
-    require_staff_user,
+    require_full_staff_user,
+    require_internal_staff_user,
     require_store_user,
+    resolve_account_role,
 )
+from .domain.roles import AccountRole, get_role_spec
 from .forms import StaffAccountCreateForm, StoreAccountCreateForm
 from .read.selectors import (
     count_staff_open_orders,
@@ -21,12 +22,6 @@ from .write.dispatch import dispatch_account_creation
 
 
 def store_list(request):
-    """
-    Public store locator page.
-
-    Shows active stores with a usable address so visitors can find retail
-    locations that carry SwedeSweets products.
-    """
     return render(
         request,
         "accounts/store_list.html",
@@ -36,32 +31,21 @@ def store_list(request):
 
 @login_required
 def portal(request):
-    """
-    Smart authenticated entrypoint.
+    role = resolve_account_role(request.user)
+    role_spec = get_role_spec(role)
 
-    Routing rules:
-    - store users go to the store portal
-    - internal staff users go to the staff portal
-    - other authenticated users get a fallback page
-    """
-    if is_store_user(request.user):
-        return redirect("accounts:store_portal")
+    if role_spec.portal_route is None:
+        return render(
+            request,
+            "accounts/no_store_connected.html",
+            status=403,
+        )
 
-    if is_staff_user(request.user):
-        return redirect("accounts:staff_portal")
-
-    return render(
-        request,
-        "accounts/no_store_connected.html",
-        status=403,
-    )
+    return redirect(role_spec.portal_route)
 
 
 @login_required
 def store_portal(request):
-    """
-    Portal for store-linked partner accounts.
-    """
     store = require_store_user(request)
     context = get_store_portal_snapshot(store)
 
@@ -73,11 +57,33 @@ def store_portal(request):
 
 
 @login_required
+def restricted_staff_portal(request):
+    require_internal_staff_user(request)
+
+    if resolve_account_role(request.user) != AccountRole.RESTRICTED_STAFF:
+        return render(
+            request,
+            "accounts/no_store_connected.html",
+            status=403,
+        )
+
+    context = {
+        "open_orders": list_staff_open_orders(limit=10),
+        "unprocessed_partner_requests": list_staff_unprocessed_partner_requests(limit=10),
+        "open_order_count": count_staff_open_orders(),
+        "unprocessed_partner_request_count": count_staff_unprocessed_partner_requests(),
+    }
+
+    return render(
+        request,
+        "accounts/restricted_staff_portal.html",
+        context,
+    )
+
+
+@login_required
 def staff_portal(request):
-    """
-    Internal staff portal.
-    """
-    require_staff_user(request)
+    require_full_staff_user(request)
 
     context = {
         "open_orders": list_staff_open_orders(limit=10),
@@ -95,19 +101,13 @@ def staff_portal(request):
 
 @login_required
 def account_create_choice(request):
-    """
-    Staff-only entrypoint for explicit account provisioning.
-    """
-    require_staff_user(request)
+    require_full_staff_user(request)
     return render(request, "accounts/account_create_choice.html")
 
 
 @login_required
 def create_store_account_view(request):
-    """
-    Staff-only workflow for creating a store-linked account.
-    """
-    require_staff_user(request)
+    require_full_staff_user(request)
 
     if request.method == "POST":
         form = StoreAccountCreateForm(request.POST)
@@ -130,18 +130,15 @@ def create_store_account_view(request):
 
 @login_required
 def create_staff_account_view(request):
-    """
-    Staff-only workflow for creating an internal staff account.
-    """
-    require_staff_user(request)
+    require_full_staff_user(request)
 
     if request.method == "POST":
         form = StaffAccountCreateForm(request.POST)
         if form.is_valid():
-            user = dispatch_account_creation(form.to_command())
+            staff_account = dispatch_account_creation(form.to_command())
             messages.success(
                 request,
-                f"Staff account created for {user.username}.",
+                f"Staff account created for {staff_account.user.username}.",
             )
             return redirect("accounts:staff_portal")
     else:

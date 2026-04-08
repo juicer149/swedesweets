@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-  Staff portal — SwedeSweets
+  Operations portal — SwedeSweets
 {% endblock %}
 
 {% block content %}
@@ -10,15 +10,11 @@
 
     <div class="orders-page-header">
       <div>
-        <h1 class="page-title">Staff portal</h1>
+        <h1 class="page-title">Operations portal</h1>
         <p class="page-subtitle">
-          Full internal overview for operations, incoming partner requests, and account provisioning.
+          Internal operational overview for open orders and incoming partner requests.
         </p>
       </div>
-
-      <a href="/admin/" class="button button-secondary">
-        Open admin
-      </a>
     </div>
 
     <section class="card card-soft">
@@ -27,30 +23,6 @@
       <div class="stack">
         <p><strong>Open orders:</strong> {{ open_order_count }}</p>
         <p><strong>Unprocessed partner requests:</strong> {{ unprocessed_partner_request_count }}</p>
-      </div>
-    </section>
-
-    <section class="card card-soft">
-      <h2 class="section-title">Provisioning</h2>
-
-      <div class="stack">
-        <p>
-          Create new internal staff accounts and new store-linked partner accounts.
-        </p>
-
-        <div class="stack">
-          <a href="{% url 'accounts:account_create_choice' %}" class="button button-primary">
-            Create account
-          </a>
-
-          <a href="{% url 'accounts:create_store_account' %}" class="button button-secondary">
-            Create store account
-          </a>
-
-          <a href="{% url 'accounts:create_staff_account' %}" class="button button-secondary">
-            Create staff account
-          </a>
-        </div>
       </div>
     </section>
 
@@ -64,11 +36,6 @@
               <div><strong>{{ order.store.name }}</strong></div>
               <div>{{ order.created_at|date:"Y-m-d H:i" }}</div>
               <div>{{ order.get_status_display }}</div>
-              <div>
-                <a href="/admin/ordering/order/{{ order.id }}/change/" class="link">
-                  Open in admin
-                </a>
-              </div>
             </article>
           {% endfor %}
         </div>
@@ -87,11 +54,6 @@
               <div><strong>{{ request_obj.store_name|default:"Unknown store" }}</strong></div>
               <div>{{ request_obj.email }}</div>
               <div>{{ request_obj.created_at|date:"Y-m-d H:i" }}</div>
-              <div>
-                <a href="/admin/partner_request/partnerrequest/{{ request_obj.id }}/change/" class="link">
-                  Open in admin
-                </a>
-              </div>
             </article>
           {% endfor %}
         </div>
