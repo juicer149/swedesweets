@@ -234,6 +234,7 @@ Important concepts include:
 - `StaffAccessLevel`
 - `AccountRole`
 - role specs / role dispatch data
+- invalid account identity errors
 
 ### `write/`
 
@@ -397,13 +398,22 @@ These are acceptable for the current business size.
 
 A store login without a real `Store` identity is invalid for the current model.
 
-### A store account must not be a staff account
-
-Store users and staff users represent different actors.
-
 ### A staff account must create a `StaffAccount`
 
 Internal staff identity should not exist only implicitly through Django flags.
+
+### A user must not have two business identities
+
+A Django `User` may represent exactly one business identity in this system:
+
+- `Store`
+- `StaffAccount`
+- or no configured business identity yet
+
+A user must never be linked to both `Store` and `StaffAccount`.
+
+If that invalid state appears, role resolution should fail loudly rather than
+silently choosing one identity.
 
 ### Restricted staff and full staff are different roles
 

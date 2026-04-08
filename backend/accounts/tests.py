@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
+from accounts.authz import resolve_account_role
+from accounts.domain.errors import InvalidAccountIdentity
 from accounts.domain.roles import StaffAccessLevel
 from accounts.models import StaffAccount, Store
 
@@ -148,3 +150,23 @@ class AccountsViewTests(TestCase):
         self.client.login(username="ops@example.com", password="testpass123")
         response = self.client.get(reverse("accounts:account_create_choice"))
         self.assertEqual(response.status_code, 403)
+
+    def test_resolve_account_role_raises_for_dual_business_identity(self):
+        dual_user = User.objects.create_user(
+            username="dual@example.com",
+            email="dual@example.com",
+            password="testpass123",
+        )
+        Store.objects.create(
+            user=dual_user,
+            name="Dual Store",
+            address="Dual street 1",
+            is_active=True,
+        )
+        StaffAccount.objects.create(
+            user=dual_user,
+            access_level=StaffAccessLevel.RESTRICTED,
+        )
+
+        with self.assertRaises(InvalidAccountIdentity):
+            resolve_account_role(dual_user)
