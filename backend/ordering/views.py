@@ -11,6 +11,23 @@ from .write.actions import place_order
 from .write.parsing import empty_order_form, parse_order_form
 
 
+def _resolve_order_detail_back_link(source: str | None) -> tuple[str, str]:
+    """
+    Resolve where the order detail page should link back to.
+
+    Supported sources:
+    - portal
+    - history
+
+    Unknown values fall back to order history because that is the safest
+    stable parent page for order detail.
+    """
+    if source == "portal":
+        return "accounts:store_portal", "Back to portal"
+
+    return "ordering:order_history", "Back to order history"
+
+
 @login_required
 def order_create(request):
     """
@@ -105,9 +122,15 @@ def order_history(request):
 def order_detail(request, order_id):
     """
     Show one order belonging to the authenticated store.
+
+    The detail page can be reached from more than one parent page, so the
+    back link is resolved from a small query-string source hint.
     """
     store = require_request_store(request)
     order = get_order_for_store(store, order_id)
+
+    source = request.GET.get("from")
+    back_url_name, back_label = _resolve_order_detail_back_link(source)
 
     return render(
         request,
@@ -115,5 +138,7 @@ def order_detail(request, order_id):
         {
             "store": store,
             "order": order,
+            "back_url_name": back_url_name,
+            "back_label": back_label,
         },
     )

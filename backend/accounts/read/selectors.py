@@ -1,6 +1,9 @@
 from accounts.models import Store
-from ordering.read.selectors import latest_order_for_store
 from ordering.models import Order
+from ordering.read.selectors import (
+    latest_order_for_store,
+    list_active_orders_for_store,
+)
 from partner_request.models import PartnerRequest
 
 
@@ -16,8 +19,17 @@ def public_store_locator_entries():
 
 
 def get_store_portal_snapshot(store: Store) -> dict:
+    """
+    Build the read model for the store portal homepage.
+
+    Current homepage needs:
+    - store identity
+    - active orders (pending / packed)
+    - latest order, which may still be useful for future UI additions
+    """
     return {
         "store": store,
+        "active_orders": list_active_orders_for_store(store),
         "last_order": latest_order_for_store(store),
     }
 

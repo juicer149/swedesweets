@@ -1,0 +1,478 @@
+/* =========================================================
+   PORTAL TOKENS
+   Shared portal colors, radius, spacing, and shadows.
+   ========================================================= */
+
+:root {
+  --portal-bg: #f7f9fc;
+  --portal-card-bg: #ffffff;
+  --portal-text-main: #1f2937;
+  --portal-text-muted: #667085;
+  --portal-border: #d9e2ec;
+
+  --portal-brand-blue: #2f67b2;
+  --portal-brand-blue-dark: #1d4f91;
+  --portal-brand-yellow: #f4c542;
+  --portal-brand-yellow-hover: #ffd867;
+
+  --portal-status-pending-text: #9f6a00;
+  --portal-status-packed-text: #1d4f91;
+  --portal-status-delivered-text: #2f7a46;
+  --portal-status-cancelled-text: #a23b3b;
+  --portal-status-neutral-text: #667085;
+
+  --portal-shadow-soft: 0 8px 24px rgba(29, 36, 51, 0.08);
+  --portal-shadow-button: 0 6px 18px rgba(29, 36, 51, 0.08);
+  --portal-shadow-button-primary: 0 10px 24px rgba(29, 36, 51, 0.14);
+
+  --portal-radius-section: 24px;
+  --portal-radius-card: 16px;
+  --portal-radius-button: 999px;
+
+  --portal-content-width: 900px;
+}
+
+/* =========================================================
+   PORTAL PAGE LAYOUT
+   Main page shell used by portal pages.
+   ========================================================= */
+
+.portal-page {
+  max-width: var(--portal-content-width);
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  color: var(--portal-text-main);
+}
+
+/* =========================================================
+   PORTAL HERO
+   Large welcome block at the top of a portal page.
+   ========================================================= */
+
+.portal-hero {
+  background: linear-gradient(
+    135deg,
+    var(--portal-brand-blue-dark),
+    var(--portal-brand-blue)
+  );
+  color: white;
+  border-radius: var(--portal-radius-section);
+  padding: 3rem 2rem;
+  box-shadow: var(--portal-shadow-soft);
+}
+
+.portal-hero__inner {
+  max-width: 42rem;
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+  text-align: center;
+}
+
+.portal-hero__title {
+  margin: 0;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+.portal-hero__intro {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+/* =========================================================
+   PORTAL BUTTONS
+   Shared button styles for portal pages.
+   ========================================================= */
+
+.portal-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.portal-button-row--centered {
+  justify-content: center;
+}
+
+.portal-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0.8rem 1.1rem;
+  border-radius: var(--portal-radius-button);
+  border: 1px solid transparent;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: var(--portal-shadow-button);
+  transition:
+    transform 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    color 140ms ease;
+}
+
+.portal-button:hover {
+  transform: translateY(-1px);
+}
+
+.portal-button--primary {
+  background: var(--portal-brand-yellow);
+  color: var(--portal-text-main);
+  box-shadow: var(--portal-shadow-button-primary);
+}
+
+.portal-button--primary:hover {
+  background: var(--portal-brand-yellow-hover);
+}
+
+.portal-button--secondary {
+  background: white;
+  color: var(--portal-text-main);
+  border-color: var(--portal-border);
+}
+
+/* =========================================================
+   PORTAL SECTIONS
+   Shared spacing and headings for portal content sections.
+   ========================================================= */
+
+.portal-section {
+  margin-top: 2.5rem;
+}
+
+.portal-section__title {
+  margin: 0 0 1rem 0;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+/* =========================================================
+   PORTAL ORDER LIST
+   Shared order list style for store portal and order history.
+   ========================================================= */
+
+.portal-order-list {
+  border-left: 2px solid var(--portal-border);
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+/* =========================================================
+   PORTAL ORDER CARD
+   Compact order summary card used in portal contexts.
+   ========================================================= */
+
+.portal-order-card {
+  background: var(--portal-card-bg);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--portal-radius-card);
+  box-shadow: var(--portal-shadow-soft);
+  padding: 0.95rem 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.portal-order-card__top {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.portal-order-card__identity {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.portal-order-card__label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--portal-text-muted);
+}
+
+.portal-order-card__id {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--portal-text-main);
+}
+
+.portal-order-card__details {
+  display: grid;
+  gap: 0.3rem;
+  color: var(--portal-text-muted);
+  font-size: 0.95rem;
+}
+
+.portal-order-card__details strong {
+  color: var(--portal-text-main);
+}
+
+.portal-order-card__footer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* =========================================================
+   PORTAL ORDER STATUS
+   Shared inline status text colors.
+   ========================================================= */
+
+.portal-order-status {
+  font-weight: 600;
+}
+
+.portal-order-status--pending {
+  color: var(--portal-status-pending-text);
+}
+
+.portal-order-status--packed {
+  color: var(--portal-status-packed-text);
+}
+
+.portal-order-status--delivered {
+  color: var(--portal-status-delivered-text);
+}
+
+.portal-order-status--cancelled {
+  color: var(--portal-status-cancelled-text);
+}
+
+.portal-order-status--neutral {
+  color: var(--portal-status-neutral-text);
+}
+
+/* =========================================================
+   PORTAL INLINE ACTION
+   Small neutral action button for compact cards.
+   ========================================================= */
+
+.portal-inline-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--portal-border);
+  background: #ffffff;
+  color: var(--portal-text-main);
+  text-decoration: none;
+  font-weight: 600;
+  transition:
+    border-color 140ms ease,
+    color 140ms ease,
+    transform 140ms ease;
+}
+
+.portal-inline-button:hover {
+  border-color: var(--portal-brand-blue-dark);
+  color: var(--portal-brand-blue-dark);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   PORTAL EMPTY STATE
+   Used when a list has no content yet.
+   ========================================================= */
+
+.portal-empty-state {
+  background: var(--portal-card-bg);
+  border: 1px dashed var(--portal-border);
+  border-radius: var(--portal-radius-card);
+  padding: 1.2rem;
+  color: var(--portal-text-muted);
+}
+
+/* =========================================================
+   PORTAL FOOTER ACTIONS
+   Bottom action row on portal pages.
+   ========================================================= */
+
+.portal-actions-footer {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   PORTAL ORDER FORM
+   Layout pieces for the order form page.
+   ========================================================= */
+
+.portal-order-form-shell {
+  margin-top: 2rem;
+}
+
+.portal-order-category-header {
+  margin-bottom: 1rem;
+}
+
+.portal-order-rows {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.portal-order-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 1rem;
+  align-items: end;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--portal-border);
+}
+
+.portal-order-product {
+  min-width: 0;
+}
+
+.portal-order-product-name {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--portal-text-main);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.portal-order-quantity {
+  min-width: 0;
+}
+
+/* =========================================================
+   PORTAL QUANTITY CONTROL
+   Plus/minus buttons with manual input in the middle.
+   ========================================================= */
+
+.portal-qty-control {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.portal-qty-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--portal-border);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--portal-text-main);
+  text-align: center;
+  font-weight: 600;
+  -moz-appearance: textfield;
+}
+
+.portal-qty-input::-webkit-outer-spin-button,
+.portal-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.portal-qty-input:focus {
+  outline: none;
+  border-color: var(--portal-brand-blue-dark);
+  box-shadow: 0 0 0 3px rgba(47, 103, 178, 0.12);
+}
+
+.portal-qty-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--portal-border);
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    background-color 140ms ease;
+}
+
+.portal-qty-button:hover {
+  transform: translateY(-1px);
+}
+
+.portal-qty-button--minus {
+  color: var(--portal-status-cancelled-text);
+}
+
+.portal-qty-button--minus:hover {
+  border-color: var(--portal-status-cancelled-text);
+  background: #fff5f5;
+}
+
+.portal-qty-button--plus {
+  color: var(--portal-brand-blue-dark);}
+
+.portal-qty-button--plus:hover {
+  border-color: var(--portal-brand-blue-dark);
+  background: #f3f8ff;
+}
+
+/* =========================================================
+   RESPONSIVE
+   Portal-specific responsive tweaks.
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .portal-order-row {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .portal-order-quantity {
+    max-width: 260px;
+  }
+}
+
+@media (max-width: 640px) {
+  .portal-page {
+    padding: 1.25rem 0.85rem 3rem;
+  }
+
+  .portal-hero {
+    padding: 2.25rem 1.25rem;
+  }
+
+  .portal-order-card__top {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .portal-order-list {
+    padding-left: 0.75rem;
+  }
+
+  .portal-actions-footer {
+    justify-content: flex-start;
+  }
+
+  .portal-qty-control {
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+  }
+
+  .portal-qty-button {
+    width: 40px;
+    height: 40px;
+  }
+}

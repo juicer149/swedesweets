@@ -1,84 +1,182 @@
 {% extends "base.html" %}
-
 {% block title %}
   Order details — SwedeSweets
 {% endblock %}
 
 {% block content %}
-<section class="page-section">
-  <div class="container left">
-    <a href="{% url 'ordering:order_history' %}" class="link back-link">
-      ← Back to order history
+<section class="portal-page">
+
+  <div style="margin-bottom: 1rem;">
+    <a href="{% url back_url_name %}" class="link back-link">
+      ← {{ back_label }}
     </a>
+  </div>
 
-    <div class="card order-detail-shell">
-      <div class="order-detail-header">
+  <header class="portal-section" style="margin-top: 0;">
+    <h1 class="portal-section__title" style="font-size: 2rem; margin-bottom: 0.5rem;">
+      Order #{{ order.id|stringformat:'s'|slice:':8' }}
+    </h1>
+
+    <p style="margin: 0; color: var(--portal-text-muted); font-size: 1rem; line-height: 1.6;">
+      Review the full details of this order, including status and ordered items.
+    </p>
+  </header>
+
+  <section class="portal-section">
+    <h2 class="portal-section__title">Order summary</h2>
+
+    <article class="portal-order-card">
+      <div
+        style="
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 1rem 1.5rem;
+        "
+      >
         <div>
-          <h1 class="page-title">Order details</h1>
-          <p class="page-subtitle">{{ store.name }}</p>
+          <div class="portal-order-card__label">Order ID</div>
+          <div class="portal-order-card__id">#{{ order.id|stringformat:'s'|slice:':8' }}</div>
         </div>
 
-        <div class="badge">
-          <span class="status-dot status-{{ order.status }}"></span>
-          <span>{{ order.get_status_display }}</span>
+        <div>
+          <div class="portal-order-card__label">Status</div>
+          <div style="margin-top: 0.1rem;">
+            <span
+              class="
+                {% if order.status == 'pending' %}
+                  portal-order-status portal-order-status--pending
+                {% elif order.status == 'packed' %}
+                  portal-order-status portal-order-status--packed
+                {% elif order.status == 'delivered' %}
+                  portal-order-status portal-order-status--delivered
+                {% elif order.status == 'cancelled' %}
+                  portal-order-status portal-order-status--cancelled
+                {% else %}
+                  portal-order-status portal-order-status--neutral
+                {% endif %}
+              "
+            >
+              {{ order.get_status_display }}
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <div class="portal-order-card__label">Placed</div>
+          <div class="portal-order-card__details">
+            <div>{{ order.created_at|date:"Y-m-d H:i" }}</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="portal-order-card__label">Store</div>
+          <div class="portal-order-card__details">
+            <div>{{ store.name }}</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="portal-order-card__label">Products</div>
+          <div class="portal-order-card__details">
+            <div>{{ order.line_count }}</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="portal-order-card__label">Total boxes</div>
+          <div class="portal-order-card__details">
+            <div>{{ order.total_boxes }}</div>
+          </div>
         </div>
       </div>
+    </article>
+  </section>
 
-      <div class="card">
-        <div class="order-summary-item">
-          <div class="order-summary-label">Placed</div>
-          <div class="order-summary-value">{{ order.created_at|date:"Y-m-d H:i" }}</div>
-        </div>
+  <section class="portal-section">
+    <h2 class="portal-section__title">Ordered items</h2>
 
-        <div class="order-summary-item">
-          <div class="order-summary-label">Products</div>
-          <div class="order-summary-value">{{ order.line_count }}</div>
-        </div>
-
-        <div class="order-summary-item">
-          <div class="order-summary-label">Total boxes</div>
-          <div class="order-summary-value">{{ order.total_boxes }}</div>
-        </div>
-      </div>
-
-      <section class="order-items-section">
-        <h2 class="section-title">Ordered items</h2>
-
-        <div class="stack">
-          {% for item in order.items.all %}
-            <article class="card card-hover">
-              <div class="order-item-top">
-                <div class="order-item-code">#{{ item.product_code }}</div>
-                <div class="order-item-qty">{{ item.boxes }} box(es)</div>
+    {% if order.items.all %}
+      <div class="portal-order-list">
+        {% for item in order.items.all %}
+          <article class="portal-order-card">
+            <div
+              style="
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 1rem;
+                flex-wrap: wrap;
+              "
+            >
+              <div style="min-width: 0;">
+                <div class="portal-order-card__label">Product</div>
+                <div class="portal-order-card__id" style="font-size: 1.05rem;">
+                  {{ item.product_name }}
+                </div>
               </div>
 
-              <div class="order-item-name">{{ item.product_name }}</div>
+              <div style="text-align: right;">
+                <div class="portal-order-card__label">Boxes</div>
+                <div class="portal-order-card__id">{{ item.boxes }}</div>
+              </div>
+            </div>
 
-              {% if item.product_category_name or item.product_units_per_box or item.product_weight_grams %}
-                <div class="order-item-meta">
-                  {% if item.product_category_name %}
-                    <span>{{ item.product_category_name }}</span>
-                  {% endif %}
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 1rem;
+              "
+              class="portal-order-card__details"
+            >
+              <div>
+                <strong>Code:</strong>
+                {{ item.product_code }}
+              </div>
 
-                  {% if item.product_units_per_box %}
-                    <span>{{ item.product_units_per_box }} units/box</span>
-                  {% endif %}
+              <div>
+                <strong>Category:</strong>
+                {% if item.product_category_name %}
+                  {{ item.product_category_name }}
+                {% else %}
+                  —
+                {% endif %}
+              </div>
 
-                  {% if item.product_weight_grams %}
-                    <span>{{ item.product_weight_grams }} g</span>
-                  {% endif %}
-                </div>
-              {% endif %}
-            </article>
-          {% endfor %}
-        </div>
-      </section>
+              <div>
+                <strong>Units / box:</strong>
+                {% if item.product_units_per_box %}
+                  {{ item.product_units_per_box }}
+                {% else %}
+                  —
+                {% endif %}
+              </div>
 
-      <div class="order-detail-footer">
-        <div class="order-detail-id-label">Order ID</div>
-        <div class="order-detail-id-value">{{ order.id }}</div>
+              <div>
+                <strong>Weight:</strong>
+                {% if item.product_weight_grams %}
+                  {{ item.product_weight_grams }} g
+                {% else %}
+                  —
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        {% endfor %}
       </div>
+    {% else %}
+      <div class="portal-empty-state">
+        No order items are available for this order.
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="portal-section">
+    <div class="portal-button-row">
+      <a href="{% url 'pages:contact' %}?order_id={{ order.id }}" class="portal-button portal-button--secondary">
+        Contact us about this order
+      </a>
     </div>
-  </div>
+  </section>
 </section>
 {% endblock %}

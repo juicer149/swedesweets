@@ -1,24 +1,35 @@
 {% extends "base.html" %}
-
 {% block title %}
-  New order — SwedeSweets
+  Place new order — SwedeSweets
 {% endblock %}
 
 {% block content %}
-<section class="page-section">
-  <div class="container left">
-    <div class="orders-page-header">
-      <div>
-        <h1 class="page-title">New order</h1>
-        <p class="page-subtitle">{{ store.name }}</p>
-      </div>
+<!-- Main portal page wrapper -->
+<section class="portal-page">
 
-      <a href="{% url 'ordering:order_history' %}" class="button button-secondary">
-        Back to history
-      </a>
-    </div>
+  <!-- Back link to the store portal -->
+  <div style="margin-bottom: 1rem;">
+    <a href="{% url 'accounts:store_portal' %}" class="link back-link">
+      ← Back to portal
+    </a>
+  </div>
 
-    {% if form.errors %}
+  <!-- Simple page header -->
+  <header class="portal-section" style="margin-top: 0;">
+    <!-- Main page heading -->
+    <h1 class="portal-section__title" style="font-size: 2rem; margin-bottom: 0.5rem;">
+      Place new order
+    </h1>
+
+    <!-- Short page intro -->
+    <p style="margin: 0; color: var(--portal-text-muted); font-size: 1rem; line-height: 1.6;">
+      Enter the number of boxes you want for each product. Leave a field empty if you do not want to order that item.
+    </p>
+  </header>
+
+  <!-- Error summary block -->
+  {% if form.errors %}
+    <section class="portal-section" style="margin-top: 1.5rem;">
       <div class="alert alert-error">
         <ul>
           {% for error in form.errors %}
@@ -26,55 +37,119 @@
           {% endfor %}
         </ul>
       </div>
-    {% endif %}
+    </section>
+  {% endif %}
 
-    <form method="post" class="stack">
-      {% csrf_token %}
+  <!-- Main order form -->
+  <form method="post" class="portal-order-form-shell">
+    {% csrf_token %}
 
-      {% regroup form.rows by category_name as category_groups %}
+    <!-- Group order rows by category -->
+    {% regroup form.rows by category_name as category_groups %}
 
-      {% for group in category_groups %}
-        <section class="card card-soft">
-          <div class="order-category-header">
-            <h2 class="section-title">{{ group.grouper|default:"Other" }}</h2>
-          </div>
+    <!-- Repeat one card section per category -->
+    {% for group in category_groups %}
+      <section class="portal-section" style="margin-top: 0;">
+        <article class="portal-order-card">
 
-          <div class="order-category-body">
+          <!-- Category heading -->
+          <header class="portal-order-category-header">
+            <h2 class="portal-section__title" style="margin-bottom: 0;">
+              {{ group.grouper|default:"Other" }}
+            </h2>
+          </header>
+
+          <!-- Product rows inside this category -->
+          <div class="portal-order-rows">
             {% for row in group.list %}
-              <div class="order-form-row">
-                <div class="order-form-product">
-                  <div class="order-form-code">{{ row.product_code }}</div>
-                  <label for="qty_{{ row.product_id }}" class="order-form-name">
-                    {{ row.product_name }}
+              <div class="portal-order-row">
+
+                <!-- Left side: product identity -->
+                <div class="portal-order-product">
+                  <div class="portal-order-card__label">
+                    Product code {{ row.product_code }}
+                  </div>
+
+                  <label
+                    for="qty_{{ row.product_id }}"
+                    class="portal-order-product-name"
+                  >
+                    {{ row.product_name|title }}
                   </label>
                 </div>
 
-                <div class="order-form-quantity">
-                  <label for="qty_{{ row.product_id }}" class="order-form-quantity-label">
+                <!-- Right side: quantity controls -->
+                <div class="portal-order-quantity">
+                  <label
+                    for="qty_{{ row.product_id }}"
+                    class="portal-order-card__label"
+                    style="display: block; margin-bottom: 0.35rem; text-align: center;"
+                  >
                     Boxes
                   </label>
-                  <input
-                    id="qty_{{ row.product_id }}"
-                    name="qty_{{ row.product_id }}"
-                    type="number"
-                    min="0"
-                    step="1"
-                    value="{{ row.entered_boxes }}"
-                    class="order-qty-input"
-                  >
+
+                  <div class="portal-qty-control">
+                    <button
+                      type="button"
+                      class="portal-qty-button portal-qty-button--minus"
+                      data-action="decrement"
+                      data-target="qty_{{ row.product_id }}"
+                      aria-label="Decrease quantity for {{ row.product_name|title }}"
+                    >
+                      −
+                    </button>
+
+                    <input
+                      id="qty_{{ row.product_id }}"
+                      name="qty_{{ row.product_id }}"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value="{{ row.entered_boxes }}"
+                      placeholder="0"
+                      class="portal-qty-input"
+                    >
+
+                    <button
+                      type="button"
+                      class="portal-qty-button portal-qty-button--plus"
+                      data-action="increment"
+                      data-target="qty_{{ row.product_id }}"
+                      aria-label="Increase quantity for {{ row.product_name|title }}"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               </div>
             {% endfor %}
           </div>
-        </section>
-      {% endfor %}
+        </article>
+      </section>
+    {% endfor %}
 
-      <div>
-        <button type="submit" class="button button-primary">
-          Place order
-        </button>
-      </div>
-    </form>
-  </div>
+    <!-- Bottom submit area -->
+    <section class="portal-section">
+      <article class="portal-order-card">
+        <h2 class="portal-section__title" style="margin-bottom: 0.5rem;">
+          Submit order
+        </h2>
+
+        <p style="margin: 0; color: var(--portal-text-muted); line-height: 1.6;">
+          Review your quantities above, then submit the order when you are ready.
+        </p>
+
+        <div class="portal-button-row" style="margin-top: 1rem;">
+          <button type="submit" class="portal-button portal-button--primary">
+            Place order
+          </button>
+
+          <a href="{% url 'accounts:store_portal' %}" class="portal-button portal-button--secondary">
+            Cancel
+          </a>
+        </div>
+      </article>
+    </section>
+  </form>
 </section>
 {% endblock %}

@@ -6,7 +6,11 @@ from catalog.models import Product, ProductCategory
 from ordering.domain.errors import EmptyOrder, InvalidProductSelection, InvalidQuantity
 from ordering.domain.value_objects import BoxQuantity, MAX_BOXES_PER_LINE
 from ordering.models import Order, OrderItem
-from ordering.read.selectors import get_order_for_store, list_store_orders
+from ordering.read.selectors import (
+    get_order_for_store,
+    list_active_orders_for_store,
+    list_store_orders,
+)
 from ordering.write.actions import place_order
 from ordering.write.commands import PlaceOrderCommand, PlaceOrderLine
 from ordering.write.parsing import empty_order_form, parse_order_form
@@ -235,6 +239,22 @@ class OrderingReadSelectorTests(TestCase):
 
         self.assertEqual(order.line_count, 2)
         self.assertEqual(order.total_boxes, 5)
+
+    def test_list_active_orders_for_store_excludes_delivered_orders(self):
+        packed_order = Order.objects.create(
+            store=self.store,
+            status=Order.Status.PACKED,
+        )
+        delivered_order = Order.objects.create(
+            store=self.store,
+            status=Order.Status.DELIVERED,
+        )
+
+        active_orders = list_active_orders_for_store(self.store)
+
+        self.assertIn(self.order, active_orders)
+        self.assertIn(packed_order, active_orders)
+        self.assertNotIn(delivered_order, active_orders)
 
     def test_get_order_for_store_returns_only_store_order(self):
         fetched = get_order_for_store(self.store, self.order.id)

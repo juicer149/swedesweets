@@ -1,96 +1,148 @@
 {% extends "base.html" %}
-
 {% block title %}
   Order history — SwedeSweets
 {% endblock %}
 
 {% block content %}
-<section class="page-section">
-  <div class="container left">
-    <div class="orders-page-header">
-      <div>
-        <h1 class="page-title">Order history</h1>
-        <p class="page-subtitle">{{ store.name }}</p>
+<section class="portal-page">
+  <div style="margin-bottom: 1rem;">
+    <a href="{% url 'accounts:store_portal' %}" class="link back-link">
+      ← Back to portal
+    </a>
+  </div>
+
+  <header class="portal-section" style="margin-top: 0;">
+    <h1 class="portal-section__title" style="font-size: 2rem; margin-bottom: 0.5rem;">
+      Order history
+    </h1>
+
+    <p style="margin: 0; color: var(--portal-text-muted); font-size: 1rem; line-height: 1.6;">
+      Review your current orders and browse your delivered order history.
+    </p>
+  </header>
+
+  <section class="portal-section">
+    <h2 class="portal-section__title">Current orders</h2>
+
+    {% if open_orders %}
+      <div class="portal-order-list">
+        {% for order in open_orders %}
+          <article class="portal-order-card">
+            <div class="portal-order-card__top">
+              <div class="portal-order-card__identity">
+                <span class="portal-order-card__label">Order ID</span>
+                <div class="portal-order-card__id">#{{ order.id|stringformat:'s'|slice:':8' }}</div>
+              </div>
+
+              <div class="portal-order-card__details">
+                <div><strong>Date:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</div>
+
+                <div>
+                  <strong>Status:</strong>
+                  <span
+                    class="
+                      {% if order.status == 'pending' %}
+                        portal-order-status portal-order-status--pending
+                      {% elif order.status == 'packed' %}
+                        portal-order-status portal-order-status--packed
+                      {% elif order.status == 'delivered' %}
+                        portal-order-status portal-order-status--delivered
+                      {% elif order.status == 'cancelled' %}
+                        portal-order-status portal-order-status--cancelled
+                      {% else %}
+                        portal-order-status portal-order-status--neutral
+                      {% endif %}
+                    "
+                  >
+                    {{ order.get_status_display }}
+                  </span>
+                </div>
+
+                <div>
+                  <strong>Summary:</strong>
+                  {{ order.line_count }} products / {{ order.total_boxes }} boxes
+                </div>
+              </div>
+            </div>
+
+            <div class="portal-order-card__footer">
+              <a href="{% url 'ordering:order_detail' order.id %}?from=history" class="portal-inline-button">
+                Details
+              </a>
+            </div>
+          </article>
+        {% endfor %}
       </div>
-
-      <a href="{% url 'ordering:order_create' %}" class="button button-primary">
-        New order
-      </a>
-    </div>
-
-    {% if open_orders or delivered_orders %}
-      {% if open_orders %}
-        <section class="orders-group">
-          <h2 class="section-title">Open orders</h2>
-
-          <div class="stack">
-            {% for order in open_orders %}
-              <article class="card card-soft card-hover">
-                <div class="order-card-date">
-                  {{ order.created_at|date:"Y-m-d H:i" }}
-                </div>
-
-                <div class="order-card-status">
-                  <span class="status-dot status-{{ order.status }}"></span>
-                  <span>{{ order.get_status_display }}</span>
-                </div>
-
-                <div class="order-card-meta">
-                  {{ order.line_count }} products · {{ order.total_boxes }} boxes
-                </div>
-
-                <div class="order-card-actions">
-                  <a href="{% url 'ordering:order_detail' order.id %}" class="button button-secondary">
-                    View order
-                  </a>
-                </div>
-              </article>
-            {% endfor %}
-          </div>
-        </section>
-      {% endif %}
-
-      {% if delivered_orders %}
-        <section class="orders-group">
-          <h2 class="section-title">Delivered</h2>
-
-          <div class="stack">
-            {% for order in delivered_orders %}
-              <article class="card card-soft card-hover">
-                <div class="order-card-date">
-                  {{ order.created_at|date:"Y-m-d H:i" }}
-                </div>
-
-                <div class="order-card-status">
-                  <span class="status-dot status-{{ order.status }}"></span>
-                  <span>{{ order.get_status_display }}</span>
-                </div>
-
-                <div class="order-card-meta">
-                  {{ order.line_count }} products · {{ order.total_boxes }} boxes
-                </div>
-
-                <div class="order-card-actions">
-                  <a href="{% url 'ordering:order_detail' order.id %}" class="button button-secondary">
-                    View order
-                  </a>
-                </div>
-              </article>
-            {% endfor %}
-          </div>
-        </section>
-      {% endif %}
     {% else %}
-      <div class="stack">
-        <div class="notice">
-          No orders yet.
-        </div>
-
-        <p>
-          <a href="{% url 'ordering:order_create' %}" class="link">Place your first order</a>
-        </p>
+      <div class="portal-empty-state">
+        You do not have any current orders right now.
       </div>
     {% endif %}
-  </div>
+  </section>
+
+  <section class="portal-section">
+    <h2 class="portal-section__title">Delivered orders</h2>
+
+    {% if delivered_orders %}
+      <div class="portal-order-list">
+        {% for order in delivered_orders %}
+          <article class="portal-order-card">
+            <div class="portal-order-card__top">
+              <div class="portal-order-card__identity">
+                <span class="portal-order-card__label">Order ID</span>
+                <div class="portal-order-card__id">#{{ order.id|stringformat:'s'|slice:':8' }}</div>
+              </div>
+
+              <div class="portal-order-card__details">
+                <div><strong>Date:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</div>
+
+                <div>
+                  <strong>Status:</strong>
+                  <span
+                    class="
+                      {% if order.status == 'delivered' %}
+                        portal-order-status portal-order-status--delivered
+                      {% elif order.status == 'cancelled' %}
+                        portal-order-status portal-order-status--cancelled
+                      {% elif order.status == 'pending' %}
+                        portal-order-status portal-order-status--pending
+                      {% elif order.status == 'packed' %}
+                        portal-order-status portal-order-status--packed
+                      {% else %}
+                        portal-order-status portal-order-status--neutral
+                      {% endif %}
+                    "
+                  >
+                    {{ order.get_status_display }}
+                  </span>
+                </div>
+
+                <div>
+                  <strong>Summary:</strong>
+                  {{ order.line_count }} products / {{ order.total_boxes }} boxes
+                </div>
+              </div>
+            </div>
+
+            <div class="portal-order-card__footer">
+              <a href="{% url 'ordering:order_detail' order.id %}?from=history" class="portal-inline-button">
+                Details
+              </a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="portal-empty-state">
+        <p style="margin: 0 0 0.9rem 0;">
+          You do not have any delivered orders yet.
+        </p>
+
+        <a href="{% url 'ordering:order_create' %}" class="portal-button portal-button--primary">
+          Place your first order
+        </a>
+      </div>
+    {% endif %}
+  </section>
 </section>
 {% endblock %}

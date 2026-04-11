@@ -5,46 +5,90 @@
 {% endblock %}
 
 {% block content %}
-<section class="page-section">
-  <div class="container left">
+<section class="portal-page">
+  <section class="portal-hero">
+    <div class="portal-hero__inner">
+      <h1 class="portal-hero__title">Welcome {{ store.name }}</h1>
 
-    <h1 class="page-title">Welcome back, {{ store.name }}</h1>
+      <p class="portal-hero__intro">
+        Place new orders, follow active orders, and access your order history.
+      </p>
 
-    <div class="stack">
-      <div class="card card-soft">
-        <p class="eyebrow">Last order</p>
-
-        {% if last_order %}
-          <p>{{ last_order.created_at|date:"Y-m-d H:i" }}</p>
-        {% else %}
-          <p>No orders yet.</p>
-        {% endif %}
+      <div class="portal-button-row portal-button-row--centered">
+        <a href="{% url 'ordering:order_create' %}" class="portal-button portal-button--primary">
+          Place new order
+        </a>
       </div>
     </div>
+  </section>
 
-    <div class="stack">
-      <div class="card">
-        <div class="stack">
-          <a href="{% url 'ordering:order_create' %}" class="button button-primary">
-            Refill stock
-          </a>
+  <section class="portal-section">
+    <h2 class="portal-section__title">Current orders</h2>
 
-          <a href="{% url 'ordering:order_history' %}" class="button button-secondary">
-            Order history
-          </a>
-        </div>
+    {% if active_orders %}
+      <div class="portal-order-list">
+        {% for order in active_orders %}
+          <article class="portal-order-card">
+            <div class="portal-order-card__top">
+              <div class="portal-order-card__identity">
+                <span class="portal-order-card__label">Order ID</span>
+                <div class="portal-order-card__id">#{{ order.id|stringformat:'s'|slice:':8' }}</div>
+              </div>
+
+              <div class="portal-order-card__details">
+                <div><strong>Date:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</div>
+
+                <div>
+                  <strong>Status:</strong>
+                  <span
+                    class="
+                      {% if order.status == 'pending' %}
+                        portal-order-status portal-order-status--pending
+                      {% elif order.status == 'packed' %}
+                        portal-order-status portal-order-status--packed
+                      {% elif order.status == 'delivered' %}
+                        portal-order-status portal-order-status--delivered
+                      {% elif order.status == 'cancelled' %}
+                        portal-order-status portal-order-status--cancelled
+                      {% else %}
+                        portal-order-status portal-order-status--neutral
+                      {% endif %}
+                    "
+                  >
+                    {{ order.get_status_display }}
+                  </span>
+                </div>
+
+                <div>
+                  <strong>Summary:</strong>
+                  {{ order.line_count }} products / {{ order.total_boxes }} boxes
+                </div>
+              </div>
+            </div>
+
+            <div class="portal-order-card__footer">
+              <a href="{% url 'ordering:order_detail' order.id %}?from=portal" class="portal-inline-button">
+                Details
+              </a>
+            </div>
+          </article>
+        {% endfor %}
       </div>
-    </div>
-
-    {% if not store.is_active %}
-      <div class="stack">
-        <div class="alert alert-error">
-          Your account is currently paused.
-          Please contact SwedeSweets.
-        </div>
+    {% else %}
+      <div class="portal-empty-state">
+        You do not have any active orders right now.
       </div>
     {% endif %}
+  </section>
 
-  </div>
+  <section class="portal-actions-footer">
+    <a href="{% url 'ordering:order_history' %}" class="portal-button portal-button--secondary">
+      Order history
+    </a>
+
+    <a href="{% url 'pages:contact' %}" class="portal-button portal-button--secondary">
+      Contact us
+    </a>
+  </section>
 </section>
 {% endblock %}
