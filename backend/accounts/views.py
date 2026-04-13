@@ -12,11 +12,9 @@ from .domain.errors import InvalidAccountIdentity
 from .domain.roles import get_role_spec
 from .forms import StaffAccountCreateForm, StoreAccountCreateForm
 from .read.selectors import (
-    count_staff_open_orders,
-    count_staff_unprocessed_partner_requests,
+    get_full_staff_portal_snapshot,
+    get_restricted_staff_portal_snapshot,
     get_store_portal_snapshot,
-    list_staff_open_orders,
-    list_staff_unprocessed_partner_requests,
     public_store_locator_entries,
 )
 from .write.dispatch import dispatch_account_creation
@@ -48,12 +46,6 @@ def portal(request):
     invalid business-identity combination, such as being linked to both Store
     and StaffAccount, the system treats that as configuration error rather than
     silently choosing one side.
-
-    WHY:
-    - store users, restricted staff, and full staff are different actors
-    - they belong in different work surfaces
-    - silent fallback would hide bad data
-    - failing closed is safer than routing a user into the wrong portal
     """
     try:
         role = resolve_account_role(request.user)
@@ -80,15 +72,6 @@ def portal(request):
 def store_portal(request):
     """
     Portal for store-linked partner accounts.
-
-    Responsibility:
-    - resolve the Store linked to the authenticated user
-    - show store-facing overview data
-    - act as entrypoint into ordering
-
-    Non-responsibility:
-    - internal staff operations
-    - system administration
     """
     store = require_store_user(request)
     context = get_store_portal_snapshot(store)
@@ -105,22 +88,11 @@ def restricted_staff_portal(request):
     """
     Portal for restricted internal staff.
 
-    Restricted staff are internal operational users who should work through the
-    portal only and should not require Django admin access.
-
-    DESIGN DECISION:
-    This view is guarded directly by require_restricted_staff_user() instead of
-    combining a broader staff check with extra branching in the view. That keeps
-    access control explicit and centralized in authz helpers.
+    Restricted staff are focused on operational order handling and should not
+    depend on Django admin or broader administrative work surfaces.
     """
     require_restricted_staff_user(request)
-
-    context = {
-        "open_orders": list_staff_open_orders(limit=10),
-        "unprocessed_partner_requests": list_staff_unprocessed_partner_requests(limit=10),
-        "open_order_count": count_staff_open_orders(),
-        "unprocessed_partner_request_count": count_staff_unprocessed_partner_requests(),
-    }
+    context = get_restricted_staff_portal_snapshot()
 
     return render(
         request,
@@ -135,18 +107,13 @@ def staff_portal(request):
     Portal for full internal staff.
 
     Full staff users may:
-    - monitor operational work
+    - monitor operational order work
+    - review incoming partner requests
     - create new store and staff accounts
     - access Django admin for deeper maintenance
     """
     require_full_staff_user(request)
-
-    context = {
-        "open_orders": list_staff_open_orders(limit=10),
-        "unprocessed_partner_requests": list_staff_unprocessed_partner_requests(limit=10),
-        "open_order_count": count_staff_open_orders(),
-        "unprocessed_partner_request_count": count_staff_unprocessed_partner_requests(),
-    }
+    context = get_full_staff_portal_snapshot()
 
     return render(
         request,
@@ -170,9 +137,6 @@ def account_create_choice(request):
 def create_store_account_view(request):
     """
     Create a new store-linked account through the explicit provisioning flow.
-
-    HTTP input is validated by the form and then converted into a typed command
-    before dispatching into the write layer.
     """
     require_full_staff_user(request)
 
@@ -199,9 +163,6 @@ def create_store_account_view(request):
 def create_staff_account_view(request):
     """
     Create a new internal staff account through the explicit provisioning flow.
-
-    The chosen access level determines whether the created staff account is
-    restricted or full.
     """
     require_full_staff_user(request)
 

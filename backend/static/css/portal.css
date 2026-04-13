@@ -21,6 +21,22 @@
   --portal-status-cancelled-text: #a23b3b;
   --portal-status-neutral-text: #667085;
 
+  /* Semantic action colors derived from status colors */
+  --portal-action-packed-bg: #edf4ff;
+  --portal-action-packed-border: #bfd3f3;
+  --portal-action-packed-text: #1d4f91;
+  --portal-action-packed-hover: #e3efff;
+
+  --portal-action-delivered-bg: #eef8f1;
+  --portal-action-delivered-border: #bfdcc8;
+  --portal-action-delivered-text: #2f7a46;
+  --portal-action-delivered-hover: #e5f4ea;
+
+  --portal-action-danger-bg: #fff4f4;
+  --portal-action-danger-border: #e7c4c4;
+  --portal-action-danger-text: #a23b3b;
+  --portal-action-danger-hover: #ffeded;
+
   --portal-shadow-soft: 0 8px 24px rgba(29, 36, 51, 0.08);
   --portal-shadow-button: 0 6px 18px rgba(29, 36, 51, 0.08);
   --portal-shadow-button-primary: 0 10px 24px rgba(29, 36, 51, 0.14);
@@ -136,6 +152,36 @@
   background: white;
   color: var(--portal-text-main);
   border-color: var(--portal-border);
+}
+
+.portal-button--packed {
+  background: var(--portal-action-packed-bg);
+  color: var(--portal-action-packed-text);
+  border-color: var(--portal-action-packed-border);
+}
+
+.portal-button--packed:hover {
+  background: var(--portal-action-packed-hover);
+}
+
+.portal-button--delivered {
+  background: var(--portal-action-delivered-bg);
+  color: var(--portal-action-delivered-text);
+  border-color: var(--portal-action-delivered-border);
+}
+
+.portal-button--delivered:hover {
+  background: var(--portal-action-delivered-hover);
+}
+
+.portal-button--danger {
+  background: var(--portal-action-danger-bg);
+  color: var(--portal-action-danger-text);
+  border-color: var(--portal-action-danger-border);
+}
+
+.portal-button--danger:hover {
+  background: var(--portal-action-danger-hover);
 }
 
 /* =========================================================
@@ -422,7 +468,8 @@
 }
 
 .portal-qty-button--plus {
-  color: var(--portal-brand-blue-dark);}
+  color: var(--portal-brand-blue-dark);
+}
 
 .portal-qty-button--plus:hover {
   border-color: var(--portal-brand-blue-dark);

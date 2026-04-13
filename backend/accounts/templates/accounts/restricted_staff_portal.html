@@ -1,67 +1,119 @@
 {% extends "base.html" %}
 
 {% block title %}
-  Operations portal — SwedeSweets
+  Operations — SwedeSweets
 {% endblock %}
 
 {% block content %}
-<section class="page-section">
-  <div class="container left">
+<section class="portal-page">
 
-    <div class="orders-page-header">
-      <div>
-        <h1 class="page-title">Operations portal</h1>
-        <p class="page-subtitle">
-          Internal operational overview for open orders and incoming partner requests.
-        </p>
+  <header class="portal-section" style="margin-top: 0;">
+    <h1 class="portal-section__title" style="font-size: 2rem; margin-bottom: 0.5rem;">
+      Operations
+    </h1>
+
+    <p style="margin: 0; color: var(--portal-text-muted); font-size: 1rem; line-height: 1.6;">
+      Open orders that need packing or delivery.
+    </p>
+  </header>
+
+  <section class="portal-section">
+    <h2 class="portal-section__title">Pending orders</h2>
+
+    {% if pending_orders %}
+      <div class="portal-order-list">
+        {% for order in pending_orders %}
+          <article class="portal-order-card">
+            <div class="portal-order-card__details" style="gap: 0.45rem;">
+              <div class="portal-order-card__id">
+                {{ order.store.name }}
+              </div>
+
+              <div>
+                Placed {{ order.created_at|date:"Y-m-d H:i" }}
+              </div>
+
+              <div>
+                {{ order.line_count }} product{{ order.line_count|pluralize }} / {{ order.total_boxes }} box{{ order.total_boxes|pluralize:"es" }}
+              </div>
+            </div>
+
+            <div class="portal-button-row">
+              <a href="{% url 'ordering:staff_order_work' order.id %}" class="portal-button portal-button--primary">
+                Open order
+              </a>
+
+              <form method="post" action="{% url 'ordering:staff_order_work' order.id %}" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" name="action" value="mark_packed" class="portal-button portal-button--packed">
+                  Mark as packed
+                </button>
+              </form>
+            </div>
+          </article>
+        {% endfor %}
       </div>
+    {% else %}
+      <div class="portal-empty-state">
+        No pending orders right now.
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="portal-section">
+    <h2 class="portal-section__title">Packed orders</h2>
+
+    {% if packed_orders %}
+      <div class="portal-order-list">
+        {% for order in packed_orders %}
+          <article class="portal-order-card">
+            <div class="portal-order-card__details" style="gap: 0.45rem;">
+              <div class="portal-order-card__id">
+                {{ order.store.name }}
+              </div>
+
+              <div>
+                Placed {{ order.created_at|date:"Y-m-d H:i" }}
+              </div>
+
+              <div>
+                Packed {{ order.packed_at|date:"Y-m-d H:i" }}
+              </div>
+
+              <div>
+                {{ order.line_count }} product{{ order.line_count|pluralize }} / {{ order.total_boxes }} box{{ order.total_boxes|pluralize:"es" }}
+              </div>
+            </div>
+
+            <div class="portal-button-row">
+              <a href="{% url 'ordering:staff_order_work' order.id %}" class="portal-button portal-button--primary">
+                Open order
+              </a>
+
+              <form method="post" action="{% url 'ordering:staff_order_work' order.id %}" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" name="action" value="mark_delivered" class="portal-button portal-button--delivered">
+                  Mark as delivered
+                </button>
+              </form>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="portal-empty-state">
+        No packed orders right now.
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="portal-section">
+    <div class="portal-actions-footer">
+      <a href="{% url 'ordering:staff_order_history' %}" class="portal-button portal-button--secondary">
+        Order history
+      </a>
     </div>
+  </section>
 
-    <section class="card card-soft">
-      <h2 class="section-title">Overview</h2>
-
-      <div class="stack">
-        <p><strong>Open orders:</strong> {{ open_order_count }}</p>
-        <p><strong>Unprocessed partner requests:</strong> {{ unprocessed_partner_request_count }}</p>
-      </div>
-    </section>
-
-    <section class="orders-group">
-      <h2 class="section-title">Open orders</h2>
-
-      {% if open_orders %}
-        <div class="stack">
-          {% for order in open_orders %}
-            <article class="card card-hover">
-              <div><strong>{{ order.store.name }}</strong></div>
-              <div>{{ order.created_at|date:"Y-m-d H:i" }}</div>
-              <div>{{ order.get_status_display }}</div>
-            </article>
-          {% endfor %}
-        </div>
-      {% else %}
-        <div class="notice">No open orders.</div>
-      {% endif %}
-    </section>
-
-    <section class="orders-group">
-      <h2 class="section-title">Unprocessed partner requests</h2>
-
-      {% if unprocessed_partner_requests %}
-        <div class="stack">
-          {% for request_obj in unprocessed_partner_requests %}
-            <article class="card card-hover">
-              <div><strong>{{ request_obj.store_name|default:"Unknown store" }}</strong></div>
-              <div>{{ request_obj.email }}</div>
-              <div>{{ request_obj.created_at|date:"Y-m-d H:i" }}</div>
-            </article>
-          {% endfor %}
-        </div>
-      {% else %}
-        <div class="notice">No unprocessed partner requests.</div>
-      {% endif %}
-    </section>
-
-  </div>
 </section>
 {% endblock %}

@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% block title %}  Staff order work — SwedeSweets
+{% endblock %}
+
+{% block content %}
+<section class="portal-page">
+
+  <div style="margin-bottom: 1rem;">
+    <a href="{% url 'accounts:restricted_staff_portal' %}" class="link back-link">
+      ← Back to operations
+    </a>
+  </div>
+
+  <header class="portal-section" style="margin-top: 0;">
+    <h1 class="portal-section__title" style="font-size: 2rem; margin-bottom: 0.5rem;">
+      Order #{{ order.id|stringformat:'s'|slice:':8' }}
+    </h1>
+
+    <p style="margin: 0; color: var(--portal-text-muted); font-size: 1rem; line-height: 1.6;">
+      Handle packing, notes, and delivery for this order.
+    </p>
+  </header>
+
+  <form method="post" class="portal-order-form-shell">
+    {% csrf_token %}
+
+    <section class="portal-section">
+      <article class="portal-order-card">
+        <h2 class="portal-section__title" style="margin-bottom: 0.8rem;">
+          Order summary
+        </h2>
+
+        <div class="portal-order-card__details" style="gap: 0.5rem;">
+          <div><strong>Store:</strong> {{ order.store.name }}</div>
+          <div><strong>Placed:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</div>
+
+          <div>
+            <strong>Status:</strong>
+            <span
+              class="
+                {% if order.status == 'pending' %}
+                  portal-order-status portal-order-status--pending
+                {% elif order.status == 'packed' %}
+                  portal-order-status portal-order-status--packed
+                {% elif order.status == 'delivered' %}
+                  portal-order-status portal-order-status--delivered
+                {% elif order.status == 'cancelled' %}
+                  portal-order-status portal-order-status--cancelled
+                {% else %}
+                  portal-order-status portal-order-status--neutral
+                {% endif %}
+              "
+            >
+              {{ order.get_status_display }}
+            </span>
+          </div>
+
+          {% if order.packed_at %}
+            <div><strong>Packed:</strong> {{ order.packed_at|date:"Y-m-d H:i" }}</div>
+          {% endif %}
+
+          {% if order.delivered_at %}
+            <div><strong>Delivered:</strong> {{ order.delivered_at|date:"Y-m-d H:i" }}</div>
+          {% endif %}
+
+          {% if order.cancelled_at %}
+            <div><strong>Cancelled:</strong> {{ order.cancelled_at|date:"Y-m-d H:i" }}</div>
+          {% endif %}
+
+          <div><strong>Summary:</strong> {{ order.line_count }} products / {{ order.total_boxes }} boxes</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="portal-section">
+      <article class="portal-order-card">
+        <h2 class="portal-section__title" style="margin-bottom: 0.8rem;">
+          {% if order.status == "delivered" or order.status == "cancelled" %}
+            Ordered items
+          {% else %}
+            Items to pack
+          {% endif %}
+        </h2>
+
+        <div style="display: grid; gap: 0.9rem;">
+          {% for item in order.items.all %}
+            {% if order.status == "delivered" or order.status == "cancelled" %}
+              <div
+                style="
+                  display: grid;
+                  gap: 0.35rem;
+                  padding-top: 0.9rem;
+                  border-top: 1px solid var(--portal-border);
+                "
+              >
+                <div style="font-weight: 700; color: var(--portal-text-main);">
+                  {{ item.product_name }}
+                </div>
+
+                <div style="color: var(--portal-text-muted);">
+                  Ordered {{ item.boxes }} box{{ item.boxes|pluralize:"es" }}
+                </div>
+
+                {% if item.product_code or item.product_category_name %}
+                  <div style="color: var(--portal-text-muted); font-size: 0.92rem;">
+                    {% if item.product_code %}
+                      <span>Code {{ item.product_code }}</span>
+                    {% endif %}
+                    {% if item.product_code and item.product_category_name %}
+                      <span> · </span>
+                    {% endif %}
+                    {% if item.product_category_name %}
+                      <span>{{ item.product_category_name }}</span>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            {% else %}
+              <label
+                style="
+                  display: grid;
+                  grid-template-columns: 24px minmax(0, 1fr);
+                  gap: 0.85rem;
+                  align-items: start;
+                  padding-top: 0.9rem;
+                  border-top: 1px solid var(--portal-border);
+                  cursor: pointer;
+                "
+              >
+                <input type="checkbox">
+
+                <div>
+                  <div style="font-weight: 700; color: var(--portal-text-main);">
+                    {{ item.product_name }}
+                  </div>
+
+                  <div style="margin-top: 0.25rem; color: var(--portal-text-muted);">
+                    Ordered {{ item.boxes }} box{{ item.boxes|pluralize:"es" }}
+                  </div>
+                  {% if item.product_code or item.product_category_name %}
+                    <div style="margin-top: 0.35rem; color: var(--portal-text-muted); font-size: 0.92rem;">
+                      {% if item.product_code %}
+                        <span>Code {{ item.product_code }}</span>
+                      {% endif %}
+                      {% if item.product_code and item.product_category_name %}
+                        <span> · </span>
+                      {% endif %}
+                      {% if item.product_category_name %}
+                        <span>{{ item.product_category_name }}</span>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                </div>
+              </label>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if order.status == "pending" %}
+          <div class="portal-button-row" style="margin-top: 1rem;">
+            <button type="submit" name="action" value="mark_packed" class="portal-button portal-button--packed">
+              Mark as packed
+            </button>
+          </div>
+        {% endif %}
+
+        {% if order.status == "packed" %}
+          <div class="portal-button-row" style="margin-top: 1rem;">
+            <button type="submit" name="action" value="mark_delivered" class="portal-button portal-button--delivered">
+              Mark as delivered
+            </button>
+          </div>
+        {% endif %}
+      </article>
+    </section>
+
+    <section class="portal-section">
+      <article class="portal-order-card">
+        <h2 class="portal-section__title" style="margin-bottom: 0.8rem;">
+          Order notes
+        </h2>
+
+        {% if order.status != "delivered" and order.status != "cancelled" %}
+          <p style="margin: 0 0 0.8rem 0; color: var(--portal-text-muted); line-height: 1.6;">
+            Add notes about shortages, substitutions, packing, or delivery.
+          </p>
+
+          <textarea
+            name="staff_notes"
+            rows="6"
+            style="width: 100%;"
+            placeholder="Add internal notes for this order..."
+          >{{ order.staff_notes }}</textarea>
+
+          <div class="portal-button-row" style="margin-top: 1rem;">
+            <button type="submit" name="action" value="save" class="portal-button portal-button--secondary">
+              Save notes
+            </button>
+          </div>
+        {% else %}
+          {% if order.staff_notes %}
+            <div
+              style="
+                padding: 1rem;
+                border: 1px solid var(--portal-border);
+                border-radius: 12px;
+                background: var(--portal-card-bg);
+                color: var(--portal-text-main);
+                line-height: 1.7;
+                white-space: pre-line;
+              "
+            >
+              {{ order.staff_notes }}
+            </div>
+          {% else %}
+            <div class="portal-empty-state" style="padding: 1rem;">
+              No notes were added for this order.
+            </div>
+          {% endif %}
+        {% endif %}
+      </article>
+    </section>
+
+    {% if order.status == "pending" or order.status == "packed" %}
+      <section class="portal-section">
+        <div class="portal-button-row">
+          <button
+            type="submit"
+            name="action"
+            value="cancel_order"
+            class="link"
+            style="
+              padding: 0;
+              border: none;
+              background: none;
+              color: var(--portal-text-muted);
+              cursor: pointer;
+            "
+            onclick="return confirm('Are you sure you want to cancel this order?');"
+          >
+            Cancel order
+          </button>
+        </div>
+      </section>
+    {% endif %}
+
+  </form>
+</section>
+{% endblock %}

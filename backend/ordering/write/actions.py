@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.utils import timezone
 
 from accounts.models import Store
 from catalog.models import Product
@@ -6,6 +7,9 @@ from catalog.models import Product
 from ..domain import (
     BoxQuantity,
     InvalidProductSelection,
+    ensure_can_cancel,
+    ensure_can_mark_delivered,
+    ensure_can_mark_packed,
     ensure_order_has_lines,
     ensure_store_is_active,
     ensure_unique_product_ids,
@@ -151,3 +155,87 @@ def place_order(command: PlaceOrderCommand) -> PlaceOrderResult:
         order_id=str(order.id),
         line_count=line_count,
     )
+
+
+@transaction.atomic
+def save_staff_order_progress(*, order: Order, staff_notes: str) -> Order:
+    """
+    Persist staff notes without changing order status.
+    """
+    order.staff_notes = staff_notes.strip()
+    order.save(update_fields=["staff_notes"])
+    return order
+
+
+@transaction.atomic
+def mark_order_as_packed(*, order: Order, staff_notes: str) -> Order:
+    """
+    Mark an order as packed and persist current staff notes.
+
+    Packing is allowed from pending and tolerated for already-packed orders.
+    It is blocked for delivered/cancelled orders by domain policy.
+    """
+    ensure_can_mark_packed(current_status=order.status)
+
+    now = timezone.now()
+
+    order.staff_notes = staff_notes.strip()
+    order.status = Order.Status.PACKED
+
+    if order.packed_at is None:
+        order.packed_at = now
+
+    order.save(update_fields=["staff_notes", "status", "packed_at"])
+    return order
+
+
+@transaction.atomic
+def mark_order_as_delivered(*, order: Order, staff_notes: str) -> Order:
+    """
+    Mark an order as delivered and persist current staff notes.
+
+    For MVP simplicity, delivering directly from pending is allowed.
+    In that case the order is also treated as packed at the same moment.
+    """
+    ensure_can_mark_delivered(current_status=order.status)
+
+    now = timezone.now()
+
+    order.staff_notes = staff_notes.strip()
+    order.status = Order.Status.DELIVERED
+
+    if order.packed_at is None:
+        order.packed_at = now
+    if order.delivered_at is None:
+        order.delivered_at = now
+
+    order.save(
+        update_fields=[
+            "staff_notes",
+            "status",
+            "packed_at",
+            "delivered_at",
+        ]
+    )
+    return order
+
+
+@transaction.atomic
+def cancel_order(*, order: Order, staff_notes: str) -> Order:
+    """
+    Cancel an order and persist current staff notes.
+
+    Cancellation is blocked for delivered orders by domain policy.
+    """
+    ensure_can_cancel(current_status=order.status)
+
+    now = timezone.now()
+
+    order.staff_notes = staff_notes.strip()
+    order.status = Order.Status.CANCELLED
+
+    if order.cancelled_at is None:
+        order.cancelled_at = now
+
+    order.save(update_fields=["staff_notes", "status", "cancelled_at"])
+    return order

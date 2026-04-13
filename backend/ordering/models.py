@@ -12,18 +12,20 @@ class Order(models.Model):
     - Order is the aggregate root for ordering history
     - It belongs to exactly one Store
     - Its line items are immutable historical snapshots
-    - Status is currently simple but intended to express fulfillment progress
+    - Status expresses fulfillment progress for internal operations
 
     STATUS MEANING:
     - pending: received but not yet packed
     - packed: prepared for delivery
     - delivered: completed and historically closed
+    - cancelled: internally cancelled before completion
     """
 
     class Status(models.TextChoices):
         PENDING = "pending", "Pending"
         PACKED = "packed", "Packed"
         DELIVERED = "delivered", "Delivered"
+        CANCELLED = "cancelled", "Cancelled"
 
     id = models.UUIDField(
         primary_key=True,
@@ -44,6 +46,12 @@ class Order(models.Model):
         choices=Status.choices,
         default=Status.PENDING,
     )
+
+    # Internal staff workflow fields.
+    staff_notes = models.TextField(blank=True)
+    packed_at = models.DateTimeField(null=True, blank=True)
+    delivered_at = models.DateTimeField(null=True, blank=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]

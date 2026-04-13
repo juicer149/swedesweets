@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Staff order history — SwedeSweets
+{% endblock %}
+
+{% block content %}
+<section class="portal-page">
+
+  <div style="margin-bottom: 1rem;">
+    <a href="{% url 'accounts:restricted_staff_portal' %}" class="link back-link">
+      ← Back to operations
+    </a>
+  </div>
+
+  <header class="portal-section" style="margin-top: 0;">
+    <h1 class="portal-section__title" style="font-size: 2rem; margin-bottom: 0.5rem;">
+      Order history
+    </h1>
+
+    <p style="margin: 0; color: var(--portal-text-muted); font-size: 1rem; line-height: 1.6;">
+      Review delivered and cancelled orders.
+    </p>
+  </header>
+
+  <section class="portal-section" style="margin-top: 1.5rem;">
+    <div class="portal-button-row">
+      <a
+        href="{% url 'ordering:staff_order_history' %}"
+        class="portal-button {% if status_filter == 'all' %}portal-button--primary{% else %}portal-button--secondary{% endif %}"
+      >
+        All
+      </a>
+
+      <a
+        href="{% url 'ordering:staff_order_history' %}?status=delivered"
+        class="portal-button {% if status_filter == 'delivered' %}portal-button--delivered{% else %}portal-button--secondary{% endif %}"
+      >
+        Delivered
+      </a>
+
+      <a
+        href="{% url 'ordering:staff_order_history' %}?status=cancelled"
+        class="portal-button {% if status_filter == 'cancelled' %}portal-button--danger{% else %}portal-button--secondary{% endif %}"
+      >
+        Cancelled
+      </a>
+    </div>
+  </section>
+
+  <section class="portal-section">
+    {% if orders %}
+      <div class="portal-order-list">
+        {% for order in orders %}
+          <article class="portal-order-card">
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 160px minmax(0, 1fr);
+                gap: 1rem 1.25rem;
+                align-items: start;
+              "
+            >
+              <div style="display: grid; gap: 0.3rem;">
+                <div
+                  class="
+                    portal-order-status
+                    {% if order.status == 'delivered' %}
+                      portal-order-status--delivered
+                    {% elif order.status == 'cancelled' %}
+                      portal-order-status--cancelled
+                    {% else %}
+                      portal-order-status--neutral
+                    {% endif %}
+                  "
+                >
+                  {{ order.get_status_display }}
+                </div>
+
+                <div class="portal-order-card__id">
+                  #{{ order.id|stringformat:'s'|slice:':8' }}
+                </div>
+              </div>
+
+              <div class="portal-order-card__details" style="gap: 0.45rem;">
+                <div>
+                  {{ order.store.name }}
+                </div>
+
+                <div>
+                  Placed {{ order.created_at|date:"Y-m-d H:i" }}
+                </div>
+              </div>
+            </div>
+
+            <div class="portal-order-card__footer">
+              <a href="{% url 'ordering:staff_order_work' order.id %}" class="portal-inline-button">
+                Open order
+              </a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="portal-empty-state">
+        No matching historical orders.
+      </div>
+    {% endif %}
+  </section>
+
+</section>
+{% endblock %}

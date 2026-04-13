@@ -1,8 +1,8 @@
 from accounts.models import Store
-from ordering.models import Order
 from ordering.read.selectors import (
-    latest_order_for_store,
     list_active_orders_for_store,
+    list_packed_orders_for_staff,
+    list_pending_orders_for_staff,
 )
 from partner_request.models import PartnerRequest
 
@@ -20,31 +20,39 @@ def public_store_locator_entries():
 
 def get_store_portal_snapshot(store: Store) -> dict:
     """
-    Build the read model for the store portal homepage.
-
-    Current homepage needs:
-    - store identity
-    - active orders (pending / packed)
-    - latest order, which may still be useful for future UI additions
+    Read model for the store portal homepage.
     """
     return {
         "store": store,
         "active_orders": list_active_orders_for_store(store),
-        "last_order": latest_order_for_store(store),
     }
 
 
-def list_staff_open_orders(*, limit: int = 10):
-    return list(
-        Order.objects
-        .exclude(status=Order.Status.DELIVERED)
-        .select_related("store")
-        .order_by("-created_at")[:limit]
-    )
+def get_restricted_staff_portal_snapshot() -> dict:
+    """
+    Read model for the restricted staff operations portal.
+
+    Restricted staff focus on operational order handling only.
+    """
+    return {
+        "pending_orders": list_pending_orders_for_staff(),
+        "packed_orders": list_packed_orders_for_staff(),
+    }
 
 
-def count_staff_open_orders() -> int:
-    return Order.objects.exclude(status=Order.Status.DELIVERED).count()
+def get_full_staff_portal_snapshot() -> dict:
+    """
+    Read model for the full staff portal.
+
+    Full staff see the same operational order overview as restricted staff,
+    plus incoming partner requests for broader administrative work.
+    """
+    return {
+        "pending_orders": list_pending_orders_for_staff(),
+        "packed_orders": list_packed_orders_for_staff(),
+        "unprocessed_partner_requests": list_staff_unprocessed_partner_requests(limit=10),
+        "unprocessed_partner_request_count": count_staff_unprocessed_partner_requests(),
+    }
 
 
 def list_staff_unprocessed_partner_requests(*, limit: int = 10):

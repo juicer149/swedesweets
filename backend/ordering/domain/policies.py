@@ -1,6 +1,12 @@
 from collections.abc import Iterable, Sequence
 
-from .errors import DuplicateProduct, EmptyOrder, StoreInactive
+from ..models import Order
+from .errors import (
+    DuplicateProduct,
+    EmptyOrder,
+    InvalidOrderStatusTransition,
+    StoreInactive,
+)
 
 
 def ensure_store_is_active(*, is_active: bool) -> None:
@@ -22,3 +28,53 @@ def ensure_unique_product_ids(product_ids: Iterable[int]) -> None:
                 f"Product {product_id} appears more than once in the same order."
             )
         seen.add(product_id)
+
+
+def ensure_can_mark_packed(*, current_status: str) -> None:
+    """
+    Allow packing only from pending or packed.
+
+    - pending -> packed: valid
+    - packed -> packed: tolerated
+    - delivered -> packed: invalid
+    - cancelled -> packed: invalid
+    """
+    if current_status == Order.Status.DELIVERED:
+        raise InvalidOrderStatusTransition(
+            "Delivered orders cannot be marked as packed."
+        )
+
+    if current_status == Order.Status.CANCELLED:
+        raise InvalidOrderStatusTransition(
+            "Cancelled orders cannot be marked as packed."
+        )
+
+
+def ensure_can_mark_delivered(*, current_status: str) -> None:
+    """
+    Allow delivery from pending, packed, or delivered.
+
+    - pending -> delivered: allowed for MVP bypass flow
+    - packed -> delivered: valid
+    - delivered -> delivered: tolerated
+    - cancelled -> delivered: invalid
+    """
+    if current_status == Order.Status.CANCELLED:
+        raise InvalidOrderStatusTransition(
+            "Cancelled orders cannot be marked as delivered."
+        )
+
+
+def ensure_can_cancel(*, current_status: str) -> None:
+    """
+    Allow cancellation from pending, packed, or cancelled.
+
+    - pending -> cancelled: valid
+    - packed -> cancelled: valid
+    - cancelled -> cancelled: tolerated
+    - delivered -> cancelled: invalid
+    """
+    if current_status == Order.Status.DELIVERED:
+        raise InvalidOrderStatusTransition(
+            "Delivered orders cannot be cancelled."
+        )

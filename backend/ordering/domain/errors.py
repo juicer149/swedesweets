@@ -20,3 +20,7 @@ class StoreInactive(OrderingError):
 
 class InvalidProductSelection(OrderingError):
     """Raised when one or more selected products do not exist or are inactive."""
+
+
+class InvalidOrderStatusTransition(OrderingError):
+    """Raised when an order status change is not allowed."""
