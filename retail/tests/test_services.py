@@ -25,6 +25,8 @@ from carts.models import (
     Cart,
     CartLine,
 )
+from carts.services import create_cart
+from common.channels import SalesChannel
 from retail.models import (
     RetailCheckoutSession,
     RetailOfferSelection,
@@ -32,7 +34,6 @@ from retail.models import (
 from retail.rules import (
     MAX_RETAIL_LINE_QUANTITY,
     MAX_RETAIL_ORDER_TOTAL,
-    MIN_RETAIL_LINE_QUANTITY,
     RETAIL_CHECKOUT_WINDOW,
     RETAIL_PAYMENT_RESERVATION_WINDOW,
 )
@@ -43,13 +44,9 @@ from retail.services import (
     RetailOrderLineInput,
     add_retail_cart_line,
     buyer_from_anonymous_retail_input,
-    clear_retail_cart,
     create_pending_retail_order,
-    create_retail_cart,
     create_retail_checkout_from_cart,
-    remove_retail_cart_line,
     start_retail_payment,
-    update_retail_cart_line_quantity,
 )
 from retail.tests.factories import (
     retail_batch_price_factory,
@@ -62,16 +59,10 @@ from retail.tests.factories import (
 
 
 @pytest.mark.django_db
-def test_create_retail_cart_creates_empty_cart():
-    cart = create_retail_cart()
-
-    assert isinstance(cart, Cart)
-    assert cart.lines.count() == 0
-
-
-@pytest.mark.django_db
 def test_add_product_price_to_retail_cart():
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
     offer = retail_product_price_factory(
         enabled=True,
         price=Decimal("12.50"),
@@ -98,7 +89,9 @@ def test_add_product_price_to_retail_cart():
 
 @pytest.mark.django_db
 def test_add_batch_price_to_retail_cart():
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
     offer = retail_batch_price_factory(
         enabled=True,
         price=Decimal("4.90"),
@@ -125,7 +118,9 @@ def test_add_batch_price_to_retail_cart():
 
 @pytest.mark.django_db
 def test_adding_same_commercial_price_again_increments_existing_cart_line():
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
     offer = retail_product_price_factory(
         enabled=True,
         price=Decimal("12.50"),
@@ -150,66 +145,30 @@ def test_adding_same_commercial_price_again_increments_existing_cart_line():
 
 
 @pytest.mark.django_db
-def test_adding_same_commercial_price_rejects_quantity_above_retail_limit():
-    cart = create_retail_cart()
+def test_add_retail_cart_line_does_not_apply_order_quantity_limit():
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
     offer = retail_product_price_factory(
         enabled=True,
         price=Decimal("12.50"),
     )
+    quantity = MAX_RETAIL_LINE_QUANTITY + 1
 
     line = add_retail_cart_line(
         cart=cart,
         commercial_price_id=offer.pk,
-        quantity=MAX_RETAIL_LINE_QUANTITY,
+        quantity=quantity,
     )
 
-    with pytest.raises(
-        InvalidRetailCart,
-        match="quantity",
-    ):
-        add_retail_cart_line(
-            cart=cart,
-            commercial_price_id=offer.pk,
-            quantity=1,
-        )
-
-    line.refresh_from_db()
-    assert line.quantity == MAX_RETAIL_LINE_QUANTITY
-
-
-
-
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "quantity",
-    [
-        MIN_RETAIL_LINE_QUANTITY - 1,
-        MAX_RETAIL_LINE_QUANTITY + 1,
-    ],
-)
-def test_add_retail_cart_line_rejects_invalid_quantity(quantity: int):
-    cart = create_retail_cart()
-    offer = retail_product_price_factory(
-        enabled=True,
-        price=Decimal("12.50"),
-    )
-
-    with pytest.raises(
-        InvalidRetailCart,
-        match="quantity",
-    ):
-        add_retail_cart_line(
-            cart=cart,
-            commercial_price_id=offer.pk,
-            quantity=quantity,
-        )
+    assert line.quantity == quantity
 
 
 @pytest.mark.django_db
 def test_add_retail_cart_line_rejects_missing_offer():
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
 
     with pytest.raises(
         InvalidRetailOrder,
@@ -224,7 +183,9 @@ def test_add_retail_cart_line_rejects_missing_offer():
 
 @pytest.mark.django_db
 def test_add_retail_cart_line_rejects_disabled_offer():
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
     offer = retail_product_price_factory(
         enabled=False,
         price=Decimal("12.50"),
@@ -242,138 +203,12 @@ def test_add_retail_cart_line_rejects_disabled_offer():
 
 
 @pytest.mark.django_db
-def test_update_retail_cart_line_quantity():
-    cart = create_retail_cart()
-    offer = retail_product_price_factory(
-        enabled=True,
-        price=Decimal("12.50"),
-    )
-    line = add_retail_cart_line(
-        cart=cart,
-        commercial_price_id=offer.pk,
-        quantity=2,
-    )
-
-    updated = update_retail_cart_line_quantity(
-        cart=cart,
-        line=line,
-        quantity=5,
-    )
-
-    assert updated.quantity == 5
-
-
-@pytest.mark.django_db
-def test_update_retail_cart_line_rejects_line_from_other_cart():
-    first_cart = create_retail_cart()
-    second_cart = create_retail_cart()
-    offer = retail_product_price_factory(
-        enabled=True,
-        price=Decimal("12.50"),
-    )
-    line = add_retail_cart_line(
-        cart=first_cart,
-        commercial_price_id=offer.pk,
-        quantity=2,
-    )
-
-    with pytest.raises(
-        InvalidRetailCart,
-        match="does not belong",
-    ):
-        update_retail_cart_line_quantity(
-            cart=second_cart,
-            line=line,
-            quantity=3,
-        )
-
-    line.refresh_from_db()
-    assert line.quantity == 2
-
-
-@pytest.mark.django_db
-def test_remove_retail_cart_line():
-    cart = create_retail_cart()
-    offer = retail_product_price_factory(
-        enabled=True,
-        price=Decimal("12.50"),
-    )
-    line = add_retail_cart_line(
-        cart=cart,
-        commercial_price_id=offer.pk,
-        quantity=2,
-    )
-
-    remove_retail_cart_line(
-        cart=cart,
-        line=line,
-    )
-
-    assert not CartLine.objects.filter(pk=line.pk).exists()
-
-
-@pytest.mark.django_db
-def test_remove_retail_cart_line_rejects_line_from_other_cart():
-    first_cart = create_retail_cart()
-    second_cart = create_retail_cart()
-    offer = retail_product_price_factory(
-        enabled=True,
-        price=Decimal("12.50"),
-    )
-    line = add_retail_cart_line(
-        cart=first_cart,
-        commercial_price_id=offer.pk,
-        quantity=2,
-    )
-
-    with pytest.raises(
-        InvalidRetailCart,
-        match="does not belong",
-    ):
-        remove_retail_cart_line(
-            cart=second_cart,
-            line=line,
-        )
-
-    assert CartLine.objects.filter(pk=line.pk).exists()
-
-
-@pytest.mark.django_db
-def test_clear_retail_cart_removes_all_lines():
-    cart = create_retail_cart()
-    first_offer = retail_product_price_factory(
-        enabled=True,
-        price=Decimal("12.50"),
-    )
-    second_offer = retail_batch_price_factory(
-        enabled=True,
-        price=Decimal("4.90"),
-    )
-
-    add_retail_cart_line(
-        cart=cart,
-        commercial_price_id=first_offer.pk,
-        quantity=1,
-    )
-    add_retail_cart_line(
-        cart=cart,
-        commercial_price_id=second_offer.pk,
-        quantity=2,
-    )
-
-    returned_cart = clear_retail_cart(
-        cart=cart,
-    )
-
-    assert returned_cart.pk == cart.pk
-    assert cart.lines.count() == 0
-
-
-@pytest.mark.django_db
 def test_create_retail_checkout_from_cart_converts_and_consumes_cart():
     retail_postal_area_factory()
 
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
     cart_id = cart.pk
 
     product = retail_product_factory(
@@ -460,7 +295,9 @@ def test_create_retail_checkout_from_cart_converts_and_consumes_cart():
 def test_create_retail_checkout_from_cart_allows_two_prices_for_same_product():
     retail_postal_area_factory()
 
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
     product = retail_product_factory()
 
     product_price = retail_product_price_factory(
@@ -521,7 +358,9 @@ def test_create_retail_checkout_from_cart_allows_two_prices_for_same_product():
 def test_create_retail_checkout_from_cart_reprices_at_conversion():
     retail_postal_area_factory()
 
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
     offer = retail_product_price_factory(
         enabled=True,
         price=Decimal("12.50"),
@@ -559,7 +398,9 @@ def test_create_retail_checkout_from_cart_reprices_at_conversion():
 @pytest.mark.django_db
 def test_create_retail_checkout_from_cart_rejects_empty_cart():
     retail_postal_area_factory()
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
 
     with pytest.raises(
         InvalidRetailCart,
@@ -582,7 +423,9 @@ def test_create_retail_checkout_from_cart_rejects_empty_cart():
 def test_create_retail_checkout_from_cart_preserves_cart_on_validation_failure():
     retail_postal_area_factory()
 
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
     offer = retail_product_price_factory(
         enabled=True,
         price=Decimal("12.50"),

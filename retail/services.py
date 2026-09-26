@@ -7,6 +7,12 @@ from django.db import transaction
 from django.db.models import QuerySet
 from django.utils import timezone
 
+from carts.models import Cart, CartLine
+from carts.services import (
+    InvalidCart,
+    add_cart_line,
+)
+from common.channels import SalesChannel
 from inventory.errors import InsufficientStockError
 from inventory.models import InventoryBatch
 from orders.datatypes import BuyerInput
@@ -29,11 +35,6 @@ from reservations.services import (
     cancel_temporary_reservations_for_order,
     reserve_order_line_from_pool,
 )
-from carts.models import (
-    Cart,
-    CartLine,
-)
-from common.channels import SalesChannel
 from retail.models import (
     RetailCheckoutSession,
     RetailOfferSelection,
@@ -51,16 +52,7 @@ from retail.selectors import list_batches_for_retail_price
 
 
 class InvalidRetailCart(ValueError):
-    """Raised when a retail cart mutation violates a cart invariant."""
-
-
-@transaction.atomic
-def create_retail_cart() -> Cart:
-    """Create an empty mutable retail cart."""
-
-    return Cart.objects.create(
-        channel=SalesChannel.RETAIL,
-    )
+    """Raised when a retail cart use case violates a retail invariant."""
 
 
 @transaction.atomic
@@ -70,117 +62,23 @@ def add_retail_cart_line(
     commercial_price_id: int,
     quantity: int,
 ) -> CartLine:
-    """Add one retail CommercialPrice, merging an existing matching line."""
-
-    _validate_cart_quantity(
-        quantity=quantity,
-    )
-
-    cart = _lock_retail_cart(
-        cart=cart,
-    )
+    """Resolve an eligible RETAIL offer and add it to a cart."""
 
     commercial_price, _ = _get_retail_price_and_amount(
         commercial_price_id=commercial_price_id,
         currency=PriceAmount.Currency.EUR,
     )
 
-    existing_line = (
-        CartLine.objects
-        .filter(
+    try:
+        return add_cart_line(
             cart=cart,
             commercial_price=commercial_price,
+            quantity=quantity,
         )
-        .first()
-    )
-
-    if existing_line is not None:
-        new_quantity = existing_line.quantity + quantity
-
-        _validate_cart_quantity(
-            quantity=new_quantity,
-        )
-
-        existing_line.quantity = new_quantity
-        existing_line.save(
-            update_fields=[
-                "quantity",
-                "updated_at",
-            ],
-        )
-        return existing_line
-
-    return CartLine.objects.create(
-        cart=cart,
-        commercial_price=commercial_price,
-        quantity=quantity,
-    )
-
-
-@transaction.atomic
-def update_retail_cart_line_quantity(
-    *,
-    cart: Cart,
-    line: CartLine,
-    quantity: int,
-) -> CartLine:
-    """Set the quantity of one line that belongs to the given cart."""
-
-    _validate_cart_quantity(
-        quantity=quantity,
-    )
-
-    cart = _lock_retail_cart(
-        cart=cart,
-    )
-    line = _get_locked_cart_line(
-        cart=cart,
-        line=line,
-    )
-
-    line.quantity = quantity
-    line.save(
-        update_fields=[
-            "quantity",
-            "updated_at",
-        ],
-    )
-
-    return line
-
-
-@transaction.atomic
-def remove_retail_cart_line(
-    *,
-    cart: Cart,
-    line: CartLine,
-) -> None:
-    """Remove one line that belongs to the given cart."""
-
-    cart = _lock_retail_cart(
-        cart=cart,
-    )
-    line = _get_locked_cart_line(
-        cart=cart,
-        line=line,
-    )
-
-    line.delete()
-
-
-@transaction.atomic
-def clear_retail_cart(
-    *,
-    cart: Cart,
-) -> Cart:
-    """Remove every line from a retail cart."""
-
-    cart = _lock_retail_cart(
-        cart=cart,
-    )
-    cart.lines.all().delete()
-
-    return cart
+    except InvalidCart as exc:
+        raise InvalidRetailCart(
+            str(exc)
+        ) from exc
 
 
 class InvalidRetailOrder(ValueError):
@@ -262,7 +160,7 @@ def create_retail_checkout_from_cart(
 ) -> RetailCheckoutSession:
     """Convert one mutable retail cart into a validated retail checkout."""
 
-    cart = _lock_retail_cart(
+    cart = _lock_retail_cart_for_checkout(
         cart=cart,
     )
 
@@ -299,8 +197,12 @@ def create_pending_retail_order(
 ) -> RetailCheckoutSession:
     """Create a validated retail checkout without reserving stock."""
 
-    _validate_buyer_destination(buyer)
-    _validate_lines(lines)
+    _validate_buyer_destination(
+        buyer
+    )
+    _validate_lines(
+        lines
+    )
 
     resolved_lines = _resolve_retail_lines(
         lines=lines,
@@ -340,7 +242,7 @@ def create_pending_retail_order(
             unit=OrderLine.Unit.STOCK_UNIT,
             quantity_in_units=resolved_line.quantity,
             unit_price_snapshot=resolved_line.unit_price,
-            commercial_offer=resolved_line.commercial_price
+            commercial_offer=resolved_line.commercial_price,
         )
 
         RetailOfferSelection.objects.create(
@@ -595,8 +497,7 @@ def fail_retail_payment(
     )
 
 
-
-def _lock_retail_cart(
+def _lock_retail_cart_for_checkout(
     *,
     cart: Cart,
 ) -> Cart:
@@ -617,40 +518,6 @@ def _lock_retail_cart(
         )
 
     return cart
-
-
-def _get_locked_cart_line(
-    *,
-    cart: Cart,
-    line: CartLine,
-) -> CartLine:
-    try:
-        return (
-            CartLine.objects
-            .select_for_update()
-            .get(
-                pk=line.pk,
-                cart=cart,
-            )
-        )
-    except CartLine.DoesNotExist as exc:
-        raise InvalidRetailCart(
-            "retail cart line does not belong to cart"
-        ) from exc
-
-
-def _validate_cart_quantity(
-    *,
-    quantity: int,
-) -> None:
-    if not (
-        MIN_RETAIL_LINE_QUANTITY
-        <= quantity
-        <= MAX_RETAIL_LINE_QUANTITY
-    ):
-        raise InvalidRetailCart(
-            "invalid retail cart line quantity"
-        )
 
 
 def _get_offer_selection(

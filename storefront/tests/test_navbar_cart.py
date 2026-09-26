@@ -10,10 +10,9 @@ from carts.models import (
     Cart,
     CartLine,
 )
-from retail.services import (
-    add_retail_cart_line,
-    create_retail_cart,
-)
+from carts.services import create_cart
+from common.channels import SalesChannel
+from retail.services import add_retail_cart_line
 from retail.tests.factories import (
     retail_product_price_factory,
 )
@@ -68,7 +67,9 @@ def test_navbar_cart_fragment_renders_existing_retail_cart(
     client,
     retail_price,
 ):
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
 
     add_retail_cart_line(
         cart=cart,
@@ -99,7 +100,9 @@ def test_navbar_cart_quantity_updates_owned_line(
     client,
     retail_price,
 ):
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
 
     line = add_retail_cart_line(
         cart=cart,
@@ -142,8 +145,12 @@ def test_navbar_cart_cannot_update_line_from_other_cart(
     client,
     retail_price,
 ):
-    own_cart = create_retail_cart()
-    other_cart = create_retail_cart()
+    own_cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
+    other_cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
 
     other_line = add_retail_cart_line(
         cart=other_cart,
@@ -181,7 +188,9 @@ def test_navbar_cart_removes_owned_line(
     client,
     retail_price,
 ):
-    cart = create_retail_cart()
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
 
     line = add_retail_cart_line(
         cart=cart,

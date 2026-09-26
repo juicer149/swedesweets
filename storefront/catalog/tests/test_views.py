@@ -598,11 +598,11 @@ def test_add_to_cart_defaults_missing_quantity_to_one(client):
         ),
         (
             "0",
-            "quantity must be greater than zero",
+            "cart line quantity must be positive",
         ),
         (
             "-1",
-            "quantity must be greater than zero",
+            "cart line quantity must be positive",
         ),
     ],
 )
@@ -643,7 +643,9 @@ def test_add_to_cart_rejects_invalid_quantity(
 
 
 @pytest.mark.django_db
-def test_add_to_cart_rejects_quantity_above_line_maximum(client):
+def test_add_to_cart_allows_quantity_above_legacy_line_maximum(
+    client,
+):
     product = product_factory(
         name="Apple",
     )
@@ -669,11 +671,11 @@ def test_add_to_cart_rejects_quantity_above_line_maximum(client):
     )
 
     assert response.status_code == 302
-    assert _stored_messages(response) == [
-        "invalid retail cart line quantity"
-    ]
-    assert not Cart.objects.exists()
 
+    line = Cart.objects.get().lines.get()
+
+    assert line.commercial_price == offer
+    assert line.quantity == 21
 
 @pytest.mark.django_db
 def test_add_to_cart_returns_json_error_for_invalid_offer(client):

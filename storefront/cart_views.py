@@ -16,10 +16,11 @@ from django.views.decorators.http import (
     require_POST,
 )
 
-from retail.services import (
-    InvalidRetailCart,
-    remove_retail_cart_line,
-    update_retail_cart_line_quantity,
+from carts.models import Cart, CartLine
+from carts.services import (
+    InvalidCart,
+    remove_cart_line as remove_cart_line_service,
+    update_cart_line_quantity,
 )
 from storefront.cart import (
     mark_retail_cart_active,
@@ -31,6 +32,10 @@ from storefront.cart_selectors import (
 from storefront.navbar_viewmodels import (
     build_retail_navbar_cart,
 )
+
+
+class InvalidCartInput(ValueError):
+    """Raised when cart input cannot be parsed from the HTTP request."""
 
 
 def _wants_json(
@@ -47,7 +52,7 @@ def _wants_json(
 
 def _get_request_cart(
     request: HttpRequest,
-):
+) -> Cart | None:
     return get_retail_cart(
         cart_id=getattr(
             request,
@@ -59,7 +64,7 @@ def _get_request_cart(
 
 def _get_request_cart_or_404(
     request: HttpRequest,
-):
+) -> Cart:
     cart = _get_request_cart(
         request
     )
@@ -74,9 +79,9 @@ def _get_request_cart_or_404(
 
 def _get_request_cart_line_or_404(
     *,
-    cart,
+    cart: Cart,
     cart_line_id: int,
-):
+) -> CartLine:
     line = get_retail_cart_line(
         cart=cart,
         line_id=cart_line_id,
@@ -94,30 +99,23 @@ def _parse_quantity(
     raw_value: str | None,
 ) -> int:
     if raw_value is None:
-        raise InvalidRetailCart(
+        raise InvalidCartInput(
             "quantity is required"
         )
 
     value = raw_value.strip()
 
     if not value:
-        raise InvalidRetailCart(
+        raise InvalidCartInput(
             "quantity is required"
         )
 
     try:
-        quantity = int(value)
+        return int(value)
     except ValueError as exc:
-        raise InvalidRetailCart(
+        raise InvalidCartInput(
             "invalid quantity"
         ) from exc
-
-    if quantity <= 0:
-        raise InvalidRetailCart(
-            "quantity must be greater than zero"
-        )
-
-    return quantity
 
 
 @require_GET
@@ -165,13 +163,16 @@ def set_cart_line_quantity(
         )
 
         updated_line = (
-            update_retail_cart_line_quantity(
+            update_cart_line_quantity(
                 cart=cart,
                 line=line,
                 quantity=quantity,
             )
         )
-    except InvalidRetailCart as error:
+    except (
+        InvalidCart,
+        InvalidCartInput,
+    ) as error:
         message = str(error)
 
         if _wants_json(request):
@@ -231,11 +232,11 @@ def remove_cart_line(
     )
 
     try:
-        remove_retail_cart_line(
+        remove_cart_line_service(
             cart=cart,
             line=line,
         )
-    except InvalidRetailCart as error:
+    except InvalidCart as error:
         message = str(error)
 
         if _wants_json(request):

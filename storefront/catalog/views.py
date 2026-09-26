@@ -23,12 +23,12 @@ from retail.catalog_selectors import (
     list_retail_catalog_products,
 )
 from carts.models import Cart
+from carts.services import create_cart
 from common.channels import SalesChannel
 from retail.services import (
     InvalidRetailCart,
     InvalidRetailOrder,
     add_retail_cart_line,
-    create_retail_cart,
 )
 from storefront.cart import (
     mark_retail_cart_active,
@@ -118,18 +118,11 @@ def _parse_quantity(raw_value: str | None) -> int:
         )
 
     try:
-        quantity = int(value)
+        return int(value)
     except ValueError as exc:
         raise InvalidRetailCart(
             "invalid quantity"
         ) from exc
-
-    if quantity <= 0:
-        raise InvalidRetailCart(
-            "quantity must be greater than zero"
-        )
-
-    return quantity
 
 
 def _resolve_cart(
@@ -166,7 +159,12 @@ def _resolve_cart(
         else:
             return cart, False
 
-    return create_retail_cart(), True
+    return (
+        create_cart(
+            channel=SalesChannel.RETAIL,
+        ),
+        True,
+    )
 
 
 def product_list(request: HttpRequest):
