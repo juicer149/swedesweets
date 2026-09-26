@@ -8,6 +8,8 @@ from carts.services import (
     InvalidCart,
     add_cart_line,
     create_cart,
+    remove_cart_line,
+    update_cart_line_quantity,
 )
 from common.channels import SalesChannel
 from customers.models import Customer
@@ -119,6 +121,79 @@ def add_catalog_offer_to_cart(
         raise InvalidBusinessCart(
             str(exc)
         ) from exc
+
+
+@transaction.atomic
+def set_customer_cart_line_quantity(
+    *,
+    customer: Customer,
+    line: CartLine,
+    quantity: int,
+) -> CartLine:
+    """Set one line quantity in the customer's active BUSINESS cart."""
+
+    cart = _get_customer_cart(
+        customer=customer,
+    )
+
+    try:
+        return update_cart_line_quantity(
+            cart=cart,
+            line=line,
+            quantity=quantity,
+        )
+    except InvalidCart as exc:
+        raise InvalidBusinessCart(
+            str(exc)
+        ) from exc
+
+
+@transaction.atomic
+def remove_customer_cart_line(
+    *,
+    customer: Customer,
+    line: CartLine,
+) -> None:
+    """Remove one line from the customer's active BUSINESS cart."""
+
+    cart = _get_customer_cart(
+        customer=customer,
+    )
+
+    try:
+        remove_cart_line(
+            cart=cart,
+            line=line,
+        )
+    except InvalidCart as exc:
+        raise InvalidBusinessCart(
+            str(exc)
+        ) from exc
+
+
+def _get_customer_cart(
+    *,
+    customer: Customer,
+) -> Cart:
+    business_cart = (
+        BusinessCart.objects
+        .select_related(
+            "cart",
+        )
+        .filter(
+            customer_id=customer.pk,
+        )
+        .first()
+    )
+
+    if business_cart is None:
+        raise InvalidBusinessCart(
+            "business cart does not exist"
+        )
+
+    return _require_business_cart(
+        cart=business_cart.cart,
+    )
 
 
 def _get_business_cart_offer(

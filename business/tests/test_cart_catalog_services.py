@@ -7,6 +7,9 @@ import pytest
 from business.cart_services import (
     InvalidBusinessCart,
     add_catalog_offer_to_cart,
+    get_or_create_customer_cart,
+    remove_customer_cart_line,
+    set_customer_cart_line_quantity,
 )
 from business.models import BusinessCart
 from business.tests.factories import (
@@ -403,4 +406,216 @@ def test_invalid_quantity_does_not_leave_empty_business_cart(
 
     assert not BusinessCart.objects.filter(
         customer=customer,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_set_customer_cart_line_quantity(
+    customer,
+    apple,
+):
+    offer = standard_business_offer_factory(
+        product=apple,
+    )
+
+    line = add_catalog_offer_to_cart(
+        customer=customer,
+        product=apple,
+        commercial_price_id=offer.pk,
+        quantity=2,
+    )
+
+    updated = set_customer_cart_line_quantity(
+        customer=customer,
+        line=line,
+        quantity=7,
+    )
+
+    assert updated.pk == line.pk
+    assert updated.quantity == 7
+
+
+@pytest.mark.django_db
+def test_set_customer_cart_line_quantity_does_not_apply_stock_limits(
+    customer,
+    apple,
+):
+    offer = standard_business_offer_factory(
+        product=apple,
+    )
+
+    line = add_catalog_offer_to_cart(
+        customer=customer,
+        product=apple,
+        commercial_price_id=offer.pk,
+        quantity=1,
+    )
+
+    quantity = (
+        MAX_QUANTITY_PER_PRODUCT_PER_ORDER
+        + 1
+    )
+
+    updated = set_customer_cart_line_quantity(
+        customer=customer,
+        line=line,
+        quantity=quantity,
+    )
+
+    assert updated.quantity == quantity
+
+
+@pytest.mark.django_db
+def test_set_customer_cart_line_quantity_rejects_non_positive_quantity(
+    customer,
+    apple,
+):
+    offer = standard_business_offer_factory(
+        product=apple,
+    )
+
+    line = add_catalog_offer_to_cart(
+        customer=customer,
+        product=apple,
+        commercial_price_id=offer.pk,
+    )
+
+    with pytest.raises(
+        InvalidBusinessCart,
+        match="cart line quantity must be positive",
+    ):
+        set_customer_cart_line_quantity(
+            customer=customer,
+            line=line,
+            quantity=0,
+        )
+
+    line.refresh_from_db()
+
+    assert line.quantity == 1
+
+
+@pytest.mark.django_db
+def test_customer_cannot_update_another_customers_cart_line(
+    customer,
+    other_customer,
+    apple,
+):
+    offer = standard_business_offer_factory(
+        product=apple,
+    )
+
+    other_line = add_catalog_offer_to_cart(
+        customer=other_customer,
+        product=apple,
+        commercial_price_id=offer.pk,
+        quantity=3,
+    )
+
+    get_or_create_customer_cart(
+        customer=customer,
+    )
+
+    with pytest.raises(
+        InvalidBusinessCart,
+        match="cart line does not belong to cart",
+    ):
+        set_customer_cart_line_quantity(
+            customer=customer,
+            line=other_line,
+            quantity=5,
+        )
+
+    other_line.refresh_from_db()
+
+    assert other_line.quantity == 3
+
+
+@pytest.mark.django_db
+def test_remove_customer_cart_line(
+    customer,
+    apple,
+):
+    offer = standard_business_offer_factory(
+        product=apple,
+    )
+
+    line = add_catalog_offer_to_cart(
+        customer=customer,
+        product=apple,
+        commercial_price_id=offer.pk,
+        quantity=3,
+    )
+
+    remove_customer_cart_line(
+        customer=customer,
+        line=line,
+    )
+
+    assert not CartLine.objects.filter(
+        pk=line.pk,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_removing_last_line_keeps_empty_customer_cart(
+    customer,
+    apple,
+):
+    offer = standard_business_offer_factory(
+        product=apple,
+    )
+
+    line = add_catalog_offer_to_cart(
+        customer=customer,
+        product=apple,
+        commercial_price_id=offer.pk,
+    )
+
+    cart_id = line.cart_id
+
+    remove_customer_cart_line(
+        customer=customer,
+        line=line,
+    )
+
+    business_cart = BusinessCart.objects.get(
+        customer=customer,
+    )
+
+    assert business_cart.cart_id == cart_id
+    assert not business_cart.cart.lines.exists()
+
+
+@pytest.mark.django_db
+def test_customer_cannot_remove_another_customers_cart_line(
+    customer,
+    other_customer,
+    apple,
+):
+    offer = standard_business_offer_factory(
+        product=apple,
+    )
+
+    other_line = add_catalog_offer_to_cart(
+        customer=other_customer,
+        product=apple,
+        commercial_price_id=offer.pk,
+    )
+
+    get_or_create_customer_cart(
+        customer=customer,
+    )
+
+    with pytest.raises(
+        InvalidBusinessCart,
+        match="cart line does not belong to cart",
+    ):
+        remove_customer_cart_line(
+            customer=customer,
+            line=other_line,
+        )
+
+    assert CartLine.objects.filter(
+        pk=other_line.pk,
     ).exists()
