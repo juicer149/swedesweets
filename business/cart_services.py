@@ -126,6 +126,11 @@ def _get_business_cart_offer(
     product: Product,
     commercial_price_id: int | None,
 ) -> CommercialPrice:
+    if not product.active:
+        raise InvalidBusinessCart(
+            "business offer is not currently available"
+        )
+
     queryset = (
         CommercialPrice.objects
         .select_related(

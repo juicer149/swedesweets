@@ -18,16 +18,13 @@ from orders.models import Order
 from orders.order_limits import (
     MAX_QUANTITY_PER_PRODUCT_PER_ORDER,
 )
-from pricing.models import (
-    CommercialPrice,
-    PriceAmount,
-)
+from pricing.models import CommercialPrice
 from pricing.tests.factories import (
+    commercial_price_factory,
+    price_amount_factory,
     pricing_batch_factory,
 )
-from products.tests.factories import (
-    product_factory,
-)
+from products.tests.factories import product_factory
 
 
 @pytest.mark.django_db
@@ -90,16 +87,15 @@ def test_add_batch_business_offer_to_cart(
         batch_id="BUS-CART-001",
     )
 
-    offer = CommercialPrice.objects.create(
+    offer = commercial_price_factory(
         product=apple,
         batch=batch,
         channel=CommercialPrice.Channel.BUSINESS,
         enabled=True,
     )
 
-    PriceAmount.objects.create(
+    price_amount_factory(
         commercial_price=offer,
-        currency=PriceAmount.Currency.EUR,
         price=Decimal("8.50"),
     )
 
@@ -156,16 +152,15 @@ def test_different_offers_for_same_product_remain_separate(
         batch_id="BUS-CART-002",
     )
 
-    batch_offer = CommercialPrice.objects.create(
+    batch_offer = commercial_price_factory(
         product=apple,
         batch=batch,
         channel=CommercialPrice.Channel.BUSINESS,
         enabled=True,
     )
 
-    PriceAmount.objects.create(
+    price_amount_factory(
         commercial_price=batch_offer,
-        currency=PriceAmount.Currency.EUR,
         price=Decimal("7.50"),
     )
 
@@ -203,13 +198,32 @@ def test_different_offers_for_same_product_remain_separate(
 
 
 @pytest.mark.django_db
+def test_business_cart_rejects_unknown_offer(
+    customer,
+    apple,
+):
+    with pytest.raises(
+        InvalidBusinessCart,
+        match="business offer is not currently available",
+    ):
+        add_catalog_offer_to_cart(
+            customer=customer,
+            product=apple,
+            commercial_price_id=999_999,
+        )
+
+    assert not BusinessCart.objects.filter(
+        customer=customer,
+    ).exists()
+
+
+@pytest.mark.django_db
 def test_business_cart_rejects_retail_offer(
     customer,
     apple,
 ):
-    offer = CommercialPrice.objects.create(
+    offer = commercial_price_factory(
         product=apple,
-        batch=None,
         channel=CommercialPrice.Channel.RETAIL,
         enabled=True,
     )
@@ -230,6 +244,60 @@ def test_business_cart_rejects_retail_offer(
 
 
 @pytest.mark.django_db
+def test_business_cart_rejects_disabled_business_offer(
+    customer,
+    apple,
+):
+    offer = commercial_price_factory(
+        product=apple,
+        channel=CommercialPrice.Channel.BUSINESS,
+        enabled=False,
+    )
+
+    with pytest.raises(
+        InvalidBusinessCart,
+        match="business offer is not currently available",
+    ):
+        add_catalog_offer_to_cart(
+            customer=customer,
+            product=apple,
+            commercial_price_id=offer.pk,
+        )
+
+    assert not BusinessCart.objects.filter(
+        customer=customer,
+    ).exists()
+
+
+@pytest.mark.django_db
+def test_business_cart_rejects_inactive_product_without_standard_offer(
+    customer,
+    apple,
+):
+    apple.active = False
+    apple.save(
+        update_fields=[
+            "active",
+            "updated_at",
+        ],
+    )
+
+    with pytest.raises(
+        InvalidBusinessCart,
+        match="business offer is not currently available",
+    ):
+        add_catalog_offer_to_cart(
+            customer=customer,
+            product=apple,
+            commercial_price_id=None,
+        )
+
+    assert not BusinessCart.objects.filter(
+        customer=customer,
+    ).exists()
+
+
+@pytest.mark.django_db
 def test_business_cart_rejects_offer_for_other_product(
     customer,
     apple,
@@ -237,6 +305,7 @@ def test_business_cart_rejects_offer_for_other_product(
     other_product = product_factory(
         name="Banana",
     )
+
     offer = standard_business_offer_factory(
         product=other_product,
     )
@@ -251,22 +320,22 @@ def test_business_cart_rejects_offer_for_other_product(
             commercial_price_id=offer.pk,
         )
 
+    assert not BusinessCart.objects.filter(
+        customer=customer,
+    ).exists()
+
 
 @pytest.mark.django_db
 def test_business_cart_rejects_batch_offer_without_eur_price(
     customer,
     apple,
 ):
-    standard_business_offer_factory(
-        product=apple,
-    )
-
     batch = pricing_batch_factory(
         product=apple,
         batch_id="BUS-CART-003",
     )
 
-    offer = CommercialPrice.objects.create(
+    offer = commercial_price_factory(
         product=apple,
         batch=batch,
         channel=CommercialPrice.Channel.BUSINESS,
@@ -282,6 +351,10 @@ def test_business_cart_rejects_batch_offer_without_eur_price(
             product=apple,
             commercial_price_id=offer.pk,
         )
+
+    assert not BusinessCart.objects.filter(
+        customer=customer,
+    ).exists()
 
 
 @pytest.mark.django_db

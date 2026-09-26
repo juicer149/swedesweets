@@ -14,12 +14,13 @@ from django.shortcuts import (
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
+from business.cart_services import (
+    InvalidBusinessCart,
+    add_catalog_offer_to_cart,
+)
 from business.selectors import (
     get_business_catalog_product,
     list_business_catalog_products,
-)
-from business.services import (
-    add_catalog_offer_to_draft_order,
 )
 from business_portal.catalog.detail_viewmodels import (
     build_business_catalog_product_detail_context,
@@ -31,9 +32,11 @@ from business_portal.catalog.viewmodels import (
 from business_portal.selectors import (
     get_portal_customer_for_user,
 )
-from common.catalog.contracts import CatalogOfferKind
-from orders.errors import InvalidOrderOperation
 from products.models import Product
+
+
+class InvalidCatalogInput(ValueError):
+    """Raised when business catalog HTTP input cannot be parsed."""
 
 
 def _wants_json(request) -> bool:
@@ -49,9 +52,9 @@ def _wants_json(request) -> bool:
 def _parse_commercial_price_id(
     raw_value: str | None,
 ) -> int | None:
-    """Parse an optional catalog selection from form input.
+    """Parse an optional persistent BUSINESS offer id.
 
-    Empty input requests the current standard BUSINESS offer.
+    Empty input requests the product's standard BUSINESS offer.
 
     Any non-empty value must be a positive integer CommercialPrice id.
     """
@@ -67,49 +70,16 @@ def _parse_commercial_price_id(
     try:
         commercial_price_id = int(value)
     except ValueError as exc:
-        raise InvalidOrderOperation(
+        raise InvalidCatalogInput(
             "invalid business offer"
         ) from exc
 
     if commercial_price_id <= 0:
-        raise InvalidOrderOperation(
+        raise InvalidCatalogInput(
             "invalid business offer"
         )
 
     return commercial_price_id
-
-
-def _resolve_catalog_offer_id(
-    *,
-    product: Product,
-    commercial_price_id: int | None,
-) -> int:
-    """Resolve transport-level selection to a persistent offer identity.
-
-    A missing id is a portal shorthand for the product's current standard
-    BUSINESS offer. The business service itself only accepts persistent
-    CommercialPrice identities.
-    """
-
-    if commercial_price_id is not None:
-        return commercial_price_id
-
-    catalog_product = get_business_catalog_product(
-        product_id=product.id,
-    )
-
-    if catalog_product is None:
-        raise InvalidOrderOperation(
-            "product is not available in the business catalog"
-        )
-
-    for offer in catalog_product.offers:
-        if offer.kind == CatalogOfferKind.STANDARD:
-            return offer.commercial_price_id
-
-    raise InvalidOrderOperation(
-        "standard business offer is not currently available"
-    )
 
 
 def _parse_quantity(
@@ -117,10 +87,10 @@ def _parse_quantity(
 ) -> int:
     """Parse catalog quantity from form input.
 
-    Missing input preserves the legacy catalog behavior and means one unit.
+    Missing input preserves the catalog behavior and means one stock unit.
 
-    An explicitly submitted quantity must contain a positive integer.
-    Empty, non-integer and non-positive values are rejected.
+    HTTP parsing belongs here. Domain validation such as quantity > 0
+    belongs to carts.
     """
 
     if raw_value is None:
@@ -129,23 +99,16 @@ def _parse_quantity(
     value = raw_value.strip()
 
     if not value:
-        raise InvalidOrderOperation(
+        raise InvalidCatalogInput(
             "quantity is required"
         )
 
     try:
-        quantity = int(value)
+        return int(value)
     except ValueError as exc:
-        raise InvalidOrderOperation(
+        raise InvalidCatalogInput(
             "invalid quantity"
         ) from exc
-
-    if quantity <= 0:
-        raise InvalidOrderOperation(
-            "quantity must be greater than zero"
-        )
-
-    return quantity
 
 
 @login_required
@@ -164,7 +127,7 @@ def add_product(
     )
 
     try:
-        requested_commercial_price_id = (
+        commercial_price_id = (
             _parse_commercial_price_id(
                 request.POST.get(
                     "commercial_price_id"
@@ -178,21 +141,16 @@ def add_product(
             )
         )
 
-        commercial_price_id = _resolve_catalog_offer_id(
-            product=product,
-            commercial_price_id=(
-                requested_commercial_price_id
-            ),
-        )
-
-        add_catalog_offer_to_draft_order(
+        add_catalog_offer_to_cart(
             customer=customer,
             product=product,
             commercial_price_id=commercial_price_id,
             quantity=quantity,
-            user=request.user,
         )
-    except InvalidOrderOperation as error:
+    except (
+        InvalidBusinessCart,
+        InvalidCatalogInput,
+    ) as error:
         message = str(error)
 
         if _wants_json(request):
@@ -210,7 +168,7 @@ def add_product(
         )
     else:
         message = _(
-            "%(product)s added to your order."
+            "%(product)s added to your cart."
         ) % {
             "product": product.display_name,
         }
