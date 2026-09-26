@@ -17,10 +17,13 @@ from django.views.decorators.http import (
     require_POST,
 )
 
+from business.cart_services import (
+    InvalidBusinessCart,
+    remove_customer_cart_line,
+    set_customer_cart_line_quantity,
+)
 from business.services import (
     place_order as place_draft_order,
-    remove_draft_line as remove_business_draft_line,
-    set_draft_line_quantity as set_business_draft_line_quantity,
 )
 from business_portal.orders.detail_viewmodels import (
     build_portal_order_detail_context,
@@ -41,12 +44,12 @@ from business_portal.orders.services import (
 from business_portal.selectors import (
     get_portal_customer_for_user,
 )
+from carts.models import CartLine
+from common.channels import SalesChannel
+from customers.models import Customer
 from inventory.errors import InvalidStockOperation
 from orders.errors import InvalidOrderOperation
-from orders.models import (
-    Order,
-    OrderLine,
-)
+from orders.models import Order
 from orders.selectors import (
     get_active_draft_order_for_customer,
 )
@@ -87,24 +90,20 @@ def _add_service_errors(
         )
 
 
-def _get_portal_draft_line(
+def _get_portal_cart_line(
     *,
-    user,
-    order_line_id: int,
-) -> OrderLine:
-    customer = get_portal_customer_for_user(
-        user=user,
-    )
-
+    customer: Customer,
+    cart_line_id: int,
+) -> CartLine:
     return get_object_or_404(
-        OrderLine.objects.select_related(
-            "order",
-            "product",
+        CartLine.objects.select_related(
+            "cart",
+            "commercial_price",
+            "commercial_price__product",
         ),
-        pk=order_line_id,
-        order__channel=Order.Channel.BUSINESS,
-        order__customer=customer,
-        order__status=Order.Status.DRAFT,
+        pk=cart_line_id,
+        cart__channel=SalesChannel.BUSINESS,
+        cart__business_context__customer=customer,
     )
 
 
@@ -114,9 +113,13 @@ def set_draft_line_quantity(
     request,
     order_line_id: int,
 ):
-    line = _get_portal_draft_line(
+    customer = get_portal_customer_for_user(
         user=request.user,
-        order_line_id=order_line_id,
+    )
+
+    line = _get_portal_cart_line(
+        customer=customer,
+        cart_line_id=order_line_id,
     )
 
     wants_json = _wants_json(
@@ -156,13 +159,12 @@ def set_draft_line_quantity(
         )
 
     try:
-        set_business_draft_line_quantity(
-            order=line.order,
-            order_line_id=line.id,
+        set_customer_cart_line_quantity(
+            customer=customer,
+            line=line,
             quantity=quantity,
-            user=request.user,
         )
-    except ORDER_OPERATION_ERRORS as error:
+    except InvalidBusinessCart as error:
         message = str(error)
 
         if wants_json:
@@ -208,9 +210,13 @@ def remove_draft_line(
     request,
     order_line_id: int,
 ):
-    line = _get_portal_draft_line(
+    customer = get_portal_customer_for_user(
         user=request.user,
-        order_line_id=order_line_id,
+    )
+
+    line = _get_portal_cart_line(
+        customer=customer,
+        cart_line_id=order_line_id,
     )
 
     wants_json = _wants_json(
@@ -218,12 +224,11 @@ def remove_draft_line(
     )
 
     try:
-        remove_business_draft_line(
-            order=line.order,
-            order_line_id=line.id,
-            user=request.user,
+        remove_customer_cart_line(
+            customer=customer,
+            line=line,
         )
-    except ORDER_OPERATION_ERRORS as error:
+    except InvalidBusinessCart as error:
         message = str(error)
 
         if wants_json:
@@ -241,7 +246,7 @@ def remove_draft_line(
         )
     else:
         message = _(
-            "Product removed from your order."
+            "Product removed from your cart."
         )
 
         if wants_json:

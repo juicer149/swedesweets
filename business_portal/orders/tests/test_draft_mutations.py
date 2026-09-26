@@ -7,67 +7,89 @@ from django.urls import reverse
 from accounts.tests.factories import (
     customer_user_factory,
 )
+from business.cart_services import (
+    add_catalog_offer_to_cart,
+)
+from business.models import BusinessCart
+from business.tests.factories import (
+    standard_business_offer_factory,
+)
+from carts.models import CartLine
 from customers.tests.factories import (
     customer_factory,
 )
+from inventory.tests.conftest import TODAY
 from inventory.tests.factories import (
     batch_factory,
 )
-from orders.models import (
-    Order,
-    OrderLine,
-)
-from orders.tests.conftest import TODAY
-from orders.tests.factories import order_line_factory
 from products.tests.factories import (
     product_factory,
 )
 
 
-def _create_draft_line(
+def _stored_messages(
+    response,
+) -> list[str]:
+    return [
+        str(message)
+        for message in get_messages(
+            response.wsgi_request
+        )
+    ]
+
+
+def _login_customer(
+    *,
+    client,
+):
+    customer = customer_factory()
+
+    user = customer_user_factory(
+        customer=customer,
+    )
+
+    client.force_login(
+        user
+    )
+
+    return customer
+
+
+def _create_cart_line(
     *,
     customer,
     product,
     quantity: int,
-) -> OrderLine:
-    order = Order.objects.create(
-        channel=Order.Channel.BUSINESS,
-        customer=customer,
-        status=Order.Status.DRAFT,
+) -> CartLine:
+    offer = standard_business_offer_factory(
+        product=product,
     )
 
-    return order_line_factory(
-        order=order,
+    return add_catalog_offer_to_cart(
+        customer=customer,
         product=product,
+        commercial_price_id=offer.pk,
         quantity=quantity,
     )
 
 
 @pytest.mark.django_db
-def test_customer_can_set_draft_line_quantity(
+def test_customer_can_set_cart_line_quantity(
     client,
 ):
-    customer = customer_factory()
+    customer = _login_customer(
+        client=client,
+    )
+
     product = product_factory(
         name="Apple",
         weight_per_unit=5000,
     )
-    batch_factory(
-        product=product,
-        today=TODAY,
-        quantity=100,
-    )
-    line = _create_draft_line(
+
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=1,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
     )
 
     response = client.post(
@@ -90,35 +112,25 @@ def test_customer_can_set_draft_line_quantity(
     line.refresh_from_db()
 
     assert line.quantity == 5
-    assert line.quantity_in_units == 5
 
 
 @pytest.mark.django_db
-def test_set_draft_line_quantity_returns_json_success(
+def test_set_cart_line_quantity_returns_json_success(
     client,
 ):
-    customer = customer_factory()
+    customer = _login_customer(
+        client=client,
+    )
+
     product = product_factory(
         name="Apple",
         weight_per_unit=5000,
     )
-    batch_factory(
-        product=product,
-        today=TODAY,
-        quantity=100,
-    )
 
-    line = _create_draft_line(
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=1,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
     )
 
     response = client.post(
@@ -145,29 +157,24 @@ def test_set_draft_line_quantity_returns_json_success(
     line.refresh_from_db()
 
     assert line.quantity == 5
-    assert line.quantity_in_units == 5
 
 
 @pytest.mark.django_db
-def test_set_draft_line_quantity_rejects_invalid_quantity(
+def test_set_cart_line_quantity_rejects_invalid_quantity(
     client,
 ):
-    customer = customer_factory()
+    customer = _login_customer(
+        client=client,
+    )
+
     product = product_factory(
         name="Apple",
-        weight_per_unit=5000,
     )
-    line = _create_draft_line(
+
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=3,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
     )
 
     response = client.post(
@@ -189,41 +196,31 @@ def test_set_draft_line_quantity_rejects_invalid_quantity(
 
     line.refresh_from_db()
 
-    assert line.quantity_in_units == 3
+    assert line.quantity == 3
 
-    stored_messages = [
-        str(message)
-        for message in get_messages(
-            response.wsgi_request
-        )
-    ]
-
-    assert stored_messages == [
+    assert _stored_messages(
+        response
+    ) == [
         "Quantity must be a whole number."
     ]
 
 
 @pytest.mark.django_db
-def test_set_draft_line_quantity_returns_json_error_for_invalid_quantity(
+def test_set_cart_line_quantity_returns_json_error_for_invalid_quantity(
     client,
 ):
-    customer = customer_factory()
-    product = product_factory(
-        name="Apple",
-        weight_per_unit=5000,
+    customer = _login_customer(
+        client=client,
     )
 
-    line = _create_draft_line(
+    product = product_factory(
+        name="Apple",
+    )
+
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=3,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
     )
 
     response = client.post(
@@ -248,34 +245,121 @@ def test_set_draft_line_quantity_returns_json_error_for_invalid_quantity(
 
     line.refresh_from_db()
 
-    assert line.quantity_in_units == 3
+    assert line.quantity == 3
 
 
 @pytest.mark.django_db
-def test_set_draft_line_quantity_shows_business_validation_error(
+def test_set_cart_line_quantity_rejects_non_positive_quantity(
     client,
 ):
-    customer = customer_factory()
+    customer = _login_customer(
+        client=client,
+    )
+
     product = product_factory(
         name="Apple",
-        weight_per_unit=5000,
     )
-    batch_factory(
-        product=product,
-        today=TODAY,
-        quantity=10,
-    )
-    line = _create_draft_line(
+
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=3,
     )
 
-    user = customer_user_factory(
-        customer=customer,
+    response = client.post(
+        reverse(
+            "business_portal:set_draft_line_quantity",
+            kwargs={
+                "order_line_id": line.id,
+            },
+        ),
+        {
+            "quantity": "0",
+        },
     )
-    client.force_login(
-        user
+
+    assert response.status_code == 302
+    assert response["Location"] == reverse(
+        "business_portal:current_order"
+    )
+
+    line.refresh_from_db()
+
+    assert line.quantity == 3
+
+    assert _stored_messages(
+        response
+    ) == [
+        "cart line quantity must be positive"
+    ]
+
+
+@pytest.mark.django_db
+def test_set_cart_line_quantity_returns_json_error_for_non_positive_quantity(
+    client,
+):
+    customer = _login_customer(
+        client=client,
+    )
+
+    product = product_factory(
+        name="Apple",
+    )
+
+    line = _create_cart_line(
+        customer=customer,
+        product=product,
+        quantity=3,
+    )
+
+    response = client.post(
+        reverse(
+            "business_portal:set_draft_line_quantity",
+            kwargs={
+                "order_line_id": line.id,
+            },
+        ),
+        {
+            "quantity": "-1",
+        },
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 400
+
+    assert response.json() == {
+        "ok": False,
+        "message": "cart line quantity must be positive",
+    }
+
+    line.refresh_from_db()
+
+    assert line.quantity == 3
+
+
+@pytest.mark.django_db
+def test_set_cart_line_quantity_does_not_apply_stock_availability(
+    client,
+):
+    customer = _login_customer(
+        client=client,
+    )
+
+    product = product_factory(
+        name="Apple",
+        weight_per_unit=5000,
+    )
+
+    batch_factory(
+        product=product,
+        today=TODAY,
+        quantity=10,
+    )
+
+    line = _create_cart_line(
+        customer=customer,
+        product=product,
+        quantity=3,
     )
 
     response = client.post(
@@ -291,105 +375,33 @@ def test_set_draft_line_quantity_shows_business_validation_error(
     )
 
     assert response.status_code == 302
-    assert response["Location"] == reverse(
-        "business_portal:current_order"
-    )
 
     line.refresh_from_db()
 
-    assert line.quantity_in_units == 3
-
-    stored_messages = [
-        str(message)
-        for message in get_messages(
-            response.wsgi_request
-        )
-    ]
-
-    assert stored_messages == [
-        "only 10 units are currently available"
-    ]
+    assert line.quantity == 11
 
 
 @pytest.mark.django_db
-def test_set_draft_line_quantity_returns_json_business_validation_error(
+def test_set_cart_line_quantity_cannot_mutate_another_customer_cart(
     client,
 ):
-    customer = customer_factory()
-    product = product_factory(
-        name="Apple",
-        weight_per_unit=5000,
+    customer = _login_customer(
+        client=client,
     )
 
-    batch_factory(
-        product=product,
-        today=TODAY,
-        quantity=10,
-    )
-
-    line = _create_draft_line(
-        customer=customer,
-        product=product,
-        quantity=3,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
-    )
-
-    response = client.post(
-        reverse(
-            "business_portal:set_draft_line_quantity",
-            kwargs={
-                "order_line_id": line.id,
-            },
-        ),
-        {
-            "quantity": "11",
-        },
-        HTTP_ACCEPT="application/json",
-    )
-
-    assert response.status_code == 400
-
-    assert response.json() == {
-        "ok": False,
-        "message": "only 10 units are currently available",
-    }
-
-    line.refresh_from_db()
-
-    assert line.quantity_in_units == 3
-
-
-@pytest.mark.django_db
-def test_set_draft_line_quantity_cannot_mutate_another_customer_draft(
-    client,
-):
-    customer = customer_factory()
     other_customer = customer_factory(
         name="Other Customer",
         email="other@example.com",
     )
+
     product = product_factory(
         name="Apple",
-        weight_per_unit=5000,
     )
 
-    other_line = _create_draft_line(
+    other_line = _create_cart_line(
         customer=other_customer,
         product=product,
         quantity=3,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
     )
 
     response = client.post(
@@ -408,27 +420,26 @@ def test_set_draft_line_quantity_cannot_mutate_another_customer_draft(
 
     other_line.refresh_from_db()
 
-    assert other_line.quantity_in_units == 3
+    assert other_line.quantity == 3
+
+    assert not BusinessCart.objects.filter(
+        customer=customer,
+    ).exists()
 
 
 @pytest.mark.django_db
-def test_set_draft_line_quantity_returns_404_for_unknown_line(
+def test_set_cart_line_quantity_returns_404_for_unknown_line(
     client,
 ):
-    customer = customer_factory()
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
+    customer = _login_customer(
+        client=client,
     )
 
     response = client.post(
         reverse(
             "business_portal:set_draft_line_quantity",
             kwargs={
-                "order_line_id": 999999,
+                "order_line_id": 999_999,
             },
         ),
         {
@@ -438,24 +449,27 @@ def test_set_draft_line_quantity_returns_404_for_unknown_line(
 
     assert response.status_code == 404
 
+    assert not BusinessCart.objects.filter(
+        customer=customer,
+    ).exists()
+
 
 @pytest.mark.django_db
-def test_set_draft_line_quantity_get_is_not_allowed(
+def test_set_cart_line_quantity_get_is_not_allowed(
     client,
 ):
-    customer = customer_factory()
-    product = product_factory()
-    line = _create_draft_line(
+    customer = _login_customer(
+        client=client,
+    )
+
+    product = product_factory(
+        name="Apple",
+    )
+
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=1,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
     )
 
     response = client.get(
@@ -471,25 +485,21 @@ def test_set_draft_line_quantity_get_is_not_allowed(
 
 
 @pytest.mark.django_db
-def test_customer_can_remove_draft_line(
+def test_customer_can_remove_cart_line(
     client,
 ):
-    customer = customer_factory()
+    customer = _login_customer(
+        client=client,
+    )
+
     product = product_factory(
         name="Apple",
-        weight_per_unit=5000,
     )
-    line = _create_draft_line(
+
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=3,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
     )
 
     response = client.post(
@@ -506,34 +516,30 @@ def test_customer_can_remove_draft_line(
         "business_portal:current_order"
     )
 
-    assert not OrderLine.objects.filter(
+    assert not CartLine.objects.filter(
         pk=line.pk,
     ).exists()
 
 
 @pytest.mark.django_db
-def test_remove_draft_line_allows_empty_draft(
+def test_remove_last_cart_line_keeps_empty_customer_cart(
     client,
 ):
-    customer = customer_factory()
+    customer = _login_customer(
+        client=client,
+    )
+
     product = product_factory(
         name="Apple",
-        weight_per_unit=5000,
     )
-    line = _create_draft_line(
+
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=3,
     )
 
-    order = line.order
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
-    )
+    cart_id = line.cart_id
 
     response = client.post(
         reverse(
@@ -546,45 +552,35 @@ def test_remove_draft_line_allows_empty_draft(
 
     assert response.status_code == 302
 
-    assert not OrderLine.objects.filter(
-        pk=line.pk,
-    ).exists()
+    business_cart = BusinessCart.objects.get(
+        customer=customer,
+    )
 
-    assert Order.objects.filter(
-        pk=order.pk,
-        status=Order.Status.DRAFT,
-    ).exists()
-
-    assert not OrderLine.objects.filter(
-        order=order,
-    ).exists()
+    assert business_cart.cart_id == cart_id
+    assert not business_cart.cart.lines.exists()
 
 
 @pytest.mark.django_db
-def test_remove_draft_line_cannot_mutate_another_customer_draft(
+def test_remove_cart_line_cannot_mutate_another_customer_cart(
     client,
 ):
-    customer = customer_factory()
+    customer = _login_customer(
+        client=client,
+    )
+
     other_customer = customer_factory(
         name="Other Customer",
         email="other@example.com",
     )
+
     product = product_factory(
         name="Apple",
-        weight_per_unit=5000,
     )
 
-    other_line = _create_draft_line(
+    other_line = _create_cart_line(
         customer=other_customer,
         product=product,
         quantity=3,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
     )
 
     response = client.post(
@@ -598,53 +594,55 @@ def test_remove_draft_line_cannot_mutate_another_customer_draft(
 
     assert response.status_code == 404
 
-    assert OrderLine.objects.filter(
+    assert CartLine.objects.filter(
         pk=other_line.pk,
+    ).exists()
+
+    assert not BusinessCart.objects.filter(
+        customer=customer,
     ).exists()
 
 
 @pytest.mark.django_db
-def test_remove_draft_line_returns_404_for_unknown_line(
+def test_remove_cart_line_returns_404_for_unknown_line(
     client,
 ):
-    customer = customer_factory()
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
+    customer = _login_customer(
+        client=client,
     )
 
     response = client.post(
         reverse(
             "business_portal:remove_draft_line",
             kwargs={
-                "order_line_id": 999999,
+                "order_line_id": 999_999,
             },
         )
     )
 
     assert response.status_code == 404
 
+    assert not BusinessCart.objects.filter(
+        customer=customer,
+    ).exists()
+
 
 @pytest.mark.django_db
-def test_remove_draft_line_get_is_not_allowed(
+def test_remove_cart_line_get_is_not_allowed(
     client,
 ):
-    customer = customer_factory()
-    product = product_factory()
-    line = _create_draft_line(
+    customer = _login_customer(
+        client=client,
+    )
+
+    product = product_factory(
+        name="Apple",
+    )
+
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=1,
-    )
-
-    user = customer_user_factory(
-        customer=customer,
-    )
-    client.force_login(
-        user
     )
 
     response = client.get(
@@ -660,35 +658,30 @@ def test_remove_draft_line_get_is_not_allowed(
 
 
 @pytest.mark.django_db
-def test_customer_can_remove_draft_line_with_json_response(
+def test_customer_can_remove_cart_line_with_json_response(
     client,
 ):
-    customer = customer_factory()
+    customer = _login_customer(
+        client=client,
+    )
 
     product = product_factory(
         name="Apple",
-        weight_per_unit=5000,
     )
 
-    line = _create_draft_line(
+    line = _create_cart_line(
         customer=customer,
         product=product,
         quantity=3,
     )
 
-    user = customer_user_factory(
-        customer=customer,
-    )
-
-    client.force_login(
-        user
-    )
+    line_id = line.id
 
     response = client.post(
         reverse(
             "business_portal:remove_draft_line",
             kwargs={
-                "order_line_id": line.id,
+                "order_line_id": line_id,
             },
         ),
         HTTP_ACCEPT="application/json",
@@ -698,12 +691,10 @@ def test_customer_can_remove_draft_line_with_json_response(
 
     assert response.json() == {
         "ok": True,
-        "message": (
-            "Product removed from your order."
-        ),
-        "order_line_id": line.id,
+        "message": "Product removed from your cart.",
+        "order_line_id": line_id,
     }
 
-    assert not OrderLine.objects.filter(
-        pk=line.id,
+    assert not CartLine.objects.filter(
+        pk=line_id,
     ).exists()
