@@ -8,9 +8,12 @@ from django.utils import timezone
 
 from orders.models import Order, OrderLine
 from pricing.models import CommercialPrice, PriceAmount
+from carts.models import (
+    Cart,
+    CartLine,
+)
+from common.channels import SalesChannel
 from retail.models import (
-    RetailCart,
-    RetailCartLine,
     RetailCheckoutSession,
     RetailOfferSelection,
 )
@@ -46,7 +49,9 @@ def test_retail_postal_area_combination_must_be_unique():
 
 @pytest.mark.django_db
 def test_retail_cart_can_be_created_empty():
-    cart = RetailCart.objects.create()
+    cart = Cart.objects.create(
+        channel=SalesChannel.RETAIL,
+    )
 
     assert cart.pk.version == 4
     assert cart.lines.count() == 0
@@ -54,13 +59,15 @@ def test_retail_cart_can_be_created_empty():
 
 @pytest.mark.django_db
 def test_retail_cart_line_references_commercial_price():
-    cart = RetailCart.objects.create()
+    cart = Cart.objects.create(
+        channel=SalesChannel.RETAIL,
+    )
     commercial_price = retail_product_price_factory(
         enabled=True,
         price=Decimal("12.50"),
     )
 
-    line = RetailCartLine.objects.create(
+    line = CartLine.objects.create(
         cart=cart,
         commercial_price=commercial_price,
         quantity=2,
@@ -72,11 +79,13 @@ def test_retail_cart_line_references_commercial_price():
 
 @pytest.mark.django_db
 def test_retail_cart_line_requires_commercial_price():
-    cart = RetailCart.objects.create()
+    cart = Cart.objects.create(
+        channel=SalesChannel.RETAIL,
+    )
 
     with pytest.raises(IntegrityError):
         with transaction.atomic():
-            RetailCartLine.objects.create(
+            CartLine.objects.create(
                 cart=cart,
                 quantity=1,
             )
@@ -85,7 +94,9 @@ def test_retail_cart_line_requires_commercial_price():
 @pytest.mark.django_db
 @pytest.mark.parametrize("quantity", [0, -1])
 def test_retail_cart_line_quantity_must_be_positive(quantity):
-    cart = RetailCart.objects.create()
+    cart = Cart.objects.create(
+        channel=SalesChannel.RETAIL,
+    )
     commercial_price = retail_product_price_factory(
         enabled=True,
         price=Decimal("12.50"),
@@ -93,7 +104,7 @@ def test_retail_cart_line_quantity_must_be_positive(quantity):
 
     with pytest.raises(IntegrityError):
         with transaction.atomic():
-            RetailCartLine.objects.create(
+            CartLine.objects.create(
                 cart=cart,
                 commercial_price=commercial_price,
                 quantity=quantity,
@@ -102,13 +113,15 @@ def test_retail_cart_line_quantity_must_be_positive(quantity):
 
 @pytest.mark.django_db
 def test_same_commercial_price_can_appear_only_once_per_cart():
-    cart = RetailCart.objects.create()
+    cart = Cart.objects.create(
+        channel=SalesChannel.RETAIL,
+    )
     commercial_price = retail_product_price_factory(
         enabled=True,
         price=Decimal("12.50"),
     )
 
-    RetailCartLine.objects.create(
+    CartLine.objects.create(
         cart=cart,
         commercial_price=commercial_price,
         quantity=1,
@@ -116,7 +129,7 @@ def test_same_commercial_price_can_appear_only_once_per_cart():
 
     with pytest.raises(IntegrityError):
         with transaction.atomic():
-            RetailCartLine.objects.create(
+            CartLine.objects.create(
                 cart=cart,
                 commercial_price=commercial_price,
                 quantity=2,
@@ -143,14 +156,16 @@ def test_same_product_can_have_product_and_batch_price_in_same_cart():
         price=Decimal("4.90"),
     )
 
-    cart = RetailCart.objects.create()
+    cart = Cart.objects.create(
+        channel=SalesChannel.RETAIL,
+    )
 
-    first = RetailCartLine.objects.create(
+    first = CartLine.objects.create(
         cart=cart,
         commercial_price=product_price,
         quantity=1,
     )
-    second = RetailCartLine.objects.create(
+    second = CartLine.objects.create(
         cart=cart,
         commercial_price=batch_price,
         quantity=2,

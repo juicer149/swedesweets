@@ -22,7 +22,8 @@ from retail.catalog_selectors import (
     get_retail_catalog_product,
     list_retail_catalog_products,
 )
-from retail.models import RetailCart
+from carts.models import Cart
+from common.channels import SalesChannel
 from retail.services import (
     InvalidRetailCart,
     InvalidRetailOrder,
@@ -133,11 +134,11 @@ def _parse_quantity(raw_value: str | None) -> int:
 
 def _resolve_cart(
     request: HttpRequest,
-) -> tuple[RetailCart, bool]:
+) -> tuple[Cart, bool]:
     """Resolve the request's cart, without any cookie side effects.
 
     request.retail_cart_id only proves the cookie was signed by us - it is
-    not a guarantee the RetailCart row still exists (see
+    not a guarantee the Cart row still exists (see
     RetailCartMiddleware). A missing cart is treated the same as no cookie
     at all: a fresh cart is created.
 
@@ -156,10 +157,11 @@ def _resolve_cart(
 
     if cart_id is not None:
         try:
-            cart = RetailCart.objects.get(
+            cart = Cart.objects.get(
                 pk=cart_id,
+                channel=SalesChannel.RETAIL,
             )
-        except RetailCart.DoesNotExist:
+        except Cart.DoesNotExist:
             pass
         else:
             return cart, False

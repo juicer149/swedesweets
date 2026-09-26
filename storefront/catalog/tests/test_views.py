@@ -14,7 +14,7 @@ from accounts.tests.factories import (
 )
 from pricing.models import CommercialPrice, PriceAmount
 from products.tests.factories import product_factory
-from retail.models import RetailCart
+from carts.models import Cart
 from retail.tests.factories import (
     retail_inventory_batch_factory,
     retail_product_price_factory,
@@ -219,7 +219,7 @@ def test_business_customer_cannot_mutate_retail_cart(
     )
 
     assert response.status_code == 403
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()
     assert "retail_cart" not in response.cookies
 
 
@@ -260,7 +260,7 @@ def test_add_to_cart_creates_cart_and_sets_cookie_for_new_visitor(client):
 
     assert "retail_cart" in response.cookies
 
-    cart = RetailCart.objects.get()
+    cart = Cart.objects.get()
     line = cart.lines.get()
 
     assert line.commercial_price == offer
@@ -310,9 +310,9 @@ def test_add_to_cart_reuses_existing_cart_across_requests(client):
     # The client's cookie jar carries the signed cart cookie between
     # requests, the same way a browser would - so this is one cart, one
     # merged line, not two.
-    assert RetailCart.objects.count() == 1
+    assert Cart.objects.count() == 1
 
-    cart = RetailCart.objects.get()
+    cart = Cart.objects.get()
     line = cart.lines.get()
 
     assert line.quantity == 5
@@ -411,7 +411,7 @@ def test_add_to_cart_requires_commercial_price_id(client):
     assert _stored_messages(response) == [
         "an offer must be selected"
     ]
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()
 
 
 @pytest.mark.django_db
@@ -447,7 +447,7 @@ def test_add_to_cart_rejects_invalid_offer_id(
     assert _stored_messages(response) == [
         "invalid retail offer"
     ]
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()
 
 
 @pytest.mark.django_db
@@ -472,7 +472,7 @@ def test_add_to_cart_rejects_unknown_offer_id(client):
     assert _stored_messages(response) == [
         "retail commercial price does not exist"
     ]
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()
 
 
 @pytest.mark.django_db
@@ -510,7 +510,7 @@ def test_add_to_cart_rejects_business_price(client):
     assert _stored_messages(response) == [
         "commercial price does not belong to retail"
     ]
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()
 
 
 @pytest.mark.django_db
@@ -542,7 +542,7 @@ def test_add_to_cart_rejects_disabled_price(client):
     assert _stored_messages(response) == [
         "commercial price is not enabled for retail"
     ]
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()
 
 
 @pytest.mark.django_db
@@ -572,7 +572,7 @@ def test_add_to_cart_defaults_missing_quantity_to_one(client):
 
     assert response.status_code == 302
 
-    line = RetailCart.objects.get().lines.get()
+    line = Cart.objects.get().lines.get()
 
     assert line.quantity == 1
 
@@ -639,7 +639,7 @@ def test_add_to_cart_rejects_invalid_quantity(
     assert _stored_messages(response) == [
         expected_message
     ]
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()
 
 
 @pytest.mark.django_db
@@ -672,7 +672,7 @@ def test_add_to_cart_rejects_quantity_above_line_maximum(client):
     assert _stored_messages(response) == [
         "invalid retail cart line quantity"
     ]
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()
 
 
 @pytest.mark.django_db
@@ -699,7 +699,7 @@ def test_add_to_cart_returns_json_error_for_invalid_offer(client):
         "ok": False,
         "message": "invalid retail offer",
     }
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()
 
 
 @pytest.mark.django_db
@@ -732,4 +732,4 @@ def test_add_to_cart_returns_404_for_unknown_product(client):
     )
 
     assert response.status_code == 404
-    assert not RetailCart.objects.exists()
+    assert not Cart.objects.exists()

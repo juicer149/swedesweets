@@ -3,7 +3,6 @@
 import uuid
 
 from django.db import models
-from django.db.models import Q
 
 
 MAX_RETAIL_COUNTRY_CODE_LENGTH = 2
@@ -80,67 +79,6 @@ class RetailPostalArea(models.Model):
         return f"{self.postal_code} {self.city}, {self.country_code}"
 
 
-class RetailCart(models.Model):
-    """Mutable retail purchase intent before an Order exists.
-
-    Buyer data, price snapshots, stock reservations and payment state belong
-    to later checkout/order stages.
-    """
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self) -> str:
-        return f"Retail cart {self.pk}"
-
-
-class RetailCartLine(models.Model):
-    """One selected retail CommercialPrice in a mutable cart.
-
-    The cart stores commercial selection identity and quantity only.
-    Price is re-resolved when checkout creates the durable Order snapshot.
-    """
-
-    cart = models.ForeignKey(
-        RetailCart,
-        on_delete=models.CASCADE,
-        related_name="lines",
-    )
-
-    commercial_price = models.ForeignKey(
-        "pricing.CommercialPrice",
-        on_delete=models.CASCADE,
-        related_name="retail_cart_lines",
-    )
-
-    quantity = models.PositiveIntegerField()
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                condition=Q(quantity__gt=0),
-                name="retail_cart_line_quantity_positive",
-            ),
-            models.UniqueConstraint(
-                fields=["cart", "commercial_price"],
-                name="unique_retail_commercial_price_per_cart",
-            ),
-        ]
-
-    def __str__(self) -> str:
-        return (
-            f"Cart {self.cart_id}: {self.quantity} "
-            f"× commercial price {self.commercial_price_id}"
-        )
 
 
 class RetailCheckoutSession(models.Model):

@@ -7,12 +7,12 @@ from common.navbar_cart import (
     NavbarCart,
     NavbarCartLine,
 )
-from retail.models import RetailCart
+from carts.models import Cart
 
 
 def build_retail_navbar_cart(
     *,
-    cart: RetailCart | None,
+    cart: Cart | None,
 ) -> NavbarCart:
     if cart is None:
         return _empty_retail_navbar_cart()

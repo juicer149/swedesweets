@@ -2,26 +2,28 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from retail.models import (
-    RetailCart,
-    RetailCartLine,
+from carts.models import (
+    Cart,
+    CartLine,
 )
+from common.channels import SalesChannel
 
 
 def get_retail_cart(
     *,
     cart_id: UUID | None,
-) -> RetailCart | None:
+) -> Cart | None:
     if cart_id is None:
         return None
 
     return (
-        RetailCart.objects
+        Cart.objects
         .prefetch_related(
             "lines__commercial_price__product",
         )
         .filter(
             pk=cart_id,
+            channel=SalesChannel.RETAIL,
         )
         .first()
     )
@@ -29,11 +31,11 @@ def get_retail_cart(
 
 def get_retail_cart_line(
     *,
-    cart: RetailCart,
+    cart: Cart,
     line_id: int,
-) -> RetailCartLine | None:
+) -> CartLine | None:
     return (
-        RetailCartLine.objects
+        CartLine.objects
         .select_related(
             "commercial_price__product",
         )

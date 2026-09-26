@@ -6,9 +6,9 @@ import pytest
 from django.http import HttpResponse
 from django.urls import reverse
 
-from retail.models import (
-    RetailCart,
-    RetailCartLine,
+from carts.models import (
+    Cart,
+    CartLine,
 )
 from retail.services import (
     add_retail_cart_line,
@@ -26,7 +26,7 @@ from storefront.cart import (
 def _set_signed_retail_cart_cookie(
     client,
     *,
-    cart: RetailCart,
+    cart: Cart,
 ) -> None:
     response = HttpResponse()
 
@@ -53,14 +53,14 @@ def retail_price(db):
 def test_storefront_navbar_cart_does_not_create_cart_on_get(
     client,
 ):
-    assert RetailCart.objects.count() == 0
+    assert Cart.objects.count() == 0
 
     response = client.get(
         reverse("storefront:product_list")
     )
 
     assert response.status_code == 200
-    assert RetailCart.objects.count() == 0
+    assert Cart.objects.count() == 0
 
 
 @pytest.mark.django_db
@@ -210,6 +210,6 @@ def test_navbar_cart_removes_owned_line(
         "message": "Product removed from your cart.",
     }
 
-    assert not RetailCartLine.objects.filter(
+    assert not CartLine.objects.filter(
         pk=line.id,
     ).exists()

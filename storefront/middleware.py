@@ -20,7 +20,7 @@ class RetailCartMiddleware:
     exposes the result as `request.retail_cart_id` (a UUID, or None when no
     valid cart cookie exists). No database access happens here - this
     middleware only establishes and persists cart *identity*, never cart
-    state; whether that id still refers to a real, non-expired RetailCart
+    state; whether that id still refers to a real, non-expired Cart
     is for the view/service layer to resolve.
 
     After the view runs, it writes, renews, or clears the cart cookie on

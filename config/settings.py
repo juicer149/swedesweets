@@ -128,6 +128,7 @@ INSTALLED_APPS = [
     "orders",
     "reservations",
     "pricing",
+    "carts",
     "customers",
     "business_portal",
     "business",

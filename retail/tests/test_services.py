@@ -21,9 +21,11 @@ from orders.models import (
 from reservations.models import Allocation
 from payments.models import PaymentAttempt
 from pricing.models import CommercialPrice, PriceAmount
+from carts.models import (
+    Cart,
+    CartLine,
+)
 from retail.models import (
-    RetailCart,
-    RetailCartLine,
     RetailCheckoutSession,
     RetailOfferSelection,
 )
@@ -63,7 +65,7 @@ from retail.tests.factories import (
 def test_create_retail_cart_creates_empty_cart():
     cart = create_retail_cart()
 
-    assert isinstance(cart, RetailCart)
+    assert isinstance(cart, Cart)
     assert cart.lines.count() == 0
 
 
@@ -307,7 +309,7 @@ def test_remove_retail_cart_line():
         line=line,
     )
 
-    assert not RetailCartLine.objects.filter(pk=line.pk).exists()
+    assert not CartLine.objects.filter(pk=line.pk).exists()
 
 
 @pytest.mark.django_db
@@ -333,7 +335,7 @@ def test_remove_retail_cart_line_rejects_line_from_other_cart():
             line=line,
         )
 
-    assert RetailCartLine.objects.filter(pk=line.pk).exists()
+    assert CartLine.objects.filter(pk=line.pk).exists()
 
 
 @pytest.mark.django_db
@@ -448,7 +450,7 @@ def test_create_retail_checkout_from_cart_converts_and_consumes_cart():
         == batch_price
     )
 
-    assert not RetailCart.objects.filter(
+    assert not Cart.objects.filter(
         pk=cart_id,
     ).exists()
     assert order.allocations.count() == 0
@@ -570,7 +572,7 @@ def test_create_retail_checkout_from_cart_rejects_empty_cart():
             ),
         )
 
-    assert RetailCart.objects.filter(
+    assert Cart.objects.filter(
         pk=cart.pk,
     ).exists()
     assert Order.objects.count() == 0
@@ -611,10 +613,10 @@ def test_create_retail_checkout_from_cart_preserves_cart_on_validation_failure()
             ),
         )
 
-    assert RetailCart.objects.filter(
+    assert Cart.objects.filter(
         pk=cart.pk,
     ).exists()
-    assert RetailCartLine.objects.filter(
+    assert CartLine.objects.filter(
         cart=cart,
         commercial_price=offer,
         quantity=2,

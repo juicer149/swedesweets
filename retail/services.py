@@ -29,9 +29,12 @@ from reservations.services import (
     cancel_temporary_reservations_for_order,
     reserve_order_line_from_pool,
 )
+from carts.models import (
+    Cart,
+    CartLine,
+)
+from common.channels import SalesChannel
 from retail.models import (
-    RetailCart,
-    RetailCartLine,
     RetailCheckoutSession,
     RetailOfferSelection,
 )
@@ -52,19 +55,21 @@ class InvalidRetailCart(ValueError):
 
 
 @transaction.atomic
-def create_retail_cart() -> RetailCart:
+def create_retail_cart() -> Cart:
     """Create an empty mutable retail cart."""
 
-    return RetailCart.objects.create()
+    return Cart.objects.create(
+        channel=SalesChannel.RETAIL,
+    )
 
 
 @transaction.atomic
 def add_retail_cart_line(
     *,
-    cart: RetailCart,
+    cart: Cart,
     commercial_price_id: int,
     quantity: int,
-) -> RetailCartLine:
+) -> CartLine:
     """Add one retail CommercialPrice, merging an existing matching line."""
 
     _validate_cart_quantity(
@@ -81,7 +86,7 @@ def add_retail_cart_line(
     )
 
     existing_line = (
-        RetailCartLine.objects
+        CartLine.objects
         .filter(
             cart=cart,
             commercial_price=commercial_price,
@@ -105,7 +110,7 @@ def add_retail_cart_line(
         )
         return existing_line
 
-    return RetailCartLine.objects.create(
+    return CartLine.objects.create(
         cart=cart,
         commercial_price=commercial_price,
         quantity=quantity,
@@ -115,10 +120,10 @@ def add_retail_cart_line(
 @transaction.atomic
 def update_retail_cart_line_quantity(
     *,
-    cart: RetailCart,
-    line: RetailCartLine,
+    cart: Cart,
+    line: CartLine,
     quantity: int,
-) -> RetailCartLine:
+) -> CartLine:
     """Set the quantity of one line that belongs to the given cart."""
 
     _validate_cart_quantity(
@@ -147,8 +152,8 @@ def update_retail_cart_line_quantity(
 @transaction.atomic
 def remove_retail_cart_line(
     *,
-    cart: RetailCart,
-    line: RetailCartLine,
+    cart: Cart,
+    line: CartLine,
 ) -> None:
     """Remove one line that belongs to the given cart."""
 
@@ -166,8 +171,8 @@ def remove_retail_cart_line(
 @transaction.atomic
 def clear_retail_cart(
     *,
-    cart: RetailCart,
-) -> RetailCart:
+    cart: Cart,
+) -> Cart:
     """Remove every line from a retail cart."""
 
     cart = _lock_retail_cart(
@@ -252,7 +257,7 @@ def buyer_from_anonymous_retail_input(
 @transaction.atomic
 def create_retail_checkout_from_cart(
     *,
-    cart: RetailCart,
+    cart: Cart,
     buyer: AnonymousBuyerInput,
 ) -> RetailCheckoutSession:
     """Convert one mutable retail cart into a validated retail checkout."""
@@ -593,35 +598,42 @@ def fail_retail_payment(
 
 def _lock_retail_cart(
     *,
-    cart: RetailCart,
-) -> RetailCart:
+    cart: Cart,
+) -> Cart:
     try:
-        return (
-            RetailCart.objects
+        cart = (
+            Cart.objects
             .select_for_update()
             .get(pk=cart.pk)
         )
-    except RetailCart.DoesNotExist as exc:
+    except Cart.DoesNotExist as exc:
         raise InvalidRetailCart(
             "retail cart does not exist"
         ) from exc
 
+    if cart.channel != SalesChannel.RETAIL:
+        raise InvalidRetailCart(
+            "cart does not belong to retail"
+        )
+
+    return cart
+
 
 def _get_locked_cart_line(
     *,
-    cart: RetailCart,
-    line: RetailCartLine,
-) -> RetailCartLine:
+    cart: Cart,
+    line: CartLine,
+) -> CartLine:
     try:
         return (
-            RetailCartLine.objects
+            CartLine.objects
             .select_for_update()
             .get(
                 pk=line.pk,
                 cart=cart,
             )
         )
-    except RetailCartLine.DoesNotExist as exc:
+    except CartLine.DoesNotExist as exc:
         raise InvalidRetailCart(
             "retail cart line does not belong to cart"
         ) from exc

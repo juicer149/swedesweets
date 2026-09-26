@@ -42,6 +42,7 @@ testpaths = [
     "business_portal",
     "orders",
     "pricing",
+    "carts",
     "business",
     "retail",
     "fulfillment",
