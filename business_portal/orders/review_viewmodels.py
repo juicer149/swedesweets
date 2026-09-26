@@ -11,15 +11,16 @@ from business_portal.orders.presentation import (
     quantity_label,
 )
 from business_portal.orders.product_presentation import (
-    business_order_line_presentation,
+    business_cart_line_presentation,
 )
-from orders.models import Order, OrderLine
-from products.models import Product
+from carts.models import (
+    Cart,
+    CartLine,
+)
 
 
 @dataclass(frozen=True, slots=True)
 class PortalOrderReviewLine:
-    product: Product
     quantity: int
     quantity_label: str
     catalog_label: str
@@ -29,38 +30,40 @@ class PortalOrderReviewLine:
 
 @dataclass(frozen=True, slots=True)
 class PortalOrderReviewContext:
-    order: Order
     lines: tuple[PortalOrderReviewLine, ...]
     title: str
     items_summary: str
     place_order_label: str
     back_label: str
-    discard_draft_label: str
+    clear_cart_label: str
     back_url: str
 
     def as_dict(self) -> dict[str, Any]:
         return {
-            "order": self.order,
             "lines": self.lines,
             "title": self.title,
             "items_summary": self.items_summary,
             "place_order_label": self.place_order_label,
             "back_label": self.back_label,
-            "discard_draft_label": self.discard_draft_label,
+            "clear_cart_label": self.clear_cart_label,
             "back_url": self.back_url,
         }
 
 
 def build_portal_order_review_context(
     *,
-    order: Order,
+    cart: Cart,
     language_code: str,
 ) -> PortalOrderReviewContext:
-    order_lines = tuple(
-        order.lines
+    cart_lines = tuple(
+        cart.lines
         .select_related(
-            "product",
-            "business_offer_selection__commercial_price",
+            "commercial_price",
+            "commercial_price__product",
+        )
+        .prefetch_related(
+            "commercial_price__amounts",
+            "commercial_price__product__translations",
         )
         .order_by("id")
     )
@@ -69,31 +72,23 @@ def build_portal_order_review_context(
         _build_review_line(
             line,
             language_code=language_code,
-            currency=order.currency,
         )
-        for line in order_lines
-    )
-
-    product_count = len(
-        lines
-    )
-
-    total_quantity = sum(
-        line.quantity
-        for line in lines
+        for line in cart_lines
     )
 
     return PortalOrderReviewContext(
-        order=order,
         lines=lines,
         title=_("Review order"),
         items_summary=contents_summary(
-            product_count=product_count,
-            total_quantity=total_quantity,
+            product_count=len(lines),
+            total_quantity=sum(
+                line.quantity
+                for line in lines
+            ),
         ),
         place_order_label=_("Place order"),
         back_label=_("Back"),
-        discard_draft_label=_("Discard draft"),
+        clear_cart_label=_("Clear cart"),
         back_url=reverse(
             "business_portal:current_order"
         ),
@@ -101,24 +96,21 @@ def build_portal_order_review_context(
 
 
 def _build_review_line(
-    line: OrderLine,
+    line: CartLine,
     *,
     language_code: str,
-    currency: str,
 ) -> PortalOrderReviewLine:
     presentation = (
-        business_order_line_presentation(
+        business_cart_line_presentation(
             line,
             language_code=language_code,
-            currency=currency,
         )
     )
 
     return PortalOrderReviewLine(
-        product=line.product,
-        quantity=line.quantity_in_units,
+        quantity=line.quantity,
         quantity_label=quantity_label(
-            line.quantity_in_units
+            line.quantity
         ),
         catalog_label=(
             presentation.catalog_label

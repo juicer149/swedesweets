@@ -7,14 +7,14 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from business_portal.orders.product_presentation import (
-    business_order_line_presentation,
+    business_cart_line_presentation,
 )
-from orders.models import Order
+from carts.models import Cart
 
 
 @dataclass(frozen=True, slots=True)
-class PortalDraftLine:
-    order_line_id: int
+class PortalCartLine:
+    cart_line_id: int
     product_label: str
     offer_label: str | None
     price_label: str | None
@@ -25,52 +25,50 @@ class PortalDraftLine:
 
 @dataclass(frozen=True, slots=True)
 class PortalCurrentOrderContext:
-    draft_lines: tuple[PortalDraftLine, ...]
+    cart_lines: tuple[PortalCartLine, ...]
     title: str
     description: str
     submit_label: str
-    discard_draft_label: str
+    clear_cart_label: str
     continue_shopping_label: str
     continue_shopping_url: str
     cancel_url: str
-    has_active_draft: bool
 
     def as_dict(self) -> dict[str, Any]:
         return {
-            "draft_lines": self.draft_lines,
+            "cart_lines": self.cart_lines,
             "title": self.title,
             "description": self.description,
             "submit_label": self.submit_label,
-            "discard_draft_label": self.discard_draft_label,
+            "clear_cart_label": self.clear_cart_label,
             "continue_shopping_label": self.continue_shopping_label,
             "continue_shopping_url": self.continue_shopping_url,
             "cancel_url": self.cancel_url,
-            "has_active_draft": self.has_active_draft,
         }
 
 
 def build_portal_current_order_context(
     *,
-    draft_order: Order | None,
+    cart: Cart | None,
     language_code: str | None = None,
 ) -> PortalCurrentOrderContext:
-    draft_lines = (
-        _build_portal_draft_lines(
-            order=draft_order,
+    cart_lines = (
+        _build_portal_cart_lines(
+            cart=cart,
             language_code=language_code,
         )
-        if draft_order is not None
+        if cart is not None
         else ()
     )
 
     return PortalCurrentOrderContext(
-        draft_lines=draft_lines,
+        cart_lines=cart_lines,
         title=_("Current order"),
         description=_(
             "Review the products and quantities in your current order."
         ),
         submit_label=_("Review order"),
-        discard_draft_label=_("Discard draft"),
+        clear_cart_label=_("Clear cart"),
         continue_shopping_label=_("Continue shopping"),
         continue_shopping_url=reverse(
             "business_portal:catalog"
@@ -78,20 +76,23 @@ def build_portal_current_order_context(
         cancel_url=reverse(
             "accounts:after_login"
         ),
-        has_active_draft=draft_order is not None,
     )
 
 
-def _build_portal_draft_lines(
+def _build_portal_cart_lines(
     *,
-    order: Order,
+    cart: Cart,
     language_code: str | None,
-) -> tuple[PortalDraftLine, ...]:
+) -> tuple[PortalCartLine, ...]:
     lines = (
-        order.lines
+        cart.lines
         .select_related(
-            "product",
-            "business_offer_selection__commercial_price",
+            "commercial_price",
+            "commercial_price__product",
+        )
+        .prefetch_related(
+            "commercial_price__amounts",
+            "commercial_price__product__translations",
         )
         .order_by("id")
     )
@@ -100,20 +101,19 @@ def _build_portal_draft_lines(
         language_code or "en"
     )
 
-    draft_lines = []
+    cart_lines = []
 
     for line in lines:
         presentation = (
-            business_order_line_presentation(
+            business_cart_line_presentation(
                 line,
                 language_code=effective_language_code,
-                currency=order.currency,
             )
         )
 
-        draft_lines.append(
-            PortalDraftLine(
-                order_line_id=line.id,
+        cart_lines.append(
+            PortalCartLine(
+                cart_line_id=line.id,
                 product_label=(
                     presentation.catalog_label
                 ),
@@ -123,7 +123,7 @@ def _build_portal_draft_lines(
                 price_label=(
                     presentation.price_label
                 ),
-                quantity=line.quantity_in_units,
+                quantity=line.quantity,
                 quantity_url=reverse(
                     "business_portal:set_draft_line_quantity",
                     kwargs={
@@ -140,5 +140,5 @@ def _build_portal_draft_lines(
         )
 
     return tuple(
-        draft_lines
+        cart_lines
     )

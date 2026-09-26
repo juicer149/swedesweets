@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from decimal import Decimal
 
-from django.db import IntegrityError, transaction
+from django.db import transaction
 
+from business.datatypes import BusinessOfferLineInput
 from business.drafts import (
+    build_business_offer_order_draft,
     build_business_order_draft,
     buyer_from_customer,
     resolve_business_order_lines,
@@ -17,11 +20,17 @@ from business.policies import (
 from business.selectors import (
     list_business_catalog_products,
 )
+from carts.models import Cart
+from carts.services import (
+    InvalidCart,
+    clear_cart as clear_generic_cart,
+)
 from common.catalog.contracts import (
     CatalogOffer,
     CatalogOfferKind,
     CatalogProduct,
 )
+from common.channels import SalesChannel
 from customers.models import Customer
 from inventory.selectors import (
     orderable_quantity_by_product_id,
@@ -49,6 +58,7 @@ from orders.services import (
 )
 from pricing.models import CommercialPrice
 from products.models import Product
+from products.units import OrderUnit
 from reservations.policies import (
     clear_order_reservations_before_line_replacement,
     require_order_without_reservations_before_discard,
@@ -518,15 +528,103 @@ def create_order(
 
 
 @transaction.atomic
+def place_customer_cart(
+    *,
+    customer: Customer,
+    user=None,
+) -> Order:
+    """Convert the customer's BUSINESS cart into a placed order.
+
+    The cart row serializes placement against concurrent cart mutations.
+    The cart is cleared only after successful placement.
+    """
+
+    cart = (
+        Cart.objects
+        .select_for_update()
+        .filter(
+            business_context__customer_id=customer.pk,
+        )
+        .first()
+    )
+
+    if cart is None:
+        raise InvalidOrderOperation(
+            "cart must contain at least one line"
+        )
+
+    if cart.channel != SalesChannel.BUSINESS:
+        raise RuntimeError(
+            "business cart invariant violated: "
+            "cart does not belong to business channel"
+        )
+
+    cart_lines = tuple(
+        cart.lines
+        .order_by("id")
+        .values_list(
+            "commercial_price_id",
+            "quantity",
+        )
+    )
+
+    if not cart_lines:
+        raise InvalidOrderOperation(
+            "cart must contain at least one line"
+        )
+
+    draft = build_business_offer_order_draft(
+        customer=customer,
+        lines=(
+            BusinessOfferLineInput(
+                commercial_offer_id=commercial_price_id,
+                quantity=Decimal(quantity),
+                unit=OrderUnit.STOCK,
+            )
+            for commercial_price_id, quantity in cart_lines
+        ),
+    )
+
+    order = create_shared_draft_order(
+        draft=draft,
+    )
+
+    order = place_shared_order(
+        order=order,
+        preparation=prepare_business_order_for_placement,
+        user=user,
+    )
+
+    try:
+        clear_generic_cart(
+            cart=cart,
+        )
+    except InvalidCart as exc:
+        raise RuntimeError(
+            "business cart invariant violated: "
+            "cart disappeared during placement"
+        ) from exc
+
+    return order
+
+
+@transaction.atomic
 def get_or_create_customer_draft_order(
     *,
     customer: Customer,
 ) -> Order:
-    """Return the customer's active business draft, creating one if needed."""
+    """Return the customer's legacy business draft, creating one if needed."""
+
+    customer = (
+        Customer.objects
+        .select_for_update()
+        .get(
+            pk=customer.pk,
+        )
+    )
 
     draft = (
         Order.objects
-        .select_for_update()
         .filter(
             channel=Order.Channel.BUSINESS,
             customer=customer,
@@ -554,19 +652,7 @@ def get_or_create_customer_draft_order(
         ),
     )
 
-    try:
-        with transaction.atomic():
-            order.save()
-    except IntegrityError:
-        return (
-            Order.objects
-            .select_for_update()
-            .get(
-                channel=Order.Channel.BUSINESS,
-                customer=customer,
-                status=Order.Status.DRAFT,
-            )
-        )
+    order.save()
 
     return order
 

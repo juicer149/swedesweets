@@ -188,14 +188,6 @@ class Order(models.Model):
         ]
 
         constraints = [
-            models.UniqueConstraint(
-                fields=["customer"],
-                condition=models.Q(
-                    channel="business",
-                    status="draft",
-                ),
-                name="unique_business_draft_order_per_customer",
-            ),
             models.CheckConstraint(
                 condition=(
                     models.Q(channel="retail")

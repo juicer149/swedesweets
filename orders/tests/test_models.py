@@ -145,17 +145,31 @@ def test_customer_compatibility_properties_delegate_to_buyer_properties():
 
 
 @pytest.mark.django_db
-def test_customer_can_have_only_one_active_business_draft_order(customer):
-    Order.objects.create(
+def test_customer_can_have_multiple_business_draft_orders(
+    customer,
+):
+    first = Order.objects.create(
         customer=customer,
         channel=Order.Channel.BUSINESS,
     )
 
-    with pytest.raises(IntegrityError), transaction.atomic():
-        Order.objects.create(
+    second = Order.objects.create(
+        customer=customer,
+        channel=Order.Channel.BUSINESS,
+    )
+
+    assert first.pk != second.pk
+
+    assert (
+        Order.objects
+        .filter(
             customer=customer,
             channel=Order.Channel.BUSINESS,
+            status=Order.Status.DRAFT,
         )
+        .count()
+        == 2
+    )
 
 
 @pytest.mark.django_db

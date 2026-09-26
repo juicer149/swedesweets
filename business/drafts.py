@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterable
+from decimal import Decimal
 
 from business.datatypes import BusinessOfferLineInput
 from customers.models import Customer
@@ -15,6 +16,10 @@ from orders.drafts import (
 )
 from orders.errors import InvalidOrderOperation
 from orders.models import Order
+from orders.order_limits import (
+    MAX_QUANTITY_PER_PRODUCT_PER_ORDER,
+    is_unusually_large_order_line,
+)
 from pricing.models import (
     CommercialPrice,
     PriceAmount,
@@ -105,6 +110,60 @@ def build_business_order_draft(
         ),
         lines=resolved_lines,
     )
+
+
+def build_business_offer_order_draft(
+    *,
+    customer: Customer,
+    lines: Iterable[BusinessOfferLineInput],
+) -> OrderDraft:
+    """Resolve explicit BUSINESS offer selections into a durable order draft."""
+
+    resolved_lines = resolve_business_offer_lines(
+        lines=lines,
+    )
+
+    if not resolved_lines:
+        raise InvalidOrderOperation(
+            "order must contain at least one line"
+        )
+
+    _validate_business_order_quantity_limits(
+        lines=resolved_lines,
+    )
+
+    return OrderDraft(
+        channel=Order.Channel.BUSINESS,
+        currency=Order.Currency.EUR,
+        customer=customer,
+        buyer=buyer_from_customer(
+            customer=customer,
+        ),
+        lines=resolved_lines,
+    )
+
+
+def _validate_business_order_quantity_limits(
+    *,
+    lines: Iterable[ResolvedOrderLine],
+) -> None:
+    quantity_by_product_id: dict[int, int] = defaultdict(int)
+
+    for line in lines:
+        quantity_by_product_id[
+            line.product.pk
+        ] += line.quantity_in_units
+
+    if any(
+        is_unusually_large_order_line(
+            quantity=quantity,
+        )
+        for quantity in quantity_by_product_id.values()
+    ):
+        raise InvalidOrderOperation(
+            "maximum quantity per product is "
+            f"{MAX_QUANTITY_PER_PRODUCT_PER_ORDER}"
+        )
 
 
 def resolve_business_offer_lines(

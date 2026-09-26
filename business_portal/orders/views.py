@@ -17,13 +17,17 @@ from django.views.decorators.http import (
     require_POST,
 )
 
+from business.cart_selectors import (
+    get_customer_cart,
+)
 from business.cart_services import (
     InvalidBusinessCart,
+    clear_customer_cart,
     remove_customer_cart_line,
     set_customer_cart_line_quantity,
 )
 from business.services import (
-    place_order as place_draft_order,
+    place_customer_cart,
 )
 from business_portal.orders.detail_viewmodels import (
     build_portal_order_detail_context,
@@ -37,10 +41,6 @@ from business_portal.orders.review_viewmodels import (
 from business_portal.orders.selectors import (
     get_portal_order_for_user,
 )
-from business_portal.orders.services import (
-    DraftStatus,
-    discard_portal_draft_order,
-)
 from business_portal.selectors import (
     get_portal_customer_for_user,
 )
@@ -50,9 +50,6 @@ from customers.models import Customer
 from inventory.errors import InvalidStockOperation
 from orders.errors import InvalidOrderOperation
 from orders.models import Order
-from orders.selectors import (
-    get_active_draft_order_for_customer,
-)
 
 
 class PortalOrderIntent(StrEnum):
@@ -77,17 +74,6 @@ def _wants_json(
             "",
         )
     )
-
-
-def _add_service_errors(
-    request,
-    errors: tuple[str, ...],
-) -> None:
-    for error in errors:
-        messages.error(
-            request,
-            error,
-        )
 
 
 def _get_portal_cart_line(
@@ -294,7 +280,7 @@ def current_order(request):
         user=request.user,
     )
 
-    draft_order = get_active_draft_order_for_customer(
+    cart = get_customer_cart(
         customer=customer,
     )
 
@@ -318,26 +304,14 @@ def current_order(request):
 
         match intent:
             case PortalOrderIntent.DISCARD_DRAFT:
-                result = discard_portal_draft_order(
+                clear_customer_cart(
                     customer=customer,
-                    draft_order=draft_order,
                 )
 
-                if not result.succeeded:
-                    _add_service_errors(
-                        request,
-                        result.errors,
-                    )
-
-                    return redirect(
-                        "business_portal:current_order"
-                    )
-
-                if result.status == DraftStatus.CLEARED:
-                    messages.success(
-                        request,
-                        _("Draft order discarded."),
-                    )
+                messages.success(
+                    request,
+                    _("Cart cleared."),
+                )
 
                 return redirect(
                     "accounts:after_login"
@@ -345,8 +319,8 @@ def current_order(request):
 
             case PortalOrderIntent.REVIEW_ORDER:
                 if (
-                    draft_order is None
-                    or not draft_order.lines.exists()
+                    cart is None
+                    or not cart.lines.exists()
                 ):
                     messages.error(
                         request,
@@ -372,7 +346,7 @@ def current_order(request):
                 )
 
     context = build_portal_current_order_context(
-        draft_order=draft_order,
+        cart=cart,
         language_code=request.LANGUAGE_CODE,
     ).as_dict()
 
@@ -389,14 +363,17 @@ def review_order(request):
         user=request.user,
     )
 
-    draft_order = get_active_draft_order_for_customer(
+    cart = get_customer_cart(
         customer=customer,
     )
 
-    if draft_order is None:
+    if (
+        cart is None
+        or not cart.lines.exists()
+    ):
         messages.info(
             request,
-            _("No draft order to review."),
+            _("No cart to review."),
         )
 
         return redirect(
@@ -423,26 +400,14 @@ def review_order(request):
 
         match intent:
             case PortalOrderIntent.DISCARD_DRAFT:
-                result = discard_portal_draft_order(
+                clear_customer_cart(
                     customer=customer,
-                    draft_order=draft_order,
                 )
 
-                if not result.succeeded:
-                    _add_service_errors(
-                        request,
-                        result.errors,
-                    )
-
-                    return redirect(
-                        "business_portal:review_order"
-                    )
-
-                if result.status == DraftStatus.CLEARED:
-                    messages.success(
-                        request,
-                        _("Draft order discarded."),
-                    )
+                messages.success(
+                    request,
+                    _("Cart cleared."),
+                )
 
                 return redirect(
                     "accounts:after_login"
@@ -450,8 +415,8 @@ def review_order(request):
 
             case PortalOrderIntent.PLACE_ORDER:
                 try:
-                    placed_order = place_draft_order(
-                        order=draft_order,
+                    placed_order = place_customer_cart(
+                        customer=customer,
                         user=request.user,
                     )
                 except ORDER_OPERATION_ERRORS as error:
@@ -490,7 +455,7 @@ def review_order(request):
                 )
 
     context = build_portal_order_review_context(
-        order=draft_order,
+        cart=cart,
         language_code=request.LANGUAGE_CODE,
     ).as_dict()
 
