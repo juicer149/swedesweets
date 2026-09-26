@@ -4,33 +4,37 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from business_portal.orders.product_presentation import (
-    business_order_line_presentation,
+    business_cart_line_presentation,
 )
+from carts.models import Cart
 from common.navbar_cart import (
     NavbarCart,
     NavbarCartLine,
 )
-from orders.models import Order
 
 
 def build_business_navbar_cart(
     *,
-    draft_order: Order | None,
+    cart: Cart | None,
     language_code: str | None = None,
 ) -> NavbarCart:
-    if draft_order is None:
+    if cart is None:
         return _empty_business_navbar_cart()
 
-    order_lines = tuple(
-        draft_order.lines
+    cart_lines = tuple(
+        cart.lines
         .select_related(
-            "product",
-            "business_offer_selection__commercial_price",
+            "commercial_price",
+            "commercial_price__product",
+        )
+        .prefetch_related(
+            "commercial_price__amounts",
+            "commercial_price__product__translations",
         )
         .order_by("id")
     )
 
-    if not order_lines:
+    if not cart_lines:
         return _empty_business_navbar_cart()
 
     effective_language_code = (
@@ -41,9 +45,8 @@ def build_business_navbar_cart(
         _build_business_navbar_cart_line(
             line=line,
             language_code=effective_language_code,
-            currency=draft_order.currency,
         )
-        for line in order_lines
+        for line in cart_lines
     )
 
     return NavbarCart(
@@ -99,13 +102,11 @@ def _build_business_navbar_cart_line(
     *,
     line,
     language_code: str,
-    currency: str,
 ) -> NavbarCartLine:
     presentation = (
-        business_order_line_presentation(
+        business_cart_line_presentation(
             line,
             language_code=language_code,
-            currency=currency,
         )
     )
 
@@ -118,17 +119,21 @@ def _build_business_navbar_cart_line(
         if value
     )
 
+    product = (
+        line.commercial_price.product
+    )
+
     return NavbarCartLine(
         line_id=line.id,
         label=presentation.catalog_label,
         product_url=reverse(
             "business_portal:catalog_product",
             kwargs={
-                "product_id": line.product_id,
+                "product_id": product.id,
             },
         ),
         metadata=metadata,
-        quantity=line.quantity_in_units,
+        quantity=line.quantity,
         quantity_url=reverse(
             "business_portal:set_draft_line_quantity",
             kwargs={

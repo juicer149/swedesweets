@@ -4,14 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
 
+from business.cart_selectors import (
+    get_customer_cart,
+)
 from business_portal.orders.navbar_viewmodels import (
     build_business_navbar_cart,
 )
 from business_portal.selectors import (
     get_portal_customer_for_user,
-)
-from orders.selectors import (
-    get_active_draft_order_for_customer,
 )
 
 
@@ -24,15 +24,13 @@ def navbar_cart_fragment(
         user=request.user,
     )
 
-    draft_order = (
-        get_active_draft_order_for_customer(
-            customer=customer,
-        )
+    cart = get_customer_cart(
+        customer=customer,
     )
 
     navbar_cart = (
         build_business_navbar_cart(
-            draft_order=draft_order,
+            cart=cart,
             language_code=request.LANGUAGE_CODE,
         )
     )

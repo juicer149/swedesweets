@@ -11,6 +11,9 @@ from accounts.roles import (
     AccountRole,
     Capability,
 )
+from business.cart_selectors import (
+    get_customer_cart,
+)
 from business_portal.navigation import (
     build_business_primary_nav_items,
 )
@@ -22,9 +25,6 @@ from business_portal.selectors import (
 )
 from ops_portal.navigation import (
     build_staff_primary_nav_items,
-)
-from orders.selectors import (
-    get_active_draft_order_for_customer,
 )
 from storefront.cart_selectors import (
     get_retail_cart,
@@ -191,14 +191,12 @@ def _build_business_cart(
         )
     )
 
-    draft_order = (
-        get_active_draft_order_for_customer(
-            customer=customer,
-        )
+    cart = get_customer_cart(
+        customer=customer,
     )
 
     return build_business_navbar_cart(
-        draft_order=draft_order,
+        cart=cart,
         language_code=getattr(
             request,
             "LANGUAGE_CODE",

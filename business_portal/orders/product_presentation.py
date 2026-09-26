@@ -6,8 +6,12 @@ from decimal import Decimal
 from django.utils.translation import gettext_lazy as _
 
 from business.models import BusinessOfferSelection
+from carts.models import CartLine
 from orders.models import Order, OrderLine
-from pricing.models import CommercialPrice
+from pricing.models import (
+    CommercialPrice,
+    PriceAmount,
+)
 from products.localization import translated_product_name
 from products.models import Product
 
@@ -50,7 +54,7 @@ def business_order_line_presentation(
             line.product,
             language_code=language_code,
         ),
-        offer_label=_business_offer_label(
+        offer_label=_business_order_offer_label(
             line
         ),
         price_label=_business_price_label(
@@ -60,7 +64,40 @@ def business_order_line_presentation(
     )
 
 
-def _business_offer_label(
+def business_cart_line_presentation(
+    line: CartLine,
+    *,
+    language_code: str,
+) -> BusinessOrderLinePresentation:
+    """Present one mutable BUSINESS cart line using current offer data."""
+
+    commercial_price = line.commercial_price
+
+    amount = _find_price_amount(
+        commercial_price=commercial_price,
+        currency=PriceAmount.Currency.EUR,
+    )
+
+    return BusinessOrderLinePresentation(
+        catalog_label=business_product_catalog_label(
+            commercial_price.product,
+            language_code=language_code,
+        ),
+        offer_label=_commercial_price_offer_label(
+            commercial_price
+        ),
+        price_label=_business_price_label(
+            (
+                amount.price
+                if amount is not None
+                else None
+            ),
+            currency=PriceAmount.Currency.EUR,
+        ),
+    )
+
+
+def _business_order_offer_label(
     line: OrderLine,
 ) -> str | None:
     try:
@@ -70,9 +107,6 @@ def _business_offer_label(
     except BusinessOfferSelection.DoesNotExist:
         return None
 
-    if selection.commercial_price_id is None:
-        return None
-
     commercial_price = (
         selection.commercial_price
     )
@@ -80,6 +114,14 @@ def _business_offer_label(
     if commercial_price is None:
         return None
 
+    return _commercial_price_offer_label(
+        commercial_price
+    )
+
+
+def _commercial_price_offer_label(
+    commercial_price: CommercialPrice,
+) -> str | None:
     if commercial_price.reason:
         return str(
             _REASON_LABELS.get(
@@ -92,6 +134,18 @@ def _business_offer_label(
         return str(
             _("Special offer")
         )
+
+    return None
+
+
+def _find_price_amount(
+    *,
+    commercial_price: CommercialPrice,
+    currency: str,
+) -> PriceAmount | None:
+    for amount in commercial_price.amounts.all():
+        if amount.currency == currency:
+            return amount
 
     return None
 
