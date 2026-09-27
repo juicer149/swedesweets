@@ -121,16 +121,16 @@ def test_navbar_cart_fragment_reads_customer_cart(
     assert navbar_line.quantity == 3
 
     assert navbar_line.quantity_url == reverse(
-        "business_portal:set_draft_line_quantity",
+        "business_portal:set_cart_line_quantity",
         kwargs={
-            "order_line_id": line.id,
+            "cart_line_id": line.id,
         },
     )
 
     assert navbar_line.remove_url == reverse(
-        "business_portal:remove_draft_line",
+        "business_portal:remove_cart_line",
         kwargs={
-            "order_line_id": line.id,
+            "cart_line_id": line.id,
         },
     )
 

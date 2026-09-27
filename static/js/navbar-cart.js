@@ -223,7 +223,7 @@
 
       if (!response.ok) {
         throw new Error(
-          "Could not refresh current order."
+          "Could not refresh cart."
         );
       }
 

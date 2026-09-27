@@ -24,7 +24,7 @@ class PortalCartLine:
 
 
 @dataclass(frozen=True, slots=True)
-class PortalCurrentOrderContext:
+class PortalCartContext:
     cart_lines: tuple[PortalCartLine, ...]
     title: str
     description: str
@@ -47,11 +47,11 @@ class PortalCurrentOrderContext:
         }
 
 
-def build_portal_current_order_context(
+def build_portal_cart_context(
     *,
     cart: Cart | None,
     language_code: str | None = None,
-) -> PortalCurrentOrderContext:
+) -> PortalCartContext:
     cart_lines = (
         _build_portal_cart_lines(
             cart=cart,
@@ -61,11 +61,11 @@ def build_portal_current_order_context(
         else ()
     )
 
-    return PortalCurrentOrderContext(
+    return PortalCartContext(
         cart_lines=cart_lines,
-        title=_("Current order"),
+        title=_("Cart"),
         description=_(
-            "Review the products and quantities in your current order."
+            "Review the products and quantities in your cart."
         ),
         submit_label=_("Review order"),
         clear_cart_label=_("Clear cart"),
@@ -125,15 +125,15 @@ def _build_portal_cart_lines(
                 ),
                 quantity=line.quantity,
                 quantity_url=reverse(
-                    "business_portal:set_draft_line_quantity",
+                    "business_portal:set_cart_line_quantity",
                     kwargs={
-                        "order_line_id": line.id,
+                        "cart_line_id": line.id,
                     },
                 ),
                 remove_url=reverse(
-                    "business_portal:remove_draft_line",
+                    "business_portal:remove_cart_line",
                     kwargs={
-                        "order_line_id": line.id,
+                        "cart_line_id": line.id,
                     },
                 ),
             )

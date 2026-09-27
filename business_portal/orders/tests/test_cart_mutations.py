@@ -94,9 +94,9 @@ def test_customer_can_set_cart_line_quantity(
 
     response = client.post(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         ),
         {
@@ -106,7 +106,7 @@ def test_customer_can_set_cart_line_quantity(
 
     assert response.status_code == 302
     assert response["Location"] == reverse(
-        "business_portal:current_order"
+        "business_portal:cart"
     )
 
     line.refresh_from_db()
@@ -135,9 +135,9 @@ def test_set_cart_line_quantity_returns_json_success(
 
     response = client.post(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         ),
         {
@@ -179,9 +179,9 @@ def test_set_cart_line_quantity_rejects_invalid_quantity(
 
     response = client.post(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         ),
         {
@@ -191,7 +191,7 @@ def test_set_cart_line_quantity_rejects_invalid_quantity(
 
     assert response.status_code == 302
     assert response["Location"] == reverse(
-        "business_portal:current_order"
+        "business_portal:cart"
     )
 
     line.refresh_from_db()
@@ -225,9 +225,9 @@ def test_set_cart_line_quantity_returns_json_error_for_invalid_quantity(
 
     response = client.post(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         ),
         {
@@ -268,9 +268,9 @@ def test_set_cart_line_quantity_rejects_non_positive_quantity(
 
     response = client.post(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         ),
         {
@@ -280,7 +280,7 @@ def test_set_cart_line_quantity_rejects_non_positive_quantity(
 
     assert response.status_code == 302
     assert response["Location"] == reverse(
-        "business_portal:current_order"
+        "business_portal:cart"
     )
 
     line.refresh_from_db()
@@ -314,9 +314,9 @@ def test_set_cart_line_quantity_returns_json_error_for_non_positive_quantity(
 
     response = client.post(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         ),
         {
@@ -364,9 +364,9 @@ def test_set_cart_line_quantity_does_not_apply_stock_availability(
 
     response = client.post(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         ),
         {
@@ -406,9 +406,9 @@ def test_set_cart_line_quantity_cannot_mutate_another_customer_cart(
 
     response = client.post(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": other_line.id,
+                "cart_line_id": other_line.id,
             },
         ),
         {
@@ -437,9 +437,9 @@ def test_set_cart_line_quantity_returns_404_for_unknown_line(
 
     response = client.post(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": 999_999,
+                "cart_line_id": 999_999,
             },
         ),
         {
@@ -474,9 +474,9 @@ def test_set_cart_line_quantity_get_is_not_allowed(
 
     response = client.get(
         reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         )
     )
@@ -504,16 +504,16 @@ def test_customer_can_remove_cart_line(
 
     response = client.post(
         reverse(
-            "business_portal:remove_draft_line",
+            "business_portal:remove_cart_line",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         )
     )
 
     assert response.status_code == 302
     assert response["Location"] == reverse(
-        "business_portal:current_order"
+        "business_portal:cart"
     )
 
     assert not CartLine.objects.filter(
@@ -543,9 +543,9 @@ def test_remove_last_cart_line_keeps_empty_customer_cart(
 
     response = client.post(
         reverse(
-            "business_portal:remove_draft_line",
+            "business_portal:remove_cart_line",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         )
     )
@@ -585,9 +585,9 @@ def test_remove_cart_line_cannot_mutate_another_customer_cart(
 
     response = client.post(
         reverse(
-            "business_portal:remove_draft_line",
+            "business_portal:remove_cart_line",
             kwargs={
-                "order_line_id": other_line.id,
+                "cart_line_id": other_line.id,
             },
         )
     )
@@ -613,9 +613,9 @@ def test_remove_cart_line_returns_404_for_unknown_line(
 
     response = client.post(
         reverse(
-            "business_portal:remove_draft_line",
+            "business_portal:remove_cart_line",
             kwargs={
-                "order_line_id": 999_999,
+                "cart_line_id": 999_999,
             },
         )
     )
@@ -647,9 +647,9 @@ def test_remove_cart_line_get_is_not_allowed(
 
     response = client.get(
         reverse(
-            "business_portal:remove_draft_line",
+            "business_portal:remove_cart_line",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         )
     )
@@ -679,9 +679,9 @@ def test_customer_can_remove_cart_line_with_json_response(
 
     response = client.post(
         reverse(
-            "business_portal:remove_draft_line",
+            "business_portal:remove_cart_line",
             kwargs={
-                "order_line_id": line_id,
+                "cart_line_id": line_id,
             },
         ),
         HTTP_ACCEPT="application/json",
@@ -692,7 +692,7 @@ def test_customer_can_remove_cart_line_with_json_response(
     assert response.json() == {
         "ok": True,
         "message": "Product removed from your cart.",
-        "order_line_id": line_id,
+        "cart_line_id": line_id,
     }
 
     assert not CartLine.objects.filter(

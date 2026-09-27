@@ -16,12 +16,7 @@ from business.tests.factories import (
 )
 from business_portal.orders.repeat_services import (
     RepeatOrderSkipReason,
-    repeat_order_into_draft,
-)
-from common.catalog.contracts import (
-    CatalogOffer,
-    CatalogOfferKind,
-    CatalogProduct,
+    repeat_order_into_cart,
 )
 from customers.tests.factories import customer_factory
 from inventory.services import create_batch
@@ -71,34 +66,10 @@ def _stock(
     )
 
 
-def _standard_catalog_product(
-    *,
-    product,
-    commercial_price: CommercialPrice,
-    available_units: int,
-) -> CatalogProduct:
-    return CatalogProduct(
-        product=product,
-        available_units=available_units,
-        offers=(
-            CatalogOffer(
-                kind=CatalogOfferKind.STANDARD,
-                commercial_price_id=commercial_price.pk,
-                batch_id=None,
-                reason=None,
-                price=None,
-                currency=PriceAmount.Currency.EUR,
-                available_units=available_units,
-            ),
-        ),
-    )
-
-
 @pytest.mark.django_db
-def test_repeat_order_adds_standard_line_to_draft(
-    monkeypatch,
-):
+def test_repeat_order_adds_standard_line_to_cart():
     customer = _customer()
+
     apple = _product(
         name="Apple",
         internal_number=101,
@@ -108,8 +79,10 @@ def test_repeat_order_adds_standard_line_to_draft(
         product=apple,
     )
 
-    standard_offer = standard_business_offer_factory(
-        product=apple,
+    standard_offer = (
+        standard_business_offer_factory(
+            product=apple,
+        )
     )
 
     source_order = create_order(
@@ -122,44 +95,32 @@ def test_repeat_order_adds_standard_line_to_draft(
         ],
     )
 
-    catalog_product = _standard_catalog_product(
-        product=apple,
-        commercial_price=standard_offer,
-        available_units=98,
-    )
-
-    monkeypatch.setattr(
-        "business_portal.orders.repeat_services.list_business_catalog_products",
-        lambda: (
-            catalog_product,
-        ),
-    )
-
-    result = repeat_order_into_draft(
+    result = repeat_order_into_cart(
         customer=customer,
         source_order=source_order,
     )
 
     assert result.added_count == 1
     assert result.skipped == ()
-    assert result.draft_order is not None
-    assert result.draft_order.status == Order.Status.DRAFT
+    assert result.cart is not None
 
-    line = result.draft_order.lines.get()
+    line = result.cart.lines.get()
 
-    assert line.product == apple
-    assert line.quantity_in_units == 2
-    assert (
-        line.business_offer_selection.commercial_price
-        == standard_offer
-    )
+    assert line.commercial_price == standard_offer
+    assert line.commercial_price.product == apple
+    assert line.quantity == 2
+
+    assert not Order.objects.filter(
+        customer=customer,
+        channel=Order.Channel.BUSINESS,
+        status=Order.Status.DRAFT,
+    ).exists()
 
 
 @pytest.mark.django_db
-def test_repeat_order_preserves_original_special_offer(
-    monkeypatch,
-):
+def test_repeat_order_preserves_selected_special_offer_from_order_line():
     customer = _customer()
+
     apple = _product(
         name="Apple",
         internal_number=102,
@@ -173,7 +134,9 @@ def test_repeat_order_preserves_original_special_offer(
         batch_id="APPLE-SPECIAL",
         product=apple,
         quantity=20,
-        best_before=TODAY + timedelta(days=30),
+        best_before=(
+            TODAY + timedelta(days=30)
+        ),
         location="Shelf A1",
         today=TODAY,
     )
@@ -186,7 +149,7 @@ def test_repeat_order_preserves_original_special_offer(
         reason=CommercialPrice.Reason.SHORT_DATED,
     )
 
-    amount = PriceAmount.objects.create(
+    PriceAmount.objects.create(
         commercial_price=commercial_price,
         currency=PriceAmount.Currency.EUR,
         price=Decimal("8.50"),
@@ -205,59 +168,37 @@ def test_repeat_order_preserves_original_special_offer(
 
     source_line = source_order.lines.get()
 
-    assert source_line.commercial_offer_id == commercial_price.pk
     assert (
-        source_line.business_offer_selection.commercial_price_id
+        source_line.commercial_offer_id
         == commercial_price.pk
     )
 
-    catalog_product = CatalogProduct(
-        product=apple,
-        available_units=18,
-        offers=(
-            CatalogOffer(
-                kind=CatalogOfferKind.BATCH,
-                commercial_price_id=commercial_price.id,
-                batch_id=batch.id,
-                reason=CommercialPrice.Reason.SHORT_DATED,
-                price=amount.price,
-                currency=PriceAmount.Currency.EUR,
-                available_units=18,
-            ),
-        ),
-    )
+    BusinessOfferSelection.objects.filter(
+        order_line=source_line,
+    ).delete()
 
-    monkeypatch.setattr(
-        "business_portal.orders.repeat_services.list_business_catalog_products",
-        lambda: (
-            catalog_product,
-        ),
-    )
-
-    result = repeat_order_into_draft(
+    result = repeat_order_into_cart(
         customer=customer,
         source_order=source_order,
     )
 
     assert result.added_count == 1
     assert result.skipped == ()
-    assert result.draft_order is not None
+    assert result.cart is not None
 
-    repeated_line = result.draft_order.lines.get()
+    repeated_line = result.cart.lines.get()
 
-    assert repeated_line.product == apple
-    assert repeated_line.quantity_in_units == 2
     assert (
-        repeated_line.business_offer_selection.commercial_price_id
-        == commercial_price.id
+        repeated_line.commercial_price_id
+        == commercial_price.pk
     )
+    assert repeated_line.quantity == 2
 
 
 @pytest.mark.django_db
-def test_repeat_order_skips_product_not_in_catalog(
-    monkeypatch,
-):
+def test_repeat_order_skips_inactive_product_without_creating_cart():
     customer = _customer()
+
     apple = _product(
         name="Apple",
         internal_number=103,
@@ -281,18 +222,20 @@ def test_repeat_order_skips_product_not_in_catalog(
         ],
     )
 
-    monkeypatch.setattr(
-        "business_portal.orders.repeat_services.list_business_catalog_products",
-        lambda: (),
+    apple.active = False
+    apple.save(
+        update_fields=[
+            "active",
+        ]
     )
 
-    result = repeat_order_into_draft(
+    result = repeat_order_into_cart(
         customer=customer,
         source_order=source_order,
     )
 
     assert result.added_count == 0
-    assert result.draft_order is None
+    assert result.cart is None
     assert len(result.skipped) == 1
 
     skipped = result.skipped[0]
@@ -306,29 +249,22 @@ def test_repeat_order_skips_product_not_in_catalog(
 
 
 @pytest.mark.django_db
-def test_repeat_order_skips_special_offer_that_no_longer_exists(
-    monkeypatch,
-):
+def test_repeat_order_skips_offer_that_is_no_longer_available():
     customer = _customer()
+
     apple = _product(
         name="Apple",
         internal_number=104,
     )
 
-    batch = _stock(
+    _stock(
         product=apple,
     )
 
-    standard_offer = standard_business_offer_factory(
-        product=apple,
-    )
-
-    historical_special_offer = CommercialPrice.objects.create(
-        product=apple,
-        batch=batch,
-        channel=CommercialPrice.Channel.BUSINESS,
-        enabled=True,
-        reason=CommercialPrice.Reason.PROMOTION,
+    standard_offer = (
+        standard_business_offer_factory(
+            product=apple,
+        )
     )
 
     source_order = create_order(
@@ -341,38 +277,26 @@ def test_repeat_order_skips_special_offer_that_no_longer_exists(
         ],
     )
 
-    source_line = source_order.lines.get()
-
-    BusinessOfferSelection.objects.create(
-        order_line=source_line,
-        commercial_price=historical_special_offer,
+    standard_offer.enabled = False
+    standard_offer.save(
+        update_fields=[
+            "enabled",
+        ]
     )
 
-    catalog_product = _standard_catalog_product(
-        product=apple,
-        commercial_price=standard_offer,
-        available_units=98,
-    )
-
-    monkeypatch.setattr(
-        "business_portal.orders.repeat_services.list_business_catalog_products",
-        lambda: (
-            catalog_product,
-        ),
-    )
-
-    result = repeat_order_into_draft(
+    result = repeat_order_into_cart(
         customer=customer,
         source_order=source_order,
     )
 
     assert result.added_count == 0
-    assert result.draft_order is None
+    assert result.cart is None
     assert len(result.skipped) == 1
 
     skipped = result.skipped[0]
 
     assert skipped.product == apple
+    assert skipped.quantity == 2
     assert (
         skipped.reason
         == RepeatOrderSkipReason.OFFER_UNAVAILABLE
@@ -380,10 +304,9 @@ def test_repeat_order_skips_special_offer_that_no_longer_exists(
 
 
 @pytest.mark.django_db
-def test_repeat_order_skips_line_when_original_quantity_is_unavailable(
-    monkeypatch,
-):
+def test_repeat_order_allows_quantity_that_is_not_currently_in_stock():
     customer = _customer()
+
     apple = _product(
         name="Apple",
         internal_number=105,
@@ -391,10 +314,13 @@ def test_repeat_order_skips_line_when_original_quantity_is_unavailable(
 
     _stock(
         product=apple,
+        quantity=4,
     )
 
-    standard_offer = standard_business_offer_factory(
-        product=apple,
+    standard_offer = (
+        standard_business_offer_factory(
+            product=apple,
+        )
     )
 
     source_order = create_order(
@@ -407,48 +333,30 @@ def test_repeat_order_skips_line_when_original_quantity_is_unavailable(
         ],
     )
 
-    catalog_product = _standard_catalog_product(
-        product=apple,
-        commercial_price=standard_offer,
-        available_units=2,
-    )
-
-    monkeypatch.setattr(
-        "business_portal.orders.repeat_services.list_business_catalog_products",
-        lambda: (
-            catalog_product,
-        ),
-    )
-
-    result = repeat_order_into_draft(
+    result = repeat_order_into_cart(
         customer=customer,
         source_order=source_order,
     )
 
-    assert result.added_count == 0
-    assert result.draft_order is None
-    assert len(result.skipped) == 1
+    assert result.added_count == 1
+    assert result.skipped == ()
+    assert result.cart is not None
 
-    skipped = result.skipped[0]
+    line = result.cart.lines.get()
 
-    assert skipped.product == apple
-    assert skipped.quantity == 4
-    assert (
-        skipped.reason
-        == RepeatOrderSkipReason.QUANTITY_UNAVAILABLE
-    )
+    assert line.commercial_price == standard_offer
+    assert line.quantity == 4
 
 
 @pytest.mark.django_db
-def test_repeat_order_keeps_successful_lines_when_another_line_is_skipped(
-    monkeypatch,
-):
+def test_repeat_order_keeps_successful_lines_when_another_line_is_skipped():
     customer = _customer()
 
     apple = _product(
         name="Apple",
         internal_number=106,
     )
+
     banana = _product(
         name="Banana",
         internal_number=107,
@@ -457,15 +365,15 @@ def test_repeat_order_keeps_successful_lines_when_another_line_is_skipped(
     _stock(
         product=apple,
     )
+
     _stock(
         product=banana,
     )
 
-    apple_standard_offer = (
-        standard_business_offer_factory(
-            product=apple,
-        )
+    apple_offer = standard_business_offer_factory(
+        product=apple,
     )
+
     standard_business_offer_factory(
         product=banana,
     )
@@ -484,26 +392,21 @@ def test_repeat_order_keeps_successful_lines_when_another_line_is_skipped(
         ],
     )
 
-    apple_catalog_product = _standard_catalog_product(
-        product=apple,
-        commercial_price=apple_standard_offer,
-        available_units=98,
+    banana.active = False
+    banana.save(
+        update_fields=[
+            "active",
+        ]
     )
 
-    monkeypatch.setattr(
-        "business_portal.orders.repeat_services.list_business_catalog_products",
-        lambda: (
-            apple_catalog_product,
-        ),
-    )
-
-    result = repeat_order_into_draft(
+    result = repeat_order_into_cart(
         customer=customer,
         source_order=source_order,
     )
 
     assert result.added_count == 1
     assert len(result.skipped) == 1
+    assert result.cart is not None
 
     skipped = result.skipped[0]
 
@@ -513,16 +416,14 @@ def test_repeat_order_keeps_successful_lines_when_another_line_is_skipped(
         == RepeatOrderSkipReason.PRODUCT_UNAVAILABLE
     )
 
-    assert result.draft_order is not None
-
     assert list(
-        result.draft_order.lines.values_list(
-            "product_id",
-            "quantity_in_units",
+        result.cart.lines.values_list(
+            "commercial_price_id",
+            "quantity",
         )
     ) == [
         (
-            apple.id,
+            apple_offer.id,
             2,
         ),
     ]

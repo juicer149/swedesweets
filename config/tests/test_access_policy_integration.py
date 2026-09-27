@@ -56,8 +56,8 @@ CATALOG_PRODUCT_KWARGS = {
     "product_id": MISSING_OBJECT_ID,
 }
 
-DRAFT_LINE_KWARGS = {
-    "order_line_id": MISSING_OBJECT_ID,
+CART_LINE_KWARGS = {
+    "cart_line_id": MISSING_OBJECT_ID,
 }
 
 
@@ -82,8 +82,8 @@ VIEW_KWARGS = {
     "business_portal:order_detail": ORDER_KWARGS,
     "business_portal:catalog_product": CATALOG_PRODUCT_KWARGS,
     "business_portal:catalog_add_product": CATALOG_PRODUCT_KWARGS,
-    "business_portal:set_draft_line_quantity": DRAFT_LINE_KWARGS,
-    "business_portal:remove_draft_line": DRAFT_LINE_KWARGS,
+    "business_portal:set_cart_line_quantity": CART_LINE_KWARGS,
+    "business_portal:remove_cart_line": CART_LINE_KWARGS,
     "business_portal:repeat_order": ORDER_KWARGS,
 }
 
@@ -96,7 +96,7 @@ ALLOWED_GET_STATUS_CODES = {
 REDIRECT_VIEW_NAMES = {
     "accounts:after_login",
     "business_portal:orders",
-    "business_portal:review_order",
+    "business_portal:cart_review",
 }
 
 BUSINESS_CUSTOMER_REDIRECT_VIEW_NAMES = {
@@ -106,8 +106,8 @@ BUSINESS_CUSTOMER_REDIRECT_VIEW_NAMES = {
 POST_ONLY_VIEW_NAMES = {
     "business_portal:repeat_order",
     "business_portal:catalog_add_product",
-    "business_portal:set_draft_line_quantity",
-    "business_portal:remove_draft_line",
+    "business_portal:set_cart_line_quantity",
+    "business_portal:remove_cart_line",
     "ops_orders:toggle_checklist_mark",
 }
 

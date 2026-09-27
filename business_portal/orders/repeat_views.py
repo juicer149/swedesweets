@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import assert_never
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
@@ -11,7 +13,7 @@ from django.views.decorators.http import require_POST
 
 from business_portal.orders.repeat_services import (
     RepeatOrderSkipReason,
-    repeat_order_into_draft,
+    repeat_order_into_cart,
 )
 from business_portal.orders.selectors import (
     get_portal_order_for_user,
@@ -37,18 +39,17 @@ def repeat_order(
         order_id=order_id,
     )
 
-    result = repeat_order_into_draft(
+    result = repeat_order_into_cart(
         customer=customer,
         source_order=source_order,
-        user=request.user,
     )
 
     if result.added_count:
         messages.success(
             request,
             ngettext(
-                "%(count)s order item was added to your current order.",
-                "%(count)s order items were added to your current order.",
+                "%(count)s order item was added to your cart.",
+                "%(count)s order items were added to your cart.",
                 result.added_count,
             )
             % {
@@ -66,14 +67,13 @@ def repeat_order(
             request,
             _skip_message(
                 product_name=product_name,
-                quantity=skipped.quantity,
                 reason=skipped.reason,
             ),
         )
 
     if result.has_added_lines:
         return redirect(
-            "business_portal:current_order"
+            "business_portal:cart"
         )
 
     return redirect(
@@ -85,7 +85,6 @@ def repeat_order(
 def _skip_message(
     *,
     product_name: str,
-    quantity: int,
     reason: RepeatOrderSkipReason,
 ) -> str:
     match reason:
@@ -104,18 +103,4 @@ def _skip_message(
                 "product": product_name,
             }
 
-        case RepeatOrderSkipReason.QUANTITY_UNAVAILABLE:
-            return _(
-                "%(product)s was not added because %(quantity)s units "
-                "are not currently available."
-            ) % {
-                "product": product_name,
-                "quantity": quantity,
-            }
-
-        case _:
-            return _(
-                "%(product)s could not be added to your current order."
-            ) % {
-                "product": product_name,
-            }
+    assert_never(reason)

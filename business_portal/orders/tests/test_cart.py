@@ -62,7 +62,7 @@ def _create_cart_line(
 
 
 @pytest.mark.django_db
-def test_current_order_does_not_create_empty_cart(
+def test_cart_does_not_create_empty_cart(
     client,
 ):
     customer = _login_customer(
@@ -71,7 +71,7 @@ def test_current_order_does_not_create_empty_cart(
 
     response = client.get(
         reverse(
-            "business_portal:current_order"
+            "business_portal:cart"
         )
     )
 
@@ -84,7 +84,7 @@ def test_current_order_does_not_create_empty_cart(
 
 
 @pytest.mark.django_db
-def test_current_order_reads_customer_cart(
+def test_cart_reads_customer_cart(
     client,
 ):
     customer = _login_customer(
@@ -98,7 +98,7 @@ def test_current_order_reads_customer_cart(
 
     response = client.get(
         reverse(
-            "business_portal:current_order"
+            "business_portal:cart"
         )
     )
 
@@ -116,22 +116,22 @@ def test_current_order_reads_customer_cart(
     assert presented_line.quantity == 3
 
     assert presented_line.quantity_url == reverse(
-        "business_portal:set_draft_line_quantity",
+        "business_portal:set_cart_line_quantity",
         kwargs={
-            "order_line_id": line.id,
+            "cart_line_id": line.id,
         },
     )
 
     assert presented_line.remove_url == reverse(
-        "business_portal:remove_draft_line",
+        "business_portal:remove_cart_line",
         kwargs={
-            "order_line_id": line.id,
+            "cart_line_id": line.id,
         },
     )
 
 
 @pytest.mark.django_db
-def test_current_order_does_not_show_another_customers_cart(
+def test_cart_does_not_show_another_customers_cart(
     client,
 ):
     customer = _login_customer(
@@ -149,7 +149,7 @@ def test_current_order_does_not_show_another_customers_cart(
 
     response = client.get(
         reverse(
-            "business_portal:current_order"
+            "business_portal:cart"
         )
     )
 
@@ -162,7 +162,7 @@ def test_current_order_does_not_show_another_customers_cart(
 
 
 @pytest.mark.django_db
-def test_current_order_line_urls_mutate_cart_line(
+def test_cart_line_urls_mutate_cart_line(
     client,
 ):
     customer = _login_customer(
@@ -176,7 +176,7 @@ def test_current_order_line_urls_mutate_cart_line(
 
     response = client.get(
         reverse(
-            "business_portal:current_order"
+            "business_portal:cart"
         )
     )
 

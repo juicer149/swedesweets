@@ -90,7 +90,7 @@ def build_portal_order_review_context(
         back_label=_("Back"),
         clear_cart_label=_("Clear cart"),
         back_url=reverse(
-            "business_portal:current_order"
+            "business_portal:cart"
         ),
     )
 

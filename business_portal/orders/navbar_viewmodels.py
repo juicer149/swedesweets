@@ -50,8 +50,8 @@ def build_business_navbar_cart(
     )
 
     return NavbarCart(
-        aria_label=_("Current order"),
-        title=_("Current order"),
+        aria_label=_("Cart"),
+        title=_("Cart"),
         line_count=len(lines),
         lines=lines,
         fragment_url=reverse(
@@ -59,7 +59,7 @@ def build_business_navbar_cart(
         ),
         proceed_label=_("View order"),
         proceed_url=reverse(
-            "business_portal:current_order"
+            "business_portal:cart"
         ),
         empty_message=_(
             "Your order is empty."
@@ -75,8 +75,8 @@ def build_business_navbar_cart(
 
 def _empty_business_navbar_cart() -> NavbarCart:
     return NavbarCart(
-        aria_label=_("Current order"),
-        title=_("Current order"),
+        aria_label=_("Cart"),
+        title=_("Cart"),
         line_count=0,
         lines=(),
         fragment_url=reverse(
@@ -84,7 +84,7 @@ def _empty_business_navbar_cart() -> NavbarCart:
         ),
         proceed_label=_("View order"),
         proceed_url=reverse(
-            "business_portal:current_order"
+            "business_portal:cart"
         ),
         empty_message=_(
             "Your order is empty."
@@ -135,15 +135,15 @@ def _build_business_navbar_cart_line(
         metadata=metadata,
         quantity=line.quantity,
         quantity_url=reverse(
-            "business_portal:set_draft_line_quantity",
+            "business_portal:set_cart_line_quantity",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         ),
         remove_url=reverse(
-            "business_portal:remove_draft_line",
+            "business_portal:remove_cart_line",
             kwargs={
-                "order_line_id": line.id,
+                "cart_line_id": line.id,
             },
         ),
     )

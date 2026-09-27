@@ -32,8 +32,8 @@ from business.services import (
 from business_portal.orders.detail_viewmodels import (
     build_portal_order_detail_context,
 )
-from business_portal.orders.form_viewmodels import (
-    build_portal_current_order_context,
+from business_portal.orders.cart_viewmodels import (
+    build_portal_cart_context,
 )
 from business_portal.orders.review_viewmodels import (
     build_portal_order_review_context,
@@ -55,7 +55,7 @@ from orders.models import Order
 class PortalOrderIntent(StrEnum):
     REVIEW_ORDER = "review_order"
     PLACE_ORDER = "place_order"
-    DISCARD_DRAFT = "discard_draft"
+    CLEAR_CART = "clear_cart"
 
 
 ORDER_OPERATION_ERRORS = (
@@ -95,9 +95,9 @@ def _get_portal_cart_line(
 
 @login_required
 @require_POST
-def set_draft_line_quantity(
+def set_cart_line_quantity(
     request,
-    order_line_id: int,
+    cart_line_id: int,
 ):
     customer = get_portal_customer_for_user(
         user=request.user,
@@ -105,7 +105,7 @@ def set_draft_line_quantity(
 
     line = _get_portal_cart_line(
         customer=customer,
-        cart_line_id=order_line_id,
+        cart_line_id=cart_line_id,
     )
 
     wants_json = _wants_json(
@@ -141,7 +141,7 @@ def set_draft_line_quantity(
         )
 
         return redirect(
-            "business_portal:current_order"
+            "business_portal:cart"
         )
 
     try:
@@ -186,15 +186,15 @@ def set_draft_line_quantity(
         )
 
     return redirect(
-        "business_portal:current_order"
+        "business_portal:cart"
     )
 
 
 @login_required
 @require_POST
-def remove_draft_line(
+def remove_cart_line(
     request,
-    order_line_id: int,
+    cart_line_id: int,
 ):
     customer = get_portal_customer_for_user(
         user=request.user,
@@ -202,7 +202,7 @@ def remove_draft_line(
 
     line = _get_portal_cart_line(
         customer=customer,
-        cart_line_id=order_line_id,
+        cart_line_id=cart_line_id,
     )
 
     wants_json = _wants_json(
@@ -240,7 +240,7 @@ def remove_draft_line(
                 {
                     "ok": True,
                     "message": str(message),
-                    "order_line_id": line.id,
+                    "cart_line_id": line.id,
                 }
             )
 
@@ -250,7 +250,7 @@ def remove_draft_line(
         )
 
     return redirect(
-        "business_portal:current_order"
+        "business_portal:cart"
     )
 
 
@@ -275,7 +275,7 @@ def orders(request):
 
 
 @login_required
-def current_order(request):
+def cart(request):
     customer = get_portal_customer_for_user(
         user=request.user,
     )
@@ -299,11 +299,11 @@ def current_order(request):
             )
 
             return redirect(
-                "business_portal:current_order"
+                "business_portal:cart"
             )
 
         match intent:
-            case PortalOrderIntent.DISCARD_DRAFT:
+            case PortalOrderIntent.CLEAR_CART:
                 clear_customer_cart(
                     customer=customer,
                 )
@@ -328,11 +328,11 @@ def current_order(request):
                     )
 
                     return redirect(
-                        "business_portal:current_order"
+                        "business_portal:cart"
                     )
 
                 return redirect(
-                    "business_portal:review_order"
+                    "business_portal:cart_review"
                 )
 
             case _:
@@ -342,23 +342,23 @@ def current_order(request):
                 )
 
                 return redirect(
-                    "business_portal:current_order"
+                    "business_portal:cart"
                 )
 
-    context = build_portal_current_order_context(
+    context = build_portal_cart_context(
         cart=cart,
         language_code=request.LANGUAGE_CODE,
     ).as_dict()
 
     return render(
         request,
-        "business_portal/orders/current.html",
+        "business_portal/orders/cart.html",
         context,
     )
 
 
 @login_required
-def review_order(request):
+def cart_review(request):
     customer = get_portal_customer_for_user(
         user=request.user,
     )
@@ -377,7 +377,7 @@ def review_order(request):
         )
 
         return redirect(
-            "business_portal:current_order"
+            "business_portal:cart"
         )
 
     if request.method == "POST":
@@ -395,11 +395,11 @@ def review_order(request):
             )
 
             return redirect(
-                "business_portal:review_order"
+                "business_portal:cart_review"
             )
 
         match intent:
-            case PortalOrderIntent.DISCARD_DRAFT:
+            case PortalOrderIntent.CLEAR_CART:
                 clear_customer_cart(
                     customer=customer,
                 )
@@ -426,7 +426,7 @@ def review_order(request):
                     )
 
                     return redirect(
-                        "business_portal:review_order"
+                        "business_portal:cart_review"
                     )
 
                 messages.success(
@@ -451,7 +451,7 @@ def review_order(request):
                 )
 
                 return redirect(
-                    "business_portal:review_order"
+                    "business_portal:cart_review"
                 )
 
     context = build_portal_order_review_context(

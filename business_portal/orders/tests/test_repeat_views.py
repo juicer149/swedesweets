@@ -6,6 +6,7 @@ from django.urls import reverse
 from accounts.tests.factories import (
     customer_user_factory,
 )
+from business.models import BusinessCart
 from business.services import create_order
 from business.tests.factories import (
     standard_business_offer_factory,
@@ -132,7 +133,7 @@ def test_repeat_order_endpoint_rejects_other_customers_order(
 
 
 @pytest.mark.django_db
-def test_repeat_order_endpoint_redirects_to_current_order_after_success(
+def test_repeat_order_endpoint_redirects_to_cart_after_success(
     client,
 ):
     customer = customer_factory(
@@ -169,16 +170,20 @@ def test_repeat_order_endpoint_redirects_to_current_order_after_success(
 
     assert response.status_code == 302
     assert response["Location"] == reverse(
-        "business_portal:current_order"
+        "business_portal:cart"
     )
 
-    draft = Order.objects.get(
+    business_cart = BusinessCart.objects.get(
+        customer=customer,
+    )
+
+    line = business_cart.cart.lines.get()
+
+    assert line.commercial_price.product == product
+    assert line.quantity == 2
+
+    assert not Order.objects.filter(
         customer=customer,
         channel=Order.Channel.BUSINESS,
         status=Order.Status.DRAFT,
-    )
-
-    line = draft.lines.get()
-
-    assert line.product == product
-    assert line.quantity_in_units == 2
+    ).exists()
