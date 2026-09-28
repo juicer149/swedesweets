@@ -15,11 +15,6 @@ urlpatterns = [
         name="me",
     ),
     path(
-        "after-login/",
-        views.after_login,
-        name="after_login",
-    ),
-    path(
         "inactive/",
         views.inactive,
         name="inactive",

@@ -8,23 +8,12 @@ from accounts.activity_selectors import list_account_activities
 from accounts.roles import AccountRole
 from accounts.selectors import get_account_record
 from accounts.self_viewmodels import build_self_account_detail_context
-from config.login_routing import get_after_login_redirect_name
 
 
 def inactive(request):
     return render(
         request,
         "accounts/inactive.html",
-    )
-
-
-@login_required
-def after_login(request):
-    return redirect(
-        get_after_login_redirect_name(
-            account_role=request.account_role,
-            role_spec=request.role_spec,
-        )
     )
 
 
@@ -45,7 +34,7 @@ def me(request):
     context = build_self_account_detail_context(
         account=account,
         activity_rows=activities,
-        cancel_url=reverse("accounts:after_login"),
+        cancel_url=reverse("after_login"),
         role_spec=request.role_spec,
     ).as_dict()
 

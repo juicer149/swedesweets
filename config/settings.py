@@ -298,7 +298,7 @@ LOGIN_URL = (
 )
 
 LOGIN_REDIRECT_URL = (
-    "accounts:after_login"
+    "after_login"
 )
 
 LOGOUT_REDIRECT_URL = (

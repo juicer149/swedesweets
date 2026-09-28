@@ -314,7 +314,7 @@ def cart(request):
                 )
 
                 return redirect(
-                    "accounts:after_login"
+                    "after_login"
                 )
 
             case PortalOrderIntent.REVIEW_ORDER:
@@ -410,7 +410,7 @@ def cart_review(request):
                 )
 
                 return redirect(
-                    "accounts:after_login"
+                    "after_login"
                 )
 
             case PortalOrderIntent.PLACE_ORDER:

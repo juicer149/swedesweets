@@ -74,7 +74,7 @@ def build_portal_cart_context(
             "business_portal:catalog"
         ),
         cancel_url=reverse(
-            "accounts:after_login"
+            "after_login"
         ),
     )
 

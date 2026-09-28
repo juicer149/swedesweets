@@ -151,7 +151,7 @@ def _build_self_account_secondary_actions() -> tuple[DetailAction, ...]:
         ),
         build_secondary_get_action(
             label=_("Back to start"),
-            href=reverse("accounts:after_login"),
+            href=reverse("after_login"),
         ),
     )
 

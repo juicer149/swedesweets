@@ -6,6 +6,8 @@ from django.urls import (
     path,
 )
 
+from config import views as config_views
+
 from ops_portal.dashboard import views as dashboard_views
 from storefront import views as storefront_views
 
@@ -30,6 +32,11 @@ urlpatterns = [
     path(
         "admin/",
         admin.site.urls,
+    ),
+    path(
+        "accounts/after-login/",
+        config_views.after_login,
+        name="after_login",
     ),
     path(
         "accounts/",

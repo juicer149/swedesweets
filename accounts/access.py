@@ -28,6 +28,5 @@ CAPABILITIES = frozenset(
 
 
 VIEW_CAPABILITIES = {
-    "accounts:after_login": Capability.VIEW_OWN_ACCOUNT,
     "accounts:me": Capability.VIEW_OWN_ACCOUNT,
 }

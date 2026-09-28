@@ -15,6 +15,8 @@ from __future__ import annotations
 
 from django.conf import settings
 
+from accounts.roles import Capability
+
 from accounts.access import (
     AUTH_EXEMPT_VIEWS as ACCOUNT_AUTH_EXEMPT_VIEWS,
 )
@@ -56,6 +58,12 @@ from storefront.access import (
 )
 
 
+# Routes owned by the composition root rather than an actor-facing app.
+GLOBAL_VIEW_CAPABILITIES = {
+    "after_login": Capability.VIEW_OWN_ACCOUNT,
+}
+
+
 # The site root ("index") redirects anonymously to the public storefront
 # and has no single owning portal, so its exemption is declared directly
 # here rather than composed from a portal's access.py.
@@ -77,6 +85,7 @@ AUTH_EXEMPT_VIEWS = frozenset(
 
 
 VIEW_CAPABILITIES = {
+    **GLOBAL_VIEW_CAPABILITIES,
     **OPS_PORTAL_VIEW_CAPABILITIES,
     **OPS_ACCOUNT_VIEW_CAPABILITIES,
     **ACCOUNT_VIEW_CAPABILITIES,
