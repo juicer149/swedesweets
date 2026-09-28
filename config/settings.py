@@ -156,7 +156,7 @@ MIDDLEWARE = [
 
     # Custom middleware to set request.account and check view permissions.
     "accounts.middleware.AccountContextMiddleware",
-    "accounts.middleware.ViewCapabilityMiddleware",
+    "config.middleware.ViewCapabilityMiddleware",
 
     # Attach anonymous retail cart identity for the public storefront.
     "storefront.middleware.RetailCartMiddleware",
