@@ -5,9 +5,11 @@ from decimal import Decimal
 
 import pytest
 
-from business.models import BusinessOfferSelection
+from business.cart_services import (
+    add_catalog_offer_to_cart,
+)
 from business.services import (
-    add_catalog_offer_to_draft_order,
+    place_customer_cart,
     create_order,
     place_order,
 )
@@ -155,15 +157,15 @@ def test_repeat_order_preserves_selected_special_offer_from_order_line():
         price=Decimal("8.50"),
     )
 
-    source_order = add_catalog_offer_to_draft_order(
+    add_catalog_offer_to_cart(
         customer=customer,
         product=apple,
         commercial_price_id=commercial_price.pk,
         quantity=2,
     )
 
-    source_order = place_order(
-        order=source_order,
+    source_order = place_customer_cart(
+        customer=customer,
     )
 
     source_line = source_order.lines.get()
@@ -173,9 +175,6 @@ def test_repeat_order_preserves_selected_special_offer_from_order_line():
         == commercial_price.pk
     )
 
-    BusinessOfferSelection.objects.filter(
-        order_line=source_line,
-    ).delete()
 
     result = repeat_order_into_cart(
         customer=customer,

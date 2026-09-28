@@ -9,8 +9,11 @@ from django.utils import timezone
 from business.policies import (
     prepare_business_order_for_placement,
 )
+from business.cart_services import (
+    add_catalog_offer_to_cart,
+)
 from business.services import (
-    add_catalog_offer_to_draft_order,
+    place_customer_cart,
     create_draft_order,
     create_order,
     place_order,
@@ -923,22 +926,22 @@ def test_explicit_standard_offer_excludes_special_batch_from_reservation(
         reason=CommercialPrice.Reason.SHORT_DATED,
     )
 
-    order = add_catalog_offer_to_draft_order(
+    add_catalog_offer_to_cart(
         customer=customer,
         product=apple,
         commercial_price_id=standard_offer.pk,
         quantity=5,
     )
 
-    line = order.lines.get()
-
-    assert (
-        line.business_offer_selection.commercial_price
-        == standard_offer
+    placed = place_customer_cart(
+        customer=customer,
     )
 
-    placed = place_order(
-        order=order,
+    line = placed.lines.get()
+
+    assert (
+        line.commercial_offer
+        == standard_offer
     )
 
     allocations = list(
@@ -989,24 +992,24 @@ def test_batch_offer_reserves_exact_selected_batch(
         reason=CommercialPrice.Reason.PROMOTION,
     )
 
-    order = add_catalog_offer_to_draft_order(
+    add_catalog_offer_to_cart(
         customer=customer,
         product=apple,
         commercial_price_id=special_price.pk,
         quantity=3,
     )
 
-    line = order.lines.get()
+    placed = place_customer_cart(
+        customer=customer,
+    )
+
+    line = placed.lines.get()
 
     assert (
-        line.business_offer_selection.commercial_price
+        line.commercial_offer
         == special_price
     )
     assert line.unit_price_snapshot == Decimal("8.50")
-
-    placed = place_order(
-        order=order,
-    )
 
     allocation = placed.allocations.get()
 
@@ -1053,25 +1056,25 @@ def test_standard_and_batch_offer_for_same_product_reserve_disjoint_pools(
         reason=CommercialPrice.Reason.SHORT_DATED,
     )
 
-    order = add_catalog_offer_to_draft_order(
+    add_catalog_offer_to_cart(
         customer=customer,
         product=apple,
         commercial_price_id=standard_offer.pk,
         quantity=5,
     )
 
-    order = add_catalog_offer_to_draft_order(
+    add_catalog_offer_to_cart(
         customer=customer,
         product=apple,
         commercial_price_id=special_price.pk,
         quantity=3,
     )
 
-    assert order.lines.count() == 2
-
-    placed = place_order(
-        order=order,
+    placed = place_customer_cart(
+        customer=customer,
     )
+
+    assert placed.lines.count() == 2
 
     allocations = list(
         placed.allocations
@@ -1102,7 +1105,7 @@ def test_standard_and_batch_offer_for_same_product_reserve_disjoint_pools(
     standard_line = (
         placed.lines
         .filter(
-            business_offer_selection__commercial_price=standard_offer,
+            commercial_offer=standard_offer,
         )
         .get()
     )
@@ -1110,7 +1113,7 @@ def test_standard_and_batch_offer_for_same_product_reserve_disjoint_pools(
     special_line = (
         placed.lines
         .filter(
-            business_offer_selection__commercial_price=special_price,
+            commercial_offer=special_price,
         )
         .get()
     )

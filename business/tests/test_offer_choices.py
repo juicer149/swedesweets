@@ -8,9 +8,11 @@ import pytest
 from business.offer_choices import (
     build_business_offer_choice_context,
 )
+from business.cart_services import (
+    add_catalog_offer_to_cart,
+)
 from business.services import (
-    add_catalog_offer_to_draft_order,
-    place_order,
+    place_customer_cart,
 )
 from business.tests.conftest import TODAY
 from business.tests.factories import (
@@ -125,20 +127,20 @@ def test_business_offer_choice_context_adds_back_placed_order_quantity_per_offer
         batch=special_batch,
     )
 
-    order = add_catalog_offer_to_draft_order(
+    add_catalog_offer_to_cart(
         customer=customer,
         product=apple,
         commercial_price_id=standard_offer.pk,
         quantity=5,
     )
-    order = add_catalog_offer_to_draft_order(
+    add_catalog_offer_to_cart(
         customer=customer,
         product=apple,
         commercial_price_id=special_offer.pk,
         quantity=3,
     )
-    order = place_order(
-        order=order,
+    order = place_customer_cart(
+        customer=customer,
     )
 
     context = build_business_offer_choice_context(
@@ -173,14 +175,14 @@ def test_business_offer_choice_context_restores_existing_offer_when_free_pool_is
         product=apple,
     )
 
-    order = add_catalog_offer_to_draft_order(
+    add_catalog_offer_to_cart(
         customer=customer,
         product=apple,
         commercial_price_id=standard_offer.pk,
         quantity=4,
     )
-    order = place_order(
-        order=order,
+    order = place_customer_cart(
+        customer=customer,
     )
 
     context = build_business_offer_choice_context(
@@ -217,14 +219,14 @@ def test_business_offer_choice_context_does_not_restore_disabled_existing_offer(
         product=apple,
     )
 
-    order = add_catalog_offer_to_draft_order(
+    add_catalog_offer_to_cart(
         customer=customer,
         product=apple,
         commercial_price_id=standard_offer.pk,
         quantity=2,
     )
-    order = place_order(
-        order=order,
+    order = place_customer_cart(
+        customer=customer,
     )
 
     standard_offer.enabled = False
