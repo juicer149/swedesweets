@@ -25,7 +25,7 @@ from carts.services import (
 from storefront.cart import (
     mark_retail_cart_active,
 )
-from storefront.cart_selectors import (
+from retail.cart_selectors import (
     get_retail_cart,
     get_retail_cart_line,
 )

@@ -26,7 +26,7 @@ from business_portal.selectors import (
 from ops_portal.navigation import (
     build_staff_primary_nav_items,
 )
-from storefront.cart_selectors import (
+from retail.cart_selectors import (
     get_retail_cart,
 )
 from storefront.navbar_viewmodels import (
