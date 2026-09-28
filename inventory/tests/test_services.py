@@ -6,9 +6,9 @@ import pytest
 
 from inventory.errors import InvalidStockOperation
 from inventory.models import InventoryBatch
-from inventory.services import (
+from inventory.services import create_batch
+from reservations.inventory_services import (
     close_batch,
-    create_batch,
     update_batch,
 )
 from inventory.tests.conftest import TODAY

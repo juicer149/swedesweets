@@ -30,9 +30,9 @@ from reservations.availability import (
     sort_available_stock_rows,
 )
 from reservations.selectors import list_batch_usage
-from inventory.services import (
+from inventory.services import create_batch
+from reservations.inventory_services import (
     close_batch,
-    create_batch,
     update_batch,
 )
 from ops_portal.inventory.access import (

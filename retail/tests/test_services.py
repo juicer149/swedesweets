@@ -10,10 +10,8 @@ from inventory.errors import (
     InsufficientStockError,
     InvalidStockOperation,
 )
-from inventory.services import (
-    create_batch,
-    update_batch,
-)
+from inventory.services import create_batch
+from reservations.inventory_services import update_batch
 from orders.models import (
     Order,
     OrderLine,
