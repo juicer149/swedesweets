@@ -40,7 +40,7 @@ from orders.models import Order, OrderLine
 from products.models import Product
 
 EXPORT_FORMAT = "swedesweets-order-history"
-EXPORT_FORMAT_VERSION = 1
+EXPORT_FORMAT_VERSION = 2
 EXPORT_FILENAME = "orders.json"
 
 _ACTOR_FIELDS = (
@@ -108,10 +108,6 @@ class Command(BaseCommand):
             )
         )
         self.stdout.write(f"by_status={counts['orders_by_status']}")
-        self.stdout.write(
-            "lines_with_explicit_offer="
-            f"{counts['order_lines_with_explicit_offer']}"
-        )
         self.stdout.write(f"sha256={digest}")
 
 
@@ -136,10 +132,8 @@ def build_order_history_export(*, exported_at: datetime | None = None) -> dict[s
 
     lines = OrderLine.objects.select_related(
         "product",
-        "business_offer_selection__commercial_price__product",
-        "business_offer_selection__commercial_price__batch",
-        "retail_offer_selection__commercial_price__product",
-        "retail_offer_selection__commercial_price__batch",
+        "commercial_offer__product",
+        "commercial_offer__batch",
     ).order_by("id")
 
     orders = (
@@ -165,9 +159,6 @@ def build_order_history_export(*, exported_at: datetime | None = None) -> dict[s
             "order_lines": len(line_records),
             "orders_by_status": dict(sorted(by_status.items())),
             "orders_by_channel": dict(sorted(by_channel.items())),
-            "order_lines_with_explicit_offer": sum(
-                1 for line in line_records if line["offer"] is not None
-            ),
             "database": {
                 "customers": Customer.objects.count(),
                 "products": Product.objects.count(),
@@ -225,34 +216,19 @@ def _line_record(line: OrderLine) -> dict[str, Any]:
     }
 
 
-def _offer_ref(line: OrderLine) -> dict[str, Any] | None:
-    """Reference to the explicit commercial offer recorded for this line.
+def _offer_ref(line: OrderLine) -> dict[str, Any]:
+    """Reference to the persistent commercial offer recorded for this line."""
 
-    None means: no explicit offer was recorded (historical pre-offer business
-    line, or a business selection explicitly marked unpriced/standard).
-    """
-
-    business = getattr(line, "business_offer_selection", None)
-    retail = getattr(line, "retail_offer_selection", None)
-
-    business_price = business.commercial_price if business is not None else None
-    retail_price = retail.commercial_price if retail is not None else None
-
-    if business_price is not None and retail_price is not None:
-        raise CommandError(
-            f"Order line {line.id} has both a business and a retail offer "
-            "selection; refusing to guess."
-        )
-
-    price = business_price or retail_price
-
-    if price is None:
-        return None
+    price = line.commercial_offer
 
     return {
         "channel": price.channel,
         "product": _product_ref(price.product),
-        "batch_id": price.batch.batch_id if price.batch_id is not None else None,
+        "batch_id": (
+            price.batch.batch_id
+            if price.batch_id is not None
+            else None
+        ),
     }
 
 

@@ -9,14 +9,12 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.utils import timezone
 
-from business.models import BusinessOfferSelection
 from customers.tests.factories import customer_factory
 from inventory.tests.factories import batch_factory
 from orders.models import Order
 from orders.tests.factories import order_line_factory
 from pricing.models import CommercialPrice
 from products.tests.factories import product_factory
-from retail.models import RetailOfferSelection
 
 TODAY = timezone.localdate()
 
@@ -66,7 +64,7 @@ def apple():
 
 
 @pytest.mark.django_db
-def test_export_covers_legacy_explicit_retail_and_cancelled_orders(
+def test_export_covers_business_retail_and_cancelled_orders(
     tmp_path,
     customer,
     apple,
@@ -74,10 +72,10 @@ def test_export_covers_legacy_explicit_retail_and_cancelled_orders(
     user = get_user_model().objects.create_user(username="ops1", password="x")
     batch = batch_factory(product=apple, today=TODAY, batch_id="A-001")
 
-    # 1. legacy B2B line: no selection row, no price
-    legacy = Order.objects.create(customer=customer)
-    legacy.mark_as_placed(user=user)
-    _line(legacy, apple)
+    # 1. B2B line with its required standard offer and no price snapshot
+    business_order = Order.objects.create(customer=customer)
+    business_order.mark_as_placed(user=user)
+    _line(business_order, apple)
 
     # 2. B2B line with an explicit batch-specific offer and a price snapshot
     explicit = Order.objects.create(customer=customer)
@@ -88,16 +86,12 @@ def test_export_covers_legacy_explicit_retail_and_cancelled_orders(
         channel=CommercialPrice.Channel.BUSINESS,
         enabled=True,
     )
-    explicit_line = _line(
+    _line(
         explicit,
         apple,
         quantity=4,
         unit_price="2.50",
         commercial_offer=batch_offer,
-    )
-    BusinessOfferSelection.objects.create(
-        order_line=explicit_line,
-        commercial_price=batch_offer,
     )
 
     # 3. anonymous retail order with a product-level offer
@@ -112,16 +106,12 @@ def test_export_covers_legacy_explicit_retail_and_cancelled_orders(
         channel=CommercialPrice.Channel.RETAIL,
         enabled=True,
     )
-    retail_line = _line(
+    _line(
         retail,
         apple,
         quantity=2,
         unit_price="3.00",
         commercial_offer=retail_offer,
-    )
-    RetailOfferSelection.objects.create(
-        order_line=retail_line,
-        commercial_price=retail_offer,
     )
 
     # 4. cancelled order
@@ -138,9 +128,9 @@ def test_export_covers_legacy_explicit_retail_and_cancelled_orders(
     by_id = {order["source_order_id"]: order for order in data["orders"]}
 
     assert data["format"] == "swedesweets-order-history"
+    assert data["format_version"] == 2
     assert data["counts"]["orders"] == 4
     assert data["counts"]["order_lines"] == 4
-    assert data["counts"]["order_lines_with_explicit_offer"] == 2
     assert data["counts"]["orders_by_status"] == {
         "cancelled": 1,
         "draft": 1,
@@ -148,12 +138,19 @@ def test_export_covers_legacy_explicit_retail_and_cancelled_orders(
     }
     assert data["counts"]["database"]["orders"] == 4
 
-    legacy_record = by_id[legacy.id]
+    legacy_record = by_id[business_order.id]
     assert legacy_record["customer"] == {
         "email": "ica@example.se",
         "name": "Ica Ugglebo",
     }
-    assert legacy_record["lines"][0]["offer"] is None
+    assert legacy_record["lines"][0]["offer"] == {
+        "channel": "business",
+        "product": {
+            "sku": apple.sku,
+            "internal_number": 1,
+        },
+        "batch_id": None,
+    }
     assert legacy_record["lines"][0]["unit_price_snapshot"] is None
     assert legacy_record["total"] is None
     assert legacy_record["actors"]["placed"] == "ops1"
