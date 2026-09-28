@@ -14,9 +14,27 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 
+PORTALS = frozenset(
+    {
+        "business_portal",
+        "ops_portal",
+        "storefront",
+    }
+)
+
 FORBIDDEN_IMPORTS: dict[str, frozenset[str]] = {
-    # reservations depends on orders, never the reverse.
-    "orders": frozenset({"reservations"}),
+    "accounts": PORTALS,
+    "business": PORTALS,
+    "carts": PORTALS | {"business", "retail"},
+    "customers": PORTALS,
+    "fulfillment": PORTALS,
+    "inventory": PORTALS,
+    "orders": PORTALS | {"reservations"},
+    "payments": PORTALS,
+    "pricing": PORTALS,
+    "products": PORTALS,
+    "reservations": PORTALS,
+    "retail": PORTALS,
 }
 
 
