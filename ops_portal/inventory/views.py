@@ -62,7 +62,7 @@ from ops_portal.inventory.pricing_forms import (
     BatchPricingForm,
     build_batch_pricing_initial_data,
 )
-from ops_portal.inventory.pricing_services import (
+from pricing.batch_configuration import (
     update_batch_special_pricing,
 )
 from pricing.errors import InvalidCommercialPrice

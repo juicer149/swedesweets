@@ -6,7 +6,7 @@ import pytest
 from django.utils import timezone
 
 from inventory.tests.factories import batch_factory
-from ops_portal.inventory.pricing_services import (
+from pricing.batch_configuration import (
     update_batch_special_pricing,
 )
 from pricing.models import CommercialPrice, PriceAmount

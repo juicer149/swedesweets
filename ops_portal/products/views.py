@@ -41,7 +41,7 @@ from ops_portal.products.pricing_forms import (
     ProductPricingForm,
     build_product_pricing_initial_data,
 )
-from ops_portal.products.pricing_services import (
+from pricing.product_configuration import (
     update_product_standard_pricing,
 )
 from pricing.errors import (

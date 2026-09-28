@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import pytest
 
-from ops_portal.products.pricing_services import (
+from pricing.product_configuration import (
     update_product_standard_pricing,
 )
 from pricing.models import CommercialPrice, PriceAmount
