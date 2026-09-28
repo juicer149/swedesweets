@@ -16,9 +16,7 @@ from common.detail_cards import (
 )
 from common.ui import UiCard
 from inventory.models import InventoryBatch
-from inventory.selectors import (
-    AvailableStockRow,
-)
+from reservations.availability import AvailableStockRow
 from ops_portal.inventory.mini_cards import (
     build_batch_mini_card,
 )

@@ -9,7 +9,8 @@ from common.ui import (
     UiText,
 )
 from inventory.models import InventoryBatch
-from inventory.selectors import AvailableStockRow, BatchListRow
+from inventory.selectors import BatchListRow
+from reservations.availability import AvailableStockRow
 
 INVENTORY_CARD_CLASS = "mobile-card mobile-card--inventory"
 

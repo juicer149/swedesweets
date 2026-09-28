@@ -30,10 +30,10 @@ from ops_portal.inventory.presentation import (
     product_stock_status_presentation,
 )
 from inventory.selectors import (
-    AvailableStockRow,
     BatchListRow,
     ExpiryInfo,
 )
+from reservations.availability import AvailableStockRow
 
 
 @dataclass(frozen=True, slots=True)

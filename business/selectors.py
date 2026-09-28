@@ -10,7 +10,7 @@ from common.catalog.contracts import (
     CatalogOfferKind,
     CatalogProduct,
 )
-from inventory.selectors import (
+from reservations.availability import (
     orderable_quantity_by_batch_pk,
     orderable_quantity_by_product_id,
 )

@@ -17,8 +17,10 @@ from common.table_controls import (
     TableSortField,
 )
 from inventory.selectors import (
-    available_quantity_by_product,
     list_available_batches_for_product,
+)
+from reservations.availability import (
+    available_quantity_by_product,
 )
 from ops_portal.products.detail_viewmodels import (
     build_product_detail_context,

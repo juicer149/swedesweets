@@ -21,13 +21,15 @@ from inventory.models import InventoryBatch
 from inventory.selectors import (
     BATCH_SORTS,
     DEFAULT_BATCH_SORT,
+    list_batch_rows,
+)
+from reservations.availability import (
     DEFAULT_PRODUCT_STOCK_SORT,
     PRODUCT_STOCK_SORTS,
     available_quantity_by_product,
-    list_batch_allocations,
-    list_batch_rows,
     sort_available_stock_rows,
 )
+from reservations.selectors import list_batch_usage
 from inventory.services import (
     close_batch,
     create_batch,
@@ -189,7 +191,7 @@ def detail(
         batch_pk
     )
 
-    allocations = list_batch_allocations(
+    allocations = list_batch_usage(
         batch=batch
     )
 

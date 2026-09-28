@@ -7,12 +7,9 @@ create objects, or perform business workflows.
 
 from __future__ import annotations
 
-from collections import defaultdict
-from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import date, timedelta, datetime
 from enum import StrEnum
-from typing import TypeAlias
 
 from django.db.models import (
     Case,
@@ -32,17 +29,8 @@ from inventory.expiry import (
     build_expiry_info,
     orderable_best_before_cutoff,
 )
-from inventory.low_stock import (
-    LOW_STOCK_THRESHOLD,
-    is_low_stock,
-)
 from inventory.models import InventoryBatch
 from products.models import Product
-from reservations.datatypes import BatchUsage
-from reservations.selectors import (
-    active_reserved_quantities_by_batch_pk,
-    list_batch_usage as list_reservation_batch_usage,
-)
 
 DEFAULT_BATCH_SORT = "status"
 
@@ -97,71 +85,6 @@ BATCH_SORTS: dict[str, tuple[str, ...]] = {
     ),
 }
 
-DEFAULT_PRODUCT_STOCK_SORT = "product"
-
-PRODUCT_STOCK_SORTS: dict[str, tuple[str, ...]] = {
-    "product": (
-        "internal_number_sort",
-        "brand",
-        "product_name",
-    ),
-    "-product": (
-        "-internal_number_sort",
-        "-brand",
-        "-product_name",
-    ),
-    "batches": (
-        "batch_count",
-        "internal_number_sort",
-        "product_name",
-    ),
-    "unit": (
-        "stock_unit_sort",
-        "internal_number_sort",
-        "product_name",
-    ),
-    "-unit": (
-        "-stock_unit_sort",
-        "internal_number_sort",
-        "product_name",
-    ),
-    "-batches": (
-        "-batch_count",
-        "internal_number_sort",
-        "product_name",
-    ),
-    "physical": (
-        "physical_quantity",
-        "internal_number_sort",
-        "product_name",
-    ),
-    "-physical": (
-        "-physical_quantity",
-        "internal_number_sort",
-        "product_name",
-    ),
-    "reserved": (
-        "reserved_quantity",
-        "internal_number_sort",
-        "product_name",
-    ),
-    "-reserved": (
-        "-reserved_quantity",
-        "internal_number_sort",
-        "product_name",
-    ),
-    "available": (
-        "available_quantity",
-        "internal_number_sort",
-        "product_name",
-    ),
-    "-available": (
-        "-available_quantity",
-        "internal_number_sort",
-        "product_name",
-    ),
-}
-
 
 @dataclass(frozen=True)
 class BatchListRow:
@@ -208,59 +131,9 @@ class PhysicalStockRow:
 
 
 @dataclass(frozen=True)
-class AvailableStockRow:
-    product: Product
-    batch_count: int
-    physical_quantity: int
-    reserved_quantity: int
-    available_quantity: int
-
-    @property
-    def product_id(self) -> int:
-        return self.product.id
-
-    @property
-    def sku(self) -> str:
-        return self.product.sku
-
-    @property
-    def internal_number_sort(self) -> int:
-        return (
-            self.product.internal_number
-            or 999_999
-        )
-
-    @property
-    def code_label(self) -> str:
-        return self.product.code_label
-
-    @property
-    def catalog_label(self) -> str:
-        return self.product.catalog_label
-
-    @property
-    def product_name(self) -> str:
-        return self.product.display_name
-
-    @property
-    def brand(self) -> str:
-        return self.product.brand
-
-    @property
-    def stock_unit_sort(self) -> int:
-        return self.product.stock_unit
-
-
-@dataclass(frozen=True)
 class _PhysicalStockTotals:
     physical_quantity: int
     batch_count: int
-
-
-ProductStockSortKey: TypeAlias = Callable[
-    [AvailableStockRow],
-    tuple[object, ...],
-]
 
 
 def list_batch_rows(
@@ -340,93 +213,6 @@ def physical_quantity_by_product() -> list[PhysicalStockRow]:
     )
 
 
-def available_quantity_by_product() -> list[AvailableStockRow]:
-    stock_totals_by_product_id = (
-        _physical_stock_totals_by_product_id()
-    )
-    reserved_quantity_by_product_id = (
-        _reserved_quantity_by_product_id()
-    )
-    products_by_id = _products_by_id(
-        stock_totals_by_product_id.keys()
-    )
-
-    rows: list[AvailableStockRow] = []
-
-    for product_id, product in products_by_id.items():
-        stock_totals = (
-            stock_totals_by_product_id[
-                product_id
-            ]
-        )
-
-        reserved_quantity = (
-            reserved_quantity_by_product_id.get(
-                product_id,
-                0,
-            )
-        )
-
-        available_quantity = (
-            stock_totals.physical_quantity
-            - reserved_quantity
-        )
-
-        rows.append(
-            AvailableStockRow(
-                product=product,
-                batch_count=stock_totals.batch_count,
-                physical_quantity=(
-                    stock_totals.physical_quantity
-                ),
-                reserved_quantity=reserved_quantity,
-                available_quantity=max(
-                    available_quantity,
-                    0,
-                ),
-            )
-        )
-
-    return sorted(
-        rows,
-        key=lambda row: row.product.catalog_sort_key,
-    )
-
-
-def available_quantity_by_product_id() -> dict[int, int]:
-    return {
-        row.product_id: row.available_quantity
-        for row in available_quantity_by_product()
-    }
-
-
-def sort_available_stock_rows(
-    *,
-    rows: list[AvailableStockRow],
-    sort: str | None,
-) -> list[AvailableStockRow]:
-    normalized_sort = normalize_sort(
-        sort,
-        allowed_sorts=PRODUCT_STOCK_SORTS,
-        default_sort=DEFAULT_PRODUCT_STOCK_SORT,
-    )
-
-    reverse_sort = normalized_sort.startswith("-")
-    sort_key = normalized_sort.lstrip("-")
-
-    key_function = (
-        _product_stock_sort_key_functions()[
-            sort_key
-        ]
-    )
-
-    return sorted(
-        rows,
-        key=key_function,
-        reverse=reverse_sort,
-    )
-
-
 def list_available_batches_for_product(
     *,
     product: Product,
@@ -446,16 +232,11 @@ def list_available_batches_for_product(
     )
 
 
-def list_orderable_batches_for_product(
+def list_orderable_batches(
     *,
-    product: Product,
     today: date | None = None,
 ) -> QuerySet[InventoryBatch]:
-    """Return physical batches eligible for normal order reservation.
-
-    This selector describes inventory eligibility only. Reservation accounting
-    and locking belong to reservations.
-    """
+    """Return physical batches eligible for normal order reservation."""
 
     today = today or timezone.localdate()
     cutoff_date = orderable_best_before_cutoff(
@@ -465,7 +246,6 @@ def list_orderable_batches_for_product(
     return (
         InventoryBatch.objects
         .filter(
-            product=product,
             status=InventoryBatch.Status.ACTIVE,
             quantity__gt=0,
             best_before__gt=cutoff_date,
@@ -475,6 +255,20 @@ def list_orderable_batches_for_product(
             "best_before",
             "batch_id",
         )
+    )
+
+
+def list_orderable_batches_for_product(
+    *,
+    product: Product,
+    today: date | None = None,
+) -> QuerySet[InventoryBatch]:
+    """Return orderable physical batches for one product."""
+
+    return list_orderable_batches(
+        today=today,
+    ).filter(
+        product=product,
     )
 
 
@@ -577,168 +371,6 @@ def count_expiring_batches(
     )
 
 
-def list_low_stock_products(
-    *,
-    threshold: int = LOW_STOCK_THRESHOLD,
-) -> list[AvailableStockRow]:
-    rows = [
-        row
-        for row in available_quantity_by_product()
-        if is_low_stock(
-            available_quantity=row.available_quantity,
-            threshold=threshold,
-        )
-    ]
-
-    return sorted(
-        rows,
-        key=lambda row: (
-            row.available_quantity,
-            row.product.catalog_sort_key,
-        ),
-    )
-
-
-def list_low_stock_products_for_dashboard(
-    *,
-    threshold: int = LOW_STOCK_THRESHOLD,
-    limit: int = 3,
-) -> list[AvailableStockRow]:
-    return list_low_stock_products(
-        threshold=threshold,
-    )[:limit]
-
-
-def count_low_stock_products(
-    *,
-    threshold: int = LOW_STOCK_THRESHOLD,
-) -> int:
-    return len(
-        list_low_stock_products(
-            threshold=threshold,
-        )
-    )
-
-
-def list_batch_allocations(
-    *,
-    batch: InventoryBatch,
-) -> list[BatchUsage]:
-    """Return reservation usage history for one physical batch.
-
-    The legacy selector name is retained temporarily so inventory callers do
-    not need to change in the same refactor. Allocation persistence remains
-    hidden behind reservations.
-    """
-
-    return list_reservation_batch_usage(
-        batch=batch,
-    )
-
-
-def orderable_quantity_by_product_id(
-    *,
-    today: date | None = None,
-) -> dict[int, int]:
-    today = today or timezone.localdate()
-    cutoff_date = orderable_best_before_cutoff(
-        today=today,
-    )
-
-    physical_quantity_by_product_id = (
-        _orderable_physical_quantity_by_product_id(
-            cutoff_date=cutoff_date,
-        )
-    )
-    reserved_quantity_by_product_id = (
-        _orderable_reserved_quantity_by_product_id(
-            cutoff_date=cutoff_date,
-        )
-    )
-
-    return {
-        product_id: max(
-            physical_quantity
-            - reserved_quantity_by_product_id.get(
-                product_id,
-                0,
-            ),
-            0,
-        )
-        for product_id, physical_quantity
-        in physical_quantity_by_product_id.items()
-    }
-
-
-def orderable_quantity_by_batch_pk(
-    *,
-    batch_pks: Iterable[int],
-    today: date | None = None,
-) -> dict[int, int]:
-    """Return currently orderable quantity for requested physical batches.
-
-    Missing or non-orderable batch ids are represented by quantity zero.
-
-    Inventory owns the physical availability calculation. Callers do not need
-    to know how active reservations are stored or aggregated.
-    """
-
-    requested_batch_pks = tuple(
-        dict.fromkeys(
-            int(batch_pk)
-            for batch_pk in batch_pks
-        )
-    )
-
-    if not requested_batch_pks:
-        return {}
-
-    today = today or timezone.localdate()
-    cutoff_date = orderable_best_before_cutoff(
-        today=today,
-    )
-
-    physical_quantity_by_batch_pk = {
-        row["id"]: row["quantity"]
-        for row in (
-            InventoryBatch.objects
-            .filter(
-                pk__in=requested_batch_pks,
-                status=InventoryBatch.Status.ACTIVE,
-                quantity__gt=0,
-                best_before__gt=cutoff_date,
-            )
-            .values(
-                "id",
-                "quantity",
-            )
-        )
-    }
-
-    reserved_quantity_by_batch_pk = (
-        active_reserved_quantities_by_batch_pk(
-            batch_pks=(
-                physical_quantity_by_batch_pk.keys()
-            ),
-        )
-    )
-
-    return {
-        batch_pk: max(
-            physical_quantity_by_batch_pk.get(
-                batch_pk,
-                0,
-            )
-            - reserved_quantity_by_batch_pk.get(
-                batch_pk,
-                0,
-            ),
-            0,
-        )
-        for batch_pk in requested_batch_pks
-    }
-
-
 class InventoryActivityKind(StrEnum):
     ADDED = "added"
     EDITED = "edited"
@@ -809,53 +441,6 @@ def list_inventory_activity_for_actor(
             key=lambda activity: activity.occurred_at,
             reverse=True,
         )[:limit]
-    )
-
-
-def _orderable_physical_quantity_by_product_id(
-    *,
-    cutoff_date: date,
-) -> dict[int, int]:
-    rows = (
-        InventoryBatch.objects
-        .filter(
-            status=InventoryBatch.Status.ACTIVE,
-            quantity__gt=0,
-            best_before__gt=cutoff_date,
-        )
-        .values("product_id")
-        .annotate(
-            total_quantity=Sum("quantity"),
-        )
-    )
-
-    return {
-        row["product_id"]: (
-            row["total_quantity"] or 0
-        )
-        for row in rows
-    }
-
-
-def _orderable_reserved_quantity_by_product_id(
-    *,
-    cutoff_date: date,
-) -> dict[int, int]:
-    batches = list(
-        InventoryBatch.objects
-        .filter(
-            status=InventoryBatch.Status.ACTIVE,
-            quantity__gt=0,
-            best_before__gt=cutoff_date,
-        )
-        .values_list(
-            "id",
-            "product_id",
-        )
-    )
-
-    return _reserved_quantities_by_product_for_batches(
-        batches=batches,
     )
 
 
@@ -933,88 +518,4 @@ def _products_by_id(
     return {
         product.id: product
         for product in products
-    }
-
-
-def _reserved_quantity_by_product_id(
-) -> dict[int, int]:
-    batches = list(
-        InventoryBatch.objects
-        .filter(
-            status=InventoryBatch.Status.ACTIVE,
-            quantity__gt=0,
-        )
-        .values_list(
-            "id",
-            "product_id",
-        )
-    )
-
-    return _reserved_quantities_by_product_for_batches(
-        batches=batches,
-    )
-
-
-def _reserved_quantities_by_product_for_batches(
-    *,
-    batches: list[tuple[int, int]],
-) -> dict[int, int]:
-    if not batches:
-        return {}
-
-    reserved_by_batch_pk = (
-        active_reserved_quantities_by_batch_pk(
-            batch_pks=[
-                batch_pk
-                for batch_pk, _ in batches
-            ],
-        )
-    )
-
-    totals: dict[int, int] = defaultdict(int)
-
-    for batch_pk, product_id in batches:
-        totals[product_id] += (
-            reserved_by_batch_pk.get(
-                batch_pk,
-                0,
-            )
-        )
-
-    return dict(totals)
-
-
-def _product_stock_sort_key_functions(
-) -> dict[str, ProductStockSortKey]:
-    return {
-        "product": lambda row: (
-            row.internal_number_sort,
-            row.brand.casefold(),
-            row.product_name.casefold(),
-        ),
-        "batches": lambda row: (
-            row.batch_count,
-            row.internal_number_sort,
-            row.product_name.casefold(),
-        ),
-        "unit": lambda row: (
-            row.stock_unit_sort,
-            row.internal_number_sort,
-            row.product_name.casefold(),
-        ),
-        "physical": lambda row: (
-            row.physical_quantity,
-            row.internal_number_sort,
-            row.product_name.casefold(),
-        ),
-        "reserved": lambda row: (
-            row.reserved_quantity,
-            row.internal_number_sort,
-            row.product_name.casefold(),
-        ),
-        "available": lambda row: (
-            row.available_quantity,
-            row.internal_number_sort,
-            row.product_name.casefold(),
-        ),
     }

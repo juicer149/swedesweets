@@ -12,20 +12,22 @@ from inventory.expiry import (
 )
 from inventory.models import InventoryBatch
 from inventory.selectors import (
-    available_quantity_by_product,
-    available_quantity_by_product_id,
     count_expiring_batches,
-    count_low_stock_products,
     list_available_batches,
     list_available_batches_for_product,
     list_batch_rows,
     list_batches,
     list_depleted_batches,
     list_expiring_batch_rows_for_dashboard,
+    physical_quantity_by_product,
+)
+from reservations.availability import (
+    available_quantity_by_product,
+    available_quantity_by_product_id,
+    count_low_stock_products,
     list_low_stock_products_for_dashboard,
     orderable_quantity_by_batch_pk,
     orderable_quantity_by_product_id,
-    physical_quantity_by_product,
 )
 from inventory.services import create_batch
 from inventory.tests.conftest import TODAY

@@ -18,8 +18,10 @@ from ops_portal.inventory.presentation import (
 )
 from inventory.selectors import (
     count_expiring_batches,
-    count_low_stock_products,
     list_expiring_batch_rows_for_dashboard,
+)
+from reservations.availability import (
+    count_low_stock_products,
     list_low_stock_products_for_dashboard,
 )
 from orders.models import Order
