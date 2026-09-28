@@ -12,8 +12,8 @@ from business_portal.store.forms import (
     CustomerProfileForm,
     build_customer_profile_initial_data,
 )
-from business_portal.store.services import (
-    update_portal_customer_profile,
+from customers.services import (
+    update_customer,
 )
 from customers.errors import InvalidCustomerData
 
@@ -32,7 +32,7 @@ def edit_store(request):
 
         if form.is_valid():
             try:
-                update_portal_customer_profile(
+                update_customer(
                     customer=customer,
                     user=request.user,
                     **form.cleaned_data,
