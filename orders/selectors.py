@@ -261,28 +261,6 @@ def get_customer_order_summary(
     )
 
 
-def get_active_draft_order_for_customer(
-    *,
-    customer,
-) -> Order | None:
-    """Return the customer's active business draft, if one exists."""
-
-    return (
-        Order.objects
-        .filter(
-            channel=Order.Channel.BUSINESS,
-            customer=customer,
-            status=Order.Status.DRAFT,
-        )
-        .prefetch_related("lines")
-        .order_by(
-            "created_at",
-            "id",
-        )
-        .first()
-    )
-
-
 def list_placed_orders_for_dashboard(
     *,
     limit: int = 3,

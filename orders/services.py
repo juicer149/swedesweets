@@ -33,17 +33,6 @@ from orders.models import (
 )
 
 
-def _require_draft_for_edit(
-    *,
-    order: Order,
-) -> None:
-    if order.status != Order.Status.DRAFT:
-        raise InvalidOrderOperation(
-            "Only draft orders can be edited; "
-            f"current status is {order.status}"
-        )
-
-
 def _require_draft_for_discard(
     *,
     order: Order,
@@ -96,16 +85,6 @@ def _require_cancellable(
         raise InvalidOrderOperation(
             f"Cannot cancel order {order.pk}; "
             f"current status is {order.status}"
-        )
-
-
-def _require_positive_quantity(
-    *,
-    quantity_in_units: int,
-) -> None:
-    if quantity_in_units <= 0:
-        raise InvalidOrderOperation(
-            "order line quantity must be positive"
         )
 
 
@@ -175,169 +154,6 @@ def create_draft_order(
     _create_order_lines(
         order=order,
         lines=draft.lines,
-    )
-
-    return order
-
-
-@locked_order(
-    guard=_require_draft_for_edit,
-)
-def add_draft_order_line(
-    *,
-    order: Order,
-    line: ResolvedOrderLine,
-    user=None,
-) -> OrderLine:
-    """Persist one already-resolved line on a mutable draft order.
-
-    Sales-channel code resolves commercial eligibility before calling this
-    function. Orders owns only durable OrderLine persistence.
-    """
-
-    _require_positive_quantity(
-        quantity_in_units=line.quantity_in_units,
-    )
-
-    _validate_commercial_offer(
-        order=order,
-        line=line,
-    )
-
-    order_line = OrderLine.objects.create(
-        order=order,
-        product=line.product,
-        quantity=line.quantity_in_units,
-        unit=OrderLine.Unit.STOCK_UNIT,
-        quantity_in_units=line.quantity_in_units,
-        unit_price_snapshot=line.unit_price_snapshot,
-        commercial_offer=line.commercial_offer,
-    )
-
-    order.updated_at = timezone.now()
-    order.save(
-        update_fields=[
-            "updated_at",
-        ],
-    )
-
-    return order_line
-
-
-@locked_order(
-    guard=_require_draft_for_edit,
-)
-def replace_draft_order_lines(
-    *,
-    order: Order,
-    lines: Iterable[ResolvedOrderLine],
-    user=None,
-) -> Order:
-    """Replace lines using already resolved line data."""
-
-    resolved_lines = tuple(
-        lines
-    )
-
-    order.lines.all().delete()
-
-    if resolved_lines:
-        _create_order_lines(
-            order=order,
-            lines=resolved_lines,
-        )
-
-    order.updated_at = timezone.now()
-    order.save(
-        update_fields=[
-            "updated_at",
-        ],
-    )
-
-    return order
-
-
-@locked_order(
-    guard=_require_draft_for_edit,
-)
-def set_draft_order_line_quantity(
-    *,
-    order: Order,
-    order_line_id: int,
-    quantity_in_units: int,
-    user=None,
-) -> Order:
-    """Set an already-resolved quantity on one draft order line."""
-
-    _require_positive_quantity(
-        quantity_in_units=quantity_in_units,
-    )
-
-    line = (
-        order.lines
-        .filter(
-            pk=order_line_id,
-        )
-        .first()
-    )
-
-    if line is None:
-        raise InvalidOrderOperation(
-            "order line does not belong to this draft order"
-        )
-
-    line.quantity = quantity_in_units
-    line.unit = OrderLine.Unit.STOCK_UNIT
-    line.quantity_in_units = quantity_in_units
-    line.save(
-        update_fields=[
-            "quantity",
-            "unit",
-            "quantity_in_units",
-        ]
-    )
-
-    order.updated_at = timezone.now()
-    order.save(
-        update_fields=[
-            "updated_at",
-        ],
-    )
-
-    return order
-
-
-@locked_order(
-    guard=_require_draft_for_edit,
-)
-def remove_draft_order_line(
-    *,
-    order: Order,
-    order_line_id: int,
-    user=None,
-) -> Order:
-    """Remove one line from a draft order."""
-
-    line = (
-        order.lines
-        .filter(
-            pk=order_line_id,
-        )
-        .first()
-    )
-
-    if line is None:
-        raise InvalidOrderOperation(
-            "order line does not belong to this draft order"
-        )
-
-    line.delete()
-
-    order.updated_at = timezone.now()
-    order.save(
-        update_fields=[
-            "updated_at",
-        ],
     )
 
     return order

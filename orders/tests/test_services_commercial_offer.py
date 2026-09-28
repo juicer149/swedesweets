@@ -7,7 +7,6 @@ from orders.drafts import OrderDraft, ResolvedOrderLine
 from orders.errors import InvalidOrderOperation
 from orders.models import Order
 from orders.services import (
-    add_draft_order_line,
     create_draft_order,
 )
 from pricing.models import CommercialPrice
@@ -31,27 +30,29 @@ def test_explicit_offer_is_stored_on_the_order_line(
     customer,
     apple,
 ):
-    order = Order.objects.create(
-        customer=customer,
-    )
     offer = commercial_price_factory(
         product=apple,
         channel=CommercialPrice.Channel.BUSINESS,
         enabled=True,
     )
 
-    order_line = add_draft_order_line(
-        order=order,
-        line=ResolvedOrderLine(
-            product=apple,
-            quantity_in_units=3,
-            commercial_offer=offer,
+    order = create_draft_order(
+        draft=OrderDraft(
+            channel=Order.Channel.BUSINESS,
+            currency=Order.Currency.EUR,
+            customer=customer,
+            buyer=_buyer(customer),
+            lines=(
+                ResolvedOrderLine(
+                    product=apple,
+                    quantity_in_units=3,
+                    commercial_offer=offer,
+                ),
+            ),
         ),
     )
 
-    order_line.refresh_from_db()
-
-    assert order_line.commercial_offer == offer
+    assert order.lines.get().commercial_offer == offer
 
 
 @pytest.mark.django_db
@@ -59,10 +60,6 @@ def test_offer_for_another_product_is_rejected(
     customer,
     apple,
 ):
-    order = Order.objects.create(
-        customer=customer,
-    )
-
     other_product = product_factory(
         name="Other",
         internal_number=99,
@@ -77,16 +74,25 @@ def test_offer_for_another_product_is_rejected(
         InvalidOrderOperation,
         match="belongs to product",
     ):
-        add_draft_order_line(
-            order=order,
-            line=ResolvedOrderLine(
-                product=apple,
-                quantity_in_units=1,
-                commercial_offer=offer,
+        create_draft_order(
+            draft=OrderDraft(
+                channel=Order.Channel.BUSINESS,
+                currency=Order.Currency.EUR,
+                customer=customer,
+                buyer=_buyer(customer),
+                lines=(
+                    ResolvedOrderLine(
+                        product=apple,
+                        quantity_in_units=1,
+                        commercial_offer=offer,
+                    ),
+                ),
             ),
         )
 
-    assert not order.lines.exists()
+    assert not Order.objects.filter(
+        customer=customer,
+    ).exists()
 
 
 @pytest.mark.django_db
@@ -94,10 +100,6 @@ def test_offer_from_another_channel_is_rejected(
     customer,
     apple,
 ):
-    order = Order.objects.create(
-        customer=customer,
-    )
-
     retail_offer = commercial_price_factory(
         product=apple,
         channel=CommercialPrice.Channel.RETAIL,
@@ -108,16 +110,25 @@ def test_offer_from_another_channel_is_rejected(
         InvalidOrderOperation,
         match="is a retail offer",
     ):
-        add_draft_order_line(
-            order=order,
-            line=ResolvedOrderLine(
-                product=apple,
-                quantity_in_units=1,
-                commercial_offer=retail_offer,
+        create_draft_order(
+            draft=OrderDraft(
+                channel=Order.Channel.BUSINESS,
+                currency=Order.Currency.EUR,
+                customer=customer,
+                buyer=_buyer(customer),
+                lines=(
+                    ResolvedOrderLine(
+                        product=apple,
+                        quantity_in_units=1,
+                        commercial_offer=retail_offer,
+                    ),
+                ),
             ),
         )
 
-    assert not order.lines.exists()
+    assert not Order.objects.filter(
+        customer=customer,
+    ).exists()
 
 
 @pytest.mark.django_db
@@ -125,10 +136,6 @@ def test_unsaved_offer_is_rejected(
     customer,
     apple,
 ):
-    order = Order.objects.create(
-        customer=customer,
-    )
-
     unsaved_offer = CommercialPrice(
         product=apple,
         channel=CommercialPrice.Channel.BUSINESS,
@@ -139,16 +146,25 @@ def test_unsaved_offer_is_rejected(
         InvalidOrderOperation,
         match="must be persisted",
     ):
-        add_draft_order_line(
-            order=order,
-            line=ResolvedOrderLine(
-                product=apple,
-                quantity_in_units=1,
-                commercial_offer=unsaved_offer,
+        create_draft_order(
+            draft=OrderDraft(
+                channel=Order.Channel.BUSINESS,
+                currency=Order.Currency.EUR,
+                customer=customer,
+                buyer=_buyer(customer),
+                lines=(
+                    ResolvedOrderLine(
+                        product=apple,
+                        quantity_in_units=1,
+                        commercial_offer=unsaved_offer,
+                    ),
+                ),
             ),
         )
 
-    assert not order.lines.exists()
+    assert not Order.objects.filter(
+        customer=customer,
+    ).exists()
 
 
 @pytest.mark.django_db
@@ -158,24 +174,29 @@ def test_line_without_offer_is_rejected(
 ):
     """Runtime validation protects callers despite Python's non-enforced types."""
 
-    order = Order.objects.create(
-        customer=customer,
-    )
-
     with pytest.raises(
         InvalidOrderOperation,
         match="commercial offer is required",
     ):
-        add_draft_order_line(
-            order=order,
-            line=ResolvedOrderLine(
-                product=apple,
-                quantity_in_units=2,
-                commercial_offer=None,  # type: ignore[arg-type]
+        create_draft_order(
+            draft=OrderDraft(
+                channel=Order.Channel.BUSINESS,
+                currency=Order.Currency.EUR,
+                customer=customer,
+                buyer=_buyer(customer),
+                lines=(
+                    ResolvedOrderLine(
+                        product=apple,
+                        quantity_in_units=2,
+                        commercial_offer=None,  # type: ignore[arg-type]
+                    ),
+                ),
             ),
         )
 
-    assert not order.lines.exists()
+    assert not Order.objects.filter(
+        customer=customer,
+    ).exists()
 
 
 @pytest.mark.django_db
