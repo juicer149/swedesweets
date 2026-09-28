@@ -1,8 +1,7 @@
 """Guards the dependency rules documented in ARCHITECTURE.md.
 
-Add a rule by adding an entry to FORBIDDEN_IMPORTS: the key is the package
-whose (non-test, non-migration) code is scanned, the value is the set of
-top-level packages it must not import.
+Shared layer rules are derived from the package groups below. Package-specific
+ownership rules extend those defaults through FORBIDDEN_IMPORTS.
 """
 
 from __future__ import annotations
@@ -22,20 +21,63 @@ PORTALS = frozenset(
     }
 )
 
+CHANNEL_APPLICATIONS = frozenset(
+    {
+        "business",
+        "retail",
+    }
+)
+
+COMPOSITION_ROOT = frozenset(
+    {
+        "config",
+    }
+)
+
+SHARED_CAPABILITIES = frozenset(
+    {
+        "accounts",
+        "carts",
+        "customers",
+        "fulfillment",
+        "inventory",
+        "orders",
+        "payments",
+        "pricing",
+        "products",
+        "reservations",
+    }
+)
+
+_SHARED_CAPABILITY_FORBIDDEN_IMPORTS = (
+    PORTALS
+    | CHANNEL_APPLICATIONS
+    | COMPOSITION_ROOT
+)
+
 FORBIDDEN_IMPORTS: dict[str, frozenset[str]] = {
-    "accounts": PORTALS | {"config"},
-    "business": PORTALS,
-    "carts": PORTALS | {"business", "retail"},
-    "customers": PORTALS,
-    "fulfillment": PORTALS,
-    "inventory": PORTALS | {"reservations"},
-    "orders": PORTALS | {"reservations"},
-    "payments": PORTALS | {"retail"},
-    "pricing": PORTALS,
-    "products": PORTALS | {"orders"},
-    "reservations": PORTALS,
-    "retail": PORTALS,
+    package: _SHARED_CAPABILITY_FORBIDDEN_IMPORTS
+    for package in SHARED_CAPABILITIES
 }
+
+FORBIDDEN_IMPORTS.update(
+    {
+        "business": PORTALS | COMPOSITION_ROOT,
+        "retail": PORTALS | COMPOSITION_ROOT,
+        "inventory": (
+            FORBIDDEN_IMPORTS["inventory"]
+            | {"reservations"}
+        ),
+        "orders": (
+            FORBIDDEN_IMPORTS["orders"]
+            | {"reservations"}
+        ),
+        "products": (
+            FORBIDDEN_IMPORTS["products"]
+            | {"orders"}
+        ),
+    }
+)
 
 
 def _scanned_files(package: str) -> list[Path]:
