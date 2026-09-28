@@ -90,7 +90,7 @@ def build_portal_order_detail_context(
         order.lines
         .select_related(
             "product",
-            "business_offer_selection__commercial_price",
+            "commercial_offer",
         )
         .order_by("id")
     )

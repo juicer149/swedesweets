@@ -5,7 +5,6 @@ from decimal import Decimal
 
 from django.utils.translation import gettext_lazy as _
 
-from business.models import BusinessOfferSelection
 from carts.models import CartLine
 from orders.models import Order, OrderLine
 from pricing.models import (
@@ -100,22 +99,8 @@ def business_cart_line_presentation(
 def _business_order_offer_label(
     line: OrderLine,
 ) -> str | None:
-    try:
-        selection = (
-            line.business_offer_selection
-        )
-    except BusinessOfferSelection.DoesNotExist:
-        return None
-
-    commercial_price = (
-        selection.commercial_price
-    )
-
-    if commercial_price is None:
-        return None
-
     return _commercial_price_offer_label(
-        commercial_price
+        line.commercial_offer
     )
 
 
