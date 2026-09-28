@@ -1,5 +1,3 @@
-
-
 import uuid
 
 from django.db import models
@@ -108,30 +106,3 @@ class RetailCheckoutSession(models.Model):
 
     def __str__(self) -> str:
         return f"Retail checkout {self.pk}"
-
-
-class RetailOfferSelection(models.Model):
-    """Commercial pricing origin for one retail OrderLine.
-
-    OrderLine owns the durable product, quantity and price snapshot.
-    This row preserves the CommercialPrice identity used for retail stock-pool
-    semantics.
-    """
-
-    order_line = models.OneToOneField(
-        "orders.OrderLine",
-        on_delete=models.CASCADE,
-        related_name="retail_offer_selection",
-    )
-
-    commercial_price = models.ForeignKey(
-        "pricing.CommercialPrice",
-        on_delete=models.PROTECT,
-        related_name="retail_order_line_selections",
-    )
-
-    def __str__(self) -> str:
-        return (
-            f"Order line {self.order_line_id} "
-            f"-> commercial price {self.commercial_price_id}"
-        )

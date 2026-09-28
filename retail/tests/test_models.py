@@ -6,8 +6,8 @@ import pytest
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
-from orders.models import Order, OrderLine
-from pricing.models import CommercialPrice, PriceAmount
+from orders.models import Order
+from pricing.models import PriceAmount
 from carts.models import (
     Cart,
     CartLine,
@@ -15,7 +15,6 @@ from carts.models import (
 from common.channels import SalesChannel
 from retail.models import (
     RetailCheckoutSession,
-    RetailOfferSelection,
 )
 from retail.rules import RETAIL_CHECKOUT_WINDOW
 from retail.tests.factories import (
@@ -209,61 +208,4 @@ def test_order_can_have_only_one_retail_checkout_session():
             RetailCheckoutSession.objects.create(
                 order=order,
                 expires_at=timezone.now() + RETAIL_CHECKOUT_WINDOW,
-            )
-
-
-@pytest.mark.django_db
-def test_retail_offer_selection_references_commercial_price():
-    commercial_price = retail_product_price_factory(
-        enabled=True,
-        price=Decimal("12.50"),
-    )
-
-    order = Order.objects.create(
-        channel=Order.Channel.RETAIL,
-        customer=None,
-    )
-    line = OrderLine.objects.create(
-        order=order,
-        product=commercial_price.product,
-        quantity=2,
-        unit=OrderLine.Unit.STOCK_UNIT,
-        quantity_in_units=2,
-        unit_price_snapshot=Decimal("12.50"),
-        commercial_offer=commercial_price,
-    )
-
-    selection = RetailOfferSelection.objects.create(
-        order_line=line,
-        commercial_price=commercial_price,
-    )
-
-    assert selection.order_line == line
-    assert selection.commercial_price == commercial_price
-    assert line.retail_offer_selection == selection
-
-
-@pytest.mark.django_db
-def test_retail_offer_selection_requires_commercial_price():
-    commercial_price = retail_product_price_factory(
-        enabled=True,
-        price=Decimal("12.50"),
-    )
-    order = Order.objects.create(
-        channel=Order.Channel.RETAIL,
-        customer=None,
-    )
-    line = OrderLine.objects.create(
-        order=order,
-        product=commercial_price.product,
-        quantity=1,
-        unit=OrderLine.Unit.STOCK_UNIT,
-        quantity_in_units=1,
-        commercial_offer=commercial_price,
-    )
-
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            RetailOfferSelection.objects.create(
-                order_line=line,
             )
