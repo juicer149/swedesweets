@@ -35,10 +35,7 @@ from reservations.services import (
     cancel_temporary_reservations_for_order,
     reserve_order_line_from_pool,
 )
-from retail.models import (
-    RetailCheckoutSession,
-    RetailOfferSelection,
-)
+from retail.models import RetailCheckoutSession
 from retail.rules import (
     MAX_RETAIL_LINE_QUANTITY,
     MAX_RETAIL_ORDER_LINES,
@@ -235,7 +232,7 @@ def create_pending_retail_order(
     order.save()
 
     for resolved_line in resolved_lines:
-        order_line = OrderLine.objects.create(
+        OrderLine.objects.create(
             order=order,
             product=resolved_line.product,
             quantity=resolved_line.quantity,
@@ -245,10 +242,6 @@ def create_pending_retail_order(
             commercial_offer=resolved_line.commercial_price,
         )
 
-        RetailOfferSelection.objects.create(
-            order_line=order_line,
-            commercial_price=resolved_line.commercial_price,
-        )
 
     return RetailCheckoutSession.objects.create(
         order=order,
@@ -329,8 +322,8 @@ def start_retail_payment(
         order.lines
         .select_related(
             "product",
-            "retail_offer_selection__commercial_price__product",
-            "retail_offer_selection__commercial_price__batch__product",
+            "commercial_offer__product",
+            "commercial_offer__batch__product",
         )
         .order_by("id")
     )
@@ -350,12 +343,8 @@ def start_retail_payment(
     )
 
     for line in lines:
-        selection = _get_offer_selection(
-            line=line,
-        )
-
-        batches = _eligible_batches_for_selection(
-            selection=selection,
+        batches = _eligible_batches_for_offer(
+            commercial_price=line.commercial_offer,
             currency=order.currency,
         )
 
@@ -520,25 +509,13 @@ def _lock_retail_cart_for_checkout(
     return cart
 
 
-def _get_offer_selection(
+def _eligible_batches_for_offer(
     *,
-    line: OrderLine,
-) -> RetailOfferSelection:
-    try:
-        return line.retail_offer_selection
-    except RetailOfferSelection.DoesNotExist as exc:
-        raise InvalidRetailOrder(
-            f"order line {line.pk} has no retail offer selection"
-        ) from exc
-
-
-def _eligible_batches_for_selection(
-    *,
-    selection: RetailOfferSelection,
+    commercial_price: CommercialPrice,
     currency: str,
 ) -> QuerySet[InventoryBatch]:
     return list_batches_for_retail_price(
-        commercial_price=selection.commercial_price,
+        commercial_price=commercial_price,
         currency=currency,
     )
 

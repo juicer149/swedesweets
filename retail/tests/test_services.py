@@ -29,7 +29,6 @@ from carts.services import create_cart
 from common.channels import SalesChannel
 from retail.models import (
     RetailCheckoutSession,
-    RetailOfferSelection,
 )
 from retail.rules import (
     MAX_RETAIL_LINE_QUANTITY,
@@ -255,7 +254,7 @@ def test_create_retail_checkout_from_cart_converts_and_consumes_cart():
     lines = list(
         order.lines
         .select_related(
-            "retail_offer_selection",
+            "commercial_offer",
         )
         .order_by("id")
     )
@@ -269,11 +268,11 @@ def test_create_retail_checkout_from_cart_converts_and_consumes_cart():
     assert lines[0].quantity_in_units == 2
     assert lines[0].unit_price_snapshot == Decimal("12.50")
     assert (
-        lines[0].retail_offer_selection.commercial_price
+        lines[0].commercial_offer
         == product_price
     )
     assert (
-        lines[0].retail_offer_selection.commercial_price.batch_id
+        lines[0].commercial_offer.batch_id
         is None
     )
 
@@ -281,7 +280,7 @@ def test_create_retail_checkout_from_cart_converts_and_consumes_cart():
     assert lines[1].quantity_in_units == 3
     assert lines[1].unit_price_snapshot == Decimal("4.90")
     assert (
-        lines[1].retail_offer_selection.commercial_price
+        lines[1].commercial_offer
         == batch_price
     )
 
@@ -335,7 +334,7 @@ def test_create_retail_checkout_from_cart_allows_two_prices_for_same_product():
 
     lines = list(
         checkout.order.lines
-        .select_related("retail_offer_selection__commercial_price")
+        .select_related("commercial_offer")
         .order_by("id")
     )
 
@@ -343,11 +342,11 @@ def test_create_retail_checkout_from_cart_allows_two_prices_for_same_product():
     assert lines[0].product == product
     assert lines[1].product == product
     assert (
-        lines[0].retail_offer_selection.commercial_price
+        lines[0].commercial_offer
         == product_price
     )
     assert (
-        lines[1].retail_offer_selection.commercial_price
+        lines[1].commercial_offer
         == batch_price
     )
     assert lines[0].unit_price_snapshot == Decimal("12.50")
@@ -524,9 +523,7 @@ def test_create_pending_retail_order_from_product_price():
     assert line.unit_price_snapshot == Decimal("12.50")
     assert line.line_total == Decimal("25.00")
 
-    selection = line.retail_offer_selection
-
-    assert selection.commercial_price == offer
+    assert line.commercial_offer == offer
 
     assert order.total == Decimal("25.00")
 
@@ -562,13 +559,12 @@ def test_create_pending_retail_order_from_batch_price():
     )
 
     line = checkout.order.lines.get()
-    selection = line.retail_offer_selection
 
     assert line.product == offer.batch.product
     assert line.unit_price_snapshot == Decimal("4.90")
     assert line.line_total == Decimal("9.80")
 
-    assert selection.commercial_price == offer
+    assert line.commercial_offer == offer
 
 
 @pytest.mark.django_db
@@ -907,7 +903,6 @@ def test_retail_order_total_limit_rolls_back_checkout():
     assert Order.objects.count() == 0
     assert OrderLine.objects.count() == 0
     assert RetailCheckoutSession.objects.count() == 0
-    assert RetailOfferSelection.objects.count() == 0
 
 
 @pytest.mark.django_db
