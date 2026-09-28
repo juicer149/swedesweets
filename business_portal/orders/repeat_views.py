@@ -11,7 +11,7 @@ from django.utils.translation import (
 )
 from django.views.decorators.http import require_POST
 
-from business_portal.orders.repeat_services import (
+from business.repeat_services import (
     RepeatOrderSkipReason,
     repeat_order_into_cart,
 )

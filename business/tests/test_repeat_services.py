@@ -16,7 +16,7 @@ from business.services import (
 from business.tests.factories import (
     standard_business_offer_factory,
 )
-from business_portal.orders.repeat_services import (
+from business.repeat_services import (
     RepeatOrderSkipReason,
     repeat_order_into_cart,
 )
