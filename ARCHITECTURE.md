@@ -1,108 +1,77 @@
 # Architecture
 
 SwedeSweets uses explicit boundaries between actor-facing interfaces,
-domain/application code, shared capabilities, and application-wide composition.
+sales-channel application policy, shared domain/application capabilities, and
+application-wide composition.
 
-The primary dependency rule is:
+The architecture is organized around four different kinds of responsibility:
 
 ```text
-actor-facing UI
-        ↓
-domain / application code
+actor-facing interfaces
+    business_portal
+    storefront
+    ops_portal
+
+sales-channel applications
+    business
+    retail
+
+shared domain/application capabilities
+    accounts
+    customers
+    products
+    pricing
+    carts
+    orders
+    inventory
+    reservations
+    payments
+    fulfillment
+
+application-wide composition
+    config
 ```
 
-Core domain and application code must not depend on the interface through which
-it is used.
+These are different axes.
+
+An actor-facing application answers:
+
+> Who is using this interface?
+
+A sales-channel application answers:
+
+> Which commercial rules apply to this transaction?
+
+A shared capability answers:
+
+> Which stable domain or application concept owns this state or behavior?
+
+`config` answers:
+
+> How is the whole Django application wired together?
+
+The common dependency direction is:
+
+```text
+HTTP / presentation
+        ↓
+actor-facing use case
+        ↓
+sales-channel application when channel policy applies
+        ↓
+shared domain/application capability
+        ↓
+persistence
+```
+
+Not every use case needs every layer, but dependencies point inward.
+
+Core domain and application code must not depend on the HTTP interface through
+which it is used.
 
 ## Dependency direction
 
 The main actor-facing applications are:
-
-```text
-business_portal
-storefront
-ops_portal
-        ↓
-domain / application apps
-```
-
-The dependency direction points inward.
-
-Actor-facing applications may depend on domain and application code.
-
-Domain and application code must not depend on actor-facing applications.
-
-For example:
-
-```text
-business_portal
-    ↓
-orders
-products
-customers
-business
-
-ops_portal
-    ↓
-orders
-inventory
-products
-customers
-accounts
-
-storefront
-    ↓
-retail
-payments
-products
-```
-
-The reverse direction is not allowed:
-
-```text
-orders
-    ✗→ business_portal
-
-products
-    ✗→ storefront
-
-customers
-    ✗→ ops_portal
-```
-
-This keeps business behavior independent of the HTTP interface that happens to
-invoke it.
-
-## Core code outside HTTP
-
-Domain and application functionality should remain usable outside web requests.
-
-Examples:
-
-```text
-manage.py shell
-management commands
-workers
-scheduled jobs
-tests
-```
-
-Core logic should therefore not require:
-
-```text
-HttpRequest
-templates
-messages
-URL routing
-browser state
-```
-
-HTTP concerns belong at the edge of the system.
-
-## Actor-facing UI
-
-UI ownership follows the actor using the interface, not the domain being
-manipulated.
 
 ```text
 business_portal
@@ -115,6 +84,157 @@ ops_portal
     internal staff UI
 ```
 
+They may depend on the application layer that owns the use case.
+
+Typical dependencies are:
+
+```text
+business_portal
+        ↓
+business
+orders
+customers
+products
+carts
+
+storefront
+        ↓
+retail
+carts
+products
+payments
+
+ops_portal
+        ↓
+orders
+inventory
+products
+customers
+accounts
+business
+retail
+shared capabilities
+```
+
+`ops_portal` is an actor-facing application, not a sales channel.
+
+Staff may perform operations whose semantics belong to a specific sales
+channel. In that case the portal should call the channel application rather
+than duplicate its rules.
+
+For example:
+
+```text
+ops_portal/orders
+        ↓
+business
+        ↓
+orders / pricing / reservations / inventory
+```
+
+is correct when staff are creating or placing a BUSINESS order.
+
+Likewise, an operational retail workflow may legitimately call `retail` when
+the operation is semantically RETAIL.
+
+This does not violate dependency direction.
+
+The prohibited direction is the reverse:
+
+```text
+business
+    ✗→ ops_portal
+
+orders
+    ✗→ business_portal
+
+retail
+    ✗→ storefront
+
+products
+    ✗→ storefront
+```
+
+Application behavior should remain usable even if a particular HTTP interface
+disappears.
+
+## Actor and channel are separate axes
+
+Do not infer sales-channel semantics from the actor.
+
+Examples:
+
+```text
+B2B customer using business_portal
+    usually invokes BUSINESS behavior
+
+anonymous buyer using storefront
+    invokes RETAIL behavior
+
+staff using ops_portal
+    may invoke BUSINESS behavior
+    may invoke RETAIL behavior
+    may invoke channel-neutral operational behavior
+```
+
+Authentication and sales channel are also separate.
+
+Being logged in does not by itself determine:
+
+```text
+catalog
+commercial offer
+price requirements
+reservation policy
+payment behavior
+fulfillment policy
+```
+
+Those decisions belong to channel policy and channel-specific application
+behavior.
+
+## Core code outside HTTP
+
+Domain and application behavior should remain usable from:
+
+```text
+manage.py shell
+management commands
+workers
+scheduled jobs
+tests
+other application services
+```
+
+Core logic should therefore not require:
+
+```text
+HttpRequest
+templates
+messages
+URL routing
+browser state
+portal-specific view models
+```
+
+HTTP concerns belong at the edge.
+
+## Actor-facing UI ownership
+
+UI ownership follows the actor using the interface, not the domain object being
+manipulated.
+
+```text
+business_portal
+    authenticated B2B customer experience
+
+storefront
+    public retail experience
+
+ops_portal
+    internal staff experience
+```
+
 For example:
 
 ```text
@@ -123,11 +243,11 @@ ops_portal/products/
 
 products/
     product state
-    product queries
+    product selectors
     product mutations
 ```
 
-The portal owns:
+The actor-facing application owns:
 
 ```text
 views
@@ -138,17 +258,23 @@ templates
 routes
 navigation
 HTTP orchestration
+actor/object scoping at the edge
 ```
 
 The domain or application capability owns:
 
 ```text
-persistent state
+persistent business state
 business invariants
 domain queries
 mutations
 transactions
+locking
+channel policy
 ```
+
+A portal may compose multiple application capabilities, but it must not become
+a second implementation of their business rules.
 
 ## Portal organization
 
@@ -159,18 +285,15 @@ For example:
 
 ```text
 business_portal/
+    catalog/
+        views.py
+        tests/
+
     orders/
-        forms.py
-        selectors.py
-        services.py
         views.py
         presentation.py
         *_viewmodels.py
-
-    store/
-        forms.py
-        services.py
-        views.py
+        repeat_services.py
 
     selectors.py
         portal-level actor scope
@@ -181,13 +304,12 @@ business_portal/
 
 This is not a second domain model.
 
-`business_portal/orders` owns the B2B customer's order interface and
-portal-specific orchestration.
+`business_portal/orders` owns the B2B customer's order interface.
 
-The underlying order domain remains owned by:
+The order domain remains owned by:
 
 ```text
-orders/
+orders
 ```
 
 Likewise:
@@ -197,42 +319,48 @@ ops_portal/orders
     staff order interface
 
 orders
-    order domain
+    shared order state and lifecycle
 ```
 
-Portal package structure should follow useful actor-facing use cases rather than
-mechanically mirror every domain application.
+Portal package structure should follow useful actor-facing use cases rather
+than mechanically mirror every domain application.
 
 ## Actor-scoped UI cache
 
-A portal may own a narrow, actor-specific model representing transient UI
-state - never domain truth - when that state exists only to serve one
-actor's interface and has no meaning to any other actor or domain
-application.
+A portal may own a narrow, actor-specific model representing transient UI state
+when that state:
+
+```text
+exists only to serve that actor's interface
+is not domain truth
+has no meaning to other actors or domain applications
+can be deleted without losing business truth
+```
 
 Example:
 
 ```text
 ops_portal/models.py
     PickChecklistMark
-        - caches which reserved pick lines staff have physically
-          checked off during packing
-        - not domain truth (Allocation/Order already own real state)
-        - has no meaning outside the ops packing workflow
-        - domain applications remain unaware it exists
+        caches which reserved pick lines staff have checked off
+        during packing
 ```
 
-This is distinct from domain-owned persistent state. A portal-owned cache
-model should be rare, narrowly scoped, and cheap to delete without losing
-any business truth. It does not justify a new domain/application package
-(see "Avoid synthetic symmetry") merely because it happens to persist to
-the database.
+The real order and reservation state still belongs to:
 
-## Domain and application apps
+```text
+orders
+reservations
+```
 
-Domain and application apps own business behavior and persistence knowledge.
+Portal-owned persistence of this kind should be rare.
 
-Typical responsibilities include:
+Persisting a UI cache does not by itself justify creating a new domain
+application.
+
+## Domain and application modules
+
+A domain/application package commonly contains:
 
 ```text
 models.py
@@ -248,10 +376,10 @@ errors.py
     domain/application failures
 
 datatypes.py
-    explicit input or result structures
+    explicit input and result structures
 ```
 
-Not every application needs every module.
+Not every package needs every module.
 
 A useful distinction is:
 
@@ -268,7 +396,7 @@ view
 
 Selectors should not mutate persistent state.
 
-Services should own mutations and transactional business behavior.
+Services should own mutations and transactional behavior.
 
 Views should remain thin HTTP orchestration.
 
@@ -276,7 +404,7 @@ Views should remain thin HTTP orchestration.
 
 Persistence knowledge belongs to the application that owns the model.
 
-For example:
+Examples:
 
 ```text
 orders/selectors.py
@@ -294,7 +422,12 @@ customers/selectors.py
 
 Other applications may call these selectors.
 
-They should not duplicate their ORM knowledge.
+They should avoid reproducing the same ORM knowledge when an owning selector
+already exists.
+
+A composing module owns the cross-domain use case.
+
+Each domain retains ownership of how its own persistence is queried.
 
 For example:
 
@@ -307,10 +440,6 @@ inventory/selectors.py
 customers/selectors.py
 ```
 
-The composing module owns the cross-domain use case.
-
-Each domain retains ownership of how its own persistence is queried.
-
 ## Actor and object scope
 
 A portal may add actor-specific scoping on top of domain selectors.
@@ -319,35 +448,34 @@ For example:
 
 ```text
 business_portal/selectors.py
-    resolve logged-in user
+    logged-in Django user
         ↓
     CustomerMembership
         ↓
     Customer
 ```
 
-An order-specific portal selector may then compose that actor scope with
-domain-owned order queries:
-
-```text
-business_portal/orders/selectors.py
-        ↓
-business_portal/selectors.py
-orders/selectors.py
-```
-
-This keeps two responsibilities separate:
+Keep these responsibilities separate:
 
 ```text
 domain selector
-    how orders are queried
+    how domain objects are queried
 
-portal selector
-    which orders this actor may address
+portal scope
+    which objects this actor may address
 ```
 
-Portal selectors should compose domain queries rather than reproduce their ORM
-implementation.
+Capabilities answer:
+
+> May this actor perform this kind of operation?
+
+Object scope answers:
+
+> May this actor address this specific object?
+
+Both may be required.
+
+Capability checks without object scoping are insufficient for actor-owned data.
 
 ## Write ownership
 
@@ -358,68 +486,77 @@ Examples:
 
 ```text
 orders/services.py
-    generic order lifecycle mutations
+    generic order lifecycle
+
+carts/services.py
+    generic mutable-cart mechanics
 
 inventory/services.py
-    inventory mutations and invariants
+    inventory mutations
 
 customers/services.py
     customer mutations
 
 accounts/services.py
-    account lifecycle mutations
-```
+    account lifecycle
 
-Actor-facing portals may provide small application adapters around these
-operations when an actor-specific use case requires orchestration.
+business/cart_services.py
+    BUSINESS cart ownership and channel policy
 
-For example:
-
-```text
-business_portal/orders/services.py
-    B2B draft-order use case
-        ↓
 business/services.py
-orders/services.py
+    BUSINESS order composition and placement
+
+retail/services.py
+    RETAIL checkout/payment application workflow
 ```
 
-or:
+Actor-facing views may orchestrate these operations, but should not reproduce
+their rules.
+
+When an actor-facing use case needs channel semantics, prefer the channel
+application:
 
 ```text
-business_portal/store/services.py
-    B2B store-update use case
-        ↓
-customers/services.py
+ops_portal
+    ↓
+business
+    ↓
+orders
 ```
 
-Portal services must not become a second implementation of domain business
-rules.
+rather than:
 
-Their role is actor-specific application orchestration.
+```text
+ops_portal
+    duplicates BUSINESS placement rules
+```
 
-## Transactions
+## Transactions and locking
 
 Transactional writes belong as close as practical to the mutation whose
 invariants they protect.
-
-For example, locking and lifecycle checks used by order mutation services belong
-with the order application behavior rather than with a particular portal.
-
-HTTP views should not be responsible for maintaining database consistency.
 
 Conceptually:
 
 ```text
 HTTP request
     ↓
-portal view
+actor-facing view
     ↓
 application/domain service
     ↓
-transaction
+transaction + locking
     ↓
 database
 ```
+
+HTTP views should not maintain database consistency themselves.
+
+Lock the row that represents the serialization boundary for the invariant being
+protected.
+
+For example, generic cart mutations lock the parent `Cart` so concurrent line
+mutations for the same cart are serialized.
 
 ## Accounts and authorization
 
@@ -440,10 +577,10 @@ accounts/roles.py
     RoleSpec
 
 accounts/permissions.py
-    resolve Django User -> AccountRole -> RoleSpec
+    Django User -> AccountRole -> RoleSpec
 
 accounts/services.py
-    account lifecycle mutations and invariants
+    account lifecycle mutations
 ```
 
 Django authentication answers:
@@ -469,27 +606,32 @@ Shared authentication and self-account behavior may remain in `accounts` when
 it is not specific to B2B customers, staff operations or retail storefront
 behavior.
 
-Examples include shared login/self-account routing.
-
 Actor-specific account administration belongs to the actor-facing portal.
 
 For example:
 
 ```text
 ops_portal/accounts
-    staff-facing account management
+    staff-facing account administration
 
 accounts
-    shared identity, permissions, lifecycle and self/account behavior
+    shared identity, permissions and lifecycle
 ```
 
-B2B customers use `/my/` as their canonical account area. The generic
-`/accounts/me/` route remains available for shared/staff self-account behavior,
-but redirects B2B customers into `business_portal`.
+B2B customers use:
+
+```text
+/my/
+```
+
+as their canonical account area.
+
+`/accounts/me/` remains a shared self-account route and may redirect B2B
+customers into `business_portal`.
 
 ## Route structure
 
-Top-level URL prefixes reflect the application surface they belong to:
+Top-level URL prefixes describe application surfaces:
 
 ```text
 /
@@ -502,10 +644,10 @@ Top-level URL prefixes reflect the application surface they belong to:
     authenticated B2B customer area
 
 /ops/
-    internal staff operations area
+    internal staff operations
 
 /accounts/
-    shared authentication and account workflows
+    shared authentication/account workflows
 ```
 
 Operational resources live below `/ops/`, for example:
@@ -518,11 +660,20 @@ Operational resources live below `/ops/`, for example:
 /ops/accounts/
 ```
 
-B2B customer routes live below `/my/`, including catalog, contact, FAQ,
-account/store editing and order history.
+B2B customer routes live below `/my/`, including:
 
-The URL prefix is not an authorization boundary by itself. Capabilities,
-route policies and object scoping remain authoritative.
+```text
+catalog
+cart
+order review
+order history
+profile
+customer-facing account behavior
+```
+
+The URL prefix is not an authorization boundary.
+
+Capabilities, route policies and object scoping remain authoritative.
 
 ## Route authorization
 
@@ -538,39 +689,15 @@ Authorization is fail-closed.
 
 Navigation is UX, not authorization.
 
-A link being hidden or visible must never be treated as the security boundary.
+A hidden link is not a security boundary.
 
 The destination route must enforce its own access policy.
-
-## Object scope
-
-Capabilities answer:
-
-> May this actor access this kind of operation?
-
-Scoped selectors answer:
-
-> May this actor access this specific object?
-
-Both may be required.
-
-For example:
-
-```text
-capability
-    may view own orders
-
-object scope
-    this order belongs to the current customer's membership
-```
-
-Capability checks without object scoping are insufficient for actor-owned data.
 
 ## Navigation
 
 Navigation is actor-specific presentation.
 
-Generic navigation primitives may live in shared code:
+Generic navigation primitives may live in:
 
 ```text
 common/navigation.py
@@ -583,7 +710,7 @@ business_portal/navigation.py
 ops_portal/navigation.py
 ```
 
-Application-wide selection and composition of navigation belongs in:
+Application-wide composition belongs in:
 
 ```text
 config/context_processors.py
@@ -609,10 +736,10 @@ config/policies.py
     aggregate route access declarations
 
 config/login_routing.py
-    choose the appropriate destination after login
+    post-login destination selection
 
 config/context_processors.py
-    compose actor-specific navigation
+    actor-specific navigation composition
 
 config/middleware.py
     global request/session behavior
@@ -624,36 +751,33 @@ config/urls.py
 `config` may know about multiple applications because wiring the whole
 application together is its responsibility.
 
-Domain applications should not become composition roots for unrelated
+A domain application should not become the composition root for unrelated
 applications.
 
 ## Presentation
 
-Presentation code belongs to the actor-facing application when it is
-actor-specific.
+Actor-specific presentation belongs to the actor-facing application.
 
 Examples:
 
 ```text
 business_portal
-    B2B-specific status labels
+    B2B order labels
+    cart presentation
     order cards
-    B2B catalog labels
-    page context
-    B2B links and actions
+    customer-facing links/actions
 
 ops_portal
-    staff-specific actions
-    operational labels
-    staff routes
-    staff page context
+    operational status/actions
+    staff-facing forms
+    packing presentation
 
 storefront
-    public retail presentation
+    retail catalog/cart/checkout presentation
 ```
 
 Neutral helpers may remain near a domain when they do not know about a specific
-actor or portal.
+actor.
 
 For example:
 
@@ -692,9 +816,8 @@ page headers
 generic UI dataclasses
 form-layout helpers
 navigation primitives
+sales-channel enum
 ```
-
-Shared primitives should describe mechanics or neutral presentation structure.
 
 Actor-specific:
 
@@ -703,7 +826,7 @@ copy
 labels
 URLs
 actions
-workflow
+workflows
 authorization meaning
 ```
 
@@ -711,33 +834,31 @@ should remain in the owning portal.
 
 ## Sales channels
 
-Authentication and sales channel are separate concepts.
-
-Being logged in does not by itself determine:
+The project currently has two sales channels:
 
 ```text
-catalog
-pricing
-payment behavior
-reservation behavior
-fulfillment policy
+BUSINESS
+RETAIL
 ```
 
-Those decisions belong to channel policy and channel-specific application
-behavior.
-
-The current actor-facing channel entry points are:
+The shared channel value lives in:
 
 ```text
-business_portal
-    authenticated B2B customer experience
-
-storefront
-    public retail experience
+common.channels.SalesChannel
 ```
 
-The domain should not infer sales-channel behavior merely from whether a Django
-user is authenticated.
+Channel applications own policy:
+
+```text
+business
+    BUSINESS catalog/cart/order rules
+
+retail
+    RETAIL catalog/cart/checkout/payment rules
+```
+
+Shared capabilities should not infer channel behavior from authentication or
+from which portal invoked them.
 
 ## Customer identity
 
@@ -758,20 +879,17 @@ anonymous retail buyer
 individual order
 ```
 
-An anonymous retail checkout does not require creating a persistent `Customer`.
+An anonymous retail checkout does not require a persistent `Customer`.
 
-Retail orders may instead preserve the buyer information required by the order
-through an order snapshot.
-
-This keeps persistent business identity separate from a single retail purchase.
+Retail orders preserve required buyer information through order snapshots.
 
 ## Products and inventory
 
-A product and physical stock are separate concepts.
+Product identity and physical stock are separate concepts.
 
 ```text
 Product
-    stable sellable product / SKU identity
+    stable SKU/product identity
 
 InventoryBatch
     physical stock
@@ -782,70 +900,573 @@ InventoryBatch
 
 Product identity should not encode individual stock batches.
 
-Inventory behavior belongs to `inventory`.
+`products` owns product identity and neutral product behavior.
 
-Product identity and catalog-level product behavior belong to `products`.
+`inventory` owns physical inventory state and inventory mutations.
+
+## Pricing and commercial offers
+
+`pricing` owns commercial offers and current price data.
+
+The current model names are:
+
+```text
+CommercialPrice
+PriceAmount
+```
+
+`CommercialPrice` is semantically the persistent commercial offer identity.
+
+`PriceAmount` is current monetary price data attached to that offer.
+
+Keep these concepts separate:
+
+```text
+commercial offer identity
+    what commercial option was selected
+
+current price data
+    what that offer costs now
+
+historical order price
+    what was snapshotted when the order was created
+
+physical fulfillment
+    which inventory batches were actually reserved/picked
+```
+
+Conceptually:
+
+```text
+Product
+    stable product identity
+
+CommercialPrice
+    persistent offer identity
+    one sales channel
+    product-wide or batch-specific scope
+    enabled/disabled channel availability
+
+PriceAmount
+    current amount in one currency
+```
+
+An offer that references an inventory batch describes the commercial scope of
+the offer.
+
+It does not by itself prove that the same batch was physically reserved or
+picked.
+
+Physical truth belongs to:
+
+```text
+reservations.Allocation
+```
+
+### BUSINESS standard offers
+
+Every buyable BUSINESS product has an explicit persistent standard offer:
+
+```text
+CommercialPrice
+    channel = BUSINESS
+    product = product
+    batch = NULL
+```
+
+The standard offer is not synthesized in memory.
+
+Its `PriceAmount` may be absent because BUSINESS standard orders may be invoiced
+later.
+
+BUSINESS batch-specific offers require the channel's configured concrete price
+policy, currently EUR pricing.
+
+Existing offers are not implicitly re-enabled.
+
+Availability changes go through the pricing/application service responsible for
+that mutation.
+
+### RETAIL offers
+
+Retail offers are explicit commercial decisions.
+
+A RETAIL offer used for checkout requires a valid concrete price according to
+retail policy.
+
+## Stock-pool semantics
+
+A product-wide offer and a batch-specific offer must not simultaneously expose
+the same physical units as independently selectable stock.
+
+The stock-pool invariant is:
+
+```text
+A batch is excluded from a product-wide offer's pool
+if and only if its own batch offer is orderable
+in the same channel.
+```
+
+A disabled or otherwise non-orderable batch offer leaves that batch in the
+product-wide pool.
+
+`list_orderable_batches_for_offer` resolves the physical batches that may back
+one offer.
+
+It is deliberately reservation-agnostic: it answers physical eligibility, not
+remaining reservable quantity.
+
+Reservation accounting belongs downstream in `reservations`, where rows are
+locked and available quantity is calculated safely.
+
+Catalog presentation may layer reservation-adjusted availability on top of the
+shared pool mechanics.
+
+A catalog is therefore an approximate:
+
+> orderable right now
+
+view.
+
+Placement or payment re-validates authoritatively under transaction and
+locking.
+
+## Carts
+
+`carts` owns generic mutable purchase intent.
+
+Core models:
+
+```text
+Cart
+    UUID identity
+    sales channel
+    timestamps
+
+CartLine
+    cart
+    commercial_price
+    quantity
+    timestamps
+```
+
+Important invariants include:
+
+```text
+quantity > 0
+
+one CommercialPrice at most once per Cart
+
+Cart.channel == CartLine.commercial_price.channel
+```
+
+Generic cart mutations serialize on the parent `Cart`.
+
+Conceptually:
+
+```text
+lock Cart
+    ↓
+validate generic cart invariant
+    ↓
+mutate CartLine rows
+```
+
+This avoids races between concurrent mutations of lines belonging to the same
+cart.
+
+### What generic carts do not own
+
+`carts` deliberately does not decide:
+
+```text
+whether Product.active is required
+whether an offer is currently enabled
+whether a current PriceAmount is required
+whether stock is available
+whether an order limit is exceeded
+whether payment is required
+whether a reservation can be made
+```
+
+Those are channel/application policies.
+
+This keeps `carts` small and reusable.
+
+## BUSINESS cart ownership
+
+The `business` application attaches one active generic cart to one business
+customer through `BusinessCart`.
+
+Conceptually:
+
+```text
+Customer
+    1
+    │
+    1
+BusinessCart
+    │
+    1
+    ▼
+Cart(channel=BUSINESS)
+    │
+    *
+    ▼
+CartLine
+```
+
+The current invariant is one active BUSINESS cart per customer.
+
+`BusinessCart` owns only the association between business-customer identity and
+the generic cart.
+
+Mutable cart contents remain owned by `carts`.
+
+Creating or resolving the customer's cart belongs to `business`, because the
+customer ownership rule is BUSINESS-specific.
+
+## BUSINESS cart policy
+
+Adding an offer to a BUSINESS cart validates mutable-cart eligibility.
+
+Current cart-stage rules include:
+
+```text
+offer.channel == BUSINESS
+offer.enabled
+offer.product.active
+
+batch-specific BUSINESS offer
+    requires current EUR price
+```
+
+Cart-stage mutation intentionally does not make stock availability or order
+limits part of generic cart persistence.
+
+Those constraints may change between browsing and placement.
+
+They are therefore authoritatively revalidated when the cart becomes an order.
+
+## Cart and order lifecycle
+
+A cart and an order are different concepts.
+
+```text
+Cart
+    mutable purchase intent
+
+Order(DRAFT)
+    durable transaction attempt
+
+Order(PLACED)
+    accepted durable order
+```
+
+The lifecycle is:
+
+```text
+Cart
+  add / set quantity / remove / clear
+              │
+              ▼
+        create Order(DRAFT)
+              │
+         ┌────┴────┐
+         ▼         ▼
+       place     discard
+         │
+         ▼
+    Order(PLACED)
+```
+
+The old design treated a BUSINESS `Order(DRAFT)` as a shopping basket.
+
+That is no longer allowed.
+
+Generic order services do not expose line-level mutable-cart operations such as:
+
+```text
+add draft line
+replace draft lines
+set draft line quantity
+remove draft line
+```
+
+Mutable shopping behavior belongs to `Cart`.
+
+`Order(DRAFT)` exists only as a short-lived durable transaction attempt that can
+be prepared, placed or discarded.
+
+## BUSINESS cart placement
+
+BUSINESS placement composes channel policy with generic order lifecycle
+services.
+
+Conceptually:
+
+```text
+Customer's BUSINESS Cart
+        ↓
+lock and read cart
+        ↓
+revalidate BUSINESS offers
+        ↓
+revalidate current business policy
+        ↓
+build resolved OrderDraft
+        ↓
+orders.create_draft_order
+        ↓
+prepare BUSINESS placement
+    order limits
+    stock/reservation rules
+    other placement invariants
+        ↓
+orders.place_order
+        ↓
+clear Cart only after success
+```
+
+The operation is transactional.
+
+If order creation, reservation, validation or placement fails, the transaction
+rolls back and the customer's cart remains intact.
+
+The cart is cleared only after successful placement.
+
+This gives the system a clear ownership boundary:
+
+```text
+before successful placement
+    mutable intent belongs to Cart
+
+during transaction attempt
+    durable candidate belongs to Order(DRAFT)
+
+after success
+    durable purchase belongs to Order(PLACED)
+```
+
+## Retail cart and checkout
+
+Retail also uses the generic cart representation for mutable purchase intent.
+
+The storefront owns retail HTTP/UI behavior.
+
+`retail` owns retail application policy and checkout/payment workflow.
+
+Conceptually:
+
+```text
+storefront
+    ↓
+retail cart policy
+    ↓
+carts
+```
+
+At checkout, retail resolves the cart into a durable RETAIL order with:
+
+```text
+Order(DRAFT)
+OrderLine.commercial_offer
+OrderLine.unit_price_snapshot
+buyer snapshot
+```
+
+Retail payment startup revalidates retail availability and obtains temporary
+reservations before an external payment attempt proceeds.
+
+The provider/payment lifecycle belongs to `payments` plus retail workflow
+composition, not to `carts`.
 
 ## Orders
 
-`orders` owns the shared order model and generic order behavior.
+`orders` owns the shared durable order model and generic order lifecycle.
 
-It is not the owner of one specific actor interface.
+It is not the owner of one particular actor interface or sales channel.
 
-The same order domain may be used by:
+The same order capability may be used by:
 
 ```text
+business
+retail
 business_portal
 ops_portal
-retail
 fulfillment
 payments
 ```
 
 Actor-specific presentation and HTTP behavior stay outside `orders`.
 
-For example:
+Core order responsibilities include:
 
 ```text
-business_portal/orders
-    customer order UI
+Order state
+OrderLine state
+buyer snapshots
+price snapshots
+generic lifecycle transitions
+generic order persistence
+generic commercial-offer consistency checks
+```
 
-ops_portal/orders
-    staff order UI
+### Order(DRAFT)
 
-orders
-    order state
-    selectors
-    lifecycle services
-    datatypes
+`Order(DRAFT)` is a durable transaction attempt.
+
+It is not a mutable shopping cart.
+
+Its intended lifecycle is:
+
+```text
+create
+    ↓
+prepare
+    ↓
+place
+
+or
+
+create
+    ↓
+discard
+```
+
+Channel applications may construct a resolved draft and ask `orders` to persist
+it.
+
+After creation, generic order services do not expose shopping-cart-style
+line mutations.
+
+### Durable commercial identity
+
+Every current-schema `OrderLine` has a non-null:
+
+```text
+OrderLine.commercial_offer
+```
+
+This is the persistent identity of the commercial offer selected for that line.
+
+There are no current runtime side tables such as:
+
+```text
+BusinessOfferSelection
+RetailOfferSelection
+```
+
+Those models exist only in historical migration state where needed to backfill
+older data.
+
+### Price snapshot
+
+Historical monetary truth lives on:
+
+```text
+OrderLine.unit_price_snapshot
+```
+
+Do not derive the historical charged or invoiced price from current
+`PriceAmount`.
+
+The offer identity and price snapshot serve different purposes:
+
+```text
+commercial_offer
+    which commercial option was selected
+
+unit_price_snapshot
+    what monetary value was recorded for the order at that time
+```
+
+### Commercial scope is not fulfillment truth
+
+A batch-specific `commercial_offer` does not itself mean that the referenced
+batch was physically allocated.
+
+Actual reservation/picking truth belongs to:
+
+```text
+reservations.Allocation
 ```
 
 ## Business channel
 
-The `business` application owns B2B-specific application behavior that is not
-merely presentation.
+`business` owns BUSINESS-specific application behavior that is more than
+presentation.
 
-For example, B2B order preparation or draft workflows may compose generic order
-services while applying business-channel policy.
+Examples include:
 
-The dependency direction remains:
+```text
+BUSINESS catalog eligibility
+BUSINESS cart ownership
+BUSINESS cart mutation policy
+BUSINESS order-draft construction
+BUSINESS placement preparation
+BUSINESS order-limit policy
+BUSINESS reservation composition
+```
+
+Typical dependency direction:
 
 ```text
 business_portal
         ↓
 business
         ↓
-orders / inventory / other capabilities
+carts
+orders
+pricing
+products
+inventory
+reservations
+customers
 ```
 
-The B2B portal should not make generic `orders` responsible for B2B-only
-interface behavior.
+Operational staff may also invoke BUSINESS behavior:
+
+```text
+ops_portal
+    ↓
+business
+```
+
+when the use case is semantically a BUSINESS transaction.
+
+This is preferable to duplicating BUSINESS rules in `ops_portal`.
+
+A direct BUSINESS draft/order construction service may therefore legitimately
+be used by operational workflows even though the B2B customer-facing shopping
+flow uses `Cart`.
+
+The distinction is:
+
+```text
+customer shopping intent
+    -> Cart
+
+durable BUSINESS transaction attempt
+    -> Order(DRAFT)
+```
 
 ## Retail channel
 
-`retail` owns retail-specific application behavior and policy.
+`retail` owns RETAIL-specific application behavior and policy.
 
-Examples include retail checkout and payment-related retail workflows.
+Examples include:
+
+```text
+retail catalog eligibility
+retail cart policy
+anonymous buyer validation
+retail checkout
+retail order creation
+retail reservation policy
+payment-start workflow
+payment reconciliation/recovery composition
+```
 
 The public HTTP interface belongs to:
 
@@ -860,56 +1481,61 @@ storefront
     public HTTP/UI
         ↓
 retail
-    retail application behavior
+    RETAIL application policy
         ↓
+carts
 orders
-payments
+pricing
 reservations
+payments
 products
-inventory-related capabilities
+inventory
 ```
 
-Retail domain/application behavior should remain usable without requiring a
-browser request.
+Retail application behavior should remain usable without a browser request.
 
 ## Shared capabilities
 
-Capabilities meaningful across channels remain separate from actor-facing
-portals.
+Capabilities meaningful across actors or channels remain separate from
+actor-facing portals.
 
-Current examples include:
+Examples:
 
 ```text
 reservations
-    stock reservation capability
+    stock-reservation state and mechanism
 
 payments
-    payment capability
+    payment state and provider integration
 
 fulfillment
-    shared fulfillment application workflows
-```
-
-Portals and channel applications may use these capabilities without owning them.
-
-For example:
-
-```text
-storefront ───────┐
-business_portal ──┼──> shared capabilities
-ops_portal ───────┘
+    shared pick/pack application workflows
 ```
 
 A shared capability should exist because it represents a stable application
-concept, not merely because two callers currently contain similar code.
+concept, not merely because two callers contain similar code.
 
 ## Reservations
 
-`reservations` owns stock-reservation state and mechanism.
+`reservations` owns reservation state and reservation mechanics.
 
-It owns `Allocation`: a batch-level claim on physical stock made on behalf
-of one order line. The table keeps its historical name (`orders_allocation`)
-via `db_table`; only ownership moved.
+It owns:
+
+```text
+Allocation
+```
+
+a batch-level claim on physical stock made on behalf of one order line.
+
+The physical database table retains its historical name:
+
+```text
+orders_allocation
+```
+
+through `db_table`.
+
+Application ownership is nevertheless `reservations`.
 
 Dependency direction:
 
@@ -923,93 +1549,13 @@ inventory
 `orders` must not import `reservations`.
 
 An `Allocation` cannot exist without an order line and an inventory batch.
-An `Order` can exist without any allocations.
 
-## Pricing
+An `Order` may exist without allocations.
 
-`pricing` owns commercial offers (`CommercialPrice`), their currency
-amounts (`PriceAmount`), and the shared stock-pool mechanism.
+This asymmetry is intentional.
 
-An offer is the channel-specific commercial identity of one product scope:
-
-```text
-Product
-    global identity and status (Product.active)
-
-CommercialPrice (offer)
-    one product scope (product-wide or one batch) in one channel
-    enabled = available in that channel
-
-PriceAmount
-    optional or required depending on channel policy
-```
-
-Offer identity, availability and price are separate concepts. `enabled`
-does not mean "the price is active": a price is removed by removing its
-`PriceAmount`, not by disabling the offer.
-
-Orderability is decided by gates, in order:
-
-```text
-Product.active          global gate
-offer.enabled           channel gate
-available stock > 0     reservation-adjusted
-channel price policy    per channel
-```
-
-Channel price policy:
-
-```text
-BUSINESS standard offer
-    price optional - B2B orders may be invoiced afterwards
-
-BUSINESS batch offer
-    EUR price required
-
-RETAIL offers
-    valid price required - checkout needs a concrete price
-```
-
-Every product has an explicit BUSINESS standard offer (product-wide, batch
-NULL). It is created enabled by the data migration, by the ops product
-creation flow and by `ensure_standard_offer`. Existing offers are never
-re-enabled implicitly; availability changes go through
-`set_commercial_price_enabled`. Retail offers are always explicit
-commercial decisions and are never created automatically.
-
-Stock-pool invariant:
-
-```text
-A batch is excluded from a product-wide offer's stock pool
-if and only if its own batch offer is orderable in the same channel.
-```
-
-Otherwise the same physical units would be represented by two selectable
-offers. A batch offer that is disabled or unpriced leaves its batch in the
-product-wide pool.
-
-`list_orderable_batches_for_offer` resolves which physical batches back one
-offer. It is deliberately reservation-agnostic - it answers physical
-eligibility only (status, quantity, expiry, exclusion of batches sold
-through their own orderable same-channel offer). Reservation accounting
-happens downstream, in `reservations`, when the returned pool is locked
-and reserved from.
-
-`business.list_business_catalog_products` layers reservation-adjusted
-availability (via `orderable_quantity_by_batch_pk`) on top of this
-mechanic for display purposes - a fully reserved batch offer should
-disappear from the catalog even though it remains physically eligible.
-This is a deliberate scope difference, not an inconsistency to converge:
-merging reservation-awareness into the shared pool selector would break
-the ownership boundary `reservations` depends on to lock and count safely.
-
-The catalog is an approximate "orderable right now" view. Placement
-re-validates authoritatively under locking.
-
-Transitional: until order lines require an explicit offer, the business
-catalog still synthesizes an unpriced standard offer
-(`commercial_price_id=None`) for a product that lacks the standard offer
-row. In production every product has the row.
+Reservations are a capability applied to an order, not part of generic order
+identity.
 
 ## Payments
 
@@ -1020,24 +1566,23 @@ payments
     payment records
     provider integration
     payment services
-    provider callbacks/webhooks where appropriate
+    provider callbacks/webhooks
 
 retail
     retail payment workflow and policy
 
 storefront
-    public retail payment-return UI
+    public payment-return UI
 ```
 
 Not all HTTP endpoints are actor-facing pages.
 
-Provider callbacks and webhooks may legitimately live with the capability they
-serve when they represent machine-to-machine integration rather than an actor
-portal.
+Machine-to-machine provider callbacks may legitimately live with the capability
+they serve.
 
 ## Billing
 
-Payment processing and billing/invoicing are different concepts.
+Payment execution and billing/invoicing are different concepts.
 
 Future billing behavior should not be added to `payments` merely because money
 is involved.
@@ -1054,37 +1599,48 @@ billing
     accounting-facing billing concepts
 ```
 
-A `billing` application should only be introduced when that capability actually
+Introduce a `billing` application only when that stable capability actually
 exists.
 
 ## Fulfillment
 
 `fulfillment` is a shared application capability.
 
-It may compose:
+It composes order and reservation data into fulfillment workflows.
 
-`fulfillment` owns the pack/pick read views composed from reservation
-data (`PickLine`, `get_packaging_list`, `get_packed_lines`). Reservation
-state itself remains owned by `reservations`.
+Examples include:
 
 ```text
+PickLine
+get_packaging_list
+get_packed_lines
+```
+
+Reservation state remains owned by `reservations`.
+
+Conceptually:
+
+```text
+fulfillment
+    ↓
 orders
 inventory
 reservations
 ```
 
-to perform fulfillment workflows.
+`fulfillment` should not own actor-specific staff pages.
 
-It should not own actor-specific staff pages.
+Staff fulfillment UI belongs in:
 
-Staff fulfillment UI belongs in `ops_portal`.
+```text
+ops_portal
+```
 
 ## Avoid synthetic symmetry
 
-Applications should not be created only to make the package tree look
-symmetrical.
+Do not create applications merely to make the package tree symmetrical.
 
-For example, `ops_portal` does not require a generic `ops` domain layer merely
+For example, `ops_portal` does not need a generic `ops` application simply
 because:
 
 ```text
@@ -1092,55 +1648,127 @@ business_portal
     uses business
 ```
 
-Operational use cases should live in the domain or shared capability whose
-business meaning they represent.
+Staff-facing code should call the application that owns the actual use case.
 
-A new domain/application package should be introduced only when a stable concept
-emerges.
+Examples:
+
+```text
+ops_portal
+    ↓
+orders
+
+ops_portal
+    ↓
+inventory
+
+ops_portal
+    ↓
+business
+```
+
+depending on whether the use case is:
+
+```text
+generic order behavior
+inventory behavior
+BUSINESS-channel behavior
+```
+
+Create a new application only when a stable concept with its own state,
+invariants or policy emerges.
 
 ## Avoid premature catalog abstraction
 
-A separate `catalog` application should not be introduced merely because more
-than one sales channel displays products.
+Do not create a generic `catalog` application merely because more than one
+channel displays products.
 
 Today:
 
 ```text
 products
-    owns product data and neutral product behavior
+    neutral product identity and behavior
+
+business
+    BUSINESS catalog eligibility/policy
 
 business_portal
-    owns B2B product presentation
+    B2B catalog presentation
+
+retail
+    RETAIL catalog eligibility/policy
 
 storefront
-    owns retail product presentation
+    retail catalog presentation
 ```
 
 A shared catalog application would only be justified if a stable,
-channel-neutral catalog read model or application capability emerges.
+channel-neutral catalog capability emerges.
 
-## Dependency tests
+## Architecture tests
 
-When deciding where code belongs, ask which direction the dependency points.
+Architecture tests should protect dependency direction and important ownership
+rules.
+
+Useful invariants include:
+
+```text
+orders must not import reservations
+
+domain/application packages must not import actor-facing portals
+
+config may compose multiple applications
+
+actor-facing portals may import channel applications
+
+ops_portal may import business/retail when invoking channel semantics
+
+historical migration models are not current runtime APIs
+```
+
+When deciding whether a dependency is acceptable, ask:
+
+> Which side owns the invariant being used?
+
+and:
+
+> Could the called behavior still work if this HTTP interface disappeared?
+
+If the answer to the second question is no, presentation or HTTP concerns may
+have leaked inward.
+
+## Good and suspicious dependency examples
 
 Good:
 
 ```text
-ops_portal
-    ↓
-customers
-
 business_portal
     ↓
-orders
+business
 
 storefront
     ↓
 retail
 
+ops_portal
+    ↓
+business
+
+ops_portal
+    ↓
+orders
+
 business
     ↓
 orders
+
+retail
+    ↓
+payments
+
+reservations
+    ↓
+orders
+inventory
 
 config
     ↓
@@ -1150,69 +1778,34 @@ multiple applications
 Suspicious:
 
 ```text
-customers
-    ↓
-ops_portal
-
-orders
+business
     ↓
 business_portal
-
-products
-    ↓
-storefront
 
 retail
     ↓
 storefront
+
+orders
+    ↓
+ops_portal
+
+products
+    ↓
+business_portal
+
+inventory
+    ↓
+ops_portal
 ```
 
-A core or application module importing an actor-facing portal usually means an
-interface concern has leaked inward.
+The actor-facing edge may depend inward.
 
-Another useful test is:
-
-> Could this domain or application operation still work if the current web
-> interface disappeared?
-
-If not, HTTP or presentation concerns may have moved too far inward.
-
-## Design rules
-
-Prefer:
-
-```text
-explicit dependencies
-domain-owned persistence knowledge
-selector-owned reads
-service-owned mutations
-thin HTTP orchestration
-actor-owned presentation
-actor-specific object scoping at the edge
-fail-closed authorization
-explicit channel policy
-small modules with one clear responsibility
-stable shared capabilities
-```
-
-Avoid:
-
-```text
-core domain/application imports from actor-facing portals
-business rules in templates
-business rules in HTTP views
-ORM knowledge duplicated across applications
-navigation used as authorization
-actor-specific presentation in core domain modules
-domain applications acting as global composition roots
-sales-channel policy inferred only from authentication
-generic abstractions created only to remove small duplication
-new applications created only for structural symmetry
-```
+Core/application code should not depend outward on an actor-specific interface.
 
 ## Current application boundaries
 
-The main actor-facing interfaces are:
+Actor-facing interfaces:
 
 ```text
 business_portal
@@ -1225,61 +1818,75 @@ ops_portal
     internal staff interface
 ```
 
-Internal staff UI currently follows these ownership boundaries:
+Sales-channel applications:
 
 ```text
-ops_portal/accounts
-    staff account management
+business
+    BUSINESS policy and application workflows
 
-ops_portal/customers
-    staff customer management
-
-ops_portal/products
-    staff product management
-
-ops_portal/inventory
-    staff inventory management
-
-ops_portal/orders
-    staff order management
+retail
+    RETAIL policy and application workflows
 ```
 
-The corresponding state and business behavior remain in:
+Shared domain/application capabilities:
 
 ```text
 accounts
 customers
 products
-inventory
+pricing
+carts
 orders
+inventory
+reservations
+payments
+fulfillment
 ```
 
-The B2B customer interface is organized around customer-facing use cases:
+Application-wide composition:
 
 ```text
-business_portal/orders
-    order placement
-    draft handling
-    order history
-    order detail
-    B2B order presentation
-
-business_portal/store
-    customer store editing
-
-business_portal
-    portal home
-    shared B2B navigation
-    portal-level actor scope
+config
 ```
 
-The retail interface is:
+Internal staff UI is currently organized as:
+
+```text
+ops_portal/accounts
+ops_portal/customers
+ops_portal/products
+ops_portal/inventory
+ops_portal/orders
+```
+
+The corresponding state and business behavior remain in their owning
+applications.
+
+The B2B customer surface includes:
+
+```text
+business_portal/catalog
+    B2B catalog UI
+
+business_portal/orders
+    cart UI
+    cart mutation endpoints
+    review/placement UI
+    repeat-order UI
+    order history/detail
+    B2B order presentation
+
+business_portal
+    home/profile/navigation/actor scope
+```
+
+The retail HTTP surface is:
 
 ```text
 storefront
 ```
 
-while retail-specific application behavior remains in:
+while retail policy remains in:
 
 ```text
 retail
@@ -1291,118 +1898,203 @@ Application-wide composition remains in:
 config
 ```
 
-## Architecture migration status
+## Current route surfaces
 
-The main architecture migration is complete.
-
-Established boundaries include:
+The main route surfaces are:
 
 ```text
-B2B customer UI
-    -> business_portal
+/
+    public landing
 
-B2B order UI
-    -> business_portal/orders
+/shop/
+    retail storefront
 
-B2B store UI
-    -> business_portal/store
+/my/
+    B2B customer area
 
-public retail UI
-    -> storefront
+/ops/
+    internal operations
 
-staff account-management UI
-    -> ops_portal/accounts
-
-staff customer-management UI
-    -> ops_portal/customers
-
-staff product-management UI
-    -> ops_portal/products
-
-staff inventory-management UI
-    -> ops_portal/inventory
-
-staff order-management UI
-    -> ops_portal/orders
-
-cross-application access-policy composition
-    -> config
-
-post-login destination composition
-    -> config
-
-actor-specific navigation composition
-    -> config + owning portal
-
-domain ORM queries
-    -> owning domain selectors
+/accounts/
+    shared authentication/account workflows
 ```
 
-Current route surfaces are intentionally separated:
+`/accounts/me/` remains a generic self-account route for shared/staff behavior.
 
-```text
-/                  public landing
-/shop/             retail storefront
-/my/               B2B customer area
-/ops/              internal operations
-/accounts/         shared authentication/account workflows
-```
-
-`/accounts/me/` remains the generic self-account route for shared/staff use.
-B2B customers are redirected from it to `/my/`.
-
-This document now describes the current intended structure rather than a
-temporary migration state.
+B2B customers may be redirected from it to `/my/`.
 
 ## Adding new functionality
 
-When introducing a new feature, first determine what kind of responsibility it
-represents.
+When introducing a feature, first identify the responsibility.
 
 Ask:
 
 ```text
 Is this actor-facing HTTP or presentation?
-    -> owning portal / storefront
+    -> business_portal / storefront / ops_portal
 
-Is this persistent domain state or invariant?
-    -> owning domain application
+Is this BUSINESS-specific policy or workflow?
+    -> business
 
-Is this a read of domain-owned persistence?
-    -> owning domain selector
+Is this RETAIL-specific policy or workflow?
+    -> retail
 
-Is this a mutation or workflow?
-    -> owning domain/application service
+Is this mutable purchase intent?
+    -> carts, plus channel policy in business/retail
 
-Is this channel-specific business behavior?
-    -> channel application such as business or retail
+Is this durable order state or generic order lifecycle?
+    -> orders
 
-Is this a capability shared across channels?
-    -> shared application capability
+Is this current offer/price data?
+    -> pricing
+
+Is this physical stock?
+    -> inventory
+
+Is this a claim against physical stock?
+    -> reservations
+
+Is this payment/provider state?
+    -> payments
+
+Is this shared pick/pack workflow?
+    -> fulfillment
+
+Is this persistent customer/account state?
+    -> customers / accounts
 
 Is this application-wide wiring?
     -> config
 ```
 
-The location should follow from the responsibility.
+Then ask:
+
+```text
+Who owns the invariant?
+Who owns the persistence?
+Who owns the actor-specific presentation?
+Which layer should know about the sales channel?
+```
+
+The location should follow from responsibility.
 
 It should not be chosen merely because a nearby module is convenient to edit.
 
+## Design rules
+
+Prefer:
+
+```text
+explicit dependencies
+one owner for each kind of truth
+domain-owned persistence knowledge
+selector-owned reads
+service-owned mutations
+thin HTTP orchestration
+actor-owned presentation
+channel-owned commercial policy
+explicit object scoping
+fail-closed authorization
+transactional invariant enforcement
+small modules with one clear responsibility
+stable shared capabilities
+```
+
+Avoid:
+
+```text
+core/application imports from actor-facing portals
+business rules in templates
+business rules duplicated in views
+ORM knowledge duplicated across applications
+navigation used as authorization
+actor-specific presentation in core modules
+domain applications acting as global composition roots
+sales-channel policy inferred from authentication
+Order(DRAFT) used as a shopping cart
+duplicate commercial-offer identity tables
+current price used as historical order price
+commercial offer scope treated as physical allocation truth
+generic abstractions created only to remove small duplication
+new applications created only for structural symmetry
+```
+
 ## Guiding principle
 
-The architecture should make the common dependency direction obvious:
+The intended dependency shape is:
 
 ```text
 HTTP / presentation
         ↓
-application use case
+actor-facing use case
         ↓
-domain behavior
+sales-channel application when channel policy applies
+        ↓
+shared domain/application capability
         ↓
 persistence
 ```
 
+Not every path uses every layer.
+
+For a channel-neutral staff operation:
+
+```text
+ops_portal
+    ↓
+orders
+```
+
+may be enough.
+
+For a BUSINESS-channel staff operation:
+
+```text
+ops_portal
+    ↓
+business
+    ↓
+orders / pricing / reservations
+```
+
+is appropriate.
+
+For mutable purchase intent:
+
+```text
+business_portal or storefront
+        ↓
+business or retail
+        ↓
+carts
+```
+
+For durable purchase state:
+
+```text
+business or retail
+        ↓
+orders
+```
+
+The core ownership model is:
+
+```text
+CartLine.commercial_price
+    mutable commercial intent
+
+OrderLine.commercial_offer
+    durable commercial identity
+
+OrderLine.unit_price_snapshot
+    historical monetary truth
+
+reservations.Allocation
+    physical stock / fulfillment truth
+```
+
 The purpose of these boundaries is not to maximize the number of modules.
 
-The purpose is to make change local, dependencies explicit, business rules
-reusable, and incorrect coupling difficult.
+The purpose is to make ownership obvious, change local, dependencies explicit,
+business rules reusable, invalid states difficult to represent, and
+historical, commercial and physical truth difficult to confuse.
