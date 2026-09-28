@@ -44,12 +44,6 @@ from ops_portal.orders.access import (
 from ops_portal.products.access import (
     VIEW_CAPABILITIES as OPS_PRODUCT_VIEW_CAPABILITIES,
 )
-from payments.access import (
-    AUTH_EXEMPT_VIEWS as PAYMENT_AUTH_EXEMPT_VIEWS,
-)
-from payments.access import (
-    VIEW_CAPABILITIES as PAYMENT_VIEW_CAPABILITIES,
-)
 from storefront.access import (
     AUTH_EXEMPT_VIEWS as STOREFRONT_AUTH_EXEMPT_VIEWS,
 )
@@ -70,6 +64,7 @@ GLOBAL_VIEW_CAPABILITIES = {
 GLOBAL_AUTH_EXEMPT_VIEWS = frozenset(
     {
         "index",
+        "payments:sumup_webhook",
     }
 )
 
@@ -78,7 +73,6 @@ AUTH_EXEMPT_VIEWS = frozenset(
     {
         *GLOBAL_AUTH_EXEMPT_VIEWS,
         *ACCOUNT_AUTH_EXEMPT_VIEWS,
-        *PAYMENT_AUTH_EXEMPT_VIEWS,
         *STOREFRONT_AUTH_EXEMPT_VIEWS,
     }
 )
@@ -94,7 +88,6 @@ VIEW_CAPABILITIES = {
     **OPS_PRODUCT_VIEW_CAPABILITIES,
     **OPS_CUSTOMER_VIEW_CAPABILITIES,
     **BUSINESS_PORTAL_VIEW_CAPABILITIES,
-    **PAYMENT_VIEW_CAPABILITIES,
     **STOREFRONT_VIEW_CAPABILITIES,
 }
 

@@ -99,7 +99,7 @@ urlpatterns = [
     path(
         "payments/",
         include(
-            "payments.urls",
+            "config.payment_urls",
             namespace="payments",
         ),
     ),

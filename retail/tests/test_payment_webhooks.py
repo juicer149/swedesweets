@@ -50,7 +50,7 @@ def test_sumup_webhook_is_public_and_reconciles_known_checkout(
         return attempt
 
     monkeypatch.setattr(
-        "payments.views.reconcile_retail_payment",
+        "retail.payment_webhooks.reconcile_retail_payment",
         fake_reconcile_retail_payment,
     )
 
@@ -126,7 +126,7 @@ def test_sumup_webhook_ignores_unknown_event_type(
         )
 
     monkeypatch.setattr(
-        "payments.views.reconcile_retail_payment",
+        "retail.payment_webhooks.reconcile_retail_payment",
         unexpected_reconciliation,
     )
 
@@ -181,7 +181,7 @@ def test_sumup_webhook_ignores_unknown_checkout(
         )
 
     monkeypatch.setattr(
-        "payments.views.reconcile_retail_payment",
+        "retail.payment_webhooks.reconcile_retail_payment",
         unexpected_reconciliation,
     )
 
@@ -218,7 +218,7 @@ def test_sumup_webhook_returns_server_error_on_reconciliation_conflict(
         )
 
     monkeypatch.setattr(
-        "payments.views.reconcile_retail_payment",
+        "retail.payment_webhooks.reconcile_retail_payment",
         conflicting_reconciliation,
     )
 
@@ -268,7 +268,7 @@ def test_sumup_webhook_returns_server_error_when_reconciliation_fails(
         )
 
     monkeypatch.setattr(
-        "payments.views.reconcile_retail_payment",
+        "retail.payment_webhooks.reconcile_retail_payment",
         failed_reconciliation,
     )
 
