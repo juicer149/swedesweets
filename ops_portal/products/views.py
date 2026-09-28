@@ -65,8 +65,10 @@ from products.selectors import (
     PRODUCT_FILTER_ALL,
     PRODUCT_FILTER_INACTIVE,
     PRODUCT_SORTS,
-    get_product_delivered_demand_summary,
     list_products,
+)
+from orders.product_demand import (
+    get_product_delivered_demand_summary,
 )
 from products.services import (
     create_product,

@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from decimal import Decimal
-
 import pytest
 
 from products.selectors import (
     PRODUCT_FILTER_ACTIVE,
     PRODUCT_FILTER_INACTIVE,
     get_product_by_sku,
-    get_product_delivered_demand_summary,
     list_products,
 )
 from products.tests.factories import product_factory
@@ -133,15 +130,3 @@ def test_list_products_can_sort_by_stock_unit():
     )
 
     assert list(list_products(sort="unit")) == [box_product, piece_product]
-
-
-@pytest.mark.django_db
-def test_get_product_delivered_demand_summary_is_empty_without_delivered_orders():
-    product = product_factory()
-
-    summary = get_product_delivered_demand_summary(product=product)
-
-    assert summary.delivered_order_count == 0
-    assert summary.delivered_quantity == 0
-    assert summary.average_quantity_per_delivered_order == Decimal("0.0")
-    assert summary.last_delivered_at is None

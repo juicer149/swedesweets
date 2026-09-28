@@ -32,7 +32,7 @@ FORBIDDEN_IMPORTS: dict[str, frozenset[str]] = {
     "orders": PORTALS | {"reservations"},
     "payments": PORTALS,
     "pricing": PORTALS,
-    "products": PORTALS,
+    "products": PORTALS | {"orders"},
     "reservations": PORTALS,
     "retail": PORTALS,
 }

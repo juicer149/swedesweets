@@ -37,7 +37,7 @@ from products.models import (
     Product,
     ProductProfile,
 )
-from products.selectors import (
+from orders.product_demand import (
     ProductDeliveredDemandSummary,
 )
 
