@@ -113,6 +113,15 @@
 
       const payload = await response.json();
 
+      // The cart is locked by an open payment, usually because this page
+      // was restored from history. Reload so the buyer sees the locked
+      // cart and the way back to the payment.
+      if (response.status === 409) {
+        form.dataset.pendingQuantity = "";
+        window.location.reload();
+        return;
+      }
+
       if (
         !response.ok
         || !payload.ok
