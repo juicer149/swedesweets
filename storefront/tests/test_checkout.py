@@ -622,3 +622,30 @@ def test_wrong_town_for_known_postal_code_is_a_city_error(client, cart):
     assert form.has_error("city")
     assert not form.has_error("postal_code")
     assert "Annecy" in str(form.errors["city"])
+
+
+@pytest.mark.django_db
+def test_unconfigured_provider_leaves_no_pending_attempt(
+    client,
+    cart,
+    settings,
+):
+    settings.SUMUP_API_KEY = ""
+    settings.SUMUP_MERCHANT_CODE = ""
+
+    checkout = _created_checkout(client)
+
+    response = client.post(
+        _pay_url(checkout)
+    )
+
+    assert response.url == _review_url(checkout)
+    assert not checkout.order.payment_attempts.exists()
+    assert not checkout.order.allocations.exists()
+
+    retry = _submit_details(client)
+
+    assert retry.status_code == 302
+    assert "payment in progress" not in str(
+        list(retry.wsgi_request._messages)
+    )

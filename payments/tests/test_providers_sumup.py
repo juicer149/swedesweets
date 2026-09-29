@@ -373,3 +373,19 @@ def test_sumup_errors_are_hosted_payment_errors():
     from payments.providers.sumup import SumUpPaymentError
 
     assert issubclass(SumUpPaymentError, HostedPaymentError)
+
+
+def test_missing_credentials_are_a_hosted_payment_configuration_error(settings):
+    from payments.contracts import (
+        HostedPaymentConfigurationError,
+        HostedPaymentError,
+    )
+    from payments.providers.factory import get_default_hosted_payment_provider
+
+    settings.SUMUP_API_KEY = ""
+    settings.SUMUP_MERCHANT_CODE = ""
+
+    with pytest.raises(HostedPaymentConfigurationError) as exc_info:
+        get_default_hosted_payment_provider()
+
+    assert isinstance(exc_info.value, HostedPaymentError)

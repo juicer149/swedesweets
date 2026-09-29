@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import StrEnum
 
+from payments.contracts import HostedPaymentProvider
 from payments.models import PaymentAttempt
 from payments.providers.factory import (
     get_default_hosted_payment_provider,
@@ -18,6 +19,17 @@ from retail.services import (
     fail_retail_payment,
     start_retail_payment,
 )
+
+__all__ = [
+    "PaymentReconciliationConflict",
+    "RetailPaymentRecovery",
+    "RetailPaymentRecoveryAction",
+    "RetailPaymentRedirect",
+    "begin_retail_hosted_payment",
+    "reconcile_retail_payment",
+    "recover_retail_payment",
+    "retry_retail_hosted_payment",
+]
 
 
 class RetailPaymentRecoveryAction(StrEnum):
@@ -46,7 +58,13 @@ def begin_retail_hosted_payment(
     customer_return_url: str,
     webhook_url: str,
 ) -> RetailPaymentRedirect:
-    """Start a retail payment and create its external hosted checkout."""
+    """Start a retail payment and create its external hosted checkout.
+
+    The provider is resolved before any local attempt exists, so a
+    misconfigured provider never leaves a pending attempt behind.
+    """
+
+    provider = get_default_hosted_payment_provider()
 
     attempt = start_retail_payment(
         checkout=checkout,
@@ -54,6 +72,7 @@ def begin_retail_hosted_payment(
 
     return _create_retail_hosted_payment_session(
         attempt=attempt,
+        provider=provider,
         customer_return_url=customer_return_url,
         webhook_url=webhook_url,
     )
@@ -69,6 +88,7 @@ def retry_retail_hosted_payment(
 
     return _create_retail_hosted_payment_session(
         attempt=attempt,
+        provider=get_default_hosted_payment_provider(),
         customer_return_url=customer_return_url,
         webhook_url=webhook_url,
     )
@@ -189,11 +209,10 @@ def reconcile_retail_payment(
 def _create_retail_hosted_payment_session(
     *,
     attempt: PaymentAttempt,
+    provider: HostedPaymentProvider,
     customer_return_url: str,
     webhook_url: str,
 ) -> RetailPaymentRedirect:
-    provider = get_default_hosted_payment_provider()
-
     session = create_hosted_payment_session(
         attempt=attempt,
         provider=provider,

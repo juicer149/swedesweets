@@ -15,6 +15,10 @@ class HostedPaymentError(RuntimeError):
     """
 
 
+class HostedPaymentConfigurationError(HostedPaymentError):
+    """Raised when no hosted payment provider can be built from settings."""
+
+
 class ExternalPaymentStatus(StrEnum):
     PENDING = "pending"
     SUCCEEDED = "succeeded"
