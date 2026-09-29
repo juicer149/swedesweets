@@ -38,6 +38,10 @@ from fulfillment.selectors import get_packaging_list
 from products.models import Product
 
 
+CUSTOMER_LABEL = "Customer"
+RETAIL_BUYER_LABEL = "Retail buyer"
+
+
 @dataclass(frozen=True, slots=True)
 class OrderContentLine:
     product: Product
@@ -61,7 +65,8 @@ class OrderDetailContext:
     description: str
     cancel_url: str
     customer_maps_href: str
-    customer_detail_href: str
+    customer_detail_href: str | None
+    buyer_label: str
     pick_lines: list[PickLine]
     checked_allocation_ids: frozenset[int]
 
@@ -78,6 +83,7 @@ class OrderDetailContext:
             "cancel_url": self.cancel_url,
             "customer_maps_href": self.customer_maps_href,
             "customer_detail_href": self.customer_detail_href,
+            "buyer_label": self.buyer_label,
             "pick_lines": self.pick_lines,
             "checked_allocation_ids": self.checked_allocation_ids,
         }
@@ -148,6 +154,7 @@ def build_order_detail_context(
         cancel_url=cancel_url,
         customer_maps_href=maps_directions_href(order.customer_address),
         customer_detail_href=customer_detail_href(order),
+        buyer_label=buyer_label(order),
         pick_lines=pick_lines,
         checked_allocation_ids=checked_allocation_ids,
     )
@@ -279,7 +286,7 @@ def build_deliver_action() -> DetailAction:
 
 def _build_order_header(order: Order) -> DetailHeader:
     return DetailHeader(
-        eyebrow="Customer",
+        eyebrow=buyer_label(order),
         title=order.customer_name,
         status_label=order.get_status_display(),
         status_class=order_detail_status_class(order.status),
@@ -319,7 +326,7 @@ def _build_order_detail_panels(
     panels.append(
         DetailPanel(
             key="customer",
-            label="Customer",
+            label=buyer_label(order),
             summary=order.customer_name,
             body_template="ops_portal/orders/includes/detail_panel_customer.html",
             icon="users",
@@ -362,8 +369,26 @@ def order_deliver_href(order: Order) -> str:
     return reverse("ops_orders:deliver", kwargs={"order_id": order.pk})
 
 
-def customer_detail_href(order: Order) -> str:
+def customer_detail_href(order: Order) -> str | None:
+    """Link to the customer page, or None for orders without a customer.
+
+    Retail orders are placed by anonymous buyers whose details live only
+    in the order's buyer snapshot.
+    """
+
+    if order.customer_id is None:
+        return None
+
     return reverse("ops_customers:detail", kwargs={"customer_pk": order.customer_id})
+
+
+def buyer_label(order: Order) -> str:
+    """Label for who placed the order: a customer or a retail buyer."""
+
+    if order.customer_id is None:
+        return RETAIL_BUYER_LABEL
+
+    return CUSTOMER_LABEL
 
 
 def product_detail_href(product_id: int) -> str:

@@ -3,10 +3,17 @@
     {% include "includes/ui/icon_block.html" with name="users" size="sm" class_name="detail-list__icon" only %}
 
     <div>
-      <p class="detail-list__label">Customer</p>
-      <a class="detail-list__value detail-list__link" href="{{ customer_detail_href }}">
-        {{ order.customer_name }}
-      </a>
+      <p class="detail-list__label">{{ buyer_label }}</p>
+
+      {% if customer_detail_href %}
+        <a class="detail-list__value detail-list__link" href="{{ customer_detail_href }}">
+          {{ order.customer_name }}
+        </a>
+      {% else %}
+        <p class="detail-list__value">
+          {{ order.customer_name }}
+        </p>
+      {% endif %}
     </div>
   </div>
 
@@ -55,14 +62,16 @@
     </div>
   </div>
 
-  <div class="detail-list__item">
-    {% include "includes/ui/icon_block.html" with name="users" size="sm" class_name="detail-list__icon" only %}
+  {% if customer_detail_href %}
+    <div class="detail-list__item">
+      {% include "includes/ui/icon_block.html" with name="users" size="sm" class_name="detail-list__icon" only %}
 
-    <div>
-      <p class="detail-list__label">Action</p>
-      <a class="detail-list__value detail-list__link" href="{{ customer_detail_href }}">
-        View customer →
-      </a>
+      <div>
+        <p class="detail-list__label">Action</p>
+        <a class="detail-list__value detail-list__link" href="{{ customer_detail_href }}">
+          View customer →
+        </a>
+      </div>
     </div>
-  </div>
+  {% endif %}
 </div>
