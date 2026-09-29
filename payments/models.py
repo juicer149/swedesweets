@@ -30,7 +30,7 @@ class PaymentAttempt(models.Model):
 
     order = models.ForeignKey(
         "orders.Order",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="payment_attempts",
     )
 

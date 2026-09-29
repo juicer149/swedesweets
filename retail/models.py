@@ -94,6 +94,14 @@ class RetailCheckoutSession(models.Model):
         related_name="retail_checkout",
     )
 
+    cart = models.ForeignKey(
+        "carts.Cart",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+
     expires_at = models.DateTimeField()
 
     created_at = models.DateTimeField(auto_now_add=True)

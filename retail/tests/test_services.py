@@ -38,11 +38,14 @@ from retail.services import (
     AnonymousBuyerInput,
     InvalidRetailCart,
     InvalidRetailOrder,
+    RetailCheckoutPaymentInProgress,
     RetailOrderLineInput,
     add_retail_cart_line,
     buyer_from_anonymous_retail_input,
+    complete_retail_payment,
     create_pending_retail_order,
     create_retail_checkout_from_cart,
+    fail_retail_payment,
     start_retail_payment,
 )
 from retail.tests.factories import (
@@ -200,7 +203,7 @@ def test_add_retail_cart_line_rejects_disabled_offer():
 
 
 @pytest.mark.django_db
-def test_create_retail_checkout_from_cart_converts_and_consumes_cart():
+def test_create_retail_checkout_from_cart_converts_and_keeps_cart(): 
     retail_postal_area_factory()
 
     cart = create_cart(
@@ -282,9 +285,10 @@ def test_create_retail_checkout_from_cart_converts_and_consumes_cart():
         == batch_price
     )
 
-    assert not Cart.objects.filter(
+    assert Cart.objects.filter(
         pk=cart_id,
     ).exists()
+    assert checkout.cart_id == cart_id
     assert order.allocations.count() == 0
 
 
@@ -1555,3 +1559,132 @@ def test_product_price_reservation_can_span_multiple_eligible_batches():
         (earlier_batch.batch_id, 3),
         (later_batch.batch_id, 3),
     ]
+
+
+def _stocked_retail_cart(
+    *,
+    batch_id: str = "CHK-001",
+    quantity: int = 2,
+) -> Cart:
+    offer = retail_product_price_factory(
+        enabled=True,
+        price=Decimal("12.50"),
+    )
+    create_batch(
+        batch_id=batch_id,
+        product=offer.product,
+        quantity=10,
+        best_before=timezone.localdate() + timedelta(days=60),
+        location="Shelf A1",
+    )
+
+    cart = create_cart(
+        channel=SalesChannel.RETAIL,
+    )
+    add_retail_cart_line(
+        cart=cart,
+        commercial_price_id=offer.pk,
+        quantity=quantity,
+    )
+
+    return cart
+
+
+def _checkout(cart: Cart) -> RetailCheckoutSession:
+    return create_retail_checkout_from_cart(
+        cart=cart,
+        buyer=AnonymousBuyerInput(
+            **retail_buyer_data()
+        ),
+    )
+
+
+@pytest.mark.django_db
+def test_new_checkout_supersedes_unpaid_checkout_from_same_cart():
+    retail_postal_area_factory()
+    cart = _stocked_retail_cart()
+
+    first = _checkout(cart)
+    second = _checkout(cart)
+
+    first.order.refresh_from_db()
+    second.order.refresh_from_db()
+
+    assert first.order.status == Order.Status.CANCELLED
+    assert second.order.status == Order.Status.DRAFT
+    assert second.cart_id == cart.pk
+    assert Cart.objects.filter(pk=cart.pk).exists()
+
+
+@pytest.mark.django_db
+def test_new_checkout_is_rejected_while_payment_is_pending():
+    retail_postal_area_factory()
+    cart = _stocked_retail_cart()
+
+    first = _checkout(cart)
+    start_retail_payment(
+        checkout=first,
+    )
+
+    with pytest.raises(RetailCheckoutPaymentInProgress) as exc_info:
+        _checkout(cart)
+
+    assert exc_info.value.checkout.pk == first.pk
+
+    first.order.refresh_from_db()
+
+    assert first.order.status == Order.Status.DRAFT
+    assert (
+        Order.objects
+        .filter(channel=Order.Channel.RETAIL)
+        .count()
+        == 1
+    )
+
+
+@pytest.mark.django_db
+def test_failed_payment_keeps_cart_and_allows_new_checkout():
+    retail_postal_area_factory()
+    cart = _stocked_retail_cart()
+
+    first = _checkout(cart)
+    attempt = start_retail_payment(
+        checkout=first,
+    )
+    fail_retail_payment(
+        attempt=attempt,
+    )
+
+    assert Cart.objects.filter(pk=cart.pk).exists()
+
+    second = _checkout(cart)
+
+    first.order.refresh_from_db()
+
+    assert first.order.status == Order.Status.CANCELLED
+    assert first.order.payment_attempts.get().status == (
+        PaymentAttempt.Status.FAILED
+    )
+    assert second.order.status == Order.Status.DRAFT
+
+
+@pytest.mark.django_db
+def test_successful_payment_places_order_and_consumes_cart():
+    retail_postal_area_factory()
+    cart = _stocked_retail_cart()
+
+    checkout = _checkout(cart)
+    attempt = start_retail_payment(
+        checkout=checkout,
+    )
+
+    complete_retail_payment(
+        attempt=attempt,
+    )
+
+    checkout.refresh_from_db()
+    checkout.order.refresh_from_db()
+
+    assert checkout.order.status == Order.Status.PLACED
+    assert checkout.cart_id is None
+    assert not Cart.objects.filter(pk=cart.pk).exists()

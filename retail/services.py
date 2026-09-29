@@ -17,6 +17,7 @@ from inventory.errors import InsufficientStockError
 from inventory.models import InventoryBatch
 from orders.datatypes import BuyerInput
 from orders.models import Order, OrderLine
+from orders.services import cancel_order as cancel_shared_order
 from orders.services import place_order as place_shared_order
 from payments.models import PaymentAttempt
 from payments.services import (
@@ -30,10 +31,16 @@ from products.models import Product
 from reservations.planning import InsufficientReservationCapacity
 from reservations.policies import (
     make_order_reservations_permanent_before_placement,
+    release_order_reservations_before_cancellation,
 )
 from reservations.services import (
     cancel_temporary_reservations_for_order,
     reserve_order_line_from_pool,
+)
+from retail.errors import (
+    InvalidRetailCart,
+    InvalidRetailOrder,
+    RetailCheckoutPaymentInProgress,
 )
 from retail.models import RetailCheckoutSession
 from retail.rules import (
@@ -47,9 +54,21 @@ from retail.rules import (
 )
 from retail.selectors import list_batches_for_retail_price
 
-
-class InvalidRetailCart(ValueError):
-    """Raised when a retail cart use case violates a retail invariant."""
+__all__ = [
+    "AnonymousBuyerInput",
+    "InvalidRetailCart",
+    "InvalidRetailOrder",
+    "ResolvedRetailOrderLine",
+    "RetailCheckoutPaymentInProgress",
+    "RetailOrderLineInput",
+    "add_retail_cart_line",
+    "buyer_from_anonymous_retail_input",
+    "complete_retail_payment",
+    "create_pending_retail_order",
+    "create_retail_checkout_from_cart",
+    "fail_retail_payment",
+    "start_retail_payment",
+]
 
 
 @transaction.atomic
@@ -76,10 +95,6 @@ def add_retail_cart_line(
         raise InvalidRetailCart(
             str(exc)
         ) from exc
-
-
-class InvalidRetailOrder(ValueError):
-    """Raised when a retail checkout violates a business invariant."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -155,7 +170,12 @@ def create_retail_checkout_from_cart(
     cart: Cart,
     buyer: AnonymousBuyerInput,
 ) -> RetailCheckoutSession:
-    """Convert one mutable retail cart into a validated retail checkout."""
+    """Convert one mutable retail cart into a validated retail checkout.
+
+    The cart is kept as mutable purchase intent until payment succeeds.
+    Earlier unpaid checkouts from the same cart are superseded and cancelled.
+    A checkout with a pending payment is never superseded.
+    """
 
     cart = _lock_retail_cart_for_checkout(
         cart=cart,
@@ -170,6 +190,10 @@ def create_retail_checkout_from_cart(
             "retail cart is empty"
         )
 
+    _supersede_open_checkouts_for_cart(
+        cart=cart,
+    )
+
     checkout = create_pending_retail_order(
         buyer=buyer,
         lines=[
@@ -181,7 +205,13 @@ def create_retail_checkout_from_cart(
         ],
     )
 
-    cart.delete()
+    checkout.cart = cart
+    checkout.save(
+        update_fields=[
+            "cart",
+            "updated_at",
+        ]
+    )
 
     return checkout
 
@@ -241,7 +271,6 @@ def create_pending_retail_order(
             unit_price_snapshot=resolved_line.unit_price,
             commercial_offer=resolved_line.commercial_price,
         )
-
 
     return RetailCheckoutSession.objects.create(
         order=order,
@@ -377,6 +406,7 @@ def complete_retail_payment(
     """Finalize a successfully paid retail checkout.
 
     Lock ordering is Order -> PaymentAttempt, matching payment-start paths.
+    The source cart is consumed only after the order is placed.
     """
 
     order_id = (
@@ -425,6 +455,10 @@ def complete_retail_payment(
         provider_transaction_id=provider_transaction_id,
     )
 
+    _consume_cart_for_placed_order(
+        order=order,
+    )
+
     return order
 
 
@@ -436,6 +470,7 @@ def fail_retail_payment(
     """Finalize a failed retail payment attempt.
 
     Lock ordering is Order -> PaymentAttempt, matching payment-start paths.
+    The draft order and the source cart are kept so the buyer can retry.
     """
 
     order_id = (
@@ -484,6 +519,80 @@ def fail_retail_payment(
     return mark_payment_attempt_failed(
         attempt=attempt,
     )
+
+
+def _supersede_open_checkouts_for_cart(
+    *,
+    cart: Cart,
+) -> None:
+    """Cancel unpaid draft checkouts created from this cart.
+
+    Draft orders are cancelled rather than deleted so failed payment
+    attempts remain as an audit trail.
+    """
+
+    open_checkouts = list(
+        RetailCheckoutSession.objects
+        .select_for_update(
+            of=("self",),
+        )
+        .select_related(
+            "order",
+        )
+        .filter(
+            cart=cart,
+            order__status=Order.Status.DRAFT,
+        )
+        .order_by("created_at")
+    )
+
+    for previous in open_checkouts:
+        has_pending_payment = (
+            previous.order.payment_attempts
+            .filter(
+                status=PaymentAttempt.Status.PENDING,
+            )
+            .exists()
+        )
+
+        if has_pending_payment:
+            raise RetailCheckoutPaymentInProgress(
+                checkout=previous,
+            )
+
+    for previous in open_checkouts:
+        cancel_shared_order(
+            order=previous.order,
+            preparation=release_order_reservations_before_cancellation,
+            reason=Order.CancelReason.OTHER,
+            note="Superseded by a newer retail checkout.",
+        )
+
+
+def _consume_cart_for_placed_order(
+    *,
+    order: Order,
+) -> None:
+    """Delete the cart a successfully paid checkout was created from."""
+
+    cart_id = (
+        RetailCheckoutSession.objects
+        .filter(
+            order=order,
+        )
+        .values_list(
+            "cart_id",
+            flat=True,
+        )
+        .first()
+    )
+
+    if cart_id is None:
+        return
+
+    Cart.objects.filter(
+        pk=cart_id,
+    ).delete()
 
 
 def _lock_retail_cart_for_checkout(
