@@ -18,6 +18,7 @@ from payments.contracts import (
     HostedPaymentSession,
 )
 from payments.models import PaymentAttempt
+from payments.services import payment_reference
 from retail.payments import begin_retail_hosted_payment
 from retail.services import (
     AnonymousBuyerInput,
@@ -195,7 +196,7 @@ def test_retail_payment_happy_path_from_checkout_to_webhook_confirmation(
     assert create_request.currency == "EUR"
     assert (
         create_request.reference
-        == f"payment-{attempt.pk}"
+        == payment_reference(attempt)
     )
 
     provider.state = ExternalPaymentState(

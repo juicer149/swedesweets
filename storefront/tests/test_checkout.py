@@ -737,3 +737,44 @@ def test_fake_checkout_page_is_hidden_when_provider_is_sumup(
     )
 
     assert response.status_code == 404
+
+
+def _cancel_payment_url(checkout: RetailCheckoutSession) -> str:
+    return reverse(
+        "storefront:checkout_cancel_payment",
+        kwargs={
+            "checkout_id": checkout.pk,
+        },
+    )
+
+
+@pytest.mark.django_db
+def test_buyer_can_cancel_open_payment_and_check_out_again(
+    client,
+    cart,
+    settings,
+):
+    settings.PAYMENT_PROVIDER = "fake"
+    checkout = _created_checkout(client)
+
+    client.post(
+        _pay_url(checkout)
+    )
+
+    review = client.get(
+        _review_url(checkout)
+    )
+
+    assert review.context["has_open_payment"] is True
+    assert _cancel_payment_url(checkout) in review.content.decode()
+
+    cancel = client.post(
+        _cancel_payment_url(checkout)
+    )
+
+    assert cancel.url == reverse("storefront:cart")
+
+    again = _submit_details(client)
+    new_checkout = RetailCheckoutSession.objects.exclude(pk=checkout.pk).get()
+
+    assert again.url == _review_url(new_checkout)

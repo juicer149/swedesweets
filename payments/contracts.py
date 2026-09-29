@@ -5,18 +5,10 @@ from decimal import Decimal
 from enum import StrEnum
 from typing import Protocol
 
-
-class HostedPaymentError(RuntimeError):
-    """Raised when a hosted payment provider cannot be trusted to have
-    completed an operation.
-
-    Provider adapters raise subclasses of this error so callers outside
-    the payments package never depend on a specific provider.
-    """
-
-
-class HostedPaymentConfigurationError(HostedPaymentError):
-    """Raised when no hosted payment provider can be built from settings."""
+from payments.errors import (
+    HostedPaymentConfigurationError as HostedPaymentConfigurationError,
+)
+from payments.errors import HostedPaymentError as HostedPaymentError
 
 
 class ExternalPaymentStatus(StrEnum):
@@ -49,6 +41,7 @@ class ExternalPaymentState:
     hosted_payment_url: str | None = None
 
 
+
 class HostedPaymentProvider(Protocol):
     def create_payment(
         self,
@@ -62,4 +55,24 @@ class HostedPaymentProvider(Protocol):
         *,
         provider_payment_id: str,
     ) -> ExternalPaymentState:
+        ...
+
+    def find_payment_by_reference(
+        self,
+        *,
+        reference: str,
+    ) -> ExternalPaymentState | None:
+        """Return the provider payment created with our reference, if any."""
+        ...
+
+    def cancel_payment(
+        self,
+        *,
+        provider_payment_id: str,
+    ) -> None:
+        """Stop an open payment from being completed.
+
+        Raises HostedPaymentError when the provider refuses, for example
+        because the payment has already been completed.
+        """
         ...

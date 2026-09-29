@@ -23,6 +23,7 @@ from payments.models import PaymentAttempt
 from payments.services import (
     InvalidPaymentAttempt,
     create_payment_attempt,
+    mark_payment_attempt_cancelled,
     mark_payment_attempt_failed,
     mark_payment_attempt_succeeded,
 )
@@ -64,6 +65,7 @@ __all__ = [
     "create_pending_retail_order",
     "create_retail_checkout_from_cart",
     "fail_retail_payment",
+    "cancel_retail_payment",
     "start_retail_payment",
 ]
 
@@ -514,6 +516,61 @@ def fail_retail_payment(
     )
 
     return mark_payment_attempt_failed(
+        attempt=attempt,
+    )
+
+
+@transaction.atomic
+def cancel_retail_payment(
+    *,
+    attempt: PaymentAttempt,
+) -> PaymentAttempt:
+    """Cancel a pending retail payment that will not be completed.
+
+    Lock ordering is Order -> PaymentAttempt, matching payment-start paths.
+    Temporary reservations are released; the draft order and the source
+    cart are kept so the buyer can change the order and pay again.
+    """
+
+    order_id = (
+        PaymentAttempt.objects
+        .only("order_id")
+        .get(pk=attempt.pk)
+        .order_id
+    )
+
+    order = (
+        Order.objects
+        .select_for_update()
+        .get(pk=order_id)
+    )
+
+    attempt = (
+        PaymentAttempt.objects
+        .select_for_update()
+        .get(pk=attempt.pk)
+    )
+
+    if attempt.order_id != order.pk:
+        raise InvalidPaymentAttempt(
+            "payment attempt order changed unexpectedly"
+        )
+
+    if order.channel != Order.Channel.RETAIL:
+        raise InvalidRetailOrder(
+            "payment attempt does not belong to a retail order"
+        )
+
+    if order.status != Order.Status.DRAFT:
+        raise InvalidRetailOrder(
+            "only draft retail orders can cancel payment"
+        )
+
+    cancel_temporary_reservations_for_order(
+        order=order,
+    )
+
+    return mark_payment_attempt_cancelled(
         attempt=attempt,
     )
 

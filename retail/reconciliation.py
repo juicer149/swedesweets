@@ -9,7 +9,9 @@ from payments.selectors import (
     list_pending_payment_attempt_ids,
 )
 from retail.payments import (
+    is_past_unconfirmed_grace,
     reconcile_retail_payment,
+    resolve_unconfirmed_retail_payment,
 )
 
 
@@ -36,9 +38,9 @@ def reconcile_pending_retail_payments() -> PaymentReconciliationSummary:
     Provider failures or reconciliation conflicts for one attempt do not stop
     reconciliation of later attempts.
 
-    Pending attempts without a provider payment id are intentionally left
-    untouched because their external creation state cannot yet be determined
-    from the provider id.
+    Pending attempts without a provider payment id are left alone during a
+    short grace period, then resolved by searching the provider for our
+    payment reference.
     """
 
     attempt_ids = list_pending_payment_attempt_ids(
@@ -75,30 +77,48 @@ def reconcile_pending_retail_payments() -> PaymentReconciliationSummary:
             continue
 
         if not attempt.provider_payment_id:
-            unresolved += 1
+            if not is_past_unconfirmed_grace(attempt):
+                unresolved += 1
 
-            logger.info(
-                "Payment attempt %s is pending without a provider payment id.",
-                attempt.pk,
-            )
+                logger.info(
+                    "Payment attempt %s is pending without a provider "
+                    "payment id and is still within its grace period.",
+                    attempt.pk,
+                )
 
-            continue
+                continue
 
-        checked += 1
+            checked += 1
 
-        try:
-            reconciled = reconcile_retail_payment(
-                attempt=attempt,
-            )
-        except Exception:
-            errors += 1
+            try:
+                reconciled = resolve_unconfirmed_retail_payment(
+                    attempt=attempt,
+                )
+            except Exception:
+                errors += 1
 
-            logger.exception(
-                "Could not reconcile payment attempt %s.",
-                attempt.pk,
-            )
+                logger.exception(
+                    "Could not resolve unconfirmed payment attempt %s.",
+                    attempt.pk,
+                )
 
-            continue
+                continue
+        else:
+            checked += 1
+
+            try:
+                reconciled = reconcile_retail_payment(
+                    attempt=attempt,
+                )
+            except Exception:
+                errors += 1
+
+                logger.exception(
+                    "Could not reconcile payment attempt %s.",
+                    attempt.pk,
+                )
+
+                continue
 
         if reconciled.status == PaymentAttempt.Status.SUCCEEDED:
             succeeded += 1

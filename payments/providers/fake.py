@@ -24,10 +24,11 @@ from payments.contracts import (
 FAKE_PAYMENT_TIMEOUT_SECONDS = 24 * 60 * 60
 
 _CACHE_PREFIX = "payments:fake:"
+_REFERENCE_PREFIX = "payments:fake-ref:"
 
 
 class FakePaymentError(HostedPaymentError):
-    """Raised when a fake payment cannot be found."""
+    """Raised when a fake payment cannot be found or changed."""
 
 
 class FakeHostedPaymentProvider:
@@ -49,6 +50,11 @@ class FakeHostedPaymentProvider:
                 "customer_return_url": request.customer_return_url,
                 "transaction_id": None,
             },
+            FAKE_PAYMENT_TIMEOUT_SECONDS,
+        )
+        cache.set(
+            _reference_key(request.reference),
+            payment_id,
             FAKE_PAYMENT_TIMEOUT_SECONDS,
         )
 
@@ -85,6 +91,50 @@ class FakeHostedPaymentProvider:
                 else None
             ),
         )
+
+    def find_payment_by_reference(
+        self,
+        *,
+        reference: str,
+    ) -> ExternalPaymentState | None:
+        payment_id = cache.get(
+            _reference_key(reference)
+        )
+
+        if payment_id is None:
+            return None
+
+        return self.get_payment(
+            provider_payment_id=payment_id,
+        )
+
+    def cancel_payment(
+        self,
+        *,
+        provider_payment_id: str,
+    ) -> None:
+        payment = get_fake_payment(
+            provider_payment_id
+        )
+
+        if payment is None:
+            raise FakePaymentError(
+                f"unknown fake payment {provider_payment_id}"
+            )
+
+        if payment["status"] == ExternalPaymentStatus.SUCCEEDED.value:
+            raise FakePaymentError(
+                "fake payment is already paid"
+            )
+
+        if payment["status"] == ExternalPaymentStatus.PENDING.value:
+            payment["status"] = ExternalPaymentStatus.FAILED.value
+
+            cache.set(
+                _cache_key(provider_payment_id),
+                payment,
+                FAKE_PAYMENT_TIMEOUT_SECONDS,
+            )
 
 
 def fake_checkout_url(
@@ -149,3 +199,9 @@ def _cache_key(
     payment_id: str,
 ) -> str:
     return f"{_CACHE_PREFIX}{payment_id}"
+
+
+def _reference_key(
+    reference: str,
+) -> str:
+    return f"{_REFERENCE_PREFIX}{reference}"

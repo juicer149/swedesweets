@@ -6,7 +6,10 @@ from urllib.error import (
     HTTPError,
     URLError,
 )
-from urllib.parse import quote
+from urllib.parse import (
+    quote,
+    urlencode,
+)
 from urllib.request import (
     Request,
     urlopen,
@@ -117,93 +120,91 @@ class SumUpHostedPaymentProvider:
     ) -> ExternalPaymentState:
         """Retrieve and normalize the current SumUp checkout state."""
 
-        provider_payment_id = (
-            provider_payment_id.strip()
-        )
-
-        if not provider_payment_id:
-            raise ValueError(
-                "provider payment id is required"
-            )
-
-        encoded_id = quote(
-            provider_payment_id,
-            safe="",
+        provider_payment_id = _required_payment_id(
+            provider_payment_id
         )
 
         response = self._request_json(
             method="GET",
-            path=(
-                f"{SUMUP_CHECKOUTS_PATH}/"
-                f"{encoded_id}"
-            ),
+            path=_checkout_path(provider_payment_id),
         )
 
-        response_id = response.get(
-            "id"
+        state = _checkout_state(
+            response
         )
 
-        if (
-            not isinstance(response_id, str)
-            or response_id != provider_payment_id
-        ):
+        if state.provider_payment_id != provider_payment_id:
             raise SumUpPaymentError(
                 "SumUp returned an unexpected checkout id"
             )
 
-        hosted_payment_url = response.get(
-            "hosted_checkout_url"
+        return state
+
+    def find_payment_by_reference(
+        self,
+        *,
+        reference: str,
+    ) -> ExternalPaymentState | None:
+        """Find the checkout created with our reference, if SumUp has one."""
+
+        reference = reference.strip()
+
+        if not reference:
+            raise ValueError(
+                "payment reference is required"
+            )
+
+        response = self._request(
+            method="GET",
+            path=(
+                f"{SUMUP_CHECKOUTS_PATH}?"
+                f"{urlencode({'checkout_reference': reference})}"
+            ),
         )
 
         if not isinstance(
-            hosted_payment_url,
-            str,
-        ) or not hosted_payment_url:
-            hosted_payment_url = None
+            response,
+            list,
+        ):
+            raise SumUpPaymentError(
+                "SumUp returned an invalid checkout list"
+            )
 
-        status = response.get(
-            "status"
+        # A checkout without a reference field is kept as a possible match:
+        # wrongly reporting "no payment" could hide a real one.
+        matches = [
+            checkout
+            for checkout in response
+            if isinstance(checkout, dict)
+            and checkout.get("checkout_reference", reference) == reference
+        ]
+
+        if not matches:
+            return None
+
+        if len(matches) > 1:
+            raise SumUpPaymentError(
+                f"SumUp has several checkouts with reference {reference!r}"
+            )
+
+        return _checkout_state(
+            matches[0]
         )
 
-        if status == "PENDING":
-            return ExternalPaymentState(
-                provider_payment_id=response_id,
-                status=ExternalPaymentStatus.PENDING,
-                hosted_payment_url=hosted_payment_url,
-            )
+    def cancel_payment(
+        self,
+        *,
+        provider_payment_id: str,
+    ) -> None:
+        """Deactivate an open SumUp checkout so it can no longer be paid."""
 
-        if status in {
-            "FAILED",
-            "EXPIRED",
-        }:
-            return ExternalPaymentState(
-                provider_payment_id=response_id,
-                status=ExternalPaymentStatus.FAILED,
-                hosted_payment_url=hosted_payment_url,
-            )
+        provider_payment_id = _required_payment_id(
+            provider_payment_id
+        )
 
-        if status == "PAID":
-            transaction_id = response.get(
-                "transaction_id"
-            )
-
-            if not isinstance(
-                transaction_id,
-                str,
-            ) or not transaction_id:
-                raise SumUpPaymentError(
-                    "paid SumUp checkout has no transaction id"
-                )
-
-            return ExternalPaymentState(
-                provider_payment_id=response_id,
-                status=ExternalPaymentStatus.SUCCEEDED,
-                provider_transaction_id=transaction_id,
-                hosted_payment_url=hosted_payment_url,
-            )
-
-        raise SumUpPaymentError(
-            f"unsupported SumUp checkout status: {status!r}"
+        self._request(
+            method="DELETE",
+            path=_checkout_path(provider_payment_id),
         )
 
     def _request_json(
@@ -213,6 +214,29 @@ class SumUpHostedPaymentProvider:
         path: str,
         payload: dict[str, object] | None = None,
     ) -> dict[str, object]:
+        data = self._request(
+            method=method,
+            path=path,
+            payload=payload,
+        )
+
+        if not isinstance(
+            data,
+            dict,
+        ):
+            raise SumUpPaymentError(
+                "SumUp returned an invalid checkout response"
+            )
+
+        return data
+
+    def _request(
+        self,
+        *,
+        method: str,
+        path: str,
+        payload: dict[str, object] | None = None,
+    ) -> object:
         body = None
 
         if payload is not None:
@@ -250,8 +274,11 @@ class SumUpHostedPaymentProvider:
                 "Could not reach SumUp"
             ) from exc
 
+        if not response_body:
+            return None
+
         try:
-            data = json.loads(
+            return json.loads(
                 response_body,
             )
         except json.JSONDecodeError as exc:
@@ -259,15 +286,95 @@ class SumUpHostedPaymentProvider:
                 "SumUp returned invalid JSON"
             ) from exc
 
+
+def _checkout_state(
+    checkout: dict[str, object],
+) -> ExternalPaymentState:
+    response_id = checkout.get(
+        "id"
+    )
+
+    if not isinstance(response_id, str) or not response_id:
+        raise SumUpPaymentError(
+            "SumUp checkout has no id"
+        )
+
+    hosted_payment_url = checkout.get(
+        "hosted_checkout_url"
+    )
+
+    if not isinstance(
+        hosted_payment_url,
+        str,
+    ) or not hosted_payment_url:
+        hosted_payment_url = None
+
+    status = checkout.get(
+        "status"
+    )
+
+    if status == "PENDING":
+        return ExternalPaymentState(
+            provider_payment_id=response_id,
+            status=ExternalPaymentStatus.PENDING,
+            hosted_payment_url=hosted_payment_url,
+        )
+
+    if status in {
+        "FAILED",
+        "EXPIRED",
+    }:
+        return ExternalPaymentState(
+            provider_payment_id=response_id,
+            status=ExternalPaymentStatus.FAILED,
+            hosted_payment_url=hosted_payment_url,
+        )
+
+    if status == "PAID":
+        transaction_id = checkout.get(
+            "transaction_id"
+        )
+
         if not isinstance(
-            data,
-            dict,
-        ):
+            transaction_id,
+            str,
+        ) or not transaction_id:
             raise SumUpPaymentError(
-                "SumUp returned an invalid checkout response"
+                "paid SumUp checkout has no transaction id"
             )
 
-        return data
+        return ExternalPaymentState(
+            provider_payment_id=response_id,
+            status=ExternalPaymentStatus.SUCCEEDED,
+            provider_transaction_id=transaction_id,
+            hosted_payment_url=hosted_payment_url,
+        )
+
+    raise SumUpPaymentError(
+        f"unsupported SumUp checkout status: {status!r}"
+    )
+
+
+def _required_payment_id(
+    provider_payment_id: str,
+) -> str:
+    provider_payment_id = provider_payment_id.strip()
+
+    if not provider_payment_id:
+        raise ValueError(
+            "provider payment id is required"
+        )
+
+    return provider_payment_id
+
+
+def _checkout_path(
+    provider_payment_id: str,
+) -> str:
+    return (
+        f"{SUMUP_CHECKOUTS_PATH}/"
+        f"{quote(provider_payment_id, safe='')}"
+    )
 
 
 def _decimal_to_json_number(

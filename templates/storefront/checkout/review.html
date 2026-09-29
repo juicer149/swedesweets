@@ -20,12 +20,14 @@
           {% trans "Items" %}
         </h2>
 
-        <a
-          class="button button--text button--tone-neutral"
-          href="{{ cart_url }}"
-        >
-          {% trans "Edit cart" %}
-        </a>
+        {% if not has_open_payment %}
+          <a
+            class="button button--text button--tone-neutral"
+            href="{{ cart_url }}"
+          >
+            {% trans "Edit cart" %}
+          </a>
+        {% endif %}
       </div>
 
       <div class="table-wrapper">
@@ -101,12 +103,14 @@
         {% trans "Delivery details" %}
       </h2>
 
-      <a
-        class="button button--text button--tone-neutral"
-        href="{{ edit_details_url }}"
-      >
-        {% trans "Edit details" %}
-      </a>
+      {% if not has_open_payment %}
+        <a
+          class="button button--text button--tone-neutral"
+          href="{{ edit_details_url }}"
+        >
+          {% trans "Edit details" %}
+        </a>
+      {% endif %}
     </div>
 
     <address class="retail-checkout-buyer__address">
@@ -119,21 +123,51 @@
   </div>
 
   <div class="form-card form-card--wide retail-checkout-pay">
-    <form
-      method="post"
-      action="{{ pay_url }}"
-      data-submit-once
-    >
-      {% csrf_token %}
+    {% if has_open_payment %}
+      <p class="retail-checkout-pay__open">
+        {% trans "You have a payment in progress for this order. Continue it, or cancel it to change your order." %}
+      </p>
+    {% endif %}
 
-      <button
-        class="button button--md button--solid button--tone-place"
-        type="submit"
-        data-submitting-label="{% trans 'Redirecting to secure payment…' %}"
+    <div class="retail-checkout-pay__actions">
+      {% if has_open_payment %}
+        <form
+          method="post"
+          action="{{ cancel_payment_url }}"
+          data-submit-once
+        >
+          {% csrf_token %}
+
+          <button
+            class="button button--md button--ghost button--tone-danger"
+            type="submit"
+            data-submitting-label="{% trans 'Cancelling…' %}"
+          >
+            {% trans "Cancel payment and edit order" %}
+          </button>
+        </form>
+      {% endif %}
+
+      <form
+        method="post"
+        action="{{ pay_url }}"
+        data-submit-once
       >
-        {% blocktrans with total=total_label %}Pay {{ total }}{% endblocktrans %}
-      </button>
-    </form>
+        {% csrf_token %}
+
+        <button
+          class="button button--md button--solid button--tone-place"
+          type="submit"
+          data-submitting-label="{% trans 'Redirecting to secure payment…' %}"
+        >
+          {% if has_open_payment %}
+            {% trans "Continue payment" %}
+          {% else %}
+            {% blocktrans with total=total_label %}Pay {{ total }}{% endblocktrans %}
+          {% endif %}
+        </button>
+      </form>
+    </div>
 
     <p class="muted-text retail-checkout-pay__note">
       {% trans "You will be redirected to SumUp to pay securely by card." %}

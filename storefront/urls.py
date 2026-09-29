@@ -68,6 +68,11 @@ urlpatterns = [
         name="checkout_pay",
     ),
     path(
+        "checkout/<uuid:checkout_id>/cancel-payment/",
+        checkout_views.checkout_cancel_payment,
+        name="checkout_cancel_payment",
+    ),
+    path(
         "payment/<uuid:checkout_id>/return/",
         views.payment_return,
         name="payment_return",

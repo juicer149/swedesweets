@@ -390,3 +390,96 @@ def test_missing_credentials_are_a_hosted_payment_configuration_error(settings):
         get_default_hosted_payment_provider()
 
     assert isinstance(exc_info.value, HostedPaymentError)
+
+
+def test_sumup_provider_finds_checkout_by_reference():
+    provider = SumUpHostedPaymentProvider(
+        api_key="test-key",
+        merchant_code="M123456",
+    )
+
+    with patch(
+        "payments.providers.sumup.urlopen",
+        return_value=_urlopen_response(
+            [
+                {
+                    "id": "checkout-7",
+                    "checkout_reference": "payment-7",
+                    "status": "PENDING",
+                },
+            ]
+        ),
+    ) as mocked_urlopen:
+        state = provider.find_payment_by_reference(
+            reference="payment-7",
+        )
+
+    http_request = mocked_urlopen.call_args.args[0]
+
+    assert http_request.get_method() == "GET"
+    assert http_request.full_url.endswith(
+        "/v0.1/checkouts?checkout_reference=payment-7"
+    )
+    assert state.provider_payment_id == "checkout-7"
+    assert state.status == ExternalPaymentStatus.PENDING
+
+
+def test_sumup_provider_returns_none_when_reference_is_unknown():
+    provider = SumUpHostedPaymentProvider(
+        api_key="test-key",
+        merchant_code="M123456",
+    )
+
+    with patch(
+        "payments.providers.sumup.urlopen",
+        return_value=_urlopen_response([]),
+    ):
+        assert provider.find_payment_by_reference(
+            reference="payment-7",
+        ) is None
+
+
+def test_sumup_provider_rejects_several_checkouts_for_one_reference():
+    provider = SumUpHostedPaymentProvider(
+        api_key="test-key",
+        merchant_code="M123456",
+    )
+
+    with patch(
+        "payments.providers.sumup.urlopen",
+        return_value=_urlopen_response(
+            [
+                {"id": "a", "checkout_reference": "payment-7", "status": "PENDING"},
+                {"id": "b", "checkout_reference": "payment-7", "status": "PENDING"},
+            ]
+        ),
+    ):
+        with pytest.raises(SumUpPaymentError):
+            provider.find_payment_by_reference(
+                reference="payment-7",
+            )
+
+
+def test_sumup_provider_deactivates_checkout():
+    provider = SumUpHostedPaymentProvider(
+        api_key="test-key",
+        merchant_code="M123456",
+    )
+
+    response = MagicMock()
+    response.read.return_value = b""
+    context_manager = MagicMock()
+    context_manager.__enter__.return_value = response
+
+    with patch(
+        "payments.providers.sumup.urlopen",
+        return_value=context_manager,
+    ) as mocked_urlopen:
+        provider.cancel_payment(
+            provider_payment_id="checkout-7",
+        )
+
+    http_request = mocked_urlopen.call_args.args[0]
+
+    assert http_request.get_method() == "DELETE"
+    assert http_request.full_url.endswith("/v0.1/checkouts/checkout-7")

@@ -16,6 +16,7 @@ from payments.services import (
     create_payment_attempt,
     mark_payment_attempt_failed,
     mark_payment_attempt_succeeded,
+    payment_reference,
 )
 from products.tests.factories import product_factory
 
@@ -309,7 +310,7 @@ def test_create_hosted_payment_session_persists_provider_payment_id():
 
     request = provider.requests[0]
 
-    assert request.reference == f"payment-{attempt.pk}"
+    assert request.reference == payment_reference(attempt)
     assert request.amount == Decimal("12.50")
     assert request.currency == Order.Currency.EUR
 

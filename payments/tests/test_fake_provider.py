@@ -106,3 +106,53 @@ def test_unknown_fake_payment_is_a_provider_error():
         FakeHostedPaymentProvider().get_payment(
             provider_payment_id="fake-missing",
         )
+
+
+def test_fake_payment_can_be_found_by_reference():
+    provider = FakeHostedPaymentProvider()
+    session = provider.create_payment(
+        request=_request(),
+    )
+
+    state = provider.find_payment_by_reference(
+        reference="payment-1",
+    )
+
+    assert state.provider_payment_id == session.provider_payment_id
+
+
+def test_unknown_fake_reference_is_not_found():
+    assert FakeHostedPaymentProvider().find_payment_by_reference(
+        reference="payment-missing",
+    ) is None
+
+
+def test_cancelled_fake_payment_reports_failed():
+    provider = FakeHostedPaymentProvider()
+    session = provider.create_payment(
+        request=_request(),
+    )
+
+    provider.cancel_payment(
+        provider_payment_id=session.provider_payment_id,
+    )
+
+    assert provider.get_payment(
+        provider_payment_id=session.provider_payment_id,
+    ).status == ExternalPaymentStatus.FAILED
+
+
+def test_paid_fake_payment_cannot_be_cancelled():
+    provider = FakeHostedPaymentProvider()
+    session = provider.create_payment(
+        request=_request(),
+    )
+    complete_fake_payment(
+        session.provider_payment_id,
+        succeeded=True,
+    )
+
+    with pytest.raises(FakePaymentError):
+        provider.cancel_payment(
+            provider_payment_id=session.provider_payment_id,
+        )

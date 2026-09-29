@@ -13,15 +13,29 @@ from payments.contracts import (
     HostedPaymentRequest,
     HostedPaymentSession,
 )
+from payments.errors import (
+    InvalidPaymentAttempt,
+    PaymentReconciliationConflict,
+)
 from payments.models import PaymentAttempt
 
 
-class InvalidPaymentAttempt(ValueError):
-    """Raised when payment attempt state violates a payment invariant."""
+PAYMENT_REFERENCE_PREFIX = "payment-"
 
 
-class PaymentReconciliationConflict(RuntimeError):
-    """Provider truth conflicts with an irreversible local payment state."""
+def payment_reference(
+    attempt: PaymentAttempt,
+) -> str:
+    """Our reference for an attempt, sent to and searchable at the provider.
+
+    The creation time makes the reference unique even if database ids are
+    ever reused, for example after resetting a staging database, so a
+    search can never match a payment left over from earlier data.
+    """
+
+    created = attempt.created_at.strftime("%Y%m%d%H%M%S%f")
+
+    return f"{PAYMENT_REFERENCE_PREFIX}{attempt.pk}-{created}"
 
 
 @transaction.atomic
@@ -182,6 +196,77 @@ def mark_payment_attempt_failed(
     return attempt
 
 
+@transaction.atomic
+def mark_payment_attempt_cancelled(
+    *,
+    attempt: PaymentAttempt,
+) -> PaymentAttempt:
+    """Move one pending payment attempt to CANCELLED."""
+
+    attempt = (
+        PaymentAttempt.objects
+        .select_for_update()
+        .get(pk=attempt.pk)
+    )
+
+    if attempt.status != PaymentAttempt.Status.PENDING:
+        raise InvalidPaymentAttempt(
+            "only pending payment attempts can be cancelled"
+        )
+
+    attempt.status = PaymentAttempt.Status.CANCELLED
+    attempt.save(
+        update_fields=[
+            "status",
+            "updated_at",
+        ]
+    )
+
+    return attempt
+
+
+@transaction.atomic
+def attach_provider_payment_id(
+    *,
+    attempt: PaymentAttempt,
+    provider_payment_id: str,
+) -> PaymentAttempt:
+    """Link a pending attempt to a provider payment found after the fact.
+
+    Used when the provider created a payment but its id never reached us,
+    for example because the connection dropped after the provider replied.
+    """
+
+    attempt = (
+        PaymentAttempt.objects
+        .select_for_update()
+        .get(pk=attempt.pk)
+    )
+
+    if attempt.status != PaymentAttempt.Status.PENDING:
+        raise InvalidPaymentAttempt(
+            "only pending payment attempts can be linked to a provider payment"
+        )
+
+    if attempt.provider_payment_id:
+        if attempt.provider_payment_id == provider_payment_id:
+            return attempt
+
+        raise PaymentReconciliationConflict(
+            "payment attempt is already linked to another provider payment"
+        )
+
+    attempt.provider_payment_id = provider_payment_id
+    attempt.save(
+        update_fields=[
+            "provider_payment_id",
+            "updated_at",
+        ]
+    )
+
+    return attempt
+
+
 def create_hosted_payment_session(
     *,
     attempt: PaymentAttempt,
@@ -215,7 +300,7 @@ def create_hosted_payment_session(
 
     session = provider.create_payment(
         request=HostedPaymentRequest(
-            reference=f"payment-{attempt.pk}",
+            reference=payment_reference(attempt),
             amount=attempt.amount,
             currency=attempt.currency,
             description=(

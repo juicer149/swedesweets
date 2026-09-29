@@ -35,6 +35,8 @@ class CheckoutReviewContext:
     edit_details_url: str
     cart_url: str
     pay_url: str
+    cancel_payment_url: str
+    has_open_payment: bool
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -44,12 +46,15 @@ class CheckoutReviewContext:
             "edit_details_url": self.edit_details_url,
             "cart_url": self.cart_url,
             "pay_url": self.pay_url,
+            "cancel_payment_url": self.cancel_payment_url,
+            "has_open_payment": self.has_open_payment,
         }
 
 
 def build_checkout_review_context(
     *,
     checkout: RetailCheckoutSession,
+    has_open_payment: bool = False,
 ) -> CheckoutReviewContext:
     order = checkout.order
 
@@ -114,6 +119,13 @@ def build_checkout_review_context(
                 "checkout_id": checkout.pk,
             },
         ),
+        cancel_payment_url=reverse(
+            "storefront:checkout_cancel_payment",
+            kwargs={
+                "checkout_id": checkout.pk,
+            },
+        ),
+        has_open_payment=has_open_payment,
     )
 
 

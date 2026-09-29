@@ -24,19 +24,21 @@ from django.views.decorators.http import (
 
 from inventory.errors import InsufficientStockError
 from orders.models import Order
-from payments.contracts import HostedPaymentError
-from payments.selectors import (
-    get_pending_payment_attempt,
-)
-from retail.delivery_areas import RETAIL_SERVICE_COUNTRY
+from payments.errors import HostedPaymentError
+from payments.selectors import get_pending_payment_attempt
 from retail.cart_selectors import get_retail_cart
+from retail.delivery_areas import RETAIL_SERVICE_COUNTRY
 from retail.errors import (
     InvalidRetailCart,
     InvalidRetailOrder,
     RetailCheckoutPaymentInProgress,
 )
 from retail.models import RetailCheckoutSession
-from retail.payments import begin_retail_hosted_payment
+from retail.payments import (
+    RetailPaymentRecoveryAction,
+    begin_retail_hosted_payment,
+    cancel_open_retail_payment,
+)
 from retail.rules import list_retail_cities_for_postal_code
 from retail.selectors import get_retail_checkout
 from retail.services import create_retail_checkout_from_cart
@@ -256,6 +258,9 @@ def checkout_review(
 
     context = build_checkout_review_context(
         checkout=checkout,
+        has_open_payment=get_pending_payment_attempt(
+            order=order,
+        ) is not None,
     ).as_dict()
 
     return render(
@@ -379,3 +384,89 @@ def checkout_pay(
     return redirect(
         payment.redirect_url
     )
+
+
+@require_POST
+def checkout_cancel_payment(
+    request: HttpRequest,
+    checkout_id: UUID,
+):
+    """Cancel the buyer's open payment so the order can be changed.
+
+    A payment completed in the meantime wins: the buyer is sent to the
+    confirmation page instead of back to the cart.
+    """
+
+    checkout = _get_owned_checkout_or_404(
+        request,
+        checkout_id,
+    )
+
+    attempt = get_pending_payment_attempt(
+        order=checkout.order,
+    )
+
+    if attempt is None:
+        return redirect(
+            "storefront:cart"
+        )
+
+    try:
+        recovery = cancel_open_retail_payment(
+            attempt=attempt,
+        )
+    except HostedPaymentError:
+        logger.warning(
+            "Could not cancel payment for checkout %s",
+            checkout.pk,
+            exc_info=True,
+        )
+
+        messages.error(
+            request,
+            _(
+                "We couldn't reach the payment provider to cancel your "
+                "payment. Please try again in a moment."
+            ),
+        )
+
+        return redirect(
+            "storefront:checkout_review",
+            checkout_id=checkout.pk,
+        )
+
+    match recovery.action:
+        case RetailPaymentRecoveryAction.CONFIRMED:
+            return redirect(
+                "storefront:payment_return",
+                checkout_id=checkout.pk,
+            )
+        case (
+            RetailPaymentRecoveryAction.PAYMENT_CANCELLED
+            | RetailPaymentRecoveryAction.PAYMENT_FAILED
+        ):
+            messages.info(
+                request,
+                _(
+                    "Your payment was cancelled. "
+                    "You can now change your order."
+                ),
+            )
+
+            return redirect(
+                "storefront:cart"
+            )
+        case _:
+            messages.error(
+                request,
+                _(
+                    "We couldn't cancel your payment. If you already paid, "
+                    "your order is safe. Otherwise, please try again or "
+                    "contact us."
+                ),
+            )
+
+            return redirect(
+                "storefront:checkout_review",
+                checkout_id=checkout.pk,
+            )
