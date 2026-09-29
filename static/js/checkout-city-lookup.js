@@ -20,11 +20,18 @@
   let lastPostalCode = null;
   let controller = null;
 
-  function useTextInput() {
-    if (citySelect) {
-      citySelect.remove();
-      citySelect = null;
+  function removeCitySelect() {
+    if (!citySelect) {
+      return;
     }
+
+    citySelect.tomselect?.destroy();
+    citySelect.remove();
+    citySelect = null;
+  }
+
+  function useTextInput() {
+    removeCitySelect();
 
     cityInput.id = cityId;
     cityInput.hidden = false;
@@ -42,15 +49,17 @@
     useTextInput();
 
     const current = cityInput.value;
+    const selected = cities.includes(current) ? current : cities[0];
 
     citySelect = document.createElement("select");
     citySelect.name = cityInput.name;
-    citySelect.className = cityInput.className;
     citySelect.required = true;
     citySelect.autocomplete = "address-level2";
+    citySelect.dataset.enhancedSelect = "true";
+    citySelect.dataset.enhancedSelectSearch = cities.length > 8 ? "true" : "false";
 
     cities.forEach((city) => {
-      citySelect.add(new Option(city, city, false, city === current));
+      citySelect.add(new Option(city, city, false, city === selected));
     });
 
     cityInput.id = `${cityId}-text`;
@@ -59,6 +68,8 @@
 
     citySelect.id = cityId;
     cityInput.after(citySelect);
+
+    window.enhanceSelects?.(citySelect.parentElement);
   }
 
   async function lookup() {

@@ -12,7 +12,10 @@ from retail.delivery_areas import (
     PostalAreaRecord,
     PostalAreaSyncResult,
     fetch_postal_areas,
+    read_postal_area_snapshot,
+    records_from_geo_api_communes,
     sync_retail_postal_areas,
+    write_postal_area_snapshot
 )
 from retail.models import RetailPostalArea
 from retail.tests.factories import retail_postal_area_factory
@@ -293,3 +296,92 @@ def test_command_logs_a_single_warning_when_stale_areas_are_found(
 
     assert len(warnings) == 1
     assert "74999" in warnings[0].getMessage()
+
+
+def test_snapshot_covers_the_chamonix_valley():
+    keys = {
+        record.key
+        for record in fetch_postal_areas()
+    }
+
+    assert ("FR", "74400", "Chamonix-Mont-Blanc") in keys
+    assert ("FR", "74310", "Les Houches") in keys
+    assert ("FR", "74310", "Servoz") in keys
+    assert ("FR", "74170", "Saint-Gervais-les-Bains") in keys
+    assert ("FR", "74170", "Les Contamines-Montjoie") in keys
+
+
+def test_geo_api_communes_are_flattened_per_postal_code():
+    records = records_from_geo_api_communes(
+        [
+            {
+                "nom": "Annecy",
+                "codesPostaux": ["74000", "74370"],
+            },
+            {
+                "nom": "Servoz",
+                "codesPostaux": ["74310"],
+            },
+        ]
+    )
+
+    assert [record.key for record in records] == [
+        ("FR", "74000", "Annecy"),
+        ("FR", "74310", "Servoz"),
+        ("FR", "74370", "Annecy"),
+    ]
+
+
+def test_geo_api_postal_codes_outside_department_are_skipped():
+    records = records_from_geo_api_communes(
+        [
+            {
+                "nom": "Border Town",
+                "codesPostaux": ["01200", "74910"],
+            },
+        ]
+    )
+
+    assert [record.postal_code for record in records] == ["74910"]
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"nom": "Not a list"},
+        ["not an object"],
+        [{"nom": "Missing codes"}],
+        [],
+    ],
+)
+def test_unexpected_geo_api_payload_is_rejected(payload):
+    with pytest.raises(PostalAreaFetchError):
+        records_from_geo_api_communes(payload)
+
+
+def test_snapshot_round_trip(tmp_path):
+    path = tmp_path / "postal_areas.json"
+    records = [
+        PostalAreaRecord("FR", "74310", "Servoz"),
+        PostalAreaRecord("FR", "74310", "Les Houches"),
+    ]
+
+    write_postal_area_snapshot(
+        records,
+        path=path,
+    )
+
+    assert {
+        record.key
+        for record in read_postal_area_snapshot(path=path)
+    } == {
+        record.key
+        for record in records
+    }
+
+
+def test_missing_snapshot_is_a_fetch_error(tmp_path):
+    with pytest.raises(PostalAreaFetchError):
+        read_postal_area_snapshot(
+            path=tmp_path / "missing.json",
+        )
