@@ -56,6 +56,16 @@ def can_edit_order(
     order: Order,
     role_spec: RoleSpec,
 ) -> bool:
+    """Return whether staff may change an order's lines.
+
+    Retail orders are paid for exactly the lines the buyer checked out, so
+    editing them would break the link between the order and the payment.
+    A retail order that needs changes is cancelled and refunded instead.
+    """
+
+    if order.channel == Order.Channel.RETAIL:
+        return False
+
     return order.can_be_edited and role_spec.allows(Capability.EDIT_ORDERS)
 
 

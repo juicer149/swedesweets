@@ -13,6 +13,16 @@
     <form method="post" class="form-card form-card--embedded" novalidate>
       {% csrf_token %}
 
+      {% if order.channel == "retail" and order.status == "placed" %}
+        <div class="form-errors" role="note">
+          <p>
+            <strong>This retail order has been paid.</strong>
+            Cancelling it does not refund the buyer. Refund the payment
+            in SumUp, then cancel the order here.
+          </p>
+        </div>
+      {% endif %}
+
       {% if form.non_field_errors %}
         <div class="form-errors" role="alert">
           {% for error in form.non_field_errors %}

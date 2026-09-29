@@ -18,6 +18,7 @@ from common.detail_cards import (
 )
 from common.ui import UiCard
 from ops_portal.orders.access import (
+    can_cancel_order,
     can_deliver_order,
     can_edit_order,
     can_pack_order,
@@ -185,11 +186,14 @@ def build_order_secondary_actions(
 ) -> tuple[DetailAction, ...]:
     """Return the secondary actions shown on the detail and pack pages.
 
-    Cancel order deliberately lives only on the edit page (see
-    OrderFormContext.cancel_order_url), not here - cancelling is a more
-    consequential action than viewing/packing, and edit is already the
-    page a person goes to when they intend to change something about
+    For editable orders, Cancel order deliberately lives only on the edit
+    page (see OrderFormContext.cancel_order_url), not here - cancelling is
+    a more consequential action than viewing/packing, and edit is already
+    the page a person goes to when they intend to change something about
     the order.
+
+    Retail orders cannot be edited, so their cancel action is offered here
+    instead.
     """
 
     actions: list[DetailAction] = []
@@ -199,6 +203,16 @@ def build_order_secondary_actions(
             build_secondary_get_action(
                 label="Edit order",
                 href=order_edit_href(order),
+            )
+        )
+    elif (
+        order.channel == Order.Channel.RETAIL
+        and can_cancel_order(order=order, role_spec=role_spec)
+    ):
+        actions.append(
+            build_secondary_get_action(
+                label="Cancel order",
+                href=order_cancel_href(order),
             )
         )
 
