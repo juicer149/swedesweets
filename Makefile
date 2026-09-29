@@ -2,31 +2,36 @@ PYTHON := .venv/bin/python
 PIP := .venv/bin/pip
 MANAGE := $(PYTHON) manage.py
 
-.PHONY: help venv install setup run check migrate makemigrations superuser seed reset-demo shell django-shell collectstatic test test-v clean
+.PHONY: help venv install setup run check migrate makemigrations superuser seed reset-demo shell django-shell collectstatic messages compilemessages i18n test test-v clean
 
 help:
 	@echo "SwedeSweets Ops commands"
 	@echo ""
 	@echo "Setup:"
-	@echo "  make install       Install project dependencies from pyproject.toml"
-	@echo "  make setup         Create venv, install deps, migrate database"
+	@echo "  make install         Install project dependencies from pyproject.toml"
+	@echo "  make setup           Create venv, install deps, migrate database"
 	@echo ""
 	@echo "Django:"
-	@echo "  make run           Run development server"
-	@echo "  make check         Run Django system checks"
-	@echo "  make migrate       Apply migrations"
-	@echo "  make makemigrations Create new migrations"
-	@echo "  make superuser     Create Django superuser"
-	@echo "  make seed          Seed demo data"
-	@echo "  make reset-demo    Reset and seed demo data"
-	@echo "  make collectstatic Build static files manifest"
+	@echo "  make run             Run development server"
+	@echo "  make check           Run Django system checks"
+	@echo "  make migrate         Apply migrations"
+	@echo "  make makemigrations  Create new migrations"
+	@echo "  make superuser       Create Django superuser"
+	@echo "  make seed            Seed demo data"
+	@echo "  make reset-demo      Reset and seed demo data"
+	@echo "  make collectstatic   Build static files manifest"
+	@echo ""
+	@echo "Translations:"
+	@echo "  make messages        Update French translation messages"
+	@echo "  make compilemessages Compile translation messages"
+	@echo "  make i18n            Update and compile translations"
 	@echo ""
 	@echo "Tools:"
-	@echo "  make shell         Run shell_plus with IPython"
-	@echo "  make django-shell  Run default Django shell"
-	@echo "  make test          Run tests"
-	@echo "  make test-v        Run verbose tests"
-	@echo "  make clean         Remove Python/tool caches"
+	@echo "  make shell           Run shell_plus with IPython"
+	@echo "  make django-shell    Run default Django shell"
+	@echo "  make test            Run tests"
+	@echo "  make test-v          Run verbose tests"
+	@echo "  make clean           Remove Python/tool caches"
 
 install: venv
 	$(PIP) install --upgrade pip
@@ -35,7 +40,7 @@ install: venv
 setup: install migrate
 
 run:
-	$(MANAGE) runserver 0.0.0:8000
+	$(MANAGE) runserver 0.0.0.0:8000
 
 check:
 	$(MANAGE) check
@@ -57,6 +62,14 @@ reset-demo:
 
 collectstatic:
 	$(MANAGE) collectstatic --noinput
+
+messages:
+	$(MANAGE) makemessages -l fr
+
+compilemessages:
+	$(MANAGE) compilemessages
+
+i18n: messages compilemessages
 
 shell:
 	$(MANAGE) shell_plus --ipython
