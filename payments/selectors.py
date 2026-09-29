@@ -27,3 +27,32 @@ def list_pending_payment_attempt_ids(
             flat=True,
         )
     )
+
+
+def get_latest_payment_attempt(
+    *,
+    order,
+) -> PaymentAttempt | None:
+    return (
+        PaymentAttempt.objects
+        .filter(
+            order=order,
+        )
+        .order_by("-id")
+        .first()
+    )
+
+
+def get_pending_payment_attempt(
+    *,
+    order,
+) -> PaymentAttempt | None:
+    return (
+        PaymentAttempt.objects
+        .filter(
+            order=order,
+            status=PaymentAttempt.Status.PENDING,
+        )
+        .order_by("-id")
+        .first()
+    )

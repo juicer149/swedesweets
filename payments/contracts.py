@@ -6,6 +6,15 @@ from enum import StrEnum
 from typing import Protocol
 
 
+class HostedPaymentError(RuntimeError):
+    """Raised when a hosted payment provider cannot be trusted to have
+    completed an operation.
+
+    Provider adapters raise subclasses of this error so callers outside
+    the payments package never depend on a specific provider.
+    """
+
+
 class ExternalPaymentStatus(StrEnum):
     PENDING = "pending"
     SUCCEEDED = "succeeded"

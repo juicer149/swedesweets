@@ -58,6 +58,11 @@ urlpatterns = [
         name="checkout_review",
     ),
     path(
+        "checkout/<uuid:checkout_id>/pay/",
+        checkout_views.checkout_pay,
+        name="checkout_pay",
+    ),
+    path(
         "payment/<uuid:checkout_id>/return/",
         views.payment_return,
         name="payment_return",

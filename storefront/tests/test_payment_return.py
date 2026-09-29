@@ -77,7 +77,7 @@ def test_payment_return_is_public_and_shows_confirmation(
     )
 
     assert response.status_code == 200
-    assert response.content == b"Payment confirmed."
+    assert response.context["result"] == "confirmed"
 
 
 @pytest.mark.django_db
@@ -150,7 +150,7 @@ def test_payment_return_shows_failed_state(
     )
 
     assert response.status_code == 200
-    assert response.content == b"Payment failed."
+    assert response.context["result"] == "failed"
 
 
 @pytest.mark.django_db
@@ -185,7 +185,7 @@ def test_payment_return_shows_support_state(
     )
 
     assert response.status_code == 200
-    assert response.content == b"Payment requires support."
+    assert response.context["result"] == "support"
 
 
 @pytest.mark.django_db

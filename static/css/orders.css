@@ -301,6 +301,23 @@
   line-height: 1.6;
 }
 
+.retail-checkout-pay {
+  margin-top: 1.5rem;
+  text-align: right;
+}
+
+.retail-checkout-pay__note {
+  margin-top: 0.5rem;
+}
+
+.retail-payment-result h1 {
+  margin-bottom: 1rem;
+}
+
+.retail-payment-result p {
+  margin-bottom: 0.75rem;
+}
+
 /* =============================================================================
    Pack checklist
 

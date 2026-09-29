@@ -1,0 +1,109 @@
+{% extends "storefront/base.html" %}
+{% load i18n static %}
+
+{% block title %}
+  {% if result == "confirmed" %}
+    {% trans "Thank you for your order" %}
+  {% elif result == "failed" %}
+    {% trans "Payment not completed" %}
+  {% else %}
+    {% trans "Payment status" %}
+  {% endif %}
+  | SwedeSweets
+{% endblock %}
+
+{% block content %}
+<section
+  class="form-section form-section--wide"
+  aria-labelledby="storefront-payment-result-title"
+>
+  <div class="form-card form-card--wide retail-payment-result retail-payment-result--{{ result }}">
+    {% if result == "confirmed" %}
+      <h1 id="storefront-payment-result-title">
+        {% trans "Thank you for your order" %}
+      </h1>
+
+      <p>
+        {% blocktrans with reference=order_reference %}Your payment was successful and your order number is <strong>{{ reference }}</strong>.{% endblocktrans %}
+      </p>
+
+      <p>
+        {% trans "We'll contact you when your order is on its way." %}
+      </p>
+
+      <div class="portal-place-order-actions">
+        <a
+          class="button button--md button--solid button--tone-place"
+          href="{{ shop_url }}"
+        >
+          {% trans "Back to shop" %}
+        </a>
+      </div>
+    {% elif result == "failed" %}
+      <h1 id="storefront-payment-result-title">
+        {% trans "Payment not completed" %}
+      </h1>
+
+      <p>
+        {% trans "Your payment could not be completed." %}
+      </p>
+
+      <div class="portal-place-order-actions">
+        {% if retry_url %}
+          <form
+            method="post"
+            action="{{ retry_url }}"
+            data-submit-once
+          >
+            {% csrf_token %}
+
+            <button
+              class="button button--md button--solid button--tone-place"
+              type="submit"
+            >
+              {% trans "Try again" %}
+            </button>
+          </form>
+        {% endif %}
+
+        <a
+          class="button button--md button--ghost button--tone-neutral"
+          href="{{ cart_url }}"
+        >
+          {% trans "Back to cart" %}
+        </a>
+      </div>
+    {% else %}
+      <h1 id="storefront-payment-result-title">
+        {% trans "We couldn't confirm your payment" %}
+      </h1>
+
+      <p>
+        {% trans "We couldn't confirm the status of your payment right now. If you were charged, your order is safe and we will sort it out." %}
+      </p>
+
+      <p>
+        {% blocktrans with reference=order_reference %}Please contact us and mention order number <strong>{{ reference }}</strong>.{% endblocktrans %}
+      </p>
+
+      <div class="portal-place-order-actions">
+        <a
+          class="button button--md button--solid button--tone-place"
+          href="{{ contact_url }}"
+        >
+          {% trans "Contact us" %}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+
+  <script
+    src="{% static 'js/submit-once.js' %}"
+    defer
+  ></script>
+{% endblock %}

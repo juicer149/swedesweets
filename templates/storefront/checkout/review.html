@@ -1,5 +1,5 @@
 {% extends "storefront/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% trans "Review order" %} | SwedeSweets{% endblock %}
 
@@ -117,5 +117,35 @@
       {{ buyer.phone_number }}
     </address>
   </div>
+
+  <div class="form-card form-card--wide retail-checkout-pay">
+    <form
+      method="post"
+      action="{{ pay_url }}"
+      data-submit-once
+    >
+      {% csrf_token %}
+
+      <button
+        class="button button--md button--solid button--tone-place"
+        type="submit"
+      >
+        {% blocktrans with total=total_label %}Pay {{ total }}{% endblocktrans %}
+      </button>
+    </form>
+
+    <p class="muted-text retail-checkout-pay__note">
+      {% trans "You will be redirected to SumUp to pay securely by card." %}
+    </p>
+  </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+
+  <script
+    src="{% static 'js/submit-once.js' %}"
+    defer
+  ></script>
 {% endblock %}

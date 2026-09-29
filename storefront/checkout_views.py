@@ -18,15 +18,23 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import (
     require_GET,
     require_http_methods,
+    require_POST,
 )
 
+from inventory.errors import InsufficientStockError
 from orders.models import Order
+from payments.contracts import HostedPaymentError
+from payments.selectors import (
+    get_pending_payment_attempt,
+)
 from retail.cart_selectors import get_retail_cart
 from retail.errors import (
     InvalidRetailCart,
     InvalidRetailOrder,
     RetailCheckoutPaymentInProgress,
 )
+from retail.models import RetailCheckoutSession
+from retail.payments import begin_retail_hosted_payment
 from retail.selectors import get_retail_checkout
 from retail.services import create_retail_checkout_from_cart
 from storefront.cart_viewmodels import build_retail_cart_context
@@ -40,6 +48,30 @@ from storefront.checkout_session import (
 from storefront.checkout_viewmodels import build_checkout_review_context
 
 logger = logging.getLogger(__name__)
+
+
+def _get_owned_checkout_or_404(
+    request: HttpRequest,
+    checkout_id: UUID,
+) -> RetailCheckoutSession:
+    if not owns_checkout(
+        request,
+        checkout_id=checkout_id,
+    ):
+        raise Http404(
+            "Checkout not found."
+        )
+
+    checkout = get_retail_checkout(
+        checkout_id=checkout_id,
+    )
+
+    if checkout is None:
+        raise Http404(
+            "Checkout not found."
+        )
+
+    return checkout
 
 
 @require_http_methods(
@@ -156,22 +188,10 @@ def checkout_review(
     request: HttpRequest,
     checkout_id: UUID,
 ):
-    if not owns_checkout(
+    checkout = _get_owned_checkout_or_404(
         request,
-        checkout_id=checkout_id,
-    ):
-        raise Http404(
-            "Checkout not found."
-        )
-
-    checkout = get_retail_checkout(
-        checkout_id=checkout_id,
+        checkout_id,
     )
-
-    if checkout is None:
-        raise Http404(
-            "Checkout not found."
-        )
 
     order = checkout.order
 
@@ -215,4 +235,120 @@ def checkout_review(
         request,
         "storefront/checkout/review.html",
         context,
+    )
+
+
+@require_POST
+def checkout_pay(
+    request: HttpRequest,
+    checkout_id: UUID,
+):
+    """Send the buyer to the hosted payment page for one checkout.
+
+    Invariant: a new external payment is never started while an earlier
+    PENDING attempt has an unknown outcome. Any pending attempt, with or
+    without a provider payment id, is resolved through the payment return
+    flow, where recovery decides between resuming, confirming, failing or
+    routing to support.
+    """
+
+    checkout = _get_owned_checkout_or_404(
+        request,
+        checkout_id,
+    )
+    order = checkout.order
+
+    if order.status != Order.Status.DRAFT:
+        return redirect(
+            "storefront:payment_return",
+            checkout_id=checkout.pk,
+        )
+
+    if get_pending_payment_attempt(
+        order=order,
+    ) is not None:
+        return redirect(
+            "storefront:payment_return",
+            checkout_id=checkout.pk,
+        )
+
+    try:
+        payment = begin_retail_hosted_payment(
+            checkout=checkout,
+            customer_return_url=request.build_absolute_uri(
+                reverse(
+                    "storefront:payment_return",
+                    kwargs={
+                        "checkout_id": checkout.pk,
+                    },
+                )
+            ),
+            webhook_url=request.build_absolute_uri(
+                reverse(
+                    "payments:sumup_webhook"
+                )
+            ),
+        )
+    except InsufficientStockError:
+        messages.error(
+            request,
+            _(
+                "Some items in your cart are no longer in stock. "
+                "Please update your cart."
+            ),
+        )
+
+        return redirect(
+            "storefront:cart"
+        )
+    except InvalidRetailOrder:
+        if get_pending_payment_attempt(
+            order=order,
+        ) is not None:
+            return redirect(
+                "storefront:payment_return",
+                checkout_id=checkout.pk,
+            )
+
+        messages.info(
+            request,
+            _(
+                "Your checkout has expired. "
+                "Please confirm your details again."
+            ),
+        )
+
+        return redirect(
+            "storefront:checkout"
+        )
+    except HostedPaymentError:
+        logger.warning(
+            "Hosted payment setup failed for checkout %s",
+            checkout.pk,
+            exc_info=True,
+        )
+
+        if get_pending_payment_attempt(
+            order=order,
+        ) is not None:
+            return redirect(
+                "storefront:payment_return",
+                checkout_id=checkout.pk,
+            )
+
+        messages.error(
+            request,
+            _(
+                "We couldn't reach the payment provider. "
+                "Please try again in a moment."
+            ),
+        )
+
+        return redirect(
+            "storefront:checkout_review",
+            checkout_id=checkout.pk,
+        )
+
+    return redirect(
+        payment.redirect_url
     )

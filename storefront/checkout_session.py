@@ -63,3 +63,12 @@ def get_remembered_checkout_details(
     return request.session.get(
         CHECKOUT_DETAILS_SESSION_KEY,
     )
+
+
+def forget_checkout_details(
+    request: HttpRequest,
+) -> None:
+    request.session.pop(
+        CHECKOUT_DETAILS_SESSION_KEY,
+        None,
+    )

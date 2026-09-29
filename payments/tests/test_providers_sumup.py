@@ -366,3 +366,10 @@ def test_sumup_provider_requires_credentials():
             api_key="test-key",
             merchant_code="",
         )
+
+
+def test_sumup_errors_are_hosted_payment_errors():
+    from payments.contracts import HostedPaymentError
+    from payments.providers.sumup import SumUpPaymentError
+
+    assert issubclass(SumUpPaymentError, HostedPaymentError)

@@ -34,6 +34,7 @@ class CheckoutReviewContext:
     buyer: CheckoutBuyer
     edit_details_url: str
     cart_url: str
+    pay_url: str
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -42,6 +43,7 @@ class CheckoutReviewContext:
             "buyer": self.buyer,
             "edit_details_url": self.edit_details_url,
             "cart_url": self.cart_url,
+            "pay_url": self.pay_url,
         }
 
 
@@ -105,6 +107,12 @@ def build_checkout_review_context(
         ),
         cart_url=reverse(
             "storefront:cart"
+        ),
+        pay_url=reverse(
+            "storefront:checkout_pay",
+            kwargs={
+                "checkout_id": checkout.pk,
+            },
         ),
     )
 

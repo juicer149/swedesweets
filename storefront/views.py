@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from django.views.decorators.http import require_GET
 from django.http import (
     Http404,
     HttpRequest,
@@ -15,14 +14,25 @@ from django.shortcuts import (
     render,
 )
 from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.http import require_GET
 
 from accounts.roles import AccountRole
-from payments.models import PaymentAttempt
+from orders.models import Order
+from payments.selectors import get_latest_payment_attempt
 from retail.models import RetailCheckoutSession
 from retail.payments import (
     RetailPaymentRecoveryAction,
     recover_retail_payment,
 )
+from storefront.checkout_session import (
+    forget_checkout_details,
+    owns_checkout,
+)
+
+PAYMENT_RESULT_CONFIRMED = "confirmed"
+PAYMENT_RESULT_FAILED = "failed"
+PAYMENT_RESULT_SUPPORT = "support"
 
 
 def _is_business_customer(
@@ -87,6 +97,10 @@ def payment_return(
 
     Recovery asks the provider for authoritative state when necessary and then
     maps the resulting application state to the next customer-facing action.
+
+    The page is reachable by checkout id alone because the buyer may return
+    from the provider in a different session. It therefore shows only the
+    order reference and payment outcome, never buyer details.
     """
 
     checkout = get_object_or_404(
@@ -96,12 +110,8 @@ def payment_return(
         pk=checkout_id,
     )
 
-    attempt = (
-        PaymentAttempt.objects
-        .filter(
-            order=checkout.order,
-        )
-        .first()
+    attempt = get_latest_payment_attempt(
+        order=checkout.order,
     )
 
     if attempt is None:
@@ -113,39 +123,72 @@ def payment_return(
         attempt=attempt,
     )
 
-    if (
-        recovery.action
-        == RetailPaymentRecoveryAction.CONTINUE_PAYMENT
-    ):
-        if recovery.redirect_url is None:
-            return HttpResponse(
-                "Payment requires support.",
-                status=200,
+    match recovery.action:
+        case RetailPaymentRecoveryAction.CONTINUE_PAYMENT if recovery.redirect_url:
+            return HttpResponseRedirect(
+                recovery.redirect_url
             )
+        case RetailPaymentRecoveryAction.CONFIRMED:
+            result = PAYMENT_RESULT_CONFIRMED
 
-        return HttpResponseRedirect(
-            recovery.redirect_url
-        )
+            forget_checkout_details(
+                request
+            )
+        case RetailPaymentRecoveryAction.PAYMENT_FAILED:
+            result = PAYMENT_RESULT_FAILED
+        case _:
+            result = PAYMENT_RESULT_SUPPORT
 
-    if (
-        recovery.action
-        == RetailPaymentRecoveryAction.CONFIRMED
+    checkout.order.refresh_from_db()
+
+    return render(
+        request,
+        "storefront/checkout/payment_result.html",
+        {
+            "result": result,
+            "order_reference": checkout.order.pk,
+            "retry_url": _payment_retry_url(
+                request,
+                checkout=checkout,
+                result=result,
+            ),
+            "shop_url": reverse(
+                "storefront:product_list"
+            ),
+            "cart_url": reverse(
+                "storefront:cart"
+            ),
+            "contact_url": reverse(
+                "public_site:contact"
+            ),
+        },
+    )
+
+
+def _payment_retry_url(
+    request: HttpRequest,
+    *,
+    checkout: RetailCheckoutSession,
+    result: str,
+) -> str | None:
+    if result != PAYMENT_RESULT_FAILED:
+        return None
+
+    if not owns_checkout(
+        request,
+        checkout_id=checkout.pk,
     ):
-        return HttpResponse(
-            "Payment confirmed.",
-            status=200,
-        )
+        return None
 
-    if (
-        recovery.action
-        == RetailPaymentRecoveryAction.PAYMENT_FAILED
-    ):
-        return HttpResponse(
-            "Payment failed.",
-            status=200,
-        )
+    if checkout.order.status != Order.Status.DRAFT:
+        return None
 
-    return HttpResponse(
-        "Payment requires support.",
-        status=200,
+    if checkout.expires_at <= timezone.now():
+        return None
+
+    return reverse(
+        "storefront:checkout_pay",
+        kwargs={
+            "checkout_id": checkout.pk,
+        },
     )

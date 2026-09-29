@@ -12,11 +12,19 @@ from django.utils import timezone
 from carts.models import Cart
 from carts.services import create_cart
 from common.channels import SalesChannel
+from inventory.errors import InsufficientStockError
 from inventory.services import create_batch
 from orders.models import Order
+from payments.contracts import HostedPaymentError
 from retail.models import RetailCheckoutSession
+from retail.payments import (
+    RetailPaymentRecovery,
+    RetailPaymentRecoveryAction,
+    RetailPaymentRedirect,
+)
 from retail.services import (
     add_retail_cart_line,
+    fail_retail_payment,
     start_retail_payment,
 )
 from retail.tests.factories import (
@@ -255,3 +263,302 @@ def test_cart_page_links_to_checkout(client, cart):
     )
 
     assert reverse("storefront:checkout") in response.content.decode()
+
+
+def _created_checkout(client) -> RetailCheckoutSession:
+    _submit_details(client)
+
+    return RetailCheckoutSession.objects.get()
+
+
+def _pay_url(checkout: RetailCheckoutSession) -> str:
+    return reverse(
+        "storefront:checkout_pay",
+        kwargs={
+            "checkout_id": checkout.pk,
+        },
+    )
+
+
+def _review_url(checkout: RetailCheckoutSession) -> str:
+    return reverse(
+        "storefront:checkout_review",
+        kwargs={
+            "checkout_id": checkout.pk,
+        },
+    )
+
+
+def _return_url(checkout: RetailCheckoutSession) -> str:
+    return reverse(
+        "storefront:payment_return",
+        kwargs={
+            "checkout_id": checkout.pk,
+        },
+    )
+
+
+@pytest.mark.django_db
+def test_review_shows_pay_button(client, cart):
+    checkout = _created_checkout(client)
+
+    response = client.get(
+        _review_url(checkout)
+    )
+
+    assert _pay_url(checkout) in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_pay_requires_owning_session(client, cart):
+    checkout = _created_checkout(client)
+
+    response = Client().post(
+        _pay_url(checkout)
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_pay_redirects_to_hosted_checkout(client, cart, monkeypatch):
+    checkout = _created_checkout(client)
+    calls = []
+
+    def fake_begin(**kwargs):
+        calls.append(kwargs)
+
+        return RetailPaymentRedirect(
+            attempt=None,
+            redirect_url="https://pay.example/123",
+        )
+
+    monkeypatch.setattr(
+        "storefront.checkout_views.begin_retail_hosted_payment",
+        fake_begin,
+    )
+
+    response = client.post(
+        _pay_url(checkout)
+    )
+
+    assert response.status_code == 302
+    assert response.url == "https://pay.example/123"
+    assert calls[0]["customer_return_url"] == (
+        "http://testserver" + _return_url(checkout)
+    )
+    assert calls[0]["webhook_url"].endswith(
+        reverse("payments:sumup_webhook")
+    )
+
+
+@pytest.mark.django_db
+def test_pay_with_started_provider_payment_resumes_it(client, cart):
+    checkout = _created_checkout(client)
+
+    attempt = start_retail_payment(
+        checkout=checkout,
+    )
+    attempt.provider_payment_id = "sumup-existing"
+    attempt.save(
+        update_fields=[
+            "provider_payment_id",
+        ]
+    )
+
+    response = client.post(
+        _pay_url(checkout)
+    )
+
+    assert response.status_code == 302
+    assert response.url == _return_url(checkout)
+
+
+@pytest.mark.django_db
+def test_pay_with_pending_attempt_without_provider_id_never_retries(
+    client,
+    cart,
+    monkeypatch,
+):
+    checkout = _created_checkout(client)
+    start_retail_payment(
+        checkout=checkout,
+    )
+
+    def fail_if_called(**kwargs):
+        raise AssertionError("must not start another external payment")
+
+    monkeypatch.setattr(
+        "storefront.checkout_views.begin_retail_hosted_payment",
+        fail_if_called,
+    )
+
+    response = client.post(
+        _pay_url(checkout)
+    )
+
+    assert response.status_code == 302
+    assert response.url == _return_url(checkout)
+
+
+@pytest.mark.django_db
+def test_provider_error_after_attempt_goes_to_payment_return(
+    client,
+    cart,
+    monkeypatch,
+):
+    checkout = _created_checkout(client)
+
+    def fake_begin(**kwargs):
+        start_retail_payment(
+            checkout=kwargs["checkout"],
+        )
+
+        raise HostedPaymentError("connection reset")
+
+    monkeypatch.setattr(
+        "storefront.checkout_views.begin_retail_hosted_payment",
+        fake_begin,
+    )
+
+    response = client.post(
+        _pay_url(checkout)
+    )
+
+    assert response.status_code == 302
+    assert response.url == _return_url(checkout)
+
+
+@pytest.mark.django_db
+def test_provider_error_without_attempt_returns_to_review(
+    client,
+    cart,
+    monkeypatch,
+):
+    checkout = _created_checkout(client)
+
+    def fake_begin(**kwargs):
+        raise HostedPaymentError("provider not configured")
+
+    monkeypatch.setattr(
+        "storefront.checkout_views.begin_retail_hosted_payment",
+        fake_begin,
+    )
+
+    response = client.post(
+        _pay_url(checkout)
+    )
+
+    assert response.url == _review_url(checkout)
+
+
+@pytest.mark.django_db
+def test_programming_errors_are_not_reported_as_provider_errors(
+    client,
+    cart,
+    monkeypatch,
+):
+    checkout = _created_checkout(client)
+
+    def fake_begin(**kwargs):
+        raise AttributeError("bug")
+
+    monkeypatch.setattr(
+        "storefront.checkout_views.begin_retail_hosted_payment",
+        fake_begin,
+    )
+
+    with pytest.raises(AttributeError):
+        client.post(
+            _pay_url(checkout)
+        )
+
+
+@pytest.mark.django_db
+def test_pay_out_of_stock_sends_buyer_to_cart(client, cart, monkeypatch):
+    checkout = _created_checkout(client)
+
+    def fake_begin(**kwargs):
+        raise InsufficientStockError(
+            product_name="Test",
+            requested_quantity=2,
+            available_quantity=0,
+            missing_quantity=2,
+        )
+
+    monkeypatch.setattr(
+        "storefront.checkout_views.begin_retail_hosted_payment",
+        fake_begin,
+    )
+
+    response = client.post(
+        _pay_url(checkout)
+    )
+
+    assert response.url == reverse("storefront:cart")
+
+
+
+@pytest.mark.django_db
+def test_failed_payment_offers_retry_to_owning_session(
+    client,
+    cart,
+    monkeypatch,
+):
+    checkout = _created_checkout(client)
+    start_retail_payment(
+        checkout=checkout,
+    )
+
+    def fake_recover(*, attempt):
+        return RetailPaymentRecovery(
+            attempt=attempt,
+            action=RetailPaymentRecoveryAction.PAYMENT_FAILED,
+        )
+
+    monkeypatch.setattr(
+        "storefront.views.recover_retail_payment",
+        fake_recover,
+    )
+
+    own = client.get(
+        _return_url(checkout)
+    )
+    other = Client().get(
+        _return_url(checkout)
+    )
+
+    assert own.context["retry_url"] == _pay_url(checkout)
+    assert other.context["retry_url"] is None
+
+
+@pytest.mark.django_db
+def test_provider_error_without_new_attempt_ignores_old_failed_attempt(
+    client,
+    cart,
+    monkeypatch,
+):
+    checkout = _created_checkout(client)
+
+    old_attempt = start_retail_payment(
+        checkout=checkout,
+    )
+    fail_retail_payment(
+        attempt=old_attempt,
+    )
+
+    def fake_begin(**kwargs):
+        raise HostedPaymentError(
+            "provider not configured"
+        )
+
+    monkeypatch.setattr(
+        "storefront.checkout_views.begin_retail_hosted_payment",
+        fake_begin,
+    )
+
+    response = client.post(
+        _pay_url(checkout)
+    )
+
+    assert response.url == _review_url(checkout)

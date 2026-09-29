@@ -15,6 +15,7 @@ from urllib.request import (
 from payments.contracts import (
     ExternalPaymentState,
     ExternalPaymentStatus,
+    HostedPaymentError,
     HostedPaymentRequest,
     HostedPaymentSession,
 )
@@ -24,7 +25,7 @@ SUMUP_API_BASE_URL = "https://api.sumup.com"
 SUMUP_CHECKOUTS_PATH = "/v0.1/checkouts"
 
 
-class SumUpPaymentError(RuntimeError):
+class SumUpPaymentError(HostedPaymentError):
     """Raised when communication with SumUp cannot be trusted."""
 
 
