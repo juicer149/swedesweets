@@ -34,3 +34,6 @@ staticfiles/
 .idea/
 .vscode/
 scripts/
+
+# Fake payment provider state (local development)
+.fake_payments/
