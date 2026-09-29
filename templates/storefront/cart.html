@@ -1,0 +1,262 @@
+{% extends "storefront/base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Cart" %} | SwedeSweets{% endblock %}
+
+{% block content %}
+{% include "includes/ui/page_header.html" with title_id="storefront-cart-title" title=_("Cart") %}
+
+<section
+  class="form-section form-section--wide"
+  aria-labelledby="storefront-cart-title"
+  data-current-order
+  data-current-order-error-message="{% trans 'Could not update quantity.' %}"
+>
+  <div class="form-card form-card--wide portal-place-order-card">
+    <section
+      class="order-lines"
+      aria-labelledby="storefront-cart-lines-title"
+    >
+      {% if cart_lines %}
+        <div class="order-lines__header order-lines__header--with-action">
+          <h2 id="storefront-cart-lines-title">
+            {% trans "Items" %}
+          </h2>
+
+          <a
+            class="button button--text button--tone-neutral"
+            href="{{ continue_shopping_url }}"
+          >
+            {% trans "Continue shopping" %}
+          </a>
+        </div>
+
+        <div class="portal-cart">
+          <div
+            class="portal-cart__header"
+            aria-hidden="true"
+          >
+            <span>
+              {% trans "Product" %}
+            </span>
+
+            <span>
+              {% trans "Quantity" %}
+            </span>
+
+            <span></span>
+          </div>
+
+          <div class="portal-cart__lines">
+            {% for line in cart_lines %}
+              <article class="portal-cart-line">
+                <div class="portal-cart-line__product">
+                  <a
+                    class="text-link portal-cart-line__product-label"
+                    href="{{ line.product_url }}"
+                  >
+                    {{ line.product_label }}
+                  </a>
+
+                  {% if line.offer_label %}
+                    <div class="muted-text">
+                      <strong>
+                        {{ line.offer_label }}
+                      </strong>
+                    </div>
+                  {% endif %}
+
+                  {% if line.unit_price_label %}
+                    <div class="muted-text">
+                      {% blocktrans with price=line.unit_price_label %}{{ price }} each{% endblocktrans %}
+                    </div>
+                  {% endif %}
+
+                  {% if line.line_total_label %}
+                    <div class="retail-cart-line__total">
+                      {% trans "Total" %}:
+                      <span data-cart-line-total="{{ line.cart_line_id }}">
+                        {{ line.line_total_label }}
+                      </span>
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="portal-cart-line__quantity">
+                  <form
+                    method="post"
+                    action="{{ line.quantity_url }}"
+                    data-current-order-quantity-form
+                    data-confirmed-quantity="{{ line.quantity }}"
+                  >
+                    {% csrf_token %}
+
+                    <div
+                      class="quantity-stepper"
+                      aria-label="{% trans 'Quantity' %}"
+                      data-quantity-stepper
+                    >
+                      <button
+                        class="quantity-stepper__button quantity-stepper__button--decrease"
+                        type="button"
+                        aria-label="{% trans 'Decrease quantity' %}"
+                        data-quantity-decrease
+                      >
+                        <span aria-hidden="true">−</span>
+                      </button>
+
+                      <label
+                        class="visually-hidden"
+                        for="quantity-{{ line.cart_line_id }}"
+                      >
+                        {% trans "Quantity" %}
+                      </label>
+
+                      <input
+                        id="quantity-{{ line.cart_line_id }}"
+                        class="quantity-stepper__input"
+                        type="number"
+                        name="quantity"
+                        value="{{ line.quantity }}"
+                        min="1"
+                        step="1"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        required
+                        data-quantity-input
+                      >
+
+                      <button
+                        class="quantity-stepper__button quantity-stepper__button--increase"
+                        type="button"
+                        aria-label="{% trans 'Increase quantity' %}"
+                        data-quantity-increase
+                      >
+                        <span aria-hidden="true">+</span>
+                      </button>
+                    </div>
+
+                    <span
+                      class="visually-hidden"
+                      role="status"
+                      aria-live="polite"
+                      data-current-order-quantity-status
+                    ></span>
+
+                    <noscript>
+                      <button
+                        class="button button--sm button--text button--tone-neutral"
+                        type="submit"
+                      >
+                        {% trans "Update quantity" %}
+                      </button>
+                    </noscript>
+                  </form>
+                </div>
+
+                <div class="portal-cart-line__action">
+                  <form
+                    method="post"
+                    action="{{ line.remove_url }}"
+                  >
+                    {% csrf_token %}
+
+                    <button
+                      class="portal-cart-line__remove-button"
+                      type="submit"
+                      aria-label="{% trans 'Remove product' %}"
+                    >
+                      {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+                      <span class="visually-hidden">
+                        {% trans "Remove product" %}
+                      </span>
+                    </button>
+                  </form>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% if subtotal_label %}
+          <div class="retail-cart-subtotal">
+            <span>
+              {% trans "Subtotal" %}
+            </span>
+
+            <strong data-cart-subtotal>
+              {{ subtotal_label }}
+            </strong>
+          </div>
+
+          <p class="muted-text retail-cart-subtotal__note">
+            {% trans "Delivery details are entered at checkout." %}
+          </p>
+        {% endif %}
+
+        <div class="portal-place-order-actions">
+          {% if checkout_url %}
+            <a
+              class="button button--md button--solid button--tone-place"
+              href="{{ checkout_url }}"
+            >
+              {% trans "Continue to checkout" %}
+            </a>
+          {% endif %}
+
+          <form method="post">
+            {% csrf_token %}
+
+            <button
+              class="button button--md button--ghost button--tone-danger"
+              type="submit"
+              name="intent"
+              value="clear_cart"
+            >
+              {% trans "Clear cart" %}
+            </button>
+          </form>
+        </div>
+      {% else %}
+        <div class="order-lines__header">
+          <h2 id="storefront-cart-lines-title">
+            {% trans "Items" %}
+          </h2>
+        </div>
+
+        <div class="portal-cart-empty">
+          <p>
+            {% trans "Your cart is empty." %}
+          </p>
+
+          <a
+            class="button button--md button--solid button--tone-place"
+            href="{{ continue_shopping_url }}"
+          >
+            {% trans "Browse shop" %}
+          </a>
+        </div>
+      {% endif %}
+    </section>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+
+  <script
+    src="{% static 'js/quantity-stepper.js' %}"
+    defer
+  ></script>
+
+  <script
+    src="{% static 'js/cart.js' %}"
+    defer
+  ></script>
+
+  <script
+    src="{% static 'js/storefront-cart.js' %}"
+    defer
+  ></script>
+{% endblock %}

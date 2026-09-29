@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 16:04+0200\n"
-"PO-Revision-Date: 2026-09-19 15:05+0200\n"
+"POT-Creation-Date: 2026-09-29 15:55+0200\n"
+"PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: accounts/self_viewmodels.py:80 accounts/self_viewmodels.py:114
 #: templates/business_portal/includes/account_section_nav.html:3
 #: templates/business_portal/index.html:4
-#: templates/business_portal/index.html:8
+#: templates/business_portal/index.html:11
 msgid "My account"
 msgstr "Mon compte"
 
@@ -38,7 +38,6 @@ msgstr "Site public"
 #: accounts/account_menus.py:101 accounts/self_viewmodels.py:130
 #: ops_portal/accounts/detail_viewmodels.py:188
 #: ops_portal/accounts/detail_viewmodels.py:204
-#: templates/business_portal/index.html:16
 msgid "Account"
 msgstr "Compte"
 
@@ -285,8 +284,8 @@ msgstr "Standard"
 
 #: business_portal/catalog/viewmodels.py:298
 #: business_portal/catalog/viewmodels.py:309
-#: business_portal/orders/product_presentation.py:87
-#: business_portal/orders/product_presentation.py:93
+#: business_portal/orders/product_presentation.py:114
+#: business_portal/orders/product_presentation.py:120
 #: storefront/catalog/viewmodels.py:234 storefront/catalog/viewmodels.py:241
 msgid "Special offer"
 msgstr "Offre spéciale"
@@ -308,10 +307,10 @@ msgid "In stock"
 msgstr "En stock"
 
 # | msgid "Choose products and quantities for your next order."
-#: business_portal/catalog/views.py:172
+#: business_portal/catalog/views.py:171 storefront/catalog/views.py:331
 #, python-format
-msgid "%(product)s added to your order."
-msgstr "%(product)s a été ajouté à votre commande."
+msgid "%(product)s added to your cart."
+msgstr "%(product)s a été ajouté à votre panier."
 
 #: business_portal/navigation.py:25
 #: templates/business_portal/catalog/index.html:4
@@ -331,6 +330,37 @@ msgstr "Contact"
 msgid "FAQ"
 msgstr "FAQ"
 
+#: business_portal/orders/cart_viewmodels.py:66
+#: business_portal/orders/navbar_viewmodels.py:53
+#: business_portal/orders/navbar_viewmodels.py:54
+#: business_portal/orders/navbar_viewmodels.py:78
+#: business_portal/orders/navbar_viewmodels.py:79
+#: templates/storefront/cart.html:4 templates/storefront/cart.html:7
+msgid "Cart"
+msgstr "Panier"
+
+# | msgid "Choose products and quantities for your next order."
+#: business_portal/orders/cart_viewmodels.py:68
+#| msgid "Review the products and quantities in your current order."
+msgid "Review the products and quantities in your cart."
+msgstr "Vérifiez les produits et les quantités dans votre panier."
+
+#: business_portal/orders/cart_viewmodels.py:70
+#: business_portal/orders/review_viewmodels.py:81
+msgid "Review order"
+msgstr "Vérifier la commande"
+
+#: business_portal/orders/cart_viewmodels.py:71
+#: business_portal/orders/review_viewmodels.py:91
+#: templates/storefront/cart.html:216
+msgid "Clear cart"
+msgstr "Vider le panier"
+
+#: business_portal/orders/cart_viewmodels.py:72
+#: storefront/navbar_viewmodels.py:71 templates/storefront/cart.html:30
+msgid "Continue shopping"
+msgstr "Continuer les achats"
+
 #: business_portal/orders/detail_viewmodels.py:175
 msgid "Order details"
 msgstr "Détails de la commande"
@@ -338,16 +368,17 @@ msgstr "Détails de la commande"
 #: business_portal/orders/detail_viewmodels.py:203
 #: templates/business_portal/includes/orders_panel.html:67
 #: templates/business_portal/includes/orders_panel.html:112
-#: templates/business_portal/orders/current.html:4
-#: templates/business_portal/orders/current.html:7
+#: templates/business_portal/orders/cart.html:4
+#: templates/business_portal/orders/cart.html:7
 #: templates/business_portal/orders/includes/detail_panel_order.html:5
 msgid "Order"
 msgstr "Commande"
 
 #: business_portal/orders/detail_viewmodels.py:217
-#: templates/business_portal/orders/current.html:23
-#: templates/business_portal/orders/current.html:200
+#: templates/business_portal/orders/cart.html:23
+#: templates/business_portal/orders/cart.html:199
 #: templates/business_portal/orders/review.html:21
+#: templates/storefront/cart.html:23 templates/storefront/cart.html:223
 msgid "Items"
 msgstr "Articles"
 
@@ -355,35 +386,6 @@ msgstr "Articles"
 #: business_portal/orders/detail_viewmodels.py:324
 msgid "View product →"
 msgstr "Voir le produit →"
-
-# | msgid "Recent orders"
-#: business_portal/orders/form_viewmodels.py:68
-#: business_portal/orders/navbar_viewmodels.py:50
-#: business_portal/orders/navbar_viewmodels.py:51
-#: business_portal/orders/navbar_viewmodels.py:75
-#: business_portal/orders/navbar_viewmodels.py:76
-msgid "Current order"
-msgstr "Commande en cours"
-
-# | msgid "Choose products and quantities for your next order."
-#: business_portal/orders/form_viewmodels.py:70
-msgid "Review the products and quantities in your current order."
-msgstr "Vérifiez les produits et les quantités de votre commande en cours."
-
-#: business_portal/orders/form_viewmodels.py:72
-#: business_portal/orders/review_viewmodels.py:89
-msgid "Review order"
-msgstr "Vérifier la commande"
-
-#: business_portal/orders/form_viewmodels.py:73
-#: business_portal/orders/review_viewmodels.py:96
-msgid "Discard draft"
-msgstr "Abandonner"
-
-#: business_portal/orders/form_viewmodels.py:74
-#: storefront/navbar_viewmodels.py:46 storefront/navbar_viewmodels.py:71
-msgid "Continue shopping"
-msgstr "Continuer les achats"
 
 #: business_portal/orders/list_viewmodels.py:109
 msgid "View order →"
@@ -395,26 +397,25 @@ msgid "%(created_at)s · %(quantity)s"
 msgstr "%(created_at)s · %(quantity)s"
 
 # | msgid "View order →"
-#: business_portal/orders/navbar_viewmodels.py:57
-#: business_portal/orders/navbar_viewmodels.py:82
+#: business_portal/orders/navbar_viewmodels.py:60
+#: business_portal/orders/navbar_viewmodels.py:85
 msgid "View order"
 msgstr "Voir la commande"
 
 # | msgid "No orders yet"
-#: business_portal/orders/navbar_viewmodels.py:62
-#: business_portal/orders/navbar_viewmodels.py:87
-#: templates/business_portal/orders/current.html:206
+#: business_portal/orders/navbar_viewmodels.py:65
+#: business_portal/orders/navbar_viewmodels.py:90
+#: templates/business_portal/orders/cart.html:205
 msgid "Your order is empty."
 msgstr "Votre commande est vide."
 
 # | msgid "Customer catalog"
-#: business_portal/orders/navbar_viewmodels.py:65
-#: business_portal/orders/navbar_viewmodels.py:90
-#: templates/business_portal/index.html:29
+#: business_portal/orders/navbar_viewmodels.py:68
+#: business_portal/orders/navbar_viewmodels.py:93
 msgid "Browse catalog"
 msgstr "Parcourir le catalogue"
 
-#: business_portal/orders/presentation.py:74 orders/models.py:51
+#: business_portal/orders/presentation.py:74 orders/models.py:49
 msgid "Draft"
 msgstr "Brouillon"
 
@@ -427,13 +428,13 @@ msgstr "Reçue"
 msgid "Prepared"
 msgstr "Préparée"
 
-#: business_portal/orders/presentation.py:77 orders/models.py:54
+#: business_portal/orders/presentation.py:77 orders/models.py:52
 #: templates/business_portal/orders/includes/detail_panel_order.html:35
 msgid "Delivered"
 msgstr "Livrée"
 
-#: business_portal/orders/presentation.py:78 orders/models.py:55
-#: orders/models.py:554
+#: business_portal/orders/presentation.py:78 orders/models.py:53
+#: reservations/models.py:43
 #: templates/business_portal/orders/includes/detail_panel_order.html:42
 msgid "Cancelled"
 msgstr "Annulée"
@@ -460,100 +461,89 @@ msgstr[1] "%(count)s produits"
 msgid "%(products)s · %(quantity)s"
 msgstr "%(products)s · %(quantity)s"
 
-#: business_portal/orders/product_presentation.py:16
+#: business_portal/orders/product_presentation.py:19
 msgid "Short dated"
 msgstr "Date courte"
 
-#: business_portal/orders/product_presentation.py:17
+#: business_portal/orders/product_presentation.py:20
 msgid "Damaged package"
 msgstr "Emballage endommagé"
 
-#: business_portal/orders/product_presentation.py:18
+#: business_portal/orders/product_presentation.py:21
 msgid "Promotion"
 msgstr "Promotion"
 
-#: business_portal/orders/product_presentation.py:19 orders/models.py:62
+#: business_portal/orders/product_presentation.py:22 orders/models.py:60
 #: templates/business_portal/catalog/index.html:64
 #: templates/storefront/catalog/index.html:64
 msgid "Other"
 msgstr "Autre"
 
-#: business_portal/orders/repeat_views.py:50
+#: business_portal/orders/repeat_views.py:51
 #, python-format
-msgid "%(count)s order item was added to your current order."
-msgid_plural "%(count)s order items were added to your current order."
-msgstr[0] ""
-"%(count)s article de la commande a été ajouté à votre commande en cours."
-msgstr[1] ""
-"%(count)s articles de la commande ont été ajoutés à votre commande en cours."
+#| msgid "%(count)s order item was added to your current order."
+#| msgid_plural "%(count)s order items were added to your current order."
+msgid "%(count)s order item was added to your cart."
+msgid_plural "%(count)s order items were added to your cart."
+msgstr[0] "%(count)s article a été ajouté à votre panier."
+msgstr[1] "%(count)s articles ont été ajoutés à votre panier."
 
-#: business_portal/orders/repeat_views.py:94
+#: business_portal/orders/repeat_views.py:93
 #, python-format
 msgid "%(product)s is no longer available for business ordering."
 msgstr "%(product)s n’est plus disponible à la commande professionnelle."
 
-#: business_portal/orders/repeat_views.py:101
+#: business_portal/orders/repeat_views.py:100
 #, python-format
 msgid ""
 "%(product)s was not added because the original offer is no longer available."
 msgstr ""
 "%(product)s n’a pas été ajouté car l’offre d’origine n’est plus disponible."
 
-#: business_portal/orders/repeat_views.py:109
-#, python-format
-msgid ""
-"%(product)s was not added because %(quantity)s units are not currently "
-"available."
-msgstr ""
-"%(product)s n’a pas été ajouté car %(quantity)s unités ne sont pas "
-"disponibles actuellement."
-
-#: business_portal/orders/repeat_views.py:118
-#, python-format
-msgid "%(product)s could not be added to your current order."
-msgstr "%(product)s n’a pas pu être ajouté à votre commande en cours."
-
-#: business_portal/orders/review_viewmodels.py:94
+#: business_portal/orders/review_viewmodels.py:89
 msgid "Place order"
 msgstr "Passer une commande"
 
-#: business_portal/orders/review_viewmodels.py:95
+#: business_portal/orders/review_viewmodels.py:90
 #: templates/ops_portal/orders/order_form.html:138
 msgid "Back"
 msgstr "Retour"
 
 # | msgid "Quantity must be at least 1."
-#: business_portal/orders/views.py:137
+#: business_portal/orders/views.py:126
 msgid "Quantity must be a whole number."
 msgstr "La quantité doit être un nombre entier."
 
 # | msgid "Quantity"
-#: business_portal/orders/views.py:183 storefront/cart_views.py:197
+#: business_portal/orders/views.py:171 storefront/cart_views.py:256
 msgid "Quantity updated."
 msgstr "Quantité mise à jour."
 
-#: business_portal/orders/views.py:244
-msgid "Product removed from your order."
-msgstr "Produit retiré de votre commande."
+#: business_portal/orders/views.py:235 storefront/cart_views.py:335
+msgid "Product removed from your cart."
+msgstr "Produit retiré de votre panier."
 
-#: business_portal/orders/views.py:307 business_portal/orders/views.py:362
-#: business_portal/orders/views.py:412 business_portal/orders/views.py:480
+#: business_portal/orders/views.py:298 business_portal/orders/views.py:341
+#: business_portal/orders/views.py:394 business_portal/orders/views.py:450
 msgid "Unknown order action."
 msgstr "Action non reconnue pour cette commande."
 
-#: business_portal/orders/views.py:334 business_portal/orders/views.py:439
-msgid "Draft order discarded."
-msgstr "Brouillon de commande supprimé."
+#: business_portal/orders/views.py:313 business_portal/orders/views.py:409
+#: storefront/cart_views.py:156
+#| msgid "Draft cleared."
+msgid "Cart cleared."
+msgstr "Panier vidé."
 
-#: business_portal/orders/views.py:348
+#: business_portal/orders/views.py:327
 msgid "Add at least one product."
 msgstr "Ajoutez au moins un produit."
 
-#: business_portal/orders/views.py:394
-msgid "No draft order to review."
-msgstr "Aucun brouillon de commande à vérifier."
+#: business_portal/orders/views.py:376
+#| msgid "No draft order to review."
+msgid "No cart to review."
+msgstr "Aucun panier à vérifier."
 
-#: business_portal/orders/views.py:465
+#: business_portal/orders/views.py:435
 #, python-format
 msgid "Order #%(order_id)s placed."
 msgstr "Commande n° %(order_id)s passée."
@@ -597,7 +587,7 @@ msgstr "Numéro de téléphone"
 
 #: business_portal/store/forms.py:67
 msgid "Enter a phone number."
-msgstr "Saisissez un nomero de téléphone."
+msgstr "Saisissez un numéro de téléphone."
 
 #: business_portal/store/forms.py:70
 msgid "Phone number is too long."
@@ -708,10 +698,11 @@ msgstr ""
 "Empêcher ce compte client de se connecter. Les données client existantes et "
 "les historiques sont conservés."
 
-#: ops_portal/orders/forms.py:100
+#: ops_portal/orders/forms.py:116
 #, python-format
-msgid "%(product_label)s · %(available_quantity)s left"
-msgstr "%(product_label)s · %(available_quantity)s dispo"
+#| msgid "%(product_label)s · %(available_quantity)s left"
+msgid "%(offer_label)s · %(available_quantity)s left"
+msgstr "%(offer_label)s · stock restant : %(available_quantity)s"
 
 #: ops_portal/orders/presentation.py:165
 #, python-format
@@ -733,63 +724,55 @@ msgstr "Créée le %(date)s"
 msgid "%(prefix)s %(elapsed)s ago"
 msgstr "%(prefix)s il y a %(elapsed)s"
 
-#: orders/models.py:44
+#: orders/models.py:42
 msgid "Business"
 msgstr "Professionnel"
 
 # | msgid "Details"
-#: orders/models.py:45
+#: orders/models.py:43
 msgid "Retail"
-msgstr "Détail"
+msgstr "Vente au détail"
 
-#: orders/models.py:48
+#: orders/models.py:46
 msgid "Euro"
 msgstr "Euro"
 
-#: orders/models.py:52
+#: orders/models.py:50
 #: templates/business_portal/orders/includes/detail_panel_order.html:21
 msgid "Placed"
 msgstr "Passée"
 
-#: orders/models.py:53
+#: orders/models.py:51
 msgid "Packed"
 msgstr "Préparée"
 
-#: orders/models.py:58
+#: orders/models.py:56
 msgid "Customer request"
 msgstr "Demande du client"
 
-#: orders/models.py:59
+#: orders/models.py:57
 msgid "Order entry error"
 msgstr "Erreur de saisie de commande"
 
-#: orders/models.py:60
+#: orders/models.py:58
 msgid "Duplicate order"
 msgstr "Commande en double"
 
-#: orders/models.py:61
+#: orders/models.py:59
 msgid "Out of stock"
 msgstr "Rupture de stock"
 
-#: orders/models.py:461
+#: orders/models.py:451
 msgid "Stock unit"
 msgstr "Unité de stock"
 
-#: orders/models.py:462
+#: orders/models.py:452
 msgid "Kg"
 msgstr "kg"
 
-#: orders/models.py:463
+#: orders/models.py:453
 msgid "Grams"
 msgstr "Grammes"
-
-#: orders/models.py:552
-msgid "Reserved"
-msgstr "Réservée"
-
-#: orders/models.py:553
-msgid "Consumed"
-msgstr "Consommée"
 
 #: products/models.py:69
 msgid "Box"
@@ -880,9 +863,18 @@ msgstr "Préparations pour dip"
 msgid "Merchandise"
 msgstr "Marchandise"
 
-#: storefront/cart_views.py:261
-msgid "Product removed from your cart."
-msgstr "Produit retiré de votre panier."
+#: reservations/models.py:41
+msgid "Reserved"
+msgstr "Réservée"
+
+#: reservations/models.py:42
+msgid "Consumed"
+msgstr "Consommée"
+
+#: storefront/cart_views.py:161
+#| msgid "Unknown order action."
+msgid "Unknown cart action."
+msgstr "Action non reconnue pour ce panier."
 
 # | msgid "Edit order"
 #: storefront/catalog/viewmodels.py:64
@@ -896,30 +888,32 @@ msgstr "Ajouter au panier"
 msgid "Add %(product)s to cart"
 msgstr "Ajouter %(product)s au panier"
 
-#: storefront/catalog/views.py:251
+#: storefront/catalog/views.py:250
 msgid "Retail cart actions are not available for business customers."
 msgstr ""
 "Les actions du panier ne sont pas disponibles pour les clients "
 "professionnels."
-
-# | msgid "Choose products and quantities for your next order."
-#: storefront/catalog/views.py:332
-#, python-format
-msgid "%(product)s added to your cart."
-msgstr "%(product)s a été ajouté à votre panier."
 
 #: storefront/navbar_viewmodels.py:39 storefront/navbar_viewmodels.py:40
 #: storefront/navbar_viewmodels.py:64 storefront/navbar_viewmodels.py:65
 msgid "Shopping cart"
 msgstr "Panier"
 
+# | msgid "Edit order"
+#: storefront/navbar_viewmodels.py:46
+#| msgid "Add to cart"
+msgid "Go to cart"
+msgstr "Aller au panier"
+
 # | msgid "No orders yet"
 #: storefront/navbar_viewmodels.py:51 storefront/navbar_viewmodels.py:76
+#: templates/storefront/cart.html:229
 msgid "Your cart is empty."
 msgstr "Votre panier est vide."
 
 # | msgid "Customer catalog"
 #: storefront/navbar_viewmodels.py:54 storefront/navbar_viewmodels.py:79
+#: templates/storefront/cart.html:236
 msgid "Browse shop"
 msgstr "Parcourir la boutique"
 
@@ -1079,15 +1073,17 @@ msgstr "Offre"
 #: templates/business_portal/catalog/index.html:277
 #: templates/business_portal/includes/orders_panel.html:82
 #: templates/business_portal/includes/orders_panel.html:180
-#: templates/business_portal/orders/current.html:44
-#: templates/business_portal/orders/current.html:84
-#: templates/business_portal/orders/current.html:100
+#: templates/business_portal/orders/cart.html:44
+#: templates/business_portal/orders/cart.html:84
+#: templates/business_portal/orders/cart.html:100
 #: templates/business_portal/orders/includes/detail_panel_items.html:13
 #: templates/business_portal/orders/review.html:49
 #: templates/includes/navbar_cart.html:89
 #: templates/includes/navbar_cart.html:110
-#: templates/ops_portal/orders/includes/order_line_form.html:36
+#: templates/ops_portal/orders/includes/order_line_form.html:56
 #: templates/ops_portal/orders/order_form.html:83
+#: templates/storefront/cart.html:44 templates/storefront/cart.html:96
+#: templates/storefront/cart.html:112
 #: templates/storefront/catalog/detail.html:141
 #: templates/storefront/catalog/detail.html:146
 #: templates/storefront/catalog/detail.html:162
@@ -1099,9 +1095,10 @@ msgstr "Quantité"
 
 #: templates/business_portal/catalog/detail.html:152
 #: templates/business_portal/catalog/index.html:267
-#: templates/business_portal/orders/current.html:90
+#: templates/business_portal/orders/cart.html:90
 #: templates/includes/navbar_cart.html:98
-#: templates/ops_portal/orders/includes/order_line_form.html:26
+#: templates/ops_portal/orders/includes/order_line_form.html:46
+#: templates/storefront/cart.html:102
 #: templates/storefront/catalog/detail.html:152
 #: templates/storefront/catalog/index.html:267
 msgid "Decrease quantity"
@@ -1109,9 +1106,10 @@ msgstr "Diminuer la quantité"
 
 #: templates/business_portal/catalog/detail.html:182
 #: templates/business_portal/catalog/index.html:300
-#: templates/business_portal/orders/current.html:120
+#: templates/business_portal/orders/cart.html:120
 #: templates/includes/navbar_cart.html:133
-#: templates/ops_portal/orders/includes/order_line_form.html:44
+#: templates/ops_portal/orders/includes/order_line_form.html:64
+#: templates/storefront/cart.html:132
 #: templates/storefront/catalog/detail.html:182
 #: templates/storefront/catalog/index.html:300
 msgid "Increase quantity"
@@ -1141,10 +1139,10 @@ msgid "No offers are currently available."
 msgstr "Aucune offre n’est disponible actuellement."
 
 #: templates/business_portal/catalog/includes/detail_panel_product.html:5
-#: templates/business_portal/orders/current.html:40
+#: templates/business_portal/orders/cart.html:40
 #: templates/business_portal/orders/includes/detail_panel_items.html:9
 #: templates/business_portal/orders/review.html:42
-#: templates/ops_portal/orders/order_form.html:82
+#: templates/storefront/cart.html:40
 msgid "Product"
 msgstr "Produit"
 
@@ -1291,29 +1289,23 @@ msgstr "n° %(order_id)s"
 msgid "No orders found."
 msgstr "Aucune commande trouvée."
 
-#: templates/business_portal/index.html:20
-msgid "View your account details and order history."
-msgstr "Consultez les détails de votre compte et l’historique de vos commandes."
-
-#: templates/business_portal/index.html:36
-msgid "Review current order"
-msgstr "Vérifier la commande en cours"
-
-#: templates/business_portal/orders/current.html:13
+#: templates/business_portal/orders/cart.html:13
+#: templates/storefront/cart.html:13
 msgid "Could not update quantity."
 msgstr "Impossible de mettre à jour la quantité."
 
 # | msgid "Quantity"
-#: templates/business_portal/orders/current.html:139
+#: templates/business_portal/orders/cart.html:139
+#: templates/storefront/cart.html:151
 msgid "Update quantity"
 msgstr "Mettre à jour la quantité"
 
 # | msgid "Choose product"
-#: templates/business_portal/orders/current.html:155
-#: templates/business_portal/orders/current.html:160
+#: templates/business_portal/orders/cart.html:155
+#: templates/business_portal/orders/cart.html:159
 #: templates/includes/navbar_cart.html:175
-#: templates/includes/navbar_cart.html:180
-#: templates/ops_portal/orders/includes/order_line_form.html:56
+#: templates/includes/navbar_cart.html:180 templates/storefront/cart.html:167
+#: templates/storefront/cart.html:171
 msgid "Remove product"
 msgstr "Retirer le produit"
 
@@ -1473,23 +1465,37 @@ msgid "Select an activity row to open the affected record."
 msgstr ""
 "Sélectionnez une ligne d’activité pour ouvrir l’enregistrement concerné."
 
+#: templates/ops_portal/orders/includes/order_line_form.html:76
+#| msgid "Remove"
+msgid "Remove offer"
+msgstr "Retirer l’offre"
+
 #: templates/ops_portal/orders/order_form.html:59
 msgid "Order products"
 msgstr "Produits de la commande"
 
 #: templates/ops_portal/orders/order_form.html:63
+#| msgid ""
+#| "Choose a product to add it below. Choosing a product that's already added "
+#| "increases its quantity instead."
 msgid ""
-"Choose a product to add it below. Choosing a product that's already added "
+"Choose an offer to add it below. Choosing an offer that's already added "
 "increases its quantity instead."
 msgstr ""
-"Choisissez un produit pour l’ajouter ci-dessous. Si vous choisissez un "
-"produit déjà ajouté, sa quantité sera augmentée à la place."
+"Choisissez une offre pour l’ajouter ci-dessous. Si vous choisissez une offre "
+"déjà ajoutée, sa quantité sera augmentée à la place."
+
+#: templates/ops_portal/orders/order_form.html:82
+#| msgid "Product"
+msgid "Product offer"
+msgstr "Offre produit"
 
 #: templates/ops_portal/orders/order_form.html:103
-msgid "No products added yet. Use the selector above to add one."
+#| msgid "No products added yet. Use the selector above to add one."
+msgid "No offers added yet. Use the selector above to add one."
 msgstr ""
-"Aucun produit ajouté pour le moment. Utilisez le sélecteur ci-dessus pour en "
-"ajouter un."
+"Aucune offre ajoutée pour le moment. Utilisez le sélecteur ci-dessus pour en "
+"ajouter une."
 
 #: templates/ops_portal/orders/order_form.html:125
 msgid "Are you sure you want to cancel this order? This cannot be undone."
@@ -1661,6 +1667,27 @@ msgstr ""
 msgid "Send reset link"
 msgstr "Envoyer le lien de réinitialisation"
 
+#: templates/storefront/cart.html:71
+#, python-format
+msgid "%(price)s each"
+msgstr "%(price)s l’unité"
+
+#: templates/storefront/cart.html:77
+msgid "Total"
+msgstr "Total"
+
+#: templates/storefront/cart.html:184
+msgid "Subtotal"
+msgstr "Sous-total"
+
+#: templates/storefront/cart.html:193
+msgid "Delivery details are entered at checkout."
+msgstr "Les informations de livraison sont saisies lors de la validation de la commande."
+
+#: templates/storefront/cart.html:203
+msgid "Continue to checkout"
+msgstr "Continuer vers le paiement"
+
 #: templates/storefront/contact.html:7 templates/storefront/faq.html:18
 msgid "Contact us"
 msgstr "Nous contacter"
@@ -1692,6 +1719,43 @@ msgstr "Cette page est encore en cours de rédaction."
 #: templates/storefront/faq.html:20
 msgid "if you have a question in the meantime."
 msgstr "si vous avez une question en attendant."
+
+# | msgid "Choose products and quantities for your next order."
+#, python-format
+#~ msgid "%(product)s added to your order."
+#~ msgstr "%(product)s a été ajouté à votre commande."
+
+# | msgid "Recent orders"
+#~ msgid "Current order"
+#~ msgstr "Commande en cours"
+
+#~ msgid "Discard draft"
+#~ msgstr "Abandonner"
+
+#, python-format
+#~ msgid ""
+#~ "%(product)s was not added because %(quantity)s units are not currently "
+#~ "available."
+#~ msgstr ""
+#~ "%(product)s n’a pas été ajouté car %(quantity)s unités ne sont pas "
+#~ "disponibles actuellement."
+
+#, python-format
+#~ msgid "%(product)s could not be added to your current order."
+#~ msgstr "%(product)s n’a pas pu être ajouté à votre commande en cours."
+
+#~ msgid "Product removed from your order."
+#~ msgstr "Produit retiré de votre commande."
+
+#~ msgid "Draft order discarded."
+#~ msgstr "Brouillon de commande supprimé."
+
+#~ msgid "View your account details and order history."
+#~ msgstr ""
+#~ "Consultez les détails de votre compte et l’historique de vos commandes."
+
+#~ msgid "Review current order"
+#~ msgstr "Vérifier la commande en cours"
 
 #~ msgid "Order actions"
 #~ msgstr "Actions sur la commande"
@@ -1779,9 +1843,6 @@ msgstr "si vous avez une question en attendant."
 # | msgid "Store profile"
 #~ msgid "Store overview"
 #~ msgstr "Aperçu du magasin"
-
-#~ msgid "Remove"
-#~ msgstr "Retirer"
 
 #~ msgid "Add at least one product. Empty products are ignored."
 #~ msgstr "Ajoutez au moins un produit. Les lignes vides sont ignorées."
@@ -1874,9 +1935,6 @@ msgstr "si vous avez une question en attendant."
 
 #~ msgid "Draft order saved."
 #~ msgstr "Brouillon de commande enregistré."
-
-#~ msgid "Draft cleared."
-#~ msgstr "Brouillon de commande effacé."
 
 #~ msgid "Nothing to save."
 #~ msgstr "Rien à enregistrer."

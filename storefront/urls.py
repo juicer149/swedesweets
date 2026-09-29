@@ -22,6 +22,11 @@ urlpatterns = [
         name="product_detail",
     ),
     path(
+        "cart/",
+        cart_views.cart,
+        name="cart",
+    ),
+    path(
         "cart/add/<int:product_id>/",
         catalog_views.add_to_cart,
         name="add_to_cart",

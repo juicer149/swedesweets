@@ -133,6 +133,8 @@ def test_navbar_cart_quantity_updates_owned_line(
         "ok": True,
         "message": "Quantity updated.",
         "quantity": 3,
+        "line_total_label": "€30.00",
+        "subtotal_label": "€30.00",
     }
 
     line.refresh_from_db()

@@ -258,6 +258,25 @@
   line-height: 1.45;
 }
 
+.retail-cart-line__total {
+  margin-top: 0.25rem;
+  font-weight: 600;
+}
+
+.retail-cart-subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border, #e5e5e5);
+  font-size: 1.125rem;
+}
+
+.retail-cart-subtotal__note {
+  margin-top: 0.25rem;
+  text-align: right;
+}
 
 /* =============================================================================
    Pack checklist

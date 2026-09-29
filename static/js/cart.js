@@ -16,6 +16,7 @@
     {
       lineId,
       quantity,
+      payload = null,
     }
   ) {
     document.dispatchEvent(
@@ -26,6 +27,7 @@
             source: "current-order",
             lineId,
             quantity,
+            payload,
           },
         }
       )
@@ -148,6 +150,7 @@
       notifyCartChanged({
         lineId,
         quantity: savedQuantity,
+        payload,
       });
     } catch (error) {
       input.value = (

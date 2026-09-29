@@ -13,25 +13,35 @@ from django.shortcuts import (
 from django.utils.translation import gettext as _
 from django.views.decorators.http import (
     require_GET,
+    require_http_methods,
     require_POST,
 )
 
 from carts.models import Cart, CartLine
 from carts.services import (
     InvalidCart,
-    remove_cart_line as remove_cart_line_service,
+    clear_cart,
     update_cart_line_quantity,
 )
-from storefront.cart import (
-    mark_retail_cart_active,
+from carts.services import (
+    remove_cart_line as remove_cart_line_service,
 )
 from retail.cart_selectors import (
     get_retail_cart,
     get_retail_cart_line,
 )
+from storefront.cart import (
+    mark_retail_cart_active,
+)
+from storefront.cart_viewmodels import (
+    build_retail_cart_context,
+)
 from storefront.navbar_viewmodels import (
     build_retail_navbar_cart,
 )
+
+
+CLEAR_CART_INTENT = "clear_cart"
 
 
 class InvalidCartInput(ValueError):
@@ -118,6 +128,54 @@ def _parse_quantity(
         ) from exc
 
 
+@require_http_methods(
+    [
+        "GET",
+        "POST",
+    ]
+)
+def cart(
+    request: HttpRequest,
+):
+    cart = _get_request_cart(
+        request
+    )
+
+    if request.method == "POST":
+        intent = request.POST.get(
+            "intent"
+        )
+
+        if intent == CLEAR_CART_INTENT and cart is not None:
+            clear_cart(
+                cart=cart,
+            )
+
+            messages.success(
+                request,
+                _("Cart cleared."),
+            )
+        elif intent != CLEAR_CART_INTENT:
+            messages.error(
+                request,
+                _("Unknown cart action."),
+            )
+
+        return redirect(
+            "storefront:cart"
+        )
+
+    context = build_retail_cart_context(
+        cart=cart,
+    ).as_dict()
+
+    return render(
+        request,
+        "storefront/cart.html",
+        context,
+    )
+
+
 @require_GET
 def navbar_cart_fragment(
     request: HttpRequest,
@@ -199,11 +257,26 @@ def set_cart_line_quantity(
         )
 
         if _wants_json(request):
+            cart_context = build_retail_cart_context(
+                cart=cart,
+            )
+            line_view = cart_context.line(
+                updated_line.id
+            )
+
             return JsonResponse(
                 {
                     "ok": True,
                     "message": str(message),
                     "quantity": updated_line.quantity,
+                    "line_total_label": (
+                        line_view.line_total_label
+                        if line_view is not None
+                        else None
+                    ),
+                    "subtotal_label": (
+                        cart_context.subtotal_label
+                    ),
                 }
             )
 
@@ -213,7 +286,7 @@ def set_cart_line_quantity(
         )
 
     return redirect(
-        "storefront:product_list"
+        "storefront:cart"
     )
 
 
@@ -276,5 +349,5 @@ def remove_cart_line(
         )
 
     return redirect(
-        "storefront:product_list"
+        "storefront:cart"
     )

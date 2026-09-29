@@ -43,9 +43,9 @@ def build_retail_navbar_cart(
         fragment_url=reverse(
             "storefront:navbar_cart_fragment"
         ),
-        proceed_label=_("Continue shopping"),
+        proceed_label=_("Go to cart"),
         proceed_url=reverse(
-            "storefront:product_list"
+            "storefront:cart"
         ),
         empty_message=_(
             "Your cart is empty."
