@@ -403,6 +403,29 @@ SUMUP_MERCHANT_CODE = (
     )
 )
 
+PAYMENT_PROVIDER_SUMUP = "sumup"
+PAYMENT_PROVIDER_FAKE = "fake"
+
+PAYMENT_PROVIDER = os.environ.get(
+    "PAYMENT_PROVIDER",
+    PAYMENT_PROVIDER_SUMUP,
+).strip().lower()
+
+if PAYMENT_PROVIDER not in {
+    PAYMENT_PROVIDER_SUMUP,
+    PAYMENT_PROVIDER_FAKE,
+}:
+    raise RuntimeError(
+        f"Unknown PAYMENT_PROVIDER {PAYMENT_PROVIDER!r}."
+    )
+
+# The fake provider accepts orders without taking money. It must never be
+# reachable outside local development.
+if PAYMENT_PROVIDER == PAYMENT_PROVIDER_FAKE and not DEBUG:
+    raise RuntimeError(
+        "The fake payment provider is only allowed when DEBUG is true."
+    )
+
 
 # =============================================================================
 # Internationalization

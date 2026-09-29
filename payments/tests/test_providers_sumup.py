@@ -382,6 +382,7 @@ def test_missing_credentials_are_a_hosted_payment_configuration_error(settings):
     )
     from payments.providers.factory import get_default_hosted_payment_provider
 
+    settings.PAYMENT_PROVIDER = "sumup"
     settings.SUMUP_API_KEY = ""
     settings.SUMUP_MERCHANT_CODE = ""
 

@@ -65,6 +65,7 @@ GLOBAL_AUTH_EXEMPT_VIEWS = frozenset(
     {
         "index",
         "payments:sumup_webhook",
+        "payments:fake_checkout",
     }
 )
 

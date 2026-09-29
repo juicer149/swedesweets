@@ -630,6 +630,7 @@ def test_unconfigured_provider_leaves_no_pending_attempt(
     cart,
     settings,
 ):
+    settings.PAYMENT_PROVIDER = "sumup"
     settings.SUMUP_API_KEY = ""
     settings.SUMUP_MERCHANT_CODE = ""
 
@@ -649,3 +650,90 @@ def test_unconfigured_provider_leaves_no_pending_attempt(
     assert "payment in progress" not in str(
         list(retry.wsgi_request._messages)
     )
+
+
+def _pay_with_fake_provider(client, checkout, outcome: str):
+    pay = client.post(
+        _pay_url(checkout)
+    )
+
+    assert pay.status_code == 302
+    assert pay.url.startswith("/payments/fake/")
+    assert client.get(pay.url).status_code == 200
+
+    back = client.post(
+        pay.url,
+        {
+            "outcome": outcome,
+        },
+    )
+
+    assert back.url == "http://testserver" + _return_url(checkout)
+
+    return client.get(
+        _return_url(checkout)
+    )
+
+
+@pytest.mark.django_db
+def test_fake_payment_success_places_order_and_consumes_cart(
+    client,
+    cart,
+    settings,
+):
+    settings.PAYMENT_PROVIDER = "fake"
+    checkout = _created_checkout(client)
+
+    result = _pay_with_fake_provider(
+        client,
+        checkout,
+        "pay",
+    )
+
+    checkout.order.refresh_from_db()
+
+    assert result.context["result"] == "confirmed"
+    assert checkout.order.status == Order.Status.PLACED
+    assert not Cart.objects.filter(pk=cart.pk).exists()
+
+
+@pytest.mark.django_db
+def test_fake_payment_decline_keeps_cart_and_offers_retry(
+    client,
+    cart,
+    settings,
+):
+    settings.PAYMENT_PROVIDER = "fake"
+    checkout = _created_checkout(client)
+
+    result = _pay_with_fake_provider(
+        client,
+        checkout,
+        "decline",
+    )
+
+    checkout.order.refresh_from_db()
+
+    assert result.context["result"] == "failed"
+    assert result.context["retry_url"] == _pay_url(checkout)
+    assert checkout.order.status == Order.Status.DRAFT
+    assert Cart.objects.filter(pk=cart.pk).exists()
+
+
+@pytest.mark.django_db
+def test_fake_checkout_page_is_hidden_when_provider_is_sumup(
+    client,
+    settings,
+):
+    settings.PAYMENT_PROVIDER = "sumup"
+
+    response = client.get(
+        reverse(
+            "payments:fake_checkout",
+            kwargs={
+                "payment_id": "fake-anything",
+            },
+        )
+    )
+
+    assert response.status_code == 404

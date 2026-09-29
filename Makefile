@@ -1,3 +1,7 @@
+# Load local settings from .env when present (see .env.example).
+-include .env
+export
+
 PYTHON := .venv/bin/python
 PIP := .venv/bin/pip
 MANAGE := $(PYTHON) manage.py
