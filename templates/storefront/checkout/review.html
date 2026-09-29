@@ -129,6 +129,7 @@
       <button
         class="button button--md button--solid button--tone-place"
         type="submit"
+        data-submitting-label="{% trans 'Redirecting to secure payment…' %}"
       >
         {% blocktrans with total=total_label %}Pay {{ total }}{% endblocktrans %}
       </button>

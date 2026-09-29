@@ -7,6 +7,15 @@
       .forEach((button) => {
         button.disabled = submitting;
 
+        if (button.dataset.submittingLabel) {
+          if (submitting) {
+            button.dataset.idleLabel = button.textContent;
+            button.textContent = button.dataset.submittingLabel;
+          } else if (button.dataset.idleLabel) {
+            button.textContent = button.dataset.idleLabel;
+          }
+        }
+
         if (submitting) {
           button.setAttribute("aria-busy", "true");
         } else {

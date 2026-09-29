@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-29 19:25+0200\n"
+"POT-Creation-Date: 2026-09-29 20:48+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -925,7 +925,9 @@ msgstr "Saisissez votre numéro de téléphone."
 
 #: storefront/checkout_forms.py:87
 msgid "Street and number, plus your village if you have one (e.g. Argentière)."
-msgstr "Rue et numéro, ainsi que votre village si vous en avez un (p. ex. Argentière)."
+msgstr ""
+"Rue et numéro, ainsi que votre village si vous en avez un (p. ex. "
+"Argentière)."
 
 #: storefront/checkout_forms.py:91
 msgid "Enter your street address."
@@ -1897,12 +1899,16 @@ msgstr "Prix"
 msgid "Edit details"
 msgstr "Modifier les informations"
 
-#: templates/storefront/checkout/review.html:133
+#: templates/storefront/checkout/review.html:132
+msgid "Redirecting to secure payment…"
+msgstr "Redirection vers le paiement sécurisé…"
+
+#: templates/storefront/checkout/review.html:134
 #, python-format
 msgid "Pay %(total)s"
 msgstr "Payer %(total)s"
 
-#: templates/storefront/checkout/review.html:138
+#: templates/storefront/checkout/review.html:139
 msgid "You will be redirected to SumUp to pay securely by card."
 msgstr "Vous serez redirigé vers SumUp pour payer par carte en toute sécurité."
 
