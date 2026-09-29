@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-29 15:55+0200\n"
+"POT-Creation-Date: 2026-09-29 16:15+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -341,12 +341,13 @@ msgstr "Panier"
 
 # | msgid "Choose products and quantities for your next order."
 #: business_portal/orders/cart_viewmodels.py:68
-#| msgid "Review the products and quantities in your current order."
 msgid "Review the products and quantities in your cart."
 msgstr "Vérifiez les produits et les quantités dans votre panier."
 
 #: business_portal/orders/cart_viewmodels.py:70
 #: business_portal/orders/review_viewmodels.py:81
+#: templates/storefront/checkout/review.html:4
+#: templates/storefront/checkout/review.html:7
 msgid "Review order"
 msgstr "Vérifier la commande"
 
@@ -379,6 +380,7 @@ msgstr "Commande"
 #: templates/business_portal/orders/cart.html:199
 #: templates/business_portal/orders/review.html:21
 #: templates/storefront/cart.html:23 templates/storefront/cart.html:223
+#: templates/storefront/checkout/review.html:20
 msgid "Items"
 msgstr "Articles"
 
@@ -481,8 +483,6 @@ msgstr "Autre"
 
 #: business_portal/orders/repeat_views.py:51
 #, python-format
-#| msgid "%(count)s order item was added to your current order."
-#| msgid_plural "%(count)s order items were added to your current order."
 msgid "%(count)s order item was added to your cart."
 msgid_plural "%(count)s order items were added to your cart."
 msgstr[0] "%(count)s article a été ajouté à votre panier."
@@ -515,11 +515,11 @@ msgid "Quantity must be a whole number."
 msgstr "La quantité doit être un nombre entier."
 
 # | msgid "Quantity"
-#: business_portal/orders/views.py:171 storefront/cart_views.py:256
+#: business_portal/orders/views.py:171 storefront/cart_views.py:258
 msgid "Quantity updated."
 msgstr "Quantité mise à jour."
 
-#: business_portal/orders/views.py:235 storefront/cart_views.py:335
+#: business_portal/orders/views.py:235 storefront/cart_views.py:337
 msgid "Product removed from your cart."
 msgstr "Produit retiré de votre panier."
 
@@ -529,8 +529,7 @@ msgid "Unknown order action."
 msgstr "Action non reconnue pour cette commande."
 
 #: business_portal/orders/views.py:313 business_portal/orders/views.py:409
-#: storefront/cart_views.py:156
-#| msgid "Draft cleared."
+#: storefront/cart_views.py:157
 msgid "Cart cleared."
 msgstr "Panier vidé."
 
@@ -539,7 +538,6 @@ msgid "Add at least one product."
 msgstr "Ajoutez au moins un produit."
 
 #: business_portal/orders/views.py:376
-#| msgid "No draft order to review."
 msgid "No cart to review."
 msgstr "Aucun panier à vérifier."
 
@@ -561,7 +559,7 @@ msgstr "Saisissez le nom du magasin."
 msgid "Store name is too long."
 msgstr "Le nom du magasin est trop long."
 
-#: business_portal/store/forms.py:43
+#: business_portal/store/forms.py:43 storefront/checkout_forms.py:50
 #: templates/accounts/includes/detail_panel_account.html:5
 #: templates/business_portal/includes/account_details_panel.html:36
 #: templates/storefront/contact.html:20
@@ -572,7 +570,7 @@ msgstr "E-mail"
 msgid "Enter an email address."
 msgstr "Saisissez une adresse e-mail."
 
-#: business_portal/store/forms.py:49
+#: business_portal/store/forms.py:49 storefront/checkout_forms.py:54
 msgid "Enter a valid email address."
 msgstr "Saisissez une adresse e-mail valide."
 
@@ -580,7 +578,7 @@ msgstr "Saisissez une adresse e-mail valide."
 msgid "Email address is too long."
 msgstr "L’adresse e-mail est trop longue."
 
-#: business_portal/store/forms.py:64
+#: business_portal/store/forms.py:64 storefront/checkout_forms.py:65
 #: templates/business_portal/includes/account_details_panel.html:46
 msgid "Phone number"
 msgstr "Numéro de téléphone"
@@ -606,7 +604,7 @@ msgstr "Choisissez un pays."
 msgid "Choose a valid country."
 msgstr "Choisissez un pays valide."
 
-#: business_portal/store/forms.py:102
+#: business_portal/store/forms.py:102 storefront/checkout_forms.py:108
 #: templates/business_portal/includes/account_details_panel.html:66
 msgid "City"
 msgstr "Ville"
@@ -619,7 +617,7 @@ msgstr "Saisissez une ville."
 msgid "City is too long."
 msgstr "La ville est trop longue."
 
-#: business_portal/store/forms.py:120
+#: business_portal/store/forms.py:120 storefront/checkout_forms.py:81
 #: templates/business_portal/includes/account_details_panel.html:56
 msgid "Address"
 msgstr "Adresse"
@@ -700,7 +698,6 @@ msgstr ""
 
 #: ops_portal/orders/forms.py:116
 #, python-format
-#| msgid "%(product_label)s · %(available_quantity)s left"
 msgid "%(offer_label)s · %(available_quantity)s left"
 msgstr "%(offer_label)s · stock restant : %(available_quantity)s"
 
@@ -871,8 +868,7 @@ msgstr "Réservée"
 msgid "Consumed"
 msgstr "Consommée"
 
-#: storefront/cart_views.py:161
-#| msgid "Unknown order action."
+#: storefront/cart_views.py:162
 msgid "Unknown cart action."
 msgstr "Action non reconnue pour ce panier."
 
@@ -894,6 +890,99 @@ msgstr ""
 "Les actions du panier ne sont pas disponibles pour les clients "
 "professionnels."
 
+#: storefront/checkout_forms.py:24
+#| msgid "Store name"
+msgid "First name"
+msgstr "Prénom"
+
+#: storefront/checkout_forms.py:26
+#| msgid "Enter the store name."
+msgid "Enter your first name."
+msgstr "Saisissez votre prénom."
+
+#: storefront/checkout_forms.py:37
+#| msgid "Store name"
+msgid "Last name"
+msgstr "Nom"
+
+#: storefront/checkout_forms.py:39
+#| msgid "Enter the store name."
+msgid "Enter your last name."
+msgstr "Saisissez votre nom."
+
+#: storefront/checkout_forms.py:51
+msgid "We send your order confirmation here."
+msgstr "Nous envoyons votre confirmation de commande à cette adresse."
+
+#: storefront/checkout_forms.py:53
+#| msgid "Enter an email address."
+msgid "Enter your email address."
+msgstr "Saisissez votre adresse e-mail."
+
+#: storefront/checkout_forms.py:66
+msgid "Used only if we need to reach you about delivery."
+msgstr "Utilisé uniquement si nous devons vous contacter au sujet de la livraison."
+
+#: storefront/checkout_forms.py:68
+#| msgid "Enter a phone number."
+msgid "Enter your phone number."
+msgstr "Saisissez votre numéro de téléphone."
+
+#: storefront/checkout_forms.py:83
+#| msgid "Enter a street address."
+msgid "Enter your street address."
+msgstr "Saisissez votre adresse."
+
+#: storefront/checkout_forms.py:94
+#| msgid "Total orders"
+msgid "Postal code"
+msgstr "Code postal"
+
+#: storefront/checkout_forms.py:96
+msgid "Enter your postal code."
+msgstr "Saisissez votre code postal."
+
+#: storefront/checkout_forms.py:110
+#| msgid "Enter a city."
+msgid "Enter your city."
+msgstr "Saisissez votre ville."
+
+#: storefront/checkout_forms.py:144
+#| msgid "Store name is too long."
+msgid "Your full name is too long."
+msgstr "Votre nom complet est trop long."
+
+#: storefront/checkout_forms.py:162
+msgid ""
+"We don't deliver to this postal code and city yet. Check the spelling of the "
+"city."
+msgstr "Nous ne livrons pas encore dans cette ville pour ce code postal. Vérifiez l’orthographe de la ville."
+
+# | msgid "No orders yet"
+#: storefront/checkout_views.py:65 storefront/navbar_viewmodels.py:51
+#: storefront/navbar_viewmodels.py:76 templates/storefront/cart.html:229
+msgid "Your cart is empty."
+msgstr "Votre panier est vide."
+
+#: storefront/checkout_views.py:92
+msgid "You already have a payment in progress for this cart."
+msgstr "Un paiement est déjà en cours pour ce panier."
+
+#: storefront/checkout_views.py:114
+msgid ""
+"Some items in your cart are no longer available. Review your cart and try "
+"again."
+msgstr "Certains articles de votre panier ne sont plus disponibles. Vérifiez votre panier et réessayez."
+
+#: storefront/checkout_views.py:182
+msgid ""
+"This checkout was replaced by a newer one. Please confirm your details again."
+msgstr "Cette validation de commande a été remplacée par une plus récente. Veuillez confirmer à nouveau vos informations."
+
+#: storefront/checkout_views.py:201
+msgid "Your checkout has expired. Please confirm your details again."
+msgstr "Votre session de validation a expiré. Veuillez confirmer à nouveau vos informations."
+
 #: storefront/navbar_viewmodels.py:39 storefront/navbar_viewmodels.py:40
 #: storefront/navbar_viewmodels.py:64 storefront/navbar_viewmodels.py:65
 msgid "Shopping cart"
@@ -901,15 +990,8 @@ msgstr "Panier"
 
 # | msgid "Edit order"
 #: storefront/navbar_viewmodels.py:46
-#| msgid "Add to cart"
 msgid "Go to cart"
 msgstr "Aller au panier"
-
-# | msgid "No orders yet"
-#: storefront/navbar_viewmodels.py:51 storefront/navbar_viewmodels.py:76
-#: templates/storefront/cart.html:229
-msgid "Your cart is empty."
-msgstr "Votre panier est vide."
 
 # | msgid "Customer catalog"
 #: storefront/navbar_viewmodels.py:54 storefront/navbar_viewmodels.py:79
@@ -1090,6 +1172,7 @@ msgstr "Offre"
 #: templates/storefront/catalog/index.html:253
 #: templates/storefront/catalog/index.html:258
 #: templates/storefront/catalog/index.html:277
+#: templates/storefront/checkout/review.html:43
 msgid "Quantity"
 msgstr "Quantité"
 
@@ -1143,6 +1226,7 @@ msgstr "Aucune offre n’est disponible actuellement."
 #: templates/business_portal/orders/includes/detail_panel_items.html:9
 #: templates/business_portal/orders/review.html:42
 #: templates/storefront/cart.html:40
+#: templates/storefront/checkout/review.html:36
 msgid "Product"
 msgstr "Produit"
 
@@ -1466,7 +1550,6 @@ msgstr ""
 "Sélectionnez une ligne d’activité pour ouvrir l’enregistrement concerné."
 
 #: templates/ops_portal/orders/includes/order_line_form.html:76
-#| msgid "Remove"
 msgid "Remove offer"
 msgstr "Retirer l’offre"
 
@@ -1475,9 +1558,6 @@ msgid "Order products"
 msgstr "Produits de la commande"
 
 #: templates/ops_portal/orders/order_form.html:63
-#| msgid ""
-#| "Choose a product to add it below. Choosing a product that's already added "
-#| "increases its quantity instead."
 msgid ""
 "Choose an offer to add it below. Choosing an offer that's already added "
 "increases its quantity instead."
@@ -1486,12 +1566,10 @@ msgstr ""
 "déjà ajoutée, sa quantité sera augmentée à la place."
 
 #: templates/ops_portal/orders/order_form.html:82
-#| msgid "Product"
 msgid "Product offer"
 msgstr "Offre produit"
 
 #: templates/ops_portal/orders/order_form.html:103
-#| msgid "No products added yet. Use the selector above to add one."
 msgid "No offers added yet. Use the selector above to add one."
 msgstr ""
 "Aucune offre ajoutée pour le moment. Utilisez le sélecteur ci-dessus pour en "
@@ -1673,20 +1751,62 @@ msgid "%(price)s each"
 msgstr "%(price)s l’unité"
 
 #: templates/storefront/cart.html:77
+#: templates/storefront/checkout/review.html:57
+#: templates/storefront/checkout/review.html:88
 msgid "Total"
 msgstr "Total"
 
 #: templates/storefront/cart.html:184
+#: templates/storefront/checkout/details.html:46
 msgid "Subtotal"
 msgstr "Sous-total"
 
 #: templates/storefront/cart.html:193
 msgid "Delivery details are entered at checkout."
-msgstr "Les informations de livraison sont saisies lors de la validation de la commande."
+msgstr ""
+"Les informations de livraison sont saisies lors de la validation de la "
+"commande."
 
 #: templates/storefront/cart.html:203
 msgid "Continue to checkout"
 msgstr "Continuer vers le paiement"
+
+#: templates/storefront/checkout/details.html:4
+msgid "Checkout"
+msgstr "Paiement"
+
+#: templates/storefront/checkout/details.html:7
+#: templates/storefront/checkout/review.html:101
+#| msgid "Order details"
+msgid "Delivery details"
+msgstr "Informations de livraison"
+
+#: templates/storefront/checkout/details.html:13
+#| msgid "Continue to checkout"
+msgid "Continue to review"
+msgstr "Continuer vers la vérification"
+
+# | msgid "Recent orders"
+#: templates/storefront/checkout/details.html:18
+#| msgid "Current order"
+msgid "Your order"
+msgstr "Votre commande"
+
+# | msgid "Edit order"
+#: templates/storefront/checkout/details.html:25
+#: templates/storefront/checkout/review.html:27
+#| msgid "Add to cart"
+msgid "Edit cart"
+msgstr "Modifier le panier"
+
+#: templates/storefront/checkout/review.html:50
+msgid "Price"
+msgstr "Prix"
+
+#: templates/storefront/checkout/review.html:108
+#| msgid "Order details"
+msgid "Edit details"
+msgstr "Modifier les informations"
 
 #: templates/storefront/contact.html:7 templates/storefront/faq.html:18
 msgid "Contact us"
@@ -1724,10 +1844,6 @@ msgstr "si vous avez une question en attendant."
 #, python-format
 #~ msgid "%(product)s added to your order."
 #~ msgstr "%(product)s a été ajouté à votre commande."
-
-# | msgid "Recent orders"
-#~ msgid "Current order"
-#~ msgstr "Commande en cours"
 
 #~ msgid "Discard draft"
 #~ msgstr "Abandonner"
@@ -1902,9 +2018,6 @@ msgstr "si vous avez une question en attendant."
 #~ msgstr ""
 #~ "Passez de nouvelles commandes, consultez votre historique et suivez "
 #~ "l’activité récente."
-
-#~ msgid "Total orders"
-#~ msgstr "Total des commandes"
 
 #~ msgid "All orders placed with SwedeSweets"
 #~ msgstr "Toutes les commandes passées avec SwedeSweets"

@@ -1,0 +1,121 @@
+{% extends "storefront/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Review order" %} | SwedeSweets{% endblock %}
+
+{% block content %}
+{% include "includes/ui/page_header.html" with title_id="storefront-review-title" title=_("Review order") %}
+
+<section
+  class="form-section form-section--wide"
+  aria-labelledby="storefront-review-title"
+>
+  <div class="form-card form-card--wide portal-place-order-card">
+    <section
+      class="order-lines"
+      aria-labelledby="storefront-review-items-title"
+    >
+      <div class="order-lines__header order-lines__header--with-action">
+        <h2 id="storefront-review-items-title">
+          {% trans "Items" %}
+        </h2>
+
+        <a
+          class="button button--text button--tone-neutral"
+          href="{{ cart_url }}"
+        >
+          {% trans "Edit cart" %}
+        </a>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">
+                {% trans "Product" %}
+              </th>
+
+              <th
+                scope="col"
+                class="table-cell--numeric"
+              >
+                {% trans "Quantity" %}
+              </th>
+
+              <th
+                scope="col"
+                class="table-cell--numeric"
+              >
+                {% trans "Price" %}
+              </th>
+
+              <th
+                scope="col"
+                class="table-cell--numeric"
+              >
+                {% trans "Total" %}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for line in lines %}
+              <tr>
+                <td>
+                  {{ line.product_label }}
+                </td>
+
+                <td class="table-cell--numeric">
+                  {{ line.quantity }}
+                </td>
+
+                <td class="table-cell--numeric">
+                  {{ line.unit_price_label }}
+                </td>
+
+                <td class="table-cell--numeric">
+                  {{ line.line_total_label }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="retail-cart-subtotal">
+        <span>
+          {% trans "Total" %}
+        </span>
+
+        <strong>
+          {{ total_label }}
+        </strong>
+      </div>
+    </section>
+  </div>
+
+  <div class="form-card form-card--wide retail-checkout-buyer">
+    <div class="order-lines__header order-lines__header--with-action">
+      <h2>
+        {% trans "Delivery details" %}
+      </h2>
+
+      <a
+        class="button button--text button--tone-neutral"
+        href="{{ edit_details_url }}"
+      >
+        {% trans "Edit details" %}
+      </a>
+    </div>
+
+    <address class="retail-checkout-buyer__address">
+      <strong>{{ buyer.name }}</strong><br>
+      {{ buyer.address_line }}<br>
+      {{ buyer.postal_code }} {{ buyer.city }}<br>
+      {{ buyer.email }}<br>
+      {{ buyer.phone_number }}
+    </address>
+  </div>
+</section>
+{% endblock %}

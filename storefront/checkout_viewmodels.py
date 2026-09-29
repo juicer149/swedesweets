@@ -1,0 +1,115 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from decimal import Decimal
+from typing import Any
+
+from django.urls import reverse
+
+from retail.models import RetailCheckoutSession
+
+
+@dataclass(frozen=True, slots=True)
+class CheckoutReviewLine:
+    product_label: str
+    quantity: int
+    unit_price_label: str
+    line_total_label: str
+
+
+@dataclass(frozen=True, slots=True)
+class CheckoutBuyer:
+    name: str
+    email: str
+    phone_number: str
+    address_line: str
+    postal_code: str
+    city: str
+
+
+@dataclass(frozen=True, slots=True)
+class CheckoutReviewContext:
+    lines: tuple[CheckoutReviewLine, ...]
+    total_label: str
+    buyer: CheckoutBuyer
+    edit_details_url: str
+    cart_url: str
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "lines": self.lines,
+            "total_label": self.total_label,
+            "buyer": self.buyer,
+            "edit_details_url": self.edit_details_url,
+            "cart_url": self.cart_url,
+        }
+
+
+def build_checkout_review_context(
+    *,
+    checkout: RetailCheckoutSession,
+) -> CheckoutReviewContext:
+    order = checkout.order
+
+    order_lines = list(
+        order.lines
+        .select_related(
+            "product",
+        )
+        .order_by("id")
+    )
+
+    lines: list[CheckoutReviewLine] = []
+    total = Decimal("0.00")
+
+    for line in order_lines:
+        quantity = int(
+            line.quantity_in_units
+        )
+        line_total = (
+            line.unit_price_snapshot
+            * quantity
+        )
+        total += line_total
+
+        lines.append(
+            CheckoutReviewLine(
+                product_label=line.product.display_name,
+                quantity=quantity,
+                unit_price_label=_format_eur(
+                    line.unit_price_snapshot
+                ),
+                line_total_label=_format_eur(
+                    line_total
+                ),
+            )
+        )
+
+    return CheckoutReviewContext(
+        lines=tuple(
+            lines
+        ),
+        total_label=_format_eur(
+            total
+        ),
+        buyer=CheckoutBuyer(
+            name=order.buyer_name_snapshot,
+            email=order.buyer_email_snapshot,
+            phone_number=order.buyer_phone_snapshot,
+            address_line=order.buyer_address_line_snapshot,
+            postal_code=order.buyer_postal_code_snapshot,
+            city=order.buyer_city_snapshot,
+        ),
+        edit_details_url=reverse(
+            "storefront:checkout"
+        ),
+        cart_url=reverse(
+            "storefront:cart"
+        ),
+    )
+
+
+def _format_eur(
+    value: Decimal,
+) -> str:
+    return f"€{value:.2f}"

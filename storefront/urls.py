@@ -3,6 +3,7 @@ from django.urls import path
 from storefront import (
     cart_views,
     views,
+    checkout_views,
 )
 from storefront.catalog import views as catalog_views
 
@@ -45,6 +46,16 @@ urlpatterns = [
         "cart/lines/<int:cart_line_id>/remove/",
         cart_views.remove_cart_line,
         name="remove_cart_line",
+    ),
+    path(
+        "checkout/",
+        checkout_views.checkout_details,
+        name="checkout",
+    ),
+    path(
+        "checkout/<uuid:checkout_id>/",
+        checkout_views.checkout_review,
+        name="checkout_review",
     ),
     path(
         "payment/<uuid:checkout_id>/return/",

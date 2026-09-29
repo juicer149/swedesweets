@@ -10,6 +10,7 @@ from django.shortcuts import (
     redirect,
     render,
 )
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import (
     require_GET,
@@ -167,6 +168,7 @@ def cart(
 
     context = build_retail_cart_context(
         cart=cart,
+        checkout_url=reverse("storefront:checkout"),
     ).as_dict()
 
     return render(

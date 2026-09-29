@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
+from uuid import UUID
 
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -12,6 +13,7 @@ from pricing.selectors import (
     get_product_price_amount,
     list_orderable_batches_for_offer,
 )
+from retail.models import RetailCheckoutSession
 
 
 def list_batches_for_retail_price(
@@ -78,5 +80,21 @@ def get_batch_for_retail_price(
             today=today,
         )
         .select_related("product")
+        .first()
+    )
+
+
+def get_retail_checkout(
+    *,
+    checkout_id: UUID,
+) -> RetailCheckoutSession | None:
+    return (
+        RetailCheckoutSession.objects
+        .select_related(
+            "order",
+        )
+        .filter(
+            pk=checkout_id,
+        )
         .first()
     )

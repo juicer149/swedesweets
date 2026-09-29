@@ -278,6 +278,29 @@
   text-align: right;
 }
 
+.retail-checkout-summary,
+.retail-checkout-buyer {
+  margin-top: 1.5rem;
+}
+
+.retail-checkout-summary__lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.retail-checkout-summary__line {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.retail-checkout-buyer__address {
+  font-style: normal;
+  line-height: 1.6;
+}
+
 /* =============================================================================
    Pack checklist
 

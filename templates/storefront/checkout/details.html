@@ -1,0 +1,56 @@
+{% extends "storefront/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Checkout" %} | SwedeSweets{% endblock %}
+
+{% block content %}
+{% include "includes/ui/page_header.html" with title_id="storefront-checkout-title" title=_("Delivery details") %}
+
+<section
+  class="form-section form-section--wide"
+  aria-labelledby="storefront-checkout-title"
+>
+  {% include "includes/ui/form.html" with form=form submit_label=_("Continue to review") cancel_url=cart_url %}
+
+  <div class="form-card form-card--wide portal-place-order-card retail-checkout-summary">
+    <div class="order-lines__header order-lines__header--with-action">
+      <h2>
+        {% trans "Your order" %}
+      </h2>
+
+      <a
+        class="button button--text button--tone-neutral"
+        href="{{ cart_url }}"
+      >
+        {% trans "Edit cart" %}
+      </a>
+    </div>
+
+    <ul class="retail-checkout-summary__lines">
+      {% for line in cart_summary.cart_lines %}
+        <li class="retail-checkout-summary__line">
+          <span>
+            {{ line.quantity }} × {{ line.product_label }}
+          </span>
+
+          <span>
+            {{ line.line_total_label }}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if cart_summary.subtotal_label %}
+      <div class="retail-cart-subtotal">
+        <span>
+          {% trans "Subtotal" %}
+        </span>
+
+        <strong>
+          {{ cart_summary.subtotal_label }}
+        </strong>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
