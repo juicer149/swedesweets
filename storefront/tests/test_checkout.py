@@ -562,3 +562,63 @@ def test_provider_error_without_new_attempt_ignores_old_failed_attempt(
     )
 
     assert response.url == _review_url(checkout)
+
+
+@pytest.mark.django_db
+def test_city_lookup_returns_towns_for_postal_code(client, db):
+    retail_postal_area_factory(
+        postal_code="74400",
+        city="Chamonix-Mont-Blanc",
+    )
+
+    response = client.get(
+        reverse("storefront:checkout_cities"),
+        {
+            "postal_code": "74400",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "cities": ["Chamonix-Mont-Blanc"],
+    }
+
+
+@pytest.mark.django_db
+def test_city_lookup_returns_empty_list_for_unknown_postal_code(client, db):
+    response = client.get(
+        reverse("storefront:checkout_cities"),
+        {
+            "postal_code": "75001",
+        },
+    )
+
+    assert response.json() == {
+        "cities": [],
+    }
+
+
+@pytest.mark.django_db
+def test_details_store_official_town_spelling(client, cart):
+    _submit_details(
+        client,
+        city="ANNECY",
+    )
+
+    checkout = RetailCheckoutSession.objects.get()
+
+    assert checkout.order.buyer_city_snapshot == "Annecy"
+
+
+@pytest.mark.django_db
+def test_wrong_town_for_known_postal_code_is_a_city_error(client, cart):
+    response = _submit_details(
+        client,
+        city="Chamonix",
+    )
+
+    form = response.context["form"]
+
+    assert form.has_error("city")
+    assert not form.has_error("postal_code")
+    assert "Annecy" in str(form.errors["city"])

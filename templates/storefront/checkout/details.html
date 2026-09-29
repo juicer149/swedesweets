@@ -1,5 +1,5 @@
 {% extends "storefront/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% trans "Checkout" %} | SwedeSweets{% endblock %}
 
@@ -53,4 +53,13 @@
     {% endif %}
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+
+  <script
+    src="{% static 'js/checkout-city-lookup.js' %}"
+    defer
+  ></script>
 {% endblock %}

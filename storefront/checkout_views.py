@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.http import (
     Http404,
     HttpRequest,
+    JsonResponse,
 )
 from django.shortcuts import (
     redirect,
@@ -27,6 +28,7 @@ from payments.contracts import HostedPaymentError
 from payments.selectors import (
     get_pending_payment_attempt,
 )
+from retail.delivery_areas import RETAIL_SERVICE_COUNTRY
 from retail.cart_selectors import get_retail_cart
 from retail.errors import (
     InvalidRetailCart,
@@ -35,6 +37,7 @@ from retail.errors import (
 )
 from retail.models import RetailCheckoutSession
 from retail.payments import begin_retail_hosted_payment
+from retail.rules import list_retail_cities_for_postal_code
 from retail.selectors import get_retail_checkout
 from retail.services import create_retail_checkout_from_cart
 from storefront.cart_viewmodels import build_retail_cart_context
@@ -72,6 +75,30 @@ def _get_owned_checkout_or_404(
         )
 
     return checkout
+
+
+@require_GET
+def checkout_cities(
+    request: HttpRequest,
+):
+    """Return deliverable town names for one postal code.
+
+    Public reference data used to prefill the town on the checkout form.
+    """
+
+    postal_code = request.GET.get(
+        "postal_code",
+        "",
+    )
+
+    return JsonResponse(
+        {
+            "cities": list_retail_cities_for_postal_code(
+                country_code=RETAIL_SERVICE_COUNTRY,
+                postal_code=postal_code,
+            ),
+        }
+    )
 
 
 @require_http_methods(

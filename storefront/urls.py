@@ -48,6 +48,11 @@ urlpatterns = [
         name="remove_cart_line",
     ),
     path(
+        "checkout/cities/",
+        checkout_views.checkout_cities,
+        name="checkout_cities",
+    ),
+    path(
         "checkout/",
         checkout_views.checkout_details,
         name="checkout",

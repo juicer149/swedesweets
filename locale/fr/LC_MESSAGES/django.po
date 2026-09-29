@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-29 17:30+0200\n"
+"POT-Creation-Date: 2026-09-29 19:25+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -559,7 +559,7 @@ msgstr "Saisissez le nom du magasin."
 msgid "Store name is too long."
 msgstr "Le nom du magasin est trop long."
 
-#: business_portal/store/forms.py:43 storefront/checkout_forms.py:50
+#: business_portal/store/forms.py:43 storefront/checkout_forms.py:54
 #: templates/accounts/includes/detail_panel_account.html:5
 #: templates/business_portal/includes/account_details_panel.html:36
 #: templates/storefront/contact.html:20
@@ -570,7 +570,7 @@ msgstr "E-mail"
 msgid "Enter an email address."
 msgstr "Saisissez une adresse e-mail."
 
-#: business_portal/store/forms.py:49 storefront/checkout_forms.py:54
+#: business_portal/store/forms.py:49 storefront/checkout_forms.py:58
 msgid "Enter a valid email address."
 msgstr "Saisissez une adresse e-mail valide."
 
@@ -578,7 +578,7 @@ msgstr "Saisissez une adresse e-mail valide."
 msgid "Email address is too long."
 msgstr "L’adresse e-mail est trop longue."
 
-#: business_portal/store/forms.py:64 storefront/checkout_forms.py:65
+#: business_portal/store/forms.py:64 storefront/checkout_forms.py:69
 #: templates/business_portal/includes/account_details_panel.html:46
 msgid "Phone number"
 msgstr "Numéro de téléphone"
@@ -604,7 +604,7 @@ msgstr "Choisissez un pays."
 msgid "Choose a valid country."
 msgstr "Choisissez un pays valide."
 
-#: business_portal/store/forms.py:102 storefront/checkout_forms.py:108
+#: business_portal/store/forms.py:102
 #: templates/business_portal/includes/account_details_panel.html:66
 msgid "City"
 msgstr "Ville"
@@ -617,7 +617,7 @@ msgstr "Saisissez une ville."
 msgid "City is too long."
 msgstr "La ville est trop longue."
 
-#: business_portal/store/forms.py:120 storefront/checkout_forms.py:81
+#: business_portal/store/forms.py:120 storefront/checkout_forms.py:85
 #: templates/business_portal/includes/account_details_panel.html:56
 msgid "Address"
 msgstr "Adresse"
@@ -890,78 +890,90 @@ msgstr ""
 "Les actions du panier ne sont pas disponibles pour les clients "
 "professionnels."
 
-#: storefront/checkout_forms.py:24
+#: storefront/checkout_forms.py:28
 msgid "First name"
 msgstr "Prénom"
 
-#: storefront/checkout_forms.py:26
+#: storefront/checkout_forms.py:30
 msgid "Enter your first name."
 msgstr "Saisissez votre prénom."
 
-#: storefront/checkout_forms.py:37
+#: storefront/checkout_forms.py:41
 msgid "Last name"
 msgstr "Nom"
 
-#: storefront/checkout_forms.py:39
+#: storefront/checkout_forms.py:43
 msgid "Enter your last name."
 msgstr "Saisissez votre nom."
 
-#: storefront/checkout_forms.py:51
+#: storefront/checkout_forms.py:55
 msgid "We send your order confirmation here."
 msgstr "Nous envoyons votre confirmation de commande à cette adresse."
 
-#: storefront/checkout_forms.py:53
+#: storefront/checkout_forms.py:57
 msgid "Enter your email address."
 msgstr "Saisissez votre adresse e-mail."
 
-#: storefront/checkout_forms.py:66
+#: storefront/checkout_forms.py:70
 msgid "Used only if we need to reach you about delivery."
 msgstr ""
 "Utilisé uniquement si nous devons vous contacter au sujet de la livraison."
 
-#: storefront/checkout_forms.py:68
+#: storefront/checkout_forms.py:72
 msgid "Enter your phone number."
 msgstr "Saisissez votre numéro de téléphone."
 
-#: storefront/checkout_forms.py:83
+#: storefront/checkout_forms.py:87
+msgid "Street and number, plus your village if you have one (e.g. Argentière)."
+msgstr "Rue et numéro, ainsi que votre village si vous en avez un (p. ex. Argentière)."
+
+#: storefront/checkout_forms.py:91
 msgid "Enter your street address."
 msgstr "Saisissez votre adresse."
 
-#: storefront/checkout_forms.py:94
+#: storefront/checkout_forms.py:102
 msgid "Postal code"
 msgstr "Code postal"
 
-#: storefront/checkout_forms.py:96
+#: storefront/checkout_forms.py:104
 msgid "Enter your postal code."
 msgstr "Saisissez votre code postal."
 
-#: storefront/checkout_forms.py:110
-msgid "Enter your city."
+#: storefront/checkout_forms.py:115 storefront/checkout_forms.py:187
+msgid "We don't deliver to this postal code yet."
+msgstr "Nous ne livrons pas encore à ce code postal."
+
+#: storefront/checkout_forms.py:123
+msgid "Town"
+msgstr "Ville"
+
+#: storefront/checkout_forms.py:125
+msgid "Enter your town."
 msgstr "Saisissez votre ville."
 
-#: storefront/checkout_forms.py:144
+#: storefront/checkout_forms.py:160
 msgid "Your full name is too long."
 msgstr "Votre nom complet est trop long."
 
-#: storefront/checkout_forms.py:162
+#: storefront/checkout_forms.py:204
+#, python-format
 msgid ""
-"We don't deliver to this postal code and city yet. Check the spelling of the "
-"city."
+"This town doesn't match postal code %(postal_code)s. Choose: %(cities)s."
 msgstr ""
-"Nous ne livrons pas encore dans cette ville pour ce code postal. Vérifiez "
-"l’orthographe de la ville."
+"Cette ville ne correspond pas au code postal %(postal_code)s. Choisissez : "
+"%(cities)s."
 
 # | msgid "No orders yet"
-#: storefront/checkout_views.py:97 storefront/navbar_viewmodels.py:51
+#: storefront/checkout_views.py:124 storefront/navbar_viewmodels.py:51
 #: storefront/navbar_viewmodels.py:76 templates/storefront/cart.html:229
 msgid "Your cart is empty."
 msgstr "Votre panier est vide."
 
-#: storefront/checkout_views.py:124
+#: storefront/checkout_views.py:151
 msgid "You already have a payment in progress for this cart."
 msgstr "Un paiement est déjà en cours pour ce panier."
 
-#: storefront/checkout_views.py:146
+#: storefront/checkout_views.py:173
 msgid ""
 "Some items in your cart are no longer available. Review your cart and try "
 "again."
@@ -969,27 +981,31 @@ msgstr ""
 "Certains articles de votre panier ne sont plus disponibles. Vérifiez votre "
 "panier et réessayez."
 
-#: storefront/checkout_views.py:202
+#: storefront/checkout_views.py:229
 msgid ""
 "This checkout was replaced by a newer one. Please confirm your details again."
 msgstr ""
 "Cette validation de commande a été remplacée par une plus récente. Veuillez "
 "confirmer à nouveau vos informations."
 
-#: storefront/checkout_views.py:221 storefront/checkout_views.py:316
+#: storefront/checkout_views.py:248 storefront/checkout_views.py:343
 msgid "Your checkout has expired. Please confirm your details again."
 msgstr ""
 "Votre session de validation a expiré. Veuillez confirmer à nouveau vos "
 "informations."
 
-#: storefront/checkout_views.py:296
+#: storefront/checkout_views.py:323
 msgid ""
 "Some items in your cart are no longer in stock. Please update your cart."
-msgstr "Certains articles de votre panier ne sont plus en stock. Veuillez mettre à jour votre panier."
+msgstr ""
+"Certains articles de votre panier ne sont plus en stock. Veuillez mettre à "
+"jour votre panier."
 
-#: storefront/checkout_views.py:342
+#: storefront/checkout_views.py:369
 msgid "We couldn't reach the payment provider. Please try again in a moment."
-msgstr "Nous n’avons pas pu joindre le prestataire de paiement. Veuillez réessayer dans un instant."
+msgstr ""
+"Nous n’avons pas pu joindre le prestataire de paiement. Veuillez réessayer "
+"dans un instant."
 
 #: storefront/navbar_viewmodels.py:39 storefront/navbar_viewmodels.py:40
 #: storefront/navbar_viewmodels.py:64 storefront/navbar_viewmodels.py:65
@@ -1822,7 +1838,9 @@ msgstr "Statut du paiement"
 msgid ""
 "Your payment was successful and your order number is <strong>%(reference)s</"
 "strong>."
-msgstr "Votre paiement a été effectué avec succès et votre numéro de commande est <strong>%(reference)s</strong>."
+msgstr ""
+"Votre paiement a été effectué avec succès et votre numéro de commande est "
+"<strong>%(reference)s</strong>."
 
 #: templates/storefront/checkout/payment_result.html:31
 msgid "We'll contact you when your order is on its way."
@@ -1853,13 +1871,18 @@ msgstr "Nous n’avons pas pu confirmer votre paiement"
 msgid ""
 "We couldn't confirm the status of your payment right now. If you were "
 "charged, your order is safe and we will sort it out."
-msgstr "Nous n’avons pas pu confirmer l’état de votre paiement pour le moment. Si vous avez été débité, votre commande est bien enregistrée et nous réglerons la situation."
+msgstr ""
+"Nous n’avons pas pu confirmer l’état de votre paiement pour le moment. Si "
+"vous avez été débité, votre commande est bien enregistrée et nous réglerons "
+"la situation."
 
 #: templates/storefront/checkout/payment_result.html:86
 #, python-format
 msgid ""
 "Please contact us and mention order number <strong>%(reference)s</strong>."
-msgstr "Veuillez nous contacter en indiquant le numéro de commande <strong>%(reference)s</strong>."
+msgstr ""
+"Veuillez nous contacter en indiquant le numéro de commande "
+"<strong>%(reference)s</strong>."
 
 #: templates/storefront/checkout/payment_result.html:94
 #: templates/storefront/contact.html:7 templates/storefront/faq.html:18
