@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Any
 from uuid import uuid4
 
-from django.core.cache import cache
+from django.core.cache import caches
 from django.urls import reverse
 
 from payments.contracts import (
@@ -39,7 +39,7 @@ class FakeHostedPaymentProvider:
     ) -> HostedPaymentSession:
         payment_id = f"fake-{uuid4().hex}"
 
-        cache.set(
+        _store().set(
             _cache_key(payment_id),
             {
                 "status": ExternalPaymentStatus.PENDING.value,
@@ -52,7 +52,7 @@ class FakeHostedPaymentProvider:
             },
             FAKE_PAYMENT_TIMEOUT_SECONDS,
         )
-        cache.set(
+        _store().set(
             _reference_key(request.reference),
             payment_id,
             FAKE_PAYMENT_TIMEOUT_SECONDS,
@@ -97,7 +97,7 @@ class FakeHostedPaymentProvider:
         *,
         reference: str,
     ) -> ExternalPaymentState | None:
-        payment_id = cache.get(
+        payment_id = _store().get(
             _reference_key(reference)
         )
 
@@ -130,7 +130,7 @@ class FakeHostedPaymentProvider:
         if payment["status"] == ExternalPaymentStatus.PENDING.value:
             payment["status"] = ExternalPaymentStatus.FAILED.value
 
-            cache.set(
+            _store().set(
                 _cache_key(provider_payment_id),
                 payment,
                 FAKE_PAYMENT_TIMEOUT_SECONDS,
@@ -151,7 +151,7 @@ def fake_checkout_url(
 def get_fake_payment(
     payment_id: str,
 ) -> dict[str, Any] | None:
-    return cache.get(
+    return _store().get(
         _cache_key(payment_id)
     )
 
@@ -186,7 +186,7 @@ def complete_fake_payment(
             else None
         )
 
-        cache.set(
+        _store().set(
             _cache_key(payment_id),
             payment,
             FAKE_PAYMENT_TIMEOUT_SECONDS,
@@ -205,3 +205,8 @@ def _reference_key(
     reference: str,
 ) -> str:
     return f"{_REFERENCE_PREFIX}{reference}"
+
+
+def _store():
+    # File-based in development so fake payments survive runserver reloads.
+    return caches["fake_payments"]

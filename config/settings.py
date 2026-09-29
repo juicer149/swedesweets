@@ -428,6 +428,32 @@ if PAYMENT_PROVIDER == PAYMENT_PROVIDER_FAKE and not DEBUG:
 
 
 # =============================================================================
+# Cache
+# =============================================================================
+
+CACHES = {
+    "default": {
+        "BACKEND": (
+            "django.core.cache.backends.locmem."
+            "LocMemCache"
+        ),
+    },
+    # Fake payments must survive dev server restarts, or an order paid
+    # through the fake provider gets stuck when runserver reloads.
+    "fake_payments": {
+        "BACKEND": (
+            "django.core.cache.backends.filebased."
+            "FileBasedCache"
+        ),
+        "LOCATION": (
+            BASE_DIR
+            / ".fake_payments"
+        ),
+    },
+}
+
+
+# =============================================================================
 # Internationalization
 # =============================================================================
 
