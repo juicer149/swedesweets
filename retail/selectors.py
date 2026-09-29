@@ -6,7 +6,10 @@ from uuid import UUID
 from django.db.models import QuerySet
 from django.utils import timezone
 
+from carts.models import Cart
 from inventory.models import InventoryBatch
+from orders.models import Order
+from payments.models import PaymentAttempt
 from pricing.models import CommercialPrice
 from pricing.selectors import (
     get_batch_price_amount,
@@ -96,5 +99,28 @@ def get_retail_checkout(
         .filter(
             pk=checkout_id,
         )
+        .first()
+    )
+
+
+def get_retail_checkout_with_open_payment(
+    *,
+    cart: Cart,
+) -> RetailCheckoutSession | None:
+    """Return the unpaid checkout from this cart that has a pending payment."""
+
+    return (
+        RetailCheckoutSession.objects
+        .select_related(
+            "order",
+        )
+        .filter(
+            cart=cart,
+            order__status=Order.Status.DRAFT,
+            order__payment_attempts__status=(
+                PaymentAttempt.Status.PENDING
+            ),
+        )
+        .order_by("-created_at")
         .first()
     )

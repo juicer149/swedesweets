@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from django.utils.translation import gettext
+
 if TYPE_CHECKING:
     from retail.models import RetailCheckoutSession
 
@@ -18,6 +20,29 @@ class InvalidRetailCart(ValueError):
 
 class InvalidRetailOrder(ValueError):
     """Raised when a retail checkout violates a business invariant."""
+
+
+class RetailCartLocked(InvalidRetailCart):
+    """Raised when a cart is changed while one of its checkouts is being paid.
+
+    The draft order sent to the payment provider is a snapshot of the cart.
+    Changing the cart meanwhile would have no effect on what the buyer pays,
+    so the cart stays read-only until the payment succeeds, fails or is
+    cancelled.
+    """
+
+    def __init__(
+        self,
+        *,
+        checkout: RetailCheckoutSession,
+    ) -> None:
+        super().__init__(
+            gettext(
+                "You have a payment in progress. "
+                "Finish or cancel it before changing your cart."
+            )
+        )
+        self.checkout = checkout
 
 
 class RetailCheckoutPaymentInProgress(InvalidRetailOrder):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-29 21:15+0200\n"
+"POT-Creation-Date: 2026-09-29 22:07+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -353,12 +353,12 @@ msgstr "Vérifier la commande"
 
 #: business_portal/orders/cart_viewmodels.py:71
 #: business_portal/orders/review_viewmodels.py:91
-#: templates/storefront/cart.html:216
+#: templates/storefront/cart.html:243
 msgid "Clear cart"
 msgstr "Vider le panier"
 
 #: business_portal/orders/cart_viewmodels.py:72
-#: storefront/navbar_viewmodels.py:71 templates/storefront/cart.html:30
+#: storefront/navbar_viewmodels.py:71 templates/storefront/cart.html:48
 msgid "Continue shopping"
 msgstr "Continuer les achats"
 
@@ -379,7 +379,7 @@ msgstr "Commande"
 #: templates/business_portal/orders/cart.html:23
 #: templates/business_portal/orders/cart.html:199
 #: templates/business_portal/orders/review.html:21
-#: templates/storefront/cart.html:23 templates/storefront/cart.html:223
+#: templates/storefront/cart.html:41 templates/storefront/cart.html:251
 #: templates/storefront/checkout/review.html:20
 msgid "Items"
 msgstr "Articles"
@@ -515,11 +515,11 @@ msgid "Quantity must be a whole number."
 msgstr "La quantité doit être un nombre entier."
 
 # | msgid "Quantity"
-#: business_portal/orders/views.py:171 storefront/cart_views.py:258
+#: business_portal/orders/views.py:171 storefront/cart_views.py:331
 msgid "Quantity updated."
 msgstr "Quantité mise à jour."
 
-#: business_portal/orders/views.py:235 storefront/cart_views.py:337
+#: business_portal/orders/views.py:235 storefront/cart_views.py:399
 msgid "Product removed from your cart."
 msgstr "Produit retiré de votre panier."
 
@@ -529,7 +529,7 @@ msgid "Unknown order action."
 msgstr "Action non reconnue pour cette commande."
 
 #: business_portal/orders/views.py:313 business_portal/orders/views.py:409
-#: storefront/cart_views.py:157
+#: storefront/cart_views.py:237
 msgid "Cart cleared."
 msgstr "Panier vidé."
 
@@ -868,7 +868,16 @@ msgstr "Réservée"
 msgid "Consumed"
 msgstr "Consommée"
 
-#: storefront/cart_views.py:162
+#: retail/errors.py:41
+#| msgid "You already have a payment in progress for this cart."
+msgid ""
+"You have a payment in progress. Finish or cancel it before changing your "
+"cart."
+msgstr ""
+"Un paiement est en cours. Terminez-le ou annulez-le avant de modifier "
+"votre panier."
+
+#: storefront/cart_views.py:242
 msgid "Unknown cart action."
 msgstr "Action non reconnue pour ce panier."
 
@@ -966,16 +975,16 @@ msgstr ""
 "%(cities)s."
 
 # | msgid "No orders yet"
-#: storefront/checkout_views.py:126 storefront/navbar_viewmodels.py:51
-#: storefront/navbar_viewmodels.py:76 templates/storefront/cart.html:229
+#: storefront/checkout_views.py:129 storefront/navbar_viewmodels.py:51
+#: storefront/navbar_viewmodels.py:76 templates/storefront/cart.html:257
 msgid "Your cart is empty."
 msgstr "Votre panier est vide."
 
-#: storefront/checkout_views.py:153
+#: storefront/checkout_views.py:149 storefront/checkout_views.py:179
 msgid "You already have a payment in progress for this cart."
 msgstr "Un paiement est déjà en cours pour ce panier."
 
-#: storefront/checkout_views.py:175
+#: storefront/checkout_views.py:201
 msgid ""
 "Some items in your cart are no longer available. Review your cart and try "
 "again."
@@ -983,49 +992,47 @@ msgstr ""
 "Certains articles de votre panier ne sont plus disponibles. Vérifiez votre "
 "panier et réessayez."
 
-#: storefront/checkout_views.py:231
+#: storefront/checkout_views.py:257
 msgid ""
 "This checkout was replaced by a newer one. Please confirm your details again."
 msgstr ""
 "Cette validation de commande a été remplacée par une plus récente. Veuillez "
 "confirmer à nouveau vos informations."
 
-#: storefront/checkout_views.py:250 storefront/checkout_views.py:348
+#: storefront/checkout_views.py:276 storefront/checkout_views.py:374
 msgid "Your checkout has expired. Please confirm your details again."
 msgstr ""
 "Votre session de validation a expiré. Veuillez confirmer à nouveau vos "
 "informations."
 
-#: storefront/checkout_views.py:328
+#: storefront/checkout_views.py:354
 msgid ""
 "Some items in your cart are no longer in stock. Please update your cart."
 msgstr ""
 "Certains articles de votre panier ne sont plus en stock. Veuillez mettre à "
 "jour votre panier."
 
-#: storefront/checkout_views.py:374
+#: storefront/checkout_views.py:400
 msgid "We couldn't reach the payment provider. Please try again in a moment."
 msgstr ""
 "Nous n’avons pas pu joindre le prestataire de paiement. Veuillez réessayer "
 "dans un instant."
 
-#: storefront/checkout_views.py:428
-#, fuzzy
+#: storefront/checkout_views.py:454
 #| msgid ""
 #| "We couldn't reach the payment provider. Please try again in a moment."
 msgid ""
 "We couldn't reach the payment provider to cancel your payment. Please try "
 "again in a moment."
 msgstr ""
-"Nous n’avons pas pu joindre le prestataire de paiement. Veuillez réessayer "
-"dans un instant."
+"Nous n’avons pas pu joindre le prestataire de paiement pour annuler "
+"votre paiement. Veuillez réessayer dans un instant."
 
-#: storefront/checkout_views.py:451
+#: storefront/checkout_views.py:477
 msgid "Your payment was cancelled. You can now change your order."
-msgstr ""
+msgstr "Votre paiement a été annulé. Vous pouvez maintenant modifier votre commande."
 
-#: storefront/checkout_views.py:463
-#, fuzzy
+#: storefront/checkout_views.py:489
 #| msgid ""
 #| "We couldn't confirm the status of your payment right now. If you were "
 #| "charged, your order is safe and we will sort it out."
@@ -1033,9 +1040,9 @@ msgid ""
 "We couldn't cancel your payment. If you already paid, your order is safe. "
 "Otherwise, please try again or contact us."
 msgstr ""
-"Nous n’avons pas pu confirmer l’état de votre paiement pour le moment. Si "
-"vous avez été débité, votre commande est bien enregistrée et nous réglerons "
-"la situation."
+"Nous n’avons pas pu annuler votre paiement. Si vous avez déjà payé, "
+"votre commande est bien enregistrée. Sinon, veuillez réessayer ou nous "
+"contacter."
 
 #: storefront/navbar_viewmodels.py:39 storefront/navbar_viewmodels.py:40
 #: storefront/navbar_viewmodels.py:64 storefront/navbar_viewmodels.py:65
@@ -1049,7 +1056,7 @@ msgstr "Aller au panier"
 
 # | msgid "Customer catalog"
 #: storefront/navbar_viewmodels.py:54 storefront/navbar_viewmodels.py:79
-#: templates/storefront/cart.html:236
+#: templates/storefront/cart.html:264
 msgid "Browse shop"
 msgstr "Parcourir la boutique"
 
@@ -1218,8 +1225,8 @@ msgstr "Offre"
 #: templates/includes/navbar_cart.html:110
 #: templates/ops_portal/orders/includes/order_line_form.html:56
 #: templates/ops_portal/orders/order_form.html:83
-#: templates/storefront/cart.html:44 templates/storefront/cart.html:96
-#: templates/storefront/cart.html:112
+#: templates/storefront/cart.html:62 templates/storefront/cart.html:119
+#: templates/storefront/cart.html:135
 #: templates/storefront/catalog/detail.html:141
 #: templates/storefront/catalog/detail.html:146
 #: templates/storefront/catalog/detail.html:162
@@ -1235,7 +1242,7 @@ msgstr "Quantité"
 #: templates/business_portal/orders/cart.html:90
 #: templates/includes/navbar_cart.html:98
 #: templates/ops_portal/orders/includes/order_line_form.html:46
-#: templates/storefront/cart.html:102
+#: templates/storefront/cart.html:125
 #: templates/storefront/catalog/detail.html:152
 #: templates/storefront/catalog/index.html:267
 msgid "Decrease quantity"
@@ -1246,7 +1253,7 @@ msgstr "Diminuer la quantité"
 #: templates/business_portal/orders/cart.html:120
 #: templates/includes/navbar_cart.html:133
 #: templates/ops_portal/orders/includes/order_line_form.html:64
-#: templates/storefront/cart.html:132
+#: templates/storefront/cart.html:155
 #: templates/storefront/catalog/detail.html:182
 #: templates/storefront/catalog/index.html:300
 msgid "Increase quantity"
@@ -1279,7 +1286,7 @@ msgstr "Aucune offre n’est disponible actuellement."
 #: templates/business_portal/orders/cart.html:40
 #: templates/business_portal/orders/includes/detail_panel_items.html:9
 #: templates/business_portal/orders/review.html:42
-#: templates/storefront/cart.html:40
+#: templates/storefront/cart.html:58
 #: templates/storefront/checkout/review.html:38
 msgid "Product"
 msgstr "Produit"
@@ -1434,7 +1441,7 @@ msgstr "Impossible de mettre à jour la quantité."
 
 # | msgid "Quantity"
 #: templates/business_portal/orders/cart.html:139
-#: templates/storefront/cart.html:151
+#: templates/storefront/cart.html:174
 msgid "Update quantity"
 msgstr "Mettre à jour la quantité"
 
@@ -1442,8 +1449,8 @@ msgstr "Mettre à jour la quantité"
 #: templates/business_portal/orders/cart.html:155
 #: templates/business_portal/orders/cart.html:159
 #: templates/includes/navbar_cart.html:175
-#: templates/includes/navbar_cart.html:180 templates/storefront/cart.html:167
-#: templates/storefront/cart.html:171
+#: templates/includes/navbar_cart.html:180 templates/storefront/cart.html:192
+#: templates/storefront/cart.html:196
 msgid "Remove product"
 msgstr "Retirer le produit"
 
@@ -1799,29 +1806,44 @@ msgstr ""
 msgid "Send reset link"
 msgstr "Envoyer le lien de réinitialisation"
 
-#: templates/storefront/cart.html:71
+#: templates/storefront/cart.html:27
+#| msgid "You already have a payment in progress for this cart."
+msgid ""
+"You have a payment in progress for this cart. Continue it, or cancel it to "
+"change your cart."
+msgstr ""
+"Un paiement est en cours pour ce panier. Poursuivez-le ou annulez-le "
+"pour modifier votre panier."
+
+# | msgid "Edit order"
+#: templates/storefront/cart.html:34
+#| msgid "Go to cart"
+msgid "Go to payment"
+msgstr "Aller au paiement"
+
+#: templates/storefront/cart.html:89
 #, python-format
 msgid "%(price)s each"
 msgstr "%(price)s l’unité"
 
-#: templates/storefront/cart.html:77
+#: templates/storefront/cart.html:95
 #: templates/storefront/checkout/review.html:59
 #: templates/storefront/checkout/review.html:90
 msgid "Total"
 msgstr "Total"
 
-#: templates/storefront/cart.html:184
+#: templates/storefront/cart.html:210
 #: templates/storefront/checkout/details.html:46
 msgid "Subtotal"
 msgstr "Sous-total"
 
-#: templates/storefront/cart.html:193
+#: templates/storefront/cart.html:219
 msgid "Delivery details are entered at checkout."
 msgstr ""
 "Les informations de livraison sont saisies lors de la validation de la "
 "commande."
 
-#: templates/storefront/cart.html:203
+#: templates/storefront/cart.html:230
 msgid "Continue to checkout"
 msgstr "Continuer vers le paiement"
 
@@ -1932,28 +1954,27 @@ msgid ""
 "You have a payment in progress for this order. Continue it, or cancel it to "
 "change your order."
 msgstr ""
+"Un paiement est en cours pour cette commande. Poursuivez-le ou "
+"annulez-le pour modifier votre commande."
 
 #: templates/storefront/checkout/review.html:144
-#, fuzzy
 #| msgid "Cancelled"
 msgid "Cancelling…"
-msgstr "Annulée"
+msgstr "Annulation…"
 
 #: templates/storefront/checkout/review.html:146
-#, fuzzy
 #| msgid "Cancelled order"
 msgid "Cancel payment and edit order"
-msgstr "Commande annulée"
+msgstr "Annuler le paiement et modifier la commande"
 
 #: templates/storefront/checkout/review.html:161
 msgid "Redirecting to secure payment…"
 msgstr "Redirection vers le paiement sécurisé…"
 
 #: templates/storefront/checkout/review.html:164
-#, fuzzy
 #| msgid "Continue shopping"
 msgid "Continue payment"
-msgstr "Continuer les achats"
+msgstr "Poursuivre le paiement"
 
 #: templates/storefront/checkout/review.html:166
 #, python-format

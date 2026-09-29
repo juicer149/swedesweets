@@ -29,6 +29,7 @@ class RetailCartContext:
     subtotal_label: str | None
     continue_shopping_url: str
     checkout_url: str | None
+    open_payment_url: str | None
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -36,6 +37,7 @@ class RetailCartContext:
             "subtotal_label": self.subtotal_label,
             "continue_shopping_url": self.continue_shopping_url,
             "checkout_url": self.checkout_url,
+            "open_payment_url": self.open_payment_url,
         }
 
     def line(
@@ -56,7 +58,14 @@ def build_retail_cart_context(
     *,
     cart: Cart | None,
     checkout_url: str | None = None,
+    open_payment_url: str | None = None,
 ) -> RetailCartContext:
+    """Build the cart page.
+
+    While a payment for this cart is open, the cart is read-only and the
+    buyer is pointed to that payment instead of to a new checkout.
+    """
+
     cart_lines = (
         _load_cart_lines(
             cart=cart,
@@ -105,9 +114,10 @@ def build_retail_cart_context(
         ),
         checkout_url=(
             checkout_url
-            if built_lines
+            if built_lines and open_payment_url is None
             else None
         ),
+        open_payment_url=open_payment_url,
     )
 
 

@@ -330,6 +330,27 @@
   font-weight: 600;
 }
 
+.retail-cart-locked {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border, #e5e5e5);
+  border-radius: 0.5rem;
+}
+
+.retail-cart-locked p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.retail-cart-line__quantity-locked {
+  font-weight: 600;
+}
+
 /* =============================================================================
    Pack checklist
 

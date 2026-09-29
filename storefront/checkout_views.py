@@ -40,7 +40,10 @@ from retail.payments import (
     cancel_open_retail_payment,
 )
 from retail.rules import list_retail_cities_for_postal_code
-from retail.selectors import get_retail_checkout
+from retail.selectors import (
+    get_retail_checkout,
+    get_retail_checkout_with_open_payment,
+)
 from retail.services import create_retail_checkout_from_cart
 from storefront.cart_viewmodels import build_retail_cart_context
 from storefront.checkout_forms import RetailCheckoutDetailsForm
@@ -128,6 +131,29 @@ def checkout_details(
 
         return redirect(
             "storefront:cart"
+        )
+
+    open_checkout = get_retail_checkout_with_open_payment(
+        cart=cart,
+    )
+
+    if open_checkout is not None:
+        remember_checkout(
+            request,
+            checkout_id=open_checkout.pk,
+        )
+
+        messages.info(
+            request,
+            _(
+                "You already have a payment in progress "
+                "for this cart."
+            ),
+        )
+
+        return redirect(
+            "storefront:checkout_review",
+            checkout_id=open_checkout.pk,
         )
 
     if request.method == "POST":

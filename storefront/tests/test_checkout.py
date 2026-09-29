@@ -778,3 +778,158 @@ def test_buyer_can_cancel_open_payment_and_check_out_again(
     new_checkout = RetailCheckoutSession.objects.exclude(pk=checkout.pk).get()
 
     assert again.url == _review_url(new_checkout)
+
+
+
+
+
+def _open_payment(client) -> RetailCheckoutSession:
+    checkout = _created_checkout(client)
+
+    start_retail_payment(
+        checkout=checkout,
+    )
+
+    return checkout
+
+
+def _quantity_url(line) -> str:
+    return reverse(
+        "storefront:set_cart_line_quantity",
+        kwargs={
+            "cart_line_id": line.pk,
+        },
+    )
+
+
+@pytest.mark.django_db
+def test_cart_page_is_read_only_while_payment_is_open(client, cart):
+    checkout = _open_payment(client)
+
+    response = client.get(
+        reverse("storefront:cart")
+    )
+    content = response.content.decode()
+
+    assert response.context["open_payment_url"] == _review_url(checkout)
+    assert response.context["checkout_url"] is None
+    assert "data-current-order-quantity-form" not in content
+    assert 'value="clear_cart"' not in content
+
+
+@pytest.mark.django_db
+def test_quantity_change_is_refused_while_payment_is_open(client, cart):
+    _open_payment(client)
+    line = cart.lines.get()
+
+    response = client.post(
+        _quantity_url(line),
+        {
+            "quantity": "1",
+        },
+        HTTP_ACCEPT="application/json",
+    )
+
+    line.refresh_from_db()
+
+    assert response.status_code == 409
+    assert response.json()["ok"] is False
+    assert line.quantity == 2
+
+
+@pytest.mark.django_db
+def test_line_removal_is_refused_while_payment_is_open(client, cart):
+    _open_payment(client)
+    line = cart.lines.get()
+
+    client.post(
+        reverse(
+            "storefront:remove_cart_line",
+            kwargs={
+                "cart_line_id": line.pk,
+            },
+        )
+    )
+
+    assert cart.lines.filter(pk=line.pk).exists()
+
+
+@pytest.mark.django_db
+def test_clearing_cart_is_refused_while_payment_is_open(client, cart):
+    _open_payment(client)
+
+    client.post(
+        reverse("storefront:cart"),
+        {
+            "intent": "clear_cart",
+        },
+    )
+
+    assert cart.lines.exists()
+
+
+@pytest.mark.django_db
+def test_adding_to_cart_is_refused_while_payment_is_open(client, cart):
+    _open_payment(client)
+    line = cart.lines.select_related("commercial_price").get()
+
+    response = client.post(
+        reverse(
+            "storefront:add_to_cart",
+            kwargs={
+                "product_id": line.commercial_price.product_id,
+            },
+        ),
+        {
+            "commercial_price_id": str(line.commercial_price_id),
+            "quantity": "1",
+        },
+        HTTP_ACCEPT="application/json",
+    )
+
+    line.refresh_from_db()
+
+    assert response.status_code == 400
+    assert line.quantity == 2
+    assert cart.lines.count() == 1
+
+
+@pytest.mark.django_db
+def test_checkout_page_sends_open_payment_to_review(client, cart):
+    checkout = _open_payment(client)
+
+    response = client.get(
+        reverse("storefront:checkout")
+    )
+
+    assert response.status_code == 302
+    assert response.url == _review_url(checkout)
+
+
+@pytest.mark.django_db
+def test_cart_is_editable_again_after_cancelling_payment(
+    client,
+    cart,
+    settings,
+):
+    settings.PAYMENT_PROVIDER = "fake"
+    checkout = _created_checkout(client)
+
+    client.post(
+        _pay_url(checkout)
+    )
+    client.post(
+        _cancel_payment_url(checkout)
+    )
+
+    line = cart.lines.get()
+    response = client.post(
+        _quantity_url(line),
+        {
+            "quantity": "1",
+        },
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 200
+    assert response.json()["quantity"] == 1

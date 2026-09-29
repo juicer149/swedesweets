@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.http import (
     Http404,
     HttpRequest,
+    HttpResponse,
     JsonResponse,
 )
 from django.shortcuts import (
@@ -19,23 +20,32 @@ from django.views.decorators.http import (
 )
 
 from carts.models import Cart, CartLine
-from carts.services import (
-    InvalidCart,
-    clear_cart,
-    update_cart_line_quantity,
-)
-from carts.services import (
-    remove_cart_line as remove_cart_line_service,
-)
 from retail.cart_selectors import (
     get_retail_cart,
     get_retail_cart_line,
+)
+from retail.errors import (
+    InvalidRetailCart,
+    RetailCartLocked,
+)
+from retail.selectors import (
+    get_retail_checkout_with_open_payment,
+)
+from retail.services import (
+    clear_retail_cart,
+    update_retail_cart_line_quantity,
+)
+from retail.services import (
+    remove_retail_cart_line as remove_retail_cart_line_service,
 )
 from storefront.cart import (
     mark_retail_cart_active,
 )
 from storefront.cart_viewmodels import (
     build_retail_cart_context,
+)
+from storefront.checkout_session import (
+    remember_checkout,
 )
 from storefront.navbar_viewmodels import (
     build_retail_navbar_cart,
@@ -129,6 +139,70 @@ def _parse_quantity(
         ) from exc
 
 
+def _cart_error_response(
+    request: HttpRequest,
+    error: Exception,
+) -> HttpResponse:
+    message = str(error)
+
+    if _wants_json(request):
+        return JsonResponse(
+            {
+                "ok": False,
+                "message": message,
+            },
+            status=(
+                409
+                if isinstance(error, RetailCartLocked)
+                else 400
+            ),
+        )
+
+    messages.error(
+        request,
+        message,
+    )
+
+    return redirect(
+        "storefront:cart"
+    )
+
+
+def _open_payment_url(
+    request: HttpRequest,
+    *,
+    cart: Cart | None,
+) -> str | None:
+    """Return the review page of a checkout being paid from this cart.
+
+    The signed cart cookie proves this browser owns the cart, and with it
+    the checkout created from the cart, so ownership is remembered here
+    for buyers whose session no longer lists the checkout.
+    """
+
+    if cart is None:
+        return None
+
+    checkout = get_retail_checkout_with_open_payment(
+        cart=cart,
+    )
+
+    if checkout is None:
+        return None
+
+    remember_checkout(
+        request,
+        checkout_id=checkout.pk,
+    )
+
+    return reverse(
+        "storefront:checkout_review",
+        kwargs={
+            "checkout_id": checkout.pk,
+        },
+    )
+
+
 @require_http_methods(
     [
         "GET",
@@ -148,14 +222,20 @@ def cart(
         )
 
         if intent == CLEAR_CART_INTENT and cart is not None:
-            clear_cart(
-                cart=cart,
-            )
-
-            messages.success(
-                request,
-                _("Cart cleared."),
-            )
+            try:
+                clear_retail_cart(
+                    cart=cart,
+                )
+            except InvalidRetailCart as error:
+                messages.error(
+                    request,
+                    str(error),
+                )
+            else:
+                messages.success(
+                    request,
+                    _("Cart cleared."),
+                )
         elif intent != CLEAR_CART_INTENT:
             messages.error(
                 request,
@@ -169,6 +249,10 @@ def cart(
     context = build_retail_cart_context(
         cart=cart,
         checkout_url=reverse("storefront:checkout"),
+        open_payment_url=_open_payment_url(
+            request,
+            cart=cart,
+        ),
     ).as_dict()
 
     return render(
@@ -223,69 +307,58 @@ def set_cart_line_quantity(
         )
 
         updated_line = (
-            update_cart_line_quantity(
+            update_retail_cart_line_quantity(
                 cart=cart,
                 line=line,
                 quantity=quantity,
             )
         )
     except (
-        InvalidCart,
+        InvalidRetailCart,
         InvalidCartInput,
     ) as error:
-        message = str(error)
-
-        if _wants_json(request):
-            return JsonResponse(
-                {
-                    "ok": False,
-                    "message": message,
-                },
-                status=400,
-            )
-
-        messages.error(
+        return _cart_error_response(
             request,
-            message,
-        )
-    else:
-        mark_retail_cart_active(
-            request,
-            cart_id=cart.id,
+            error,
         )
 
-        message = _(
-            "Quantity updated."
+    mark_retail_cart_active(
+        request,
+        cart_id=cart.id,
+    )
+
+    message = _(
+        "Quantity updated."
+    )
+
+    if _wants_json(request):
+        cart_context = build_retail_cart_context(
+            cart=cart,
+        )
+        line_view = cart_context.line(
+            updated_line.id
         )
 
-        if _wants_json(request):
-            cart_context = build_retail_cart_context(
-                cart=cart,
-            )
-            line_view = cart_context.line(
-                updated_line.id
-            )
-
-            return JsonResponse(
-                {
-                    "ok": True,
-                    "message": str(message),
-                    "quantity": updated_line.quantity,
-                    "line_total_label": (
-                        line_view.line_total_label
-                        if line_view is not None
-                        else None
-                    ),
-                    "subtotal_label": (
-                        cart_context.subtotal_label
-                    ),
-                }
-            )
-
-        messages.success(
-            request,
-            message,
+        return JsonResponse(
+            {
+                "ok": True,
+                "message": str(message),
+                "quantity": updated_line.quantity,
+                "line_total_label": (
+                    line_view.line_total_label
+                    if line_view is not None
+                    else None
+                ),
+                "subtotal_label": (
+                    cart_context.subtotal_label
+                ),
+            }
         )
+
+    messages.success(
+        request,
+        message,
+    )
 
     return redirect(
         "storefront:cart"
@@ -307,48 +380,37 @@ def remove_cart_line(
     )
 
     try:
-        remove_cart_line_service(
+        remove_retail_cart_line_service(
             cart=cart,
             line=line,
         )
-    except InvalidCart as error:
-        message = str(error)
-
-        if _wants_json(request):
-            return JsonResponse(
-                {
-                    "ok": False,
-                    "message": message,
-                },
-                status=400,
-            )
-
-        messages.error(
+    except InvalidRetailCart as error:
+        return _cart_error_response(
             request,
-            message,
-        )
-    else:
-        mark_retail_cart_active(
-            request,
-            cart_id=cart.id,
+            error,
         )
 
-        message = _(
-            "Product removed from your cart."
+    mark_retail_cart_active(
+        request,
+        cart_id=cart.id,
+    )
+
+    message = _(
+        "Product removed from your cart."
+    )
+
+    if _wants_json(request):
+        return JsonResponse(
+            {
+                "ok": True,
+                "message": str(message),
+            }
         )
 
-        if _wants_json(request):
-            return JsonResponse(
-                {
-                    "ok": True,
-                    "message": str(message),
-                }
-            )
-
-        messages.success(
-            request,
-            message,
-        )
+    messages.success(
+        request,
+        message,
+    )
 
     return redirect(
         "storefront:cart"

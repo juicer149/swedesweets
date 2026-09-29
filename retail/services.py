@@ -11,6 +11,9 @@ from carts.models import Cart, CartLine
 from carts.services import (
     InvalidCart,
     add_cart_line,
+    clear_cart,
+    remove_cart_line,
+    update_cart_line_quantity,
 )
 from common.channels import SalesChannel
 from inventory.errors import InsufficientStockError
@@ -41,6 +44,7 @@ from reservations.services import (
 from retail.errors import (
     InvalidRetailCart,
     InvalidRetailOrder,
+    RetailCartLocked,
     RetailCheckoutPaymentInProgress,
 )
 from retail.models import RetailCheckoutSession
@@ -53,13 +57,20 @@ from retail.rules import (
     RETAIL_PAYMENT_RESERVATION_WINDOW,
     is_supported_retail_destination,
 )
-from retail.selectors import list_batches_for_retail_price
+from retail.selectors import (
+    get_retail_checkout_with_open_payment,
+    list_batches_for_retail_price,
+)
 
 __all__ = [
     "AnonymousBuyerInput",
     "ResolvedRetailOrderLine",
     "RetailOrderLineInput",
     "add_retail_cart_line",
+    "clear_retail_cart",
+    "ensure_retail_cart_editable",
+    "remove_retail_cart_line",
+    "update_retail_cart_line_quantity",
     "buyer_from_anonymous_retail_input",
     "complete_retail_payment",
     "create_pending_retail_order",
@@ -79,6 +90,10 @@ def add_retail_cart_line(
 ) -> CartLine:
     """Resolve an eligible RETAIL offer and add it to a cart."""
 
+    ensure_retail_cart_editable(
+        cart=cart,
+    )
+
     commercial_price, _ = _get_retail_price_and_amount(
         commercial_price_id=commercial_price_id,
         currency=PriceAmount.Currency.EUR,
@@ -89,6 +104,88 @@ def add_retail_cart_line(
             cart=cart,
             commercial_price=commercial_price,
             quantity=quantity,
+        )
+    except InvalidCart as exc:
+        raise InvalidRetailCart(
+            str(exc)
+        ) from exc
+
+
+def ensure_retail_cart_editable(
+    *,
+    cart: Cart,
+) -> None:
+    """Refuse cart changes while a checkout from the cart is being paid.
+
+    The draft order sent to the payment provider is a snapshot of the
+    cart. It is never updated: to change the order the buyer cancels the
+    payment, which cancels the draft and releases its reservations, and
+    a new checkout then snapshots the cart again.
+    """
+
+    checkout = get_retail_checkout_with_open_payment(
+        cart=cart,
+    )
+
+    if checkout is not None:
+        raise RetailCartLocked(
+            checkout=checkout,
+        )
+
+
+def update_retail_cart_line_quantity(
+    *,
+    cart: Cart,
+    line: CartLine,
+    quantity: int,
+) -> CartLine:
+    ensure_retail_cart_editable(
+        cart=cart,
+    )
+
+    try:
+        return update_cart_line_quantity(
+            cart=cart,
+            line=line,
+            quantity=quantity,
+        )
+    except InvalidCart as exc:
+        raise InvalidRetailCart(
+            str(exc)
+        ) from exc
+
+
+def remove_retail_cart_line(
+    *,
+    cart: Cart,
+    line: CartLine,
+) -> None:
+    ensure_retail_cart_editable(
+        cart=cart,
+    )
+
+    try:
+        remove_cart_line(
+            cart=cart,
+            line=line,
+        )
+    except InvalidCart as exc:
+        raise InvalidRetailCart(
+            str(exc)
+        ) from exc
+
+
+def clear_retail_cart(
+    *,
+    cart: Cart,
+) -> Cart:
+    ensure_retail_cart_editable(
+        cart=cart,
+    )
+
+    try:
+        return clear_cart(
+            cart=cart,
         )
     except InvalidCart as exc:
         raise InvalidRetailCart(
