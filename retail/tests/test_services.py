@@ -34,11 +34,13 @@ from retail.rules import (
     RETAIL_CHECKOUT_WINDOW,
     RETAIL_PAYMENT_RESERVATION_WINDOW,
 )
-from retail.services import (
-    AnonymousBuyerInput,
+from retail.errors import (
     InvalidRetailCart,
     InvalidRetailOrder,
     RetailCheckoutPaymentInProgress,
+)
+from retail.services import (
+    AnonymousBuyerInput,
     RetailOrderLineInput,
     add_retail_cart_line,
     buyer_from_anonymous_retail_input,

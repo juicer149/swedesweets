@@ -10,9 +10,9 @@ from inventory.services import create_batch
 from orders.models import Order
 from reservations.models import Allocation
 from payments.models import PaymentAttempt
+from retail.errors import InvalidRetailOrder
 from retail.services import (
     AnonymousBuyerInput,
-    InvalidRetailOrder,
     RetailOrderLineInput,
     create_pending_retail_order,
     fail_retail_payment,

@@ -25,9 +25,8 @@ from retail.catalog_selectors import (
 from carts.models import Cart
 from carts.services import create_cart
 from common.channels import SalesChannel
+from retail.errors import InvalidRetailCart, InvalidRetailOrder
 from retail.services import (
-    InvalidRetailCart,
-    InvalidRetailOrder,
     add_retail_cart_line,
 )
 from storefront.cart import (

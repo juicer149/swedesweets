@@ -14,13 +14,13 @@ from payments.contracts import (
 )
 from payments.models import PaymentAttempt
 from payments.providers.sumup import SumUpPaymentError
+from retail.errors import InvalidRetailOrder
 from retail.payments import (
     begin_retail_hosted_payment,
     retry_retail_hosted_payment,
 )
 from retail.services import (
     AnonymousBuyerInput,
-    InvalidRetailOrder,
     RetailOrderLineInput,
     create_pending_retail_order,
 )

@@ -56,10 +56,7 @@ from retail.selectors import list_batches_for_retail_price
 
 __all__ = [
     "AnonymousBuyerInput",
-    "InvalidRetailCart",
-    "InvalidRetailOrder",
     "ResolvedRetailOrderLine",
-    "RetailCheckoutPaymentInProgress",
     "RetailOrderLineInput",
     "add_retail_cart_line",
     "buyer_from_anonymous_retail_input",

@@ -14,9 +14,9 @@ from payments.services import (
     InvalidPaymentAttempt,
     cancel_pending_payment_attempts_for_order,
 )
+from retail.errors import InvalidRetailOrder
 from retail.services import (
     AnonymousBuyerInput,
-    InvalidRetailOrder,
     RetailOrderLineInput,
     create_pending_retail_order,
     fail_retail_payment,
