@@ -59,10 +59,10 @@ superuser:
 	$(MANAGE) createsuperuser
 
 seed:
-	$(MANAGE) seed_demo_data --with-demo-user
+	$(MANAGE) seed_demo_data --with-orders --with-demo-user
 
 reset-demo:
-	$(MANAGE) seed_demo_data --reset --with-demo-user
+	$(MANAGE) seed_demo_data --reset --with-orders --with-demo-user
 
 collectstatic:
 	$(MANAGE) collectstatic --noinput

@@ -1,54 +1,27 @@
-# Seed demo data
+# Management commands
 
-This seed data uses real historical inventory and sales data for the MVP demo.
+| Command | Purpose |
+|---|---|
+| `ensure_admin_user` | Create or update the superuser from environment variables (runs on deploy) |
+| `reconcile_payments` | Reconcile retail payments with the payment provider |
+| `export_order_history` | Export order history as JSON, outside the repository |
+| `seed_demo_data` | Synthetic demo data, local development only |
 
-## Current seed state
-
-Seed command:
+## Demo data
 
 ```bash
-python manage.py seed_demo_data --reset --with-orders
+make reset-demo   # seed_demo_data --reset --with-orders --with-demo-user
 ```
 
-Creates:
+Everything except the product catalogue is invented (`_demo_data.py`):
 
-* products
-* customers
-* inbound inventory batches
-* historical delivered orders
-* consumed allocations
+- six business customers in Haute-Savoie with `@example.com` addresses and
+  phone numbers from the range reserved for fiction (+33 1 99 00 xx xx)
+- one long-dated batch per active product, plus short-dated batches for the
+  expiry queue and a few small ones for the low-stock queue
+- four retail merch products with EUR prices
+- 28 B2B orders over the last eight weeks: 4 placed, 4 packed, 20 delivered
 
-## Skipped historical orders
-
-The following orders are intentionally skipped for now:
-
-### 2025-12-01_super_u_les_houches_2025-0002
-
-Skipped because this large order currently consumes more stock than the known
-inbound batches support. It also contains unmapped items:
-
-* BRIO CARAMEL
-* JÄTTEBANAN CHOKLAD
-
-Re-enable after verifying additional inbound stock or correcting product mapping.
-
-### 2026-02-29_miss_money_penny_2025-0004
-
-Skipped because the invoice only says "Lösgodis 10" and does not provide a
-product-level split. skippa
-
-### unknown_date_unknown_customer_unknown_invoice
-
-Skipped because the source text is missing invoice number, customer and order date.
-
-```
-
-## Nästa bra tekniska förbättring
-
-Seed räknar ordern som skapad innan/efter vissa skips lite otydligt. senare justera rapporteringen så den skriver:
-
-```text id="qcqwhd"
-Historical orders created: 7
-Skipped orders: 3
-Unmapped inventory lines ignored: 3
-```
+Dates are relative to the day it runs, so the queues always look current.
+The command refuses to run unless `DEBUG=True`. Real orders and customer
+data never belong in the repository; use `export_order_history` for those.

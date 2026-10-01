@@ -1,50 +1,72 @@
+"""Seed a local database with synthetic demo data.
+
+    python manage.py seed_demo_data --with-orders [--reset] [--with-demo-user]
+
+Creates the product catalogue, six invented business customers, inbound
+stock (including short-dated and low-stock batches), four retail merch
+products with EUR prices, and, with --with-orders, about four weeks of
+B2B orders in placed, packed and delivered states.
+
+All customers, batches and orders are invented (see _demo_data.py).
+Orders go through the same services as the ops portal: business placement,
+reservation-backed packing and delivery.
+
+Refuses to run unless DEBUG is true: it is a local development tool and
+--reset deletes every order, customer, batch and product.
+"""
+
 from __future__ import annotations
 
 import json
-from collections.abc import Iterator
 from datetime import date, datetime, time, timedelta
-from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, transaction
 from django.utils import timezone
 
-from customers.models import Customer, normalize_customer_email
+from accounts.models import CustomerMembership
+from business.services import create_order
+from carts.models import Cart
+from customers.models import Customer
 from customers.services import create_customer
+from fulfillment.services import pack_order
 from inventory.models import InventoryBatch
 from inventory.services import create_batch
 from orders.datatypes import OrderLineInput
-from orders.models import (
-    Order,
-    OrderLine,
+from orders.models import Order, OrderLine
+from orders.services import deliver_order
+from payments.models import PaymentAttempt
+from pricing.models import CommercialPrice, PriceAmount
+from pricing.services import (
+    create_commercial_price,
+    ensure_standard_offer,
+    set_commercial_price_enabled,
+    set_price_amount,
 )
-from reservations.models import Allocation
-from orders.services import create_order, deliver_order, pack_order
 from products.models import Product
 from products.services import create_product
+from reservations.models import Allocation
+
+from . import _demo_data as demo
 
 DEMO_USER_USERNAME = "demo_ops"
 DEMO_USER_EMAIL = "demo.ops@example.com"
 
-COMMAND_DIR = Path(__file__).resolve().parent
-
-PRODUCT_CATALOG_PATH = COMMAND_DIR / "seed_demo_products.json"
-CUSTOMER_CATALOG_PATH = COMMAND_DIR / "seed_demo_customers.json"
-BATCH_CATALOG_DIR = COMMAND_DIR / "seed_demo_batches"
-ORDER_CATALOG_DIR = COMMAND_DIR / "seed_demo_orders"
+PRODUCT_CATALOG_PATH = Path(__file__).resolve().parent / "seed_demo_products.json"
 
 
 class Command(BaseCommand):
-    help = "Seed demo data for SwedeSweets MVP."
+    help = "Seed synthetic demo data (local development only)."
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--reset",
             action="store_true",
-            help="Delete existing demo-domain data before seeding.",
+            help="Delete existing orders, customers, stock and products first.",
         )
         parser.add_argument(
             "--with-demo-user",
@@ -54,40 +76,53 @@ class Command(BaseCommand):
         parser.add_argument(
             "--with-orders",
             action="store_true",
-            help="Seed historical demo orders and consume inventory.",
+            help="Seed B2B orders in placed, packed and delivered states.",
         )
 
     @transaction.atomic
     def handle(self, *args, **options):
-        if options["reset"]:
-            self._reset_demo_data()
-        elif self._demo_data_exists():
+        if not settings.DEBUG:
             raise CommandError(
-                "Demo data already exists. Run with --reset to recreate it."
+                "seed_demo_data only runs with DEBUG=True (local development)."
             )
 
-        seed_user = self._get_seed_user(
-            create_demo_user=options["with_demo_user"],
-        )
+        if options["reset"]:
+            self._reset()
+        elif self._data_exists():
+            raise CommandError(
+                "Data already exists. Run with --reset to recreate it."
+            )
+
+        today = timezone.localdate()
+        user = self._seed_user(create_demo_user=options["with_demo_user"])
 
         products = self._create_products()
         customers = self._create_customers()
-        self._create_inventory(products=products)
+
+        candy_numbers = [number for number, product in products.items() if product.active]
+        batches = demo.build_batches(internal_numbers=candy_numbers, today=today)
+        self._create_batches(batches, products)
+
+        merch = self._create_merch()
+        self._create_batches(demo.merch_batches(today=today), merch)
+
+        summary = (
+            f"{len(products)} products, {len(merch)} merch items, "
+            f"{len(customers)} customers, {len(batches)} batches"
+        )
 
         if options["with_orders"]:
-            self._create_orders(
-                products=products,
-                customers=customers,
-                user=seed_user,
-            )
+            orders = demo.build_orders(batches=batches, today=today)
+            self._create_orders(orders, products, customers, user)
+            summary += f", {len(orders)} orders"
 
-        self.stdout.write(self.style.SUCCESS("Demo data seeded successfully."))
+        self.stdout.write(self.style.SUCCESS(f"Demo data seeded: {summary}."))
 
-    # ==========================================================================
+    # ------------------------------------------------------------------
     # reset
-    # ==========================================================================
+    # ------------------------------------------------------------------
 
-    def _demo_data_exists(self) -> bool:
+    def _data_exists(self) -> bool:
         return (
             Product.objects.exists()
             or Customer.objects.exists()
@@ -95,874 +130,237 @@ class Command(BaseCommand):
             or Order.objects.exists()
         )
 
-    def _reset_demo_data(self) -> None:
-        Allocation.objects.all().delete()
-        OrderLine.objects.all().delete()
-        Order.objects.all().delete()
-        InventoryBatch.objects.all().delete()
-        Customer.objects.all().delete()
-        Product.objects.all().delete()
-
-        _reset_database_sequences(
-            Allocation,
+    def _reset(self) -> None:
+        # Children before parents: several relations are PROTECT.
+        for model in (
+            PaymentAttempt,
+            Allocation,      # cascades ops pick-checklist marks
             OrderLine,
-            Order,
+            Order,           # cascades retail checkout sessions
+            Cart,            # cascades cart lines and business carts
+            CustomerMembership,
+            PriceAmount,
+            CommercialPrice,
             InventoryBatch,
             Customer,
             Product,
-        )
+        ):
+            model.objects.all().delete()
 
-    # ==========================================================================
+        _reset_sequences(Order, OrderLine, InventoryBatch, Customer, Product)
+
+    # ------------------------------------------------------------------
     # users
-    # ==========================================================================
+    # ------------------------------------------------------------------
 
-    def _get_seed_user(self, *, create_demo_user: bool):
+    def _seed_user(self, *, create_demo_user: bool):
         User = get_user_model()
 
-        existing_superuser = (
-            User.objects.filter(is_superuser=True).order_by("id").first()
-        )
-
-        if existing_superuser is not None:
-            return existing_superuser
+        superuser = User.objects.filter(is_superuser=True).order_by("id").first()
+        if superuser is not None:
+            return superuser
 
         if not create_demo_user:
             return None
 
-        user = User.objects.create(
+        user, created = User.objects.get_or_create(
             username=DEMO_USER_USERNAME,
-            email=DEMO_USER_EMAIL,
-            is_staff=True,
-            is_superuser=False,
+            defaults={"email": DEMO_USER_EMAIL, "is_staff": True},
         )
-        user.set_unusable_password()
-        user.save(update_fields=["password"])
-
+        if created:
+            user.set_unusable_password()
+            user.save(update_fields=["password"])
         return user
 
-    # ==========================================================================
-    # products
-    # ==========================================================================
+    # ------------------------------------------------------------------
+    # catalogue
+    # ------------------------------------------------------------------
 
     def _create_products(self) -> dict[int, Product]:
         products: dict[int, Product] = {}
 
-        for item in _load_json_list(PRODUCT_CATALOG_PATH):
-            product = self._create_product(item)
+        for item in _load_product_catalog():
+            result = create_product(
+                internal_number=int(item["internal_number"]),
+                manufacturer=str(item["manufacturer"]),
+                brand=str(item["brand"]),
+                name=str(item["name"]),
+                weight_per_unit=int(item["weight_per_unit"]),
+                stock_unit=str(item.get("stock_unit", Product.StockUnit.BOX)),
+                vegan=bool(item["vegan"]),
+            )
+            product = getattr(result, "item", result)
 
-            if product.internal_number is None:
-                raise CommandError(f"Product {product!s} is missing internal_number.")
+            if not bool(item.get("active", True)):
+                product.active = False
+                product.save(update_fields=["active"])
 
+            ensure_standard_offer(
+                product=product,
+                channel=CommercialPrice.Channel.BUSINESS,
+            )
             products[product.internal_number] = product
 
         return products
 
-    def _create_product(self, item: dict[str, Any]) -> Product:
-        result = create_product(
-            internal_number=int(item["internal_number"]),
-            manufacturer=str(item["manufacturer"]),
-            brand=str(item["brand"]),
-            name=str(item["name"]),
-            weight_per_unit=int(item["weight_per_unit"]),
-            stock_unit=str(item.get("stock_unit", Product.StockUnit.BOX)),
-            vegan=bool(item["vegan"]),
-        )
+    def _create_merch(self) -> dict[int, Product]:
+        merch: dict[int, Product] = {}
 
-        product = getattr(result, "item", result)
+        for item in demo.MERCH:
+            result = create_product(
+                internal_number=item.internal_number,
+                manufacturer=demo.MERCH_BRAND,
+                brand=demo.MERCH_BRAND,
+                name=item.name,
+                weight_per_unit=item.weight_per_unit,
+                stock_unit=Product.StockUnit.PIECE,
+            )
+            product = getattr(result, "item", result)
 
-        if not bool(item.get("active", True)):
-            product.active = False
-            product.save(update_fields=["active"])
+            offer = create_commercial_price(
+                product=product,
+                channel=CommercialPrice.Channel.RETAIL,
+            )
+            set_price_amount(
+                commercial_price=offer,
+                currency=PriceAmount.Currency.EUR,
+                price=item.retail_price_eur,
+            )
+            set_commercial_price_enabled(commercial_price=offer, enabled=True)
 
-        return product
+            merch[item.internal_number] = product
 
-    # ==========================================================================
-    # customers
-    # ==========================================================================
+        return merch
 
     def _create_customers(self) -> dict[str, Customer]:
-        customers: dict[str, Customer] = {}
-
-        for item in _load_json_list(CUSTOMER_CATALOG_PATH):
-            customer = create_customer(
-                name=str(item["name"]),
-                email=normalize_customer_email(str(item["email"])),
-                phone_number=str(item["phone_number"]),
-                country=str(item["country"]),
-                city=str(item["city"]),
-                address_line=str(item["address_line"]),
+        return {
+            item.key: create_customer(
+                name=item.name,
+                email=item.email,
+                phone_number=item.phone_number,
+                country=item.country,
+                city=item.city,
+                address_line=item.address_line,
             )
+            for item in demo.CUSTOMERS
+        }
 
-            key = str(item["key"])
-
-            if key in customers:
-                raise CommandError(f"Duplicate customer key in seed data: {key}")
-
-            customers[key] = customer
-
-        return customers
-
-    # ==========================================================================
-    # inventory
-    # ==========================================================================
-
-    def _create_inventory(
+    def _create_batches(
         self,
-        *,
+        batches: list[demo.DemoBatch],
         products: dict[int, Product],
     ) -> None:
-        for item in _load_batch_items(BATCH_CATALOG_DIR):
-            self._create_batch_from_item(
-                item=item,
-                products=products,
+        for batch in batches:
+            create_batch(
+                product=products[batch.internal_number],
+                quantity=batch.quantity,
+                best_before=batch.best_before,
+                location=batch.location,
+                batch_id=batch.batch_id,
+                today=batch.received,
             )
 
-    def _create_batch_from_item(
-        self,
-        *,
-        item: dict[str, Any],
-        products: dict[int, Product],
-    ) -> InventoryBatch:
-        internal_number = int(item["internal_number"])
-
-        if internal_number not in products:
-            source_name = str(item.get("invoice_name", "unknown source line"))
-            raise CommandError(
-                f"Batch references unknown product #{internal_number}: {source_name}"
-            )
-
-        product = products[internal_number]
-
-        return create_batch(
-            product=product,
-            quantity=int(item["quantity"]),
-            best_before=_parse_best_before(item),
-            location=str(item["location"]),
-            today=_parse_received_date(item),
-            allow_non_future_best_before=True,
-        )
-
-    # ==========================================================================
+    # ------------------------------------------------------------------
     # orders
-    # ==========================================================================
+    # ------------------------------------------------------------------
 
     def _create_orders(
         self,
-        *,
+        orders: list[demo.DemoOrder],
         products: dict[int, Product],
         customers: dict[str, Customer],
         user,
     ) -> None:
-        if not ORDER_CATALOG_DIR.exists():
-            self.stdout.write(
-                self.style.WARNING(
-                    f"Order catalog directory does not exist: {ORDER_CATALOG_DIR}"
-                )
-            )
-            return
-
-        created_count = 0
-        skipped_count = 0
-
-        for order_data in _load_order_records(ORDER_CATALOG_DIR):
-            if _should_skip_order(order_data):
-                skipped_count += 1
-                self.stdout.write(
-                    self.style.WARNING(f"Skipped order {_order_seed_label(order_data)}")
-                )
-                continue
-
-            unmapped_items = order_data.get("unmapped_items", [])
-
-            if unmapped_items:
-                self._write_unmapped_items_warning(
-                    order_data=order_data,
-                    unmapped_items=unmapped_items,
-                )
-
-            inventory_items = order_data.get("items", [])
-
-            if not inventory_items:
-                skipped_count += 1
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"Skipped order {_order_seed_label(order_data)} "
-                        "because it has no inventory items."
-                    )
-                )
-                continue
-
-            customer_key = str(order_data["customer_key"])
-
-            if customer_key not in customers:
-                raise CommandError(
-                    f"Order {_order_seed_label(order_data)} references "
-                    f"unknown customer_key {customer_key!r}."
-                )
-
-            line_inputs = _build_order_line_inputs(
-                order_data=order_data,
-                products=products,
-            )
-
+        for index, data in enumerate(orders, start=1):
             try:
                 order = create_order(
-                    customer=customers[customer_key],
-                    lines=line_inputs,
+                    customer=customers[data.customer_key],
+                    lines=[
+                        OrderLineInput.units(
+                            product=products[line.internal_number],
+                            quantity=line.quantity,
+                        )
+                        for line in data.lines
+                    ],
                     user=user,
                 )
-                order = pack_order(order=order, user=user)
-                order = deliver_order(order=order, user=user)
-                _apply_historical_order_timestamp(
-                    order=order,
-                    order_date=_parse_order_date(order_data),
-                )
+                if data.status in ("packed", "delivered"):
+                    order = pack_order(order=order, user=user)
+                if data.status == "delivered":
+                    order = deliver_order(order=order, user=user)
             except Exception as error:
                 raise CommandError(
-                    f"Could not seed order {_order_seed_label(order_data)}: {error}"
+                    f"Could not seed demo order #{index} "
+                    f"({data.customer_key}, {data.placed_on}): {error}"
                 ) from error
 
-            created_count += 1
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Historical orders seeded: {created_count}; skipped: {skipped_count}."
-            )
-        )
-
-    def _write_unmapped_items_warning(
-        self,
-        *,
-        order_data: dict[str, Any],
-        unmapped_items: Any,
-    ) -> None:
-        order_label = _order_seed_label(order_data)
-
-        if not isinstance(unmapped_items, list):
-            self.stdout.write(
-                self.style.WARNING(
-                    f"Order {order_label} has invalid unmapped_items data. "
-                    "Expected a list."
-                )
-            )
-            return
-
-        self.stdout.write(
-            self.style.WARNING(
-                f"Order {order_label} has {len(unmapped_items)} unmapped item(s). "
-                "They will not consume inventory:"
-            )
-        )
-
-        for index, item in enumerate(unmapped_items, start=1):
-            self.stdout.write(
-                self.style.WARNING(f"  - #{index}: {_format_unmapped_item(item)}")
-            )
+            _backdate(order=order, placed_on=data.placed_on, status=data.status)
 
 
-# ==============================================================================
-# reset helpers
-# ==============================================================================
+# ======================================================================
+# helpers
+# ======================================================================
 
 
-def _reset_database_sequences(*models) -> None:
-    model_list = list(models)
-
-    if connection.vendor == "sqlite":
-        _reset_sqlite_sequences(model_list)
-        return
-
-    if connection.vendor == "postgresql":
-        _reset_postgresql_sequences(model_list)
-        return
-
-    if connection.vendor == "mysql":
-        _reset_mysql_sequences(model_list)
-        return
-
-
-def _reset_sqlite_sequences(models: list[type]) -> None:
-    table_names = [model._meta.db_table for model in models]
-
-    if not table_names:
-        return
-
-    with connection.cursor() as cursor:
-        cursor.execute(
-            """
-            SELECT name
-            FROM sqlite_master
-            WHERE type = 'table'
-              AND name = 'sqlite_sequence'
-            """
-        )
-
-        if cursor.fetchone() is None:
-            return
-
-        placeholders = ", ".join(["%s"] * len(table_names))
-
-        cursor.execute(
-            f"DELETE FROM sqlite_sequence WHERE name IN ({placeholders})",
-            table_names,
-        )
-
-
-def _reset_postgresql_sequences(models: list[type]) -> None:
-    with connection.cursor() as cursor:
-        for model in models:
-            table_name = model._meta.db_table
-            pk_column = model._meta.pk.column
-
-            cursor.execute(
-                "SELECT pg_get_serial_sequence(%s, %s)",
-                [table_name, pk_column],
-            )
-            row = cursor.fetchone()
-
-            if not row or not row[0]:
-                continue
-
-            sequence_name = row[0]
-
-            cursor.execute(
-                "SELECT setval(%s, 1, false)",
-                [sequence_name],
-            )
-
-
-def _reset_mysql_sequences(models: list[type]) -> None:
-    with connection.cursor() as cursor:
-        for model in models:
-            table_name = connection.ops.quote_name(model._meta.db_table)
-            cursor.execute(f"ALTER TABLE {table_name} AUTO_INCREMENT = 1")
-
-
-# ==============================================================================
-# loading: generic
-# ==============================================================================
-
-
-def _load_json_list(path: Path) -> list[dict[str, Any]]:
-    with path.open(encoding="utf-8") as file:
+def _load_product_catalog() -> list[dict[str, Any]]:
+    with PRODUCT_CATALOG_PATH.open(encoding="utf-8") as file:
         data = json.load(file)
 
-    if not isinstance(data, list):
-        raise CommandError(f"{path.name} must contain a JSON list.")
-
-    for index, item in enumerate(data, start=1):
-        if not isinstance(item, dict):
-            raise CommandError(
-                f"{path.name} item #{index} must be a JSON object: {item!r}"
-            )
+    if not isinstance(data, list) or not all(isinstance(i, dict) for i in data):
+        raise CommandError(f"{PRODUCT_CATALOG_PATH.name} must be a list of objects.")
 
     return data
 
 
-def _load_json_object(path: Path) -> dict[str, Any]:
-    with path.open(encoding="utf-8") as file:
-        data = json.load(file)
+def _at(day: date, hour: int) -> datetime:
+    return timezone.make_aware(datetime.combine(day, time(hour=hour)))
 
-    if not isinstance(data, dict):
-        raise CommandError(f"{path.name} must contain a JSON object.")
 
-    return data
+def _backdate(*, order: Order, placed_on: date, status: str) -> None:
+    """Move an order's timestamps back to when the demo says it happened."""
 
-
-# ==============================================================================
-# loading: batches
-# ==============================================================================
-
-
-def _load_batch_items(directory: Path) -> Iterator[dict[str, Any]]:
-    if not directory.exists():
-        raise CommandError(f"Batch catalog directory does not exist: {directory}")
-
-    if not directory.is_dir():
-        raise CommandError(f"Batch catalog path is not a directory: {directory}")
-
-    batch_files = sorted(directory.glob("*.json"))
-
-    if not batch_files:
-        raise CommandError(
-            f"Batch catalog directory contains no JSON files: {directory}"
-        )
-
-    for path in batch_files:
-        yield from _load_batch_items_from_file(path)
-
-
-def _load_batch_items_from_file(path: Path) -> Iterator[dict[str, Any]]:
-    document = _load_json_object(path)
-
-    schema_version = document.get("schema_version")
-
-    if schema_version != 1:
-        raise CommandError(
-            f"{path.name} has unsupported schema_version: {schema_version!r}. "
-            "Expected schema_version 1."
-        )
-
-    receipts = document.get("receipts")
-
-    if not isinstance(receipts, list):
-        raise CommandError(f"{path.name} must contain a 'receipts' list.")
-
-    for receipt_index, receipt in enumerate(receipts, start=1):
-        if not isinstance(receipt, dict):
-            raise CommandError(
-                f"{path.name} receipt #{receipt_index} must be a JSON object."
-            )
-
-        yield from _load_batch_items_from_receipt(
-            path=path,
-            receipt=receipt,
-            receipt_index=receipt_index,
-        )
-
-
-def _load_batch_items_from_receipt(
-    *,
-    path: Path,
-    receipt: dict[str, Any],
-    receipt_index: int,
-) -> Iterator[dict[str, Any]]:
-    source = receipt.get("source")
-
-    if not isinstance(source, dict):
-        raise CommandError(
-            f"{path.name} receipt #{receipt_index} must contain a 'source' object."
-        )
-
-    supplier = receipt.get("supplier", {})
-
-    if not isinstance(supplier, dict):
-        raise CommandError(
-            f"{path.name} receipt #{receipt_index} field 'supplier' "
-            "must be an object if provided."
-        )
-
-    items = receipt.get("items")
-
-    if not isinstance(items, list):
-        raise CommandError(
-            f"{path.name} receipt #{receipt_index} must contain an 'items' list."
-        )
-
-    received_date = _required_source_field(
-        path=path,
-        receipt_index=receipt_index,
-        source=source,
-        field_name="received_date",
-    )
-
-    invoice_number = source.get("invoice_number")
-    supplier_order_number = source.get("supplier_order_number")
-    supplier_name = supplier.get("name")
-
-    for item_index, item in enumerate(items, start=1):
-        if not isinstance(item, dict):
-            raise CommandError(
-                f"{path.name} receipt #{receipt_index} item #{item_index} "
-                "must be a JSON object."
-            )
-
-        yield {
-            **item,
-            "received_date": item.get("received_date", received_date),
-            "invoice_number": item.get("invoice_number", invoice_number),
-            "supplier_order_number": item.get(
-                "supplier_order_number",
-                supplier_order_number,
-            ),
-            "supplier_name": item.get("supplier_name", supplier_name),
-            "_source_file": path.name,
-            "_receipt_index": receipt_index,
-            "_item_index": item_index,
-        }
-
-
-def _required_source_field(
-    *,
-    path: Path,
-    receipt_index: int,
-    source: dict[str, Any],
-    field_name: str,
-) -> str:
-    value = source.get(field_name)
-
-    if not value:
-        raise CommandError(
-            f"{path.name} receipt #{receipt_index} source is missing "
-            f"required field {field_name!r}."
-        )
-
-    return str(value)
-
-
-# ==============================================================================
-# loading: orders
-# ==============================================================================
-
-
-def _load_order_records(directory: Path) -> Iterator[dict[str, Any]]:
-    if not directory.exists():
-        return
-
-    if not directory.is_dir():
-        raise CommandError(f"Order catalog path is not a directory: {directory}")
-
-    for path in sorted(directory.glob("*.json")):
-        yield from _load_order_records_from_file(path)
-
-
-def _load_order_records_from_file(path: Path) -> Iterator[dict[str, Any]]:
-    document = _load_json_object(path)
-
-    schema_version = document.get("schema_version")
-
-    if schema_version != 1:
-        raise CommandError(
-            f"{path.name} has unsupported schema_version: {schema_version!r}. "
-            "Expected schema_version 1."
-        )
-
-    orders = document.get("orders")
-
-    if not isinstance(orders, list):
-        raise CommandError(f"{path.name} must contain an 'orders' list.")
-
-    for order_index, order_data in enumerate(orders, start=1):
-        if not isinstance(order_data, dict):
-            raise CommandError(
-                f"{path.name} order #{order_index} must be a JSON object."
-            )
-
-        yield {
-            **order_data,
-            "_source_file": path.name,
-            "_order_index": order_index,
-        }
-
-
-# ==============================================================================
-# parsing: batches
-# ==============================================================================
-
-
-def _parse_best_before(item: dict[str, Any]) -> date:
-    raw_best_before = item.get("best_before")
-
-    if not raw_best_before:
-        raise CommandError(
-            "Batch item is missing required field 'best_before': "
-            f"{_format_batch_item_context(item)}"
-        )
-
-    try:
-        return date.fromisoformat(str(raw_best_before))
-    except ValueError as error:
-        raise CommandError(
-            "Batch item has invalid 'best_before'. "
-            "Expected YYYY-MM-DD: "
-            f"{_format_batch_item_context(item)}"
-        ) from error
-
-
-def _parse_received_date(item: dict[str, Any]) -> date:
-    raw_received_date = item.get("received_date")
-
-    if raw_received_date:
-        try:
-            return date.fromisoformat(str(raw_received_date))
-        except ValueError as error:
-            raise CommandError(
-                "Batch item has invalid 'received_date'. "
-                "Expected YYYY-MM-DD: "
-                f"{_format_batch_item_context(item)}"
-            ) from error
-
-    raw_received_days_ago = item.get("received_days_ago", 1)
-
-    try:
-        received_days_ago = int(raw_received_days_ago)
-    except (TypeError, ValueError) as error:
-        raise CommandError(
-            "Batch item has invalid 'received_days_ago': "
-            f"{_format_batch_item_context(item)}"
-        ) from error
-
-    if received_days_ago < 0:
-        raise CommandError(
-            "Batch item 'received_days_ago' must be non-negative: "
-            f"{_format_batch_item_context(item)}"
-        )
-
-    return timezone.localdate() - timedelta(days=received_days_ago)
-
-
-def _format_batch_item_context(item: dict[str, Any]) -> str:
-    source_file = item.get("_source_file", "unknown file")
-    receipt_index = item.get("_receipt_index", "?")
-    item_index = item.get("_item_index", "?")
-    invoice_code = item.get("invoice_code", "unknown invoice code")
-    invoice_name = item.get("invoice_name", "unknown invoice name")
-
-    return (
-        f"{source_file}, receipt #{receipt_index}, item #{item_index}, "
-        f"{invoice_code} {invoice_name}"
-    )
-
-
-# ==============================================================================
-# parsing: orders
-# ==============================================================================
-
-
-def _should_skip_order(order_data: dict[str, Any]) -> bool:
-    if bool(order_data.get("skip", False)):
-        return True
-
-    raw_order_date = str(order_data.get("order_date", "")).strip().lower()
-    raw_customer_key = str(order_data.get("customer_key", "")).strip().lower()
-
-    return (
-        not raw_order_date
-        or raw_order_date in {"unknown", "fill_in", "todo"}
-        or not raw_customer_key
-        or raw_customer_key in {"unknown", "unknown_customer", "fill_in", "todo"}
-    )
-
-
-def _build_order_line_inputs(
-    *,
-    order_data: dict[str, Any],
-    products: dict[int, Product],
-) -> list[OrderLineInput]:
-    raw_items = order_data.get("items")
-
-    if not isinstance(raw_items, list):
-        raise CommandError(
-            f"Order {_order_seed_label(order_data)} must contain an 'items' list."
-        )
-
-    line_inputs: list[OrderLineInput] = []
-
-    for item_index, item in enumerate(raw_items, start=1):
-        if not isinstance(item, dict):
-            raise CommandError(
-                f"Order {_order_seed_label(order_data)} item #{item_index} "
-                "must be a JSON object."
-            )
-
-        line_inputs.append(
-            _build_order_line_input(
-                order_data=order_data,
-                item=item,
-                item_index=item_index,
-                products=products,
-            )
-        )
-
-    return line_inputs
-
-
-def _build_order_line_input(
-    *,
-    order_data: dict[str, Any],
-    item: dict[str, Any],
-    item_index: int,
-    products: dict[int, Product],
-) -> OrderLineInput:
-    try:
-        internal_number = int(item["internal_number"])
-    except KeyError as error:
-        raise CommandError(
-            f"Order {_order_seed_label(order_data)} item #{item_index} "
-            "is missing 'internal_number'."
-        ) from error
-
-    if internal_number not in products:
-        raise CommandError(
-            f"Order {_order_seed_label(order_data)} item #{item_index} "
-            f"references unknown product #{internal_number}."
-        )
-
-    product = products[internal_number]
-    quantity = _parse_decimal(item.get("sold_quantity", item.get("quantity")))
-    unit = _normalize_seed_order_unit(
-        item.get("sold_unit", item.get("unit", product.stock_unit))
-    )
-
-    if unit == "kg":
-        return OrderLineInput.kg(
-            product=product,
-            kg=quantity,
-        )
-
-    if unit == "grams":
-        return OrderLineInput.grams(
-            product=product,
-            grams=int(quantity),
-        )
-
-    if unit in {
-        "stock_unit",
-        "unit",
-        "units",
-        "piece",
-        "pieces",
-        "bag",
-        "bags",
-        "box",
-        "boxes",
-        "case",
-        "cases",
-    }:
-        if quantity != quantity.to_integral_value():
-            raise CommandError(
-                f"Order {_order_seed_label(order_data)} item #{item_index} "
-                f"uses unit {unit!r}, but quantity {quantity} is not a whole number."
-            )
-
-        return OrderLineInput.stock_units(
-            product=product,
-            quantity=int(quantity),
-        )
-
-    raise CommandError(
-        f"Order {_order_seed_label(order_data)} item #{item_index} "
-        f"has unsupported unit {unit!r}."
-    )
-
-
-def _normalize_seed_order_unit(value: Any) -> str:
-    unit = str(value).strip().lower()
-
-    aliases = {
-        "kg": "kg",
-        "kilo": "kg",
-        "kilos": "kg",
-        "kilogram": "kg",
-        "kilograms": "kg",
-        "g": "grams",
-        "gram": "grams",
-        "grams": "grams",
-        "stock": "stock_unit",
-        "stock_unit": "stock_unit",
-        "stock_units": "stock_unit",
-        "unit": "stock_unit",
-        "units": "stock_unit",
-        "quantity": "stock_unit",
-        "piece": "piece",
-        "pieces": "pieces",
-        "st": "pieces",
-        "pcs": "pieces",
-        "bag": "bag",
-        "bags": "bags",
-        "box": "box",
-        "boxes": "boxes",
-        "case": "case",
-        "cases": "cases",
+    placed = _at(placed_on, 9)
+    fields: dict[str, datetime] = {
+        "created_at": placed,
+        "placed_at": placed,
+        "updated_at": placed,
     }
 
-    return aliases.get(unit, unit)
+    if status in ("packed", "delivered"):
+        packed = _at(placed_on + timedelta(days=demo.PACK_AFTER_DAYS), 14)
+        fields["packed_at"] = packed
+        fields["updated_at"] = packed
+
+    if status == "delivered":
+        delivered = _at(placed_on + timedelta(days=demo.DELIVER_AFTER_DAYS), 10)
+        fields["delivered_at"] = delivered
+        fields["updated_at"] = delivered
+
+    Order.objects.filter(pk=order.pk).update(**fields)
 
 
-def _parse_decimal(value: Any) -> Decimal:
-    if value is None:
-        raise CommandError("Missing decimal value.")
+def _reset_sequences(*models) -> None:
+    """Restart primary keys at 1 so demo ids are stable between resets."""
 
-    normalized = str(value).strip().replace(",", ".")
+    with connection.cursor() as cursor:
+        for model in models:
+            table = model._meta.db_table
 
-    try:
-        return Decimal(normalized)
-    except Exception as error:
-        raise CommandError(f"Invalid decimal value: {value!r}") from error
+            if connection.vendor == "sqlite":
+                cursor.execute(
+                    "SELECT name FROM sqlite_master "
+                    "WHERE type = 'table' AND name = 'sqlite_sequence'"
+                )
+                if cursor.fetchone() is not None:
+                    cursor.execute(
+                        "DELETE FROM sqlite_sequence WHERE name = %s", [table]
+                    )
 
-
-def _parse_order_date(order_data: dict[str, Any]) -> date:
-    raw_order_date = order_data.get("order_date")
-
-    if not raw_order_date:
-        raise CommandError(
-            f"Order {_order_seed_label(order_data)} is missing 'order_date'."
-        )
-
-    try:
-        return date.fromisoformat(str(raw_order_date))
-    except ValueError as error:
-        raise CommandError(
-            f"Order {_order_seed_label(order_data)} has invalid order_date. "
-            "Expected YYYY-MM-DD."
-        ) from error
-
-
-def _apply_historical_order_timestamp(
-    *,
-    order: Order,
-    order_date: date,
-) -> None:
-    historical_datetime = timezone.make_aware(
-        datetime.combine(order_date, time(hour=12))
-    )
-
-    Order.objects.filter(pk=order.pk).update(
-        created_at=historical_datetime,
-        updated_at=historical_datetime,
-        placed_at=historical_datetime,
-        packed_at=historical_datetime,
-        delivered_at=historical_datetime,
-    )
-
-
-def _format_unmapped_item(item: Any) -> str:
-    if not isinstance(item, dict):
-        return str(item)
-
-    parts = []
-
-    invoice_code = item.get("invoice_code") or item.get("code")
-    invoice_name = item.get("invoice_name") or item.get("name") or item.get("text")
-    quantity = item.get("quantity") or item.get("sold_quantity")
-    unit = item.get("unit") or item.get("sold_unit")
-    reason = item.get("reason")
-    raw_text = item.get("raw_text") or item.get("raw")
-
-    if invoice_code:
-        parts.append(str(invoice_code))
-
-    if invoice_name:
-        parts.append(str(invoice_name))
-
-    if quantity:
-        quantity_label = str(quantity)
-
-        if unit:
-            quantity_label = f"{quantity_label} {unit}"
-
-        parts.append(f"quantity={quantity_label}")
-
-    if reason:
-        parts.append(f"reason={reason}")
-
-    if raw_text and not parts:
-        parts.append(str(raw_text))
-
-    if parts:
-        return " · ".join(parts)
-
-    return json.dumps(item, ensure_ascii=False, sort_keys=True)
-
-
-def _order_seed_label(order_data: dict[str, Any]) -> str:
-    seed_key = order_data.get("seed_key")
-
-    if seed_key:
-        return str(seed_key)
-
-    source_file = order_data.get("_source_file", "unknown file")
-    order_index = order_data.get("_order_index", "?")
-    invoice_number = order_data.get("invoice_number", "unknown invoice")
-
-    return f"{source_file} order #{order_index} invoice {invoice_number}"
+            elif connection.vendor == "postgresql":
+                cursor.execute(
+                    "SELECT pg_get_serial_sequence(%s, %s)",
+                    [table, model._meta.pk.column],
+                )
+                row = cursor.fetchone()
+                if row and row[0]:
+                    cursor.execute("SELECT setval(%s, 1, false)", [row[0]])
