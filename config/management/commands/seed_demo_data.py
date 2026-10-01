@@ -1,11 +1,16 @@
 """Seed a local database with synthetic demo data.
 
-    python manage.py seed_demo_data --with-orders [--reset] [--with-demo-user]
+    python manage.py seed_demo_data --with-orders [--reset] [--with-demo-accounts]
 
 Creates the product catalogue, six invented business customers, inbound
 stock (including short-dated and low-stock batches), four retail merch
 products with EUR prices, and, with --with-orders, about four weeks of
-B2B orders in placed, packed and delivered states.
+B2B orders in placed, packed and delivered states. With --with-demo-accounts
+it also creates three logins whose password is their username:
+
+    fullstaff        full staff access (ops portal, account management)
+    restrictedstaff  restricted staff access (ops portal)
+    business         B2B customer, linked to the demo customer with most orders
 
 All customers, batches and orders are invented (see _demo_data.py).
 Orders go through the same services as the ops portal: business placement,
@@ -29,6 +34,11 @@ from django.db import connection, transaction
 from django.utils import timezone
 
 from accounts.models import CustomerMembership
+from accounts.services import (
+    create_customer_account,
+    create_full_staff_account,
+    create_restricted_staff_account,
+)
 from business.services import create_order
 from carts.models import Cart
 from customers.models import Customer
@@ -53,8 +63,15 @@ from reservations.models import Allocation
 
 from . import _demo_data as demo
 
-DEMO_USER_USERNAME = "demo_ops"
-DEMO_USER_EMAIL = "demo.ops@example.com"
+# username == password; local development only (the command needs DEBUG).
+DEMO_STAFF_ACCOUNTS = (
+    ("fullstaff", create_full_staff_account),
+    ("restrictedstaff", create_restricted_staff_account),
+)
+DEMO_BUSINESS_USERNAME = "business"
+DEMO_USERNAMES = tuple(name for name, _ in DEMO_STAFF_ACCOUNTS) + (
+    DEMO_BUSINESS_USERNAME,
+)
 
 PRODUCT_CATALOG_PATH = Path(__file__).resolve().parent / "seed_demo_products.json"
 
@@ -69,9 +86,12 @@ class Command(BaseCommand):
             help="Delete existing orders, customers, stock and products first.",
         )
         parser.add_argument(
-            "--with-demo-user",
+            "--with-demo-accounts",
             action="store_true",
-            help="Create a demo_ops staff user with an unusable password.",
+            help=(
+                "Create logins fullstaff, restrictedstaff and business, "
+                "each with its username as password."
+            ),
         )
         parser.add_argument(
             "--with-orders",
@@ -94,7 +114,13 @@ class Command(BaseCommand):
             )
 
         today = timezone.localdate()
-        user = self._seed_user(create_demo_user=options["with_demo_user"])
+        user = None
+        if options["with_demo_accounts"]:
+            # Recreate rather than reuse: a previous run's logins may remain.
+            get_user_model().objects.filter(
+                email__in=[f"{name}@example.com" for name in DEMO_USERNAMES]
+            ).delete()
+            user = self._create_staff_accounts()
 
         products = self._create_products()
         customers = self._create_customers()
@@ -111,10 +137,15 @@ class Command(BaseCommand):
             f"{len(customers)} customers, {len(batches)} batches"
         )
 
+        orders: list[demo.DemoOrder] = []
         if options["with_orders"]:
             orders = demo.build_orders(batches=batches, today=today)
             self._create_orders(orders, products, customers, user)
             summary += f", {len(orders)} orders"
+
+        if options["with_demo_accounts"]:
+            self._create_business_account(customers, orders)
+            summary += f"; logins: {', '.join(DEMO_USERNAMES)} (password = username)"
 
         self.stdout.write(self.style.SUCCESS(f"Demo data seeded: {summary}."))
 
@@ -150,27 +181,37 @@ class Command(BaseCommand):
         _reset_sequences(Order, OrderLine, InventoryBatch, Customer, Product)
 
     # ------------------------------------------------------------------
-    # users
+    # accounts
     # ------------------------------------------------------------------
 
-    def _seed_user(self, *, create_demo_user: bool):
-        User = get_user_model()
+    def _create_staff_accounts(self):
+        """Create the demo staff logins; return the full staff user."""
 
-        superuser = User.objects.filter(is_superuser=True).order_by("id").first()
-        if superuser is not None:
-            return superuser
+        users = [
+            _demo_login(create(email=f"{name}@example.com", password=name), name)
+            for name, create in DEMO_STAFF_ACCOUNTS
+        ]
+        return users[0]
 
-        if not create_demo_user:
-            return None
+    def _create_business_account(
+        self,
+        customers: dict[str, Customer],
+        orders: list[demo.DemoOrder],
+    ) -> None:
+        """A B2B login for the customer with the most orders, so its portal
+        has order history to show."""
 
-        user, created = User.objects.get_or_create(
-            username=DEMO_USER_USERNAME,
-            defaults={"email": DEMO_USER_EMAIL, "is_staff": True},
+        keys = [order.customer_key for order in orders] or [demo.CUSTOMERS[0].key]
+        key = max(sorted(set(keys)), key=keys.count)
+
+        _demo_login(
+            create_customer_account(
+                email=f"{DEMO_BUSINESS_USERNAME}@example.com",
+                password=DEMO_BUSINESS_USERNAME,
+                customer=customers[key],
+            ),
+            DEMO_BUSINESS_USERNAME,
         )
-        if created:
-            user.set_unusable_password()
-            user.save(update_fields=["password"])
-        return user
 
     # ------------------------------------------------------------------
     # catalogue
@@ -300,6 +341,16 @@ class Command(BaseCommand):
 # ======================================================================
 # helpers
 # ======================================================================
+
+
+def _demo_login(created, username: str):
+    """Accounts are created with the e-mail as username; demo logins use a
+    short username so they are quick to type."""
+
+    user = created.user
+    user.username = username
+    user.save(update_fields=["username"])
+    return user
 
 
 def _load_product_catalog() -> list[dict[str, Any]]:

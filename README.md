@@ -168,7 +168,8 @@ make check
 `make seed` fills a local database with synthetic data: invented business
 customers, stock (including short-dated and low-stock batches), retail merch
 with prices, and B2B orders in every state. Only the product catalogue is
-real. See `config/management/commands/README.md`.
+real. It also creates three logins, password = username: `fullstaff`,
+`restrictedstaff` and `business`. See `config/management/commands/README.md`.
 
 Reset the local database and seed demo data with:
 

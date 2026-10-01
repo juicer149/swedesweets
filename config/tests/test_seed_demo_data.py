@@ -112,3 +112,43 @@ def test_orders_never_take_more_than_long_dated_stock():
 
     assert orders
     assert min(stock.values()) >= 1
+
+
+@pytest.mark.django_db
+def test_demo_accounts_log_in_with_their_username_as_password(debug, client):
+    _seed(with_demo_accounts=True)
+
+    for username in ("fullstaff", "restrictedstaff", "business"):
+        assert client.login(username=username, password=username), username
+        client.logout()
+
+
+@pytest.mark.django_db
+def test_demo_accounts_have_the_right_roles(debug):
+    from django.contrib.auth import get_user_model
+
+    from accounts.roles import StaffAccessLevel
+
+    _seed(with_demo_accounts=True)
+    users = get_user_model().objects
+
+    assert users.get(username="fullstaff").staff_account.access_level == StaffAccessLevel.FULL
+    assert (
+        users.get(username="restrictedstaff").staff_account.access_level
+        == StaffAccessLevel.RESTRICTED
+    )
+
+    customer = users.get(username="business").customer_membership.customer
+    assert Order.objects.filter(customer=customer).exists()
+
+
+@pytest.mark.django_db
+def test_demo_accounts_survive_a_reset(debug):
+    _seed(with_demo_accounts=True)
+    _seed(with_demo_accounts=True, reset=True)
+
+    from django.contrib.auth import get_user_model
+
+    assert get_user_model().objects.filter(
+        username__in=["fullstaff", "restrictedstaff", "business"]
+    ).count() == 3

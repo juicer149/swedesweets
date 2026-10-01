@@ -10,8 +10,16 @@
 ## Demo data
 
 ```bash
-make reset-demo   # seed_demo_data --reset --with-orders --with-demo-user
+make reset-demo   # seed_demo_data --reset --with-orders --with-demo-accounts
 ```
+
+Logins (password = username):
+
+| Username | Role |
+|---|---|
+| `fullstaff` | full staff: ops portal and account management |
+| `restrictedstaff` | restricted staff: ops portal |
+| `business` | B2B customer, linked to the demo shop with the most orders |
 
 Everything except the product catalogue is invented (`_demo_data.py`):
 
