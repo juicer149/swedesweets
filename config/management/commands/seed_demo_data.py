@@ -258,6 +258,16 @@ class Command(BaseCommand):
             )
             product = getattr(result, "item", result)
 
+            # Every product has a standard BUSINESS offer (the business
+            # catalogue relies on it); merch is retail only, so it is off.
+            set_commercial_price_enabled(
+                commercial_price=ensure_standard_offer(
+                    product=product,
+                    channel=CommercialPrice.Channel.BUSINESS,
+                ),
+                enabled=False,
+            )
+
             offer = create_commercial_price(
                 product=product,
                 channel=CommercialPrice.Channel.RETAIL,

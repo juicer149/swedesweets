@@ -152,3 +152,16 @@ def test_demo_accounts_survive_a_reset(debug):
     assert get_user_model().objects.filter(
         username__in=["fullstaff", "restrictedstaff", "business"]
     ).count() == 3
+
+
+@pytest.mark.django_db
+def test_business_catalogue_lists_candy_but_not_merch(debug):
+    from business.selectors import list_business_catalog_products
+
+    _seed()
+
+    catalogue = list_business_catalog_products()
+    numbers = {item.product.internal_number for item in catalogue}
+
+    assert numbers
+    assert not numbers & {item.internal_number for item in demo.MERCH}
