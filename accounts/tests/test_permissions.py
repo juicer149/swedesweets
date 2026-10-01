@@ -34,11 +34,11 @@ def user(db):
 @pytest.fixture
 def customer(db) -> Customer:
     return customer_factory(
-        name="Super U Les Houches",
+        name="Épicerie du Col",
         email="orders@example.fr",
         phone_number="+33 123456789",
         country="FR",
-        city="Les Houches",
+        city="Chamonix-Mont-Blanc",
         address_line="123 Route des Sweets",
     )
 
