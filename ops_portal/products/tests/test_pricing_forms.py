@@ -166,10 +166,10 @@ def test_product_pricing_form_accepts_active_business_without_amount():
     assert form.pricing_values()["business_eur"] is None
 
 
-def test_product_pricing_form_defaults_business_active_retail_inactive():
+def test_product_pricing_form_defaults_both_channels_inactive():
     form = ProductPricingForm()
 
-    assert form["business_status"].value() == PRICING_STATUS_ACTIVE
+    assert form["business_status"].value() == PRICING_STATUS_INACTIVE
     assert form["retail_status"].value() == PRICING_STATUS_INACTIVE
 
 

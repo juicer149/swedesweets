@@ -92,11 +92,9 @@ class ProductPricingForm(forms.Form):
     business_sek = _price_field(
         label="SEK",
     )
-    # New products are orderable in B2B by default, matching the historical
-    # behavior and the 2b data migration (standard offers created enabled).
     business_status = _pricing_status_field(
         help_text=BUSINESS_STATUS_HELP_TEXT,
-        initial=PRICING_STATUS_ACTIVE,
+        initial=PRICING_STATUS_INACTIVE,
     )
 
     retail_eur = _price_field(
