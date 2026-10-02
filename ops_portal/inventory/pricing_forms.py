@@ -6,7 +6,6 @@ from django import forms
 
 from pricing.models import CommercialPrice, PriceAmount
 
-
 PRICE_DECIMAL_PLACES = 2
 PRICE_MAX_DIGITS = 10
 

@@ -3,11 +3,11 @@ from __future__ import annotations
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from carts.models import Cart
 from common.navbar_cart import (
     NavbarCart,
     NavbarCartLine,
 )
-from carts.models import Cart
 
 
 def build_retail_navbar_cart(

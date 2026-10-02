@@ -56,7 +56,9 @@ def test_batch_offer_returns_exact_batch_only():
     product = product_factory()
     batch_factory(product=product, today=TODAY, batch_id="OTHER")
     target = batch_factory(product=product, today=TODAY, batch_id="TARGET")
-    offer = _offer(product=product, channel=CommercialPrice.Channel.RETAIL, batch=target)
+    offer = _offer(
+        product=product, channel=CommercialPrice.Channel.RETAIL, batch=target
+    )
 
     assert list(
         list_orderable_batches_for_offer(
@@ -118,7 +120,9 @@ def test_batch_offer_with_no_amount_does_not_remove_batch_from_pool():
 def test_disabled_offer_has_no_pool():
     product = product_factory()
     batch_factory(product=product, today=TODAY)
-    offer = _offer(product=product, channel=CommercialPrice.Channel.RETAIL, enabled=False)
+    offer = _offer(
+        product=product, channel=CommercialPrice.Channel.RETAIL, enabled=False
+    )
 
     assert list(
         list_orderable_batches_for_offer(

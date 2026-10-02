@@ -14,7 +14,6 @@ from pricing.models import (
 from products.localization import translated_product_name
 from products.models import Product
 
-
 _REASON_LABELS = {
     CommercialPrice.Reason.SHORT_DATED: _("Short dated"),
     CommercialPrice.Reason.DAMAGED_PACKAGE: _("Damaged package"),

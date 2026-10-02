@@ -125,7 +125,9 @@ class Command(BaseCommand):
         products = self._create_products()
         customers = self._create_customers()
 
-        candy_numbers = [number for number, product in products.items() if product.active]
+        candy_numbers = [
+            number for number, product in products.items() if product.active
+        ]
         batches = demo.build_batches(internal_numbers=candy_numbers, today=today)
         self._create_batches(batches, products)
 

@@ -11,7 +11,7 @@ from orders.drafts import (
     OrderDraft,
     ResolvedOrderLine,
 )
-from orders.errors import InvalidOrderOperation
+from orders.errors import InvalidOrderOperation, InvalidOrderStatusTransition
 from orders.models import (
     Order,
     OrderLine,
@@ -200,7 +200,7 @@ def test_place_order_rolls_back_preparation_when_transition_fails(
 
         order.status = Order.Status.PACKED
 
-    with pytest.raises(Exception):
+    with pytest.raises(InvalidOrderStatusTransition):
         place_order(
             order=order,
             preparation=preparation,
@@ -912,7 +912,7 @@ def test_pack_order_rolls_back_preparation_when_transition_fails(
 
         order.status = Order.Status.DRAFT
 
-    with pytest.raises(Exception):
+    with pytest.raises(InvalidOrderStatusTransition):
         pack_order(
             order=order,
             preparation=preparation,
@@ -1039,7 +1039,7 @@ def test_cancel_order_rolls_back_preparation_when_transition_fails(
 
         order.status = Order.Status.DELIVERED
 
-    with pytest.raises(Exception):
+    with pytest.raises(InvalidOrderStatusTransition):
         cancel_order(
             order=order,
             preparation=preparation,

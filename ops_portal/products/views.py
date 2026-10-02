@@ -19,9 +19,6 @@ from common.table_controls import (
 from inventory.selectors import (
     list_available_batches_for_product,
 )
-from reservations.availability import (
-    available_quantity_by_product,
-)
 from ops_portal.products.detail_viewmodels import (
     build_product_detail_context,
 )
@@ -43,13 +40,16 @@ from ops_portal.products.pricing_forms import (
     ProductPricingForm,
     build_product_pricing_initial_data,
 )
-from pricing.product_configuration import (
-    update_product_standard_pricing,
+from orders.product_demand import (
+    get_product_delivered_demand_summary,
 )
 from pricing.errors import (
     InvalidCommercialPrice,
 )
 from pricing.models import CommercialPrice
+from pricing.product_configuration import (
+    update_product_standard_pricing,
+)
 from pricing.selectors import (
     get_product_commercial_price,
 )
@@ -69,14 +69,13 @@ from products.selectors import (
     PRODUCT_SORTS,
     list_products,
 )
-from orders.product_demand import (
-    get_product_delivered_demand_summary,
-)
 from products.services import (
     create_product,
     update_product,
 )
-
+from reservations.availability import (
+    available_quantity_by_product,
+)
 
 PRODUCT_FILTERS = [
     TableFilter(

@@ -8,17 +8,16 @@ import pytest
 from business.cart_services import (
     add_catalog_offer_to_cart,
 )
-from business.services import (
-    place_customer_cart,
-    create_order,
-    place_order,
-)
-from business.tests.factories import (
-    standard_business_offer_factory,
-)
 from business.repeat_services import (
     RepeatOrderSkipReason,
     repeat_order_into_cart,
+)
+from business.services import (
+    create_order,
+    place_customer_cart,
+)
+from business.tests.factories import (
+    standard_business_offer_factory,
 )
 from customers.tests.factories import customer_factory
 from inventory.services import create_batch

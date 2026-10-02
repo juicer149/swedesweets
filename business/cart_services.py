@@ -7,10 +7,12 @@ from carts.models import Cart, CartLine
 from carts.services import (
     InvalidCart,
     add_cart_line,
-    clear_cart as clear_generic_cart,
     create_cart,
     remove_cart_line,
     update_cart_line_quantity,
+)
+from carts.services import (
+    clear_cart as clear_generic_cart,
 )
 from common.channels import SalesChannel
 from customers.models import Customer

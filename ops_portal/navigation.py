@@ -13,7 +13,6 @@ from __future__ import annotations
 from accounts.roles import AccountRole, Capability, RoleSpec
 from common.navigation import NavItem, filter_nav_items
 
-
 CUSTOMERS_NAV_ITEM = NavItem(
     label="Customers",
     route_name="ops_customers:index",

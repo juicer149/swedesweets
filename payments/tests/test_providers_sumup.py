@@ -126,14 +126,13 @@ def test_sumup_provider_rejects_missing_checkout_id():
                 ),
             }
         ),
+    ), pytest.raises(
+        SumUpPaymentError,
+        match="checkout id",
     ):
-        with pytest.raises(
-            SumUpPaymentError,
-            match="checkout id",
-        ):
-            provider.create_payment(
-                request=_request(),
-            )
+        provider.create_payment(
+            request=_request(),
+        )
 
 
 def test_sumup_provider_rejects_missing_hosted_checkout_url():
@@ -149,14 +148,13 @@ def test_sumup_provider_rejects_missing_hosted_checkout_url():
                 "id": "sumup-checkout-123",
             }
         ),
+    ), pytest.raises(
+        SumUpPaymentError,
+        match="hosted checkout URL",
     ):
-        with pytest.raises(
-            SumUpPaymentError,
-            match="hosted checkout URL",
-        ):
-            provider.create_payment(
-                request=_request(),
-            )
+        provider.create_payment(
+            request=_request(),
+        )
 
 
 def test_sumup_provider_gets_pending_checkout():
@@ -314,14 +312,13 @@ def test_sumup_provider_rejects_paid_checkout_without_transaction_id():
                 "status": "PAID",
             }
         ),
+    ), pytest.raises(
+        SumUpPaymentError,
+        match="transaction id",
     ):
-        with pytest.raises(
-            SumUpPaymentError,
-            match="transaction id",
-        ):
-            provider.get_payment(
-                provider_payment_id="sumup-checkout-123",
-            )
+        provider.get_payment(
+            provider_payment_id="sumup-checkout-123",
+        )
 
 
 def test_sumup_provider_rejects_unknown_checkout_status():
@@ -338,14 +335,13 @@ def test_sumup_provider_rejects_unknown_checkout_status():
                 "status": "SOMETHING_NEW",
             }
         ),
+    ), pytest.raises(
+        SumUpPaymentError,
+        match="unsupported SumUp checkout status",
     ):
-        with pytest.raises(
-            SumUpPaymentError,
-            match="unsupported SumUp checkout status",
-        ):
-            provider.get_payment(
-                provider_payment_id="sumup-checkout-123",
-            )
+        provider.get_payment(
+            provider_payment_id="sumup-checkout-123",
+        )
 
 
 def test_sumup_provider_requires_credentials():
@@ -453,11 +449,10 @@ def test_sumup_provider_rejects_several_checkouts_for_one_reference():
                 {"id": "b", "checkout_reference": "payment-7", "status": "PENDING"},
             ]
         ),
-    ):
-        with pytest.raises(SumUpPaymentError):
-            provider.find_payment_by_reference(
-                reference="payment-7",
-            )
+    ), pytest.raises(SumUpPaymentError):
+        provider.find_payment_by_reference(
+            reference="payment-7",
+        )
 
 
 def test_sumup_provider_deactivates_checkout():

@@ -3,8 +3,8 @@ from __future__ import annotations
 from django.contrib import messages
 from django.db import transaction
 from django.http import (
-    HttpRequest,
     Http404,
+    HttpRequest,
     HttpResponseForbidden,
     JsonResponse,
 )
@@ -17,14 +17,14 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 from accounts.roles import AccountRole
+from carts.models import Cart
+from carts.services import create_cart
+from common.channels import SalesChannel
 from products.models import Product
 from retail.catalog_selectors import (
     get_retail_catalog_product,
     list_retail_catalog_products,
 )
-from carts.models import Cart
-from carts.services import create_cart
-from common.channels import SalesChannel
 from retail.errors import InvalidRetailCart, InvalidRetailOrder
 from retail.services import (
     add_retail_cart_line,

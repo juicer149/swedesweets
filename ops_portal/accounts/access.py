@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from accounts.roles import AccountRole, Capability, RoleSpec
 
-
 CAPABILITIES = frozenset(
     {
         Capability.MANAGE_ACCOUNTS,

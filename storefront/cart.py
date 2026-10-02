@@ -4,7 +4,6 @@ from uuid import UUID
 
 from django.http import HttpRequest
 
-
 COOKIE_NAME = "retail_cart"
 COOKIE_SALT = "storefront.retail_cart"
 COOKIE_MAX_AGE = 60 * 60 * 24 * 30  # 30 days

@@ -30,7 +30,6 @@ from reservations.services import (
     reserve_order_line_from_pool,
 )
 
-
 __all__ = [
     "BatchAvailability",
     "BatchPick",

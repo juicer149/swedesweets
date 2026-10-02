@@ -6,15 +6,15 @@ import pytest
 from django.contrib.messages import get_messages
 from django.urls import reverse
 
-from customers.tests.factories import (
-    customer_factory,
-)
 from accounts.tests.factories import (
     customer_user_factory,
 )
+from carts.models import Cart
+from customers.tests.factories import (
+    customer_factory,
+)
 from pricing.models import CommercialPrice, PriceAmount
 from products.tests.factories import product_factory
-from carts.models import Cart
 from retail.tests.factories import (
     retail_inventory_batch_factory,
     retail_product_price_factory,

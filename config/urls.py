@@ -7,10 +7,8 @@ from django.urls import (
 )
 
 from config import views as config_views
-
 from ops_portal.dashboard import views as dashboard_views
 from storefront import views as storefront_views
-
 
 urlpatterns = [
     path(

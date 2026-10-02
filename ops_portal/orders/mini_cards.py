@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from common.ui import UiCard, UiCardRow, UiText
-from orders.models import Order
 from ops_portal.orders.presentation import (
     build_order_status_presentation,
     contents_summary,
@@ -10,6 +9,7 @@ from ops_portal.orders.presentation import (
     order_product_count,
     order_total_quantity,
 )
+from orders.models import Order
 
 
 def build_order_usage_mini_card(

@@ -9,10 +9,10 @@ from retail.rules import (
     MAX_RETAIL_ORDER_TOTAL,
     MIN_RETAIL_LINE_QUANTITY,
     find_retail_destination,
-    list_retail_cities_for_postal_code,
     is_supported_retail_destination,
     is_valid_retail_line_quantity,
     is_valid_retail_order_total,
+    list_retail_cities_for_postal_code,
     normalize_city_for_matching,
 )
 from retail.tests.factories import retail_postal_area_factory

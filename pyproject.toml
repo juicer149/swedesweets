@@ -112,4 +112,6 @@ select = [
     "B",    # flake8-bugbear
     "SIM",  # simplify
 ]
-ignore = []
+ignore = [
+    "UP034",  # parenthesised values are a deliberate style here
+]

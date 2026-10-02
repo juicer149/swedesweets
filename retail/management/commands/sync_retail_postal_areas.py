@@ -9,7 +9,6 @@ from retail.delivery_areas import (
     sync_retail_postal_areas,
 )
 
-
 logger = logging.getLogger(__name__)
 
 

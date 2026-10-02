@@ -9,7 +9,6 @@ from customers.tests.factories import customer_factory
 from inventory.tests.factories import batch_factory
 from products.tests.factories import product_factory
 
-
 TODAY = timezone.localdate()
 
 MIGRATE_FROM = [

@@ -16,7 +16,6 @@ from common.detail_cards import (
 )
 from common.ui import UiCard
 from inventory.models import InventoryBatch
-from reservations.availability import AvailableStockRow
 from ops_portal.inventory.mini_cards import (
     build_batch_mini_card,
 )
@@ -30,14 +29,15 @@ from ops_portal.products.presentation import (
     product_detail_status_class,
     product_status_icon,
 )
+from orders.product_demand import (
+    ProductDeliveredDemandSummary,
+)
 from pricing.models import CommercialPrice
 from products.models import (
     Product,
     ProductProfile,
 )
-from orders.product_demand import (
-    ProductDeliveredDemandSummary,
-)
+from reservations.availability import AvailableStockRow
 
 
 @dataclass(frozen=True, slots=True)

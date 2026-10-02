@@ -9,7 +9,6 @@ from uuid import uuid4
 from django.core.files.base import ContentFile
 from PIL import Image, ImageOps
 
-
 THUMBNAIL_MAX_SIZE = (
     640,
     640,

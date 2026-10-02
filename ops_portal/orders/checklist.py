@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from ops_portal.models import PickChecklistMark
 from orders.models import Order
 from reservations.models import Allocation
-from ops_portal.models import PickChecklistMark
 
 
 def list_checked_allocation_ids_for_order(

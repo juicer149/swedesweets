@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from ops_portal.navigation import build_staff_primary_nav_items
 from accounts.roles import (
     FULL_STAFF_SPEC,
     OWNER_SPEC,
@@ -8,6 +7,7 @@ from accounts.roles import (
     UNKNOWN_SPEC,
     AccountRole,
 )
+from ops_portal.navigation import build_staff_primary_nav_items
 
 
 def _labels(items):

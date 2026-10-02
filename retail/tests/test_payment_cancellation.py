@@ -15,6 +15,7 @@ from payments.providers.fake import (
     complete_fake_payment,
 )
 from payments.services import payment_reference
+from reservations.models import Allocation
 from retail.payments import (
     RetailPaymentRecoveryAction,
     begin_retail_hosted_payment,
@@ -33,7 +34,6 @@ from retail.tests.factories import (
     retail_postal_area_factory,
     retail_product_price_factory,
 )
-from reservations.models import Allocation
 
 
 @pytest.fixture

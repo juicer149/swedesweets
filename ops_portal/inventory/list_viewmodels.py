@@ -15,9 +15,13 @@ from common.ui import (
     UiText,
     build_quantity_info,
 )
-from ops_portal.inventory.access import can_create_batch
 from inventory.low_stock import LOW_STOCK_THRESHOLD
 from inventory.models import InventoryBatch
+from inventory.selectors import (
+    BatchListRow,
+    ExpiryInfo,
+)
+from ops_portal.inventory.access import can_create_batch
 from ops_portal.inventory.presentation import (
     INVENTORY_CARD_CLASS,
     batch_quantity_label,
@@ -28,10 +32,6 @@ from ops_portal.inventory.presentation import (
     product_physical_quantity_label,
     product_reserved_quantity_label,
     product_stock_status_presentation,
-)
-from inventory.selectors import (
-    BatchListRow,
-    ExpiryInfo,
 )
 from reservations.availability import AvailableStockRow
 

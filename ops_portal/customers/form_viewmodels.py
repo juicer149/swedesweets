@@ -5,8 +5,8 @@ from typing import Any
 
 from django.urls import reverse
 
-from ops_portal.customers.forms import CustomerForm
 from customers.models import Customer
+from ops_portal.customers.forms import CustomerForm
 
 
 @dataclass(frozen=True, slots=True)

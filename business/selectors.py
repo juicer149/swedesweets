@@ -10,10 +10,6 @@ from common.catalog.contracts import (
     CatalogOfferKind,
     CatalogProduct,
 )
-from reservations.availability import (
-    orderable_quantity_by_batch_pk,
-    orderable_quantity_by_product_id,
-)
 from pricing.models import (
     CommercialPrice,
     PriceAmount,
@@ -24,6 +20,10 @@ from pricing.selectors import (
 from products.models import (
     Product,
     ProductTranslation,
+)
+from reservations.availability import (
+    orderable_quantity_by_batch_pk,
+    orderable_quantity_by_product_id,
 )
 
 

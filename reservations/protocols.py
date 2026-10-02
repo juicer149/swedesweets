@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from typing import TypeAlias
 
-
-BatchQuantity: TypeAlias = tuple[int, int]
+type BatchQuantity = tuple[int, int]
 
 
 @dataclass(frozen=True, slots=True)

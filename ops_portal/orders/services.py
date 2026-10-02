@@ -11,12 +11,16 @@ from fulfillment.services import pack_order as pack_order_with_reservations
 from ops_portal.models import PickChecklistMark
 from ops_portal.orders.drafts import build_ops_order_draft
 from orders.models import Order
-from reservations.models import Allocation
 from orders.services import (
     create_draft_order,
+)
+from orders.services import (
     place_order as place_shared_order,
+)
+from orders.services import (
     update_placed_order as update_shared_placed_order,
 )
+from reservations.models import Allocation
 from reservations.policies import (
     clear_order_reservations_before_line_replacement,
 )

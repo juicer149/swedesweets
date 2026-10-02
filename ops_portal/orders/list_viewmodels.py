@@ -18,7 +18,6 @@ from ops_portal.orders.access import (
     can_deliver_order,
     can_pack_order,
 )
-from orders.models import Order
 from ops_portal.orders.presentation import (
     build_order_status_presentation,
     maps_directions_href,
@@ -27,6 +26,7 @@ from ops_portal.orders.presentation import (
     order_lifecycle_label,
     order_quantity_label,
 )
+from orders.models import Order
 
 
 @dataclass(frozen=True, slots=True)

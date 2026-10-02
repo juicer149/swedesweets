@@ -5,7 +5,6 @@ from django.urls import path
 from payments import fake_views
 from retail import payment_webhooks
 
-
 app_name = "payments"
 
 

@@ -6,14 +6,14 @@ from typing import Any
 from django.urls import reverse
 
 from accounts.models import StaffAccount
-from ops_portal.accounts.list_viewmodels import (
-    ACCOUNT_VIEW_CUSTOMER,
-    ACCOUNT_VIEW_INTERNAL,
-)
 from ops_portal.accounts.forms import (
     CustomerAccountCreateForm,
     InternalAccountCreateForm,
     InternalAccountEditForm,
+)
+from ops_portal.accounts.list_viewmodels import (
+    ACCOUNT_VIEW_CUSTOMER,
+    ACCOUNT_VIEW_INTERNAL,
 )
 
 

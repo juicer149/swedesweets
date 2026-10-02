@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from accounts.roles import Capability
 
-
 VIEW_CAPABILITIES = {
     "business_portal:index": Capability.VIEW_BUSINESS_PORTAL,
     "business_portal:edit_store": Capability.EDIT_OWN_ACCOUNT,

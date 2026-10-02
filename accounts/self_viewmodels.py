@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 
+from accounts.activity import AccountActivity
 from accounts.activity_viewmodels import (
     AccountActivityPresentation,
     build_account_activity_presentations,
@@ -15,9 +16,8 @@ from accounts.presentation import (
     build_account_presentation,
 )
 from accounts.roles import RoleSpec
-from accounts.self_activity_links import self_activity_target_href
-from accounts.activity import AccountActivity
 from accounts.selectors import AccountRecord
+from accounts.self_activity_links import self_activity_target_href
 from common.detail_cards import (
     DetailAction,
     DetailCard,

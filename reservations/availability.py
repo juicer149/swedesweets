@@ -6,7 +6,6 @@ from collections import defaultdict
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import date
-from typing import TypeAlias
 
 from django.db.models import Sum
 
@@ -24,7 +23,6 @@ from products.models import Product
 from reservations.selectors import (
     active_reserved_quantities_by_batch_pk,
 )
-
 
 DEFAULT_PRODUCT_STOCK_SORT = "product"
 
@@ -133,7 +131,7 @@ class AvailableStockRow:
         return self.product.stock_unit
 
 
-ProductStockSortKey: TypeAlias = Callable[
+type ProductStockSortKey = Callable[
     [AvailableStockRow],
     tuple[object, ...],
 ]

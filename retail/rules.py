@@ -7,7 +7,6 @@ from decimal import Decimal
 
 from retail.models import RetailPostalArea
 
-
 MIN_RETAIL_LINE_QUANTITY = 1
 MAX_RETAIL_LINE_QUANTITY = 20
 

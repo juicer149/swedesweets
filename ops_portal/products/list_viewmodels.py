@@ -14,13 +14,13 @@ from common.ui import (
     UiText,
 )
 from ops_portal.products.access import can_create_product
-from products.models import Product
 from ops_portal.products.presentation import (
     ProductTagPresentation,
     product_attribute_tags,
     product_manufacturer_label,
     product_status_presentation,
 )
+from products.models import Product
 
 
 @dataclass(frozen=True, slots=True)

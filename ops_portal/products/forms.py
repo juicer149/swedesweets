@@ -21,7 +21,6 @@ from products.models import (
     ProductProfile,
 )
 
-
 PRODUCT_STATUS_ACTIVE = "active"
 PRODUCT_STATUS_INACTIVE = "inactive"
 

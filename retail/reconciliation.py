@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
 
 from orders.models import Order
 from payments.models import PaymentAttempt
@@ -13,7 +13,6 @@ from retail.payments import (
     reconcile_retail_payment,
     resolve_unconfirmed_retail_payment,
 )
-
 
 logger = logging.getLogger(__name__)
 

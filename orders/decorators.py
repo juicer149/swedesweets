@@ -9,7 +9,6 @@ from django.db import transaction
 from orders.contracts import OrderMutationGuard
 from orders.models import Order
 
-
 ReturnT = TypeVar("ReturnT")
 
 

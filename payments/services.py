@@ -19,7 +19,6 @@ from payments.errors import (
 )
 from payments.models import PaymentAttempt
 
-
 PAYMENT_REFERENCE_PREFIX = "payment-"
 
 

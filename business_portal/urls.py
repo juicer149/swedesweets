@@ -4,11 +4,9 @@ from django.urls import path
 
 from business_portal import views
 from business_portal.catalog import views as catalog_views
-from business_portal.orders import navbar_views
-from business_portal.orders import repeat_views
+from business_portal.orders import navbar_views, repeat_views
 from business_portal.orders import views as order_views
 from business_portal.store import views as store_views
-
 
 app_name = "business_portal"
 

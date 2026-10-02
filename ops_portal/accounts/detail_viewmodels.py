@@ -7,10 +7,10 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 
+from accounts.activity import AccountActivity
 from accounts.activity_viewmodels import AccountActivityPresentation
 from accounts.presentation import AccountPresentation
 from accounts.roles import AccountRole, RoleSpec
-from accounts.activity import AccountActivity
 from accounts.selectors import AccountRecord
 from common.detail_cards import (
     DetailAction,

@@ -129,12 +129,15 @@ class OrderLineInput:
         )
 
     def resolve_product_id(self) -> int:
-        if self.product_id is not None and self.product is not None:
-            if self.product_id != self.product.id:
-                raise InvalidOrderOperation(
-                    f"product_id ({self.product_id}) and "
-                    f"product ({self.product.id}) refer to different products"
-                )
+        if (
+            self.product_id is not None
+            and self.product is not None
+            and self.product_id != self.product.id
+        ):
+            raise InvalidOrderOperation(
+                f"product_id ({self.product_id}) and "
+                f"product ({self.product.id}) refer to different products"
+            )
 
         if self.product_id is not None:
             return self.product_id

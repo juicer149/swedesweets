@@ -21,6 +21,8 @@ from inventory.selectors import (
     list_expiring_batch_rows_for_dashboard,
     physical_quantity_by_product,
 )
+from inventory.services import create_batch
+from inventory.tests.conftest import TODAY
 from reservations.availability import (
     available_quantity_by_product,
     available_quantity_by_product_id,
@@ -29,8 +31,6 @@ from reservations.availability import (
     orderable_quantity_by_batch_pk,
     orderable_quantity_by_product_id,
 )
-from inventory.services import create_batch
-from inventory.tests.conftest import TODAY
 
 
 @pytest.mark.parametrize(

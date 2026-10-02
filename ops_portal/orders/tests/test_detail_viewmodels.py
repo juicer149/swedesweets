@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-import pytest
-
 from customers.models import Customer
+from ops_portal.orders.access import can_edit_order
 from ops_portal.orders.detail_viewmodels import (
     CUSTOMER_LABEL,
     RETAIL_BUYER_LABEL,
+    build_order_secondary_actions,
     buyer_label,
     customer_detail_href,
 )
 from orders.models import Order
-from ops_portal.orders.access import can_edit_order
-from ops_portal.orders.detail_viewmodels import build_order_secondary_actions
 
 
 class _AllowAll:

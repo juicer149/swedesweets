@@ -18,7 +18,6 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from django.db import transaction
-from django.utils import timezone
 
 from orders.contracts import OrderMutationPreparation
 from orders.decorators import locked_order

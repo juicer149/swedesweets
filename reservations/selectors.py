@@ -3,16 +3,15 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Iterable
 
-from django.db.models import Q
 from django.utils import timezone
 
 from inventory.models import InventoryBatch
 from orders.models import Order
-from reservations.models import Allocation
 from reservations.datatypes import (
     BatchUsage,
     ReservationPick,
 )
+from reservations.models import Allocation
 from reservations.providers import (
     active_allocation_reservations,
 )

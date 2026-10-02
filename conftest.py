@@ -3,7 +3,6 @@ from __future__ import annotations
 import pytest
 from django.core.cache import caches
 
-
 _TEST_CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",

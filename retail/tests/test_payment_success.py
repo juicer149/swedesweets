@@ -9,12 +9,12 @@ from django.utils import timezone
 from inventory.services import create_batch
 from orders.errors import InvalidOrderOperation
 from orders.models import Order
-from reservations.models import Allocation
 from payments.models import PaymentAttempt
 from payments.services import (
     InvalidPaymentAttempt,
     cancel_pending_payment_attempts_for_order,
 )
+from reservations.models import Allocation
 from retail.services import (
     AnonymousBuyerInput,
     RetailOrderLineInput,

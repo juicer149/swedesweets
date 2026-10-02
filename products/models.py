@@ -45,7 +45,6 @@ from products.catalog import (
 )
 from products.errors import InvalidProductData
 
-
 IMMUTABLE_PRODUCT_IDENTITY_FIELDS = frozenset(
     {
         "weight_per_unit",

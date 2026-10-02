@@ -4,10 +4,10 @@ from decimal import Decimal
 
 import pytest
 
+from pricing.models import CommercialPrice, PriceAmount
 from pricing.product_configuration import (
     update_product_standard_pricing,
 )
-from pricing.models import CommercialPrice, PriceAmount
 from pricing.tests.factories import (
     commercial_price_factory,
     price_amount_factory,

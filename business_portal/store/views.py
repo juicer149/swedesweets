@@ -12,10 +12,10 @@ from business_portal.store.forms import (
     CustomerProfileForm,
     build_customer_profile_initial_data,
 )
+from customers.errors import InvalidCustomerData
 from customers.services import (
     update_customer,
 )
-from customers.errors import InvalidCustomerData
 
 
 @login_required

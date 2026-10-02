@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 from django.urls import URLPattern, URLResolver, get_resolver
 
-from config.policies import AUTH_EXEMPT_VIEWS, VIEW_CAPABILITIES
 from accounts.roles import Capability
+from config.policies import AUTH_EXEMPT_VIEWS, VIEW_CAPABILITIES
 
 EXEMPT_VIEW_NAME_PREFIXES = ("admin:",)
 

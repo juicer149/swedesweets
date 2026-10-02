@@ -13,10 +13,9 @@ from common.detail_cards import (
     build_secondary_get_action,
 )
 from common.ui import StatusPresentation, UiCard
-from ops_portal.customers.access import can_edit_customer
 from customers.models import Customer
+from ops_portal.customers.access import can_edit_customer
 from ops_portal.orders.mini_cards import build_customer_order_mini_card
-from orders.models import Order
 from ops_portal.orders.presentation import (
     build_order_status_presentation,
     contents_summary,
@@ -25,6 +24,7 @@ from ops_portal.orders.presentation import (
     order_total_quantity,
     quantity_label,
 )
+from orders.models import Order
 from orders.selectors import CustomerOrderSummary
 
 

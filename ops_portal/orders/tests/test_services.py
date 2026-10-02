@@ -30,7 +30,6 @@ from products.tests.factories import product_factory
 from products.units import OrderUnit
 from reservations.models import Allocation
 
-
 TODAY = timezone.localdate()
 BEST_BEFORE = TODAY + timedelta(days=60)
 
@@ -479,7 +478,7 @@ def test_update_placed_order_preserves_split_batch_marks_individually():
         status=Allocation.Status.RESERVED,
     )
 
-    allocation_b = Allocation.objects.create(
+    Allocation.objects.create(
         order=order,
         order_line=order_line,
         batch=batch_b,

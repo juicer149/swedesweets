@@ -16,7 +16,6 @@ from customers.models import CUSTOMER_COUNTRY_LABELS
 from orders.models import Order
 from orders.selectors import list_customer_orders
 
-
 ACCOUNT_TAB_ACCOUNT = "account"
 ACCOUNT_TAB_ORDERS = "orders"
 ACCOUNT_TABS = {

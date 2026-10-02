@@ -7,9 +7,6 @@ from django.urls import reverse
 from django.utils import timezone
 
 from accounts.presentation import AccountPresentation
-from ops_portal.accounts.presentation import (
-    build_ops_account_presentation,
-)
 from accounts.selectors import AccountRecord
 from common.page_header import PageHeader, PageHeaderAction
 from common.ui import (
@@ -18,6 +15,9 @@ from common.ui import (
     UiCard,
     UiCardRow,
     UiText,
+)
+from ops_portal.accounts.presentation import (
+    build_ops_account_presentation,
 )
 
 ACCOUNT_VIEW_INTERNAL = "internal"

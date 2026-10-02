@@ -6,7 +6,7 @@ PYTHON := .venv/bin/python
 PIP := .venv/bin/pip
 MANAGE := $(PYTHON) manage.py
 
-.PHONY: help venv install setup run check migrate makemigrations superuser seed reset-demo shell django-shell collectstatic messages compilemessages i18n test test-v clean
+.PHONY: help venv install setup run check lint migrate makemigrations superuser seed reset-demo shell django-shell collectstatic messages compilemessages i18n test test-v clean
 
 help:
 	@echo "SwedeSweets Ops commands"
@@ -33,6 +33,7 @@ help:
 	@echo "Tools:"
 	@echo "  make shell           Run shell_plus with IPython"
 	@echo "  make django-shell    Run default Django shell"
+	@echo "  make lint            Run ruff"
 	@echo "  make test            Run tests"
 	@echo "  make test-v          Run verbose tests"
 	@echo "  make clean           Remove Python/tool caches"
@@ -85,6 +86,9 @@ shell:
 
 django-shell:
 	$(MANAGE) shell
+
+lint:
+	.venv/bin/ruff check .
 
 test: collectstatic
 	$(PYTHON) -m pytest

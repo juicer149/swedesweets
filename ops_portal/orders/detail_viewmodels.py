@@ -17,6 +17,8 @@ from common.detail_cards import (
     build_secondary_get_action,
 )
 from common.ui import UiCard
+from fulfillment.datatypes import PickLine
+from fulfillment.selectors import get_packaging_list
 from ops_portal.orders.access import (
     can_cancel_order,
     can_deliver_order,
@@ -24,10 +26,7 @@ from ops_portal.orders.access import (
     can_pack_order,
 )
 from ops_portal.orders.checklist import list_checked_allocation_ids_for_order
-from fulfillment.datatypes import PickLine
-from orders.models import Order, OrderLine
 from ops_portal.orders.presentation import (
-    contents_summary,
     maps_directions_href,
     order_detail_card_class,
     order_detail_status_class,
@@ -35,9 +34,8 @@ from ops_portal.orders.presentation import (
     quantity_label,
 )
 from ops_portal.products.mini_cards import build_product_quantity_mini_card
-from fulfillment.selectors import get_packaging_list
+from orders.models import Order, OrderLine
 from products.models import Product
-
 
 CUSTOMER_LABEL = "Customer"
 RETAIL_BUYER_LABEL = "Retail buyer"

@@ -11,6 +11,10 @@ from django.utils.translation import gettext as _
 from business.datatypes import BusinessOfferLineInput
 from business.offer_choices import build_business_offer_choice_context
 from customers.models import Customer
+from ops_portal.products.presentation import (
+    translated_product_catalog_label,
+    translated_product_name,
+)
 from orders.models import Order, OrderLine
 from orders.order_limits import (
     MAX_QUANTITY_PER_PRODUCT_PER_ORDER,
@@ -18,10 +22,6 @@ from orders.order_limits import (
 )
 from pricing.models import CommercialPrice
 from products.models import Product
-from ops_portal.products.presentation import (
-    translated_product_catalog_label,
-    translated_product_name,
-)
 from products.units import quantity_to_units
 
 # extra=0 below - lines are never pre-rendered blank; they only ever appear
@@ -430,13 +430,14 @@ class OrderLineForm(forms.Form):
             requested_quantity=quantity_in_units,
             available_quantity=available_units,
         ):
+            maximum = product.stock_quantity_label(
+                MAX_QUANTITY_PER_PRODUCT_PER_ORDER
+            )
             self.add_error(
                 "quantity",
                 (
                     "This line is unusually large. "
-                    f"Maximum is "
-                    f"{product.stock_quantity_label(MAX_QUANTITY_PER_PRODUCT_PER_ORDER)} "
-                    "per product."
+                    f"Maximum is {maximum} per product."
                 ),
             )
 
@@ -621,11 +622,12 @@ class BaseOrderLineFormSet(BaseFormSet):
                     product_id
                 ]
 
+                maximum = product.stock_quantity_label(
+                    MAX_QUANTITY_PER_PRODUCT_PER_ORDER
+                )
                 raise forms.ValidationError(
                     f"{product.display_name} is unusually large. "
-                    f"Maximum is "
-                    f"{product.stock_quantity_label(MAX_QUANTITY_PER_PRODUCT_PER_ORDER)} "
-                    "per order."
+                    f"Maximum is {maximum} per order."
                 )
 
     @property

@@ -14,7 +14,6 @@ from common.ui import (
 )
 from orders.models import Order
 
-
 ORDER_CARD_BASE_CLASS = "mobile-card mobile-card--order"
 
 ORDER_CARD_CLASS_BY_STATUS = {

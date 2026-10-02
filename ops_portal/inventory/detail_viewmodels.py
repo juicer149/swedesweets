@@ -33,7 +33,7 @@ from ops_portal.orders.mini_cards import (
 from ops_portal.products.mini_cards import (
     build_product_mini_card,
 )
-from pricing.models import CommercialPrice, PriceAmount
+from pricing.models import CommercialPrice
 from reservations.datatypes import BatchUsage
 
 

@@ -18,7 +18,6 @@ from products.selectors import (
     list_product_activity_for_actor,
 )
 
-
 ACCOUNT_ACTIVITY_LIMIT = 24
 
 

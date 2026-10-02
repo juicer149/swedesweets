@@ -6,36 +6,13 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from ops_portal.accounts.detail_viewmodels import (
-    build_account_detail_context,
-    build_customer_account_status_context,
-    customer_account_status_success_message,
-)
+from accounts.activity_selectors import list_account_activities
 from accounts.errors import AccountCreationError
-from ops_portal.accounts.form_viewmodels import (
-    build_create_customer_account_form_context,
-    build_create_internal_account_form_context,
-    build_edit_internal_account_form_context,
-)
-from ops_portal.accounts.forms import (
-    CustomerAccountCreateForm,
-    InternalAccountCreateForm,
-    InternalAccountEditForm,
-)
-from ops_portal.accounts.list_viewmodels import (
-    ACCOUNT_VIEW_CUSTOMER,
-    ACCOUNT_VIEW_INTERNAL,
-    ACCOUNT_VIEW_UNLINKED,
-    build_account_page_rows,
-    build_account_view_links,
-    build_accounts_page_header,
-)
 from accounts.models import (
     CustomerMembership,
     StaffAccount,
 )
 from accounts.roles import AccountRole
-from accounts.activity_selectors import list_account_activities
 from accounts.selectors import (
     get_account_record,
     get_account_user,
@@ -59,7 +36,29 @@ from common.table_controls import (
 from ops_portal.accounts.access import (
     can_manage_customer_account_status,
 )
-
+from ops_portal.accounts.detail_viewmodels import (
+    build_account_detail_context,
+    build_customer_account_status_context,
+    customer_account_status_success_message,
+)
+from ops_portal.accounts.form_viewmodels import (
+    build_create_customer_account_form_context,
+    build_create_internal_account_form_context,
+    build_edit_internal_account_form_context,
+)
+from ops_portal.accounts.forms import (
+    CustomerAccountCreateForm,
+    InternalAccountCreateForm,
+    InternalAccountEditForm,
+)
+from ops_portal.accounts.list_viewmodels import (
+    ACCOUNT_VIEW_CUSTOMER,
+    ACCOUNT_VIEW_INTERNAL,
+    ACCOUNT_VIEW_UNLINKED,
+    build_account_page_rows,
+    build_account_view_links,
+    build_accounts_page_header,
+)
 
 ACCOUNT_DEFAULT_VIEW = ACCOUNT_VIEW_INTERNAL
 

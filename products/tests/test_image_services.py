@@ -164,22 +164,21 @@ def test_product_thumbnail_is_webp_and_at_most_640_pixels(
         with storage.open(
             product.profile.thumbnail.name,
             "rb",
-        ) as thumbnail_file:
-            with Image.open(
-                thumbnail_file
-            ) as thumbnail:
-                assert (
-                    thumbnail.width
-                    <= 640
-                )
-                assert (
-                    thumbnail.height
-                    <= 640
-                )
-                assert (
-                    thumbnail.format
-                    == "WEBP"
-                )
+        ) as thumbnail_file, Image.open(
+            thumbnail_file
+        ) as thumbnail:
+            assert (
+                thumbnail.width
+                <= 640
+            )
+            assert (
+                thumbnail.height
+                <= 640
+            )
+            assert (
+                thumbnail.format
+                == "WEBP"
+            )
 
         change.commit()
 
@@ -214,17 +213,16 @@ def test_product_thumbnail_preserves_aspect_ratio(
         with storage.open(
             product.profile.thumbnail.name,
             "rb",
-        ) as thumbnail_file:
-            with Image.open(
-                thumbnail_file
-            ) as thumbnail:
-                assert (
-                    thumbnail.size
-                    == (
-                        640,
-                        320,
-                    )
+        ) as thumbnail_file, Image.open(
+            thumbnail_file
+        ) as thumbnail:
+            assert (
+                thumbnail.size
+                == (
+                    640,
+                    320,
                 )
+            )
 
         change.commit()
 

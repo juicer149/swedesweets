@@ -15,7 +15,7 @@ from retail.delivery_areas import (
     read_postal_area_snapshot,
     records_from_geo_api_communes,
     sync_retail_postal_areas,
-    write_postal_area_snapshot
+    write_postal_area_snapshot,
 )
 from retail.models import RetailPostalArea
 from retail.tests.factories import retail_postal_area_factory

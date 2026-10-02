@@ -2,7 +2,6 @@ from django.urls import path
 
 from storefront import views
 
-
 app_name = "public_site"
 
 

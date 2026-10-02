@@ -22,7 +22,6 @@ from products.tests.factories import (
     product_factory,
 )
 
-
 PROFILE_FORM_DATA = {
     "name": "Updated Store",
     "email": "updated@example.com",

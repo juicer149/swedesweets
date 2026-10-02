@@ -17,7 +17,6 @@ from retail.models import (
     normalize_postal_code,
 )
 
-
 RETAIL_SERVICE_COUNTRY = "FR"
 RETAIL_SERVICE_DEPARTMENT_PREFIX = "74"
 

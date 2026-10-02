@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import pytest
 
-from orders.datatypes import OrderLineInput, BuyerInput
+from orders.datatypes import BuyerInput, OrderLineInput
 from orders.errors import InvalidOrderOperation
 from products.units import OrderUnit
 

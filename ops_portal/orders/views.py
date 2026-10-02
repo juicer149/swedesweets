@@ -23,6 +23,8 @@ from ops_portal.orders.access import (
 )
 from ops_portal.orders.checklist import (
     ChecklistAllocationNotFound,
+)
+from ops_portal.orders.checklist import (
     toggle_checklist_mark as _toggle_checklist_mark,
 )
 from ops_portal.orders.detail_viewmodels import (
@@ -34,12 +36,6 @@ from ops_portal.orders.detail_viewmodels import (
     build_post_edit_success_url,
     build_post_pack_success_url,
 )
-from ops_portal.orders.services import (
-    create_order,
-    pack_order_and_clear_checklist,
-    update_placed_order_and_preserve_checklist
-)
-from orders.errors import InvalidOrderOperation
 from ops_portal.orders.form_viewmodels import (
     build_cancel_order_form_context,
     build_create_order_form_context,
@@ -57,6 +53,12 @@ from ops_portal.orders.list_viewmodels import (
     build_order_page_rows,
     build_orders_page_header,
 )
+from ops_portal.orders.services import (
+    create_order,
+    pack_order_and_clear_checklist,
+    update_placed_order_and_preserve_checklist,
+)
+from orders.errors import InvalidOrderOperation
 from orders.models import Order
 from orders.selectors import (
     DEFAULT_ORDER_SORT,
@@ -64,7 +66,6 @@ from orders.selectors import (
     list_orders,
 )
 from orders.services import deliver_order
-
 
 ORDER_FILTERS = [
     TableFilter("", "All"),

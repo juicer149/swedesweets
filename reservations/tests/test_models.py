@@ -11,7 +11,6 @@ from orders.tests.factories import order_line_factory
 from reservations.errors import InvalidAllocationStatusTransition
 from reservations.models import Allocation
 
-
 TODAY = timezone.localdate()
 FUTURE_BEST_BEFORE = TODAY + timedelta(days=60)
 

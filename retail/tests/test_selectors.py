@@ -224,7 +224,7 @@ def test_product_price_pool_survives_disabled_price_on_other_channel():
     )
     batch = retail_inventory_batch_factory(product=product, today=today)
 
-    disabled_retail_batch_price = retail_batch_price_factory(
+    retail_batch_price_factory(
         batch=batch, enabled=False, price=Decimal("3.90"),
     )
     CommercialPrice.objects.create(

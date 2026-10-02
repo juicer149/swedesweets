@@ -10,7 +10,6 @@ from django.utils import timezone
 
 from inventory.services import create_batch
 from orders.models import Order
-from reservations.models import Allocation
 from payments.contracts import (
     ExternalPaymentState,
     ExternalPaymentStatus,
@@ -19,6 +18,7 @@ from payments.contracts import (
 )
 from payments.models import PaymentAttempt
 from payments.services import payment_reference
+from reservations.models import Allocation
 from retail.payments import begin_retail_hosted_payment
 from retail.services import (
     AnonymousBuyerInput,

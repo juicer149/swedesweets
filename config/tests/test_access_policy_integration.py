@@ -24,7 +24,6 @@ from config.policies import (
 )
 from customers.tests.factories import customer_factory
 
-
 MISSING_OBJECT_ID = 999999
 
 ACCOUNT_USER_KWARGS = {

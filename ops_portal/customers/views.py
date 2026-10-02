@@ -35,6 +35,8 @@ from ops_portal.customers.list_viewmodels import (
 )
 from orders.selectors import (
     get_customer_order_summary,
+)
+from orders.selectors import (
     list_customer_orders as list_orders_for_customer,
 )
 

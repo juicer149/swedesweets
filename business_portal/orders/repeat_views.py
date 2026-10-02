@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.utils.translation import (
     gettext as _,
+)
+from django.utils.translation import (
     ngettext,
 )
 from django.views.decorators.http import require_POST

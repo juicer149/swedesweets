@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from accounts.roles import Capability
 
-
 AUTH_EXEMPT_VIEWS = frozenset(
     {
         "login",

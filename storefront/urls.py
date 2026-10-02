@@ -2,11 +2,10 @@ from django.urls import path
 
 from storefront import (
     cart_views,
-    views,
     checkout_views,
+    views,
 )
 from storefront.catalog import views as catalog_views
-
 
 app_name = "storefront"
 

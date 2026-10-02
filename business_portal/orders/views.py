@@ -29,11 +29,11 @@ from business.cart_services import (
 from business.services import (
     place_customer_cart,
 )
-from business_portal.orders.detail_viewmodels import (
-    build_portal_order_detail_context,
-)
 from business_portal.orders.cart_viewmodels import (
     build_portal_cart_context,
+)
+from business_portal.orders.detail_viewmodels import (
+    build_portal_order_detail_context,
 )
 from business_portal.orders.review_viewmodels import (
     build_portal_order_review_context,
@@ -49,7 +49,6 @@ from common.channels import SalesChannel
 from customers.models import Customer
 from inventory.errors import InvalidStockOperation
 from orders.errors import InvalidOrderOperation
-from orders.models import Order
 
 
 class PortalOrderIntent(StrEnum):

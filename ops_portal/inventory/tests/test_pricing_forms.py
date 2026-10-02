@@ -7,9 +7,9 @@ from django.utils import timezone
 
 from inventory.tests.factories import batch_factory
 from ops_portal.inventory.pricing_forms import (
-    BatchPricingForm,
     PRICING_STATUS_ACTIVE,
     PRICING_STATUS_INACTIVE,
+    BatchPricingForm,
     build_batch_pricing_initial_data,
 )
 from pricing.models import CommercialPrice, PriceAmount
@@ -20,7 +20,6 @@ from pricing.services import (
     set_price_amount,
 )
 from products.tests.factories import product_factory
-
 
 TODAY = timezone.localdate()
 

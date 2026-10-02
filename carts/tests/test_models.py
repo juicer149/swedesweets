@@ -20,8 +20,7 @@ def test_cart_can_be_created_empty():
 
 @pytest.mark.django_db
 def test_cart_channel_must_be_valid():
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            Cart.objects.create(
-                channel="invalid-channel",
-            )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        Cart.objects.create(
+            channel="invalid-channel",
+        )

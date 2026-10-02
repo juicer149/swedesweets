@@ -23,18 +23,7 @@ from inventory.selectors import (
     DEFAULT_BATCH_SORT,
     list_batch_rows,
 )
-from reservations.availability import (
-    DEFAULT_PRODUCT_STOCK_SORT,
-    PRODUCT_STOCK_SORTS,
-    available_quantity_by_product,
-    sort_available_stock_rows,
-)
-from reservations.selectors import list_batch_usage
 from inventory.services import create_batch
-from reservations.inventory_services import (
-    close_batch,
-    update_batch,
-)
 from ops_portal.inventory.access import (
     can_close_batch,
     can_edit_batch,
@@ -72,7 +61,17 @@ from pricing.models import CommercialPrice
 from pricing.selectors import (
     get_batch_commercial_price,
 )
-
+from reservations.availability import (
+    DEFAULT_PRODUCT_STOCK_SORT,
+    PRODUCT_STOCK_SORTS,
+    available_quantity_by_product,
+    sort_available_stock_rows,
+)
+from reservations.inventory_services import (
+    close_batch,
+    update_batch,
+)
+from reservations.selectors import list_batch_usage
 
 INVENTORY_VIEW_BATCHES = "batches"
 INVENTORY_VIEW_PRODUCTS = "products"

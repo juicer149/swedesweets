@@ -15,14 +15,13 @@ from __future__ import annotations
 
 from django.conf import settings
 
-from accounts.roles import Capability
-
 from accounts.access import (
     AUTH_EXEMPT_VIEWS as ACCOUNT_AUTH_EXEMPT_VIEWS,
 )
 from accounts.access import (
     VIEW_CAPABILITIES as ACCOUNT_VIEW_CAPABILITIES,
 )
+from accounts.roles import Capability
 from business_portal.access import (
     VIEW_CAPABILITIES as BUSINESS_PORTAL_VIEW_CAPABILITIES,
 )
@@ -50,7 +49,6 @@ from storefront.access import (
 from storefront.access import (
     VIEW_CAPABILITIES as STOREFRONT_VIEW_CAPABILITIES,
 )
-
 
 # Routes owned by the composition root rather than an actor-facing app.
 GLOBAL_VIEW_CAPABILITIES = {

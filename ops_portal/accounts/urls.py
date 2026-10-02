@@ -4,7 +4,6 @@ from django.urls import path
 
 from ops_portal.accounts import views
 
-
 app_name = "ops_accounts"
 
 

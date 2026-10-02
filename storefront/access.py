@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 AUTH_EXEMPT_VIEWS = frozenset(
     {
         "index",

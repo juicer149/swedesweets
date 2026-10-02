@@ -127,7 +127,10 @@ def _read_only_snapshot():
         yield
 
 
-def build_order_history_export(*, exported_at: datetime | None = None) -> dict[str, Any]:
+def build_order_history_export(
+    *,
+    exported_at: datetime | None = None,
+) -> dict[str, Any]:
     exported_at = exported_at or datetime.now(UTC)
 
     lines = OrderLine.objects.select_related(

@@ -6,16 +6,16 @@ from decimal import Decimal
 import pytest
 from django.utils import timezone
 
-from business.policies import (
-    prepare_business_order_for_placement,
-)
 from business.cart_services import (
     add_catalog_offer_to_cart,
 )
+from business.policies import (
+    prepare_business_order_for_placement,
+)
 from business.services import (
-    place_customer_cart,
     create_draft_order,
     create_order,
+    place_customer_cart,
     place_order,
     update_placed_order,
 )

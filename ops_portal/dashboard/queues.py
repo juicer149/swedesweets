@@ -6,34 +6,34 @@ from dataclasses import dataclass, replace
 from django.urls import reverse
 
 from accounts.roles import AccountRole, Capability, RoleSpec
+from inventory.expiry import EXPIRY_SOON_DAYS
+from inventory.selectors import (
+    count_expiring_batches,
+    list_expiring_batch_rows_for_dashboard,
+)
 from ops_portal.dashboard.viewmodels import (
     DashboardQueueItem,
     DashboardQueuePanel,
     DashboardQueueTab,
 )
-from inventory.expiry import EXPIRY_SOON_DAYS
 from ops_portal.inventory.presentation import (
     batch_quantity_label,
     product_available_quantity_label,
 )
-from inventory.selectors import (
-    count_expiring_batches,
-    list_expiring_batch_rows_for_dashboard,
-)
-from reservations.availability import (
-    count_low_stock_products,
-    list_low_stock_products_for_dashboard,
-)
-from orders.models import Order
 from ops_portal.orders.presentation import (
     order_lifecycle_label,
     order_quantity_label,
 )
+from orders.models import Order
 from orders.selectors import (
     count_packed_orders,
     count_placed_orders,
     list_packed_orders_for_dashboard,
     list_placed_orders_for_dashboard,
+)
+from reservations.availability import (
+    count_low_stock_products,
+    list_low_stock_products_for_dashboard,
 )
 
 QUEUE_PREVIEW_LIMIT = 4
@@ -147,7 +147,8 @@ def _expiring_batches_view_all_href() -> str:
 
 
 def _low_stock_products_view_all_href() -> str:
-    return f"{reverse('ops_inventory:index')}?view=products&sort=available#inventory-list"
+    index = reverse("ops_inventory:index")
+    return f"{index}?view=products&sort=available#inventory-list"
 
 
 # -----------------------------------------------------------------------------

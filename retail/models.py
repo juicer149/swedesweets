@@ -2,7 +2,6 @@ import uuid
 
 from django.db import models
 
-
 MAX_RETAIL_COUNTRY_CODE_LENGTH = 2
 MAX_RETAIL_POSTAL_CODE_LENGTH = 10
 MAX_RETAIL_CITY_LENGTH = 120

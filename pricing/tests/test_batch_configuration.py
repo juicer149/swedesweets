@@ -21,7 +21,6 @@ from pricing.services import (
 )
 from products.tests.factories import product_factory
 
-
 TODAY = timezone.localdate()
 
 

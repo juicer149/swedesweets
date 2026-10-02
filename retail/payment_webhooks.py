@@ -15,7 +15,6 @@ from payments.models import PaymentAttempt
 from payments.services import PaymentReconciliationConflict
 from retail.payments import reconcile_retail_payment
 
-
 logger = logging.getLogger(__name__)
 
 

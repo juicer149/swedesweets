@@ -5,11 +5,11 @@ from decimal import Decimal
 
 import pytest
 
-from business.offer_choices import (
-    build_business_offer_choice_context,
-)
 from business.cart_services import (
     add_catalog_offer_to_cart,
+)
+from business.offer_choices import (
+    build_business_offer_choice_context,
 )
 from business.services import (
     place_customer_cart,

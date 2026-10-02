@@ -6,13 +6,12 @@ import pytest
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
-from orders.models import Order
-from pricing.models import PriceAmount
 from carts.models import (
     Cart,
     CartLine,
 )
 from common.channels import SalesChannel
+from orders.models import Order
 from retail.models import (
     RetailCheckoutSession,
 )
@@ -41,9 +40,8 @@ def test_retail_postal_area_normalizes_values():
 def test_retail_postal_area_combination_must_be_unique():
     retail_postal_area_factory()
 
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            retail_postal_area_factory()
+    with pytest.raises(IntegrityError), transaction.atomic():
+        retail_postal_area_factory()
 
 
 @pytest.mark.django_db
@@ -82,12 +80,11 @@ def test_retail_cart_line_requires_commercial_price():
         channel=SalesChannel.RETAIL,
     )
 
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            CartLine.objects.create(
-                cart=cart,
-                quantity=1,
-            )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        CartLine.objects.create(
+            cart=cart,
+            quantity=1,
+        )
 
 
 @pytest.mark.django_db
@@ -101,13 +98,12 @@ def test_retail_cart_line_quantity_must_be_positive(quantity):
         price=Decimal("12.50"),
     )
 
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            CartLine.objects.create(
-                cart=cart,
-                commercial_price=commercial_price,
-                quantity=quantity,
-            )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        CartLine.objects.create(
+            cart=cart,
+            commercial_price=commercial_price,
+            quantity=quantity,
+        )
 
 
 @pytest.mark.django_db
@@ -126,13 +122,12 @@ def test_same_commercial_price_can_appear_only_once_per_cart():
         quantity=1,
     )
 
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            CartLine.objects.create(
-                cart=cart,
-                commercial_price=commercial_price,
-                quantity=2,
-            )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        CartLine.objects.create(
+            cart=cart,
+            commercial_price=commercial_price,
+            quantity=2,
+        )
 
 
 @pytest.mark.django_db
@@ -203,9 +198,8 @@ def test_order_can_have_only_one_retail_checkout_session():
         expires_at=timezone.now() + RETAIL_CHECKOUT_WINDOW,
     )
 
-    with pytest.raises(IntegrityError):
-        with transaction.atomic():
-            RetailCheckoutSession.objects.create(
-                order=order,
-                expires_at=timezone.now() + RETAIL_CHECKOUT_WINDOW,
-            )
+    with pytest.raises(IntegrityError), transaction.atomic():
+        RetailCheckoutSession.objects.create(
+            order=order,
+            expires_at=timezone.now() + RETAIL_CHECKOUT_WINDOW,
+        )

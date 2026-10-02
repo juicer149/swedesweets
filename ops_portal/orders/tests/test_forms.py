@@ -11,11 +11,11 @@ from customers.tests.factories import customer_factory
 from inventory.tests.factories import batch_factory
 from ops_portal.orders.forms import (
     MAX_UNITS_PER_PRODUCT_PER_ORDER,
+    BusinessOfferChoiceField,
     OrderCancelForm,
     OrderCreateForm,
     OrderLineForm,
     OrderLineFormSet,
-    BusinessOfferChoiceField,
     build_order_line_initial_data,
     build_order_line_inputs,
 )
@@ -24,7 +24,6 @@ from orders.tests.factories import order_line_factory
 from pricing.models import CommercialPrice, PriceAmount
 from products.tests.factories import product_factory
 from products.units import OrderUnit
-
 
 TODAY = timezone.localdate()
 

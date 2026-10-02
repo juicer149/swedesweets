@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import StrEnum
 from datetime import datetime
+from enum import StrEnum
 
 from django.db.models import QuerySet
 

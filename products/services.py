@@ -39,7 +39,6 @@ from products.models import (
     ProductTranslation,
 )
 
-
 CUSTOMER_FACING_LANGUAGE_CODE = "fr"
 
 

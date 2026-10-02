@@ -6,25 +6,30 @@ from decimal import Decimal
 import pytest
 from django.utils import timezone
 
-from inventory.errors import (
-    InsufficientStockError,
-    InvalidStockOperation,
-)
-from inventory.services import create_batch
-from reservations.inventory_services import update_batch
-from orders.models import (
-    Order,
-    OrderLine,
-)
-from reservations.models import Allocation
-from payments.models import PaymentAttempt
-from pricing.models import CommercialPrice, PriceAmount
 from carts.models import (
     Cart,
     CartLine,
 )
 from carts.services import create_cart
 from common.channels import SalesChannel
+from inventory.errors import (
+    InsufficientStockError,
+    InvalidStockOperation,
+)
+from inventory.services import create_batch
+from orders.models import (
+    Order,
+    OrderLine,
+)
+from payments.models import PaymentAttempt
+from pricing.models import CommercialPrice, PriceAmount
+from reservations.inventory_services import update_batch
+from reservations.models import Allocation
+from retail.errors import (
+    InvalidRetailCart,
+    InvalidRetailOrder,
+    RetailCheckoutPaymentInProgress,
+)
 from retail.models import (
     RetailCheckoutSession,
 )
@@ -33,11 +38,6 @@ from retail.rules import (
     MAX_RETAIL_ORDER_TOTAL,
     RETAIL_CHECKOUT_WINDOW,
     RETAIL_PAYMENT_RESERVATION_WINDOW,
-)
-from retail.errors import (
-    InvalidRetailCart,
-    InvalidRetailOrder,
-    RetailCheckoutPaymentInProgress,
 )
 from retail.services import (
     AnonymousBuyerInput,

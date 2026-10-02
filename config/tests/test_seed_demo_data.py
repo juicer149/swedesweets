@@ -104,7 +104,8 @@ def test_orders_never_take_more_than_long_dated_stock():
     stock: dict[int, int] = {}
     for batch in batches:
         if (batch.best_before - today).days >= 60:
-            stock[batch.internal_number] = stock.get(batch.internal_number, 0) + batch.quantity
+            number = batch.internal_number
+            stock[number] = stock.get(number, 0) + batch.quantity
 
     for order in orders:
         for line in order.lines:
@@ -132,7 +133,10 @@ def test_demo_accounts_have_the_right_roles(debug):
     _seed(with_demo_accounts=True)
     users = get_user_model().objects
 
-    assert users.get(username="fullstaff").staff_account.access_level == StaffAccessLevel.FULL
+    assert (
+        users.get(username="fullstaff").staff_account.access_level
+        == StaffAccessLevel.FULL
+    )
     assert (
         users.get(username="restrictedstaff").staff_account.access_level
         == StaffAccessLevel.RESTRICTED

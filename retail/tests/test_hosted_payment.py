@@ -7,13 +7,13 @@ import pytest
 from django.utils import timezone
 
 from inventory.services import create_batch
-from reservations.models import Allocation
 from payments.contracts import (
     HostedPaymentRequest,
     HostedPaymentSession,
 )
 from payments.models import PaymentAttempt
 from payments.providers.sumup import SumUpPaymentError
+from reservations.models import Allocation
 from retail.errors import InvalidRetailOrder
 from retail.payments import (
     begin_retail_hosted_payment,

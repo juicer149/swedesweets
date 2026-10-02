@@ -15,8 +15,8 @@ from common.ui import (
     maps_search_link,
     tel_link,
 )
-from ops_portal.customers.access import can_create_customer
 from customers.models import Customer
+from ops_portal.customers.access import can_create_customer
 
 
 @dataclass(frozen=True, slots=True)

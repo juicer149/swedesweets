@@ -51,7 +51,6 @@ from storefront.navbar_viewmodels import (
     build_retail_navbar_cart,
 )
 
-
 CLEAR_CART_INTENT = "clear_cart"
 
 

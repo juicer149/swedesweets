@@ -13,7 +13,6 @@ from customers.models import (
     Customer,
 )
 
-
 PORTAL_CUSTOMER_COUNTRY_CHOICES = list(
     CUSTOMER_COUNTRY_LABELS.items()
 )
