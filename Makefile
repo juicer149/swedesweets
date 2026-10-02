@@ -37,6 +37,11 @@ help:
 	@echo "  make test-v          Run verbose tests"
 	@echo "  make clean           Remove Python/tool caches"
 
+venv: $(PYTHON)
+
+$(PYTHON):
+	python3 -m venv .venv
+
 install: venv
 	$(PIP) install --upgrade pip
 	$(PIP) install -e .
