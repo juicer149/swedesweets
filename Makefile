@@ -46,7 +46,7 @@ install: venv
 	$(PIP) install --upgrade pip
 	$(PIP) install -e .
 
-setup: install migrate
+setup: install migrate collectstatic
 
 run:
 	$(MANAGE) runserver 0.0.0.0:8000
@@ -70,7 +70,7 @@ reset-demo:
 	$(MANAGE) seed_demo_data --reset --with-orders --with-demo-accounts
 
 collectstatic:
-	$(MANAGE) collectstatic --noinput
+	$(MANAGE) collectstatic --noinput -v 0
 
 messages:
 	$(MANAGE) makemessages -l fr
@@ -86,10 +86,10 @@ shell:
 django-shell:
 	$(MANAGE) shell
 
-test:
+test: collectstatic
 	$(PYTHON) -m pytest
 
-test-v:
+test-v: collectstatic
 	$(PYTHON) -m pytest -v
 
 clean:
