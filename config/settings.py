@@ -60,9 +60,11 @@ def env_list(
 # Core settings
 # =============================================================================
 
+# Off unless explicitly enabled: production must never fall back to debug mode
+# because a variable is missing. Local development sets it in .env.
 DEBUG = env_bool(
     "DJANGO_DEBUG",
-    default=True,
+    default=False,
 )
 
 SECRET_KEY = os.environ.get(
@@ -100,6 +102,25 @@ SECURE_PROXY_SSL_HEADER = (
     "HTTP_X_FORWARDED_PROTO",
     "https",
 )
+
+# Production is served over HTTPS only: cookies are never sent over plain
+# HTTP, HTTP requests are redirected, and browsers remember to use HTTPS
+# (HSTS). Start HSTS short and raise it once everything is known to work.
+if not DEBUG:
+    SECURE_SSL_REDIRECT = env_bool(
+        "DJANGO_SECURE_SSL_REDIRECT",
+        default=True,
+    )
+
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    SECURE_HSTS_SECONDS = int(
+        os.environ.get(
+            "DJANGO_SECURE_HSTS_SECONDS",
+            "3600",
+        )
+    )
 
 
 # =============================================================================

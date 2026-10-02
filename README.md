@@ -66,8 +66,9 @@ and webhook reconciliation.
 Requires Python 3.12.
 
 ```bash
-git clone git@github.com:juicer149/swedesweets.git
+git clone https://github.com/juicer149/swedesweets.git
 cd swedesweets
+cp .env.example .env
 make setup         # virtualenv, dependencies, migrations (SQLite)
 make reset-demo    # synthetic demo data and logins
 make run           # http://localhost:8000/
