@@ -976,6 +976,13 @@ CommercialPrice
 
 The standard offer is not synthesized in memory.
 
+A product without a BUSINESS standard offer is not sold to business customers
+at the standard price, exactly like one whose offer is disabled: the business
+catalogue leaves it out (batch-specific BUSINESS offers may still list it) and
+ordering it is rejected as an invalid order. Products are channel-neutral
+labels; each channel's offers decide where a product is sold, so a product may
+be sold in BUSINESS, RETAIL, both (possibly at different prices) or neither.
+
 Its `PriceAmount` may be absent because BUSINESS standard orders may be invoiced
 later.
 

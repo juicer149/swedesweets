@@ -221,6 +221,29 @@ def test_business_cart_rejects_unknown_offer(
 
 
 @pytest.mark.django_db
+def test_business_cart_rejects_product_without_business_offer(
+    customer,
+    apple,
+):
+    """A product with no BUSINESS offer is not sold to business customers;
+    adding it is refused like any unavailable offer, not a server error."""
+
+    with pytest.raises(
+        InvalidBusinessCart,
+        match="business offer is not currently available",
+    ):
+        add_catalog_offer_to_cart(
+            customer=customer,
+            product=apple,
+            commercial_price_id=None,
+        )
+
+    assert not BusinessCart.objects.filter(
+        customer=customer,
+    ).exists()
+
+
+@pytest.mark.django_db
 def test_business_cart_rejects_retail_offer(
     customer,
     apple,

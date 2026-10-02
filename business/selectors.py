@@ -51,8 +51,11 @@ def list_business_catalog_products(
         business price policy     standard offer: price optional
                                   batch offer: EUR price required
 
-    Every active catalog product must have a persistent product-level BUSINESS
-    CommercialPrice. That row is the standard offer's durable identity.
+    A product is sold in the business channel through a persistent
+    product-level BUSINESS CommercialPrice (its standard offer) and/or
+    batch-specific BUSINESS offers. A product without a standard offer is not
+    sold here at the standard price, exactly as if the offer were disabled;
+    products sold only to retail customers have none.
 
     An enabled standard offer may be unpriced. Missing price therefore does
     not remove the standard offer; only its displayed price is absent.
@@ -67,8 +70,7 @@ def list_business_catalog_products(
     not orderable (disabled or unpriced) leaves its batch in the standard
     pool.
 
-    A missing standard BUSINESS offer is an invalid catalog configuration.
-    Synthetic standard offers are no longer created.
+    Synthetic standard offers are never created.
     """
 
     available_units_by_product_id = (
@@ -136,24 +138,6 @@ def list_business_catalog_products(
                 commercial_price,
                 amount,
             )
-        )
-
-    missing_standard_offer_products = [
-        product
-        for product in products
-        if product.id not in standard_offer_by_product_id
-    ]
-
-    if missing_standard_offer_products:
-        missing_products = ", ".join(
-            product.display_name
-            for product in missing_standard_offer_products
-        )
-
-        raise RuntimeError(
-            "business catalog invariant violated: "
-            "missing standard BUSINESS offer for "
-            f"{missing_products}"
         )
 
     available_units_by_batch_pk = (
@@ -247,15 +231,16 @@ def list_business_catalog_products(
         )
 
         standard_offer = (
-            standard_offer_by_product_id[
-                product.id
-            ]
+            standard_offer_by_product_id.get(
+                product.id,
+            )
         )
 
         offers: list[CatalogOffer] = []
 
         if (
             standard_available_units > 0
+            and standard_offer is not None
             and standard_offer.enabled
         ):
             offers.append(

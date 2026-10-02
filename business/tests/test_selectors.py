@@ -242,12 +242,15 @@ def test_business_catalog_product_has_unpriced_standard_offer(
 
 
 @pytest.mark.django_db
-def test_business_catalog_rejects_product_without_standard_offer(
+def test_business_catalog_leaves_out_product_without_standard_offer(
     monkeypatch,
 ):
+    """A product with no BUSINESS offer is not sold to business customers
+    (for example retail-only merch); it is left out, not an error."""
+
     product = _product(
         internal_number=1,
-        name="Broken configuration",
+        name="Retail only",
     )
 
     monkeypatch.setattr(
@@ -257,11 +260,63 @@ def test_business_catalog_rejects_product_without_standard_offer(
         },
     )
 
-    with pytest.raises(
-        RuntimeError,
-        match="missing standard BUSINESS offer",
-    ):
+    monkeypatch.setattr(
+        "business.selectors.orderable_quantity_by_batch_pk",
+        lambda *, batch_pks: {},
+    )
+
+    assert list_business_catalog_products() == ()
+
+
+@pytest.mark.django_db
+def test_business_catalog_product_without_standard_offer_keeps_batch_offer(
+    monkeypatch,
+):
+    product = _product(
+        internal_number=1,
+        name="Only special stock in B2B",
+    )
+
+    batch = _batch(
+        product=product,
+        batch_id="BATCH-SPECIAL",
+        quantity=4,
+    )
+
+    batch_offer = _commercial_price(
+        product=product,
+        batch=batch,
+        channel=CommercialPrice.Channel.BUSINESS,
+        reason=CommercialPrice.Reason.SHORT_DATED,
+    )
+
+    _price_amount(
+        commercial_price=batch_offer,
+        price="5.00",
+    )
+
+    monkeypatch.setattr(
+        "business.selectors.orderable_quantity_by_product_id",
+        lambda: {
+            product.id: 10,
+        },
+    )
+
+    monkeypatch.setattr(
+        "business.selectors.orderable_quantity_by_batch_pk",
+        lambda *, batch_pks: {
+            batch.pk: 4,
+        },
+    )
+
+    (catalog_product,) = (
         list_business_catalog_products()
+    )
+
+    (offer,) = catalog_product.offers
+
+    assert offer.kind == CatalogOfferKind.BATCH
+    assert offer.commercial_price_id == batch_offer.pk
 
 
 @pytest.mark.django_db

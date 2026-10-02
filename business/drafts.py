@@ -54,10 +54,9 @@ def resolve_standard_business_offer(
 ) -> CommercialPrice:
     """Return the product's persistent standard BUSINESS offer.
 
-    Missing standard identity is a catalog/configuration invariant violation.
-
-    A disabled standard offer is different: the identity exists, but the
-    product is intentionally unavailable in the business channel.
+    A missing or disabled standard offer means the product is not sold in the
+    business channel at the standard price (it may be retail-only); ordering
+    it is rejected as an invalid order, not treated as a server error.
     """
 
     offer = (
@@ -70,14 +69,7 @@ def resolve_standard_business_offer(
         .first()
     )
 
-    if offer is None:
-        raise RuntimeError(
-            "business ordering invariant violated: "
-            "missing standard BUSINESS offer for "
-            f"{product.display_name}"
-        )
-
-    if not offer.enabled:
+    if offer is None or not offer.enabled:
         raise InvalidOrderOperation(
             "product is not available for business ordering"
         )
@@ -390,8 +382,8 @@ def _standard_business_offers_by_product_id(
 ) -> dict[int, CommercialPrice]:
     """Resolve standard BUSINESS offers for several products in one query.
 
-    Every requested product must have a persistent standard BUSINESS offer.
-    Disabled offers are present identities but are not orderable.
+    A product without a standard BUSINESS offer, or with a disabled one, is
+    not sold in the business channel; asking for it is an invalid order.
     """
 
     products_by_id = {
@@ -414,31 +406,23 @@ def _standard_business_offers_by_product_id(
         )
     }
 
-    missing_product_names = sorted(
-        products_by_id[product_id].display_name
-        for product_id in (
-            products_by_id.keys()
-            - offers_by_product_id.keys()
-        )
-    )
-
-    if missing_product_names:
-        raise RuntimeError(
-            "business ordering invariant violated: "
-            "missing standard BUSINESS offer for "
-            + ", ".join(missing_product_names)
-        )
-
-    disabled_product_names = sorted(
-        products_by_id[product_id].display_name
+    unavailable_product_ids = (
+        products_by_id.keys() - offers_by_product_id.keys()
+    ) | {
+        product_id
         for product_id, offer in offers_by_product_id.items()
         if not offer.enabled
+    }
+
+    unavailable_product_names = sorted(
+        products_by_id[product_id].display_name
+        for product_id in unavailable_product_ids
     )
 
-    if disabled_product_names:
+    if unavailable_product_names:
         raise InvalidOrderOperation(
             "product is not available for business ordering: "
-            + ", ".join(disabled_product_names)
+            + ", ".join(unavailable_product_names)
         )
 
     return offers_by_product_id

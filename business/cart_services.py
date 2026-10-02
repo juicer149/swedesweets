@@ -264,10 +264,9 @@ def _get_business_cart_offer(
         )
 
         if commercial_price is None:
-            raise RuntimeError(
-                "business ordering invariant violated: "
-                "missing standard BUSINESS offer for "
-                f"{product.display_name}"
+            # No BUSINESS offer: not sold to business customers.
+            raise InvalidBusinessCart(
+                "business offer is not currently available"
             )
     else:
         commercial_price = (

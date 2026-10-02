@@ -6,12 +6,17 @@ from decimal import Decimal
 import pytest
 
 from business.datatypes import BusinessOfferLineInput
-from business.drafts import resolve_business_offer_lines
+from business.drafts import (
+    resolve_business_offer_lines,
+    resolve_business_order_lines,
+    resolve_standard_business_offer,
+)
 from business.tests.conftest import TODAY
 from business.tests.factories import (
     standard_business_offer_factory,
 )
 from inventory.services import create_batch
+from orders.datatypes import OrderLineInput
 from orders.errors import InvalidOrderOperation
 from pricing.models import (
     CommercialPrice,
@@ -287,4 +292,33 @@ def test_resolve_business_offer_lines_rejects_missing_offer():
                     unit=OrderUnit.STOCK,
                 ),
             ],
+        )
+
+
+@pytest.mark.django_db
+def test_product_without_standard_offer_is_not_orderable_by_business(
+    apple,
+):
+    """No BUSINESS offer means not sold to business: an invalid order,
+    like a disabled offer, not a server error."""
+
+    with pytest.raises(
+        InvalidOrderOperation,
+        match="not available for business ordering",
+    ):
+        resolve_business_order_lines(
+            lines=[
+                OrderLineInput.units(
+                    product=apple,
+                    quantity=1,
+                ),
+            ],
+        )
+
+    with pytest.raises(
+        InvalidOrderOperation,
+        match="not available for business ordering",
+    ):
+        resolve_standard_business_offer(
+            product=apple,
         )
