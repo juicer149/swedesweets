@@ -165,3 +165,7 @@ email, and invoice generation for B2B orders.
 - `ARCHITECTURE.md`: boundaries, ownership and dependency rules
 - `accounts/README.md`: identity, roles and capabilities
 - `config/management/commands/README.md`: management commands and demo data
+
+## License
+
+All rights reserved. The code is published for reference; it is not licensed for reuse.
