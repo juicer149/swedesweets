@@ -1,13 +1,13 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView
 from django.urls import (
     include,
     path,
 )
 
-from accounts.forms import LoginForm
+from accounts.forms import LoginForm, ResetRequestForm
 from config import views as config_views
 from ops_portal.dashboard import views as dashboard_views
 from storefront import views as storefront_views
@@ -45,11 +45,16 @@ urlpatterns = [
             namespace="accounts",
         ),
     ),
-    # Before django.contrib.auth.urls, so this login view wins.
+    # Before django.contrib.auth.urls, so these views win.
     path(
         "accounts/login/",
         LoginView.as_view(authentication_form=LoginForm),
         name="login",
+    ),
+    path(
+        "accounts/password_reset/",
+        PasswordResetView.as_view(form_class=ResetRequestForm),
+        name="password_reset",
     ),
     path(
         "accounts/",

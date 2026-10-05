@@ -165,8 +165,15 @@
   margin-bottom: var(--space-7);
 }
 
+.auth-card--bare {
+  /* The page's cream, much darker: the title blends in rather than
+     standing out in navy. */
+  --auth-title-color: #504530;
+}
+
 .auth-card--bare .auth-card__title {
   margin-bottom: 0;
+  color: var(--auth-title-color);
   font-size: var(--font-size-28);
 }
 

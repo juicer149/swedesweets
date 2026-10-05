@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django.utils.translation import gettext_lazy as _
 
 
@@ -15,3 +15,11 @@ class LoginForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields["username"].widget.attrs["placeholder"] = _("Username")
         self.fields["password"].widget.attrs["placeholder"] = _("Password")
+
+
+class ResetRequestForm(PasswordResetForm):
+    """Django's password reset form, with "Email" as the placeholder."""
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["email"].widget.attrs["placeholder"] = _("Email")
