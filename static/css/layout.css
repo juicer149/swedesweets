@@ -162,7 +162,7 @@
 }
 
 .auth-card--bare .auth-card__header {
-  margin-bottom: var(--space-7);
+  margin-bottom: clamp(var(--space-3), 5dvh, var(--space-7));
   text-align: center;
 }
 
@@ -241,15 +241,16 @@
      fields in the middle, close together
      the main button and the quiet link at the bottom
    On a tall desktop screen the card is capped and centred instead of
-   stretching to the bottom. Very short screens (a phone on its side) keep
-   normal scrolling so nothing is cut off.
+   stretching to the bottom. Vertical spacing shrinks with the screen
+   height (clamp + dvh), so a short window or a zoomed-in page still fits;
+   only below 400px of height (a phone on its side) does the page scroll.
    ----------------------------------------------------------------------------- */
 
 body:has(.auth-page--bare) .site-footer {
   display: none;
 }
 
-@media (min-height: 520px) {
+@media (min-height: 400px) {
   body:has(.auth-page--bare) {
     display: flex;
     flex-direction: column;
@@ -278,7 +279,9 @@ body:has(.auth-page--bare) .site-footer {
     align-items: center;
     justify-content: center;
     min-height: 0;
-    padding-block: var(--space-6) var(--space-8);
+    padding-block:
+      clamp(var(--space-3), 4dvh, var(--space-6))
+      clamp(var(--space-4), 5dvh, var(--space-8));
   }
 
   .auth-card.auth-card--bare {
@@ -308,9 +311,11 @@ body:has(.auth-page--bare) .site-footer {
 
 /* Phones: the card fills all the height, so the actions sit at the very
    bottom of the screen, like a bottom bar. */
-@media (max-width: 760px) and (min-height: 520px) {
+@media (max-width: 760px) and (min-height: 400px) {
   .auth-page.auth-page--bare {
-    padding-block: var(--space-6) calc(var(--space-5) + env(safe-area-inset-bottom));
+    padding-block:
+      clamp(var(--space-3), 4dvh, var(--space-6))
+      calc(clamp(var(--space-3), 3dvh, var(--space-5)) + env(safe-area-inset-bottom));
   }
 
   .auth-card.auth-card--bare {
@@ -330,7 +335,7 @@ body:has(.auth-page--bare) .site-footer {
   }
 
   .auth-card--centered > .auth-card__actions {
-    margin-top: var(--space-6);
+    margin-top: clamp(var(--space-4), 4dvh, var(--space-6));
   }
 }
 
