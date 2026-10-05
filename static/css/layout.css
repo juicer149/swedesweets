@@ -163,6 +163,7 @@
 
 .auth-card--bare .auth-card__header {
   margin-bottom: var(--space-7);
+  text-align: center;
 }
 
 .auth-card--bare {
