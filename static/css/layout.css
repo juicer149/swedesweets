@@ -168,7 +168,7 @@
 .auth-card--bare {
   /* The page's cream, much darker: the title blends in rather than
      standing out in navy. */
-  --auth-title-color: #504530;
+  --auth-title-color: #3b3834;
 }
 
 .auth-card--bare .auth-card__title {
@@ -230,6 +230,84 @@
 .auth-card__link:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
+}
+
+
+/* -----------------------------------------------------------------------------
+   Bare auth pages fill the screen without scrolling:
+     header (logo, language) at the top
+     title high up
+     fields in the middle, close together
+     the main button and the quiet link at the bottom
+   On a tall desktop screen the card is capped and centred instead of
+   stretching to the bottom. Very short screens (a phone on its side) keep
+   normal scrolling so nothing is cut off.
+   ----------------------------------------------------------------------------- */
+
+body:has(.auth-page--bare) .site-footer {
+  display: none;
+}
+
+@media (min-height: 520px) {
+  body:has(.auth-page--bare) {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body:has(.auth-page--bare) .site-main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  body:has(.auth-page--bare) .site-main > .container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .auth-page.auth-page--bare {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    padding-block: var(--space-6) var(--space-8);
+  }
+
+  .auth-card.auth-card--bare {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 560px;
+  }
+
+  /* The middle part (fields, or the one line of a status page) takes the
+     free space and sits in its centre; the actions go to the bottom. */
+  .auth-card--bare > .form-grid,
+  .auth-card--bare > .auth-card__text {
+    margin-block: auto;
+  }
+
+  .auth-card--bare > .auth-card__actions {
+    margin-top: 0;
+  }
+
+  /* Status pages with no middle part (reset complete): actions at the
+     bottom all the same. */
+  .auth-card--bare > .auth-card__header + .auth-card__actions {
+    margin-top: auto;
+  }
+}
+
+/* Fields closer to each other than to anything else. */
+.auth-card--bare > .form-grid {
+  gap: var(--space-3);
 }
 
 
