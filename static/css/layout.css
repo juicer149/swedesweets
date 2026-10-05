@@ -123,6 +123,242 @@
 }
 
 
+/* -----------------------------------------------------------------------------
+   Bare auth card: no box, the form sits on the page itself.
+   A soft glow behind keeps it grouped.
+   ----------------------------------------------------------------------------- */
+
+.auth-page--bare {
+  padding-block: var(--space-10) var(--space-12);
+  overflow-x: clip; /* the glow must not widen the page on phones */
+}
+
+.auth-card.auth-card--bare {
+  position: relative;
+  isolation: isolate;
+
+  width: min(100%, 380px);
+  padding: var(--space-4) 0;
+
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.auth-card--bare::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--space-12) * -1) calc(var(--space-16) * -1);
+  z-index: -1;
+
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--color-row-shadow) / 0.10),
+    rgb(var(--color-row-shadow) / 0.04) 55%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.auth-card--bare .auth-card__header {
+  margin-bottom: clamp(var(--space-3), 5dvh, var(--space-7));
+  text-align: center;
+}
+
+.auth-card--bare {
+  /* The page's cream, much darker: the title blends in rather than
+     standing out in navy. */
+  --auth-title-color: #3b3834;
+}
+
+.auth-card--bare .auth-card__title {
+  margin-bottom: 0;
+  color: var(--auth-title-color);
+  font-size: var(--font-size-28);
+}
+
+/* forms.css loads after this file and makes .form-actions a space-between
+   flex row; two classes here win, so the actions stack and centre. */
+.auth-card--bare .auth-card__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-8);
+}
+
+.auth-card--bare .auth-card__submit {
+  min-height: 2.9rem;
+}
+
+/* A line of plain text on a status page (reset link sent, link expired). */
+.auth-card__text {
+  margin: 0;
+  color: var(--color-neutral-700);
+}
+
+/* Password rules under a new-password field: small and quiet. */
+.auth-card__help {
+  margin-top: var(--space-2);
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  line-height: 1.45;
+}
+
+.auth-card__help ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+/* The one sentence a status page has to say, as its heading. */
+.auth-card__message {
+  color: var(--auth-title-color, var(--color-neutral-800));
+  font-family: var(--font-heading);
+  font-size: var(--font-size-20);
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* Secondary action: same size as the button text, but quiet. */
+.auth-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-16);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-control);
+}
+
+.auth-card__link:hover {
+  color: var(--color-neutral-800);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.auth-card__link:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+
+/* -----------------------------------------------------------------------------
+   Bare auth pages fill the screen without scrolling:
+     header (logo, language) at the top
+     title high up
+     fields in the middle, close together
+     the main button and the quiet link at the bottom
+   On a tall desktop screen the card is capped and centred instead of
+   stretching to the bottom. Vertical spacing shrinks with the screen
+   height (clamp + dvh), so a short window or a zoomed-in page still fits;
+   only below 400px of height (a phone on its side) does the page scroll.
+   ----------------------------------------------------------------------------- */
+
+body:has(.auth-page--bare) .site-footer {
+  display: none;
+}
+
+@media (min-height: 400px) {
+  body:has(.auth-page--bare) {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body:has(.auth-page--bare) .site-main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  body:has(.auth-page--bare) .site-main > .container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .auth-page.auth-page--bare {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    padding-block:
+      clamp(var(--space-3), 4dvh, var(--space-6))
+      clamp(var(--space-4), 5dvh, var(--space-8));
+  }
+
+  .auth-card.auth-card--bare {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 560px;
+  }
+
+  /* The middle part (fields, or the one line of a status page) takes the
+     free space and sits in its centre; the actions go to the bottom. */
+  .auth-card--bare > .form-grid,
+  .auth-card--bare > .auth-card__text {
+    margin-block: auto;
+  }
+
+  .auth-card--bare > .auth-card__actions {
+    margin-top: 0;
+  }
+
+  /* Status pages with no middle part (reset complete): actions at the
+     bottom all the same. */
+  .auth-card--bare > .auth-card__header + .auth-card__actions {
+    margin-top: auto;
+  }
+}
+
+/* Phones: the card fills all the height, so the actions sit at the very
+   bottom of the screen, like a bottom bar. */
+@media (max-width: 760px) and (min-height: 400px) {
+  .auth-page.auth-page--bare {
+    padding-block:
+      clamp(var(--space-3), 4dvh, var(--space-6))
+      calc(clamp(var(--space-3), 3dvh, var(--space-5)) + env(safe-area-inset-bottom));
+  }
+
+  .auth-card.auth-card--bare {
+    max-height: none;
+  }
+}
+
+/* Desktop, one-field pages (reset password): no stretching; the field is
+   centred with the actions just under it. */
+@media (min-width: 761px) {
+  .auth-card.auth-card--bare.auth-card--centered {
+    height: auto;
+  }
+
+  .auth-card--centered > .form-grid {
+    margin-block: 0;
+  }
+
+  .auth-card--centered > .auth-card__actions {
+    margin-top: clamp(var(--space-5), 5dvh, var(--space-7));
+  }
+}
+
+/* Fields closer to each other than to anything else. */
+.auth-card--bare > .form-grid {
+  gap: var(--space-3);
+}
+
+
 /* =============================================================================
    List layout
    ============================================================================= */
