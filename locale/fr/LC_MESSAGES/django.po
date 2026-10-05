@@ -2282,3 +2282,7 @@ msgstr "Masquer le mot de passe"
 #: templates/registration/password_change_form.html
 msgid "Password rules"
 msgstr "Règles du mot de passe"
+
+#: templates/storefront/contact.html
+msgid "Want to get in touch?"
+msgstr "Envie de nous contacter ?"

@@ -475,9 +475,24 @@ body:has(.auth-page--bare) .site-footer {
   color: var(--color-neutral-600);
 }
 
-/* Rows that are links (contact): larger, easy to tap, no underline until
-   hovered. */
+/* One short line above the contact links. */
+.contact-lead {
+  margin: 0 0 var(--space-4);
+  color: var(--auth-title-color, var(--color-neutral-800));
+  font-family: var(--font-heading);
+  font-size: var(--font-size-20);
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* Rows that are links (contact): larger, easy to tap. Blue says "tap to
+   call / write"; no hover effect. The two colours are variables to try
+   other combinations (e.g. text in primary-600 too). */
 .icon-rows--links {
+  --icon-rows-link-icon: var(--color-primary-600);
+  --icon-rows-link-text: var(--color-primary-900);
+
   gap: var(--space-2);
   font-size: var(--font-size-18);
 }
@@ -493,16 +508,14 @@ body:has(.auth-page--bare) .site-footer {
   min-height: 3rem;
   padding: var(--space-1) var(--space-2);
 
-  color: var(--color-neutral-800);
+  color: var(--icon-rows-link-text);
   font-weight: 600;
   text-decoration: none;
   border-radius: var(--radius-control);
 }
 
-.icon-rows__link:hover {
-  color: var(--color-neutral-900);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+.icon-rows__link .icon-rows__icon {
+  color: var(--icon-rows-link-icon);
 }
 
 .icon-rows__link:focus-visible {
