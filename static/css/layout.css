@@ -354,30 +354,20 @@ body:has(.auth-page--bare) .site-footer {
 }
 
 /* -----------------------------------------------------------------------------
-   Inline variant: the same bare card inside the normal site (navbar,
-   footer, and on phones the fixed bottom navigation). The page scrolls as
-   usual; the actions follow the fields instead of going to the bottom.
+   In-site variant: the same one-screen layout on pages that keep the
+   site's navbar. On phones that navbar has a fixed bottom bar, so the
+   page keeps room for it instead of putting the actions underneath.
    ----------------------------------------------------------------------------- */
 
-.auth-page--inline {
-  padding-block:
-    clamp(var(--space-6), 6dvh, var(--space-12))
-    clamp(var(--space-8), 8dvh, var(--space-16));
-  overflow-x: clip; /* the glow must not widen the page on phones */
+@media (max-width: 760px) and (min-height: 400px) {
+  body:has(.auth-page--in-site) .site-main {
+    padding-bottom: 6.5rem;
+  }
 }
 
-.auth-page--inline .auth-card.auth-card--bare {
-  height: auto;
-  max-height: none;
-}
-
-.auth-page--inline .auth-card--bare > .form-grid,
-.auth-page--inline .auth-card--bare > .auth-card__text {
-  margin-block: 0;
-}
-
-.auth-page--inline .auth-card--bare > .auth-card__actions {
-  margin-top: clamp(var(--space-5), 5dvh, var(--space-7));
+/* Password rules above the fields: quiet, a little apart from them. */
+.auth-card__help--lead {
+  margin: 0 0 var(--space-2);
 }
 
 /* Fields closer to each other than to anything else. */

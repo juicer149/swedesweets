@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    PasswordChangeForm,
+    PasswordResetForm,
+)
 from django.utils.translation import gettext_lazy as _
 
 
@@ -23,3 +27,16 @@ class ResetRequestForm(PasswordResetForm):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields["email"].widget.attrs["placeholder"] = _("Email")
+
+
+class AccountPasswordChangeForm(PasswordChangeForm):
+    """Django's change-password form, each field's label as its placeholder.
+
+    The labels are Django's own (already translated); the page hides them
+    visually and keeps them for screen readers.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs["placeholder"] = field.label
