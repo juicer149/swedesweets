@@ -8,9 +8,9 @@ from django.utils.translation import gettext_lazy as _
 
 from business_portal.orders.product_presentation import (
     business_cart_line_presentation,
+    product_image_url,
 )
 from carts.models import Cart
-from products.models import ProductProfile
 
 
 @dataclass(frozen=True, slots=True)
@@ -129,7 +129,7 @@ def _build_portal_cart_lines(
                         ),
                     },
                 ),
-                image_url=_product_image_url(
+                image_url=product_image_url(
                     line.commercial_price.product,
                 ),
                 offer_label=(
@@ -158,21 +158,3 @@ def _build_portal_cart_lines(
         cart_lines
     )
 
-
-def _product_image_url(
-    product,
-) -> str | None:
-    """The small picture first: the cart shows it as a 3rem circle."""
-
-    try:
-        profile = product.profile
-    except ProductProfile.DoesNotExist:
-        return None
-
-    if profile.thumbnail:
-        return profile.thumbnail.url
-
-    if profile.image:
-        return profile.image.url
-
-    return None

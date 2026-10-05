@@ -688,7 +688,7 @@ button.auth-card__link {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .cart-line__product:hover .cart-line__name {
+  a.cart-line__product:hover .cart-line__name {
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
@@ -732,6 +732,34 @@ button.auth-card__link {
   outline-offset: 2px;
 }
 
+/* Review: the title with the count under it, then the lines read-only,
+   the quantity on the right. */
+.cart-heading {
+  margin-bottom: clamp(var(--space-5), 4dvh, var(--space-7));
+}
+
+.cart-heading .contact-lead {
+  margin-bottom: var(--space-1);
+}
+
+.cart-summary {
+  margin: 0;
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  text-align: center;
+}
+
+.cart-line--review {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.cart-line__quantity-label {
+  color: var(--color-neutral-900);
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 /* The two quiet links stand apart from the yellow button. */
 .auth-card--bare .cart-actions {
   gap: var(--space-6);
@@ -762,6 +790,11 @@ button.auth-card__link {
 
   .cart-line__product {
     grid-column: 1 / -1;
+  }
+
+  /* Review: the quantity is short, it stays beside the product. */
+  .cart-line--review .cart-line__product {
+    grid-column: auto;
   }
 }
 

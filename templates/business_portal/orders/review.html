@@ -4,114 +4,94 @@
 {% block title %}{{ title }} | SwedeSweets{% endblock %}
 
 {% block content %}
-{% include "includes/ui/page_header.html" with title_id="portal-review-order-title" title=title %}
-
 <section
-  class="form-section form-section--wide"
+  class="bare-section cart-page"
   aria-labelledby="portal-review-order-title"
 >
-  <div class="form-card form-card--wide portal-place-order-card">
-    <section
-      class="order-lines"
-      aria-labelledby="portal-review-items-title"
-    >
-      <div class="order-lines__header order-lines__header--with-action">
-        <div>
-          <h2 id="portal-review-items-title">
-            {% trans "Items" %}
-          </h2>
+  <div class="auth-card auth-card--bare auth-card--centered cart-card">
+    <header class="cart-heading">
+      <h1 id="portal-review-order-title" class="contact-lead">
+        {{ title }}
+      </h1>
 
-          <p>
-            {{ items_summary }}
-          </p>
-        </div>
+      <p class="cart-summary">
+        {{ items_summary }}
+      </p>
+    </header>
 
-        <a
-          class="button button--text button--tone-neutral"
-          href="{{ back_url }}"
-        >
-          {{ back_label }}
-        </a>
-      </div>
-
-      <div class="table-wrapper">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th scope="col">
-                {% trans "Product" %}
-              </th>
-
-              <th
-                scope="col"
-                class="table-cell--numeric"
+    <ul class="cart-lines" aria-label="{% trans 'Items' %}">
+      {% for line in lines %}
+        <li class="cart-line cart-line--review">
+          <div class="cart-line__product">
+            {% if line.image_url %}
+              <img
+                class="cart-line__image"
+                src="{{ line.image_url }}"
+                alt=""
+                width="48"
+                height="48"
+                loading="lazy"
+                decoding="async"
               >
-                {% trans "Quantity" %}
-              </th>
-            </tr>
-          </thead>
+            {% else %}
+              <span class="cart-line__image cart-line__image--empty" aria-hidden="true"></span>
+            {% endif %}
 
-          <tbody>
-            {% for line in lines %}
-              <tr>
-                <td>
-                  <span class="muted-text">
-                    {{ line.catalog_label }}
-                  </span>
+            <span class="cart-line__text">
+              <span class="cart-line__name">{{ line.catalog_label }}</span>
 
-                  {% if line.offer_label %}
-                    <div class="muted-text">
-                      <strong>
-                        {{ line.offer_label }}
-                      </strong>
-                    </div>
-                  {% endif %}
+              {% if line.offer_label %}
+                <span class="cart-line__meta cart-line__meta--offer">{{ line.offer_label }}</span>
+              {% endif %}
 
-                  {% if line.price_label %}
-                    <div class="muted-text">
-                      {{ line.price_label }}
-                    </div>
-                  {% endif %}
-                </td>
+              {% if line.price_label %}
+                <span class="cart-line__meta">{{ line.price_label }}</span>
+              {% endif %}
+            </span>
+          </div>
 
-                <td class="table-cell--numeric">
-                  <strong>
-                    {{ line.quantity_label }}
-                  </strong>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </section>
+          <span class="cart-line__quantity-label">
+            {{ line.quantity_label }}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
 
-    <form
-      method="post"
-      class="form-actions form-actions--split"
-    >
-      {% csrf_token %}
+    <div class="form-actions auth-card__actions cart-actions">
+      <form class="cart-actions__primary" method="post">
+        {% csrf_token %}
 
-      <div class="form-actions__primary">
         <button
-          class="button button--md button--solid button--tone-place"
+          class="button button--md button--solid button--tone-place auth-card__submit"
           type="submit"
           name="intent"
           value="place_order"
         >
           {{ place_order_label }}
         </button>
-      </div>
+      </form>
 
-      <button
-        class="button button--md button--ghost button--tone-danger"
-        type="submit"
-        name="intent"
-        value="clear_cart"
-      >
-        {{ clear_cart_label }}
-      </button>
-    </form>
+      <div class="cart-actions__links">
+        <a class="auth-card__link" href="{{ back_url }}">
+          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+          {{ back_label }}
+        </a>
+
+        <form method="post">
+          {% csrf_token %}
+
+          <button
+            class="auth-card__link"
+            type="submit"
+            name="intent"
+            value="clear_cart"
+          >
+            {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+            {{ clear_cart_label }}
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}

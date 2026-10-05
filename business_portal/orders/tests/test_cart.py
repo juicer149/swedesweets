@@ -216,3 +216,36 @@ def test_cart_line_urls_mutate_cart_line(
     assert not CartLine.objects.filter(
         pk=line.pk,
     ).exists()
+
+
+@pytest.mark.django_db
+def test_cart_review_lists_lines_with_quantity_and_actions(
+    client,
+):
+    customer = _login_customer(
+        client=client,
+    )
+
+    _create_cart_line(
+        customer=customer,
+        quantity=3,
+    )
+
+    response = client.get(
+        reverse(
+            "business_portal:cart_review"
+        )
+    )
+
+    assert response.status_code == 200
+
+    (review_line,) = response.context["lines"]
+
+    assert review_line.quantity == 3
+    assert review_line.image_url is None
+
+    content = response.content.decode()
+
+    assert 'value="place_order"' in content
+    assert 'value="clear_cart"' in content
+    assert f'href="{reverse("business_portal:cart")}"' in content

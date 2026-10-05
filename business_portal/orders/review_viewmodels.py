@@ -12,6 +12,7 @@ from business_portal.orders.presentation import (
 )
 from business_portal.orders.product_presentation import (
     business_cart_line_presentation,
+    product_image_url,
 )
 from carts.models import (
     Cart,
@@ -24,6 +25,7 @@ class PortalOrderReviewLine:
     quantity: int
     quantity_label: str
     catalog_label: str
+    image_url: str | None
     offer_label: str | None
     price_label: str | None
 
@@ -60,6 +62,7 @@ def build_portal_order_review_context(
         .select_related(
             "commercial_price",
             "commercial_price__product",
+            "commercial_price__product__profile",
         )
         .prefetch_related(
             "commercial_price__amounts",
@@ -114,6 +117,9 @@ def _build_review_line(
         ),
         catalog_label=(
             presentation.catalog_label
+        ),
+        image_url=product_image_url(
+            line.commercial_price.product,
         ),
         offer_label=(
             presentation.offer_label
