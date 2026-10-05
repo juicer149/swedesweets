@@ -167,13 +167,14 @@
 }
 
 .auth-card--bare .auth-card__title {
+  display: inline-block; /* the rule below is as wide as the word */
   font-size: var(--font-size-28);
 }
 
 .auth-card--bare .auth-card__title::after {
   content: "";
   display: block;
-  width: 3rem;
+  width: 100%;
   height: 3px;
   margin-top: var(--space-3);
 
@@ -192,6 +193,10 @@
 
 .auth-card--bare .auth-card__submit {
   min-height: 2.9rem;
+}
+
+.auth-card--bare .auth-card__actions > .button--ghost {
+  justify-self: center;
 }
 
 
