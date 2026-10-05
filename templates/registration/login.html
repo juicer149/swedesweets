@@ -1,34 +1,7 @@
-{% extends "base.html" %}
-{% load static i18n %}
+{% extends "registration/auth_base.html" %}
+{% load i18n %}
 
 {% block title %}{% trans "Login" %} | SwedeSweets{% endblock %}
-
-{% block navbar %}
-<header class="site-header site-header--auth">
-  <div class="container">
-    <nav
-      class="site-nav"
-      aria-label="{% trans 'Authentication navigation' %}"
-    >
-      <a
-        class="site-brand"
-        href="{% url 'index' %}"
-        aria-label="{% trans 'SwedeSweets home' %}"
-      >
-        <img
-          class="site-brand__logo"
-          src="{% static 'images/swedesweets-logo.png' %}"
-          alt="SwedeSweets"
-        >
-      </a>
-
-      <div class="site-nav__auth">
-        {% include "includes/language_switcher.html" %}
-      </div>
-    </nav>
-  </div>
-</header>
-{% endblock %}
 
 {% block content %}
 <section class="auth-page auth-page--bare" aria-labelledby="login-title">
@@ -41,66 +14,13 @@
       </h1>
     </header>
 
-    {% if form.non_field_errors %}
-      <div class="form-errors" role="alert">
-        {% for error in form.non_field_errors %}
-          <p>{{ error }}</p>
-        {% endfor %}
-      </div>
-    {% endif %}
+    {% include "registration/includes/form_errors.html" %}
 
+    {% trans "Username" as username_label %}
+    {% trans "Password" as password_label %}
     <div class="form-grid">
-      <div class="form-field form-field--full{% if form.username.errors %} form-field--error{% endif %}">
-        <label class="form-label" for="{{ form.username.id_for_label }}">
-          {% trans "Username" %}
-        </label>
-
-        {{ form.username }}
-
-        {% if form.username.errors %}
-          <div class="form-field__errors" role="alert">
-            {% for error in form.username.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="form-field form-field--full{% if form.password.errors %} form-field--error{% endif %}">
-        <label class="form-label" for="{{ form.password.id_for_label }}">
-          {% trans "Password" %}
-        </label>
-
-        <div class="password-field">
-          {{ form.password }}
-
-          <button
-            class="password-field__toggle"
-            type="button"
-            data-password-toggle
-            data-label-show="{% trans 'Show password' %}"
-            data-label-hide="{% trans 'Hide password' %}"
-            aria-label="{% trans 'Show password' %}"
-            aria-pressed="false"
-            hidden
-          >
-            <span class="password-field__icon password-field__icon--show">
-              {% include "includes/ui/icon.html" with name="eye-closed" %}
-            </span>
-            <span class="password-field__icon password-field__icon--hide">
-              {% include "includes/ui/icon.html" with name="eye-shining" %}
-            </span>
-          </button>
-        </div>
-
-        {% if form.password.errors %}
-          <div class="form-field__errors" role="alert">
-            {% for error in form.password.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
+      {% include "registration/includes/auth_field.html" with field=form.username label=username_label %}
+      {% include "registration/includes/auth_field.html" with field=form.password label=password_label password=True %}
     </div>
 
     <div class="form-actions auth-card__actions">
@@ -111,17 +31,10 @@
         {% trans "Login" %}
       </button>
 
-      <a
-        class="auth-card__link"
-        href="{% url 'password_reset' %}"
-      >
+      <a class="auth-card__link" href="{% url 'password_reset' %}">
         {% trans "Forgot password?" %}
       </a>
     </div>
   </form>
 </section>
-{% endblock %}
-
-{% block scripts %}
-<script src="{% static 'js/password-toggle.js' %}" defer></script>
 {% endblock %}

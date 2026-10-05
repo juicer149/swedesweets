@@ -1,0 +1,51 @@
+{% load i18n %}
+{% comment %}
+One field of an auth form.
+  field     the bound form field
+  label     optional label text (default: the field's own label)
+  password  true: add the show / hide eye
+  help      true: show the field's help text under it
+{% endcomment %}
+<div class="form-field form-field--full{% if field.errors %} form-field--error{% endif %}">
+  <label class="form-label" for="{{ field.id_for_label }}">
+    {% if label %}{{ label }}{% else %}{{ field.label }}{% endif %}
+  </label>
+
+  {% if password %}
+    <div class="password-field">
+      {{ field }}
+
+      <button
+        class="password-field__toggle"
+        type="button"
+        data-password-toggle
+        data-label-show="{% trans 'Show password' %}"
+        data-label-hide="{% trans 'Hide password' %}"
+        aria-label="{% trans 'Show password' %}"
+        aria-pressed="false"
+        hidden
+      >
+        <span class="password-field__icon password-field__icon--show">
+          {% include "includes/ui/icon.html" with name="eye-closed" %}
+        </span>
+        <span class="password-field__icon password-field__icon--hide">
+          {% include "includes/ui/icon.html" with name="eye-shining" %}
+        </span>
+      </button>
+    </div>
+  {% else %}
+    {{ field }}
+  {% endif %}
+
+  {% if help and field.help_text %}
+    <div class="auth-card__help">{{ field.help_text|safe }}</div>
+  {% endif %}
+
+  {% if field.errors %}
+    <div class="form-field__errors" role="alert">
+      {% for error in field.errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
