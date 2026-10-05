@@ -1,25 +1,44 @@
 {% extends "storefront/base.html" %}
-{% load i18n %}
+{% load static i18n %}
 
 {% block title %}{% trans "FAQ" %} | SwedeSweets{% endblock %}
 
 {% block content %}
-{% include "includes/ui/page_header.html" with title_id="public-faq-title" title=_("Frequently asked questions") description=_("Answers are on the way - in the meantime, feel free to contact us directly.") %}
-
 <section
-  class="list-section"
+  class="auth-page auth-page--bare auth-page--in-site"
   aria-labelledby="public-faq-title"
 >
-  <article class="content-card">
-    <div class="content-card__body">
-      <p>
-        {% trans "This page is still being written." %}
-        <a class="text-link" href="{{ contact_url }}">
-          {% trans "Contact us" %}
-        </a>
-        {% trans "if you have a question in the meantime." %}
-      </p>
+  <div class="auth-card auth-card--bare auth-card--centered faq">
+    <h1 id="public-faq-title" class="contact-lead">
+      {% trans "Frequently asked questions" %}
+    </h1>
+
+    <div class="faq__list">
+      {% for item in faq_items %}
+        <details class="faq__item" data-smooth data-smooth-group="faq">
+          <summary class="faq__question">
+            <span>{{ item.question }}</span>
+            {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="faq__chevron" only %}
+          </summary>
+
+          <div class="faq__answer" data-smooth-content>
+            <p>{{ item.answer }}</p>
+          </div>
+        </details>
+      {% endfor %}
     </div>
-  </article>
+
+    <div class="form-actions auth-card__actions">
+      <a class="auth-card__link" href="{{ contact_url }}">
+        {% include "includes/ui/icon_block.html" with name="mail" size="sm" only %}
+        {% trans "Contact us" %}
+      </a>
+    </div>
+  </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'js/smooth-details.js' %}" defer></script>
 {% endblock %}

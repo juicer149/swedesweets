@@ -29,6 +29,7 @@ from storefront.checkout_session import (
     forget_checkout_details,
     owns_checkout,
 )
+from storefront.faq import PUBLIC_FAQ, answered
 
 PAYMENT_RESULT_CONFIRMED = "confirmed"
 PAYMENT_RESULT_FAILED = "failed"
@@ -80,6 +81,7 @@ def faq(request: HttpRequest) -> HttpResponse:
         request,
         "storefront/faq.html",
         {
+            "faq_items": answered(PUBLIC_FAQ),
             "contact_url": reverse(
                 "public_site:contact"
             ),

@@ -2286,3 +2286,83 @@ msgstr "Règles du mot de passe"
 #: templates/storefront/contact.html
 msgid "Want to get in touch?"
 msgstr "Envie de nous contacter ?"
+
+#: storefront/faq.py
+msgid "What can I buy online?"
+msgstr "Que puis-je acheter en ligne ?"
+
+#: storefront/faq.py
+msgid "Our online shop sells SwedeSweets merch, and now and then candy offers, such as short-dated stock."
+msgstr "Notre boutique en ligne vend le merch SwedeSweets et, de temps en temps, des offres de bonbons, comme des produits à date courte."
+
+#: storefront/faq.py
+msgid "Where do you deliver?"
+msgstr "Où livrez-vous ?"
+
+#: storefront/faq.py
+msgid "We deliver online orders within Haute-Savoie (74)."
+msgstr "Nous livrons les commandes en ligne en Haute-Savoie (74)."
+
+#: storefront/faq.py
+msgid "How do I pay?"
+msgstr "Comment puis-je payer ?"
+
+#: storefront/faq.py
+msgid "By card. Payment is handled by SumUp, so your card details never reach us."
+msgstr "Par carte. Le paiement est géré par SumUp : vos données de carte ne nous parviennent jamais."
+
+#: storefront/faq.py
+msgid "Where can I find your candy in shops?"
+msgstr "Où trouver vos bonbons en magasin ?"
+
+#: storefront/faq.py
+msgid "Ask us and we will tell you the nearest shop that sells SwedeSweets."
+msgstr "Demandez-nous et nous vous indiquerons le magasin le plus proche qui vend SwedeSweets."
+
+#: storefront/faq.py
+msgid "How long does delivery take, and what does it cost?"
+msgstr "Combien de temps prend la livraison, et combien coûte-t-elle ?"
+
+#: storefront/faq.py
+msgid "Can I return or exchange merch?"
+msgstr "Puis-je retourner ou échanger du merch ?"
+
+#: storefront/faq.py
+msgid "Which sizes are available?"
+msgstr "Quelles tailles sont disponibles ?"
+
+#: storefront/faq.py
+msgid "How do I become a reseller?"
+msgstr "Comment devenir revendeur ?"
+
+#: storefront/faq.py
+msgid "Get in touch through the contact page and we will set up an account for your shop."
+msgstr "Contactez-nous via la page de contact et nous créerons un compte pour votre magasin."
+
+#: storefront/faq.py
+msgid "How do I log in?"
+msgstr "Comment me connecter ?"
+
+#: storefront/faq.py
+msgid "With the username and password you received from us. If you have forgotten your password, use the link on the login page."
+msgstr "Avec le nom d'utilisateur et le mot de passe que nous vous avons envoyés. Si vous avez oublié votre mot de passe, utilisez le lien sur la page de connexion."
+
+#: storefront/faq.py
+msgid "Can I change my store's details?"
+msgstr "Puis-je modifier les informations de mon magasin ?"
+
+#: storefront/faq.py
+msgid "Yes, under My account. Orders already placed keep the delivery details they were placed with."
+msgstr "Oui, dans Mon compte. Les commandes déjà passées gardent les informations de livraison avec lesquelles elles ont été passées."
+
+#: storefront/faq.py
+msgid "Is there a minimum order?"
+msgstr "Y a-t-il une commande minimum ?"
+
+#: storefront/faq.py
+msgid "Which days do you deliver?"
+msgstr "Quels jours livrez-vous ?"
+
+#: storefront/faq.py
+msgid "How do invoices and payment terms work?"
+msgstr "Comment fonctionnent les factures et les conditions de paiement ?"

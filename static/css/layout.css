@@ -523,6 +523,75 @@ body:has(.auth-page--bare) .site-footer {
   outline-offset: 2px;
 }
 
+/* -----------------------------------------------------------------------------
+   FAQ: questions that slide open one at a time (smooth-details.js with a
+   group). Wider than the login column; the open question is lightly lit.
+   ----------------------------------------------------------------------------- */
+
+.auth-card.auth-card--bare.faq {
+  width: min(100%, 600px);
+}
+
+.faq__list {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.faq__question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-18);
+  font-weight: 600;
+  line-height: 1.35;
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--radius-control);
+
+  transition: background var(--motion-fast), color var(--motion-fast);
+}
+
+.faq__question::-webkit-details-marker {
+  display: none;
+}
+
+.faq__question:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.faq__item[open] > .faq__question {
+  color: var(--color-neutral-900);
+  background: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
+}
+
+.faq__chevron {
+  color: var(--color-neutral-600);
+  transition: transform 200ms ease;
+}
+
+.faq__item[open] .faq__chevron {
+  transform: rotate(180deg);
+}
+
+.faq__answer p {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  color: var(--color-neutral-700);
+  line-height: 1.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq__question,
+  .faq__chevron {
+    transition: none;
+  }
+}
+
 /* Fields closer to each other than to anything else. */
 .auth-card--bare > .form-grid {
   gap: var(--space-3);

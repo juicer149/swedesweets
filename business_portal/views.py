@@ -15,6 +15,7 @@ from business_portal.selectors import (
 from customers.models import CUSTOMER_COUNTRY_LABELS
 from orders.models import Order
 from orders.selectors import list_customer_orders
+from storefront.faq import BUSINESS_FAQ, answered
 
 ACCOUNT_TAB_ACCOUNT = "account"
 ACCOUNT_TAB_ORDERS = "orders"
@@ -125,6 +126,7 @@ def faq(request):
         request,
         "storefront/faq.html",
         {
+            "faq_items": answered(BUSINESS_FAQ),
             "contact_url": reverse(
                 "business_portal:contact"
             ),
