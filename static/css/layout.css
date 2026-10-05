@@ -409,9 +409,14 @@ body:has(.auth-page--bare) .site-footer {
   transform: rotate(180deg);
 }
 
+/* Padding, not margin, so the sliding height includes the gap. */
+.auth-card__rules-content {
+  padding-top: var(--space-2);
+}
+
 .auth-card__rules-list {
   width: fit-content;
-  margin: var(--space-2) auto 0;
+  margin: 0 auto;
   padding-left: 1.1rem;
   text-align: left;
 }
