@@ -75,7 +75,27 @@
           {% trans "Password" %}
         </label>
 
-        {{ form.password }}
+        <div class="password-field">
+          {{ form.password }}
+
+          <button
+            class="password-field__toggle"
+            type="button"
+            data-password-toggle
+            data-label-show="{% trans 'Show password' %}"
+            data-label-hide="{% trans 'Hide password' %}"
+            aria-label="{% trans 'Show password' %}"
+            aria-pressed="false"
+            hidden
+          >
+            <span class="password-field__icon password-field__icon--show">
+              {% include "includes/ui/icon.html" with name="eye" %}
+            </span>
+            <span class="password-field__icon password-field__icon--hide">
+              {% include "includes/ui/icon.html" with name="eye-off" %}
+            </span>
+          </button>
+        </div>
 
         {% if form.password.errors %}
           <div class="form-field__errors" role="alert">
@@ -104,4 +124,8 @@
     </div>
   </form>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/password-toggle.js' %}" defer></script>
 {% endblock %}

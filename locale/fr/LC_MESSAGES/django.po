@@ -2270,3 +2270,11 @@ msgstr "si vous avez une question en attendant."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
+
+#: templates/registration/login.html
+msgid "Show password"
+msgstr "Afficher le mot de passe"
+
+#: templates/registration/login.html
+msgid "Hide password"
+msgstr "Masquer le mot de passe"
