@@ -4,216 +4,162 @@
 {% block title %}{% trans "Order" %} | SwedeSweets{% endblock %}
 
 {% block content %}
-{% include "includes/ui/page_header.html" with title_id="portal-place-order-title" title=_("Order") %}
-
 <section
-  class="form-section form-section--wide"
+  class="bare-section cart-page"
   aria-labelledby="portal-place-order-title"
   data-current-order
   data-current-order-error-message="{% trans 'Could not update quantity.' %}"
 >
-  <div class="form-card form-card--wide portal-place-order-card">
-    <section
-      class="order-lines"
-      aria-labelledby="portal-order-lines-title"
-    >
-      {% if cart_lines %}
-        <div class="order-lines__header order-lines__header--with-action">
-          <h2 id="portal-order-lines-title">
-            {% trans "Items" %}
-          </h2>
+  <div class="auth-card auth-card--bare auth-card--centered cart-card">
+    <h1 id="portal-place-order-title" class="contact-lead">
+      {% trans "Order" %}
+    </h1>
 
-          <a
-            class="button button--text button--tone-neutral"
-            href="{{ continue_shopping_url }}"
+    {% if cart_lines %}
+      <ul class="cart-lines" aria-label="{% trans 'Items' %}">
+        {% for line in cart_lines %}
+          <li class="cart-line">
+            <div class="cart-line__product">
+              <span class="cart-line__name">{{ line.product_label }}</span>
+
+              {% if line.offer_label %}
+                <span class="cart-line__meta cart-line__meta--offer">{{ line.offer_label }}</span>
+              {% endif %}
+
+              {% if line.price_label %}
+                <span class="cart-line__meta">{{ line.price_label }}</span>
+              {% endif %}
+            </div>
+
+            <form
+              class="cart-line__quantity"
+              method="post"
+              action="{{ line.quantity_url }}"
+              data-current-order-quantity-form
+              data-confirmed-quantity="{{ line.quantity }}"
+            >
+              {% csrf_token %}
+
+              <div
+                class="quantity-stepper"
+                aria-label="{% trans 'Quantity' %}"
+                data-quantity-stepper
+              >
+                <button
+                  class="quantity-stepper__button quantity-stepper__button--decrease"
+                  type="button"
+                  aria-label="{% trans 'Decrease quantity' %}"
+                  data-quantity-decrease
+                >
+                  <span aria-hidden="true">−</span>
+                </button>
+
+                <label class="visually-hidden" for="quantity-{{ line.cart_line_id }}">
+                  {% trans "Quantity" %}
+                </label>
+
+                <input
+                  id="quantity-{{ line.cart_line_id }}"
+                  class="quantity-stepper__input"
+                  type="number"
+                  name="quantity"
+                  value="{{ line.quantity }}"
+                  min="1"
+                  step="1"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  required
+                  data-quantity-input
+                >
+
+                <button
+                  class="quantity-stepper__button quantity-stepper__button--increase"
+                  type="button"
+                  aria-label="{% trans 'Increase quantity' %}"
+                  data-quantity-increase
+                >
+                  <span aria-hidden="true">+</span>
+                </button>
+              </div>
+
+              <span
+                class="visually-hidden"
+                role="status"
+                aria-live="polite"
+                data-current-order-quantity-status
+              ></span>
+
+              <noscript>
+                <button class="auth-card__link" type="submit">
+                  {% trans "Update quantity" %}
+                </button>
+              </noscript>
+            </form>
+
+            <form class="cart-line__remove" method="post" action="{{ line.remove_url }}">
+              {% csrf_token %}
+
+              <button
+                class="cart-line__remove-button"
+                type="submit"
+                aria-label="{% trans 'Remove product' %}"
+              >
+                {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+              </button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <div class="form-actions auth-card__actions cart-actions">
+        <form class="cart-actions__primary" method="post">
+          {% csrf_token %}
+
+          <button
+            class="button button--md button--solid button--tone-place auth-card__submit"
+            type="submit"
+            name="intent"
+            value="review_order"
           >
+            {{ submit_label }}
+          </button>
+        </form>
+
+        <div class="cart-actions__links">
+          <a class="auth-card__link" href="{{ continue_shopping_url }}">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
             {{ continue_shopping_label }}
           </a>
-        </div>
-
-        <div class="portal-cart">
-          <div
-            class="portal-cart__header"
-            aria-hidden="true"
-          >
-            <span>
-              {% trans "Product" %}
-            </span>
-
-            <span>
-              {% trans "Quantity" %}
-            </span>
-
-            <span></span>
-          </div>
-
-          <div class="portal-cart__lines">
-            {% for line in cart_lines %}
-              <article class="portal-cart-line">
-                <div class="portal-cart-line__product">
-                  <span class="portal-cart-line__product-label">
-                    {{ line.product_label }}
-                  </span>
-
-                  {% if line.offer_label %}
-                    <div class="muted-text">
-                      <strong>
-                        {{ line.offer_label }}
-                      </strong>
-                    </div>
-                  {% endif %}
-
-                  {% if line.price_label %}
-                    <div class="muted-text">
-                      {{ line.price_label }}
-                    </div>
-                  {% endif %}
-                </div>
-
-                <div class="portal-cart-line__quantity">
-                  <form
-                    method="post"
-                    action="{{ line.quantity_url }}"
-                    data-current-order-quantity-form
-                    data-confirmed-quantity="{{ line.quantity }}"
-                  >
-                    {% csrf_token %}
-
-                    <div
-                      class="quantity-stepper"
-                      aria-label="{% trans 'Quantity' %}"
-                      data-quantity-stepper
-                    >
-                      <button
-                        class="quantity-stepper__button quantity-stepper__button--decrease"
-                        type="button"
-                        aria-label="{% trans 'Decrease quantity' %}"
-                        data-quantity-decrease
-                      >
-                        <span aria-hidden="true">−</span>
-                      </button>
-
-                      <label
-                        class="visually-hidden"
-                        for="quantity-{{ line.cart_line_id }}"
-                      >
-                        {% trans "Quantity" %}
-                      </label>
-
-                      <input
-                        id="quantity-{{ line.cart_line_id }}"
-                        class="quantity-stepper__input"
-                        type="number"
-                        name="quantity"
-                        value="{{ line.quantity }}"
-                        min="1"
-                        step="1"
-                        inputmode="numeric"
-                        autocomplete="off"
-                        required
-                        data-quantity-input
-                      >
-
-                      <button
-                        class="quantity-stepper__button quantity-stepper__button--increase"
-                        type="button"
-                        aria-label="{% trans 'Increase quantity' %}"
-                        data-quantity-increase
-                      >
-                        <span aria-hidden="true">+</span>
-                      </button>
-                    </div>
-
-                    <span
-                      class="visually-hidden"
-                      role="status"
-                      aria-live="polite"
-                      data-current-order-quantity-status
-                    ></span>
-
-                    <noscript>
-                      <button
-                        class="button button--sm button--text button--tone-neutral"
-                        type="submit"
-                      >
-                        {% trans "Update quantity" %}
-                      </button>
-                    </noscript>
-                  </form>
-                </div>
-
-                <div class="portal-cart-line__action">
-                  <form
-                    method="post"
-                    action="{{ line.remove_url }}"
-                  >
-                    {% csrf_token %}
-
-                    <button
-                      class="portal-cart-line__remove-button"
-                      type="submit"
-                      aria-label="{% trans 'Remove product' %}"
-                    >
-                      {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
-                      <span class="visually-hidden">
-                        {% trans "Remove product" %}
-                      </span>
-                    </button>
-                  </form>
-                </div>
-              </article>
-            {% endfor %}
-          </div>
-        </div>
-
-        <div class="portal-place-order-actions">
-          <form method="post">
-            {% csrf_token %}
-
-            <button
-              class="button button--md button--solid button--tone-place"
-              type="submit"
-              name="intent"
-              value="review_order"
-            >
-              {{ submit_label }}
-            </button>
-          </form>
 
           <form method="post">
             {% csrf_token %}
 
             <button
-              class="button button--md button--ghost button--tone-danger"
+              class="auth-card__link"
               type="submit"
               name="intent"
               value="clear_cart"
             >
+              {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
               {{ clear_cart_label }}
             </button>
           </form>
         </div>
-      {% else %}
-        <div class="order-lines__header">
-          <h2 id="portal-order-lines-title">
-            {% trans "Items" %}
-          </h2>
-        </div>
+      </div>
+    {% else %}
+      <p class="auth-card__text auth-card__message">
+        {% trans "Your order is empty." %}
+      </p>
 
-        <div class="portal-cart-empty">
-          <p>
-            {% trans "Your order is empty." %}
-          </p>
-
-          <a
-            class="button button--md button--solid button--tone-place"
-            href="{{ continue_shopping_url }}"
-          >
-            {{ continue_shopping_label }}
-          </a>
-        </div>
-      {% endif %}
-    </section>
+      <div class="form-actions auth-card__actions">
+        <a
+          class="button button--md button--solid button--tone-place auth-card__submit"
+          href="{{ continue_shopping_url }}"
+        >
+          {{ continue_shopping_label }}
+        </a>
+      </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}
@@ -221,13 +167,6 @@
 {% block scripts %}
   {{ block.super }}
 
-  <script
-    src="{% static 'js/quantity-stepper.js' %}"
-    defer
-  ></script>
-
-  <script
-    src="{% static 'js/cart.js' %}"
-    defer
-  ></script>
+  <script src="{% static 'js/quantity-stepper.js' %}" defer></script>
+  <script src="{% static 'js/cart.js' %}" defer></script>
 {% endblock %}

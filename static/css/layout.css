@@ -592,6 +592,136 @@ body:has(.auth-page--bare) .site-footer {
   }
 }
 
+/* -----------------------------------------------------------------------------
+   Cart (business portal): the order's lines on the page itself, divided
+   by hairlines; the yellow button to review, then two quiet links.
+   ----------------------------------------------------------------------------- */
+
+.auth-card.auth-card--bare.cart-card {
+  width: min(100%, 640px);
+}
+
+/* A <button> that looks like the quiet text link. */
+button.auth-card__link {
+  font-family: var(--font-body);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.cart-lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cart-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding-block: var(--space-4);
+}
+
+.cart-line + .cart-line {
+  border-top: 1px solid var(--color-neutral-200);
+}
+
+.cart-line__product {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cart-line__name {
+  color: var(--color-neutral-900);
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.cart-line__meta {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  line-height: 1.4;
+}
+
+.cart-line__meta--offer {
+  color: var(--color-neutral-700);
+  font-weight: 600;
+}
+
+.cart-line__quantity,
+.cart-line__remove {
+  margin: 0;
+}
+
+.cart-line__remove-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+
+  color: var(--color-neutral-600);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+
+  transition: color var(--motion-fast), transform 120ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cart-line__remove-button:hover {
+    color: var(--color-action-danger-on-light);
+  }
+}
+
+.cart-line__remove-button:active {
+  transform: scale(0.9);
+}
+
+.cart-line__remove-button:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.cart-actions__primary {
+  width: 100%;
+  margin: 0;
+}
+
+.cart-actions__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2) var(--space-5);
+}
+
+.cart-actions__links form {
+  margin: 0;
+}
+
+/* Phones: the product on its own line, quantity and remove under it. */
+@media (max-width: 600px) {
+  .cart-line {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-3);
+  }
+
+  .cart-line__product {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-line__remove-button {
+    transition: none;
+  }
+}
+
 /* Fields closer to each other than to anything else. */
 .auth-card--bare > .form-grid {
   gap: var(--space-3);
