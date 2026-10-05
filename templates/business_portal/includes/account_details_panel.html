@@ -8,7 +8,7 @@
   {% if active_tab != "account" %}hidden{% endif %}
 >
   <section
-    class="account-overview"
+    class="bare-section"
     aria-labelledby="account-details-title"
   >
     <div class="auth-card auth-card--bare auth-card--centered">
@@ -18,21 +18,21 @@
         </h2>
       </header>
 
-      <ul class="account-details">
-        <li class="account-details__item">
-          {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="account-details__icon" only %}
+      <ul class="icon-rows">
+        <li class="icon-rows__item">
+          {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="icon-rows__icon" only %}
           <span class="visually-hidden">{% trans "Email" %}:</span>
           <span>{{ customer.email }}</span>
         </li>
 
-        <li class="account-details__item">
-          {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="account-details__icon" only %}
+        <li class="icon-rows__item">
+          {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="icon-rows__icon" only %}
           <span class="visually-hidden">{% trans "Phone number" %}:</span>
           <span>{{ customer.phone_number }}</span>
         </li>
 
-        <li class="account-details__item">
-          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="account-details__icon" only %}
+        <li class="icon-rows__item">
+          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon" only %}
           <span class="visually-hidden">{% trans "Address" %}:</span>
           <span>
             {{ customer.address_line }}<br>

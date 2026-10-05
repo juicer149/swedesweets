@@ -428,12 +428,11 @@ body:has(.auth-page--bare) .site-footer {
 }
 
 /* -----------------------------------------------------------------------------
-   Account overview (business portal, My account tab): the bare card
-   inside a normal scrolling page. The store's name as the title, its
-   contact details as quiet rows with icons, then the actions.
+   Bare section: the bare card inside a normal scrolling page (My account,
+   Contact). Icon rows: quiet lines of details, each with a small icon.
    ----------------------------------------------------------------------------- */
 
-.account-overview {
+.bare-section {
   display: grid;
   justify-items: center;
   padding-block:
@@ -442,16 +441,16 @@ body:has(.auth-page--bare) .site-footer {
   overflow-x: clip; /* the glow must not widen the page on phones */
 }
 
-.account-overview .auth-card.auth-card--bare {
+.bare-section .auth-card.auth-card--bare {
   flex: 0 0 auto;
   max-height: none;
 }
 
-.account-overview .auth-card--bare > .auth-card__actions {
+.bare-section .auth-card--bare > .auth-card__actions {
   margin-top: clamp(var(--space-6), 6dvh, var(--space-8));
 }
 
-.account-details {
+.icon-rows {
   display: grid;
   gap: var(--space-4);
   width: fit-content;
@@ -464,16 +463,51 @@ body:has(.auth-page--bare) .site-footer {
   line-height: 1.45;
 }
 
-.account-details__item {
+.icon-rows__item {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
   overflow-wrap: anywhere;
 }
 
-.account-details__icon {
+.icon-rows__icon {
   margin-top: 0.1rem;
   color: var(--color-neutral-600);
+}
+
+/* Rows that are links (contact): larger, easy to tap, no underline until
+   hovered. */
+.icon-rows--links {
+  gap: var(--space-2);
+  font-size: var(--font-size-18);
+}
+
+.icon-rows--links .icon-rows__item {
+  align-items: center;
+}
+
+.icon-rows__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 3rem;
+  padding: var(--space-1) var(--space-2);
+
+  color: var(--color-neutral-800);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-control);
+}
+
+.icon-rows__link:hover {
+  color: var(--color-neutral-900);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.icon-rows__link:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
 }
 
 /* Fields closer to each other than to anything else. */

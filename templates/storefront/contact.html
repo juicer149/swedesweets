@@ -4,38 +4,29 @@
 {% block title %}{% trans "Contact" %} | SwedeSweets{% endblock %}
 
 {% block content %}
-{% include "includes/ui/page_header.html" with title_id="public-contact-title" title=_("Contact us") description=_("Questions about an order, a product, or anything else? Get in touch.") %}
+<section class="bare-section" aria-labelledby="public-contact-title">
+  <div class="auth-card auth-card--bare auth-card--centered">
+    <h1 id="public-contact-title" class="visually-hidden">
+      {% trans "Contact us" %}
+    </h1>
 
-<section
-  class="list-section portal-contact-section"
-  aria-labelledby="public-contact-title"
->
-  <article class="content-card portal-contact-card">
-    <div class="content-card__body">
-      <div class="detail-list">
-        <div class="detail-list__item">
-          {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="detail-list__icon" only %}
+    <ul class="icon-rows icon-rows--links">
+      <li class="icon-rows__item">
+        <a class="icon-rows__link" href="mailto:info@swedesweets.se">
+          {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="icon-rows__icon" only %}
+          <span class="visually-hidden">{% trans "Email" %}:</span>
+          info@swedesweets.se
+        </a>
+      </li>
 
-          <div>
-            <p class="detail-list__label">{% trans "Email" %}</p>
-            <a class="detail-list__value detail-list__link" href="mailto:info@swedesweets.se">
-              info@swedesweets.se
-            </a>
-          </div>
-        </div>
-
-        <div class="detail-list__item">
-          {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="detail-list__icon" only %}
-
-          <div>
-            <p class="detail-list__label">{% trans "Phone" %}</p>
-            <a class="detail-list__value detail-list__link" href="tel:+46739756195">
-              +46 (73) 975 61 95
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </article>
+      <li class="icon-rows__item">
+        <a class="icon-rows__link" href="tel:+46739756195">
+          {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="icon-rows__icon" only %}
+          <span class="visually-hidden">{% trans "Phone" %}:</span>
+          +46 (73) 975 61 95
+        </a>
+      </li>
+    </ul>
+  </div>
 </section>
 {% endblock %}
