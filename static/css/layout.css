@@ -427,6 +427,55 @@ body:has(.auth-page--bare) .site-footer {
   }
 }
 
+/* -----------------------------------------------------------------------------
+   Account overview (business portal, My account tab): the bare card
+   inside a normal scrolling page. The store's name as the title, its
+   contact details as quiet rows with icons, then the actions.
+   ----------------------------------------------------------------------------- */
+
+.account-overview {
+  display: grid;
+  justify-items: center;
+  padding-block:
+    clamp(var(--space-6), 6dvh, var(--space-10))
+    clamp(var(--space-6), 6dvh, var(--space-10));
+  overflow-x: clip; /* the glow must not widen the page on phones */
+}
+
+.account-overview .auth-card.auth-card--bare {
+  flex: 0 0 auto;
+  max-height: none;
+}
+
+.account-overview .auth-card--bare > .auth-card__actions {
+  margin-top: clamp(var(--space-6), 6dvh, var(--space-8));
+}
+
+.account-details {
+  display: grid;
+  gap: var(--space-4);
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+
+  color: var(--color-neutral-800);
+  line-height: 1.45;
+}
+
+.account-details__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  overflow-wrap: anywhere;
+}
+
+.account-details__icon {
+  margin-top: 0.1rem;
+  color: var(--color-neutral-600);
+}
+
 /* Fields closer to each other than to anything else. */
 .auth-card--bare > .form-grid {
   gap: var(--space-3);
