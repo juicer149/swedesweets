@@ -306,6 +306,34 @@ body:has(.auth-page--bare) .site-footer {
   }
 }
 
+/* Phones: the card fills all the height, so the actions sit at the very
+   bottom of the screen, like a bottom bar. */
+@media (max-width: 760px) and (min-height: 520px) {
+  .auth-page.auth-page--bare {
+    padding-block: var(--space-6) calc(var(--space-5) + env(safe-area-inset-bottom));
+  }
+
+  .auth-card.auth-card--bare {
+    max-height: none;
+  }
+}
+
+/* Desktop, one-field pages (reset password): no stretching; the field is
+   centred with the actions just under it. */
+@media (min-width: 761px) {
+  .auth-card.auth-card--bare.auth-card--centered {
+    height: auto;
+  }
+
+  .auth-card--centered > .form-grid {
+    margin-block: 0;
+  }
+
+  .auth-card--centered > .auth-card__actions {
+    margin-top: var(--space-6);
+  }
+}
+
 /* Fields closer to each other than to anything else. */
 .auth-card--bare > .form-grid {
   gap: var(--space-3);
