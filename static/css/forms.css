@@ -606,7 +606,7 @@
   height: 2.5rem;
   padding: 0;
 
-  color: var(--color-primary-600);
+  color: var(--color-neutral-600);
   background: transparent;
   border: 0;
   border-radius: var(--radius-control);
@@ -614,6 +614,15 @@
 }
 
 .password-field__toggle:hover {
+  color: var(--color-neutral-800);
+}
+
+/* Showing the password: the eye turns blue and shines. */
+.password-field__toggle[aria-pressed="true"] {
+  color: var(--color-primary-600);
+}
+
+.password-field__toggle[aria-pressed="true"]:hover {
   color: var(--color-primary-800);
 }
 
