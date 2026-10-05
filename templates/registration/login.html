@@ -31,8 +31,8 @@
 {% endblock %}
 
 {% block content %}
-<section class="auth-page" aria-labelledby="login-title">
-  <form class="auth-card" method="post" action="{% url 'login' %}">
+<section class="auth-page auth-page--bare" aria-labelledby="login-title">
+  <form class="auth-card auth-card--bare" method="post" action="{% url 'login' %}">
     {% csrf_token %}
 
     <header class="auth-card__header">
@@ -89,7 +89,7 @@
 
     <div class="form-actions auth-card__actions">
       <button
-        class="button button--lg button--solid button--tone-place auth-card__submit"
+        class="button button--md button--solid button--tone-place auth-card__submit"
         type="submit"
       >
         {% trans "Login" %}

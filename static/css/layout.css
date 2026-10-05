@@ -123,6 +123,78 @@
 }
 
 
+/* -----------------------------------------------------------------------------
+   Bare auth card: no box, the form sits on the page itself.
+   A soft glow behind keeps it grouped; the gold rule under the title
+   keeps the site's accent.
+   ----------------------------------------------------------------------------- */
+
+.auth-page--bare {
+  padding-block: var(--space-10) var(--space-12);
+  overflow-x: clip; /* the glow must not widen the page on phones */
+}
+
+.auth-card.auth-card--bare {
+  position: relative;
+  isolation: isolate;
+
+  width: min(100%, 380px);
+  padding: var(--space-4) 0;
+
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.auth-card--bare::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--space-12) * -1) calc(var(--space-16) * -1);
+  z-index: -1;
+
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--color-row-shadow) / 0.10),
+    rgb(var(--color-row-shadow) / 0.04) 55%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.auth-card--bare .auth-card__header {
+  margin-bottom: var(--space-5);
+}
+
+.auth-card--bare .auth-card__title {
+  font-size: var(--font-size-28);
+}
+
+.auth-card--bare .auth-card__title::after {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: 3px;
+  margin-top: var(--space-3);
+
+  background: var(--color-accent-600);
+  border-radius: 999px;
+}
+
+.auth-card--bare .auth-card__description {
+  font-size: var(--font-size-14);
+}
+
+.auth-card--bare .auth-card__actions {
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.auth-card--bare .auth-card__submit {
+  min-height: 2.9rem;
+}
+
+
 /* =============================================================================
    List layout
    ============================================================================= */
