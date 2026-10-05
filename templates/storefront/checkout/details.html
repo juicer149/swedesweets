@@ -4,53 +4,66 @@
 {% block title %}{% trans "Checkout" %} | SwedeSweets{% endblock %}
 
 {% block content %}
-{% include "includes/ui/page_header.html" with title_id="storefront-checkout-title" title=_("Delivery details") %}
-
 <section
-  class="form-section form-section--wide"
+  class="bare-section cart-page"
   aria-labelledby="storefront-checkout-title"
 >
-  {% include "includes/ui/form.html" with form=form submit_label=_("Continue to review") cancel_url=cart_url %}
+  <div class="auth-card auth-card--bare auth-card--centered cart-card">
+    <h1 id="storefront-checkout-title" class="contact-lead">
+      {% trans "Delivery details" %}
+    </h1>
 
-  <div class="form-card form-card--wide portal-place-order-card retail-checkout-summary">
-    <div class="order-lines__header order-lines__header--with-action">
-      <h2>
-        {% trans "Your order" %}
-      </h2>
+    <form method="post" class="checkout-form" data-dirty-form novalidate>
+      {% csrf_token %}
 
-      <a
-        class="button button--text button--tone-neutral"
-        href="{{ cart_url }}"
-      >
-        {% trans "Edit cart" %}
-      </a>
-    </div>
+      {% include "registration/includes/form_errors.html" with form=form only %}
 
-    <ul class="retail-checkout-summary__lines">
-      {% for line in cart_summary.cart_lines %}
-        <li class="retail-checkout-summary__line">
-          <span>
-            {{ line.quantity }} × {{ line.product_label }}
-          </span>
-
-          <span>
-            {{ line.line_total_label }}
-          </span>
-        </li>
-      {% endfor %}
-    </ul>
-
-    {% if cart_summary.subtotal_label %}
-      <div class="retail-cart-subtotal">
-        <span>
-          {% trans "Subtotal" %}
-        </span>
-
-        <strong>
-          {{ cart_summary.subtotal_label }}
-        </strong>
+      <div class="form-grid">
+        {% for field in form %}
+          {% include "includes/ui/form_field.html" with field=field only %}
+        {% endfor %}
       </div>
-    {% endif %}
+
+      {% if cart_summary.cart_lines %}
+        <section class="checkout-order" aria-labelledby="storefront-checkout-order-title">
+          <h2 id="storefront-checkout-order-title" class="checkout-order__title">
+            {% trans "Your order" %}
+          </h2>
+
+          <ul class="checkout-order__lines">
+            {% for line in cart_summary.cart_lines %}
+              <li class="checkout-order__line">
+                <span>{{ line.quantity }} × {{ line.product_label }}</span>
+                <span>{{ line.line_total_label }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          {% if cart_summary.subtotal_label %}
+            <div class="cart-total">
+              <span>{% trans "Subtotal" %}</span>
+              <strong>{{ cart_summary.subtotal_label }}</strong>
+            </div>
+          {% endif %}
+        </section>
+      {% endif %}
+
+      <div class="form-actions auth-card__actions cart-actions">
+        <button
+          class="button button--md button--solid button--tone-place auth-card__submit"
+          type="submit"
+        >
+          {% trans "Continue to review" %}
+        </button>
+
+        <div class="cart-actions__links">
+          <a class="auth-card__link" href="{{ cart_url }}" data-dirty-ignore="true">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+            {% trans "Edit cart" %}
+          </a>
+        </div>
+      </div>
+    </form>
   </div>
 </section>
 {% endblock %}
@@ -58,8 +71,5 @@
 {% block scripts %}
   {{ block.super }}
 
-  <script
-    src="{% static 'js/checkout-city-lookup.js' %}"
-    defer
-  ></script>
+  <script src="{% static 'js/checkout-city-lookup.js' %}" defer></script>
 {% endblock %}

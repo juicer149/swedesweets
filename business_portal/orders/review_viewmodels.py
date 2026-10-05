@@ -12,12 +12,12 @@ from business_portal.orders.presentation import (
 )
 from business_portal.orders.product_presentation import (
     business_cart_line_presentation,
-    product_image_url,
 )
 from carts.models import (
     Cart,
     CartLine,
 )
+from products.images import product_image_url
 
 
 @dataclass(frozen=True, slots=True)

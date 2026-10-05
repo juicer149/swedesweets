@@ -183,6 +183,7 @@ def test_review_shows_order_to_owning_session(client, cart):
     assert response.status_code == 200
     assert "Marie Dupont" in content
     assert "€20.00" in content
+    assert response.context["lines"][0].image_url is None
 
 
 @pytest.mark.django_db

@@ -6,12 +6,14 @@ from typing import Any
 
 from django.urls import reverse
 
+from products.images import product_image_url
 from retail.models import RetailCheckoutSession
 
 
 @dataclass(frozen=True, slots=True)
 class CheckoutReviewLine:
     product_label: str
+    image_url: str | None
     quantity: int
     unit_price_label: str
     line_total_label: str
@@ -62,6 +64,7 @@ def build_checkout_review_context(
         order.lines
         .select_related(
             "product",
+            "product__profile",
         )
         .order_by("id")
     )
@@ -82,6 +85,9 @@ def build_checkout_review_context(
         lines.append(
             CheckoutReviewLine(
                 product_label=line.product.display_name,
+                image_url=product_image_url(
+                    line.product,
+                ),
                 quantity=quantity,
                 unit_price_label=_format_eur(
                     line.unit_price_snapshot

@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from carts.models import Cart, CartLine
 from pricing.models import PriceAmount
+from products.images import product_image_url
 
 
 @dataclass(frozen=True, slots=True)
@@ -15,6 +16,7 @@ class RetailCartLine:
     cart_line_id: int
     product_label: str
     product_url: str
+    image_url: str | None
     offer_label: str | None
     unit_price_label: str | None
     line_total_label: str | None
@@ -129,6 +131,7 @@ def _load_cart_lines(
         cart.lines
         .select_related(
             "commercial_price__product",
+            "commercial_price__product__profile",
         )
         .prefetch_related(
             "commercial_price__amounts",
@@ -154,6 +157,9 @@ def _build_line(
             kwargs={
                 "product_id": product.id,
             },
+        ),
+        image_url=product_image_url(
+            product,
         ),
         offer_label=(
             commercial_price.get_reason_display()

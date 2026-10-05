@@ -93,6 +93,13 @@ def test_cart_page_shows_lines_and_subtotal(
     assert 'value="2"' in content
     assert "€20.00" in content
 
+    (line,) = response.context["cart_lines"]
+
+    assert line.image_url is None
+    assert f'href="{line.product_url}"' in content
+    assert "data-cart-subtotal" in content
+    assert f'data-cart-line-total="{line.cart_line_id}"' in content
+
 
 @pytest.mark.django_db
 def test_quantity_update_returns_new_totals_as_json(

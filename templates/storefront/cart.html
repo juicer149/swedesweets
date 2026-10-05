@@ -4,268 +4,213 @@
 {% block title %}{% trans "Cart" %} | SwedeSweets{% endblock %}
 
 {% block content %}
-{% include "includes/ui/page_header.html" with title_id="storefront-cart-title" title=_("Cart") %}
-
 <section
-  class="form-section form-section--wide"
+  class="bare-section cart-page"
   aria-labelledby="storefront-cart-title"
   data-current-order
   data-current-order-error-message="{% trans 'Could not update quantity.' %}"
 >
-  <div class="form-card form-card--wide portal-place-order-card">
-    <section
-      class="order-lines"
-      aria-labelledby="storefront-cart-lines-title"
-    >
-      {% if cart_lines %}
-        {% if open_payment_url %}
-          <div
-            class="retail-cart-locked"
-            role="status"
-          >
-            <p>
-              {% trans "You have a payment in progress for this cart. Continue it, or cancel it to change your cart." %}
-            </p>
+  <div class="auth-card auth-card--bare auth-card--centered cart-card">
+    <h1 id="storefront-cart-title" class="contact-lead">
+      {% trans "Cart" %}
+    </h1>
 
-            <a
-              class="button button--md button--solid button--tone-place"
-              href="{{ open_payment_url }}"
-            >
-              {% trans "Go to payment" %}
+    {% if cart_lines %}
+      {% if open_payment_url %}
+        <p class="cart-notice" role="status">
+          {% trans "You have a payment in progress for this cart. Continue it, or cancel it to change your cart." %}
+        </p>
+      {% endif %}
+
+      <ul class="cart-lines" aria-label="{% trans 'Items' %}">
+        {% for line in cart_lines %}
+          <li class="cart-line{% if open_payment_url %} cart-line--review{% endif %}">
+            <a class="cart-line__product" href="{{ line.product_url }}">
+              {% if line.image_url %}
+                <img
+                  class="cart-line__image"
+                  src="{{ line.image_url }}"
+                  alt=""
+                  width="48"
+                  height="48"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% else %}
+                <span class="cart-line__image cart-line__image--empty" aria-hidden="true"></span>
+              {% endif %}
+
+              <span class="cart-line__text">
+                <span class="cart-line__name">{{ line.product_label }}</span>
+
+                {% if line.offer_label %}
+                  <span class="cart-line__meta cart-line__meta--offer">{{ line.offer_label }}</span>
+                {% endif %}
+
+                {% if line.unit_price_label %}
+                  <span class="cart-line__meta">
+                    {% blocktrans with price=line.unit_price_label %}{{ price }} each{% endblocktrans %}
+                  </span>
+                {% endif %}
+
+                {% if line.line_total_label %}
+                  <span class="cart-line__meta cart-line__meta--total">
+                    {% trans "Total" %}:
+                    <span data-cart-line-total="{{ line.cart_line_id }}">{{ line.line_total_label }}</span>
+                  </span>
+                {% endif %}
+              </span>
             </a>
-          </div>
+
+            {% if open_payment_url %}
+              <span class="cart-line__quantity-label">× {{ line.quantity }}</span>
+            {% else %}
+              <form
+                class="cart-line__quantity"
+                method="post"
+                action="{{ line.quantity_url }}"
+                data-current-order-quantity-form
+                data-confirmed-quantity="{{ line.quantity }}"
+              >
+                {% csrf_token %}
+
+                <div
+                  class="quantity-stepper"
+                  aria-label="{% trans 'Quantity' %}"
+                  data-quantity-stepper
+                >
+                  <button
+                    class="quantity-stepper__button quantity-stepper__button--decrease"
+                    type="button"
+                    aria-label="{% trans 'Decrease quantity' %}"
+                    data-quantity-decrease
+                  >
+                    <span aria-hidden="true">−</span>
+                  </button>
+
+                  <label class="visually-hidden" for="quantity-{{ line.cart_line_id }}">
+                    {% trans "Quantity" %}
+                  </label>
+
+                  <input
+                    id="quantity-{{ line.cart_line_id }}"
+                    class="quantity-stepper__input"
+                    type="number"
+                    name="quantity"
+                    value="{{ line.quantity }}"
+                    min="1"
+                    step="1"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    required
+                    data-quantity-input
+                  >
+
+                  <button
+                    class="quantity-stepper__button quantity-stepper__button--increase"
+                    type="button"
+                    aria-label="{% trans 'Increase quantity' %}"
+                    data-quantity-increase
+                  >
+                    <span aria-hidden="true">+</span>
+                  </button>
+                </div>
+
+                <span
+                  class="visually-hidden"
+                  role="status"
+                  aria-live="polite"
+                  data-current-order-quantity-status
+                ></span>
+
+                <noscript>
+                  <button class="auth-card__link" type="submit">
+                    {% trans "Update quantity" %}
+                  </button>
+                </noscript>
+              </form>
+
+              <form class="cart-line__remove" method="post" action="{{ line.remove_url }}">
+                {% csrf_token %}
+
+                <button
+                  class="cart-line__remove-button"
+                  type="submit"
+                  aria-label="{% trans 'Remove product' %}"
+                >
+                  {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+                </button>
+              </form>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if subtotal_label %}
+        <div class="cart-total">
+          <span>{% trans "Subtotal" %}</span>
+          <strong data-cart-subtotal>{{ subtotal_label }}</strong>
+        </div>
+
+        <p class="cart-total__note">
+          {% trans "Delivery details are entered at checkout." %}
+        </p>
+      {% endif %}
+
+      <div class="form-actions auth-card__actions cart-actions">
+        {% if open_payment_url %}
+          <a
+            class="button button--md button--solid button--tone-place auth-card__submit"
+            href="{{ open_payment_url }}"
+          >
+            {% trans "Go to payment" %}
+          </a>
+        {% elif checkout_url %}
+          <a
+            class="button button--md button--solid button--tone-place auth-card__submit"
+            href="{{ checkout_url }}"
+          >
+            {% trans "Continue to checkout" %}
+          </a>
         {% endif %}
 
-        <div class="order-lines__header order-lines__header--with-action">
-          <h2 id="storefront-cart-lines-title">
-            {% trans "Items" %}
-          </h2>
-
-          <a
-            class="button button--text button--tone-neutral"
-            href="{{ continue_shopping_url }}"
-          >
+        <div class="cart-actions__links">
+          <a class="auth-card__link" href="{{ continue_shopping_url }}">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
             {% trans "Continue shopping" %}
           </a>
-        </div>
 
-        <div class="portal-cart">
-          <div
-            class="portal-cart__header"
-            aria-hidden="true"
-          >
-            <span>
-              {% trans "Product" %}
-            </span>
-
-            <span>
-              {% trans "Quantity" %}
-            </span>
-
-            <span></span>
-          </div>
-
-          <div class="portal-cart__lines">
-            {% for line in cart_lines %}
-              <article class="portal-cart-line">
-                <div class="portal-cart-line__product">
-                  <a
-                    class="text-link portal-cart-line__product-label"
-                    href="{{ line.product_url }}"
-                  >
-                    {{ line.product_label }}
-                  </a>
-
-                  {% if line.offer_label %}
-                    <div class="muted-text">
-                      <strong>
-                        {{ line.offer_label }}
-                      </strong>
-                    </div>
-                  {% endif %}
-
-                  {% if line.unit_price_label %}
-                    <div class="muted-text">
-                      {% blocktrans with price=line.unit_price_label %}{{ price }} each{% endblocktrans %}
-                    </div>
-                  {% endif %}
-
-                  {% if line.line_total_label %}
-                    <div class="retail-cart-line__total">
-                      {% trans "Total" %}:
-                      <span data-cart-line-total="{{ line.cart_line_id }}">
-                        {{ line.line_total_label }}
-                      </span>
-                    </div>
-                  {% endif %}
-                </div>
-
-                <div class="portal-cart-line__quantity">
-                  {% if open_payment_url %}
-                    <span class="retail-cart-line__quantity-locked">
-                      {{ line.quantity }}
-                    </span>
-                  {% else %}
-                    <form
-                      method="post"
-                      action="{{ line.quantity_url }}"
-                      data-current-order-quantity-form
-                      data-confirmed-quantity="{{ line.quantity }}"
-                    >
-                      {% csrf_token %}
-
-                      <div
-                        class="quantity-stepper"
-                        aria-label="{% trans 'Quantity' %}"
-                        data-quantity-stepper
-                      >
-                        <button
-                          class="quantity-stepper__button quantity-stepper__button--decrease"
-                          type="button"
-                          aria-label="{% trans 'Decrease quantity' %}"
-                          data-quantity-decrease
-                        >
-                          <span aria-hidden="true">−</span>
-                        </button>
-
-                        <label
-                          class="visually-hidden"
-                          for="quantity-{{ line.cart_line_id }}"
-                        >
-                          {% trans "Quantity" %}
-                        </label>
-
-                        <input
-                          id="quantity-{{ line.cart_line_id }}"
-                          class="quantity-stepper__input"
-                          type="number"
-                          name="quantity"
-                          value="{{ line.quantity }}"
-                          min="1"
-                          step="1"
-                          inputmode="numeric"
-                          autocomplete="off"
-                          required
-                          data-quantity-input
-                        >
-
-                        <button
-                          class="quantity-stepper__button quantity-stepper__button--increase"
-                          type="button"
-                          aria-label="{% trans 'Increase quantity' %}"
-                          data-quantity-increase
-                        >
-                          <span aria-hidden="true">+</span>
-                        </button>
-                      </div>
-
-                      <span
-                        class="visually-hidden"
-                        role="status"
-                        aria-live="polite"
-                        data-current-order-quantity-status
-                      ></span>
-
-                      <noscript>
-                        <button
-                          class="button button--sm button--text button--tone-neutral"
-                          type="submit"
-                        >
-                          {% trans "Update quantity" %}
-                        </button>
-                      </noscript>
-                    </form>
-                  {% endif %}
-                </div>
-
-                <div class="portal-cart-line__action">
-                  {% if not open_payment_url %}
-                    <form
-                      method="post"
-                      action="{{ line.remove_url }}"
-                    >
-                      {% csrf_token %}
-
-                      <button
-                        class="portal-cart-line__remove-button"
-                        type="submit"
-                        aria-label="{% trans 'Remove product' %}"
-                      >
-                        {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
-                        <span class="visually-hidden">
-                          {% trans "Remove product" %}
-                        </span>
-                      </button>
-                    </form>
-                  {% endif %}
-                </div>
-              </article>
-            {% endfor %}
-          </div>
-        </div>
-
-        {% if subtotal_label %}
-          <div class="retail-cart-subtotal">
-            <span>
-              {% trans "Subtotal" %}
-            </span>
-
-            <strong data-cart-subtotal>
-              {{ subtotal_label }}
-            </strong>
-          </div>
-
-          <p class="muted-text retail-cart-subtotal__note">
-            {% trans "Delivery details are entered at checkout." %}
-          </p>
-        {% endif %}
-
-        {% if not open_payment_url %}
-          <div class="portal-place-order-actions">
-            {% if checkout_url %}
-              <a
-                class="button button--md button--solid button--tone-place"
-                href="{{ checkout_url }}"
-              >
-                {% trans "Continue to checkout" %}
-              </a>
-            {% endif %}
-
+          {% if not open_payment_url %}
             <form method="post">
               {% csrf_token %}
 
               <button
-                class="button button--md button--ghost button--tone-danger"
+                class="auth-card__link"
                 type="submit"
                 name="intent"
                 value="clear_cart"
               >
+                {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
                 {% trans "Clear cart" %}
               </button>
             </form>
-          </div>
-        {% endif %}
-      {% else %}
-        <div class="order-lines__header">
-          <h2 id="storefront-cart-lines-title">
-            {% trans "Items" %}
-          </h2>
+          {% endif %}
         </div>
+      </div>
+    {% else %}
+      <p class="auth-card__text auth-card__message">
+        {% trans "Your cart is empty." %}
+      </p>
 
-        <div class="portal-cart-empty">
-          <p>
-            {% trans "Your cart is empty." %}
-          </p>
-
-          <a
-            class="button button--md button--solid button--tone-place"
-            href="{{ continue_shopping_url }}"
-          >
-            {% trans "Browse shop" %}
-          </a>
-        </div>
-      {% endif %}
-    </section>
+      <div class="form-actions auth-card__actions">
+        <a
+          class="button button--md button--solid button--tone-place auth-card__submit"
+          href="{{ continue_shopping_url }}"
+        >
+          {% trans "Browse shop" %}
+        </a>
+      </div>
+    {% endif %}
   </div>
 </section>
 {% endblock %}
@@ -273,18 +218,7 @@
 {% block scripts %}
   {{ block.super }}
 
-  <script
-    src="{% static 'js/quantity-stepper.js' %}"
-    defer
-  ></script>
-
-  <script
-    src="{% static 'js/cart.js' %}"
-    defer
-  ></script>
-
-  <script
-    src="{% static 'js/storefront-cart.js' %}"
-    defer
-  ></script>
+  <script src="{% static 'js/quantity-stepper.js' %}" defer></script>
+  <script src="{% static 'js/cart.js' %}" defer></script>
+  <script src="{% static 'js/storefront-cart.js' %}" defer></script>
 {% endblock %}
