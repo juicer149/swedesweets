@@ -4,7 +4,7 @@ import pytest
 from django.test import override_settings
 from django.urls import reverse
 
-from accounts.forms import AccountPasswordChangeForm, LoginForm
+from accounts.forms import AccountPasswordChangeForm, LoginForm, split_password_rules
 from accounts.tests.factories import user_factory
 
 
@@ -46,3 +46,26 @@ def test_change_password_page_uses_the_field_labels_as_placeholders(client):
     assert 'placeholder="Old password"' in html
     assert 'placeholder="New password"' in html
     assert 'placeholder="New password confirmation"' in html
+
+
+def test_password_rules_lead_is_split_off():
+    lead, items = split_password_rules([
+        "Your password must contain at least 8 characters.",
+        "Your password can’t be entirely numeric.",
+    ])
+    assert lead == "Your password"
+    assert items == ["must contain at least 8 characters.", "can’t be entirely numeric."]
+
+
+def test_password_rules_without_a_common_lead_stay_whole():
+    assert split_password_rules(["Short.", "Different."]) == ("", ["Short.", "Different."])
+    assert split_password_rules(["Only one rule."]) == ("", ["Only one rule."])
+
+
+def test_password_rules_work_in_french():
+    lead, items = split_password_rules([
+        "Votre mot de passe doit contenir au minimum 8 caractères.",
+        "Votre mot de passe ne peut pas être entièrement numérique.",
+    ])
+    assert lead == "Votre mot de passe"
+    assert items[0].startswith("doit contenir")

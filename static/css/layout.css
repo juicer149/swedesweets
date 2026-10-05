@@ -365,9 +365,26 @@ body:has(.auth-page--bare) .site-footer {
   }
 }
 
-/* Password rules above the fields: quiet, a little apart from them. */
-.auth-card__help--lead {
-  margin: 0 0 var(--space-2);
+/* Password rules above the fields: centred, quiet, a little apart.
+   "Your password…" on its own line, then each rule without that lead. */
+.auth-card__rules {
+  margin-bottom: var(--space-3);
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.auth-card__rules-lead {
+  margin: 0 0 var(--space-1);
+  color: var(--color-neutral-700);
+  font-weight: 600;
+}
+
+.auth-card__rules-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 /* Fields closer to each other than to anything else. */
