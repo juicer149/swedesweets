@@ -606,7 +606,7 @@
   height: 2.5rem;
   padding: 0;
 
-  color: var(--color-neutral-600);
+  color: var(--color-primary-600);
   background: transparent;
   border: 0;
   border-radius: var(--radius-control);
@@ -614,7 +614,7 @@
 }
 
 .password-field__toggle:hover {
-  color: var(--color-primary-900);
+  color: var(--color-primary-800);
 }
 
 .password-field__toggle:focus-visible {
@@ -627,8 +627,8 @@
 }
 
 .password-field__icon {
-  width: 1.35rem;
-  height: 1.35rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .password-field__toggle[aria-pressed="false"] .password-field__icon--hide,
