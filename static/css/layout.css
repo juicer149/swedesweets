@@ -149,7 +149,8 @@
 .auth-card--bare::before {
   content: "";
   position: absolute;
-  inset: calc(var(--space-12) * -1) calc(var(--space-16) * -1);
+  /* Wider than the card, but not taller: it never adds scroll. */
+  inset: 0 calc(var(--space-16) * -1);
   z-index: -1;
 
   background: radial-gradient(
@@ -256,8 +257,9 @@
      the main button and the quiet link at the bottom
    On a tall desktop screen the card is capped and centred instead of
    stretching to the bottom. Vertical spacing shrinks with the screen
-   height (clamp + dvh), so a short window or a zoomed-in page still fits;
-   only below 400px of height (a phone on its side) does the page scroll.
+   height (clamp + dvh), so a short window or a zoomed-in page still fits.
+   The screen is a minimum, not a limit: when the content grows (an opened
+   list of password rules, error messages) the page scrolls as usual.
    ----------------------------------------------------------------------------- */
 
 body:has(.auth-page--bare) .site-footer {
@@ -268,14 +270,12 @@ body:has(.auth-page--bare) .site-footer {
   body:has(.auth-page--bare) {
     display: flex;
     flex-direction: column;
-    height: 100dvh;
-    overflow: hidden;
+    min-height: 100dvh;
   }
 
   body:has(.auth-page--bare) .site-main {
     display: flex;
     flex: 1;
-    min-height: 0;
     padding-bottom: 0;
   }
 
@@ -283,7 +283,6 @@ body:has(.auth-page--bare) .site-footer {
     display: flex;
     flex: 1;
     flex-direction: column;
-    min-height: 0;
   }
 
   .auth-page.auth-page--bare {
@@ -292,16 +291,17 @@ body:has(.auth-page--bare) .site-footer {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 0;
     padding-block:
       clamp(var(--space-3), 4dvh, var(--space-6))
       clamp(var(--space-4), 5dvh, var(--space-8));
   }
 
+  /* Grows to fill the page (up to 560px on desktop), and past it when
+     the content needs more. */
   .auth-card.auth-card--bare {
     display: flex;
+    flex: 1 0 auto;
     flex-direction: column;
-    height: 100%;
     max-height: 560px;
   }
 
@@ -341,7 +341,7 @@ body:has(.auth-page--bare) .site-footer {
    centred with the actions just under it. */
 @media (min-width: 761px) {
   .auth-card.auth-card--bare.auth-card--centered {
-    height: auto;
+    flex: 0 0 auto;
   }
 
   .auth-card--centered > .form-grid {
@@ -351,6 +351,129 @@ body:has(.auth-page--bare) .site-footer {
   .auth-card--centered > .auth-card__actions {
     margin-top: clamp(var(--space-5), 5dvh, var(--space-7));
   }
+}
+
+/* -----------------------------------------------------------------------------
+   In-site variant: the same one-screen layout on pages that keep the
+   site's navbar. On phones that navbar has a fixed bottom bar, so the
+   page keeps room for it instead of putting the actions underneath.
+   ----------------------------------------------------------------------------- */
+
+@media (max-width: 760px) and (min-height: 400px) {
+  body:has(.auth-page--in-site) .site-main {
+    padding-bottom: 6.5rem;
+  }
+}
+
+/* Password rules above the fields: a quiet, centred "Your password…"
+   that opens (native <details>) to the rules as a bulleted list. */
+.auth-card__rules {
+  margin-bottom: var(--space-3);
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  line-height: 1.5;
+}
+
+.auth-card__rules-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+
+  color: var(--color-neutral-700);
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--radius-control);
+}
+
+.auth-card__rules-summary::-webkit-details-marker {
+  display: none;
+}
+
+.auth-card__rules-summary:hover {
+  color: var(--color-neutral-900);
+}
+
+.auth-card__rules-summary:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.auth-card__rules-chevron {
+  transition: transform 150ms ease;
+}
+
+.auth-card__rules[open] .auth-card__rules-chevron {
+  transform: rotate(180deg);
+}
+
+/* Padding, not margin, so the sliding height includes the gap. */
+.auth-card__rules-content {
+  padding-top: var(--space-2);
+}
+
+.auth-card__rules-list {
+  width: fit-content;
+  margin: 0 auto;
+  padding-left: 1.1rem;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-card__rules-chevron {
+    transition: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Account overview (business portal, My account tab): the bare card
+   inside a normal scrolling page. The store's name as the title, its
+   contact details as quiet rows with icons, then the actions.
+   ----------------------------------------------------------------------------- */
+
+.account-overview {
+  display: grid;
+  justify-items: center;
+  padding-block:
+    clamp(var(--space-6), 6dvh, var(--space-10))
+    clamp(var(--space-6), 6dvh, var(--space-10));
+  overflow-x: clip; /* the glow must not widen the page on phones */
+}
+
+.account-overview .auth-card.auth-card--bare {
+  flex: 0 0 auto;
+  max-height: none;
+}
+
+.account-overview .auth-card--bare > .auth-card__actions {
+  margin-top: clamp(var(--space-6), 6dvh, var(--space-8));
+}
+
+.account-details {
+  display: grid;
+  gap: var(--space-4);
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+
+  color: var(--color-neutral-800);
+  line-height: 1.45;
+}
+
+.account-details__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  overflow-wrap: anywhere;
+}
+
+.account-details__icon {
+  margin-top: 0.1rem;
+  color: var(--color-neutral-600);
 }
 
 /* Fields closer to each other than to anything else. */

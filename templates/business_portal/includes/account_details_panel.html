@@ -8,100 +8,52 @@
   {% if active_tab != "account" %}hidden{% endif %}
 >
   <section
-    class="list-section portal-profile-section"
+    class="account-overview"
     aria-labelledby="account-details-title"
   >
-    <h2
-      id="account-details-title"
-      class="visually-hidden"
-    >
-      {% trans "Account details" %}
-    </h2>
+    <div class="auth-card auth-card--bare auth-card--centered">
+      <header class="auth-card__header">
+        <h2 id="account-details-title" class="auth-card__title">
+          {{ customer.name }}
+        </h2>
+      </header>
 
-    <article class="content-card content-card--wide portal-profile-card">
-      <div class="content-card__body">
-        <div class="form-grid">
-          <div class="form-field">
-            <span class="form-label">
-              {% trans "Store name" %}
-            </span>
+      <ul class="account-details">
+        <li class="account-details__item">
+          {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="account-details__icon" only %}
+          <span class="visually-hidden">{% trans "Email" %}:</span>
+          <span>{{ customer.email }}</span>
+        </li>
 
-            <p>
-              {{ customer.name }}
-            </p>
-          </div>
+        <li class="account-details__item">
+          {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="account-details__icon" only %}
+          <span class="visually-hidden">{% trans "Phone number" %}:</span>
+          <span>{{ customer.phone_number }}</span>
+        </li>
 
-          <div class="form-field">
-            <span class="form-label">
-              {% trans "Email" %}
-            </span>
+        <li class="account-details__item">
+          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="account-details__icon" only %}
+          <span class="visually-hidden">{% trans "Address" %}:</span>
+          <span>
+            {{ customer.address_line }}<br>
+            {{ customer.city }}, {{ country_label }}
+          </span>
+        </li>
+      </ul>
 
-            <p>
-              {{ customer.email }}
-            </p>
-          </div>
-
-          <div class="form-field">
-            <span class="form-label">
-              {% trans "Phone number" %}
-            </span>
-
-            <p>
-              {{ customer.phone_number }}
-            </p>
-          </div>
-
-          <div class="form-field">
-            <span class="form-label">
-              {% trans "Address" %}
-            </span>
-
-            <p>
-              {{ customer.address_line }}
-            </p>
-          </div>
-
-          <div class="form-field">
-            <span class="form-label">
-              {% trans "City" %}
-            </span>
-
-            <p>
-              {{ customer.city }}
-            </p>
-          </div>
-
-          <div class="form-field">
-            <span class="form-label">
-              {% trans "Country" %}
-            </span>
-
-            <p>
-              {{ country_label }}
-            </p>
-          </div>
-        </div>
-
-        <p class="form-help">
-          {% trans "Changes to store information apply to future orders. Existing orders keep the delivery details that were saved when the order was placed." %}
-        </p>
-      </div>
-
-      <footer class="form-actions content-card__footer">
+      <div class="form-actions auth-card__actions">
         <a
-          class="button button--md button--solid button--tone-place"
+          class="button button--md button--solid button--tone-place auth-card__submit"
           href="{% url 'business_portal:edit_store' %}"
         >
           {% trans "Edit store information" %}
         </a>
 
-        <a
-          class="button button--md button--ghost button--tone-neutral"
-          href="{% url 'password_change' %}"
-        >
+        <a class="auth-card__link" href="{% url 'password_change' %}">
+          {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
           {% trans "Change password" %}
         </a>
-      </footer>
-    </article>
+      </div>
+    </div>
   </section>
 </section>
