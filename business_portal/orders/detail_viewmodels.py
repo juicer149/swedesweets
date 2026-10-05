@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -11,32 +12,17 @@ from business.selectors import (
 from business_portal.orders.presentation import (
     business_order_status_label,
     contents_summary,
-    order_detail_card_class,
-    order_detail_status_class,
     order_status_icon,
     quantity_label,
 )
 from business_portal.orders.product_presentation import (
     business_order_line_presentation,
 )
-from common.detail_cards import (
-    DetailCard,
-    DetailHeader,
-    DetailPanel,
-)
-from common.ui import (
-    TONE_NEUTRAL,
-    UiCard,
-    UiCardRow,
-    UiText,
-)
 from orders.models import (
     Order,
     OrderLine,
 )
-from products.localization import (
-    translated_product_name,
-)
+from products.images import product_image_url
 from products.models import Product
 
 
@@ -50,19 +36,24 @@ class PortalOrderContentLine:
     offer_label: str | None
     price_label: str | None
     catalog_href: str | None
-    card: UiCard
+    image_url: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class PortalOrderDate:
+    label: str
+    value: datetime
 
 
 @dataclass(frozen=True, slots=True)
 class PortalOrderDetailContext:
     order: Order
     content_lines: tuple[PortalOrderContentLine, ...]
-    product_count: int
-    total_quantity: int
-    total_quantity_label: str
-    detail_card: DetailCard
+    contents_label: str
+    dates: tuple[PortalOrderDate, ...]
     title: str
     customer_status_label: str
+    status_icon: str
     cancel_url: str
     repeat_order_url: str
 
@@ -70,12 +61,11 @@ class PortalOrderDetailContext:
         return {
             "order": self.order,
             "content_lines": self.content_lines,
-            "product_count": self.product_count,
-            "total_quantity": self.total_quantity,
-            "total_quantity_label": self.total_quantity_label,
-            "detail_card": self.detail_card,
+            "contents_label": self.contents_label,
+            "dates": self.dates,
             "title": self.title,
             "customer_status_label": self.customer_status_label,
+            "status_icon": self.status_icon,
             "cancel_url": self.cancel_url,
             "repeat_order_url": self.repeat_order_url,
         }
@@ -90,6 +80,7 @@ def build_portal_order_detail_context(
         order.lines
         .select_related(
             "product",
+            "product__profile",
             "commercial_offer",
         )
         .order_by("id")
@@ -114,36 +105,18 @@ def build_portal_order_detail_context(
         for line in order_lines
     )
 
-    product_count = len(
-        content_lines
-    )
-
-    total_quantity = sum(
-        line.quantity
-        for line in content_lines
-    )
-
     return PortalOrderDetailContext(
         order=order,
         content_lines=content_lines,
-        product_count=product_count,
-        total_quantity=total_quantity,
-        total_quantity_label=quantity_label(
-            total_quantity
+        contents_label=contents_summary(
+            product_count=len(content_lines),
+            total_quantity=sum(
+                line.quantity
+                for line in content_lines
+            ),
         ),
-        detail_card=DetailCard(
-            header=_build_order_header(
-                order
-            ),
-            panels=_build_order_detail_panels(
-                order=order,
-                product_count=product_count,
-                total_quantity=total_quantity,
-            ),
-            content_card_class=(
-                f"portal-order-detail-card "
-                f"{order_detail_card_class(order.status)}"
-            ),
+        dates=_order_dates(
+            order
         ),
         title=_(
             "Order #%(order_id)s"
@@ -155,6 +128,9 @@ def build_portal_order_detail_context(
             business_order_status_label(
                 order.status
             )
+        ),
+        status_icon=order_status_icon(
+            order.status
         ),
         cancel_url=reverse(
             "business_portal:orders"
@@ -168,68 +144,37 @@ def build_portal_order_detail_context(
     )
 
 
-def _build_order_header(
+def _order_dates(
     order: Order,
-) -> DetailHeader:
-    return DetailHeader(
-        eyebrow=_("Order details"),
-        title=_(
-            "Order #%(order_id)s"
+) -> tuple[PortalOrderDate, ...]:
+    """The steps the order has passed, in order; Created only before it
+    was placed."""
+
+    steps = (
+        (_("Placed"), order.placed_at),
+        (_("Prepared"), order.packed_at),
+        (_("Delivered"), order.delivered_at),
+        (_("Cancelled"), order.cancelled_at),
+    )
+
+    dates = tuple(
+        PortalOrderDate(
+            label=label,
+            value=value,
         )
-        % {
-            "order_id": order.pk,
-        },
-        status_label=business_order_status_label(
-            order.status
-        ),
-        status_class=order_detail_status_class(
-            order.status
-        ),
-        status_icon=order_status_icon(
-            order.status
-        ),
+        for label, value in steps
+        if value is not None
     )
 
+    if order.placed_at is None:
+        dates = (
+            PortalOrderDate(
+                label=_("Created"),
+                value=order.created_at,
+            ),
+        ) + dates
 
-def _build_order_detail_panels(
-    *,
-    order: Order,
-    product_count: int,
-    total_quantity: int,
-) -> tuple[DetailPanel, ...]:
-    return (
-        DetailPanel(
-            key="order",
-            label=_("Order"),
-            summary=_("Details"),
-            body_template=(
-                "business_portal/orders/includes/"
-                "detail_panel_order.html"
-            ),
-            icon="cart",
-            is_active=(
-                order.status
-                == Order.Status.CANCELLED
-            ),
-        ),
-        DetailPanel(
-            key="items",
-            label=_("Items"),
-            summary=contents_summary(
-                product_count=product_count,
-                total_quantity=total_quantity,
-            ),
-            body_template=(
-                "business_portal/orders/includes/"
-                "detail_panel_items.html"
-            ),
-            icon="box",
-            is_active=(
-                order.status
-                != Order.Status.CANCELLED
-            ),
-        ),
-    )
+    return dates
 
 
 def _build_content_line(
@@ -245,34 +190,24 @@ def _build_content_line(
         currency=currency,
     )
 
-    line_quantity_label = quantity_label(
-        line.quantity_in_units
-    )
-
-    catalog_href = _catalog_product_href(
-        product_id=line.product_id,
-        available_catalog_product_ids=(
-            available_catalog_product_ids
-        ),
-    )
-
     return PortalOrderContentLine(
         product=line.product,
         quantity=line.quantity_in_units,
-        quantity_label=line_quantity_label,
+        quantity_label=quantity_label(
+            line.quantity_in_units
+        ),
         unit=line.get_unit_display(),
         catalog_label=presentation.catalog_label,
         offer_label=presentation.offer_label,
         price_label=presentation.price_label,
-        catalog_href=catalog_href,
-        card=_build_content_line_card(
-            product=line.product,
-            quantity_label=line_quantity_label,
-            catalog_label=presentation.catalog_label,
-            offer_label=presentation.offer_label,
-            price_label=presentation.price_label,
-            catalog_href=catalog_href,
-            language_code=language_code,
+        catalog_href=_catalog_product_href(
+            product_id=line.product_id,
+            available_catalog_product_ids=(
+                available_catalog_product_ids
+            ),
+        ),
+        image_url=product_image_url(
+            line.product,
         ),
     )
 
@@ -290,65 +225,4 @@ def _catalog_product_href(
         kwargs={
             "product_id": product_id,
         },
-    )
-
-
-def _build_content_line_card(
-    *,
-    product: Product,
-    quantity_label: str,
-    catalog_label: str,
-    offer_label: str | None,
-    price_label: str | None,
-    catalog_href: str | None,
-    language_code: str,
-) -> UiCard:
-    subtext_parts = [
-        catalog_label,
-    ]
-
-    if offer_label:
-        subtext_parts.append(
-            offer_label
-        )
-
-    if price_label:
-        subtext_parts.append(
-            price_label
-        )
-
-    action = None
-
-    if catalog_href:
-        action = UiText(
-            text=_("View product →"),
-            href=catalog_href,
-            css_class="text-link",
-        )
-
-    return UiCard(
-        tone=TONE_NEUTRAL,
-        css_class=(
-            "mobile-card mobile-card--neutral "
-            "portal-detail-item-card"
-        ),
-        rows=(
-            UiCardRow(
-                left=UiText(
-                    text=translated_product_name(
-                        product,
-                        language_code=language_code,
-                    ),
-                    css_class="ui-card-title",
-                    subtext=" · ".join(
-                        subtext_parts
-                    ),
-                ),
-                right=UiText(
-                    text=quantity_label,
-                    css_class="ui-card-order-meta",
-                ),
-            ),
-        ),
-        action=action,
     )

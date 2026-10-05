@@ -760,6 +760,55 @@ button.auth-card__link {
   font-variant-numeric: tabular-nums;
 }
 
+/* Order detail (business): the status in its colour, then the contents;
+   the lines as in review; the dates in small print. */
+.order-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.order-status__state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--order-status-color, var(--color-neutral-700));
+  font-weight: 600;
+}
+
+.order-status--placed { --order-status-color: var(--color-status-placed-text); }
+.order-status--packed { --order-status-color: var(--color-status-packed-text); }
+.order-status--delivered { --order-status-color: var(--color-status-delivered-text); }
+.order-status--cancelled { --order-status-color: var(--color-status-cancelled-text); }
+
+.order-dates {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-6) 0 0;
+  padding-top: var(--space-4);
+
+  font-size: var(--font-size-14);
+  border-top: 1px solid var(--color-neutral-300);
+}
+
+.order-dates__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.order-dates dt {
+  color: var(--color-neutral-600);
+}
+
+.order-dates dd {
+  margin: 0;
+  color: var(--color-neutral-800);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Shop (retail): the same cart, plus prices, a subtotal and checkout. */
 .cart-notice {
   margin: 0 0 var(--space-4);

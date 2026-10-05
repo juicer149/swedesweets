@@ -1,57 +1,115 @@
 {% extends "base.html" %}
-{% load static i18n %}
+{% load i18n %}
 
 {% block title %}{{ title }} | SwedeSweets{% endblock %}
 
 {% block content %}
 <section
-  class="content-section content-section--wide content-section--detail"
+  class="bare-section cart-page"
+  aria-labelledby="portal-order-detail-title"
 >
-  <article
-    class="content-card content-card--wide {{ detail_card.content_card_class }}"
-  >
-    <a
-      class="text-link portal-order-detail-card__back-link"
-      href="{{ cancel_url }}"
-    >
-      ← {% trans "Back to order history" %}
-    </a>
+  <div class="auth-card auth-card--bare auth-card--centered cart-card">
+    <header class="cart-heading">
+      <h1 id="portal-order-detail-title" class="contact-lead">
+        {{ title }}
+      </h1>
 
-    {% include "includes/ui/detail_card_header.html" with header=detail_card.header %}
+      <p class="cart-summary order-status order-status--{{ order.status }}">
+        <span class="order-status__state">
+          {% include "includes/ui/icon_block.html" with name=status_icon size="sm" only %}
+          {{ customer_status_label }}
+        </span>
+        <span aria-hidden="true">·</span>
+        <span>{{ contents_label }}</span>
+      </p>
+    </header>
 
-    {% include "includes/ui/detail_panels.html" with detail_panels=detail_card.panels %}
+    {% if content_lines %}
+      <ul class="cart-lines" aria-label="{% trans 'Items' %}">
+        {% for line in content_lines %}
+          <li class="cart-line cart-line--review">
+            {% if line.catalog_href %}
+              <a class="cart-line__product" href="{{ line.catalog_href }}">
+            {% else %}
+              <div class="cart-line__product">
+            {% endif %}
 
-    <footer class="form-actions content-card__footer">
-      <form
-        method="post"
-        action="{{ repeat_order_url }}"
-      >
+              {% if line.image_url %}
+                <img
+                  class="cart-line__image"
+                  src="{{ line.image_url }}"
+                  alt=""
+                  width="48"
+                  height="48"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% else %}
+                <span class="cart-line__image cart-line__image--empty" aria-hidden="true"></span>
+              {% endif %}
+
+              <span class="cart-line__text">
+                <span class="cart-line__name">{{ line.catalog_label }}</span>
+
+                {% if line.offer_label %}
+                  <span class="cart-line__meta cart-line__meta--offer">{{ line.offer_label }}</span>
+                {% endif %}
+
+                {% if line.price_label %}
+                  <span class="cart-line__meta">{{ line.price_label }}</span>
+                {% endif %}
+
+                {% if not line.catalog_href %}
+                  <span class="cart-line__meta">{% trans "Not currently available in the catalog" %}</span>
+                {% endif %}
+              </span>
+
+            {% if line.catalog_href %}
+              </a>
+            {% else %}
+              </div>
+            {% endif %}
+
+            <span class="cart-line__quantity-label">{{ line.quantity_label }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="auth-card__text auth-card__message">
+        {% trans "No order items found." %}
+      </p>
+    {% endif %}
+
+    {% if dates %}
+      <dl class="order-dates">
+        {% for date in dates %}
+          <div class="order-dates__row">
+            <dt>{{ date.label }}</dt>
+            <dd><time datetime="{{ date.value|date:'c' }}">{{ date.value|date:"Y-m-d H:i" }}</time></dd>
+          </div>
+        {% endfor %}
+      </dl>
+    {% endif %}
+
+    <div class="form-actions auth-card__actions cart-actions">
+      <form class="cart-actions__primary" method="post" action="{{ repeat_order_url }}">
         {% csrf_token %}
 
         <button
-          class="button button--lg button--solid button--tone-place"
+          class="button button--md button--solid button--tone-place auth-card__submit"
           type="submit"
         >
           {% trans "Order again" %}
         </button>
       </form>
-    </footer>
 
-    {% include "includes/ui/detail_actions.html" with primary_action=detail_card.primary_action secondary_action=detail_card.secondary_action secondary_actions=detail_card.secondary_actions %}
-  </article>
+      <div class="cart-actions__links">
+        <a class="auth-card__link" href="{{ cancel_url }}">
+          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+          {% trans "Back to order history" %}
+        </a>
+      </div>
+    </div>
+  </div>
 </section>
-{% endblock %}
-
-{% block scripts %}
-  {{ block.super }}
-
-  <script
-    src="{% static 'js/tabs.js' %}"
-    defer
-  ></script>
-
-  <script
-    src="{% static 'js/clickable_rows.js' %}"
-    defer
-  ></script>
 {% endblock %}
