@@ -236,7 +236,11 @@
   text-decoration: none;
 
   transform: none;
-  transition: background var(--motion-fast), color var(--motion-fast);
+  transition:
+    background var(--motion-fast),
+    color var(--motion-fast),
+    transform 120ms ease,
+    box-shadow 120ms ease;
 }
 
 .filter-chips .filter-chip[aria-current="page"],
@@ -253,14 +257,6 @@
 /* A little life: on hover (real pointers only) the chip warms halfway
    towards the active yellow and rises a hair; pressed, it sinks in, and
    it comes back up filled. */
-.filter-chips .filter-chip {
-  transition:
-    background var(--motion-fast),
-    color var(--motion-fast),
-    transform 120ms ease,
-    box-shadow 120ms ease;
-}
-
 @media (hover: hover) and (pointer: fine) {
   .filter-chips .filter-chip:hover:not([aria-current="page"], [aria-pressed="true"]) {
     color: var(--color-neutral-800);
