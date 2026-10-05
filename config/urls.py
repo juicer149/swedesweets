@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.views import LoginView
 from django.urls import (
     include,
     path,
 )
 
+from accounts.forms import LoginForm
 from config import views as config_views
 from ops_portal.dashboard import views as dashboard_views
 from storefront import views as storefront_views
@@ -42,6 +44,12 @@ urlpatterns = [
             "accounts.urls",
             namespace="accounts",
         ),
+    ),
+    # Before django.contrib.auth.urls, so this login view wins.
+    path(
+        "accounts/login/",
+        LoginView.as_view(authentication_form=LoginForm),
+        name="login",
     ),
     path(
         "accounts/",

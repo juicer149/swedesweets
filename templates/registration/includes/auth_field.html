@@ -3,11 +3,13 @@
 One field of an auth form.
   field     the bound form field
   label     optional label text (default: the field's own label)
-  password  true: add the show / hide eye
-  help      true: show the field's help text under it
+  password    true: add the show / hide eye
+  help        true: show the field's help text under it
+  hide_label  true: keep the label for screen readers only (the field
+              shows a placeholder instead)
 {% endcomment %}
 <div class="form-field form-field--full{% if field.errors %} form-field--error{% endif %}">
-  <label class="form-label" for="{{ field.id_for_label }}">
+  <label class="form-label{% if hide_label %} visually-hidden{% endif %}" for="{{ field.id_for_label }}">
     {% if label %}{{ label }}{% else %}{{ field.label }}{% endif %}
   </label>
 

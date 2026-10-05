@@ -19,8 +19,8 @@
     {% trans "Username" as username_label %}
     {% trans "Password" as password_label %}
     <div class="form-grid">
-      {% include "registration/includes/auth_field.html" with field=form.username label=username_label %}
-      {% include "registration/includes/auth_field.html" with field=form.password label=password_label password=True %}
+      {% include "registration/includes/auth_field.html" with field=form.username label=username_label hide_label=True %}
+      {% include "registration/includes/auth_field.html" with field=form.password label=password_label password=True hide_label=True %}
     </div>
 
     <div class="form-actions auth-card__actions">
