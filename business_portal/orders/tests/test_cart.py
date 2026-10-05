@@ -129,6 +129,17 @@ def test_cart_reads_customer_cart(
         },
     )
 
+    product_url = reverse(
+        "business_portal:catalog_product",
+        kwargs={
+            "product_id": line.commercial_price.product_id,
+        },
+    )
+
+    assert presented_line.product_url == product_url
+    assert presented_line.image_url is None
+    assert f'href="{product_url}"' in response.content.decode()
+
 
 @pytest.mark.django_db
 def test_cart_does_not_show_another_customers_cart(

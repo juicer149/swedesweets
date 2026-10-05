@@ -19,17 +19,33 @@
       <ul class="cart-lines" aria-label="{% trans 'Items' %}">
         {% for line in cart_lines %}
           <li class="cart-line">
-            <div class="cart-line__product">
-              <span class="cart-line__name">{{ line.product_label }}</span>
-
-              {% if line.offer_label %}
-                <span class="cart-line__meta cart-line__meta--offer">{{ line.offer_label }}</span>
+            <a class="cart-line__product" href="{{ line.product_url }}">
+              {% if line.image_url %}
+                <img
+                  class="cart-line__image"
+                  src="{{ line.image_url }}"
+                  alt=""
+                  width="48"
+                  height="48"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% else %}
+                <span class="cart-line__image cart-line__image--empty" aria-hidden="true"></span>
               {% endif %}
 
-              {% if line.price_label %}
-                <span class="cart-line__meta">{{ line.price_label }}</span>
-              {% endif %}
-            </div>
+              <span class="cart-line__text">
+                <span class="cart-line__name">{{ line.product_label }}</span>
+
+                {% if line.offer_label %}
+                  <span class="cart-line__meta cart-line__meta--offer">{{ line.offer_label }}</span>
+                {% endif %}
+
+                {% if line.price_label %}
+                  <span class="cart-line__meta">{{ line.price_label }}</span>
+                {% endif %}
+              </span>
+            </a>
 
             <form
               class="cart-line__quantity"

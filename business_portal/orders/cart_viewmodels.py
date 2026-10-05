@@ -10,12 +10,15 @@ from business_portal.orders.product_presentation import (
     business_cart_line_presentation,
 )
 from carts.models import Cart
+from products.models import ProductProfile
 
 
 @dataclass(frozen=True, slots=True)
 class PortalCartLine:
     cart_line_id: int
     product_label: str
+    product_url: str
+    image_url: str | None
     offer_label: str | None
     price_label: str | None
     quantity: int
@@ -89,6 +92,7 @@ def _build_portal_cart_lines(
         .select_related(
             "commercial_price",
             "commercial_price__product",
+            "commercial_price__product__profile",
         )
         .prefetch_related(
             "commercial_price__amounts",
@@ -117,6 +121,17 @@ def _build_portal_cart_lines(
                 product_label=(
                     presentation.catalog_label
                 ),
+                product_url=reverse(
+                    "business_portal:catalog_product",
+                    kwargs={
+                        "product_id": (
+                            line.commercial_price.product_id
+                        ),
+                    },
+                ),
+                image_url=_product_image_url(
+                    line.commercial_price.product,
+                ),
                 offer_label=(
                     presentation.offer_label
                 ),
@@ -142,3 +157,22 @@ def _build_portal_cart_lines(
     return tuple(
         cart_lines
     )
+
+
+def _product_image_url(
+    product,
+) -> str | None:
+    """The small picture first: the cart shows it as a 3rem circle."""
+
+    try:
+        profile = product.profile
+    except ProductProfile.DoesNotExist:
+        return None
+
+    if profile.thumbnail:
+        return profile.thumbnail.url
+
+    if profile.image:
+        return profile.image.url
+
+    return None
