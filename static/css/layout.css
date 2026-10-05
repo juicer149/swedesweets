@@ -477,7 +477,7 @@ body:has(.auth-page--bare) .site-footer {
 
 /* One short line above the contact links. */
 .contact-lead {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 clamp(var(--space-5), 4dvh, var(--space-7));
   color: var(--auth-title-color, var(--color-neutral-800));
   font-family: var(--font-heading);
   font-size: var(--font-size-20);
