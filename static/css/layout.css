@@ -125,8 +125,7 @@
 
 /* -----------------------------------------------------------------------------
    Bare auth card: no box, the form sits on the page itself.
-   A soft glow behind keeps it grouped; the gold rule under the title
-   keeps the site's accent.
+   A soft glow behind keeps it grouped.
    ----------------------------------------------------------------------------- */
 
 .auth-page--bare {
@@ -167,36 +166,25 @@
 }
 
 .auth-card--bare .auth-card__title {
-  display: inline-block; /* the rule below is as wide as the word */
   font-size: var(--font-size-28);
-}
-
-.auth-card--bare .auth-card__title::after {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 3px;
-  margin-top: var(--space-3);
-
-  background: var(--color-accent-600);
-  border-radius: 999px;
 }
 
 .auth-card--bare .auth-card__description {
   font-size: var(--font-size-14);
 }
 
+/* forms.css loads after this file and makes .form-actions a space-between
+   flex row; two classes here win, so the actions stack and centre. */
 .auth-card--bare .auth-card__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-5);
 }
 
 .auth-card--bare .auth-card__submit {
   min-height: 2.9rem;
-}
-
-.auth-card--bare .auth-card__actions > .button--ghost {
-  justify-self: center;
 }
 
 
