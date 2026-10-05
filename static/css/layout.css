@@ -365,26 +365,61 @@ body:has(.auth-page--bare) .site-footer {
   }
 }
 
-/* Password rules above the fields: centred, quiet, a little apart.
-   "Your password…" on its own line, then each rule without that lead. */
+/* Password rules above the fields: a quiet, centred "Your password…"
+   that opens (native <details>) to the rules as a bulleted list. */
 .auth-card__rules {
   margin-bottom: var(--space-3);
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
   line-height: 1.5;
-  text-align: center;
 }
 
-.auth-card__rules-lead {
-  margin: 0 0 var(--space-1);
+.auth-card__rules-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+
   color: var(--color-neutral-700);
   font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--radius-control);
+}
+
+.auth-card__rules-summary::-webkit-details-marker {
+  display: none;
+}
+
+.auth-card__rules-summary:hover {
+  color: var(--color-neutral-900);
+}
+
+.auth-card__rules-summary:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.auth-card__rules-chevron {
+  transition: transform 150ms ease;
+}
+
+.auth-card__rules[open] .auth-card__rules-chevron {
+  transform: rotate(180deg);
 }
 
 .auth-card__rules-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  width: fit-content;
+  margin: var(--space-2) auto 0;
+  padding-left: 1.1rem;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-card__rules-chevron {
+    transition: none;
+  }
 }
 
 /* Fields closer to each other than to anything else. */
