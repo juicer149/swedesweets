@@ -9,15 +9,10 @@ from common.page_header import PageHeader, PageHeaderAction
 from common.table_controls import QuickJumpOption, QuickJumpSearch
 from common.ui import (
     StatusPresentation,
-    UiCard,
-    UiCardRow,
-    UiText,
 )
 from ops_portal.products.access import can_create_product
 from ops_portal.products.presentation import (
-    ProductTagPresentation,
-    product_attribute_tags,
-    product_manufacturer_label,
+    product_status_icon,
     product_status_presentation,
 )
 from products.models import Product
@@ -30,7 +25,21 @@ class ProductPageRow:
     detail_href: str
     weight_label: str
     unit_label: str
-    card: UiCard
+
+    @property
+    def meta(self) -> str:
+        """Phones: the grey line under the name (code · manufacturer · vegan)."""
+
+        parts = [
+            self.product.code_label,
+            self.product.manufacturer,
+            "Vegan" if self.product.vegan else "",
+        ]
+        return " · ".join(part for part in parts if part)
+
+    @property
+    def icon(self) -> str:
+        return product_status_icon(self.product)
 
 
 def build_products_page_header(*, role_spec: RoleSpec) -> PageHeader:
@@ -69,11 +78,6 @@ def _build_product_page_row(product: Product) -> ProductPageRow:
         detail_href=detail_href,
         weight_label=product.weight_label,
         unit_label=product.stock_unit_singular,
-        card=_product_card(
-            product=product,
-            status=status,
-            detail_href=detail_href,
-        ),
     )
 
 
@@ -93,104 +97,6 @@ def build_product_quick_jump_search(
             )
             for row in rows
         ],
-    )
-
-
-def _product_card(
-    *,
-    product: Product,
-    status: StatusPresentation,
-    detail_href: str,
-) -> UiCard:
-    return UiCard(
-        tone=status.tone,
-        css_class="mobile-card mobile-card--product",
-        href=detail_href,
-        aria_label=f"View product {product.display_name}",
-        footer_hint="Open details →",
-        rows=_product_card_rows(
-            product=product,
-            status=status,
-        ),
-    )
-
-
-def _product_card_rows(
-    *,
-    product: Product,
-    status: StatusPresentation,
-) -> tuple[UiCardRow, ...]:
-    rows: list[UiCardRow] = [
-        _product_header_row(product, status),
-        _product_brand_row(product),
-        _product_name_row(product),
-        _product_manufacturer_row(product),
-        _product_weight_row(product),
-    ]
-
-    for tag in product_attribute_tags(product):
-        rows.append(_product_tag_row(tag))
-
-    return tuple(rows)
-
-
-def _product_header_row(
-    product: Product,
-    status: StatusPresentation,
-) -> UiCardRow:
-    return UiCardRow(
-        left=UiText(
-            text=product.code_label,
-            css_class="ui-card-id",
-        ),
-        right=status.text,
-    )
-
-
-def _product_brand_row(product: Product) -> UiCardRow:
-    return UiCardRow(
-        left=UiText(
-            text=product.brand,
-            css_class="ui-card-title",
-        ),
-    )
-
-
-def _product_name_row(product: Product) -> UiCardRow:
-    return UiCardRow(
-        left=UiText(
-            text=product.name,
-            css_class="ui-card-title",
-        ),
-    )
-
-
-def _product_manufacturer_row(product: Product) -> UiCardRow:
-    return UiCardRow(
-        left=UiText(
-            text=product_manufacturer_label(product),
-            css_class="ui-card-meta",
-        ),
-    )
-
-
-def _product_weight_row(product: Product) -> UiCardRow:
-    return UiCardRow(
-        left=UiText(
-            text=product.unit_weight_label,
-            css_class="ui-card-strong",
-        ),
-    )
-
-
-def _product_tag_row(tag: ProductTagPresentation) -> UiCardRow:
-    return UiCardRow(
-        left=UiText(
-            text=tag.label,
-            css_class=tag.css_class,
-            icon=tag.icon,
-            icon_class=tag.icon_class,
-        ),
     )
 
 

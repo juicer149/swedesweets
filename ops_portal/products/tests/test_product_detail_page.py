@@ -124,3 +124,25 @@ def test_available_uses_the_inventory_stock_scale(available, level):
     )
 
     assert stock.available_info.level == level
+
+
+@pytest.mark.django_db
+def test_product_list_shows_table_and_phone_rows(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Apple", internal_number=504)
+
+    response = client.get(reverse("ops_products:index"))
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert 'class="data-table product-table"' in content
+    assert "mobile-lines" in content
+
+    row = next(
+        row for row in response.context["product_rows"] if row.product == product
+    )
+    assert row.meta.startswith(product.code_label)
+
+    detail_url = reverse("ops_products:detail", kwargs={"product_pk": product.pk})
+    # Table row (data-href) and phone row (href) both open the product.
+    assert content.count(f'"{detail_url}"') >= 2
