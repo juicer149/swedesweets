@@ -18,12 +18,15 @@ from business_portal.orders.presentation import (
 from business_portal.orders.product_presentation import (
     business_order_line_presentation,
 )
+from common.lines import META_OFFER, LineView, meta, metas
 from orders.models import (
     Order,
     OrderLine,
 )
 from products.images import product_image_url
 from products.models import Product
+
+UNAVAILABLE_LABEL = _("Not currently available in the catalog")
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,6 +40,20 @@ class PortalOrderContentLine:
     price_label: str | None
     catalog_href: str | None
     image_url: str | None
+
+    @property
+    def view(self) -> LineView:
+        return LineView(
+            name=self.catalog_label,
+            href=self.catalog_href,
+            image_url=self.image_url,
+            metas=metas(
+                meta(self.offer_label, META_OFFER),
+                meta(self.price_label),
+                meta(None if self.catalog_href else UNAVAILABLE_LABEL),
+            ),
+            aside=self.quantity_label,
+        )
 
 
 @dataclass(frozen=True, slots=True)

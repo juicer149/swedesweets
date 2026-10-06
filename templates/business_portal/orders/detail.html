@@ -14,39 +14,7 @@
     {% if content_lines %}
       <ul class="lines" aria-label="{% trans 'Items' %}">
         {% for line in content_lines %}
-          <li class="line line--static">
-            {% if line.catalog_href %}
-              <a class="line__product" href="{{ line.catalog_href }}">
-            {% else %}
-              <div class="line__product">
-            {% endif %}
-
-              {% include "includes/ui/line_image.html" with url=line.image_url only %}
-
-              <span class="line__text">
-                <span class="line__name">{{ line.catalog_label }}</span>
-
-                {% if line.offer_label %}
-                  <span class="line__meta line__meta--offer">{{ line.offer_label }}</span>
-                {% endif %}
-
-                {% if line.price_label %}
-                  <span class="line__meta">{{ line.price_label }}</span>
-                {% endif %}
-
-                {% if not line.catalog_href %}
-                  <span class="line__meta">{% trans "Not currently available in the catalog" %}</span>
-                {% endif %}
-              </span>
-
-            {% if line.catalog_href %}
-              </a>
-            {% else %}
-              </div>
-            {% endif %}
-
-            <span class="line__quantity-label">{{ line.quantity_label }}</span>
-          </li>
+          {% include "includes/ui/line.html" with line=line.view only %}
         {% endfor %}
       </ul>
     {% else %}

@@ -34,44 +34,9 @@
   </div>
 
   <div class="line__quantity">
-    <div class="quantity-stepper" data-quantity-stepper>
-      <button
-        class="quantity-stepper__button quantity-stepper__button--decrease"
-        type="button"
-        aria-label="{% trans 'Decrease quantity' %}"
-        data-quantity-decrease
-      >
-        <span aria-hidden="true">−</span>
-      </button>
-
-      <label
-        class="visually-hidden"
-        for="{{ line_form.quantity.id_for_label }}"
-      >
-        {% trans "Quantity" %}
-      </label>
-
-      {{ line_form.quantity }}
-
-      <button
-        class="quantity-stepper__button quantity-stepper__button--increase"
-        type="button"
-        aria-label="{% trans 'Increase quantity' %}"
-        data-quantity-increase
-      >
-        <span aria-hidden="true">+</span>
-      </button>
-    </div>
+    {% include "includes/ui/quantity_stepper.html" with field=line_form.quantity only %}
   </div>
 
-  <div class="line__remove">
-    <button
-      class="line__remove-button"
-      type="button"
-      aria-label="{% trans 'Remove offer' %}"
-      data-remove-order-line
-    >
-      {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
-    </button>
-  </div>
+  {% trans "Remove offer" as remove_label %}
+  {% include "includes/ui/line_remove.html" with label=remove_label only %}
 </li>

@@ -6,6 +6,7 @@ from typing import Any
 
 from django.urls import reverse
 
+from common.lines import LineView, meta, metas
 from products.images import product_image_url
 from retail.models import RetailCheckoutSession
 
@@ -17,6 +18,17 @@ class CheckoutReviewLine:
     quantity: int
     unit_price_label: str
     line_total_label: str
+
+    @property
+    def view(self) -> LineView:
+        return LineView(
+            name=self.product_label,
+            image_url=self.image_url,
+            metas=metas(
+                meta(f"{self.quantity} × {self.unit_price_label}"),
+            ),
+            aside=self.line_total_label,
+        )
 
 
 @dataclass(frozen=True, slots=True)

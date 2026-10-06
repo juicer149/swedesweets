@@ -68,24 +68,7 @@
   {% if order_rows %}
     <ul class="lines mobile-lines" aria-label="Orders">
       {% for row in order_rows %}
-        <li class="line line--link">
-          <a
-            class="line__link"
-            href="{{ row.detail_href }}"
-            aria-label="Order #{{ row.order.id }}, {{ row.order.customer_name }}, {{ row.status.label }}"
-          >
-            <span class="line__icon line__icon--{{ row.status.tone.key }}" aria-hidden="true">
-              {% include "includes/ui/icon_block.html" with name=row.status.text.icon size="sm" only %}
-            </span>
-
-            <span class="line__text">
-              <span class="line__name">{{ row.title }}</span>
-              <span class="line__meta">{{ row.meta }}</span>
-            </span>
-
-            <span class="line__aside">{{ row.quantity_label }}</span>
-          </a>
-        </li>
+        {% include "includes/ui/line_link.html" with href=row.detail_href label=row.link_label tone=row.status.tone.key icon=row.status.text.icon name=row.title meta=row.meta aside=row.quantity_label only %}
       {% endfor %}
     </ul>
   {% else %}

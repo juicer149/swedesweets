@@ -5,8 +5,10 @@ from decimal import Decimal
 from typing import Any
 
 from django.urls import reverse
+from django.utils.translation import gettext
 
 from carts.models import Cart, CartLine
+from common.lines import META_OFFER, META_TOTAL, LineView, meta, metas
 from pricing.models import PriceAmount
 from products.images import product_image_url
 
@@ -23,6 +25,29 @@ class RetailCartLine:
     quantity: int
     quantity_url: str
     remove_url: str
+
+    @property
+    def view(self) -> LineView:
+        return LineView(
+            name=self.product_label,
+            href=self.product_url,
+            image_url=self.image_url,
+            metas=metas(
+                meta(self.offer_label, META_OFFER),
+                meta(
+                    self.unit_price_label
+                    and gettext("%(price)s each") % {"price": self.unit_price_label}
+                ),
+                meta(
+                    self.line_total_label,
+                    META_TOTAL,
+                    prefix=f"{gettext('Total')}: ",
+                    total_for=self.cart_line_id,
+                ),
+            ),
+            # Read-only while a payment is open.
+            aside=f"× {self.quantity}",
+        )
 
 
 @dataclass(frozen=True, slots=True)

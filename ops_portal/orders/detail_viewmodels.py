@@ -14,6 +14,7 @@ from common.detail_cards import (
     DetailAction,
     build_secondary_get_action,
 )
+from common.lines import LineView, meta, metas
 from fulfillment.datatypes import PickLine
 from fulfillment.selectors import get_packaging_list
 from ops_portal.orders.access import (
@@ -45,6 +46,18 @@ class OrderContentLine:
     unit: str
     catalog_label: str
     image_url: str | None
+
+    @property
+    def view(self) -> LineView:
+        return LineView(
+            name=self.product.display_name,
+            href=self.product_detail_href,
+            image_url=self.image_url,
+            metas=metas(
+                meta(f"{self.product.code_label} · {self.product.weight_label}"),
+            ),
+            aside=self.quantity_label,
+        )
 
 
 @dataclass(frozen=True, slots=True)

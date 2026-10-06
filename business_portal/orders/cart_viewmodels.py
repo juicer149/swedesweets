@@ -10,6 +10,7 @@ from business_portal.orders.product_presentation import (
     business_cart_line_presentation,
 )
 from carts.models import Cart
+from common.lines import META_OFFER, LineView, meta, metas
 from products.images import product_image_url
 
 
@@ -24,6 +25,18 @@ class PortalCartLine:
     quantity: int
     quantity_url: str
     remove_url: str
+
+    @property
+    def view(self) -> LineView:
+        return LineView(
+            name=self.product_label,
+            href=self.product_url,
+            image_url=self.image_url,
+            metas=metas(
+                meta(self.offer_label, META_OFFER),
+                meta(self.price_label),
+            ),
+        )
 
 
 @dataclass(frozen=True, slots=True)

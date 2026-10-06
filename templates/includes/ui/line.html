@@ -1,0 +1,13 @@
+{% comment %}
+  A read-only line: the product, and its aside (a quantity or an amount)
+  on the right. Reviews, order pages.
+
+  line   a LineView (common/lines.py)
+{% endcomment %}
+<li class="line line--static">
+  {% include "includes/ui/line_product.html" with line=line only %}
+
+  {% if line.aside %}
+    <span class="line__quantity-label">{{ line.aside }}</span>
+  {% endif %}
+</li>

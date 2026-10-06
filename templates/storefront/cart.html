@@ -25,30 +25,7 @@
       <ul class="lines" aria-label="{% trans 'Items' %}">
         {% for line in cart_lines %}
           <li class="line{% if open_payment_url %} line--static{% endif %}">
-            <a class="line__product" href="{{ line.product_url }}">
-              {% include "includes/ui/line_image.html" with url=line.image_url only %}
-
-              <span class="line__text">
-                <span class="line__name">{{ line.product_label }}</span>
-
-                {% if line.offer_label %}
-                  <span class="line__meta line__meta--offer">{{ line.offer_label }}</span>
-                {% endif %}
-
-                {% if line.unit_price_label %}
-                  <span class="line__meta">
-                    {% blocktrans with price=line.unit_price_label %}{{ price }} each{% endblocktrans %}
-                  </span>
-                {% endif %}
-
-                {% if line.line_total_label %}
-                  <span class="line__meta line__meta--total">
-                    {% trans "Total" %}:
-                    <span data-cart-line-total="{{ line.cart_line_id }}">{{ line.line_total_label }}</span>
-                  </span>
-                {% endif %}
-              </span>
-            </a>
+            {% include "includes/ui/line_product.html" with line=line.view only %}
 
             {% if open_payment_url %}
               <span class="line__quantity-label">× {{ line.quantity }}</span>
@@ -78,17 +55,7 @@
                 </noscript>
               </form>
 
-              <form class="line__remove" method="post" action="{{ line.remove_url }}">
-                {% csrf_token %}
-
-                <button
-                  class="line__remove-button"
-                  type="submit"
-                  aria-label="{% trans 'Remove product' %}"
-                >
-                  {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
-                </button>
-              </form>
+              {% include "includes/ui/line_remove.html" with url=line.remove_url only %}
             {% endif %}
           </li>
         {% endfor %}

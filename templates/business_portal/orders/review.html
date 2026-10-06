@@ -21,27 +21,7 @@
 
     <ul class="lines" aria-label="{% trans 'Items' %}">
       {% for line in lines %}
-        <li class="line line--static">
-          <div class="line__product">
-            {% include "includes/ui/line_image.html" with url=line.image_url only %}
-
-            <span class="line__text">
-              <span class="line__name">{{ line.catalog_label }}</span>
-
-              {% if line.offer_label %}
-                <span class="line__meta line__meta--offer">{{ line.offer_label }}</span>
-              {% endif %}
-
-              {% if line.price_label %}
-                <span class="line__meta">{{ line.price_label }}</span>
-              {% endif %}
-            </span>
-          </div>
-
-          <span class="line__quantity-label">
-            {{ line.quantity_label }}
-          </span>
-        </li>
+        {% include "includes/ui/line.html" with line=line.view only %}
       {% endfor %}
     </ul>
 

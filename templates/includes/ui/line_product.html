@@ -1,0 +1,19 @@
+{% comment %}
+  A line's product: the picture circle, the name and the grey meta lines
+  under it. A link when the line has an href.
+
+  line   a LineView (common/lines.py)
+{% endcomment %}
+{% if line.href %}<a class="line__product" href="{{ line.href }}">{% else %}<div class="line__product">{% endif %}
+  {% include "includes/ui/line_image.html" with url=line.image_url only %}
+
+  <span class="line__text">
+    <span class="line__name">{{ line.name }}</span>
+
+    {% for meta in line.metas %}
+      <span class="line__meta{% if meta.kind %} line__meta--{{ meta.kind }}{% endif %}">
+        {{ meta.prefix }}{% if meta.total_for %}<span data-cart-line-total="{{ meta.total_for }}">{{ meta.text }}</span>{% else %}{{ meta.text }}{% endif %}
+      </span>
+    {% endfor %}
+  </span>
+{% if line.href %}</a>{% else %}</div>{% endif %}

@@ -1,0 +1,31 @@
+{% comment %}
+  A line that is one link: an icon in a circle tinted by the tone, the
+  name with a meta line, and a short grey aside on the right. Dashboard
+  queues, lists on phones.
+
+  href        where the row goes
+  label       aria-label for the link (optional)
+  tone        warning, info, success, danger or nothing
+  icon        icon name
+  name, meta  the text
+  aside       right side text (optional)
+  aside_wide  true: hide the aside on phones (it would squeeze the name)
+{% endcomment %}
+<li class="line line--link">
+  <a class="line__link" href="{{ href }}"{% if label %} aria-label="{{ label }}"{% endif %}>
+    <span class="line__icon{% if tone %} line__icon--{{ tone }}{% endif %}" aria-hidden="true">
+      {% if icon %}
+        {% include "includes/ui/icon_block.html" with name=icon size="sm" only %}
+      {% endif %}
+    </span>
+
+    <span class="line__text">
+      <span class="line__name">{{ name }}</span>
+      {% if meta %}<span class="line__meta">{{ meta }}</span>{% endif %}
+    </span>
+
+    {% if aside %}
+      <span class="line__aside{% if aside_wide %} line__aside--wide{% endif %}">{{ aside }}</span>
+    {% endif %}
+  </a>
+</li>

@@ -17,6 +17,7 @@ from carts.models import (
     Cart,
     CartLine,
 )
+from common.lines import META_OFFER, LineView, meta, metas
 from products.images import product_image_url
 
 
@@ -28,6 +29,18 @@ class PortalOrderReviewLine:
     image_url: str | None
     offer_label: str | None
     price_label: str | None
+
+    @property
+    def view(self) -> LineView:
+        return LineView(
+            name=self.catalog_label,
+            image_url=self.image_url,
+            metas=metas(
+                meta(self.offer_label, META_OFFER),
+                meta(self.price_label),
+            ),
+            aside=self.quantity_label,
+        )
 
 
 @dataclass(frozen=True, slots=True)

@@ -6,6 +6,9 @@
   id_suffix  the rest of the id (a line or product id), when it varies
   value     starting quantity (default 1)
   compact   true for the smaller variant (navbar cart)
+  field     a form's quantity field to render instead of the plain input
+            (order form); its widget carries the input's class and
+            data-quantity-input, and id_prefix/value are then unused
 
   The data attributes are what quantity-stepper.js and cart.js read.
 {% endcomment %}
@@ -23,23 +26,31 @@
     <span aria-hidden="true">−</span>
   </button>
 
-  <label class="visually-hidden" for="{{ id_prefix }}{{ id_suffix }}">
-    {% trans "Quantity" %}
-  </label>
+  {% if field %}
+    <label class="visually-hidden" for="{{ field.id_for_label }}">
+      {% trans "Quantity" %}
+    </label>
 
-  <input
-    id="{{ id_prefix }}{{ id_suffix }}"
-    class="quantity-stepper__input"
-    type="number"
-    name="quantity"
-    value="{{ value|default:1 }}"
-    min="1"
-    step="1"
-    inputmode="numeric"
-    autocomplete="off"
-    required
-    data-quantity-input
-  >
+    {{ field }}
+  {% else %}
+    <label class="visually-hidden" for="{{ id_prefix }}{{ id_suffix }}">
+      {% trans "Quantity" %}
+    </label>
+
+    <input
+      id="{{ id_prefix }}{{ id_suffix }}"
+      class="quantity-stepper__input"
+      type="number"
+      name="quantity"
+      value="{{ value|default:1 }}"
+      min="1"
+      step="1"
+      inputmode="numeric"
+      autocomplete="off"
+      required
+      data-quantity-input
+    >
+  {% endif %}
 
   <button
     class="quantity-stepper__button quantity-stepper__button--increase"

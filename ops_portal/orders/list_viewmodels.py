@@ -64,6 +64,13 @@ class OrderPageRow:
     meta: str
     quantity_label: str
 
+    @property
+    def link_label(self) -> str:
+        return (
+            f"Order #{self.order.pk}, {self.order.customer_name}, "
+            f"{self.status.label}"
+        )
+
 
 def build_orders_page_header(*, role_spec: RoleSpec) -> PageHeader:
     return PageHeader(

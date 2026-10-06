@@ -1,0 +1,23 @@
+{% load i18n %}
+{% comment %}
+  The grey trash button at the end of an editable line.
+
+  url    POST here to remove the line (carts); without it the button only
+         removes the line in the page (data-remove-order-line, order form)
+  label  aria-label (default "Remove product")
+{% endcomment %}
+{% if url %}
+  <form class="line__remove" method="post" action="{{ url }}">
+    {% csrf_token %}
+
+    <button class="line__remove-button" type="submit" aria-label="{% if label %}{{ label }}{% else %}{% trans 'Remove product' %}{% endif %}">
+      {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+    </button>
+  </form>
+{% else %}
+  <div class="line__remove">
+    <button class="line__remove-button" type="button" aria-label="{% if label %}{{ label }}{% else %}{% trans 'Remove product' %}{% endif %}" data-remove-order-line>
+      {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+    </button>
+  </div>
+{% endif %}
