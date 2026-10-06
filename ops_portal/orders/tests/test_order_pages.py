@@ -90,3 +90,28 @@ def test_cancel_page_shows_form(staff_client, placed_order):
 
     assert 'name="reason"' in content
     assert 'name="note"' in content
+
+
+@pytest.mark.django_db
+def test_edit_page_keeps_line_hooks_without_cancel_dialog(
+    staff_client,
+    placed_order,
+):
+    response, content = _get(staff_client, "ops_orders:edit", placed_order)
+
+    assert response.context["title"] == f"Edit order #{placed_order.pk}"
+    assert "data-order-lines-list" in content
+    assert "data-add-order-line-select" in content
+    assert 'id="order-line-empty-form-template"' in content
+    assert f'href="{_url("ops_orders:cancel", placed_order)}"' in content
+    assert "data-confirm-message" not in content
+
+
+@pytest.mark.django_db
+def test_new_order_page_renders(staff_client):
+    response = staff_client.get(reverse("ops_orders:create"))
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert 'name="customer"' in content
+    assert "data-order-lines-empty" in content

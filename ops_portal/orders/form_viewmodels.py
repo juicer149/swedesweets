@@ -20,13 +20,8 @@ from ops_portal.orders.forms import (
     OrderLineFormSet,
     build_add_order_line_product_form,
 )
+from ops_portal.orders.presentation import order_status_icon
 from orders.models import Order
-
-
-@dataclass(frozen=True, slots=True)
-class FormContextItem:
-    label: str
-    value: Any
 
 
 @dataclass(frozen=True)
@@ -39,7 +34,7 @@ class OrderFormContext:
     add_product_form: AddOrderLineProductForm
     form: OrderCreateForm | None = None
     order: Order | None = None
-    order_context_items: list[FormContextItem] | None = None
+    status_icon: str = ""
     is_edit: bool = False
     cancel_order_url: str = ""
 
@@ -49,9 +44,7 @@ class OrderFormContext:
             "line_formset": self.line_formset,
             "add_product_form": self.add_product_form,
             "order": self.order,
-            "order_context_items": (
-                self.order_context_items or []
-            ),
+            "status_icon": self.status_icon,
             "title": self.title,
             "description": self.description,
             "submit_label": self.submit_label,
@@ -111,14 +104,12 @@ def build_edit_order_form_context(
 ) -> OrderFormContext:
     return OrderFormContext(
         order=order,
-        order_context_items=build_order_context_items(
-            order
-        ),
+        status_icon=order_status_icon(order.status),
         line_formset=line_formset,
         add_product_form=build_add_order_line_product_form(
             line_formset=line_formset,
         ),
-        title="Edit order",
+        title=f"Edit order #{order.pk}",
         description=(
             "Update this placed order before it is packed. "
             "Reservations will be rebuilt."
@@ -154,18 +145,3 @@ def build_cancel_order_form_context(
             role_spec=role_spec,
         ),
     )
-
-
-def build_order_context_items(
-    order: Order,
-) -> list[FormContextItem]:
-    return [
-        FormContextItem(
-            label="Customer",
-            value=order.customer_name,
-        ),
-        FormContextItem(
-            label="Status",
-            value=order.get_status_display(),
-        ),
-    ]
