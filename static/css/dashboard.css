@@ -55,10 +55,17 @@
   gap: var(--space-3);
 }
 
-/* No tone of its own: the row's grey, a step darker, so it marks the
+/* The queue titles carry a little more than a plain disclosure: a step
+   darker and a touch heavier. */
+.dashboard-queue > .disclosure__summary {
+  color: var(--color-neutral-700);
+  font-weight: 650;
+}
+
+/* No tone of its own: the title's grey, a step darker, so it marks the
    queue without competing with the count. */
 .dashboard-queue__icon {
-  color: var(--color-neutral-700);
+  color: var(--color-neutral-800);
 }
 
 .dashboard-queue[open] .dashboard-queue__icon {
