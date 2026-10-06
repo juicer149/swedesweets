@@ -1,8 +1,12 @@
-{% comment %}The Inventory tab: stock, orderable (coloured), active batches, Add batch.{% endcomment %}
-<dl class="facts">
+{% comment %}
+  The Inventory tab: stock, orderable, active batches, Add batch.
+  Available is coloured by how much is left; when the product cannot be
+  ordered the figures are grey and only "No" is coloured.
+{% endcomment %}
+<dl class="facts{% if not stock.is_orderable %} facts--muted{% endif %}">
   <div class="facts__row">
     <dt>Available</dt>
-    <dd><strong>{{ stock.available_quantity_label }}</strong></dd>
+    <dd><strong class="state state--{{ stock.available_state }}">{{ stock.available_quantity_label }}</strong></dd>
   </div>
   <div class="facts__row">
     <dt>Reserved</dt>

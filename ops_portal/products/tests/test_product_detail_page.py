@@ -97,3 +97,31 @@ def test_product_create_form_renders(client):
 
     assert response.status_code == 200
     assert 'name="weight_per_unit"' in response.content.decode()
+
+
+@pytest.mark.parametrize(
+    ("available", "active", "state"),
+    [
+        (20, True, "on"),
+        (10, True, "on"),
+        (9, True, "warn"),
+        (7, True, "warn"),
+        (6, True, "off"),
+        (1, True, "off"),
+        (0, True, "none"),
+        (20, False, "none"),
+    ],
+)
+def test_available_is_coloured_by_how_much_is_left(available, active, state):
+    from ops_portal.products.detail_viewmodels import ProductStockSummary
+    from products.models import Product
+
+    stock = ProductStockSummary(
+        product=Product(active=active),
+        batch_count=1,
+        physical_quantity=available,
+        reserved_quantity=0,
+        available_quantity=available,
+    )
+
+    assert stock.available_state == state
