@@ -905,29 +905,40 @@
   width: 3.5rem;
 }
 
+/* Weight */
 .product-table th:nth-child(5),
 .product-table td:nth-child(5) {
   width: 7rem;
   white-space: nowrap;
 }
 
+/* Vegan: a tick or a cross */
 .product-table th:nth-child(6),
 .product-table td:nth-child(6) {
-  width: 5rem;
-  white-space: nowrap;
-}
-
-.product-table th:nth-child(7),
-.product-table td:nth-child(7) {
   width: 5rem;
   text-align: center;
   white-space: nowrap;
 }
 
-.product-table th:nth-child(8),
-.product-table td:nth-child(8) {
+/* Status */
+.product-table th:nth-child(7),
+.product-table td:nth-child(7) {
   width: 6rem;
   white-space: nowrap;
+}
+
+/* The product's picture in a circle beside its name, like a line on the
+   cart and order pages; an empty circle keeps names lined up. */
+.table-product {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.table-product .line__image {
+  flex: 0 0 auto;
+  width: clamp(2rem, 3vw, 2.5rem);
+  height: clamp(2rem, 3vw, 2.5rem);
 }
 
 

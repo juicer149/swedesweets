@@ -25,7 +25,7 @@ def customer():
 
 
 @pytest.mark.django_db
-def test_list_shows_customers_as_rows_on_phones(staff_client, customer):
+def test_list_is_rows_with_a_search_and_no_table(staff_client, customer):
     response = staff_client.get(reverse("ops_customers:index"))
     content = response.content.decode()
 
@@ -33,8 +33,14 @@ def test_list_shows_customers_as_rows_on_phones(staff_client, customer):
     (row,) = response.context["customer_rows"]
     assert row.meta == "Chamonix-Mont-Blanc, France"
     assert row.icon == "users"
-    assert 'class="lines mobile-lines"' in content
+    assert 'class="lines"' in content
+    assert "data-table" not in content
     assert "mobile-card" not in content
+
+    (option,) = response.context["quick_jump_search"].options
+    assert option.label == "Café Blanc · Chamonix-Mont-Blanc"
+    assert option.url == row.detail_href
+    assert 'data-quick-jump="true"' in content
 
 
 @pytest.mark.django_db

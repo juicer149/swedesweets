@@ -44,8 +44,9 @@
             </td>
 
             <th scope="row">
-              <span class="row-link">
-                {{ row.product.name }}
+              <span class="table-product">
+                {% include "includes/ui/line_image.html" with url=row.image_url only %}
+                <span class="row-link">{{ row.product.name }}</span>
               </span>
             </th>
 
@@ -64,10 +65,6 @@
             </td>
 
             <td>
-              {{ row.unit_label }}
-            </td>
-
-            <td>
               {% include "includes/table/bool_icon.html" with value=row.product.vegan yes_label="Vegan" no_label="Not vegan" only %}
             </td>
 
@@ -79,7 +76,7 @@
           </tr>
         {% empty %}
           <tr>
-            <td class="empty-cell" colspan="8">
+            <td class="empty-cell" colspan="7">
               No products found.
             </td>
           </tr>

@@ -5,18 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from common.table_controls import (
-    TableControls,
-    TableControlsTemplate,
-    TableSortField,
-)
 from customers.errors import InvalidCustomerData
 from customers.models import Customer
-from customers.selectors import (
-    CUSTOMER_SORTS,
-    DEFAULT_CUSTOMER_SORT,
-    list_customers,
-)
+from customers.selectors import list_customers
 from customers.services import create_customer, update_customer
 from ops_portal.customers.detail_viewmodels import (
     build_customer_detail_context,
@@ -31,6 +22,7 @@ from ops_portal.customers.forms import (
 )
 from ops_portal.customers.list_viewmodels import (
     build_customer_page_rows,
+    build_customer_quick_jump_search,
     build_customers_page_header,
 )
 from orders.selectors import (
@@ -40,66 +32,21 @@ from orders.selectors import (
     list_customer_orders as list_orders_for_customer,
 )
 
-CUSTOMERS_LIST_ANCHOR = "customers-list"
-
-CUSTOMER_TABLE_SORTS = [
-    TableSortField("customer", "Customer"),
-    TableSortField("email", "Email"),
-    TableSortField("phone", "Phone"),
-    TableSortField("city", "City"),
-    TableSortField("country", "Country"),
-]
-
-CUSTOMER_TABLE_CONTROLS_TEMPLATE = TableControlsTemplate(
-    filters_title_id="customers-filters-title",
-    filters_aria_label="Customer filters",
-    sort_title_id="customers-sort-title",
-    sort_select_id="mobile-customer-sort",
-)
-
 
 @login_required
 def index(request):
-    controls = TableControls.from_request_values(
-        base_path=request.path,
-        anchor=CUSTOMERS_LIST_ANCHOR,
-        requested_sort=request.GET.get("sort", ""),
-        filters=[],
-        allowed_sorts=CUSTOMER_SORTS,
-        default_sort=DEFAULT_CUSTOMER_SORT,
-    )
-
-    customers = list(
-        list_customers(
-            sort=controls.active_sort,
-        )
-    )
-
-    context = {
-        "page_header": build_customers_page_header(
-            role_spec=request.role_spec,
-        ),
-        "customer_rows": build_customer_page_rows(customers),
-        "filters": [],
-        "table_sorts": controls.build_table_sort_links(
-            CUSTOMER_TABLE_SORTS
-        ),
-        "mobile_sort_fields": controls.build_mobile_sort_fields(
-            CUSTOMER_TABLE_SORTS
-        ),
-        "mobile_sort_direction": (
-            controls.build_mobile_sort_direction()
-        ),
-        "table_controls_template": (
-            CUSTOMER_TABLE_CONTROLS_TEMPLATE
-        ),
-        "numeric_table_fields": [],
-    }
+    customer_rows = build_customer_page_rows(list(list_customers()))
 
     return render(
         request,
         "ops_portal/customers/index.html",
-        context,
+        {
+            "page_header": build_customers_page_header(
+                role_spec=request.role_spec,
+            ),
+            "customer_rows": customer_rows,
+            "quick_jump_search": build_customer_quick_jump_search(customer_rows),
+        },
     )
 
 

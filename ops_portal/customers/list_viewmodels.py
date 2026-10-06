@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from accounts.roles import RoleSpec
 from common.page_header import PageHeader, PageHeaderAction
+from common.table_controls import QuickJumpOption, QuickJumpSearch
 from customers.models import Customer
 from ops_portal.customers.access import can_create_customer
 from ops_portal.customers.presentation import (
@@ -63,3 +64,22 @@ def build_customer_page_rows(customers: list[Customer]) -> list[CustomerPageRow]
         )
         for customer in customers
     ]
+
+
+def build_customer_quick_jump_search(
+    rows: list[CustomerPageRow],
+) -> QuickJumpSearch:
+    return QuickJumpSearch(
+        title="Find",
+        title_id="customers-quick-jump-title",
+        select_id="customers-quick-jump",
+        placeholder="Search by name or city",
+        aria_label="Find customer",
+        options=[
+            QuickJumpOption(
+                label=f"{row.customer.name} · {row.customer.city}",
+                url=row.detail_href,
+            )
+            for row in rows
+        ],
+    )

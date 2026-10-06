@@ -146,3 +146,19 @@ def test_product_list_shows_table_and_phone_rows(client):
     detail_url = reverse("ops_products:detail", kwargs={"product_pk": product.pk})
     # Table row (data-href) and phone row (href) both open the product.
     assert content.count(f'"{detail_url}"') >= 2
+
+
+@pytest.mark.django_db
+def test_product_list_table_has_picture_circle_and_no_unit(client):
+    client.force_login(full_staff_user_factory())
+    product_factory(name="Apple", internal_number=504)
+
+    response = client.get(reverse("ops_products:index"))
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    (row,) = response.context["product_rows"]
+    assert row.image_url is None
+    assert 'class="table-product"' in content
+    assert "line__image--empty" in content
+    assert "Unit" not in [sort.label for sort in response.context["table_sorts"]]

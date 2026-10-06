@@ -15,6 +15,7 @@ from ops_portal.products.presentation import (
     product_status_icon,
     product_status_presentation,
 )
+from products.images import product_image_url
 from products.models import Product
 
 
@@ -24,7 +25,7 @@ class ProductPageRow:
     status: StatusPresentation
     detail_href: str
     weight_label: str
-    unit_label: str
+    image_url: str | None
 
     @property
     def meta(self) -> str:
@@ -77,7 +78,7 @@ def _build_product_page_row(product: Product) -> ProductPageRow:
         status=status,
         detail_href=detail_href,
         weight_label=product.weight_label,
-        unit_label=product.stock_unit_singular,
+        image_url=product_image_url(product),
     )
 
 

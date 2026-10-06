@@ -68,6 +68,13 @@
   padding-top: var(--space-8);
 }
 
+/* A list as calm link rows at every width (customers): a readable
+   column, not the full table width. */
+.list-section.list-rows {
+  width: min(100%, 720px);
+  margin-inline: auto;
+}
+
 
 /* =============================================================================
    Mobile layout compensation

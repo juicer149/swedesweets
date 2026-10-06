@@ -111,10 +111,6 @@ PRODUCT_TABLE_SORTS = [
         "Weight",
     ),
     TableSortField(
-        "unit",
-        "Unit",
-    ),
-    TableSortField(
         "vegan",
         "Vegan",
     ),
