@@ -24,6 +24,38 @@
   }
 }
 
+/* .list-section--rows: the switch from table to rows follows the room the
+   list has, not the screen. The table stays while it fits (a zoomed-in
+   desktop, a narrow window) and turns into rows only when its own width
+   drops under 36rem. The sort select is for the rows; the table sorts by
+   its headers. */
+.list-section--rows {
+  container: list / inline-size;
+}
+
+.list-section--rows .table-card {
+  display: block;
+}
+
+.list-section--rows .mobile-lines,
+.list-section--rows .sort-control {
+  display: none;
+}
+
+@container list (max-width: 36rem) {
+  .list-section--rows .table-card {
+    display: none;
+  }
+
+  .list-section--rows .mobile-lines {
+    display: block;
+  }
+
+  .list-section--rows .sort-control {
+    display: grid;
+  }
+}
+
 .data-table {
   width: 100%;
   border-collapse: separate;

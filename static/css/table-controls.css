@@ -138,6 +138,20 @@ select.sort-select.ts-hidden-accessible {
   min-height: 100%;
 }
 
+/* The chosen sort sits in the middle of the field: equal room on both
+   sides of it (the right side holds the caret), and the select's hidden
+   keyboard input takes no width. */
+.sort-control .ts-control {
+  justify-content: center;
+  padding-inline: 2.4rem;
+}
+
+.sort-control .ts-control > input {
+  flex: 0 0 0;
+  width: 0;
+  min-width: 0;
+}
+
 .sort-control .ts-wrapper.focus .ts-control,
 .sort-control .ts-wrapper.dropdown-active .ts-control {
   background: var(--color-white);
@@ -230,7 +244,7 @@ select.sort-select.ts-hidden-accessible {
   }
 
   .sort-control .ts-control {
-    padding: 0 2rem 0 0.9rem;
+    padding: 0 2rem;
   }
 
   .sort-direction-button {
