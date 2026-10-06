@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
-from decimal import Decimal
 
 from django.urls import reverse
 
@@ -12,6 +10,7 @@ from common.detail_cards import (
     build_secondary_get_action,
 )
 from inventory.models import InventoryBatch
+from ops_portal.inventory.access import can_create_batch
 from ops_portal.products.access import (
     can_edit_product,
 )
@@ -19,9 +18,6 @@ from ops_portal.products.presentation import (
     ProductTagPresentation,
     product_attribute_tags,
     product_status_icon,
-)
-from orders.product_demand import (
-    ProductDeliveredDemandSummary,
 )
 from pricing.models import CommercialPrice
 from products.models import (
@@ -340,98 +336,6 @@ class ProductBatchRow:
 
 
 @dataclass(frozen=True, slots=True)
-class ProductDemandSummary:
-    product: Product
-    delivered_order_count: int
-    delivered_quantity: int
-    average_quantity_per_delivered_order: (
-        Decimal
-    )
-    last_delivered_at: (
-        datetime | None
-    )
-
-    @property
-    def delivered_quantity_label(
-        self,
-    ) -> str:
-        return (
-            self.product
-            .stock_quantity_label(
-                self.delivered_quantity
-            )
-        )
-
-    @property
-    def average_quantity_per_delivered_order_label(
-        self,
-    ) -> str:
-        value = (
-            self.average_quantity_per_delivered_order
-            .normalize()
-        )
-
-        if (
-            value
-            == value.to_integral_value()
-        ):
-            display_value = str(
-                int(value)
-            )
-        else:
-            display_value = (
-                format(
-                    value,
-                    "f",
-                )
-                .rstrip("0")
-                .rstrip(".")
-            )
-
-        unit = (
-            self.product.stock_unit_singular
-            if (
-                self.average_quantity_per_delivered_order
-                == 1
-            )
-            else (
-                self.product
-                .stock_unit_plural
-            )
-        )
-
-        return (
-            f"{display_value} {unit}"
-        )
-
-    @classmethod
-    def from_delivered_demand_summary(
-        cls,
-        *,
-        product: Product,
-        summary: (
-            ProductDeliveredDemandSummary
-        ),
-    ) -> ProductDemandSummary:
-        return cls(
-            product=product,
-            delivered_order_count=(
-                summary.delivered_order_count
-            ),
-            delivered_quantity=(
-                summary.delivered_quantity
-            ),
-            average_quantity_per_delivered_order=(
-                summary
-                .average_quantity_per_delivered_order
-            ),
-            last_delivered_at=(
-                summary.last_delivered_at
-            ),
-        )
-
-
-@dataclass(frozen=True, slots=True)
 class ProductDetailContext:
     product: Product
     profile: ProductProfileSummary
@@ -442,11 +346,11 @@ class ProductDetailContext:
     ]
     stock: ProductStockSummary
     batch_rows: list[ProductBatchRow]
-    demand: ProductDemandSummary
     status_key: str
     status_label: str
     status_icon: str
     edit_action: DetailAction | None
+    add_batch_href: str | None
     title: str
     description: str
     cancel_url: str
@@ -465,11 +369,11 @@ class ProductDetailContext:
             "batch_rows": (
                 self.batch_rows
             ),
-            "demand": self.demand,
             "status_key": self.status_key,
             "status_label": self.status_label,
             "status_icon": self.status_icon,
             "edit_action": self.edit_action,
+            "add_batch_href": self.add_batch_href,
             "title": self.title,
             "description": (
                 self.description
@@ -487,9 +391,6 @@ def build_product_detail_context(
     active_batches: list[
         InventoryBatch
     ],
-    demand_summary: (
-        ProductDeliveredDemandSummary
-    ),
     business_price: (
         CommercialPrice | None
     ),
@@ -507,13 +408,6 @@ def build_product_detail_context(
         )
     )
 
-    demand = (
-        ProductDemandSummary
-        .from_delivered_demand_summary(
-            product=product,
-            summary=demand_summary,
-        )
-    )
 
     pricing = (
         ProductPricingSummary
@@ -547,7 +441,6 @@ def build_product_detail_context(
                 active_batches
             )
         ),
-        demand=demand,
         status_key=(
             "active" if product.active else "inactive"
         ),
@@ -561,6 +454,11 @@ def build_product_detail_context(
                 )
             ),
             None,
+        ),
+        add_batch_href=(
+            f"{reverse('ops_inventory:create')}?product={product.pk}"
+            if can_create_batch(role_spec=role_spec)
+            else None
         ),
         title=product.display_name,
         description="",

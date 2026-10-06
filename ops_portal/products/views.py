@@ -40,9 +40,6 @@ from ops_portal.products.pricing_forms import (
     ProductPricingForm,
     build_product_pricing_initial_data,
 )
-from orders.product_demand import (
-    get_product_delivered_demand_summary,
-)
 from pricing.errors import (
     InvalidCommercialPrice,
 )
@@ -296,11 +293,6 @@ def detail(
             ),
             active_batches=list(
                 list_available_batches_for_product(
-                    product=product,
-                )
-            ),
-            demand_summary=(
-                get_product_delivered_demand_summary(
                     product=product,
                 )
             ),

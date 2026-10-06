@@ -425,7 +425,15 @@ def create(request):
                 )
 
     else:
-        form = BatchForm()
+        # "Add batch" on a product page arrives with ?product=<pk>.
+        product_pk = request.GET.get("product", "")
+        form = BatchForm(
+            initial=(
+                {"product": int(product_pk)}
+                if product_pk.isdigit()
+                else None
+            ),
+        )
         pricing_form = BatchPricingForm()
 
     context = build_create_batch_form_context(

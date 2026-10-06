@@ -1207,9 +1207,23 @@
 /* =============================================================================
    Ops product detail (calm design)
 
-   The batches as link rows under the stock facts; in Product details, the
-   description and ingredients as short paragraphs under the facts.
+   Tabs for product, pricing and inventory; the batches as link rows under
+   the stock facts; description and ingredients as short paragraphs.
    ============================================================================= */
+
+/* Tabs under the heading (the site's section nav), each panel with its
+   own button to the matching tab of the edit form. */
+.product-tabs .section-nav {
+  margin-top: 0;
+}
+
+.product-tabs__panel {
+  padding-top: var(--space-6);
+}
+
+.product-back {
+  margin-top: var(--space-6);
+}
 
 .product-batches {
   margin-top: var(--space-4);

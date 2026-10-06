@@ -38,9 +38,28 @@ def test_product_detail_shows_stock_batches_and_edit(client):
 
     batch_url = reverse("ops_inventory:detail", kwargs={"batch_pk": batch.pk})
     assert f'href="{batch_url}"' in content
-    assert "Product details" in content
-    assert "data-smooth" in content
+    assert "data-tabs" in content
+    assert "demand" not in response.context
 
+    # Each tab's button opens the same tab of the edit form.
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
-    assert f'href="{edit_url}"' in content
+    assert f'href="{edit_url}#product"' in content
+    assert f'href="{edit_url}#pricing"' in content
+
+    add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
+    assert f'href="{add_batch_url}"' in content
     assert f'href="{reverse("ops_products:index")}"' in content
+
+
+@pytest.mark.django_db
+def test_add_batch_link_preselects_the_product(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Apple", internal_number=502)
+
+    response = client.get(
+        reverse("ops_inventory:create"),
+        {"product": product.pk},
+    )
+
+    assert response.status_code == 200
+    assert response.context["form"].initial["product"] == product.pk

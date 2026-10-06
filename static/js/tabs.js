@@ -77,6 +77,13 @@
         return panelWithErrors.dataset.tabPanel;
       }
 
+      // A link can open a tab: /products/7/edit/#pricing.
+      const hashKey = window.location.hash.slice(1);
+
+      if (tabs.some((tab) => tab.dataset.tab === hashKey)) {
+        return hashKey;
+      }
+
       const selectedTab = tabs.find(
         (tab) => (
           tab.getAttribute("aria-selected")
