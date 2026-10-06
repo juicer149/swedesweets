@@ -1,0 +1,10 @@
+{% comment %}The Orders tab: the customer's orders, newest first, as link rows.{% endcomment %}
+{% if order_rows %}
+  <ul class="lines" aria-label="Orders">
+    {% for row in order_rows %}
+      {% include "includes/ui/line_link.html" with href=row.href label=row.link_label tone=row.status.tone.key icon=row.status.text.icon name=row.title meta=row.meta aside=row.quantity_label only %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="page__note">This customer has no orders yet.</p>
+{% endif %}

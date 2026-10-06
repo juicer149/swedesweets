@@ -216,26 +216,6 @@
 .order-status--depleted { --order-status-color: var(--color-status-info-text); }
 .order-status--closed { --order-status-color: var(--color-status-muted-text); }
 
-/* Order (ops): the buyer rows. A name with no page to link to reads as
-   plain text. */
-
-/* Tighter than the contact page: four short rows that belong together.
-   Each row is still 2.5rem high, enough to tap. */
-.icon-rows.order-buyer {
-  gap: 0;
-  font-size: var(--font-size-16);
-}
-
-.order-buyer .icon-rows__link {
-  min-height: 2.5rem;
-  padding-block: 0;
-}
-
-span.icon-rows__link,
-span.icon-rows__link .icon-rows__icon {
-  color: var(--color-neutral-800);
-}
-
 /* Order form: the products right under the heading on edit, with room
    above them when the customer field comes first (new order). */
 .order-form__products {

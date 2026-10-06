@@ -11,54 +11,6 @@
   </summary>
 
   <div class="disclosure__content" data-smooth-content>
-    <ul class="icon-rows icon-rows--links order-buyer">
-      <li class="icon-rows__item">
-        {% if customer_detail_href %}
-          <a class="icon-rows__link" href="{{ customer_detail_href }}">
-            {% include "includes/ui/icon_block.html" with name="users" size="sm" class_name="icon-rows__icon" only %}
-            {{ order.customer_name }}
-          </a>
-        {% else %}
-          <span class="icon-rows__link">
-            {% include "includes/ui/icon_block.html" with name="users" size="sm" class_name="icon-rows__icon" only %}
-            {{ order.customer_name }}
-          </span>
-        {% endif %}
-      </li>
-
-      {% if order.customer_email %}
-        <li class="icon-rows__item">
-          <a class="icon-rows__link" href="mailto:{{ order.customer_email }}">
-            {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="icon-rows__icon" only %}
-            {{ order.customer_email }}
-          </a>
-        </li>
-      {% endif %}
-
-      {% if order.customer_phone_number %}
-        <li class="icon-rows__item">
-          <a class="icon-rows__link" href="tel:{{ order.customer_phone_number }}">
-            {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="icon-rows__icon" only %}
-            {{ order.customer_phone_number }}
-          </a>
-        </li>
-      {% endif %}
-
-      {% if order.customer_address %}
-        <li class="icon-rows__item">
-          {% if customer_maps_href %}
-            <a class="icon-rows__link" href="{{ customer_maps_href }}" target="_blank" rel="noopener noreferrer">
-              {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon" only %}
-              {{ order.customer_address }}
-            </a>
-          {% else %}
-            <span class="icon-rows__link">
-              {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon" only %}
-              {{ order.customer_address }}
-            </span>
-          {% endif %}
-        </li>
-      {% endif %}
-    </ul>
+    {% include "includes/ui/contact_rows.html" with name=order.customer_name name_href=customer_detail_href email=order.customer_email phone=order.customer_phone_number address=order.customer_address maps_href=customer_maps_href only %}
   </div>
 </details>

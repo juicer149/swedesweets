@@ -66,15 +66,15 @@
     </table>
   </div>
 
-  <div class="mobile-card-list">
-    {% for row in customer_rows %}
-      {% include "includes/ui/card.html" with card=row.card only %}
-    {% empty %}
-      <article class="mobile-card mobile-card--neutral">
-        <p>No customers found.</p>
-      </article>
-    {% endfor %}
-  </div>
+  {% if customer_rows %}
+    <ul class="lines mobile-lines" aria-label="Customers">
+      {% for row in customer_rows %}
+        {% include "includes/ui/line_link.html" with href=row.detail_href label="View customer "|add:row.customer.name icon=row.icon name=row.customer.name meta=row.meta only %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="page__note mobile-lines">No customers found.</p>
+  {% endif %}
 </section>
 {% endblock %}
 

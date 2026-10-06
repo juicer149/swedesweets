@@ -1,40 +1,45 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
 
 from django.urls import reverse
 
 from customers.models import Customer
 from ops_portal.customers.forms import CustomerForm
-
-
-@dataclass(frozen=True, slots=True)
-class FormContextItem:
-    label: str
-    value: Any
+from ops_portal.customers.presentation import (
+    customer_place_label,
+    customer_status_icon,
+    customer_status_key,
+    customer_status_label,
+)
 
 
 @dataclass(frozen=True, slots=True)
 class CustomerFormContext:
     form: CustomerForm
     title: str
-    description: str
     submit_label: str
     cancel_url: str
     customer: Customer | None = None
-    customer_context_items: list[FormContextItem] | None = None
 
     def as_dict(self) -> dict[str, object]:
-        return {
+        context: dict[str, object] = {
             "form": self.form,
             "customer": self.customer,
-            "customer_context_items": self.customer_context_items or [],
             "title": self.title,
-            "description": self.description,
             "submit_label": self.submit_label,
             "cancel_url": self.cancel_url,
         }
+
+        if self.customer is not None:
+            context |= {
+                "status_key": customer_status_key(self.customer),
+                "status_label": customer_status_label(self.customer),
+                "status_icon": customer_status_icon(self.customer),
+                "place_label": customer_place_label(self.customer),
+            }
+
+        return context
 
 
 def build_create_customer_form_context(
@@ -44,7 +49,6 @@ def build_create_customer_form_context(
     return CustomerFormContext(
         form=form,
         title="Add customer",
-        description="",
         submit_label="Add customer",
         cancel_url=reverse("ops_customers:index"),
     )
@@ -58,26 +62,7 @@ def build_edit_customer_form_context(
     return CustomerFormContext(
         form=form,
         customer=customer,
-        customer_context_items=build_customer_context_items(customer),
-        title="Edit customer",
-        description="",
-        submit_label="Update customer",
+        title=f"Edit {customer.name}",
+        submit_label="Save customer",
         cancel_url=reverse("ops_customers:detail", kwargs={"customer_pk": customer.pk}),
     )
-
-
-def build_customer_context_items(customer: Customer) -> list[FormContextItem]:
-    return [
-        FormContextItem(
-            label="Email",
-            value=customer.email,
-        ),
-        FormContextItem(
-            label="Phone",
-            value=customer.phone_number,
-        ),
-        FormContextItem(
-            label="City",
-            value=customer.city,
-        ),
-    ]

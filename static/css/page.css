@@ -591,6 +591,24 @@ body:has(.screen) .site-footer {
   color: var(--icon-rows-link-icon);
 }
 
+/* Contact rows (includes/ui/contact_rows.html): tighter than the contact
+   page, short rows that belong together; each still 2.5rem high, enough
+   to tap. A name with no page to link to reads as plain text. */
+.icon-rows.icon-rows--tight {
+  gap: 0;
+  font-size: var(--font-size-16);
+}
+
+.icon-rows--tight .icon-rows__link {
+  min-height: 2.5rem;
+  padding-block: 0;
+}
+
+span.icon-rows__link,
+span.icon-rows__link .icon-rows__icon {
+  color: var(--color-neutral-800);
+}
+
 .icon-rows__link:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;

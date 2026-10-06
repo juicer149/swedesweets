@@ -1,0 +1,21 @@
+{% comment %}The Customer tab: how to reach them, since when, then Edit customer.{% endcomment %}
+{% include "includes/ui/contact_rows.html" with email=customer.email phone=customer.phone_number address=customer.address maps_href=maps_href only %}
+
+<dl class="facts facts--small facts--footer">
+  <div class="facts__row">
+    <dt>Customer since</dt>
+    <dd><time datetime="{{ customer.created_at|date:'c' }}">{{ customer.created_at|date:"Y-m-d" }}</time></dd>
+  </div>
+  {% if order_summary.last_ordered_at %}
+    <div class="facts__row">
+      <dt>Last order</dt>
+      <dd><time datetime="{{ order_summary.last_ordered_at|date:'c' }}">{{ order_summary.last_ordered_at|date:"Y-m-d" }}</time></dd>
+    </div>
+  {% endif %}
+</dl>
+
+{% if edit_href %}
+  <div class="form-actions page__actions">
+    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_href }}">Edit customer</a>
+  </div>
+{% endif %}

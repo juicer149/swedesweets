@@ -1,0 +1,59 @@
+{% comment %}
+  Someone's contact details as quiet rows, each one tap away: name (to
+  their page), email, phone and the address (to a map).
+
+  name, name_href   optional; name_href makes the name a link
+  email, phone      optional
+  address           optional; maps_href makes it a link (new tab)
+{% endcomment %}
+<ul class="icon-rows icon-rows--links icon-rows--tight">
+  {% if name %}
+    <li class="icon-rows__item">
+      {% if name_href %}
+        <a class="icon-rows__link" href="{{ name_href }}">
+          {% include "includes/ui/icon_block.html" with name="users" size="sm" class_name="icon-rows__icon" only %}
+          {{ name }}
+        </a>
+      {% else %}
+        <span class="icon-rows__link">
+          {% include "includes/ui/icon_block.html" with name="users" size="sm" class_name="icon-rows__icon" only %}
+          {{ name }}
+        </span>
+      {% endif %}
+    </li>
+  {% endif %}
+
+  {% if email %}
+    <li class="icon-rows__item">
+      <a class="icon-rows__link" href="mailto:{{ email }}">
+        {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="icon-rows__icon" only %}
+        {{ email }}
+      </a>
+    </li>
+  {% endif %}
+
+  {% if phone %}
+    <li class="icon-rows__item">
+      <a class="icon-rows__link" href="tel:{{ phone }}">
+        {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="icon-rows__icon" only %}
+        {{ phone }}
+      </a>
+    </li>
+  {% endif %}
+
+  {% if address %}
+    <li class="icon-rows__item">
+      {% if maps_href %}
+        <a class="icon-rows__link" href="{{ maps_href }}" target="_blank" rel="noopener noreferrer">
+          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon" only %}
+          {{ address }}
+        </a>
+      {% else %}
+        <span class="icon-rows__link">
+          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon" only %}
+          {{ address }}
+        </span>
+      {% endif %}
+    </li>
+  {% endif %}
+</ul>

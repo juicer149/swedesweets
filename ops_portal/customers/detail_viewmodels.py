@@ -5,41 +5,58 @@ from dataclasses import dataclass
 from django.urls import reverse
 
 from accounts.roles import RoleSpec
-from common.detail_cards import (
-    DetailAction,
-    DetailCard,
-    DetailHeader,
-    DetailPanel,
-    build_secondary_get_action,
-)
-from common.ui import StatusPresentation, UiCard
+from common.page_tabs import PageTab
+from common.ui import StatusPresentation
 from customers.models import Customer
 from ops_portal.customers.access import can_edit_customer
-from ops_portal.orders.mini_cards import build_customer_order_mini_card
+from ops_portal.customers.presentation import (
+    customer_place_label,
+    customer_status_icon,
+    customer_status_key,
+    customer_status_label,
+)
 from ops_portal.orders.presentation import (
     build_order_status_presentation,
-    contents_summary,
+    maps_directions_href,
     order_lifecycle_label,
-    order_product_count,
-    order_total_quantity,
-    quantity_label,
+    order_quantity_label,
 )
 from orders.models import Order
 from orders.selectors import CustomerOrderSummary
 
+CUSTOMER_DETAIL_TABS = (
+    PageTab(
+        key="customer",
+        label="Customer",
+        icon="users",
+        template="ops_portal/customers/includes/detail_tab_customer.html",
+    ),
+    PageTab(
+        key="orders",
+        label="Orders",
+        icon="cart",
+        template="ops_portal/customers/includes/detail_tab_orders.html",
+    ),
+)
+
 
 @dataclass(frozen=True, slots=True)
 class CustomerOrderRow:
+    """One of the customer's orders as a .line--link row."""
+
     order_id: int
-    order_href: str
+    href: str
     status: StatusPresentation
-    created_at: object
-    lifecycle_label: str
-    product_count: int
-    quantity: int
+    meta: str
     quantity_label: str
-    contents_label: str
-    card: UiCard
+
+    @property
+    def title(self) -> str:
+        return f"#{self.order_id}"
+
+    @property
+    def link_label(self) -> str:
+        return f"Order #{self.order_id}, {self.status.label}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,20 +64,27 @@ class CustomerDetailContext:
     customer: Customer
     order_summary: CustomerOrderSummary
     order_rows: list[CustomerOrderRow]
-    detail_card: DetailCard
-    title: str
-    description: str
-    cancel_url: str
+    maps_href: str
+    edit_href: str | None
+    back_url: str
 
     def as_dict(self) -> dict[str, object]:
         return {
             "customer": self.customer,
             "order_summary": self.order_summary,
+            "orders_label": _orders_label(self.order_summary.total_orders),
             "order_rows": self.order_rows,
-            "detail_card": self.detail_card,
-            "title": self.title,
-            "description": self.description,
-            "cancel_url": self.cancel_url,
+            "maps_href": self.maps_href,
+            "edit_href": self.edit_href,
+            "title": self.customer.name,
+            "status_key": customer_status_key(self.customer),
+            "status_label": customer_status_label(self.customer),
+            "status_icon": customer_status_icon(self.customer),
+            "place_label": customer_place_label(self.customer),
+            "page_tabs": CUSTOMER_DETAIL_TABS,
+            "tabs_label": "Customer sections",
+            "back_url": self.back_url,
+            "back_label": "Back to customers",
         }
 
 
@@ -70,116 +94,33 @@ def build_customer_detail_context(
     order_summary: CustomerOrderSummary,
     orders: list[Order],
     role_spec: RoleSpec,
-    cancel_url: str,
+    back_url: str,
 ) -> CustomerDetailContext:
-    order_rows = _build_order_rows(orders)
-
     return CustomerDetailContext(
         customer=customer,
         order_summary=order_summary,
-        order_rows=order_rows,
-        detail_card=DetailCard(
-            header=_build_customer_header(customer),
-            panels=_build_customer_detail_panels(
-                customer=customer,
-                order_summary=order_summary,
-            ),
-            secondary_actions=build_customer_secondary_actions(
-                customer=customer,
-                role_spec=role_spec,
-            ),
+        order_rows=[_build_order_row(order) for order in orders],
+        maps_href=maps_directions_href(customer.address),
+        edit_href=(
+            reverse("ops_customers:edit", kwargs={"customer_pk": customer.pk})
+            if can_edit_customer(customer=customer, role_spec=role_spec)
+            else None
         ),
-        title=customer.name,
-        description="",
-        cancel_url=cancel_url,
+        back_url=back_url,
     )
 
 
-def build_customer_secondary_actions(
-    *,
-    customer: Customer,
-    role_spec: RoleSpec,
-) -> tuple[DetailAction, ...]:
-    if not can_edit_customer(customer=customer, role_spec=role_spec):
-        return ()
-
-    return (
-        build_secondary_get_action(
-            label="Edit customer",
-            href=reverse("ops_customers:edit", kwargs={"customer_pk": customer.pk}),
-        ),
+def _build_order_row(order: Order) -> CustomerOrderRow:
+    return CustomerOrderRow(
+        order_id=order.id,
+        href=reverse("ops_orders:detail", kwargs={"order_id": order.id}),
+        status=build_order_status_presentation(order.status),
+        meta=order_lifecycle_label(order),
+        quantity_label=order_quantity_label(order),
     )
 
 
-def _build_customer_header(customer: Customer) -> DetailHeader:
-    return DetailHeader(
-        eyebrow="Customer",
-        title=customer.name,
-        status_label=customer.country_name,
-        status_class="status-text status-text--neutral",
-        status_icon="users",
-    )
-
-
-def _build_customer_detail_panels(
-    *,
-    customer: Customer,
-    order_summary: CustomerOrderSummary,
-) -> tuple[DetailPanel, ...]:
-    return (
-        DetailPanel(
-            key="customer",
-            label="Customer",
-            summary=customer.name,
-            body_template="ops_portal/customers/includes/detail_panel_customer.html",
-            icon="users",
-            is_active=True,
-        ),
-        DetailPanel(
-            key="orders",
-            label="Orders",
-            summary=_order_summary_label(order_summary.total_orders),
-            body_template="ops_portal/customers/includes/detail_panel_orders.html",
-            icon="cart",
-        ),
-    )
-
-
-def _build_order_rows(orders: list[Order]) -> list[CustomerOrderRow]:
-    rows: list[CustomerOrderRow] = []
-
-    for order in orders:
-        order_href = reverse("ops_orders:detail", kwargs={"order_id": order.id})
-        status = build_order_status_presentation(order.status)
-        product_count = order_product_count(order)
-        quantity = order_total_quantity(order)
-        contents_label = contents_summary(
-            product_count=product_count,
-            total_quantity=quantity,
-        )
-
-        rows.append(
-            CustomerOrderRow(
-                order_id=order.id,
-                order_href=order_href,
-                status=status,
-                created_at=order.created_at,
-                lifecycle_label=order_lifecycle_label(order),
-                product_count=product_count,
-                quantity=quantity,
-                quantity_label=quantity_label(quantity),
-                contents_label=contents_label,
-                card=build_customer_order_mini_card(
-                    order=order,
-                    order_href=order_href,
-                ),
-            )
-        )
-
-    return rows
-
-
-def _order_summary_label(total_orders: int) -> str:
+def _orders_label(total_orders: int) -> str:
     if total_orders == 1:
         return "1 order"
 

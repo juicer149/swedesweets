@@ -122,7 +122,7 @@ def detail(
         ),
         orders=orders,
         role_spec=request.role_spec,
-        cancel_url=reverse("ops_customers:index"),
+        back_url=reverse("ops_customers:index"),
     ).as_dict()
 
     return render(
