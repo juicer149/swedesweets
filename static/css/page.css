@@ -5,9 +5,9 @@
    a soft glow behind it that keeps it grouped. One yellow action, quiet
    grey links, mobile first with the actions at the bottom.
 
-     .screen        one-screen wrapper (login, reset, change password, FAQ):
+     .screen        one-screen wrapper (login, reset, change password, errors):
                     fills the screen, actions at the bottom on phones
-     .page-section  scrolling wrapper (cart, order, contact, dashboard)
+     .page-section  scrolling wrapper (cart, order, contact, FAQ, dashboard)
      .page          the column itself; --centered, --wide
      .page__*       its parts: heading, title, lead, note, text, message …
      .page-actions  the yellow button, then a row of quiet links
@@ -699,16 +699,20 @@ span.icon-rows__link .icon-rows__icon {
 
 /* -----------------------------------------------------------------------------
    FAQ: questions that slide open one at a time (smooth-details.js with a
-   group). Wider than the login column; the open question is lightly lit.
+   group). A scrolling page like contact, wider than the login column;
+   the open question is lightly lit.
    ----------------------------------------------------------------------------- */
 
 .page.faq {
   width: min(100%, 600px);
 }
 
+/* The title sits where the contact page's does (.page-section); the
+   questions a little further down, more so on a tall screen. */
 .faq__list {
   display: grid;
   gap: var(--space-1);
+  margin-top: clamp(var(--space-2), 4dvh, var(--space-8));
 }
 
 .faq__question {

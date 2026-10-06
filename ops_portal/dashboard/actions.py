@@ -96,7 +96,7 @@ ADD_BATCH_ACTION = DashboardActionSpec(
     capability=Capability.CREATE_BATCHES,
     css_tone="button--tone-pack",
     aria_label="Add a new inventory batch",
-    icon="inventory",
+    icon="plus",
     build_href=_add_batch_href,
 )
 
