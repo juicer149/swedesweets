@@ -37,11 +37,11 @@
           </p>
 
           {% if dashboard_queue_panel.items %}
-            <ul class="lines dashboard-items">
+            <ul class="lines">
               {% for item in dashboard_queue_panel.items %}
-                <li class="line dashboard-item">
-                  <a class="dashboard-item__link" href="{{ item.href }}">
-                    <span class="dashboard-item__icon dashboard-item__icon--{{ item.tone }}" aria-hidden="true">
+                <li class="line line--link">
+                  <a class="line__link" href="{{ item.href }}">
+                    <span class="line__icon line__icon--{{ item.tone }}" aria-hidden="true">
                       {% if item.icon %}
                         {% include "includes/ui/icon_block.html" with name=item.icon size="sm" only %}
                       {% endif %}
@@ -52,7 +52,7 @@
                       <span class="line__meta">{{ item.meta }}</span>
                     </span>
 
-                    <span class="dashboard-item__action">{{ item.action_label }}</span>
+                    <span class="line__aside line__aside--wide">{{ item.action_label }}</span>
                   </a>
                 </li>
               {% endfor %}

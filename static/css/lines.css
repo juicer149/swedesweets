@@ -155,6 +155,109 @@
   outline-offset: 2px;
 }
 
+/* A line that is one link (an order in a list, a dashboard queue item):
+   an icon in a circle tinted by the tone, the text, and a short grey
+   aside on the right (a quantity, "Pack order →").
+
+     <li class="line line--link">
+       <a class="line__link" href="…">
+         <span class="line__icon line__icon--warning">icon</span>
+         <span class="line__text">name, meta</span>
+         <span class="line__aside">12 units</span>
+       </a>
+     </li>
+   .line__aside--wide hides the aside on phones, where it would only
+   squeeze the name. */
+.line.line--link {
+  display: block;
+  padding: 0;
+}
+
+.line__link {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-card-inner);
+}
+
+.line__link:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.line__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+
+  color: var(--line-tone-text, var(--color-neutral-700));
+  background: var(--line-tone-bg, var(--color-neutral-100));
+  border-radius: 50%;
+}
+
+.line__icon--warning {
+  --line-tone-text: var(--color-status-warning-text);
+  --line-tone-bg: rgb(var(--color-status-warning) / 0.14);
+}
+
+.line__icon--info {
+  --line-tone-text: var(--color-status-info-text);
+  --line-tone-bg: rgb(var(--color-status-info) / 0.10);
+}
+
+.line__icon--success {
+  --line-tone-text: var(--color-status-success-text);
+  --line-tone-bg: rgb(var(--color-status-success) / 0.10);
+}
+
+.line__icon--danger {
+  --line-tone-text: var(--color-status-danger-text);
+  --line-tone-bg: rgb(var(--color-status-danger) / 0.10);
+}
+
+.line__aside {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  transition: color var(--motion-fast);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .line__link:hover .line__name {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .line__link:hover .line__aside {
+    color: var(--color-neutral-900);
+  }
+}
+
+@media (max-width: 600px) {
+  .line__link:has(.line__aside--wide) {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  .line__aside--wide {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line__aside {
+    transition: none;
+  }
+}
+
 /* A total under the lines, with a small note under it. */
 .lines-total {
   display: flex;

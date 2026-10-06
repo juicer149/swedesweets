@@ -54,12 +54,6 @@ ORDER_STATUS_TONE_BY_STATUS = {
     Order.Status.CANCELLED: TONE_DANGER,
 }
 
-ORDER_ACTION_LINK_CLASS_BY_STATUS = {
-    Order.Status.DELIVERED: "ui-card-order-link status-text--success",
-    Order.Status.CANCELLED: "ui-card-order-link status-text--danger",
-    Order.Status.DRAFT: "ui-card-order-link status-text--muted",
-}
-
 
 def _order_card_class(status: str) -> str:
     return ORDER_CARD_CLASS_BY_STATUS.get(
@@ -90,13 +84,6 @@ def order_status_tone(status: str):
     return ORDER_STATUS_TONE_BY_STATUS.get(
         status,
         ORDER_STATUS_TONE_BY_STATUS[Order.Status.DRAFT],
-    )
-
-
-def order_action_link_class(status: str) -> str:
-    return ORDER_ACTION_LINK_CLASS_BY_STATUS.get(
-        status,
-        "ui-card-order-link",
     )
 
 

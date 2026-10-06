@@ -22,7 +22,7 @@
    No box and no hero: the title centred, the queues as filter chips with
    their count, the queue's rows on the page divided by hairlines, and the
    actions at the bottom (one yellow button, the rest quiet links).
-   The rows reuse .lines / .line__* text styles (lines.css).
+   The rows are .line--link rows (lines.css).
    ============================================================================= */
 
 .page.dashboard-card {
@@ -73,90 +73,8 @@
 }
 
 
-/* Rows: the whole row is the link. */
-.line.dashboard-item {
-  display: block;
-  padding: 0;
-}
-
-.dashboard-item__link {
-  display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  padding-block: var(--space-4);
-
-  color: inherit;
-  text-decoration: none;
-  border-radius: var(--radius-card-inner);
-}
-
-.dashboard-item__link:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
-}
-
-.dashboard-item__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-
-  color: var(--dashboard-tone-text, var(--color-neutral-700));
-  background: var(--dashboard-tone-bg, var(--color-neutral-100));
-  border-radius: 50%;
-}
-
-.dashboard-item__icon--warning {
-  --dashboard-tone-text: var(--color-status-warning-text);
-  --dashboard-tone-bg: rgb(var(--color-status-warning) / 0.14);
-}
-
-.dashboard-item__icon--info {
-  --dashboard-tone-text: var(--color-status-info-text);
-  --dashboard-tone-bg: rgb(var(--color-status-info) / 0.10);
-}
-
-.dashboard-item__icon--danger {
-  --dashboard-tone-text: var(--color-status-danger-text);
-  --dashboard-tone-bg: rgb(var(--color-status-danger) / 0.10);
-}
-
-.dashboard-item__action {
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-14);
-  white-space: nowrap;
-  transition: color var(--motion-fast);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .dashboard-item__link:hover .line__name {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-  }
-
-  .dashboard-item__link:hover .dashboard-item__action {
-    color: var(--color-neutral-900);
-  }
-}
-
-/* Phones: the row itself says where it goes; the action text would only
-   squeeze the title. */
-@media (max-width: 600px) {
-  .dashboard-item__link {
-    grid-template-columns: 2.5rem minmax(0, 1fr);
-  }
-
-  .dashboard-item__action {
-    display: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .dashboard-queue[aria-busy="true"],
-  .dashboard-item__action {
+  .dashboard-queue[aria-busy="true"] {
     transition: none;
   }
 }

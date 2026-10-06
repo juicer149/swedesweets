@@ -152,9 +152,7 @@
 .status-text,
 .ui-card-order-id,
 .ui-card-order-status,
-.ui-card-order-customer,
 .ui-card-order-meta,
-.ui-card-order-address,
 .ui-card-order-link {
   overflow-wrap: anywhere;
 }
@@ -174,8 +172,7 @@
   color: var(--color-neutral-900);
 }
 
-.ui-card-title,
-.ui-card-order-customer {
+.ui-card-title {
   font-size: var(--font-size-24);
   font-weight: 800;
   line-height: 1.2;
@@ -190,8 +187,7 @@
   color: var(--color-neutral-700);
 }
 
-.ui-card-muted,
-.ui-card-order-address {
+.ui-card-muted {
   font-size: var(--font-size-16);
   font-weight: 500;
   line-height: 1.35;
