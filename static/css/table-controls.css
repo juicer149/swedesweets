@@ -188,9 +188,11 @@ select.sort-select.ts-hidden-accessible {
     flex: 0 0 auto;
   }
 
+  /* Narrower than the screen and centred, like the chips above it. */
   .sort-control {
     display: grid;
-    width: 100%;
+    width: min(100%, 20rem);
+    margin-inline: auto;
   }
 }
 
