@@ -1,0 +1,15 @@
+{% comment %}The Product tab of the product form: identity, brand, unit.{% endcomment %}
+<div class="form-grid">
+  {% include "includes/ui/form_field.html" with field=form.internal_number only %}
+  {% include "includes/ui/form_field.html" with field=form.manufacturer only %}
+
+  {% include "includes/ui/form_field.html" with field=form.brand only %}
+  {% include "includes/ui/form_field.html" with field=form.name only %}
+
+  {% if product %}
+    {% include "includes/ui/form_field.html" with field=form.active only %}
+  {% else %}
+    {% include "includes/ui/form_field.html" with field=form.stock_unit only %}
+    {% include "includes/ui/form_field.html" with field=form.weight_per_unit only %}
+  {% endif %}
+</div>

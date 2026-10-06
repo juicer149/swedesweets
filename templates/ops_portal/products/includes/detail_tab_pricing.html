@@ -1,0 +1,18 @@
+{% comment %}The Pricing tab: business and retail, the status coloured by state.{% endcomment %}
+<dl class="facts">
+  {% for channel in pricing.channels %}
+    <div class="facts__row">
+      <dt>{{ channel.label }}</dt>
+      <dd>
+        {% for amount in channel.amounts %}{% if not forloop.first %} · {% endif %}{{ amount.label }}{% endfor %}
+        <span class="state state--{{ channel.state }}{% if channel.amounts %} facts__aside{% endif %}">{{ channel.status_label }}</span>
+      </dd>
+    </div>
+  {% endfor %}
+</dl>
+
+{% if edit_action %}
+  <div class="form-actions page__actions">
+    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_action.href }}#pricing">Edit pricing</a>
+  </div>
+{% endif %}

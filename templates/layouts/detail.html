@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+{% comment %}
+  A detail page or an edit form in the calm design:
+
+    heading     block page_heading (usually includes/ui/status_heading.html)
+    tabs        page_tabs from the view (includes/ui/page_tabs.html); a
+                form overrides block page_body to wrap them in its <form>
+    back link   back_url / back_label from the view
+
+  Each tab's template carries its own actions at its foot.
+{% endcomment %}
+
+{% block title %}{{ title }} | SwedeSweets{% endblock %}
+
+{% block content %}
+<section class="page-section page-section--top" aria-labelledby="page-title">
+  <div class="page page--centered page--wide">
+    {% block page_heading %}
+      <h1 id="page-title" class="page__lead">{{ title }}</h1>
+    {% endblock %}
+
+    {% block page_body %}
+      {% include "includes/ui/page_tabs.html" %}
+    {% endblock %}
+
+    {% block page_back %}
+      {% if back_url %}
+        <div class="page-actions__links page__back">
+          <a class="quiet-link" href="{{ back_url }}">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+            {{ back_label }}
+          </a>
+        </div>
+      {% endif %}
+    {% endblock %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'js/tabs.js' %}" defer></script>
+  {% block page_scripts %}{% endblock %}
+{% endblock %}

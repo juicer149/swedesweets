@@ -9,6 +9,7 @@ from common.detail_cards import (
     DetailAction,
     build_secondary_get_action,
 )
+from common.page_tabs import PageTab
 from inventory.models import InventoryBatch
 from ops_portal.inventory.access import can_create_batch
 from ops_portal.products.access import (
@@ -25,6 +26,27 @@ from products.models import (
     ProductProfile,
 )
 from reservations.availability import AvailableStockRow
+
+PRODUCT_DETAIL_TABS = (
+    PageTab(
+        key="product",
+        label="Product",
+        icon="lollipop",
+        template="ops_portal/products/includes/detail_tab_product.html",
+    ),
+    PageTab(
+        key="pricing",
+        label="Pricing",
+        icon="tag",
+        template="ops_portal/products/includes/detail_tab_pricing.html",
+    ),
+    PageTab(
+        key="inventory",
+        label="Inventory",
+        icon="inventory",
+        template="ops_portal/products/includes/detail_tab_inventory.html",
+    ),
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,6 +89,10 @@ class ProductStockSummary:
                 self.available_quantity
             )
         )
+
+    @property
+    def is_orderable(self) -> bool:
+        return self.product.active and self.available_quantity > 0
 
     @property
     def available_summary_label(self) -> str:
@@ -184,6 +210,15 @@ class ProductChannelPricingSummary:
         ProductPriceAmountSummary,
         ...,
     ]
+
+    @property
+    def state(self) -> str:
+        """For the colour of the status: on (green), off (red), none."""
+
+        if not self.configured:
+            return "none"
+
+        return "on" if self.enabled else "off"
 
     @property
     def status_label(
@@ -351,6 +386,8 @@ class ProductDetailContext:
     status_icon: str
     edit_action: DetailAction | None
     add_batch_href: str | None
+    page_tabs: tuple[PageTab, ...]
+    back_url: str
     title: str
     description: str
     cancel_url: str
@@ -374,6 +411,10 @@ class ProductDetailContext:
             "status_icon": self.status_icon,
             "edit_action": self.edit_action,
             "add_batch_href": self.add_batch_href,
+            "page_tabs": self.page_tabs,
+            "tabs_label": "Product sections",
+            "back_url": self.back_url,
+            "back_label": "Back to products",
             "title": self.title,
             "description": (
                 self.description
@@ -460,6 +501,8 @@ def build_product_detail_context(
             if can_create_batch(role_spec=role_spec)
             else None
         ),
+        page_tabs=PRODUCT_DETAIL_TABS,
+        back_url=cancel_url,
         title=product.display_name,
         description="",
         cancel_url=cancel_url,

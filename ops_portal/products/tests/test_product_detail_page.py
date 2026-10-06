@@ -40,6 +40,7 @@ def test_product_detail_shows_stock_batches_and_edit(client):
     assert f'href="{batch_url}"' in content
     assert "data-tabs" in content
     assert "demand" not in response.context
+    assert "Edit catalog" not in content
 
     # Each tab's button opens the same tab of the edit form.
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
@@ -63,3 +64,36 @@ def test_add_batch_link_preselects_the_product(client):
 
     assert response.status_code == 200
     assert response.context["form"].initial["product"] == product.pk
+
+
+@pytest.mark.django_db
+def test_product_edit_form_has_the_same_tabs_as_the_links(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Apple", internal_number=503)
+
+    response = client.get(
+        reverse("ops_products:edit", kwargs={"product_pk": product.pk}),
+    )
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert [tab.key for tab in response.context["page_tabs"]] == [
+        "product",
+        "catalog",
+        "pricing",
+    ]
+    # The detail page links to #product and #pricing; tabs.js opens them.
+    assert 'data-tab="product"' in content
+    assert 'data-tab="pricing"' in content
+    assert "data-dirty-form" in content
+    assert 'name="business_eur"' in content
+
+
+@pytest.mark.django_db
+def test_product_create_form_renders(client):
+    client.force_login(full_staff_user_factory())
+
+    response = client.get(reverse("ops_products:create"))
+
+    assert response.status_code == 200
+    assert 'name="weight_per_unit"' in response.content.decode()

@@ -1,304 +1,41 @@
-{% extends "base.html" %}
+{% extends "layouts/detail.html" %}
 {% load i18n static %}
 
-{% block title %}{{ title }} | SwedeSweets{% endblock %}
-
-{% block content %}
-{% include "includes/ui/page_header.html" with title_id="product-form-title" title=title description=description %}
-
-<section
-  class="form-section"
-  aria-labelledby="product-form-title"
->
+{% block page_heading %}
   {% if product %}
-    {% include "includes/ui/form_context_card.html" with aria_label="Product summary" eyebrow="Product identity" heading=product.display_name items=product_context_items only %}
+    {% include "includes/ui/status_heading.html" with title_id="page-title" title=title status=status_key icon=status_icon label=status_label who=product.code_label only %}
+  {% else %}
+    <h1 id="page-title" class="page__lead">{{ title }}</h1>
   {% endif %}
+{% endblock %}
 
-  <form
-    method="post"
-    enctype="multipart/form-data"
-    class="form-card"
-    novalidate
-    data-tabs
-    data-dirty-form
-  >
+{% block page_body %}
+  <form method="post" enctype="multipart/form-data" novalidate data-dirty-form>
     {% csrf_token %}
 
-    {% if form.non_field_errors %}
-      <div
-        class="form-errors"
-        role="alert"
-      >
-        {% for error in form.non_field_errors %}
-          <p>{{ error }}</p>
-        {% endfor %}
-      </div>
-    {% endif %}
+    {% include "registration/includes/form_errors.html" with form=form only %}
 
-    <nav
-      class="section-nav"
-      aria-label="Product form sections"
-      role="tablist"
-    >
-      {% include "includes/ui/section_tab.html" with key="product" label="Product" is_active=True tab_id="product-form-tab-product" panel_id="product-form-panel-product" only %}
+    {% include "includes/ui/page_tabs.html" %}
 
-      {% include "includes/ui/section_tab.html" with key="catalog" label="Catalog" is_active=False tab_id="product-form-tab-catalog" panel_id="product-form-panel-catalog" only %}
-
-      {% include "includes/ui/section_tab.html" with key="pricing" label="Pricing" is_active=False tab_id="product-form-tab-pricing" panel_id="product-form-panel-pricing" only %}
-    </nav>
-
-    <section
-      id="product-form-panel-product"
-      role="tabpanel"
-      aria-labelledby="product-form-tab-product"
-      data-tab-panel="product"
-    >
-      <div class="form-grid">
-        {% include "includes/ui/form_field.html" with field=form.internal_number only %}
-        {% include "includes/ui/form_field.html" with field=form.manufacturer only %}
-
-        {% include "includes/ui/form_field.html" with field=form.brand only %}
-        {% include "includes/ui/form_field.html" with field=form.name only %}
-
-        {% if product %}
-          {% include "includes/ui/form_field.html" with field=form.active only %}
-        {% else %}
-          {% include "includes/ui/form_field.html" with field=form.stock_unit only %}
-          {% include "includes/ui/form_field.html" with field=form.weight_per_unit only %}
-        {% endif %}
-      </div>
-    </section>
-
-    <section
-      id="product-form-panel-catalog"
-      role="tabpanel"
-      aria-labelledby="product-form-tab-catalog"
-      data-tab-panel="catalog"
-      hidden
-    >
-      <div class="form-grid">
-        {% include "includes/ui/form_field.html" with field=form.customer_facing_name_fr only %}
-
-        {% include "includes/ui/form_field.html" with field=form.category only %}
-        {% include "includes/ui/form_field.html" with field=form.vegan only %}
-
-        {% include "includes/ui/form_field.html" with field=form.description only %}
-        {% include "includes/ui/form_field.html" with field=form.ingredients only %}
-
-        <div
-          class="form-field form-field--full product-image-field"
-          data-product-image-field
-        >
-          <span class="form-label">
-            {{ form.image.label }}
-          </span>
-
-          <div class="product-image-upload">
-            <div
-              class="product-image-upload__preview"
-              data-product-image-preview
-              {% if not current_image_url %}hidden{% endif %}
-            >
-              <img
-                {% if current_image_url %}
-                  src="{{ current_image_url }}"
-                {% endif %}
-                alt=""
-                data-product-image-preview-image
-              >
-            </div>
-
-            <div
-              class="product-image-upload__empty"
-              data-product-image-empty
-              {% if current_image_url %}hidden{% endif %}
-            >
-              <span class="product-image-upload__empty-icon">
-                {% include "includes/ui/icon_block.html" with name="image" size="lg" only %}
-              </span>
-
-              <div class="product-image-upload__empty-copy">
-                <strong>
-                  No product image
-                </strong>
-
-                <span>
-                  Upload a JPEG or PNG up to 10 MB.
-                </span>
-              </div>
-            </div>
-
-            <div class="product-image-upload__actions">
-              <button
-                class="button button--sm button--soft button--tone-place product-image-upload__choose"
-                type="button"
-                data-product-image-select
-              >
-                {% include "includes/ui/icon_block.html" with name="image" size="sm" only %}
-
-                <span data-product-image-select-label>
-                  {% if current_image_url %}
-                    Replace image
-                  {% else %}
-                    Choose image
-                  {% endif %}
-                </span>
-              </button>
-
-              {% if product and current_image_url %}
-                <label class="product-image-upload__remove">
-                  {{ form.remove_image }}
-
-                  <span>
-                    Remove current image
-                  </span>
-                </label>
-              {% endif %}
-            </div>
-
-            <div class="product-image-upload__native">
-              {{ form.image }}
-            </div>
-
-            {% if form.image.help_text %}
-              <p class="form-help">
-                {{ form.image.help_text }}
-              </p>
-            {% endif %}
-
-            {% if form.image.errors %}
-              <div
-                class="form-field__errors"
-                role="alert"
-              >
-                {% for error in form.image.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-
-            {% if form.remove_image.errors %}
-              <div
-                class="form-field__errors"
-                role="alert"
-              >
-                {% for error in form.remove_image.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      id="product-form-panel-pricing"
-      role="tabpanel"
-      aria-labelledby="product-form-tab-pricing"
-      data-tab-panel="pricing"
-      hidden
-    >
-      <header class="form-section-heading">
-        <h2 class="form-section-heading__title">
-          Standard pricing
-        </h2>
-
-        <p class="form-help">
-          Product-wide prices used for ordinary business and retail sales.
-        </p>
-      </header>
-
-      {% if pricing_form.non_field_errors %}
-        <div
-          class="form-errors"
-          role="alert"
-        >
-          {% for error in pricing_form.non_field_errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <section
-        class="pricing-channel"
-        aria-labelledby="business-pricing-title"
-      >
-        <h3
-          class="pricing-channel__title"
-          id="business-pricing-title"
-        >
-          Business
-        </h3>
-
-        <div class="form-grid">
-          {% include "includes/ui/form_field.html" with field=pricing_form.business_eur only %}
-          {% include "includes/ui/form_field.html" with field=pricing_form.business_sek only %}
-          {% include "includes/ui/form_field.html" with field=pricing_form.business_status only %}
-        </div>
-      </section>
-
-      <section
-        class="pricing-channel"
-        aria-labelledby="retail-pricing-title"
-      >
-        <h3
-          class="pricing-channel__title"
-          id="retail-pricing-title"
-        >
-          Retail
-        </h3>
-
-        <div class="form-grid">
-          {% include "includes/ui/form_field.html" with field=pricing_form.retail_eur only %}
-          {% include "includes/ui/form_field.html" with field=pricing_form.retail_sek only %}
-          {% include "includes/ui/form_field.html" with field=pricing_form.retail_status only %}
-        </div>
-      </section>
-    </section>
-
-    <div class="form-actions">
-      <button
-        class="button button--md button--solid button--tone-place"
-        type="submit"
-      >
+    <div class="form-actions page__actions page-actions">
+      <button class="button button--md button--solid button--tone-place page__submit" type="submit">
         {{ submit_label }}
       </button>
 
       {% if cancel_url %}
-        <a 
-          class="button button--md button--ghost button--tone-neutral"
-          href="{{ cancel_url }}"
-          data-dirty-ignore="true"
-        >
-          {% trans "Cancel" %}
-        </a>
+        <div class="page-actions__links">
+          <a class="quiet-link" href="{{ cancel_url }}" data-dirty-ignore="true">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+            {% trans "Cancel" %}
+          </a>
+        </div>
       {% endif %}
     </div>
   </form>
-</section>
 {% endblock %}
 
-{% block scripts %}
-  {{ block.super }}
-
-  <script
-    src="{% static 'js/tabs.js' %}"
-    defer
-  ></script>
-
-  <script
-    src="{% static 'js/confirm_dialog.js' %}"
-    defer
-  ></script>
-
-  <script
-    src="{% static 'js/dirty_form.js' %}"
-    defer
-  ></script>
-
-  <script
-    src="{% static 'js/product-image-upload.js' %}"
-    defer
-  ></script>
+{% block page_scripts %}
+  <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
+  <script src="{% static 'js/dirty_form.js' %}" defer></script>
+  <script src="{% static 'js/product-image-upload.js' %}" defer></script>
 {% endblock %}

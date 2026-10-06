@@ -1,0 +1,28 @@
+{% comment %}
+  A section nav of tabs and their panels (tabs.js). Each panel includes
+  its tab's template with the page's whole context.
+
+  page_tabs   PageTab list (common/page_tabs.py); the first opens unless
+              the URL hash names another or a panel holds form errors
+  tabs_label  aria-label for the tab list
+{% endcomment %}
+<div class="page-tabs" data-tabs>
+  <nav class="section-nav" aria-label="{{ tabs_label|default:'Sections' }}" role="tablist">
+    {% for tab in page_tabs %}
+      {% include "includes/ui/section_tab.html" with key=tab.key label=tab.label icon=tab.icon is_active=forloop.first tab_id="tab-"|add:tab.key panel_id="panel-"|add:tab.key only %}
+    {% endfor %}
+  </nav>
+
+  {% for tab in page_tabs %}
+    <section
+      id="panel-{{ tab.key }}"
+      class="page-tabs__panel"
+      role="tabpanel"
+      aria-labelledby="tab-{{ tab.key }}"
+      data-tab-panel="{{ tab.key }}"
+      {% if not forloop.first %}hidden{% endif %}
+    >
+      {% include tab.template %}
+    </section>
+  {% endfor %}
+</div>

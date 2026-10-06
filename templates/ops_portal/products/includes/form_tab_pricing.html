@@ -1,0 +1,49 @@
+{% comment %}The Pricing tab of the product form: standard business and retail prices.{% endcomment %}
+<p class="page__note form-tab__note">Product-wide prices for ordinary business and retail sales.</p>
+
+{% if pricing_form.non_field_errors %}
+  <div
+    class="form-errors"
+    role="alert"
+  >
+    {% for error in pricing_form.non_field_errors %}
+      <p>{{ error }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<section
+  class="pricing-channel"
+  aria-labelledby="business-pricing-title"
+>
+  <h3
+    class="pricing-channel__title"
+    id="business-pricing-title"
+  >
+    Business
+  </h3>
+
+  <div class="form-grid">
+    {% include "includes/ui/form_field.html" with field=pricing_form.business_eur only %}
+    {% include "includes/ui/form_field.html" with field=pricing_form.business_sek only %}
+    {% include "includes/ui/form_field.html" with field=pricing_form.business_status only %}
+  </div>
+</section>
+
+<section
+  class="pricing-channel"
+  aria-labelledby="retail-pricing-title"
+>
+  <h3
+    class="pricing-channel__title"
+    id="retail-pricing-title"
+  >
+    Retail
+  </h3>
+
+  <div class="form-grid">
+    {% include "includes/ui/form_field.html" with field=pricing_form.retail_eur only %}
+    {% include "includes/ui/form_field.html" with field=pricing_form.retail_sek only %}
+    {% include "includes/ui/form_field.html" with field=pricing_form.retail_status only %}
+  </div>
+</section>

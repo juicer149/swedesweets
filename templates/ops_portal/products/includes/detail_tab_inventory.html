@@ -1,0 +1,41 @@
+{% comment %}The Inventory tab: stock, orderable (coloured), active batches, Add batch.{% endcomment %}
+<dl class="facts">
+  <div class="facts__row">
+    <dt>Available</dt>
+    <dd><strong>{{ stock.available_quantity_label }}</strong></dd>
+  </div>
+  <div class="facts__row">
+    <dt>Reserved</dt>
+    <dd>{{ stock.reserved_quantity_label }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>In stock</dt>
+    <dd>{{ stock.physical_quantity_label }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>Orderable</dt>
+    <dd>
+      {% if stock.is_orderable %}
+        <span class="state state--on">Yes</span>
+      {% else %}
+        <span class="state state--off">No</span>
+      {% endif %}
+    </dd>
+  </div>
+</dl>
+
+{% if batch_rows %}
+  <ul class="lines product-batches" aria-label="Active batches">
+    {% for row in batch_rows %}
+      {% include "includes/ui/line_link.html" with href=row.batch_href label="Batch "|add:row.batch_id icon="inventory" name=row.batch_id meta=row.meta aside=row.quantity_label only %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="page__note product-batches">No active batches.</p>
+{% endif %}
+
+{% if add_batch_href %}
+  <div class="form-actions page__actions">
+    <a class="button button--md button--solid button--tone-place page__submit" href="{{ add_batch_href }}">Add batch</a>
+  </div>
+{% endif %}

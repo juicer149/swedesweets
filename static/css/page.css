@@ -217,6 +217,35 @@
   border-top: 1px solid var(--color-neutral-300);
 }
 
+/* Tabs under the heading (layouts/detail.html): the site's section nav,
+   then the open tab's content with its own actions at its foot; the back
+   link under all tabs. */
+.page-tabs .section-nav {
+  margin-top: 0;
+}
+
+.page-tabs__panel {
+  padding-top: var(--space-6);
+}
+
+.page__back {
+  margin-top: var(--space-6);
+}
+
+/* A grey line at the top of a form tab, saying what the tab is for. */
+.form-tab__note {
+  margin-bottom: var(--space-5);
+}
+
+/* A state word in its colour: on (green), off (red), none (grey). */
+.state {
+  font-weight: 600;
+}
+
+.state--on { color: var(--color-status-success-text); }
+.state--off { color: var(--color-status-danger-text); }
+.state--none { color: var(--color-neutral-600); font-weight: 400; }
+
 /* Fields closer to each other than to anything else. */
 .page > .form-grid {
   gap: var(--space-3);

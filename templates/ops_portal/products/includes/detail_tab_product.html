@@ -1,0 +1,8 @@
+{% comment %}The Product tab: the product's data, then Edit product.{% endcomment %}
+{% include "ops_portal/products/includes/product_details.html" %}
+
+{% if edit_action %}
+  <div class="form-actions page__actions">
+    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_action.href }}#product">Edit product</a>
+  </div>
+{% endif %}
