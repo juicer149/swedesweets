@@ -61,33 +61,6 @@
   width: min(100%, 640px);
 }
 
-/* A list of things to open (orders): room for a name, a meta line and an
-   aside on one row. */
-.page--list {
-  width: min(100%, 720px);
-}
-
-/* Filters and sorting above a list, quieter than on a table page: the
-   sort select shows at every width (there are no column headers to sort
-   by), small and centred. */
-.page .filter-group {
-  margin-bottom: var(--space-4);
-}
-
-.page .sort-control {
-  display: grid;
-  width: min(100%, 22rem);
-  margin: 0 auto var(--space-4);
-}
-
-.page .sort-control .ts-control {
-  min-height: 44px;
-}
-
-.list-empty {
-  margin-block: var(--space-8);
-}
-
 
 /* -----------------------------------------------------------------------------
    Parts

@@ -127,6 +127,25 @@
   flex: 0 0 auto;
 }
 
+.ui-card-order-address {
+  text-decoration: none;
+}
+
+.ui-card-order-address--link {
+  color: var(--color-primary-800);
+  text-decoration: none;
+
+  transition:
+    color var(--motion-fast),
+    text-decoration-color var(--motion-fast);
+}
+
+.ui-card-order-address--link:hover,
+.ui-card-order-address--link:focus-visible {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+
 
 /* =============================================================================
    Order card state styling
@@ -162,7 +181,8 @@
    Status-specific order text accents
    ============================================================================= */
 
-.mobile-card--order-placed .ui-card-order-id {
+.mobile-card--order-placed .ui-card-order-id,
+.mobile-card--order-placed .ui-card-order-customer {
   color: var(--color-action-place-on-light);
 }
 
