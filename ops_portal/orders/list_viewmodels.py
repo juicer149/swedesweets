@@ -9,9 +9,6 @@ from common.page_header import PageHeader, PageHeaderAction
 from common.table_tools import build_query_url
 from common.ui import (
     StatusPresentation,
-    UiCard,
-    UiCardRow,
-    UiText,
 )
 from ops_portal.orders.access import (
     can_create_order,
@@ -20,9 +17,6 @@ from ops_portal.orders.access import (
 )
 from ops_portal.orders.presentation import (
     build_order_status_presentation,
-    maps_directions_href,
-    order_action_link_class,
-    order_card_css_class,
     order_lifecycle_label,
     order_quantity_label,
 )
@@ -65,7 +59,10 @@ class OrderPageRow:
     status: StatusPresentation
     detail_href: str
     total_quantity: int
-    card: UiCard
+    # Phones: a .line--link row ("#31 · customer", "Placed 2 h ago", units).
+    title: str
+    meta: str
+    quantity_label: str
 
 
 def build_orders_page_header(*, role_spec: RoleSpec) -> PageHeader:
@@ -107,12 +104,9 @@ def _build_order_page_row(
         status=status,
         detail_href=detail_href,
         total_quantity=total_quantity,
-        card=_build_order_card(
-            order=order,
-            status=status,
-            detail_href=detail_href,
-            role_spec=role_spec,
-        ),
+        title=f"#{order.pk} · {order.customer_name}",
+        meta=order_lifecycle_label(order),
+        quantity_label=order_quantity_label(order),
     )
 
 
@@ -127,114 +121,6 @@ def _build_create_order_header_action(
         href=_create_order_href(),
         icon="cart",
         aria_label="Place a new order",
-    )
-
-
-def _build_order_card(
-    *,
-    order: Order,
-    status: StatusPresentation,
-    detail_href: str,
-    role_spec: RoleSpec,
-) -> UiCard:
-    return UiCard(
-        tone=status.tone,
-        css_class=order_card_css_class(order.status),
-        rows=(
-            _build_header_row(order, status),
-            _build_customer_row(order),
-            _build_meta_row(order),
-            _build_address_row(order),
-        ),
-        action=_build_action(
-            order=order,
-            detail_href=detail_href,
-            role_spec=role_spec,
-        ),
-    )
-
-
-def _build_header_row(order: Order, status: StatusPresentation) -> UiCardRow:
-    return UiCardRow(
-        left=UiText(
-            text=f"#{order.pk}",
-            css_class="ui-card-order-id",
-        ),
-        right=status.text,
-    )
-
-
-def _build_customer_row(order: Order) -> UiCardRow:
-    return UiCardRow(
-        center=UiText(
-            text=order.customer_name,
-            css_class="ui-card-order-customer",
-        ),
-    )
-
-
-def _build_meta_row(order: Order) -> UiCardRow:
-    return UiCardRow(
-        center=UiText(
-            text=f"{order_lifecycle_label(order)} · {order_quantity_label(order)}",
-            css_class="ui-card-order-meta",
-        ),
-    )
-
-
-def _build_address_row(order: Order) -> UiCardRow:
-    if order.status == Order.Status.PACKED:
-        return UiCardRow(
-            center=UiText(
-                text=order.customer_address,
-                href=maps_directions_href(order.customer_address),
-                css_class="ui-card-order-address ui-card-order-address--link",
-                target="_blank",
-                rel="noopener noreferrer",
-                aria_label=f"Open directions to {order.customer_address}",
-            ),
-        )
-
-    return UiCardRow(
-        center=UiText(
-            text=order.customer_address,
-            css_class="ui-card-order-address",
-        ),
-    )
-
-
-def _build_action(
-    *,
-    order: Order,
-    detail_href: str,
-    role_spec: RoleSpec,
-) -> UiText:
-    if can_pack_order(order=order, role_spec=role_spec):
-        return UiText(
-            text="Pack order",
-            href=_pack_order_href(order),
-            css_class=(
-                "button button--card-action button--tone-pack button--with-icon"
-            ),
-            icon="box",
-            icon_class="button__icon",
-        )
-
-    if can_deliver_order(order=order, role_spec=role_spec):
-        return UiText(
-            text="Mark delivered",
-            href=_deliver_order_href(order),
-            css_class=(
-                "button button--card-action button--tone-deliver button--with-icon"
-            ),
-            icon="truck",
-            icon_class="button__icon",
-        )
-
-    return UiText(
-        text="See details →",
-        href=detail_href,
-        css_class=order_action_link_class(order.status),
     )
 
 

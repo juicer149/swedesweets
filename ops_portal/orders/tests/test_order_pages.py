@@ -115,3 +115,25 @@ def test_new_order_page_renders(staff_client):
     assert response.status_code == 200
     assert 'name="customer"' in content
     assert "data-order-lines-empty" in content
+
+
+@pytest.mark.django_db
+def test_order_list_shows_table_and_phone_rows(staff_client, placed_order):
+    response = staff_client.get(
+        reverse("ops_orders:index"),
+        {"channel": "business"},
+    )
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert 'class="data-table"' in content
+    assert "mobile-lines" in content
+
+    row = next(
+        row
+        for row in response.context["order_rows"]
+        if row.order.pk == placed_order.pk
+    )
+    assert row.title == f"#{placed_order.pk} · {placed_order.customer_name}"
+    # A placed order opens straight on its pack page, from both views.
+    assert content.count(f'"{_url("ops_orders:pack", placed_order)}"') == 2

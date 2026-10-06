@@ -12,6 +12,18 @@
   overflow-x: visible;
 }
 
+/* Phones: lists that are a table on desktop show as .line--link rows
+   (lines.css) instead. */
+.mobile-lines {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .mobile-lines {
+    display: block;
+  }
+}
+
 .data-table {
   width: 100%;
   border-collapse: separate;
@@ -29,13 +41,33 @@
   vertical-align: middle;
 }
 
+/* Column headers in the calm design: grey, the sorted one dark, over a
+   soft hairline rather than a dark rule. */
 .data-table thead th {
   padding-bottom: 12px;
   font-size: var(--font-size-data-table-th);
   font-weight: 700;
   line-height: 1.33;
-  color: var(--color-table-heading);
-  border-bottom: 1px solid var(--color-table-rule);
+  color: var(--color-neutral-600);
+  border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.data-table thead .text-link--table-sort.text-link--active {
+  color: var(--color-neutral-900);
+}
+
+.data-table thead .text-link--table-sort::after {
+  background: var(--color-neutral-300);
+}
+
+.data-table thead .sort-arrow {
+  color: var(--color-neutral-700);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .data-table thead .text-link--table-sort:hover {
+    color: var(--color-neutral-800);
+  }
 }
 
 .data-table tbody th,
