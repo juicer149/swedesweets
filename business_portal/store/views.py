@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 
@@ -15,6 +16,7 @@ from business_portal.store.forms import (
 from customers.errors import InvalidCustomerData
 from customers.services import (
     update_customer,
+    update_customer_listing,
 )
 
 
@@ -31,12 +33,20 @@ def edit_store(request):
         )
 
         if form.is_valid():
+            data = form.cleaned_data
+
             try:
-                update_customer(
-                    customer=customer,
-                    user=request.user,
-                    **form.cleaned_data,
-                )
+                with transaction.atomic():
+                    update_customer(
+                        customer=customer,
+                        user=request.user,
+                        **{name: data[name] for name in form.DELIVERY_FIELDS},
+                    )
+                    update_customer_listing(
+                        customer=customer,
+                        user=request.user,
+                        **{name: data[name] for name in form.LISTING_FIELDS},
+                    )
             except InvalidCustomerData as error:
                 form.add_error(
                     None,

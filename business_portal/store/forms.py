@@ -116,7 +116,7 @@ class CustomerProfileForm(forms.Form):
 
     address_line = forms.CharField(
         max_length=MAX_CUSTOMER_ADDRESS_LINE_LENGTH,
-        label=gettext_lazy("Address"),
+        label=gettext_lazy("Delivery address"),
         error_messages={
             "required": gettext_lazy(
                 "Enter a street address."
@@ -131,6 +131,78 @@ class CustomerProfileForm(forms.Form):
             }
         ),
     )
+
+    # Find Sweets: the public list of shops that sell SwedeSweets.
+    listed_publicly = forms.BooleanField(
+        required=False,
+        label=gettext_lazy("Show my store on Find Sweets"),
+    )
+
+    store_address_line = forms.CharField(
+        required=False,
+        max_length=MAX_CUSTOMER_ADDRESS_LINE_LENGTH,
+        label=gettext_lazy("Store address"),
+        help_text=gettext_lazy(
+            "Only if visitors find you somewhere else than the delivery "
+            "address."
+        ),
+        widget=forms.TextInput(
+            attrs={
+                "autocomplete": "off",
+            }
+        ),
+    )
+
+    store_city = forms.CharField(
+        required=False,
+        max_length=MAX_CUSTOMER_CITY_LENGTH,
+        label=gettext_lazy("Store city"),
+        widget=forms.TextInput(
+            attrs={
+                "autocomplete": "off",
+            }
+        ),
+    )
+
+    DELIVERY_FIELDS = (
+        "name",
+        "email",
+        "phone_number",
+        "country",
+        "city",
+        "address_line",
+    )
+    LISTING_FIELDS = (
+        "listed_publicly",
+        "store_address_line",
+        "store_city",
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        line = (cleaned.get("store_address_line") or "").strip()
+        city = (cleaned.get("store_city") or "").strip()
+
+        if line and not city:
+            self.add_error(
+                "store_city",
+                gettext_lazy("Add the store's city too."),
+            )
+        elif city and not line:
+            self.add_error(
+                "store_address_line",
+                gettext_lazy("Add the store's street address too."),
+            )
+
+        return cleaned
+
+    @property
+    def delivery_fields(self):
+        return [self[name] for name in self.DELIVERY_FIELDS]
+
+    @property
+    def listing_fields(self):
+        return [self[name] for name in self.LISTING_FIELDS]
 
     def __init__(
         self,
@@ -152,6 +224,8 @@ class CustomerProfileForm(forms.Form):
                 "phone_number",
                 "country",
                 "city",
+                "store_address_line",
+                "store_city",
             ),
         )
 
@@ -166,4 +240,7 @@ def build_customer_profile_initial_data(
         "country": customer.country,
         "city": customer.city,
         "address_line": customer.address_line,
+        "listed_publicly": customer.listed_publicly,
+        "store_address_line": customer.store_address_line,
+        "store_city": customer.store_city,
     }

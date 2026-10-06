@@ -3,12 +3,36 @@
    ============================================================================= */
 
 .site-footer {
-  margin-top: var(--space-16);
-  padding-block: var(--space-4);
+  margin-top: var(--space-12);
+  padding-block: var(--space-6);
 
   color: var(--color-neutral-600);
   background: var(--color-neutral-50);
   border-top: 1px solid var(--color-neutral-200);
+}
+
+.site-footer__inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.site-footer__brand {
+  margin: 0;
+  color: var(--color-neutral-800);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-18);
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1) var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 /* Pages without the footer (ops): no extra room under the content, so a
@@ -21,17 +45,19 @@
   }
 }
 
-.site-footer__text {
-  margin: 0;
-  text-align: center;
-  font-size: var(--font-size-14);
-}
-
+/* Phones: the bottom navigation bar is fixed over the foot of the page,
+   so the footer carries the room for it (not the page above it). */
 @media (max-width: 767px) {
+  body:has(.site-footer) .site-main {
+    padding-bottom: var(--space-8);
+  }
+
   .site-footer {
-    display: none;
+    margin-top: 0;
+    padding-bottom: calc(6.5rem + var(--space-4));
   }
 }
+
 /* =============================================================================
    List layout
    ============================================================================= */

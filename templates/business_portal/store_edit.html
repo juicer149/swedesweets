@@ -22,10 +22,21 @@
       {% include "registration/includes/form_errors.html" with form=form only %}
 
       <div class="form-grid">
-        {% for field in form %}
+        {% for field in form.delivery_fields %}
           {% include "includes/ui/form_field.html" with field=field only %}
         {% endfor %}
       </div>
+
+      <section class="page-part store-listing" aria-labelledby="store-listing-title">
+        <h2 id="store-listing-title" class="page-part__title">{% trans "Find Sweets" %}</h2>
+        <p class="page__note">{% trans "Let visitors find your store on the public list of shops that sell SwedeSweets." %}</p>
+
+        <div class="form-grid">
+          {% for field in form.listing_fields %}
+            {% include "includes/ui/form_field.html" with field=field only %}
+          {% endfor %}
+        </div>
+      </section>
 
       <div class="form-actions page__actions page-actions">
         <button

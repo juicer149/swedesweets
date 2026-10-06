@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.urls import reverse
+from django.shortcuts import redirect, render
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_GET
 
@@ -113,10 +112,9 @@ def index(request):
 @login_required
 @require_GET
 def contact(request):
-    return render(
-        request,
-        "storefront/contact.html",
-    )
+    """Contact lives on the FAQ page now (its top); old links land there."""
+
+    return redirect("business_portal:faq")
 
 
 @login_required
@@ -127,8 +125,5 @@ def faq(request):
         "storefront/faq.html",
         {
             "faq_items": answered(BUSINESS_FAQ),
-            "contact_url": reverse(
-                "business_portal:contact"
-            ),
         },
     )

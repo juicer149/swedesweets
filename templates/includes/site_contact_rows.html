@@ -1,0 +1,23 @@
+{% load i18n %}
+{% comment %}
+  How to reach SwedeSweets: mail and phone as tappable rows. The one place
+  the details are written (the FAQ page's top; the footer has its own
+  compact line).
+{% endcomment %}
+<ul class="icon-rows icon-rows--links">
+  <li class="icon-rows__item">
+    <a class="icon-rows__link" href="mailto:info@swedesweets.se">
+      {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="icon-rows__icon icon-rows__icon--mail" only %}
+      <span class="visually-hidden">{% trans "Email" %}:</span>
+      info@swedesweets.se
+    </a>
+  </li>
+
+  <li class="icon-rows__item">
+    <a class="icon-rows__link" href="tel:+46739756195">
+      {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="icon-rows__icon icon-rows__icon--phone" only %}
+      <span class="visually-hidden">{% trans "Phone" %}:</span>
+      +46 (73) 975 61 95
+    </a>
+  </li>
+</ul>

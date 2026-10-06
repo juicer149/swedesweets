@@ -36,3 +36,52 @@ def test_order_history_on_phones_is_link_rows(client):
     assert "data-order-card-list" in content
     assert 'class="lines mobile-lines"' in content
     assert "mobile-card" not in content
+
+
+
+@pytest.mark.django_db
+def test_store_edit_saves_the_find_sweets_listing(client):
+    customer = customer_factory(email="listing@example.fr")
+    client.force_login(customer_user_factory(customer=customer))
+
+    response = client.post(
+        reverse("business_portal:edit_store"),
+        {
+            "name": customer.name,
+            "email": customer.email,
+            "phone_number": customer.phone_number,
+            "country": customer.country,
+            "city": customer.city,
+            "address_line": customer.address_line,
+            "listed_publicly": "on",
+            "store_address_line": "2 Place du Lac",
+            "store_city": "Annecy",
+        },
+    )
+
+    assert response.status_code == 302
+    customer.refresh_from_db()
+    assert customer.listed_publicly is True
+    assert customer.public_address == "2 Place du Lac, Annecy, France"
+
+
+@pytest.mark.django_db
+def test_store_edit_asks_for_both_parts_of_the_store_address(client):
+    customer = customer_factory(email="half-listing@example.fr")
+    client.force_login(customer_user_factory(customer=customer))
+
+    response = client.post(
+        reverse("business_portal:edit_store"),
+        {
+            "name": customer.name,
+            "email": customer.email,
+            "phone_number": customer.phone_number,
+            "country": customer.country,
+            "city": customer.city,
+            "address_line": customer.address_line,
+            "store_address_line": "2 Place du Lac",
+        },
+    )
+
+    assert response.status_code == 200
+    assert "store_city" in response.context["form"].errors

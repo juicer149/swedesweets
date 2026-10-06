@@ -1,0 +1,29 @@
+{% extends "storefront/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Find Sweets" %} | SwedeSweets{% endblock %}
+
+{% block content %}
+{% comment %}
+  The shops that sell SwedeSweets and chose to be listed (Customer
+  listed_publicly), by town; each opens its address on the map.
+{% endcomment %}
+<section class="page-section" aria-labelledby="find-sweets-title">
+  <div class="page page--centered page--wide">
+    <header class="page__heading">
+      <h1 id="find-sweets-title" class="page__lead">{% trans "Find Sweets" %}</h1>
+      <p class="page__note">{% trans "Shops where you can buy our Swedish sweets." %}</p>
+    </header>
+
+    {% if shops %}
+      <ul class="lines" aria-label="{% trans 'Shops' %}">
+        {% for shop in shops %}
+          {% include "includes/ui/line_link.html" with href=shop.maps_href new_tab=True icon="map-pin" name=shop.name meta=shop.address only %}
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="page__text page__message">{% trans "No shops are listed yet." %}</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

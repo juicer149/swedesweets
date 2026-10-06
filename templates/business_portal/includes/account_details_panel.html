@@ -41,6 +41,15 @@
         </li>
       </ul>
 
+      <p class="page__note store-listing-note">
+        {% if customer.listed_publicly %}
+          {% url "public_site:find_sweets" as find_sweets_url %}
+          {% blocktrans trimmed %}Your store is shown on <a class="text-link" href="{{ find_sweets_url }}">Find Sweets</a>.{% endblocktrans %}
+        {% else %}
+          {% trans "Your store is not shown on Find Sweets." %}
+        {% endif %}
+      </p>
+
       <div class="form-actions page__actions">
         <a
           class="button button--md button--solid button--tone-place page__submit"

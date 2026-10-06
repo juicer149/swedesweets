@@ -116,6 +116,45 @@ def update_customer(
 
 
 @transaction.atomic
+def update_customer_listing(
+    *,
+    customer: Customer,
+    listed_publicly: bool,
+    store_address_line: str = "",
+    store_city: str = "",
+    user=None,
+) -> Customer:
+    """Whether the shop is on Find Sweets, and its own street address.
+
+    The store address is both line and city or neither; without it Find
+    Sweets shows the delivery address.
+    """
+
+    store_address_line = (store_address_line or "").strip()
+    store_city = (store_city or "").strip()
+
+    if bool(store_address_line) != bool(store_city):
+        raise InvalidCustomerData(
+            "Give both the store's street address and its city, or neither."
+        )
+
+    customer = Customer.objects.select_for_update().get(pk=customer.pk)
+    customer.listed_publicly = listed_publicly
+    customer.store_address_line = store_address_line
+    customer.store_city = store_city
+    customer.save(
+        update_fields=[
+            "listed_publicly",
+            "store_address_line",
+            "store_city",
+        ]
+    )
+    customer.mark_as_edited(user=user)
+
+    return customer
+
+
+@transaction.atomic
 def deactivate_customer(
     *,
     customer: Customer,

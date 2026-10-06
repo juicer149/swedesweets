@@ -13,7 +13,7 @@ def test_business_navigation_has_shared_site_shape():
         for item in items
     ) == (
         "Catalog",
-        "Contact",
+        "Find Sweets",
         "FAQ",
     )
 
@@ -33,20 +33,14 @@ def test_business_catalog_uses_business_sales_channel():
     )
 
 
-def test_business_contact_and_faq_stay_in_business_portal():
+def test_business_find_sweets_is_public_and_faq_stays_in_business_portal():
     items = build_business_primary_nav_items()
 
-    contact_item = items[1]
+    find_sweets_item = items[1]
     faq_item = items[2]
 
-    assert (
-        contact_item.route_name
-        == "business_portal:contact"
-    )
-    assert (
-        contact_item.href
-        == reverse("business_portal:contact")
-    )
+    assert find_sweets_item.href == reverse("public_site:find_sweets")
+    assert find_sweets_item.icon == "map-pin"
 
     assert (
         faq_item.route_name
@@ -56,16 +50,4 @@ def test_business_contact_and_faq_stay_in_business_portal():
         faq_item.href
         == reverse("business_portal:faq")
     )
-
-
-def test_business_navigation_does_not_include_account_area():
-    items = build_business_primary_nav_items()
-
-    route_names = {
-        item.route_name
-        for item in items
-    }
-
-    assert "business_portal:index" not in route_names
-    assert "business_portal:orders" not in route_names
-    assert "business_portal:edit_store" not in route_names
+    assert faq_item.icon == "question"

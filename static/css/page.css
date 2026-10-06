@@ -722,12 +722,15 @@ span.icon-rows__link .icon-rows__icon {
   width: min(100%, 600px);
 }
 
-/* The title sits where the contact page's does (.page-section); the
-   questions a little further down, more so on a tall screen. */
+/* The questions under the contact rows (one page, /contact/ lands here). */
+.faq__title {
+  margin-top: clamp(var(--space-8), 6dvh, var(--space-12));
+}
+
 .faq__list {
   display: grid;
   gap: var(--space-1);
-  margin-top: clamp(var(--space-2), 4dvh, var(--space-8));
+  margin-top: clamp(var(--space-2), 2dvh, var(--space-4));
 }
 
 .faq__question {

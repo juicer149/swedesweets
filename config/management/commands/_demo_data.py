@@ -39,6 +39,11 @@ class DemoCustomer:
     city: str
     address_line: str
     country: str = "FR"
+    # Shown on Find Sweets; store_* when the shop is not at the delivery
+    # address.
+    listed_publicly: bool = False
+    store_address_line: str = ""
+    store_city: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -77,6 +82,7 @@ class DemoOrder:
 CUSTOMERS: tuple[DemoCustomer, ...] = (
     DemoCustomer(
         key="epicerie_du_col",
+        listed_publicly=True,
         name="Épicerie du Col",
         email="epicerie-du-col@example.com",
         phone_number="+33199000101",
@@ -85,6 +91,9 @@ CUSTOMERS: tuple[DemoCustomer, ...] = (
     ),
     DemoCustomer(
         key="comptoir_sucre",
+        listed_publicly=True,
+        store_address_line="12 Rue du Lac",
+        store_city="Annecy",
         name="Le Comptoir Sucré",
         email="comptoir-sucre@example.com",
         phone_number="+33199000102",
@@ -93,6 +102,7 @@ CUSTOMERS: tuple[DemoCustomer, ...] = (
     ),
     DemoCustomer(
         key="bazar_des_cimes",
+        listed_publicly=True,
         name="Bazar des Cimes",
         email="bazar-des-cimes@example.com",
         phone_number="+33199000103",
@@ -109,6 +119,7 @@ CUSTOMERS: tuple[DemoCustomer, ...] = (
     ),
     DemoCustomer(
         key="cafe_lumiere",
+        listed_publicly=True,
         name="Café Lumière",
         email="cafe-lumiere@example.com",
         phone_number="+33199000105",

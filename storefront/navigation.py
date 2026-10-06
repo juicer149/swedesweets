@@ -2,8 +2,8 @@
 Navigation for the public storefront.
 
 The public site chrome is shared by retail visitors, business customers and
-staff. The commerce destination varies by sales channel, while Contact and
-FAQ are shared public-site resources.
+staff. The commerce destination varies by sales channel, while Find Sweets
+and FAQ (with contact) are shared public-site resources.
 """
 
 from __future__ import annotations
@@ -38,12 +38,12 @@ STOREFRONT_CATALOG_NAV_ITEM = PublicNavItem(
     ),
 )
 
-STOREFRONT_CONTACT_NAV_ITEM = PublicNavItem(
-    label=_("Contact"),
-    route_name="public_site:contact",
+STOREFRONT_FIND_SWEETS_NAV_ITEM = PublicNavItem(
+    label=_("Find Sweets"),
+    route_name="public_site:find_sweets",
     namespace="public_site",
-    icon="mail",
-    active_url_names=("contact",),
+    icon="map-pin",
+    active_url_names=("find_sweets",),
 )
 
 STOREFRONT_FAQ_NAV_ITEM = PublicNavItem(
@@ -51,13 +51,14 @@ STOREFRONT_FAQ_NAV_ITEM = PublicNavItem(
     route_name="public_site:faq",
     namespace="public_site",
     icon="question",
-    active_url_names=("faq",),
+    # Contact lives on the FAQ page.
+    active_url_names=("faq", "contact"),
 )
 
 
 PUBLIC_PRIMARY_NAV_ITEMS = (
     STOREFRONT_CATALOG_NAV_ITEM,
-    STOREFRONT_CONTACT_NAV_ITEM,
+    STOREFRONT_FIND_SWEETS_NAV_ITEM,
     STOREFRONT_FAQ_NAV_ITEM,
 )
 

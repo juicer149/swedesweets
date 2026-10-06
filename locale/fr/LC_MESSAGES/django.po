@@ -2366,3 +2366,60 @@ msgstr "Quels jours livrez-vous ?"
 #: storefront/faq.py
 msgid "How do invoices and payment terms work?"
 msgstr "Comment fonctionnent les factures et les conditions de paiement ?"
+
+msgid "Remove this product from the order?"
+msgstr "Retirer ce produit de la commande ?"
+
+msgid "Remove"
+msgstr "Retirer"
+
+msgid "Keep it"
+msgstr "Le garder"
+
+msgid "Contact & FAQ"
+msgstr "Contact et FAQ"
+
+msgid "Site footer"
+msgstr "Pied de page"
+
+msgid "Find Sweets"
+msgstr "Où acheter"
+
+msgid "Shops where you can buy our Swedish sweets."
+msgstr "Les boutiques où acheter nos bonbons suédois."
+
+msgid "Shops"
+msgstr "Boutiques"
+
+msgid "No shops are listed yet."
+msgstr "Aucune boutique n'est encore listée."
+
+msgid "Delivery address"
+msgstr "Adresse de livraison"
+
+msgid "Show my store on Find Sweets"
+msgstr "Afficher ma boutique sur « Où acheter »"
+
+msgid "Store address"
+msgstr "Adresse de la boutique"
+
+msgid "Only if visitors find you somewhere else than the delivery address."
+msgstr "Seulement si les visiteurs vous trouvent ailleurs qu'à l'adresse de livraison."
+
+msgid "Store city"
+msgstr "Ville de la boutique"
+
+msgid "Add the store's city too."
+msgstr "Ajoutez aussi la ville de la boutique."
+
+msgid "Add the store's street address too."
+msgstr "Ajoutez aussi l'adresse de la boutique."
+
+msgid "Let visitors find your store on the public list of shops that sell SwedeSweets."
+msgstr "Permettez aux visiteurs de trouver votre boutique dans la liste publique des boutiques qui vendent SwedeSweets."
+
+msgid "Your store is shown on <a class=\"text-link\" href=\"%(find_sweets_url)s\">Find Sweets</a>."
+msgstr "Votre boutique est affichée sur <a class=\"text-link\" href=\"%(find_sweets_url)s\">Où acheter</a>."
+
+msgid "Your store is not shown on Find Sweets."
+msgstr "Votre boutique n'est pas affichée sur « Où acheter »."

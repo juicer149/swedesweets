@@ -116,3 +116,12 @@ def list_customer_activity_for_actor(
             reverse=True,
         )[:limit]
     )
+
+
+def list_publicly_listed_customers() -> QuerySet[Customer]:
+    """Shops on Find Sweets: active customers who chose to be listed."""
+
+    return Customer.objects.filter(
+        is_active=True,
+        listed_publicly=True,
+    ).order_by("name")

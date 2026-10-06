@@ -32,12 +32,12 @@ BUSINESS_CATALOG_NAV_ITEM = BusinessNavItem(
     ),
 )
 
-BUSINESS_CONTACT_NAV_ITEM = BusinessNavItem(
-    label=_("Contact"),
-    route_name="business_portal:contact",
-    namespace="business_portal",
-    icon="mail",
-    active_url_names=("contact",),
+BUSINESS_FIND_SWEETS_NAV_ITEM = BusinessNavItem(
+    label=_("Find Sweets"),
+    route_name="public_site:find_sweets",
+    namespace="public_site",
+    icon="map-pin",
+    active_url_names=("find_sweets",),
 )
 
 BUSINESS_FAQ_NAV_ITEM = BusinessNavItem(
@@ -45,13 +45,14 @@ BUSINESS_FAQ_NAV_ITEM = BusinessNavItem(
     route_name="business_portal:faq",
     namespace="business_portal",
     icon="question",
-    active_url_names=("faq",),
+    # Contact lives on the FAQ page.
+    active_url_names=("faq", "contact"),
 )
 
 
 BUSINESS_PRIMARY_NAV_ITEMS = (
     BUSINESS_CATALOG_NAV_ITEM,
-    BUSINESS_CONTACT_NAV_ITEM,
+    BUSINESS_FIND_SWEETS_NAV_ITEM,
     BUSINESS_FAQ_NAV_ITEM,
 )
 

@@ -1,19 +1,29 @@
 {% extends "storefront/base.html" %}
 {% load static i18n %}
 
-{% block title %}{% trans "FAQ" %} | SwedeSweets{% endblock %}
+{% block title %}{% trans "Contact & FAQ" %} | SwedeSweets{% endblock %}
 
 {% block content %}
+{% comment %}
+  Contact and FAQ in one page: how to reach us at the top, the questions
+  under it. /contact/ redirects here.
+{% endcomment %}
 <section
   class="page-section"
-  aria-labelledby="public-faq-title"
+  aria-labelledby="public-contact-title"
 >
   <div class="page page--centered faq">
-    <h1 id="public-faq-title" class="page__lead">
-      {% trans "Frequently asked questions" %}
+    <h1 id="public-contact-title" class="page__lead">
+      {% trans "Want to get in touch?" %}
     </h1>
 
-    <div class="faq__list">
+    {% include "includes/site_contact_rows.html" %}
+
+    <h2 id="public-faq-title" class="page-part__title faq__title">
+      {% trans "Frequently asked questions" %}
+    </h2>
+
+    <div class="faq__list" aria-labelledby="public-faq-title">
       {% for item in faq_items %}
         <details class="faq__item" data-smooth data-smooth-group="faq">
           <summary class="faq__question">
@@ -26,13 +36,6 @@
           </div>
         </details>
       {% endfor %}
-    </div>
-
-    <div class="form-actions page__actions">
-      <a class="quiet-link" href="{{ contact_url }}">
-        {% include "includes/ui/icon_block.html" with name="mail" size="sm" only %}
-        {% trans "Contact us" %}
-      </a>
     </div>
   </div>
 </section>

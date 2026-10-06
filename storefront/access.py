@@ -18,6 +18,7 @@ AUTH_EXEMPT_VIEWS = frozenset(
         "storefront:payment_return",
         "public_site:contact",
         "public_site:faq",
+        "public_site:find_sweets",
     }
 )
 

@@ -16,4 +16,9 @@ urlpatterns = [
         views.faq,
         name="faq",
     ),
+    path(
+        "find-sweets/",
+        views.find_sweets,
+        name="find_sweets",
+    ),
 ]

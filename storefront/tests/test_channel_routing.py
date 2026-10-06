@@ -28,9 +28,10 @@ def test_business_customer_is_redirected_from_public_contact(
         reverse("public_site:contact")
     )
 
+    # Contact lives on the FAQ page now.
     assert response.status_code == 302
     assert response["Location"] == reverse(
-        "business_portal:contact"
+        "business_portal:faq"
     )
 
 
@@ -58,14 +59,15 @@ def test_business_customer_is_redirected_from_public_faq(
 
 
 @pytest.mark.django_db
-def test_anonymous_visitor_can_open_public_contact(
+def test_anonymous_visitor_is_sent_from_contact_to_the_faq_page(
     client,
 ):
     response = client.get(
         reverse("public_site:contact")
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 302
+    assert response["Location"] == reverse("public_site:faq")
 
 
 @pytest.mark.django_db

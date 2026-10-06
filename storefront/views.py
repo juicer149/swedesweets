@@ -18,6 +18,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET
 
 from accounts.roles import AccountRole
+from customers.selectors import list_publicly_listed_customers
 from orders.models import Order
 from payments.selectors import get_latest_payment_attempt
 from retail.models import RetailCheckoutSession
@@ -30,6 +31,7 @@ from storefront.checkout_session import (
     owns_checkout,
 )
 from storefront.faq import PUBLIC_FAQ, answered
+from storefront.find_sweets import FindSweetsShop, maps_search_href
 
 PAYMENT_RESULT_CONFIRMED = "confirmed"
 PAYMENT_RESULT_FAILED = "failed"
@@ -59,15 +61,12 @@ def landing(request: HttpRequest) -> HttpResponse:
 
 @require_GET
 def contact(request: HttpRequest) -> HttpResponse:
-    if _is_business_customer(request):
-        return redirect(
-            "business_portal:contact"
-        )
+    """Contact lives on the FAQ page now (its top); old links land there."""
 
-    return render(
-        request,
-        "storefront/contact.html",
-    )
+    if _is_business_customer(request):
+        return redirect("business_portal:faq")
+
+    return redirect("public_site:faq")
 
 
 @require_GET
@@ -82,9 +81,31 @@ def faq(request: HttpRequest) -> HttpResponse:
         "storefront/faq.html",
         {
             "faq_items": answered(PUBLIC_FAQ),
-            "contact_url": reverse(
-                "public_site:contact"
-            ),
+        },
+    )
+
+
+@require_GET
+def find_sweets(request: HttpRequest) -> HttpResponse:
+    """Find Sweets: the shops that chose to be listed, by town."""
+
+    shops = sorted(
+        list_publicly_listed_customers(),
+        key=lambda shop: (shop.public_city.casefold(), shop.name.casefold()),
+    )
+
+    return render(
+        request,
+        "storefront/find_sweets.html",
+        {
+            "shops": [
+                FindSweetsShop(
+                    name=customer.name,
+                    address=customer.public_address,
+                    maps_href=maps_search_href(customer.public_address),
+                )
+                for customer in shops
+            ],
         },
     )
 
@@ -161,7 +182,7 @@ def payment_return(
                 "storefront:cart"
             ),
             "contact_url": reverse(
-                "public_site:contact"
+                "public_site:faq"
             ),
         },
     )
