@@ -45,7 +45,7 @@
 }
 
 /* Text only, no picture (a line in the order form). */
-.line__product--plain {
+.line__product.line__product--plain {
   grid-template-columns: minmax(0, 1fr);
 }
 
@@ -283,21 +283,40 @@
   text-align: center;
 }
 
-/* Phones: the product on its own line, quantity and remove under it.
-   A static line keeps its short right side beside the product. */
-@media (max-width: 639px) {
-  .line {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: var(--space-3);
-  }
+/* One row at every width: picture, name, stepper and trash shrink with
+   the screen (clamp) instead of the stepper dropping under the product.
+   On a phone the line is about 330px at its smallest, so it fits down to
+   the narrowest phones; a long name wraps within its own column. Lines
+   only (the catalog's stepper keeps its size). */
+.line {
+  gap: clamp(var(--space-2), 2.5vw, var(--space-4));
+}
 
-  .line__product {
-    grid-column: 1 / -1;
-  }
+.line__product {
+  grid-template-columns: clamp(2.25rem, 10vw, 3rem) minmax(0, 1fr);
+  gap: clamp(var(--space-2), 2vw, var(--space-3));
+}
 
-  .line--static .line__product {
-    grid-column: auto;
-  }
+.line__image {
+  width: clamp(2.25rem, 10vw, 3rem);
+  height: clamp(2.25rem, 10vw, 3rem);
+}
+
+.line .quantity-stepper {
+  grid-template-columns:
+    clamp(2.25rem, 9vw, var(--size-control-sm))
+    clamp(2.5rem, 11vw, 4.5rem)
+    clamp(2.25rem, 9vw, var(--size-control-sm));
+}
+
+.line .quantity-stepper__button {
+  min-width: 0;
+  min-height: clamp(2.25rem, 9vw, var(--size-control-sm));
+}
+
+.line__remove-button {
+  width: clamp(2rem, 8vw, 2.5rem);
+  height: clamp(2rem, 8vw, 2.5rem);
 }
 
 @media (prefers-reduced-motion: reduce) {
