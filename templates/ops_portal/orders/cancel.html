@@ -1,16 +1,15 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block title %}{{ title }} | SwedeSweets{% endblock %}
 
 {% block content %}
-<section class="content-section content-section--wide content-section--detail">
-  <article class="content-card content-card--wide {{ detail_card.content_card_class }}">
-    {% include "includes/ui/detail_card_header.html" with header=detail_card.header %}
+<section class="page-section" aria-labelledby="ops-order-title">
+  <div class="page page--centered page--wide">
+    {% include "ops_portal/orders/includes/order_heading.html" %}
 
-    {% include "includes/ui/detail_panels.html" with detail_panels=detail_card.panels %}
+    {% include "ops_portal/orders/includes/order_lines.html" %}
 
-    <form method="post" class="form-card form-card--embedded" novalidate>
+    <form method="post" class="order-cancel-form" novalidate>
       {% csrf_token %}
 
       {% if order.channel == "retail" and order.status == "placed" %}
@@ -23,35 +22,26 @@
         </div>
       {% endif %}
 
-      {% if form.non_field_errors %}
-        <div class="form-errors" role="alert">
-          {% for error in form.non_field_errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
-        </div>
-      {% endif %}
+      {% include "registration/includes/form_errors.html" with form=form only %}
 
       <div class="form-grid">
         {% include "includes/ui/form_field.html" with field=form.reason only %}
         {% include "includes/ui/form_field.html" with field=form.note only %}
       </div>
 
-      <div class="form-actions">
-        <button class="button button--md button--solid button--tone-danger" type="submit">
+      <div class="form-actions page__actions page-actions">
+        <button class="button button--md button--solid button--tone-danger page__submit" type="submit">
           {{ submit_label }}
         </button>
 
-        <a class="button button--md button--ghost button--tone-neutral" href="{{ cancel_url }}">
-          Back
-        </a>
+        <div class="page-actions__links">
+          <a class="quiet-link" href="{{ cancel_url }}">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+            Back
+          </a>
+        </div>
       </div>
     </form>
-  </article>
+  </div>
 </section>
-{% endblock %}
-
-{% block scripts %}
-  {{ block.super }}
-  <script src="{% static 'js/tabs.js' %}" defer></script>
-  <script src="{% static 'js/clickable_rows.js' %}" defer></script>
 {% endblock %}

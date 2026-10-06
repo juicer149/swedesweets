@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 
 from django.urls import reverse
 
@@ -11,12 +12,8 @@ from common.detail_cards import (
     ACTION_TONE_DELIVER,
     ACTION_TONE_PACK,
     DetailAction,
-    DetailCard,
-    DetailHeader,
-    DetailPanel,
     build_secondary_get_action,
 )
-from common.ui import UiCard
 from fulfillment.datatypes import PickLine
 from fulfillment.selectors import get_packaging_list
 from ops_portal.orders.access import (
@@ -28,13 +25,11 @@ from ops_portal.orders.access import (
 from ops_portal.orders.checklist import list_checked_allocation_ids_for_order
 from ops_portal.orders.presentation import (
     maps_directions_href,
-    order_detail_card_class,
-    order_detail_status_class,
     order_status_icon,
     quantity_label,
 )
-from ops_portal.products.mini_cards import build_product_quantity_mini_card
 from orders.models import Order, OrderLine
+from products.images import product_image_url
 from products.models import Product
 
 CUSTOMER_LABEL = "Customer"
@@ -49,7 +44,14 @@ class OrderContentLine:
     quantity_label: str
     unit: str
     catalog_label: str
-    card: UiCard
+    image_url: str | None
+
+
+@dataclass(frozen=True, slots=True)
+class OrderDate:
+    label: str
+    value: datetime
+    by: object | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,15 +61,21 @@ class OrderDetailContext:
     product_count: int
     total_quantity: int
     total_quantity_label: str
-    detail_card: DetailCard
+    contents_label: str
+    dates: tuple[OrderDate, ...]
+    status_label: str
+    status_icon: str
     title: str
     description: str
     cancel_url: str
+    order_url: str
     customer_maps_href: str
     customer_detail_href: str | None
     buyer_label: str
     pick_lines: list[PickLine]
     checked_allocation_ids: frozenset[int]
+    primary_action: DetailAction | None
+    secondary_actions: tuple[DetailAction, ...]
 
     def as_dict(self) -> dict[str, object]:
         return {
@@ -76,15 +84,21 @@ class OrderDetailContext:
             "product_count": self.product_count,
             "total_quantity": self.total_quantity,
             "total_quantity_label": self.total_quantity_label,
-            "detail_card": self.detail_card,
+            "contents_label": self.contents_label,
+            "dates": self.dates,
+            "status_label": self.status_label,
+            "status_icon": self.status_icon,
             "title": self.title,
             "description": self.description,
             "cancel_url": self.cancel_url,
+            "order_url": self.order_url,
             "customer_maps_href": self.customer_maps_href,
             "customer_detail_href": self.customer_detail_href,
             "buyer_label": self.buyer_label,
             "pick_lines": self.pick_lines,
             "checked_allocation_ids": self.checked_allocation_ids,
+            "primary_action": self.primary_action,
+            "secondary_actions": self.secondary_actions,
         }
 
 
@@ -94,20 +108,18 @@ def build_order_detail_context(
     title: str,
     description: str,
     cancel_url: str,
-    active_panel: str,
     primary_action: DetailAction | None = None,
-    secondary_action: DetailAction | None = None,
     secondary_actions: tuple[DetailAction, ...] = (),
     pick_lines: list[PickLine] | None = None,
 ) -> OrderDetailContext:
-    """Build the shared order detail card context.
+    """Build the context shared by the order's detail, pack, deliver and
+    cancel pages.
 
-    The Checklist tab only makes sense while the order is PLACED - that
-    is the only status where reservations are still RESERVED rather
-    than CONSUMED (packed) or released (delivered/cancelled). pick_lines
-    and checked_allocation_ids are both skipped entirely for any other
-    status, so the tab never appears (see _build_order_detail_panels)
-    and no unnecessary queries run.
+    The checklist only makes sense while the order is PLACED - that is
+    the only status where reservations are still RESERVED rather than
+    CONSUMED (packed) or released (delivered/cancelled). pick_lines and
+    checked_allocation_ids are both skipped entirely for any other
+    status, so no unnecessary queries run.
 
     pack() passes its own pre-fetched pick_lines (it already needs the
     list to decide whether the confirm button is disabled), which
@@ -125,37 +137,60 @@ def build_order_detail_context(
         else frozenset()
     )
 
-    order_lines = list(order.lines.select_related("product").all())
+    order_lines = list(
+        order.lines.select_related(
+            "product",
+            "product__profile",
+        ).all()
+    )
     content_lines = _build_content_lines(order_lines)
     product_count = len(content_lines)
     total_quantity = sum(line.quantity for line in content_lines)
+    total_quantity_text = quantity_label(total_quantity)
 
     return OrderDetailContext(
         order=order,
         content_lines=content_lines,
         product_count=product_count,
         total_quantity=total_quantity,
-        total_quantity_label=quantity_label(total_quantity),
-        detail_card=DetailCard(
-            header=_build_order_header(order),
-            panels=_build_order_detail_panels(
-                order=order,
-                active_panel=active_panel,
-                pick_lines=pick_lines,
-            ),
-            content_card_class=order_detail_card_class(order.status),
-            primary_action=primary_action,
-            secondary_action=secondary_action,
-            secondary_actions=secondary_actions,
+        total_quantity_label=total_quantity_text,
+        contents_label=(
+            f"{product_count} product{'' if product_count == 1 else 's'}"
+            f" · {total_quantity_text}"
         ),
+        dates=_order_dates(order),
+        status_label=order.get_status_display(),
+        status_icon=order_status_icon(order.status),
         title=title,
         description=description,
         cancel_url=cancel_url,
+        order_url=order_detail_href(order),
         customer_maps_href=maps_directions_href(order.customer_address),
         customer_detail_href=customer_detail_href(order),
         buyer_label=buyer_label(order),
         pick_lines=pick_lines,
         checked_allocation_ids=checked_allocation_ids,
+        primary_action=primary_action,
+        secondary_actions=secondary_actions,
+    )
+
+
+def _order_dates(order: Order) -> tuple[OrderDate, ...]:
+    """Every step the order has passed, in order, with who did it."""
+
+    steps = (
+        ("Created", order.created_at, None),
+        ("Placed", order.placed_at, order.placed_by),
+        ("Last edited", order.edited_at, order.edited_by),
+        ("Packed", order.packed_at, order.packed_by),
+        ("Delivered", order.delivered_at, order.delivered_by),
+        ("Cancelled", order.cancelled_at, order.cancelled_by),
+    )
+
+    return tuple(
+        OrderDate(label=label, value=value, by=by)
+        for label, value, by in steps
+        if value is not None
     )
 
 
@@ -296,71 +331,6 @@ def build_deliver_action() -> DetailAction:
     )
 
 
-def _build_order_header(order: Order) -> DetailHeader:
-    return DetailHeader(
-        eyebrow=buyer_label(order),
-        title=order.customer_name,
-        status_label=order.get_status_display(),
-        status_class=order_detail_status_class(order.status),
-        status_icon=order_status_icon(order.status),
-    )
-
-
-def _build_order_detail_panels(
-    *,
-    order: Order,
-    active_panel: str,
-    pick_lines: list[PickLine],
-) -> tuple[DetailPanel, ...]:
-    panels = [
-        DetailPanel(
-            key="order",
-            label="Order",
-            summary=f"#{order.id}",
-            body_template="ops_portal/orders/includes/detail_panel_order.html",
-            icon="cart",
-            is_active=active_panel == "order",
-        ),
-    ]
-
-    if order.status == Order.Status.PLACED:
-        panels.append(
-            DetailPanel(
-                key="checklist",
-                label="Checklist",
-                summary=_pick_lines_summary(pick_lines),
-                body_template="ops_portal/orders/includes/detail_panel_checklist.html",
-                icon="box",
-                is_active=active_panel == "checklist",
-            )
-        )
-
-    panels.append(
-        DetailPanel(
-            key="customer",
-            label=buyer_label(order),
-            summary=order.customer_name,
-            body_template="ops_portal/orders/includes/detail_panel_customer.html",
-            icon="users",
-            is_active=active_panel == "customer",
-        )
-    )
-
-    return tuple(panels)
-
-
-def _pick_lines_summary(pick_lines: list[PickLine]) -> str:
-    count = len(pick_lines)
-
-    if count == 0:
-        return "No lines"
-
-    if count == 1:
-        return "1 line"
-
-    return f"{count} lines"
-
-
 def order_detail_href(order: Order) -> str:
     return reverse("ops_orders:detail", kwargs={"order_id": order.pk})
 
@@ -422,11 +392,7 @@ def _build_content_lines(lines: list[OrderLine]) -> list[OrderContentLine]:
                 quantity_label=quantity_text,
                 unit=line.get_unit_display(),
                 catalog_label=line.product.catalog_label,
-                card=build_product_quantity_mini_card(
-                    product=line.product,
-                    product_href=line_product_detail_href,
-                    quantity_label=quantity_text,
-                ),
+                image_url=product_image_url(line.product),
             )
         )
 

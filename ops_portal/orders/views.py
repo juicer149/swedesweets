@@ -423,7 +423,6 @@ def pack(
         cancel_url=reverse(
             "ops_orders:index"
         ),
-        active_panel="checklist",
         pick_lines=pick_lines,
         primary_action=build_pack_action(
             is_disabled=not pick_lines,
@@ -543,7 +542,6 @@ def deliver(
         cancel_url=reverse(
             "ops_orders:index"
         ),
-        active_panel="order",
         primary_action=build_deliver_action(),
     ).as_dict()
 
@@ -570,7 +568,6 @@ def detail(
         cancel_url=reverse(
             "ops_orders:index"
         ),
-        active_panel="order",
         primary_action=build_order_detail_primary_action(
             order=order,
             role_spec=request.role_spec,

@@ -6,7 +6,7 @@ PYTHON := .venv/bin/python
 PIP := .venv/bin/pip
 MANAGE := $(PYTHON) manage.py
 
-.PHONY: help venv install setup run check lint migrate makemigrations superuser seed reset-demo shell django-shell collectstatic messages compilemessages i18n test test-v clean
+.PHONY: help venv install setup run check lint migrate makemigrations superuser seed reset-demo shell django-shell collectstatic messages compilemessages i18n test test-v clean css-unused
 
 help:
 	@echo "SwedeSweets Ops commands"
@@ -34,6 +34,7 @@ help:
 	@echo "  make shell           Run shell_plus with IPython"
 	@echo "  make django-shell    Run default Django shell"
 	@echo "  make lint            Run ruff"
+	@echo "  make css-unused      List CSS classes nothing uses any more"
 	@echo "  make test            Run tests"
 	@echo "  make test-v          Run verbose tests"
 	@echo "  make clean           Remove Python/tool caches"
@@ -89,6 +90,9 @@ django-shell:
 
 lint:
 	.venv/bin/ruff check .
+
+css-unused:
+	$(PYTHON) tools/css_unused.py
 
 test: collectstatic
 	$(PYTHON) -m pytest

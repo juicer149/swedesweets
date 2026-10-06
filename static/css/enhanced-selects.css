@@ -246,12 +246,6 @@ select.ts-hidden-accessible {
    Native-looking wrapper cleanup
    ============================================================================= */
 
-.ts-wrapper.form-control,
-.ts-wrapper.form-select {
-  padding: 0;
-  border: 0;
-}
-
 .ts-wrapper.single .ts-control::after {
   right: 1rem;
 

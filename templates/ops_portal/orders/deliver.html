@@ -1,32 +1,25 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block title %}{{ title }} | SwedeSweets{% endblock %}
 
 {% block content %}
-<section class="content-section content-section--wide content-section--detail">
-  <article class="content-card content-card--wide {{ detail_card.content_card_class }}">
-    {% include "includes/ui/detail_card_header.html" with header=detail_card.header %}
+<section class="page-section" aria-labelledby="ops-order-title">
+  <div class="page page--centered page--wide">
+    {% include "ops_portal/orders/includes/order_heading.html" %}
 
-    <section class="delivery-confirmation" aria-labelledby="delivery-confirmation-title">
-      <div class="order-lines__header">
-        <h2 id="delivery-confirmation-title">Delivery confirmation</h2>
-        <p>Confirm that this packed order has reached the customer.</p>
-      </div>
+    {% include "ops_portal/orders/includes/order_buyer.html" %}
 
-      {% include "includes/ui/detail_panels.html" with detail_panels=detail_card.panels %}
+    <section class="order-section" aria-labelledby="ops-order-products-title">
+      <h2 id="ops-order-products-title" class="order-section__title">Products</h2>
+
+      {% include "ops_portal/orders/includes/order_lines.html" %}
     </section>
 
     <form method="post">
       {% csrf_token %}
-      {% include "includes/ui/detail_actions.html" with primary_action=detail_card.primary_action secondary_action=detail_card.secondary_action secondary_actions=detail_card.secondary_actions %}
-    </form>
-  </article>
-</section>
-{% endblock %}
 
-{% block scripts %}
-  {{ block.super }}
-  <script src="{% static 'js/tabs.js' %}" defer></script>
-  <script src="{% static 'js/clickable_rows.js' %}" defer></script>
+      {% include "ops_portal/orders/includes/order_actions.html" with back_url=order_url back_label="Back to order" %}
+    </form>
+  </div>
+</section>
 {% endblock %}

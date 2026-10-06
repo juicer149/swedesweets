@@ -4,28 +4,23 @@
 {% block title %}{{ title }} | SwedeSweets{% endblock %}
 
 {% block content %}
-<section class="content-section content-section--wide content-section--detail">
-  <article class="content-card content-card--wide {{ detail_card.content_card_class }}">
-    {% include "includes/ui/detail_card_header.html" with header=detail_card.header %}
+<section class="page-section" aria-labelledby="ops-order-title">
+  <div class="page page--centered page--wide">
+    {% include "ops_portal/orders/includes/order_heading.html" %}
 
-    {% include "includes/ui/detail_panels.html" with detail_panels=detail_card.panels %}
-
-    <p class="form-help">
-      Check off every product in the checklist before confirming this order as packed.
-    </p>
+    {% include "ops_portal/orders/includes/order_checklist.html" %}
 
     <form method="post">
       {% csrf_token %}
-      {% include "includes/ui/detail_actions.html" with primary_action=detail_card.primary_action secondary_action=detail_card.secondary_action secondary_actions=detail_card.secondary_actions %}
+
+      {% include "ops_portal/orders/includes/order_actions.html" with back_url=order_url back_label="Back to order" %}
     </form>
-  </article>
+  </div>
 </section>
 {% endblock %}
 
 {% block scripts %}
   {{ block.super }}
-  <script src="{% static 'js/tabs.js' %}" defer></script>
   <script src="{% static 'js/pack_checklist.js' %}" defer></script>
   <script src="{% static 'js/pack_checklist_toggle.js' %}" defer></script>
-  <script src="{% static 'js/clickable_rows.js' %}" defer></script>
 {% endblock %}

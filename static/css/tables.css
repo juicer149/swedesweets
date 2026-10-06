@@ -171,36 +171,6 @@
   color: var(--color-neutral-600);
 }
 
-/*
-  Tables with links inside cells should not behave like clickable workflow rows.
-  Use this for customers and similar contact tables.
-*/
-
-.data-table--link-cells tbody tr {
-  filter: none;
-  transition: none;
-}
-
-.data-table--link-cells tbody tr:hover {
-  filter: none;
-  transform: none;
-}
-
-.table-card .data-table--link-cells tbody tr:hover > * {
-  background: transparent;
-}
-
-
-
-/* =============================================================================
-   Link-cell helpers
-   ============================================================================= */
-
-.action-cell {
-  text-align: right;
-  white-space: nowrap;
-}
-
 /* =============================================================================
    Boolean / attribute table icons
    ============================================================================= */

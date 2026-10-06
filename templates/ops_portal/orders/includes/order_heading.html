@@ -1,0 +1,18 @@
+{% comment %}
+  The order's title, with status (in its colour), buyer and contents under it.
+  Context: title, order, status_icon, status_label, contents_label
+{% endcomment %}
+<header class="page__heading">
+  <h1 id="ops-order-title" class="page__lead">{{ title }}</h1>
+
+  <p class="page__note order-status order-status--{{ order.status }}">
+    <span class="order-status__state">
+      {% include "includes/ui/icon_block.html" with name=status_icon size="sm" only %}
+      {{ status_label }}
+    </span>
+    <span aria-hidden="true">·</span>
+    <span>{{ order.customer_name }}</span>
+    <span aria-hidden="true">·</span>
+    <span>{{ contents_label }}</span>
+  </p>
+</header>

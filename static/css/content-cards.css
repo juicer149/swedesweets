@@ -41,20 +41,12 @@
   margin-inline: auto;
 }
 
-.content-card--placed {
-  box-shadow: var(--shadow-content-card-placed);
-}
-
 .content-card--pack {
   box-shadow: var(--shadow-content-card-pack);
 }
 
 .content-card--deliver {
   box-shadow: var(--shadow-content-card-deliver);
-}
-
-.content-card--danger {
-  box-shadow: var(--shadow-content-card-danger);
 }
 
 .content-card--muted {

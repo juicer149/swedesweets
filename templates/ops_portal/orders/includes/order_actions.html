@@ -1,0 +1,49 @@
+{% comment %}
+  The order's one big action, then quiet links (edit / cancel, back).
+  On the pack and deliver pages this sits inside their POST form; the
+  primary action is then a submit button.
+
+  Context: primary_action, secondary_actions, back_url, back_label
+{% endcomment %}
+<div class="form-actions page__actions page-actions">
+  {% if primary_action %}
+    {% if primary_action.method == "post" %}
+      <button
+        class="button button--md button--solid button--tone-{{ primary_action.tone }} button--with-icon page__submit"
+        type="submit"
+        {% if primary_action.client_behavior %}data-action-behavior="{{ primary_action.client_behavior }}"{% endif %}
+        {% if primary_action.is_disabled %}disabled{% endif %}
+      >
+        {% if primary_action.icon %}
+          <span class="button__icon" aria-hidden="true">
+            {% include "includes/ui/icon.html" with name=primary_action.icon only %}
+          </span>
+        {% endif %}
+        <span class="button__label">{{ primary_action.label }}</span>
+      </button>
+    {% else %}
+      <a
+        class="button button--md button--solid button--tone-{{ primary_action.tone }} button--with-icon page__submit"
+        href="{{ primary_action.href }}"
+      >
+        {% if primary_action.icon %}
+          <span class="button__icon" aria-hidden="true">
+            {% include "includes/ui/icon.html" with name=primary_action.icon only %}
+          </span>
+        {% endif %}
+        <span class="button__label">{{ primary_action.label }}</span>
+      </a>
+    {% endif %}
+  {% endif %}
+
+  <div class="page-actions__links">
+    {% for action in secondary_actions %}
+      <a class="quiet-link" href="{{ action.href }}">{{ action.label }}</a>
+    {% endfor %}
+
+    <a class="quiet-link" href="{{ back_url }}">
+      {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+      {{ back_label }}
+    </a>
+  </div>
+</div>

@@ -27,19 +27,6 @@
 
 
 /* =============================================================================
-   Optional form wrappers
-
-   Some server-rendered flows use one form per stepper action. display: contents
-   keeps those forms semantically present without changing the visual grid.
-   ============================================================================= */
-
-.quantity-stepper__form {
-  display: contents;
-  margin: 0;
-}
-
-
-/* =============================================================================
    Increment / decrement buttons
    ============================================================================= */
 

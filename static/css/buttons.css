@@ -467,27 +467,6 @@
 }
 
 
-.button--outline {
-  color: var(--button-outline-text);
-  background: transparent;
-  border-color: var(--button-outline-border);
-}
-
-.button--outline:hover,
-.button--outline:focus-visible {
-  background: var(--button-outline-bg-hover);
-  border-color: var(--button-outline-border-hover);
-  box-shadow: var(--button-outline-shadow-hover);
-  transform: var(--transform-lift-scale);
-}
-
-.button--outline:active {
-  background: var(--button-outline-bg-active);
-  box-shadow: var(--shadow-pressed);
-  transform: translateY(0);
-}
-
-
 .button--ghost {
   color: var(--button-soft-text);
   background: transparent;
@@ -544,51 +523,6 @@
 
 .button--text[hidden] {
   display: none;
-}
-
-
-/* =============================================================================
-   Hero action buttons
-
-   Used on dark/high-emphasis surfaces.
-   Consumes hero variables from tone classes.
-   ============================================================================= */
-
-.button--hero-action {
-  justify-content: flex-start;
-  min-width: 250px;
-  min-height: var(--size-control-xl);
-  padding-inline: var(--space-6);
-  gap: var(--space-4);
-
-  color: var(--button-hero-text);
-  background: var(--button-hero-bg);
-  border: 1.5px solid var(--button-hero-border);
-}
-
-.button--hero-action .button__icon {
-  color: var(--button-hero-border);
-}
-
-.button--hero-action:hover,
-.button--hero-action:focus-visible {
-  color: var(--color-primary-50);
-  background: var(--button-hero-bg-hover);
-  border-color: var(--button-hero-bg-hover);
-  box-shadow: var(--button-hero-shadow-hover);
-  transform: var(--transform-lift-scale-lg);
-}
-
-.button--hero-action:hover .button__icon,
-.button--hero-action:focus-visible .button__icon {
-  color: currentColor;
-}
-
-.button--hero-action:active {
-  background: var(--button-hero-bg-active);
-  border-color: var(--button-hero-bg-active);
-  box-shadow: var(--shadow-pressed);
-  transform: translateY(0);
 }
 
 

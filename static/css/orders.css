@@ -31,11 +31,6 @@
   font-weight: 400;
 }
 
-.order-lines__list {
-  display: grid;
-  gap: var(--space-4);
-}
-
 .order-line {
   display: grid;
   gap: var(--space-4);
@@ -46,51 +41,6 @@
   background: var(--color-white);
   border: var(--border-subtle);
   border-radius: var(--radius-card-inner);
-}
-
-.order-line__legend {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-
-  width: calc(100% - var(--space-4));
-  padding-inline: var(--space-2);
-
-  color: var(--color-primary-900);
-  font-size: var(--font-size-14);
-  font-weight: 800;
-}
-
-.order-line__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(7rem, 10rem);
-  align-items: start;
-  gap: var(--space-4);
-}
-
-.order-line__grid--with-unit {
-  grid-template-columns:
-    minmax(0, 1fr)
-    minmax(8rem, 12rem)
-    minmax(7rem, 10rem);
-}
-
-.order-line__grid .form-field:has(input[name$="-quantity"]) {
-  max-width: 10rem;
-}
-
-.order-line__grid .form-field:has(input[name$="-quantity"]) input {
-  width: 100%;
-}
-
-.order-lines__controls {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.order-lines__add-button {
-  width: fit-content;
 }
 
 
@@ -267,57 +217,50 @@
 }
 
 /* =============================================================================
-   Pack checklist
+   Pack checklist (calm design)
 
-   Order-specific pick checklist used by the pack-order page.
+   One row per batch, divided by hairlines like .lines: checkbox, product
+   with batch and location under it, quantity on the right. A checked row
+   turns the pack colour. The whole row is the label, so it is easy to tap.
    ============================================================================= */
 
-.pack-list {
-  display: grid;
-  gap: var(--space-4);
+.pack-list__hint {
+  margin-bottom: var(--space-3);
 }
 
 .pack-list__items {
   display: grid;
-  gap: var(--space-3);
 }
 
 .pack-line {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: start;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-2);
 
-  color: var(--color-primary-900);
-  background: var(--color-white);
-  border: var(--border-subtle);
-  border-radius: var(--radius-card-inner);
-
+  border-radius: var(--radius-control);
   cursor: pointer;
-
-  transition: var(--transition-lift);
+  transition: background var(--motion-fast);
 }
 
-.pack-line:hover {
-  border-color: var(--color-primary-500);
-  box-shadow: var(--shadow-hover-lift);
-  transform: var(--transform-lift);
+.pack-line + .pack-line {
+  border-top: 1px solid var(--color-neutral-200);
 }
 
 .pack-line:has(.pack-line__checkbox:checked) {
   background: var(--color-action-pack-light-bg);
-  border-color: var(--color-action-pack);
 }
 
 .pack-line:has(.pack-line__checkbox:focus-visible) {
-  box-shadow: var(--shadow-focus-info);
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
 }
 
 .pack-line__checkbox {
-  width: 1.15rem;
-  height: 1.15rem;
-  margin-top: 0.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
 
   accent-color: var(--color-action-pack);
   cursor: pointer;
@@ -325,77 +268,38 @@
 
 .pack-line__content {
   display: grid;
-  gap: var(--space-3);
+  gap: 2px;
   min-width: 0;
-}
-
-.pack-line__quantity {
-  display: block;
-
-  color: var(--color-primary-950);
-  font-size: var(--font-size-18);
-  font-weight: 800;
-  line-height: 1.25;
-  overflow-wrap: anywhere;
 }
 
 .pack-line__product {
-  display: block;
-  min-width: 0;
-
-  color: var(--color-primary-900);
-  font-size: var(--font-size-18);
+  color: var(--color-neutral-900);
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.35;
   overflow-wrap: anywhere;
 }
 
 .pack-line__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-1);
-
   color: var(--color-neutral-600);
-  font-size: var(--font-size-12);
+  font-size: var(--font-size-14);
+}
+
+.pack-line__quantity {
+  color: var(--color-neutral-900);
   font-weight: 700;
-  line-height: 1.35;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
-.pack-line__meta span {
-  display: inline-flex;
-  align-items: center;
-
-  width: fit-content;
-  min-height: 26px;
-  padding: 0.2rem 0.55rem;
-
-  color: var(--color-neutral-600);
-  background: var(--color-primary-50);
-  border: var(--border-subtle);
-  border-radius: var(--radius-pill);
-}
-
-.pack-line:has(.pack-line__checkbox:checked) .pack-line__quantity,
-.pack-line:has(.pack-line__checkbox:checked) .pack-line__product {
+.pack-line:has(.pack-line__checkbox:checked) .pack-line__product,
+.pack-line:has(.pack-line__checkbox:checked) .pack-line__quantity {
   color: var(--color-action-pack-on-light);
 }
 
-.pack-line:has(.pack-line__checkbox:checked) .pack-line__meta span {
-  background: rgb(var(--color-status-info) / 0.06);
-  border-color: rgb(var(--color-status-info) / 0.18);
-}
-
-
-/* =============================================================================
-   Delivery confirmation
-
-   Order-specific confirmation section used by the deliver-order page.
-   ============================================================================= */
-
-.delivery-confirmation {
-  display: grid;
-  gap: var(--space-4);
+@media (prefers-reduced-motion: reduce) {
+  .pack-line {
+    transition: none;
+  }
 }
 
 
@@ -512,18 +416,6 @@
    ============================================================================= */
 
 @media (max-width: 900px) {
-  .order-line__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .order-lines__controls {
-    width: 100%;
-  }
-
-  .order-lines__add-button {
-    width: 100%;
-    justify-content: center;
-  }
 
   .pack-line {
     gap: var(--space-3);
@@ -656,6 +548,34 @@
   margin: 0;
   color: var(--color-neutral-800);
   font-variant-numeric: tabular-nums;
+}
+
+
+/* Order (ops): a small titled section under the lines (buyer, products on
+   the deliver page). A name with no page to link to reads as plain text. */
+.order-section {
+  margin-top: var(--space-8);
+}
+
+.order-section__title {
+  margin: 0 0 var(--space-3);
+  color: var(--color-neutral-800);
+  font-size: var(--font-size-16);
+  font-weight: 600;
+  text-align: center;
+}
+
+.order-buyer {
+  font-size: var(--font-size-16);
+}
+
+span.icon-rows__link,
+span.icon-rows__link .icon-rows__icon {
+  color: var(--color-neutral-800);
+}
+
+.order-cancel-form {
+  margin-top: var(--space-6);
 }
 
 

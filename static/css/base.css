@@ -127,31 +127,6 @@ p {
   --icon-stroke-width: 1.05;
 }
 
-.ui-icon-svg--stroke-sm {
-  --icon-stroke-width: 1.25;
-}
-
-.ui-icon-svg--stroke-md {
-  --icon-stroke-width: 1.8;
-}
-
-.ui-icon-svg--stroke-lg {
-  --icon-stroke-width: 2.1;
-}
-
-/* Generic scale helpers */
-.ui-icon-svg--scale-sm {
-  --icon-scale: 0.92;
-}
-
-.ui-icon-svg--scale-lg {
-  --icon-scale: 1.18;
-}
-
-.ui-icon-svg--scale-xl {
-  --icon-scale: 1.32;
-}
-
 /* Icon-specific optical corrections */
 .ui-icon-svg--users {
   --icon-stroke-width: 1.05;

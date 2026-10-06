@@ -32,13 +32,6 @@ ORDER_MOBILE_STATUS_CLASS_BY_STATUS = {
     Order.Status.CANCELLED: "ui-card-order-status status-text--danger",
 }
 
-ORDER_DETAIL_STATUS_CLASS_BY_STATUS = {
-    Order.Status.DRAFT: "status-text status-text--muted",
-    Order.Status.PLACED: "status-text status-text--warning",
-    Order.Status.PACKED: "status-text status-text--info",
-    Order.Status.DELIVERED: "status-text status-text--success",
-    Order.Status.CANCELLED: "status-text status-text--danger",
-}
 
 ORDER_STATUS_ICON_BY_STATUS = {
     Order.Status.DRAFT: "cart",
@@ -62,12 +55,6 @@ ORDER_ACTION_LINK_CLASS_BY_STATUS = {
     Order.Status.DRAFT: "ui-card-order-link status-text--muted",
 }
 
-ORDER_DETAIL_CARD_CLASS_BY_STATUS = {
-    Order.Status.PLACED: "content-card--placed",
-    Order.Status.PACKED: "content-card--pack",
-    Order.Status.DELIVERED: "content-card--deliver",
-    Order.Status.CANCELLED: "content-card--danger",
-}
 
 BUSINESS_ORDER_STATUS_LABEL_BY_STATUS = {
     Order.Status.DRAFT: _("Draft"),
@@ -105,17 +92,6 @@ def order_mobile_status_class(status: str) -> str:
         status,
         ORDER_MOBILE_STATUS_CLASS_BY_STATUS[Order.Status.DRAFT],
     )
-
-
-def order_detail_status_class(status: str) -> str:
-    return ORDER_DETAIL_STATUS_CLASS_BY_STATUS.get(
-        status,
-        ORDER_DETAIL_STATUS_CLASS_BY_STATUS[Order.Status.DRAFT],
-    )
-
-
-def order_detail_card_class(status: str) -> str:
-    return ORDER_DETAIL_CARD_CLASS_BY_STATUS.get(status, "")
 
 
 def order_status_icon(status: str) -> str:

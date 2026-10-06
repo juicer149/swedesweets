@@ -2,18 +2,6 @@
    Responsive
    ============================================================================= */
 
-@media (max-width: 1020px) {
-  .dashboard-summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 900px) {
-  .dashboard-summary-card {
-    min-height: auto;
-    padding: var(--space-5);
-  }
-}
 
 @media (max-width: 760px) {
 
@@ -33,37 +21,6 @@
     width: min(100% - 1rem, var(--width-page));
   }
 
-  .ops-hero {
-    padding: var(--space-10) var(--space-5);
-  }
-
-  .ops-hero__nav {
-    gap: var(--space-3);
-  }
-
-  .ops-hero__nav .button {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .ops-hero__metrics {
-    display: grid;
-    gap: var(--space-3);
-    margin-top: var(--space-6);
-  }
-
-  .ops-hero__metric {
-    justify-content: center;
-  }
-
-  .ops-hero__metric:not(:last-child)::after {
-    content: none;
-  }
-
-  .dashboard-summary-grid {
-    grid-template-columns: 1fr;
-  }
-
   .form-grid {
     grid-template-columns: 1fr;
   }
@@ -81,35 +38,5 @@
   .form-actions .button {
     width: 100%;
     min-width: 0;
-  }
-
-  .order-line__legend {
-    width: 100%;
-  }
-
-  .order-line__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .order-lines__controls,
-  .order-lines__add-button {
-    width: 100%;
-  }
-
-  .pack-line {
-    padding: var(--space-3);
-  }
-
-  .pack-line__meta {
-    display: grid;
-    gap: var(--space-1);
-  }
-
-  .pack-line__meta span {
-    width: fit-content;
-  }
-
-  .delivery-summary {
-    grid-template-columns: 1fr;
   }
 }

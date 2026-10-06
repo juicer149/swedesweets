@@ -49,10 +49,6 @@ button.text-link {
   outline-offset: 5px;
 }
 
-.text-link--light {
-  color: var(--color-primary-50);
-}
-
 .text-link--table-sort {
   gap: var(--space-1);
   color: inherit;
