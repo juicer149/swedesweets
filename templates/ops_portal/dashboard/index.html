@@ -13,7 +13,10 @@
         {% for queue in dashboard_queues %}
           <details class="disclosure dashboard-queue" data-smooth data-smooth-group="dashboard-queues">
             <summary class="disclosure__summary">
-              <span>{{ queue.title }}</span>
+              <span class="dashboard-queue__title">
+                {% include "includes/ui/icon_block.html" with name=queue.icon size="md" class_name="dashboard-queue__icon" only %}
+                {{ queue.title }}
+              </span>
               <span class="dashboard-queue__end">
                 <span class="dashboard-queue__count dashboard-queue__count--{{ queue.tone }}">{{ queue.count }}</span>
                 {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="disclosure__chevron" only %}

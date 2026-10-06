@@ -50,6 +50,7 @@ class DashboardQueueSpec:
     title: str
     capability: Capability
     tone: str
+    icon: str
     view_all_label: str
 
     count_items: Callable[[], int]
@@ -63,6 +64,7 @@ class DashboardQueueSpec:
             title=self.title,
             count=count,
             tone=self.tone,
+            icon=self.icon,
             items=tuple(self.build_item(item) for item in self.list_items()),
             view_all_href=self.build_view_all_href(),
             view_all_label=self.view_all_label,
@@ -187,6 +189,7 @@ PLACED_ORDERS_QUEUE = DashboardQueueSpec(
     capability=Capability.PACK_ORDERS,
     tone="warning",
     title="Placed orders",
+    icon="box",
     view_all_label="View all placed orders →",
     count_items=count_placed_orders,
     list_items=_list_placed_orders,
@@ -199,6 +202,7 @@ PACKED_ORDERS_QUEUE = DashboardQueueSpec(
     capability=Capability.DELIVER_ORDERS,
     tone="info",
     title="Packed orders",
+    icon="packed",
     view_all_label="View all packed orders →",
     count_items=count_packed_orders,
     list_items=_list_packed_orders,
@@ -211,6 +215,7 @@ EXPIRING_BATCHES_QUEUE = DashboardQueueSpec(
     capability=Capability.VIEW_INVENTORY_RISKS,
     tone="danger",
     title="Expiring batches",
+    icon="hourglass",
     view_all_label="View expiring batches →",
     count_items=count_expiring_batches,
     list_items=_list_expiring_batches,
@@ -223,6 +228,7 @@ LOW_STOCK_QUEUE = DashboardQueueSpec(
     capability=Capability.VIEW_INVENTORY_RISKS,
     tone="warning",
     title="Low stock",
+    icon="trend-down",
     view_all_label="View low stock products →",
     count_items=count_low_stock_products,
     list_items=_list_low_stock_products,

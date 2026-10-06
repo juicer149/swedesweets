@@ -33,6 +33,22 @@
   margin-bottom: var(--space-2);
 }
 
+.dashboard-queue__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* No tone of its own: the row's grey, a step darker, so it marks the
+   queue without competing with the count. */
+.dashboard-queue__icon {
+  color: var(--color-neutral-700);
+}
+
+.dashboard-queue[open] .dashboard-queue__icon {
+  color: var(--color-neutral-900);
+}
+
 .dashboard-queue__end {
   display: inline-flex;
   align-items: center;

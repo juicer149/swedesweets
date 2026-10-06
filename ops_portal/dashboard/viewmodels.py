@@ -37,6 +37,7 @@ class DashboardQueue:
     title: str
     count: int
     tone: str
+    icon: str
     items: tuple[DashboardQueueItem, ...]
     view_all_href: str
     view_all_label: str

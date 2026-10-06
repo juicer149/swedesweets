@@ -159,6 +159,10 @@ p {
   --icon-scale: 1.2;
 }
 
+.ui-icon-svg--hourglass {
+  --icon-scale: 1.1;
+}
+
 .ui-icon-svg--x {
   --icon-scale: 1.02;
   --icon-stroke-width: 1.9;
