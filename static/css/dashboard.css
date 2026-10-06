@@ -70,7 +70,7 @@
 }
 
 /* An open queue lights its icon in the queue's own colour. */
-.dashboard-queue--placed[open] .dashboard-queue__icon { color: var(--color-accent-600); }
+.dashboard-queue--placed[open] .dashboard-queue__icon { color: var(--color-accent-700); }
 .dashboard-queue--packed[open] .dashboard-queue__icon { color: var(--color-primary-600); }
 .dashboard-queue--expiring[open] .dashboard-queue__icon { color: var(--color-status-danger-text); }
 .dashboard-queue--low-stock[open] .dashboard-queue__icon { color: var(--color-status-warning-text); }
