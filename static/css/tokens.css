@@ -178,6 +178,12 @@
   --color-action-place-light-bg-hover: var(--color-accent-100);
   --color-action-place-light-bg-active: var(--color-accent-200);
 
+  /* The filled yellow button (.button--solid.button--tone-place): the
+     place colour a little see-through, so the one primary action on a
+     page is clear without shouting. Hover brings it back to full colour.
+     Turn the percentage up or down to tune it everywhere. */
+  --color-action-place-solid: color-mix(in srgb, var(--color-action-place) 85%, transparent);
+
   --color-action-pack-light-bg: var(--color-primary-100);
   --color-action-pack-light-bg-hover: var(--color-primary-200);
   --color-action-pack-light-bg-active: var(--color-primary-300);
