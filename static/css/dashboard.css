@@ -33,6 +33,12 @@
   margin-bottom: var(--space-2);
 }
 
+/* Closer to the actions than other pages: the queues are only rows until
+   one opens, so the usual gap would leave a hole. */
+.page .dashboard-queues + .page__actions {
+  margin-top: clamp(var(--space-4), 4dvh, var(--space-6));
+}
+
 .dashboard-queue__title {
   display: inline-flex;
   align-items: center;
@@ -55,13 +61,13 @@
   gap: var(--space-3);
 }
 
+/* Counts are dark; only a danger queue (expiring) gets its red. */
 .dashboard-queue__count {
+  color: var(--color-neutral-800);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
-.dashboard-queue__count--warning { color: var(--color-status-warning-text); }
-.dashboard-queue__count--info { color: var(--color-status-info-text); }
 .dashboard-queue__count--danger { color: var(--color-status-danger-text); }
 
 .dashboard-queue__more {

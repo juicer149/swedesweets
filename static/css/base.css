@@ -151,6 +151,12 @@ p {
   --icon-scale: 1.16;
 }
 
+/* Its own drawing is thin next to the packed box; a heavier line evens
+   them out (beats the svg's .box-cls-1). */
+.ui-icon-svg--box path {
+  stroke-width: 11px;
+}
+
 .ui-icon-svg--packed {
   --icon-scale: 1.12;
 }
@@ -161,6 +167,7 @@ p {
 
 .ui-icon-svg--hourglass {
   --icon-scale: 1.1;
+  --icon-stroke-width: 1.4;
 }
 
 .ui-icon-svg--x {
