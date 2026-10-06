@@ -29,6 +29,16 @@
   width: min(100%, 720px);
 }
 
+/* With every queue closed the page fits the screen and does not scroll;
+   opening one lets it grow and scroll as usual (no overflow: hidden).
+   So no extra room under the section on desktop; phones keep theirs for
+   the bottom bar. */
+@media (min-width: 768px) {
+  body:has(.dashboard-page) .site-main {
+    padding-bottom: 0;
+  }
+}
+
 .dashboard-queues {
   margin-bottom: var(--space-2);
 }

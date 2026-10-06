@@ -41,7 +41,9 @@
       </div>
     </main>
 
-    {% include "includes/footer.html" %}
+    {% if not hide_site_footer %}
+      {% include "includes/footer.html" %}
+    {% endif %}
 
     <script
       src="{% static 'vendor/tom-select/js/tom-select.complete.min.js' %}"

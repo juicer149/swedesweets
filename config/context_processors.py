@@ -247,6 +247,8 @@ def _build_ops_navigation(
         ),
         "navbar_cart": None,
         "account_menu": account_menu,
+        # A work tool: no site footer under the pages.
+        "hide_site_footer": True,
     }
 
 
