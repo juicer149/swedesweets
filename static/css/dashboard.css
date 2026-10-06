@@ -59,17 +59,26 @@
    darker and a touch heavier. */
 .dashboard-queue > .disclosure__summary {
   color: var(--color-neutral-700);
-  font-weight: 650;
+  font-weight: 600;
 }
 
 /* No tone of its own: the title's grey, a step darker, so it marks the
    queue without competing with the count. */
 .dashboard-queue__icon {
-  color: var(--color-neutral-800);
+  color: var(--color-neutral-700);
+  transition: color var(--motion-fast);
 }
 
-.dashboard-queue[open] .dashboard-queue__icon {
-  color: var(--color-neutral-900);
+/* An open queue lights its icon in the queue's own colour. */
+.dashboard-queue--placed[open] .dashboard-queue__icon { color: var(--color-accent-600); }
+.dashboard-queue--packed[open] .dashboard-queue__icon { color: var(--color-primary-600); }
+.dashboard-queue--expiring[open] .dashboard-queue__icon { color: var(--color-status-danger-text); }
+.dashboard-queue--low-stock[open] .dashboard-queue__icon { color: var(--color-status-warning-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-queue__icon {
+    transition: none;
+  }
 }
 
 .dashboard-queue__end {

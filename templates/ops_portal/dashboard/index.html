@@ -11,7 +11,7 @@
     {% if dashboard_queues %}
       <div class="dashboard-queues">
         {% for queue in dashboard_queues %}
-          <details class="disclosure dashboard-queue" data-smooth data-smooth-group="dashboard-queues">
+          <details class="disclosure dashboard-queue dashboard-queue--{{ queue.key }}" data-smooth data-smooth-group="dashboard-queues">
             <summary class="disclosure__summary">
               <span class="dashboard-queue__title">
                 {% include "includes/ui/icon_block.html" with name=queue.icon size="md" class_name="dashboard-queue__icon" only %}
