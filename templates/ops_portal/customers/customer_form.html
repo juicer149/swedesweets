@@ -5,7 +5,7 @@
   {% if customer %}
     {% include "includes/ui/status_heading.html" with title_id="page-title" title=title status=status_key icon=status_icon label=status_label who=place_label only %}
   {% else %}
-    <h1 id="page-title" class="page__lead">{{ title }}</h1>
+    <h1 id="page-title" class="visually-hidden">{{ title }}</h1>
   {% endif %}
 {% endblock %}
 

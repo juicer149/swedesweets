@@ -1,4 +1,4 @@
-{% comment %}The Customer tab: how to reach them, since when, then Edit customer.{% endcomment %}
+{% comment %}The Customer tab: how to reach them, since when and how often, then Edit customer.{% endcomment %}
 {% include "includes/ui/contact_rows.html" with email=customer.email phone=customer.phone_number address=customer.address maps_href=maps_href only %}
 
 <dl class="facts facts--small facts--footer">
@@ -12,6 +12,10 @@
       <dd><time datetime="{{ order_summary.last_ordered_at|date:'c' }}">{{ order_summary.last_ordered_at|date:"Y-m-d" }}</time></dd>
     </div>
   {% endif %}
+  <div class="facts__row">
+    <dt>Orders</dt>
+    <dd>{{ order_summary.total_orders }}</dd>
+  </div>
 </dl>
 
 {% if edit_href %}

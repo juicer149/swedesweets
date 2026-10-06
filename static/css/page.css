@@ -458,6 +458,13 @@ body:has(.screen) .site-footer {
   padding-top: clamp(var(--space-2), 2dvh, var(--space-4));
 }
 
+/* A create form has no visible title (ops know where they are: the
+   URL, the button they came from, the submit label). The first thing
+   on the page keeps a little room under the navbar instead. */
+.page-section--top .page > .visually-hidden:first-child + * {
+  margin-top: clamp(var(--space-4), 4dvh, var(--space-8));
+}
+
 .page-section .page > .page__actions {
   margin-top: clamp(var(--space-6), 6dvh, var(--space-8));
 }

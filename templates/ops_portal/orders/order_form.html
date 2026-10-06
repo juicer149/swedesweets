@@ -9,7 +9,7 @@
     {% if is_edit and order %}
       {% include "includes/ui/status_heading.html" with title_id="order-form-title" title=title status=order.status icon=status_icon label=order.get_status_display at=order.status_changed_at who=order.customer_name only %}
     {% else %}
-      <h1 id="order-form-title" class="page__lead">{{ title }}</h1>
+      <h1 id="order-form-title" class="visually-hidden">{{ title }}</h1>
     {% endif %}
 
     <form method="post" data-dirty-form novalidate>
