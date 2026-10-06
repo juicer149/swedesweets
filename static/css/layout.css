@@ -66,12 +66,14 @@
 
 .list-section {
   padding-top: var(--space-8);
+  /* Room after the last row, since ops pages have no footer under them. */
+  padding-bottom: clamp(var(--space-8), 8dvh, var(--space-12));
 }
 
-/* A list as calm link rows at every width (customers): a readable
-   column, not the full table width. */
+/* A list as calm link rows at every width (customers): one centred
+   column as wide as the search above it, so the two line up. */
 .list-section.list-rows {
-  width: min(100%, 720px);
+  width: min(100%, 560px);
   margin-inline: auto;
 }
 
