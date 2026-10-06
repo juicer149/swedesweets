@@ -1,0 +1,11 @@
+{% comment %}The Activity tab: what this account did, newest first, each row to the record.{% endcomment %}
+{% load i18n %}
+{% if activity_rows %}
+  <ul class="lines" aria-label="{% trans 'Activity' %}">
+    {% for row in activity_rows %}
+      {% include "includes/ui/line_link.html" with href=row.href tone=row.tone icon=row.icon name=row.name meta=row.meta aside=row.aside aside_wide=True only %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="page__note">{% trans "This account has no recorded activity yet." %}</p>
+{% endif %}

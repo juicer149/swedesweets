@@ -1,0 +1,63 @@
+{% comment %}
+  The Account tab: who the login is and when it was used, then its
+  actions: Edit account (staff), and activate / deactivate (customer
+  logins; deactivating is the quiet red link, activating the yellow
+  button when there is nothing else to do).
+{% endcomment %}
+{% load i18n %}
+<dl class="facts">
+  <div class="facts__row">
+    <dt>{% trans "Role" %}</dt>
+    <dd>{{ account.role_label }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>{% trans "Linked identity" %}</dt>
+    <dd>
+      {% if account.linked_identity_href %}
+        <a class="text-link" href="{{ account.linked_identity_href }}">{{ account.linked_identity }}</a>
+      {% else %}
+        {{ account.linked_identity }}
+      {% endif %}
+    </dd>
+  </div>
+  <div class="facts__row">
+    <dt>{% trans "Last login" %}</dt>
+    <dd>
+      {% if account.last_login %}
+        <time datetime="{{ account.last_login|date:'c' }}">{{ account.last_login|date:"Y-m-d H:i" }}</time>
+      {% else %}
+        {% trans "Never" %}
+      {% endif %}
+    </dd>
+  </div>
+  <div class="facts__row">
+    <dt>{% trans "Joined" %}</dt>
+    <dd><time datetime="{{ account.date_joined|date:'c' }}">{{ account.date_joined|date:"Y-m-d" }}</time></dd>
+  </div>
+</dl>
+
+{% if edit_href or status_action %}
+  <div class="form-actions page__actions page-actions">
+    {% if edit_href %}
+      <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_href }}">{% trans "Edit account" %}</a>
+    {% elif status_action and not status_action.is_danger %}
+      <a class="button button--md button--solid button--tone-place page__submit" href="{{ status_action.href }}">{{ status_action.label }}</a>
+    {% endif %}
+
+    {% if status_action.is_danger %}
+      <div class="page-actions__links">
+        <a class="quiet-link quiet-link--danger" href="{{ status_action.href }}">
+          {% include "includes/ui/icon_block.html" with name="x" size="sm" only %}
+          {{ status_action.label }}
+        </a>
+      </div>
+    {% elif status_action and edit_href %}
+      <div class="page-actions__links">
+        <a class="quiet-link" href="{{ status_action.href }}">
+          {% include "includes/ui/icon_block.html" with name="check" size="sm" only %}
+          {{ status_action.label }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

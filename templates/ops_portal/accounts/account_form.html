@@ -1,25 +1,42 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "layouts/detail.html" %}
+{% load i18n static %}
 
-{% block title %}{{ title }} | SwedeSweets{% endblock %}
-
-{% block content %}
-{% include "includes/ui/page_header.html" with title_id="account-form-title" title=title description=description %}
-
-<section
-  class="form-section"
-  aria-labelledby="account-form-title"
->
+{% block page_heading %}
   {% if staff_account %}
-    {% include "includes/ui/form_context_card.html" with aria_label="Account summary" eyebrow="Account identity" heading=staff_account.user.email items=account_context_items only %}
+    {% include "includes/ui/status_heading.html" with title_id="page-title" title=title status=status_key icon=status_icon label=status_label who=access_level_label only %}
+  {% else %}
+    <h1 id="page-title" class="visually-hidden">{{ title }}</h1>
   {% endif %}
-
-  {% include "includes/ui/form.html" with form=form submit_label=submit_label cancel_url=cancel_url %}
-</section>
 {% endblock %}
 
-{% block scripts %}
-  {{ block.super }}
+{% block page_body %}
+  <form method="post" novalidate data-dirty-form>
+    {% csrf_token %}
+
+    {% include "registration/includes/form_errors.html" with form=form only %}
+
+    <div class="form-grid">
+      {% for field in form %}
+        {% include "includes/ui/form_field.html" with field=field only %}
+      {% endfor %}
+    </div>
+
+    <div class="form-actions page__actions page-actions">
+      <button class="button button--md button--solid button--tone-place page__submit" type="submit">
+        {{ submit_label }}
+      </button>
+
+      <div class="page-actions__links">
+        <a class="quiet-link" href="{{ cancel_url }}" data-dirty-ignore="true">
+          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+          {% trans "Cancel" %}
+        </a>
+      </div>
+    </div>
+  </form>
+{% endblock %}
+
+{% block page_scripts %}
   <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script src="{% static 'js/dirty_form.js' %}" defer></script>
 {% endblock %}

@@ -28,3 +28,11 @@ def build_ops_account_presentation(
             },
         ),
     )
+
+
+def account_status_key(account: AccountPresentation) -> str:
+    return "active" if account.is_active else "inactive"
+
+
+def account_status_icon(account: AccountPresentation) -> str:
+    return "users" if account.is_active else "x"

@@ -18,15 +18,8 @@ from ops_portal.accounts.list_viewmodels import (
 
 
 @dataclass(frozen=True, slots=True)
-class FormContextItem:
-    label: str
-    value: Any
-
-
-@dataclass(frozen=True, slots=True)
 class AccountFormContext:
     title: str
-    description: str
     submit_label: str
     cancel_url: str
     form: (
@@ -35,20 +28,28 @@ class AccountFormContext:
         | InternalAccountEditForm
     )
     staff_account: StaffAccount | None = None
-    account_context_items: list[FormContextItem] | None = None
 
     def as_dict(self) -> dict[str, Any]:
-        return {
+        context: dict[str, Any] = {
             "title": self.title,
-            "description": self.description,
             "submit_label": self.submit_label,
             "cancel_url": self.cancel_url,
             "form": self.form,
             "staff_account": self.staff_account,
-            "account_context_items": (
-                self.account_context_items or []
-            ),
         }
+
+        if self.staff_account is not None:
+            is_active = self.staff_account.user.is_active
+            context |= {
+                "status_key": "active" if is_active else "inactive",
+                "status_label": "Active" if is_active else "Inactive",
+                "status_icon": "users" if is_active else "x",
+                "access_level_label": (
+                    self.staff_account.get_access_level_display()
+                ),
+            }
+
+        return context
 
 
 def build_create_customer_account_form_context(
@@ -58,9 +59,6 @@ def build_create_customer_account_form_context(
     return AccountFormContext(
         form=form,
         title="Create customer account",
-        description=(
-            "Create a customer portal login linked to an existing customer."
-        ),
         submit_label="Create account",
         cancel_url=_accounts_customer_url(),
     )
@@ -73,9 +71,6 @@ def build_create_internal_account_form_context(
     return AccountFormContext(
         form=form,
         title="Create internal account",
-        description=(
-            "Create a login account for full or restricted operations staff."
-        ),
         submit_label="Create account",
         cancel_url=_accounts_internal_url(),
     )
@@ -89,13 +84,7 @@ def build_edit_internal_account_form_context(
     return AccountFormContext(
         form=form,
         staff_account=staff_account,
-        account_context_items=build_account_context_items(
-            staff_account
-        ),
-        title="Edit internal account",
-        description=(
-            "Update account email, staff access level and login status."
-        ),
+        title=f"Edit {staff_account.user.email}",
         submit_label="Save account",
         cancel_url=reverse(
             "ops_accounts:detail",
@@ -104,25 +93,6 @@ def build_edit_internal_account_form_context(
             },
         ),
     )
-
-
-def build_account_context_items(
-    staff_account: StaffAccount,
-) -> list[FormContextItem]:
-    return [
-        FormContextItem(
-            label="Access level",
-            value=staff_account.get_access_level_display(),
-        ),
-        FormContextItem(
-            label="Status",
-            value=(
-                "Active"
-                if staff_account.user.is_active
-                else "Inactive"
-            ),
-        ),
-    ]
 
 
 def _accounts_customer_url() -> str:

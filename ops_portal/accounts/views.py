@@ -184,7 +184,7 @@ def detail(
     context = build_account_detail_context(
         account=account,
         activity_rows=activities,
-        cancel_url=_accounts_url_for_account(
+        back_url=_accounts_url_for_account(
             account
         ),
         role_spec=request.role_spec,

@@ -63,15 +63,15 @@
     </table>
   </div>
 
-  <div class="mobile-card-list">
-    {% for row in account_rows %}
-      {% include "includes/ui/card.html" with card=row.card only %}
-    {% empty %}
-      <article class="mobile-card mobile-card--neutral">
-        <p>No accounts found.</p>
-      </article>
-    {% endfor %}
-  </div>
+  {% if account_rows %}
+    <ul class="lines mobile-lines" aria-label="Accounts">
+      {% for row in account_rows %}
+        {% include "includes/ui/line_link.html" with href=row.detail_href label="View account "|add:row.email icon=row.icon name=row.email meta=row.meta only %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="page__note mobile-lines">No accounts found.</p>
+  {% endif %}
 </section>
 {% endblock %}
 

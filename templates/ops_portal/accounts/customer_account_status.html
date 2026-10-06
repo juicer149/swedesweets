@@ -1,25 +1,31 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}{{ title }} | SwedeSweets{% endblock %}
+{% block title %}{{ submit_label }} | SwedeSweets{% endblock %}
 
 {% block content %}
-{% include "includes/ui/page_header.html" with title_id="customer-account-status-title" title=title description=description %}
+<section class="page-section page-section--top" aria-labelledby="page-title">
+  <div class="page page--centered page--wide">
+    {% include "includes/ui/status_heading.html" with title_id="page-title" title=title status=status_key icon=status_icon label=status_label who=customer.name only %}
 
-<section class="form-section" aria-labelledby="customer-account-status-title">
-  {% include "includes/ui/form_context_card.html" with aria_label="Customer account summary" eyebrow="Customer login account" heading=account_user.email items=context_items only %}
+    <p class="page__note">{{ note }}</p>
 
-  <form method="post" class="form-card" novalidate>
-    {% csrf_token %}
+    <form method="post" novalidate>
+      {% csrf_token %}
 
-    <div class="form-actions">
-      <button class="button button--md button--solid button--tone-{{ submit_tone }}" type="submit">
-        {{ submit_label }}
-      </button>
+      <div class="form-actions page__actions page-actions">
+        <button class="button button--md button--solid {% if is_danger %}button--tone-danger{% else %}button--tone-place{% endif %} page__submit" type="submit">
+          {{ submit_label }}
+        </button>
 
-      <a class="button button--md button--ghost button--tone-neutral" href="{{ cancel_url }}">
-        Back
-      </a>
-    </div>
-  </form>
+        <div class="page-actions__links">
+          <a class="quiet-link" href="{{ cancel_url }}">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+            {% trans "Back" %}
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
 </section>
 {% endblock %}

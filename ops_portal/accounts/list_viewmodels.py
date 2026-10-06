@@ -6,17 +6,10 @@ from datetime import datetime
 from django.urls import reverse
 from django.utils import timezone
 
-from accounts.presentation import AccountPresentation
 from accounts.selectors import AccountRecord
 from common.page_header import PageHeader, PageHeaderAction
-from common.ui import (
-    TONE_MUTED,
-    TONE_NEUTRAL,
-    UiCard,
-    UiCardRow,
-    UiText,
-)
 from ops_portal.accounts.presentation import (
+    account_status_icon,
     build_ops_account_presentation,
 )
 
@@ -45,7 +38,18 @@ class AccountPageRow:
     last_login_label: str
     date_joined_label: str
     detail_href: str
-    card: UiCard
+    icon: str
+
+    @property
+    def meta(self) -> str:
+        """Phones: the grey line under the email: the role, and the
+        customer for a customer login (staff identities only repeat the
+        role)."""
+
+        if self.linked_identity_href:
+            return f"{self.role_label} · {self.linked_identity}"
+
+        return self.role_label
 
 
 def build_accounts_page_header(*, active_view: str) -> PageHeader:
@@ -96,9 +100,6 @@ def _build_account_page_row(
     record: AccountRecord,
 ) -> AccountPageRow:
     account = build_ops_account_presentation(record)
-    status_tone = _status_tone(is_active=account.is_active)
-    last_login_label = _datetime_label(account.last_login)
-    date_joined_label = _datetime_label(account.date_joined)
     detail_href = reverse(
         "ops_accounts:detail",
         kwargs={"user_id": account.user_id},
@@ -111,71 +112,11 @@ def _build_account_page_row(
         linked_identity=account.linked_identity,
         linked_identity_href=account.linked_identity_href,
         status_label=account.status_label,
-        status_tone=status_tone,
-        last_login_label=last_login_label,
-        date_joined_label=date_joined_label,
+        status_tone=_status_tone(is_active=account.is_active),
+        last_login_label=_datetime_label(account.last_login),
+        date_joined_label=_datetime_label(account.date_joined),
         detail_href=detail_href,
-        card=_account_card(
-            account=account,
-            status_tone=status_tone,
-            last_login_label=last_login_label,
-            date_joined_label=date_joined_label,
-            detail_href=detail_href,
-        ),
-    )
-
-
-def _account_card(
-    *,
-    account: AccountPresentation,
-    status_tone: str,
-    last_login_label: str,
-    date_joined_label: str,
-    detail_href: str,
-) -> UiCard:
-    return UiCard(
-        tone=TONE_NEUTRAL if account.is_active else TONE_MUTED,
-        css_class="mobile-card mobile-card--account",
-        href=detail_href,
-        aria_label=f"View account {account.email}",
-        rows=(
-            UiCardRow(
-                left=UiText(
-                    text=account.email,
-                    css_class="ui-card-title",
-                ),
-                right=UiText(
-                    text=account.status_label,
-                    css_class=f"status-text status-text--{status_tone}",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=account.role_label,
-                    label="Role",
-                    css_class="ui-card-location",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=account.linked_identity,
-                    label="Linked identity",
-                    css_class="ui-card-location",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=last_login_label,
-                    label="Last login",
-                    css_class="ui-card-location",
-                ),
-                right=UiText(
-                    text=date_joined_label,
-                    label="Joined",
-                    css_class="ui-card-location",
-                ),
-            ),
-        ),
+        icon=account_status_icon(account),
     )
 
 
