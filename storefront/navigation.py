@@ -50,7 +50,7 @@ STOREFRONT_FAQ_NAV_ITEM = PublicNavItem(
     label=_("FAQ"),
     route_name="public_site:faq",
     namespace="public_site",
-    icon="",
+    icon="question",
     active_url_names=("faq",),
 )
 

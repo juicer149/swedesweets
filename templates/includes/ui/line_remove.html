@@ -1,23 +1,43 @@
 {% load i18n %}
 {% comment %}
-  The grey trash button at the end of an editable line.
+  The grey trash button at the end of an editable line. It asks first
+  (confirm_action.js with confirm_dialog.js; the page loads both), since
+  it sits right beside the stepper's + and is easy to hit by mistake.
 
   url    POST here to remove the line (carts); without it the button only
          removes the line in the page (data-remove-order-line, order form)
   label  aria-label (default "Remove product")
 {% endcomment %}
+{% trans "Remove product" as default_label %}
 {% if url %}
   <form class="line__remove" method="post" action="{{ url }}">
     {% csrf_token %}
 
-    <button class="line__remove-button" type="submit" aria-label="{% if label %}{{ label }}{% else %}{% trans 'Remove product' %}{% endif %}">
-      {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+    <button
+      class="line__remove-button"
+      type="submit"
+      aria-label="{{ label|default:default_label }}"
+      data-confirm="{% trans 'Remove this product from the order?' %}"
+      data-confirm-title="{% trans 'Remove product' %}"
+      data-confirm-label="{% trans 'Remove' %}"
+      data-confirm-cancel="{% trans 'Keep it' %}"
+    >
+      {% include "includes/ui/icon_block.html" with name="trash" size="md" only %}
     </button>
   </form>
 {% else %}
   <div class="line__remove">
-    <button class="line__remove-button" type="button" aria-label="{% if label %}{{ label }}{% else %}{% trans 'Remove product' %}{% endif %}" data-remove-order-line>
-      {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+    <button
+      class="line__remove-button"
+      type="button"
+      aria-label="{{ label|default:default_label }}"
+      data-remove-order-line
+      data-confirm="{% trans 'Remove this product from the order?' %}"
+      data-confirm-title="{% trans 'Remove product' %}"
+      data-confirm-label="{% trans 'Remove' %}"
+      data-confirm-cancel="{% trans 'Keep it' %}"
+    >
+      {% include "includes/ui/icon_block.html" with name="trash" size="md" only %}
     </button>
   </div>
 {% endif %}

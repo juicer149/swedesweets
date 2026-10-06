@@ -39,7 +39,8 @@ class PortalOrderReviewLine:
                 meta(self.offer_label, META_OFFER),
                 meta(self.price_label),
             ),
-            aside=self.quantity_label,
+            # "× 3": the count alone reads cleaner than "3 units".
+            aside=f"× {self.quantity}",
         )
 
 

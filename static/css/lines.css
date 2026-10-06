@@ -215,22 +215,22 @@
 
 .line__icon--warning {
   --line-tone-text: var(--color-status-warning-text);
-  --line-tone-bg: rgb(var(--color-status-warning) / 0.14);
+  --line-tone-bg: rgb(var(--color-status-warning) / 0.22);
 }
 
 .line__icon--info {
   --line-tone-text: var(--color-status-info-text);
-  --line-tone-bg: rgb(var(--color-status-info) / 0.10);
+  --line-tone-bg: rgb(var(--color-status-info) / 0.18);
 }
 
 .line__icon--success {
   --line-tone-text: var(--color-status-success-text);
-  --line-tone-bg: rgb(var(--color-status-success) / 0.10);
+  --line-tone-bg: rgb(var(--color-status-success) / 0.18);
 }
 
 .line__icon--danger {
   --line-tone-text: var(--color-status-danger-text);
-  --line-tone-bg: rgb(var(--color-status-danger) / 0.10);
+  --line-tone-bg: rgb(var(--color-status-danger) / 0.18);
 }
 
 .line__aside {
@@ -326,8 +326,10 @@
 }
 
 .line__remove-button {
-  width: clamp(2rem, 8vw, 2.5rem);
-  height: clamp(2rem, 8vw, 2.5rem);
+  /* A full tap target (44px) at every width; it asks before removing
+     (confirm_action.js), so a slip off the + costs nothing. */
+  width: 2.75rem;
+  height: 2.75rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

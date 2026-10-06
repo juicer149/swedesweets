@@ -20,19 +20,19 @@
 
       <ul class="icon-rows">
         <li class="icon-rows__item">
-          {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="icon-rows__icon" only %}
+          {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="icon-rows__icon icon-rows__icon--mail" only %}
           <span class="visually-hidden">{% trans "Email" %}:</span>
           <span>{{ customer.email }}</span>
         </li>
 
         <li class="icon-rows__item">
-          {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="icon-rows__icon" only %}
+          {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="icon-rows__icon icon-rows__icon--phone" only %}
           <span class="visually-hidden">{% trans "Phone number" %}:</span>
           <span>{{ customer.phone_number }}</span>
         </li>
 
         <li class="icon-rows__item">
-          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon" only %}
+          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon icon-rows__icon--place" only %}
           <span class="visually-hidden">{% trans "Address" %}:</span>
           <span>
             {{ customer.address_line }}<br>

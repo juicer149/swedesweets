@@ -52,7 +52,8 @@ class PortalOrderContentLine:
                 meta(self.price_label),
                 meta(None if self.catalog_href else UNAVAILABLE_LABEL),
             ),
-            aside=self.quantity_label,
+            # "× 3": the count alone reads cleaner than "3 units".
+            aside=f"× {self.quantity}",
         )
 
 

@@ -44,7 +44,7 @@ BUSINESS_FAQ_NAV_ITEM = BusinessNavItem(
     label=_("FAQ"),
     route_name="business_portal:faq",
     namespace="business_portal",
-    icon="",
+    icon="question",
     active_url_names=("faq",),
 )
 

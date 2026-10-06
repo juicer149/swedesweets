@@ -26,7 +26,7 @@
   {% if email %}
     <li class="icon-rows__item">
       <a class="icon-rows__link" href="mailto:{{ email }}">
-        {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="icon-rows__icon" only %}
+        {% include "includes/ui/icon_block.html" with name="mail" size="sm" class_name="icon-rows__icon icon-rows__icon--mail" only %}
         {{ email }}
       </a>
     </li>
@@ -35,7 +35,7 @@
   {% if phone %}
     <li class="icon-rows__item">
       <a class="icon-rows__link" href="tel:{{ phone }}">
-        {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="icon-rows__icon" only %}
+        {% include "includes/ui/icon_block.html" with name="phone" size="sm" class_name="icon-rows__icon icon-rows__icon--phone" only %}
         {{ phone }}
       </a>
     </li>
@@ -45,12 +45,12 @@
     <li class="icon-rows__item">
       {% if maps_href %}
         <a class="icon-rows__link" href="{{ maps_href }}" target="_blank" rel="noopener noreferrer">
-          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon" only %}
+          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon icon-rows__icon--place" only %}
           {{ address }}
         </a>
       {% else %}
         <span class="icon-rows__link">
-          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon" only %}
+          {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" class_name="icon-rows__icon icon-rows__icon--place" only %}
           {{ address }}
         </span>
       {% endif %}

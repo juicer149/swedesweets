@@ -40,7 +40,7 @@ def test_review_line_view_puts_the_quantity_aside():
     ).view
 
     assert view.href is None
-    assert view.aside == "3 units"
+    assert view.aside == "× 3"
     assert view.metas[0] == LineMeta(text="Short dated", kind=META_OFFER)
 
 
