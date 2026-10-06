@@ -1202,3 +1202,33 @@
       var(--size-control-sm);
   }
 }
+
+
+/* =============================================================================
+   Ops product detail (calm design)
+
+   The batches as link rows under the stock facts; in Product details, the
+   description and ingredients as short paragraphs under the facts.
+   ============================================================================= */
+
+.product-batches {
+  margin-top: var(--space-4);
+}
+
+.product-details__text {
+  margin-top: var(--space-4);
+}
+
+.product-details__label {
+  margin: 0 0 var(--space-1);
+  color: var(--color-neutral-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: 600;
+}
+
+.product-details__text p {
+  margin: 0;
+  color: var(--color-neutral-800);
+  line-height: 1.55;
+}

@@ -24,9 +24,9 @@
     {% endif %}
 
     {% if dates %}
-      <dl class="order-dates">
+      <dl class="facts facts--small facts--footer">
         {% for date in dates %}
-          <div class="order-dates__row">
+          <div class="facts__row">
             <dt>{{ date.label }}</dt>
             <dd><time datetime="{{ date.value|date:'c' }}">{{ date.value|date:"Y-m-d H:i" }}</time></dd>
           </div>

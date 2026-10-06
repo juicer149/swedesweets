@@ -3,9 +3,9 @@
   and note when there are any.
   Context: dates, order
 {% endcomment %}
-<dl class="order-dates">
+<dl class="facts facts--small facts--footer">
   {% for date in dates %}
-    <div class="order-dates__row">
+    <div class="facts__row">
       <dt>{{ date.label }}</dt>
       <dd>
         <time datetime="{{ date.value|date:'c' }}">{{ date.value|date:"Y-m-d H:i" }}</time>{% if date.by %} · {{ date.by }}{% endif %}
@@ -14,14 +14,14 @@
   {% endfor %}
 
   {% if order.cancel_reason %}
-    <div class="order-dates__row">
+    <div class="facts__row">
       <dt>Cancel reason</dt>
       <dd>{{ order.get_cancel_reason_display }}</dd>
     </div>
   {% endif %}
 
   {% if order.cancel_note %}
-    <div class="order-dates__row">
+    <div class="facts__row">
       <dt>Cancel note</dt>
       <dd>{{ order.cancel_note }}</dd>
     </div>

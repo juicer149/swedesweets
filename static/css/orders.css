@@ -209,51 +209,12 @@
 .order-status--delivered { --order-status-color: var(--color-status-delivered-text); }
 .order-status--cancelled { --order-status-color: var(--color-status-cancelled-text); }
 
-.order-dates {
-  display: grid;
-  gap: var(--space-1);
-  margin: var(--space-6) 0 0;
-  padding-top: var(--space-4);
+/* The same heading line for things that are on or off (a product). */
+.order-status--active { --order-status-color: var(--color-status-success-text); }
+.order-status--inactive { --order-status-color: var(--color-status-muted-text); }
 
-  font-size: var(--font-size-14);
-  border-top: 1px solid var(--color-neutral-300);
-}
-
-.order-dates__row {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-
-.order-dates dt {
-  color: var(--color-neutral-600);
-}
-
-.order-dates dd {
-  margin: 0;
-  color: var(--color-neutral-800);
-  font-variant-numeric: tabular-nums;
-}
-
-
-/* Order (ops): a small titled section under the lines (buyer, products on
-   the deliver page). A name with no page to link to reads as plain text. */
-.order-section {
-  margin-top: var(--space-8);
-}
-
-/* Right under the heading, the heading's own margin is room enough. */
-.page__heading + .order-section {
-  margin-top: 0;
-}
-
-.order-section__title {
-  margin: 0 0 var(--space-3);
-  color: var(--color-neutral-800);
-  font-size: var(--font-size-16);
-  font-weight: 600;
-  text-align: center;
-}
+/* Order (ops): the buyer rows. A name with no page to link to reads as
+   plain text. */
 
 /* Tighter than the contact page: four short rows that belong together.
    Each row is still 2.5rem high, enough to tap. */

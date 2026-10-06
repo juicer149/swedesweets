@@ -55,22 +55,11 @@ def product_status_presentation(product: Product) -> StatusPresentation:
     return PRODUCT_STATUS_INACTIVE
 
 
-def product_detail_status_class(product: Product) -> str:
-    return product_status_presentation(product).text.css_class
-
-
 def product_status_icon(product: Product) -> str:
     if product.active:
         return "lollipop"
 
     return "x"
-
-
-def product_detail_card_class(product: Product) -> str:
-    if product.active:
-        return ""
-
-    return "content-card--muted"
 
 
 def product_manufacturer_label(product: Product) -> str:

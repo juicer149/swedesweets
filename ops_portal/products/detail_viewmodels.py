@@ -9,24 +9,15 @@ from django.urls import reverse
 from accounts.roles import RoleSpec
 from common.detail_cards import (
     DetailAction,
-    DetailCard,
-    DetailHeader,
-    DetailPanel,
     build_secondary_get_action,
 )
-from common.ui import UiCard
 from inventory.models import InventoryBatch
-from ops_portal.inventory.mini_cards import (
-    build_batch_mini_card,
-)
 from ops_portal.products.access import (
     can_edit_product,
 )
 from ops_portal.products.presentation import (
     ProductTagPresentation,
     product_attribute_tags,
-    product_detail_card_class,
-    product_detail_status_class,
     product_status_icon,
 )
 from orders.product_demand import (
@@ -80,6 +71,12 @@ class ProductStockSummary:
                 self.available_quantity
             )
         )
+
+    @property
+    def available_summary_label(self) -> str:
+        """For the heading: "12 boxes available"."""
+
+        return f"{self.available_quantity_label} available"
 
     @classmethod
     def empty(
@@ -258,6 +255,12 @@ class ProductPricingSummary:
     )
 
     @property
+    def channels(self) -> tuple[ProductChannelPricingSummary, ...]:
+        """Business, then retail: one row each on the product page."""
+
+        return (self.business, self.retail)
+
+    @property
     def configured_count(
         self,
     ) -> int:
@@ -322,7 +325,18 @@ class ProductBatchRow:
     best_before: object
     location: str
     status: str
-    card: UiCard
+
+    @property
+    def meta(self) -> str:
+        """The grey line under the batch id: best before · location."""
+
+        parts = [
+            f"Best before {self.best_before:%Y-%m-%d}"
+            if self.best_before
+            else "",
+            self.location,
+        ]
+        return " · ".join(part for part in parts if part)
 
 
 @dataclass(frozen=True, slots=True)
@@ -429,7 +443,10 @@ class ProductDetailContext:
     stock: ProductStockSummary
     batch_rows: list[ProductBatchRow]
     demand: ProductDemandSummary
-    detail_card: DetailCard
+    status_key: str
+    status_label: str
+    status_icon: str
+    edit_action: DetailAction | None
     title: str
     description: str
     cancel_url: str
@@ -449,9 +466,10 @@ class ProductDetailContext:
                 self.batch_rows
             ),
             "demand": self.demand,
-            "detail_card": (
-                self.detail_card
-            ),
+            "status_key": self.status_key,
+            "status_label": self.status_label,
+            "status_icon": self.status_icon,
+            "edit_action": self.edit_action,
             "title": self.title,
             "description": (
                 self.description
@@ -530,31 +548,19 @@ def build_product_detail_context(
             )
         ),
         demand=demand,
-        detail_card=DetailCard(
-            header=(
-                _build_product_header(
-                    product
-                )
-            ),
-            panels=(
-                _build_product_detail_panels(
-                    product=product,
-                    stock=stock,
-                    demand=demand,
-                    pricing=pricing,
-                )
-            ),
-            content_card_class=(
-                product_detail_card_class(
-                    product
-                )
-            ),
-            secondary_actions=(
+        status_key=(
+            "active" if product.active else "inactive"
+        ),
+        status_label=_product_status_label(product),
+        status_icon=product_status_icon(product),
+        edit_action=next(
+            iter(
                 build_product_secondary_actions(
                     product=product,
                     role_spec=role_spec,
                 )
             ),
+            None,
         ),
         title=product.display_name,
         description="",
@@ -584,104 +590,6 @@ def build_product_secondary_actions(
                     ),
                 },
             ),
-        ),
-    )
-
-
-def _build_product_header(
-    product: Product,
-) -> DetailHeader:
-    return DetailHeader(
-        eyebrow=(
-            product.code_label
-        ),
-        title=(
-            product.display_name
-        ),
-        status_label=(
-            _product_status_label(
-                product
-            )
-        ),
-        status_class=(
-            product_detail_status_class(
-                product
-            )
-        ),
-        status_icon=(
-            product_status_icon(
-                product
-            )
-        ),
-    )
-
-
-def _build_product_detail_panels(
-    *,
-    product: Product,
-    stock: ProductStockSummary,
-    demand: ProductDemandSummary,
-    pricing: ProductPricingSummary,
-) -> tuple[DetailPanel, ...]:
-    return (
-        DetailPanel(
-            key="product",
-            label="Product",
-            summary=(
-                product.display_name
-            ),
-            body_template=(
-                "ops_portal/products/"
-                "includes/"
-                "detail_panel_product.html"
-            ),
-            icon="lollipop",
-            is_active=True,
-        ),
-        DetailPanel(
-            key="pricing",
-            label="Pricing",
-            summary=(
-                pricing.summary_label
-            ),
-            body_template=(
-                "ops_portal/products/"
-                "includes/"
-                "detail_panel_pricing.html"
-            ),
-            icon="tag",
-        ),
-        DetailPanel(
-            key="inventory",
-            label="Inventory",
-            summary=(
-                product
-                .stock_quantity_label(
-                    stock.available_quantity
-                )
-            ),
-            body_template=(
-                "ops_portal/products/"
-                "includes/"
-                "detail_panel_inventory.html"
-            ),
-            icon="inventory",
-        ),
-        DetailPanel(
-            key="demand",
-            label="Demand",
-            summary=(
-                product
-                .stock_quantity_label(
-                    demand.delivered_quantity
-                )
-            ),
-            body_template=(
-                "ops_portal/products/"
-                "includes/"
-                "detail_panel_demand.html"
-            ),
-            icon="truck",
         ),
     )
 
@@ -729,14 +637,6 @@ def _build_batch_rows(
                 status=(
                     batch
                     .get_status_display()
-                ),
-                card=(
-                    build_batch_mini_card(
-                        batch=batch,
-                        batch_href=(
-                            batch_href
-                        ),
-                    )
                 ),
             )
         )

@@ -4,7 +4,7 @@
   Context: order, buyer_label, customer_detail_href, customer_maps_href;
   buyer_open=True starts it open (deliver: the address is the point).
 {% endcomment %}
-<details class="order-section disclosure" data-smooth{% if buyer_open %} open{% endif %}>
+<details class="page-part disclosure" data-smooth{% if buyer_open %} open{% endif %}>
   <summary class="disclosure__summary">
     <span>{{ buyer_label }} details</span>
     {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="disclosure__chevron" only %}

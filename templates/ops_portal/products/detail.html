@@ -4,19 +4,107 @@
 {% block title %}{{ title }} | SwedeSweets{% endblock %}
 
 {% block content %}
-<section class="content-section content-section--wide content-section--detail">
-  <article class="content-card content-card--wide {{ detail_card.content_card_class }}">
-    {% include "includes/ui/detail_card_header.html" with header=detail_card.header %}
+<section class="page-section page-section--top" aria-labelledby="ops-product-title">
+  <div class="page page--centered page--wide">
+    {% include "includes/ui/status_heading.html" with title_id="ops-product-title" title=title status=status_key icon=status_icon label=status_label who=product.code_label what=stock.available_summary_label only %}
 
-    {% include "includes/ui/detail_panels.html" with detail_panels=detail_card.panels %}
+    <section class="page-part" aria-labelledby="ops-product-stock-title">
+      <h2 id="ops-product-stock-title" class="page-part__title">Stock</h2>
 
-    {% include "includes/ui/detail_actions.html" with primary_action=detail_card.primary_action secondary_action=detail_card.secondary_action secondary_actions=detail_card.secondary_actions %}
-  </article>
+      <dl class="facts">
+        <div class="facts__row">
+          <dt>Available</dt>
+          <dd><strong>{{ stock.available_quantity_label }}</strong></dd>
+        </div>
+        <div class="facts__row">
+          <dt>Reserved</dt>
+          <dd>{{ stock.reserved_quantity_label }}</dd>
+        </div>
+        <div class="facts__row">
+          <dt>In stock</dt>
+          <dd>{{ stock.physical_quantity_label }}</dd>
+        </div>
+        <div class="facts__row">
+          <dt>Orderable</dt>
+          <dd>{% if product.active and stock.available_quantity > 0 %}Yes{% else %}No{% endif %}</dd>
+        </div>
+      </dl>
+
+      {% if batch_rows %}
+        <ul class="lines product-batches" aria-label="Active batches">
+          {% for row in batch_rows %}
+            {% include "includes/ui/line_link.html" with href=row.batch_href label="Batch "|add:row.batch_id icon="inventory" name=row.batch_id meta=row.meta aside=row.quantity_label only %}
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="page__note product-batches">No active batches.</p>
+      {% endif %}
+    </section>
+
+    <section class="page-part" aria-labelledby="ops-product-pricing-title">
+      <h2 id="ops-product-pricing-title" class="page-part__title">Pricing</h2>
+
+      <dl class="facts">
+        {% for channel in pricing.channels %}
+          <div class="facts__row">
+            <dt>{{ channel.label }}</dt>
+            <dd>
+              {% if channel.amounts %}
+                {% for amount in channel.amounts %}{% if not forloop.first %} · {% endif %}{{ amount.label }}{% endfor %}
+                <span class="facts__aside">{{ channel.status_label }}</span>
+              {% else %}
+                {{ channel.status_label }}
+              {% endif %}
+            </dd>
+          </div>
+        {% endfor %}
+      </dl>
+    </section>
+
+    <section class="page-part" aria-labelledby="ops-product-demand-title">
+      <h2 id="ops-product-demand-title" class="page-part__title">Demand</h2>
+
+      <dl class="facts">
+        <div class="facts__row">
+          <dt>Delivered orders</dt>
+          <dd>{{ demand.delivered_order_count }}</dd>
+        </div>
+        <div class="facts__row">
+          <dt>Delivered quantity</dt>
+          <dd>{{ demand.delivered_quantity_label }}</dd>
+        </div>
+        <div class="facts__row">
+          <dt>Average per order</dt>
+          <dd>{{ demand.average_quantity_per_delivered_order_label }}</dd>
+        </div>
+        <div class="facts__row">
+          <dt>Last delivered</dt>
+          <dd>{% if demand.last_delivered_at %}{{ demand.last_delivered_at|date:"Y-m-d" }}{% else %}Never{% endif %}</dd>
+        </div>
+      </dl>
+    </section>
+
+    {% include "ops_portal/products/includes/product_details.html" %}
+
+    <div class="form-actions page__actions page-actions">
+      {% if edit_action %}
+        <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_action.href }}">
+          {{ edit_action.label }}
+        </a>
+      {% endif %}
+
+      <div class="page-actions__links">
+        <a class="quiet-link" href="{{ cancel_url }}">
+          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+          Back to products
+        </a>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}
 
 {% block scripts %}
   {{ block.super }}
-  <script src="{% static 'js/tabs.js' %}" defer></script>
-  <script src="{% static 'js/clickable_rows.js' %}" defer></script>
+  <script src="{% static 'js/smooth-details.js' %}" defer></script>
 {% endblock %}
