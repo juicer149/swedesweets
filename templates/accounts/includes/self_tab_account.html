@@ -1,0 +1,7 @@
+{% comment %}The Account tab of My account: the facts, then Change password.{% endcomment %}
+{% load i18n %}
+{% include "accounts/includes/account_facts.html" with account=account only %}
+
+<div class="form-actions page__actions">
+  <a class="button button--md button--solid button--tone-place page__submit" href="{{ password_change_href }}">{% trans "Change password" %}</a>
+</div>

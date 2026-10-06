@@ -34,7 +34,7 @@ def me(request):
     context = build_self_account_detail_context(
         account=account,
         activity_rows=activities,
-        cancel_url=reverse("after_login"),
+        back_url=reverse("after_login"),
         role_spec=request.role_spec,
     ).as_dict()
 

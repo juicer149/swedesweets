@@ -8,6 +8,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 
 from accounts.activity import AccountActivity
+from accounts.activity_viewmodels import AccountActivityRow
 from accounts.presentation import AccountPresentation
 from accounts.roles import RoleSpec
 from accounts.selectors import AccountRecord
@@ -16,7 +17,6 @@ from ops_portal.accounts.access import (
     can_manage_customer_account_status,
 )
 from ops_portal.accounts.activity_viewmodels import (
-    AccountActivityRow,
     build_ops_account_activity_rows,
 )
 from ops_portal.accounts.presentation import (
@@ -36,7 +36,7 @@ ACCOUNT_DETAIL_TABS = (
         key="activity",
         label="Activity",
         icon="inventory",
-        template="ops_portal/accounts/includes/detail_tab_activity.html",
+        template="accounts/includes/detail_tab_activity.html",
     ),
 )
 

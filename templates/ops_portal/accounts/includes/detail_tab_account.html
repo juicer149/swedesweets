@@ -5,36 +5,7 @@
   button when there is nothing else to do).
 {% endcomment %}
 {% load i18n %}
-<dl class="facts">
-  <div class="facts__row">
-    <dt>{% trans "Role" %}</dt>
-    <dd>{{ account.role_label }}</dd>
-  </div>
-  <div class="facts__row">
-    <dt>{% trans "Linked identity" %}</dt>
-    <dd>
-      {% if account.linked_identity_href %}
-        <a class="text-link" href="{{ account.linked_identity_href }}">{{ account.linked_identity }}</a>
-      {% else %}
-        {{ account.linked_identity }}
-      {% endif %}
-    </dd>
-  </div>
-  <div class="facts__row">
-    <dt>{% trans "Last login" %}</dt>
-    <dd>
-      {% if account.last_login %}
-        <time datetime="{{ account.last_login|date:'c' }}">{{ account.last_login|date:"Y-m-d H:i" }}</time>
-      {% else %}
-        {% trans "Never" %}
-      {% endif %}
-    </dd>
-  </div>
-  <div class="facts__row">
-    <dt>{% trans "Joined" %}</dt>
-    <dd><time datetime="{{ account.date_joined|date:'c' }}">{{ account.date_joined|date:"Y-m-d" }}</time></dd>
-  </div>
-</dl>
+{% include "accounts/includes/account_facts.html" with account=account only %}
 
 {% if edit_href or status_action %}
   <div class="form-actions page__actions page-actions">

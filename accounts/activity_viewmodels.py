@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -15,39 +16,69 @@ from inventory.models import InventoryBatch
 from orders.models import Order
 from products.models import Product
 
+# Tones a .line__icon can show; neutral and muted events get the plain grey.
+LINE_TONES = frozenset({"warning", "info", "success", "danger"})
+
 
 @dataclass(frozen=True, slots=True)
-class AccountActivityPresentation:
-    occurred_at: datetime
-    occurred_at_label: str
-    event_label: str
-    target_label: str
-    target_href: str
+class AccountActivityRow:
+    """One thing an account did, as a .line--link row:
+    "Order #31" / "Placed order · 2026-10-06 14:02" / Café Blanc."""
+
+    name: str
     meta: str
+    aside: str
+    href: str
     tone: str
+    icon: str
 
 
-def build_account_activity_presentations(
+def build_account_activity_rows(
     activities: tuple[AccountActivity, ...],
-) -> tuple[AccountActivityPresentation, ...]:
+    *,
+    href_for: Callable[[AccountActivity], str],
+) -> tuple[AccountActivityRow, ...]:
+    """href_for: where each row leads (ops pages, or the viewer's own)."""
+
     return tuple(
-        _build_account_activity_presentation(activity)
+        _build_account_activity_row(activity, href=href_for(activity))
         for activity in activities
     )
 
 
-def _build_account_activity_presentation(
+def _build_account_activity_row(
     activity: AccountActivity,
-) -> AccountActivityPresentation:
-    return AccountActivityPresentation(
-        occurred_at=activity.occurred_at,
-        occurred_at_label=_datetime_label(activity.occurred_at),
-        event_label=_event_label(activity.kind),
-        target_label=_target_label(activity.target),
-        target_href="",
-        meta=_target_meta(activity.target),
-        tone=_event_tone(activity.kind),
+    *,
+    href: str,
+) -> AccountActivityRow:
+    tone = _event_tone(activity.kind)
+
+    return AccountActivityRow(
+        name=_target_label(activity.target),
+        meta=(
+            f"{_event_label(activity.kind)} · "
+            f"{_datetime_label(activity.occurred_at)}"
+        ),
+        aside=_target_meta(activity.target),
+        href=href,
+        tone=tone if tone in LINE_TONES else "",
+        icon=_target_icon(activity.target),
     )
+
+
+def _target_icon(target: object) -> str:
+    match target:
+        case Order():
+            return "cart"
+        case Product():
+            return "lollipop"
+        case InventoryBatch():
+            return "inventory"
+        case Customer():
+            return "users"
+
+    return ""
+
 
 def _event_label(kind: AccountActivityKind) -> str:
     labels = {
