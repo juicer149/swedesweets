@@ -100,28 +100,27 @@ def test_product_create_form_renders(client):
 
 
 @pytest.mark.parametrize(
-    ("available", "active", "state"),
+    ("available", "level"),
     [
-        (20, True, "on"),
-        (10, True, "on"),
-        (9, True, "warn"),
-        (7, True, "warn"),
-        (6, True, "off"),
-        (1, True, "off"),
-        (0, True, "none"),
-        (20, False, "none"),
+        (20, "safe"),
+        (10, "safe"),
+        (9, "running_low"),
+        (7, "running_low"),
+        (6, "low"),
+        (1, "low"),
+        (0, "empty"),
     ],
 )
-def test_available_is_coloured_by_how_much_is_left(available, active, state):
+def test_available_uses_the_inventory_stock_scale(available, level):
     from ops_portal.products.detail_viewmodels import ProductStockSummary
     from products.models import Product
 
     stock = ProductStockSummary(
-        product=Product(active=active),
+        product=Product(active=True),
         batch_count=1,
         physical_quantity=available,
         reserved_quantity=0,
         available_quantity=available,
     )
 
-    assert stock.available_state == state
+    assert stock.available_info.level == level

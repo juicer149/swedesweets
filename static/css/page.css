@@ -243,13 +243,13 @@
 }
 
 .state--on { color: var(--color-status-success-text); }
-.state--warn { color: var(--color-status-caution-text); }
 .state--off { color: var(--color-status-danger-text); }
 .state--none { color: var(--color-neutral-600); font-weight: 400; }
 
 /* Facts that do not apply right now (a product that cannot be ordered):
    grey, except a state word that says why. */
-.facts--muted dd {
+.facts--muted dd,
+.facts--muted .quantity-text {
   color: var(--color-neutral-600);
 }
 

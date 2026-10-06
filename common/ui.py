@@ -180,8 +180,16 @@ def build_quantity_info(
     *,
     quantity: int,
     low_threshold: int = 10,
+    running_low_threshold: int | None = None,
 ) -> QuantityInfo:
-    """Return presentation info for a stock quantity."""
+    """Return presentation info for a stock quantity.
+
+    empty (red) at zero, low (red) at or under low_threshold, running low
+    (orange) at or under running_low_threshold when given, safe (green)
+    above. Callers pass the inventory.low_stock thresholds.
+    """
+
+    label = f"{quantity} units left"
 
     if quantity <= 0:
         return QuantityInfo(
@@ -195,14 +203,25 @@ def build_quantity_info(
         return QuantityInfo(
             value=quantity,
             level="low",
-            label=f"{quantity} units left",
+            label=label,
             css_class="quantity-text quantity-text--low",
+        )
+
+    if (
+        running_low_threshold is not None
+        and quantity <= running_low_threshold
+    ):
+        return QuantityInfo(
+            value=quantity,
+            level="running_low",
+            label=label,
+            css_class="quantity-text quantity-text--running-low",
         )
 
     return QuantityInfo(
         value=quantity,
         level="safe",
-        label=f"{quantity} units left",
+        label=label,
         css_class="quantity-text quantity-text--safe",
     )
 

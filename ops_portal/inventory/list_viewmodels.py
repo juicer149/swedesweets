@@ -15,7 +15,7 @@ from common.ui import (
     UiText,
     build_quantity_info,
 )
-from inventory.low_stock import LOW_STOCK_THRESHOLD
+from inventory.low_stock import LOW_STOCK_THRESHOLD, RUNNING_LOW_THRESHOLD
 from inventory.models import InventoryBatch
 from inventory.selectors import (
     BatchListRow,
@@ -116,6 +116,7 @@ def _build_batch_page_row(row: BatchListRow) -> BatchPageRow:
     quantity = build_quantity_info(
         quantity=row.batch.quantity,
         low_threshold=LOW_STOCK_THRESHOLD,
+        running_low_threshold=RUNNING_LOW_THRESHOLD,
     )
     quantity_text = batch_quantity_label(row.batch)
     detail_href = _batch_detail_href(row.batch)
@@ -148,6 +149,7 @@ def _build_product_stock_page_row(row: AvailableStockRow) -> ProductStockPageRow
     available_quantity_info = build_quantity_info(
         quantity=row.available_quantity,
         low_threshold=LOW_STOCK_THRESHOLD,
+        running_low_threshold=RUNNING_LOW_THRESHOLD,
     )
 
     return ProductStockPageRow(

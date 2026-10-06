@@ -10,7 +10,8 @@ from common.detail_cards import (
     build_secondary_get_action,
 )
 from common.page_tabs import PageTab
-from inventory.low_stock import is_low_stock
+from common.ui import QuantityInfo, build_quantity_info
+from inventory.low_stock import LOW_STOCK_THRESHOLD, RUNNING_LOW_THRESHOLD
 from inventory.models import InventoryBatch
 from ops_portal.inventory.access import can_create_batch
 from ops_portal.products.access import (
@@ -27,10 +28,6 @@ from products.models import (
     ProductProfile,
 )
 from reservations.availability import AvailableStockRow
-
-# Under this, Available shows orange; at or under LOW_STOCK_THRESHOLD
-# (inventory.low_stock, the dashboard's Low stock queue) it shows red.
-STOCK_RUNNING_LOW = 10
 
 PRODUCT_DETAIL_TABS = (
     PageTab(
@@ -100,21 +97,14 @@ class ProductStockSummary:
         return self.product.active and self.available_quantity > 0
 
     @property
-    def available_state(self) -> str:
-        """The colour of Available: red when the dashboard calls it low
-        stock, orange under ten, green above; grey when the product cannot
-        be ordered at all (then nothing on the tab is coloured)."""
+    def available_info(self) -> QuantityInfo:
+        """Colour of Available, the same scale as the inventory lists."""
 
-        if not self.is_orderable:
-            return "none"
-
-        if is_low_stock(available_quantity=self.available_quantity):
-            return "off"
-
-        if self.available_quantity < STOCK_RUNNING_LOW:
-            return "warn"
-
-        return "on"
+        return build_quantity_info(
+            quantity=self.available_quantity,
+            low_threshold=LOW_STOCK_THRESHOLD,
+            running_low_threshold=RUNNING_LOW_THRESHOLD,
+        )
 
     @property
     def available_summary_label(self) -> str:
