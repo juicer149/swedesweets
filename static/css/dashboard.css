@@ -1,39 +1,8 @@
 /* =============================================================================
-   Operations dashboard hero
+   Eyebrow
 
-   Lighter, business-portal-style intro panel: no dark full-bleed background,
-   no hero-action button variant (that was built for dark-background contrast).
-   The accent-colored bottom border is kept - it's the one visual element from
-   the old hero worth carrying forward.
+   Small uppercase label above a title (forms, account pages).
    ============================================================================= */
-
-.dashboard-hero {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-
-  padding: clamp(var(--space-6), 4vw, var(--space-8)) 0;
-
-  border-bottom: 3px solid var(--color-accent-600);
-}
-
-.dashboard-hero__copy {
-  display: grid;
-  gap: var(--space-2);
-  min-width: 0;
-}
-
-.dashboard-hero__copy h1 {
-  margin: 0;
-
-  color: var(--color-text-heading);
-  font-family: var(--font-heading);
-  font-size: clamp(var(--font-size-32), 4vw, var(--font-size-40));
-  font-weight: 700;
-  line-height: 1.05;
-}
 
 .eyebrow {
   margin: 0;
@@ -46,303 +15,148 @@
   text-transform: uppercase;
 }
 
-.dashboard-hero__actions {
+
+/* =============================================================================
+   Ops dashboard, in the calm design
+
+   No box and no hero: the title centred, the queues as filter chips with
+   their count, the queue's rows on the page divided by hairlines, and the
+   actions at the bottom (one yellow button, the rest quiet links).
+   The rows reuse the cart's .cart-lines / .cart-line__* text styles.
+   ============================================================================= */
+
+.auth-card.auth-card--bare.dashboard-card {
+  width: min(100%, 720px);
+}
+
+.dashboard-chips {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-
-/* =============================================================================
-   Dashboard layout
-   ============================================================================= */
-
-.dashboard-section {
-  padding-top: var(--space-16);
-}
-
-.dashboard-section--queue {
-  padding-top: var(--space-5);
-}
-
-
-/* =============================================================================
-   Dashboard queue navigation
-
-   Uses the shared .section-nav component. These rules only add dashboard-specific
-   label, count and icon treatment.
-   ============================================================================= */
-
-.dashboard-queue-nav {
-  margin-block: var(--space-5) var(--space-4);
-}
-
-.dashboard-queue-nav__link {
+  justify-content: center;
   gap: var(--space-2);
+  margin: 0 0 var(--space-4);
 }
 
-.dashboard-queue-nav__label {
-  display: inline-flex;
+.dashboard-chip__count {
+  margin-left: var(--space-2);
+  color: var(--color-neutral-600);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-chip__count--warning { color: var(--color-status-warning-text); }
+.dashboard-chip__count--info { color: var(--color-status-info-text); }
+.dashboard-chip__count--danger { color: var(--color-status-danger-text); }
+
+/* On the yellow active chip every count reads in the chip's own dark. */
+.filter-chips .filter-chip[aria-current="page"] .dashboard-chip__count {
+  color: inherit;
+}
+
+.dashboard-queue[aria-busy="true"] {
+  opacity: 0.6;
+  transition: opacity var(--motion-fast);
+}
+
+.dashboard-queue__description {
+  margin-bottom: var(--space-4);
+}
+
+.dashboard-queue__empty {
+  margin-block: var(--space-6);
+}
+
+.dashboard-queue__more {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-4);
+}
+
+
+/* Rows: the whole row is the link. */
+.cart-line.dashboard-item {
+  display: block;
+  padding: 0;
+}
+
+.dashboard-item__link {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.45rem;
-  min-width: 0;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-card-inner);
 }
 
-.dashboard-queue-nav__icon {
-  width: 1.2rem;
-  height: 1.2rem;
-
-  color: currentColor;
+.dashboard-item__link:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
 }
 
-.dashboard-queue-nav__count {
+.dashboard-item__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
 
-  min-width: 1.65rem;
-  height: 1.65rem;
-  padding-inline: 0.45rem;
-
-  color: var(--color-primary-950);
-  background: var(--color-primary-50);
-  border: 1px solid var(--color-neutral-300);
-  border-radius: var(--radius-pill);
-
-  font-size: var(--font-size-12);
-  font-weight: 900;
-  line-height: 1;
+  color: var(--dashboard-tone-text, var(--color-neutral-700));
+  background: var(--dashboard-tone-bg, var(--color-neutral-100));
+  border-radius: 50%;
 }
 
-.dashboard-queue-nav__count--warning {
-  color: rgb(var(--color-status-warning));
-  background: rgb(var(--color-status-warning) / 0.10);
-  border-color: rgb(var(--color-status-warning) / 0.35);
+.dashboard-item__icon--warning {
+  --dashboard-tone-text: var(--color-status-warning-text);
+  --dashboard-tone-bg: rgb(var(--color-status-warning) / 0.14);
 }
 
-.dashboard-queue-nav__count--info {
-  color: rgb(var(--color-status-info));
-  background: rgb(var(--color-status-info) / 0.10);
-  border-color: rgb(var(--color-status-info) / 0.35);
+.dashboard-item__icon--info {
+  --dashboard-tone-text: var(--color-status-info-text);
+  --dashboard-tone-bg: rgb(var(--color-status-info) / 0.10);
 }
 
-.dashboard-queue-nav__count--danger {
-  color: rgb(var(--color-status-danger));
-  background: rgb(var(--color-status-danger) / 0.10);
-  border-color: rgb(var(--color-status-danger) / 0.35);
+.dashboard-item__icon--danger {
+  --dashboard-tone-text: var(--color-status-danger-text);
+  --dashboard-tone-bg: rgb(var(--color-status-danger) / 0.10);
 }
 
-.dashboard-queue-nav__count--success {
-  color: rgb(var(--color-status-success));
-  background: rgb(var(--color-status-success) / 0.10);
-  border-color: rgb(var(--color-status-success) / 0.35);
-}
-
-.dashboard-queue-nav__count--muted,
-.dashboard-queue-nav__count--neutral {
-  color: var(--color-neutral-700);
-  background: rgb(var(--color-status-muted) / 0.08);
-  border-color: rgb(var(--color-status-muted) / 0.25);
-}
-
-
-/* =============================================================================
-   Dashboard focus panel
-
-   The outer panel uses .content-card.
-   Preview rows use .mobile-card and .mobile-card--clickable.
-   This file only owns dashboard-specific arrangement.
-   ============================================================================= */
-
-.dashboard-focus-card,
-.dashboard-all-clear {
-  margin-top: var(--space-5);
-}
-
-.dashboard-focus-card__header {
-  align-items: center;
-}
-
-.dashboard-focus-card__description {
-  margin: var(--space-2) 0 0;
-
-  color: var(--color-neutral-700);
-  font-size: var(--font-size-16);
-  font-weight: 550;
-  line-height: 1.45;
-}
-
-.dashboard-focus-list {
-  display: grid;
-  gap: var(--space-3);
-}
-
-.dashboard-focus-item {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.dashboard-focus-item__icon-shell {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 2.25rem;
-  height: 2.25rem;
-
-  color: currentColor;
-  background: var(--color-primary-100);
-  border-radius: var(--radius-pill);
-
-  flex: 0 0 auto;
-}
-
-.dashboard-focus-item__icon {
-  width: 1.2rem;
-  height: 1.2rem;
-
-  color: currentColor;
-}
-
-.dashboard-focus-item__content {
-  display: grid;
-  gap: 0.2rem;
-  min-width: 0;
-}
-
-.dashboard-focus-item__content .ui-card-title {
-  font-size: var(--font-size-18);
-}
-
-.dashboard-focus-item__content .ui-card-meta {
+.dashboard-item__action {
+  color: var(--color-neutral-600);
   font-size: var(--font-size-14);
-}
-
-.dashboard-focus-item__action {
-  justify-self: end;
   white-space: nowrap;
+  transition: color var(--motion-fast);
 }
 
-.dashboard-focus-empty {
-  margin: 0;
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-item__link:hover .cart-line__name {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
 
-  color: var(--color-neutral-700);
-  font-weight: 650;
+  .dashboard-item__link:hover .dashboard-item__action {
+    color: var(--color-neutral-900);
+  }
 }
 
-
-/* =============================================================================
-   Dashboard empty state
-   ============================================================================= */
-
-.dashboard-all-clear {
-  text-align: center;
-}
-
-.dashboard-all-clear h2 {
-  margin-bottom: var(--space-2);
-
-  color: var(--color-primary-950);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-32);
-  line-height: 1.05;
-}
-
-.dashboard-all-clear p {
-  margin: 0;
-
-  color: var(--color-neutral-700);
-  font-size: var(--font-size-16);
-  font-weight: 550;
-  line-height: 1.45;
-}
-
-
-/* =============================================================================
-   Responsive
-   ============================================================================= */
-
-@media (max-width: 720px) {
-  .dashboard-hero {
-    flex-direction: column;
-    align-items: flex-start;
-
-    padding-block: var(--space-5);
+/* Phones: the row itself says where it goes; the action text would only
+   squeeze the title. */
+@media (max-width: 600px) {
+  .dashboard-item__link {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
   }
 
-  .dashboard-hero__actions {
-    width: 100%;
-  }
-
-  .dashboard-hero__actions .button {
-    flex: 1 1 auto;
-    justify-content: center;
-  }
-
-  .dashboard-section--queue {
-    padding-top: var(--space-3);
-  }
-
-  .dashboard-queue-nav {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
-    justify-content: stretch;
-    overflow: visible;
-    margin-block: var(--space-3);
-    padding-inline: 0;
-  }
-
-  .dashboard-queue-nav__link {
-    min-width: 0;
-    padding-inline: clamp(0.35rem, 1.8vw, var(--space-3));
-    font-size: clamp(0.72rem, 2.9vw, var(--font-size-14));
-  }
-
-  .dashboard-queue-nav__label {
-    min-width: 0;
-    gap: 0;
-  }
-
-  .dashboard-queue-nav__label span:last-child {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .dashboard-queue-nav__icon {
+  .dashboard-item__action {
     display: none;
   }
+}
 
-  .dashboard-queue-nav__count {
-    min-width: clamp(1.25rem, 5vw, 1.45rem);
-    height: clamp(1.25rem, 5vw, 1.45rem);
-    padding-inline: clamp(0.25rem, 1.2vw, 0.38rem);
-
-    font-size: clamp(0.68rem, 2.7vw, var(--font-size-12));
-  }
-
-  .dashboard-focus-card__header {
-    display: grid;
-    gap: var(--space-3);
-  }
-
-  .dashboard-focus-item {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-2);
-  }
-
-  .dashboard-focus-item__icon-shell {
-    display: none;
-  }
-
-  .dashboard-focus-item__action {
-    justify-self: start;
-  }
-
-  .dashboard-all-clear h2 {
-    font-size: var(--font-size-28);
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-queue[aria-busy="true"],
+  .dashboard-item__action {
+    transition: none;
   }
 }
