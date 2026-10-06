@@ -3,14 +3,14 @@
   when it got there, then who and what.
 
     Order #31
-    ✓ Packed · 2026-10-06 14:32 · Café Blanc · 3 products · 12 units
+    ✓ Packed · 2026-10-06 · Café Blanc · 3 products · 12 units
 
   title_id  id the page's section points to (aria-labelledby)
   title     the title
   status    status key, for the colour (placed, packed, delivered, cancelled)
   icon      status icon name
   label     status text
-  at        when the status was reached (optional)
+  at        the day the status was reached (optional)
   who       e.g. the customer (optional)
   what      e.g. the contents (optional)
 {% endcomment %}
@@ -25,7 +25,7 @@
 
     {% if at %}
       <span aria-hidden="true">·</span>
-      <time datetime="{{ at|date:'c' }}">{{ at|date:"Y-m-d H:i" }}</time>
+      <time datetime="{{ at|date:'c' }}">{{ at|date:"Y-m-d" }}</time>
     {% endif %}
 
     {% if who %}

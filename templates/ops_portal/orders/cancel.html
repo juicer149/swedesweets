@@ -7,6 +7,8 @@
   <div class="page page--centered page--wide">
     {% include "includes/ui/status_heading.html" with title_id="ops-order-title" title=title status=order.status icon=status_icon label=status_label at=order.status_changed_at who=order.customer_name what=contents_label only %}
 
+    {% include "ops_portal/orders/includes/order_buyer.html" %}
+
     {% include "ops_portal/orders/includes/order_lines.html" %}
 
     <form method="post" class="order-cancel-form" novalidate>

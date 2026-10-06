@@ -71,7 +71,7 @@ def test_pack_page_keeps_checklist_hooks(staff_client, placed_order):
     assert "data-pack-checklist" in content
     assert "data-pack-line-checkbox" in content
     assert 'data-action-behavior="pack-checklist"' in content
-    assert f'href="{_url("ops_orders:detail", placed_order)}"' in content
+    assert f'href="{reverse("ops_orders:index")}"' in content
 
 
 @pytest.mark.django_db

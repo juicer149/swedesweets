@@ -8,12 +8,14 @@
   <div class="page page--centered page--wide">
     {% include "includes/ui/status_heading.html" with title_id="ops-order-title" title=title status=order.status icon=status_icon label=status_label at=order.status_changed_at who=order.customer_name what=contents_label only %}
 
+    {% include "ops_portal/orders/includes/order_buyer.html" %}
+
     {% include "ops_portal/orders/includes/order_checklist.html" %}
 
     <form method="post">
       {% csrf_token %}
 
-      {% include "ops_portal/orders/includes/order_actions.html" with back_url=order_url back_label="Back to order" %}
+      {% include "ops_portal/orders/includes/order_actions.html" with back_url=cancel_url back_label="Back to orders" %}
     </form>
   </div>
 </section>

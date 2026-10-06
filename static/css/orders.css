@@ -557,6 +557,11 @@
   margin-top: var(--space-8);
 }
 
+/* Right under the heading, the heading's own margin is room enough. */
+.page__heading + .order-section {
+  margin-top: 0;
+}
+
 .order-section__title {
   margin: 0 0 var(--space-3);
   color: var(--color-neutral-800);
@@ -565,8 +570,16 @@
   text-align: center;
 }
 
-.order-buyer {
+/* Tighter than the contact page: four short rows that belong together.
+   Each row is still 2.5rem high, enough to tap. */
+.icon-rows.order-buyer {
+  gap: 0;
   font-size: var(--font-size-16);
+}
+
+.order-buyer .icon-rows__link {
+  min-height: 2.5rem;
+  padding-block: 0;
 }
 
 span.icon-rows__link,

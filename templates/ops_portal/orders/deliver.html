@@ -9,16 +9,12 @@
 
     {% include "ops_portal/orders/includes/order_buyer.html" %}
 
-    <section class="order-section" aria-labelledby="ops-order-products-title">
-      <h2 id="ops-order-products-title" class="order-section__title">Products</h2>
-
-      {% include "ops_portal/orders/includes/order_lines.html" %}
-    </section>
+    {% include "ops_portal/orders/includes/order_lines.html" %}
 
     <form method="post">
       {% csrf_token %}
 
-      {% include "ops_portal/orders/includes/order_actions.html" with back_url=order_url back_label="Back to order" %}
+      {% include "ops_portal/orders/includes/order_actions.html" with back_url=cancel_url back_label="Back to orders" %}
     </form>
   </div>
 </section>

@@ -4,36 +4,40 @@
   stays locked until every line is checked (pack_checklist.js).
   Context: pick_lines, checked_allocation_ids, order
 {% endcomment %}
-{% if pick_lines %}
-  <p class="page__note pack-list__hint">Check each batch as it is picked from stock.</p>
+<section class="order-section" aria-labelledby="ops-order-checklist-title">
+  <h2 id="ops-order-checklist-title" class="order-section__title">Checklist</h2>
 
-  <div
-    class="pack-list"
-    data-pack-checklist
-    data-checklist-toggle-url-base="{% url 'ops_orders:pack' order_id=order.pk %}checklist/"
-  >
-    <div class="pack-list__items">
-      {% for line in pick_lines %}
-        <label class="pack-line">
-          <input
-            class="pack-line__checkbox"
-            type="checkbox"
-            data-pack-line-checkbox
-            data-allocation-id="{{ line.allocation_id }}"
-            {% if line.allocation_id in checked_allocation_ids %}checked{% endif %}
-            aria-label="Picked {{ line.quantity_label }} of {{ line.product_name }} from batch {{ line.batch_id }}"
-          >
+  {% if pick_lines %}
+    <p class="page__note pack-list__hint">Check each batch as it is picked from stock.</p>
 
-          <span class="pack-line__content">
-            <span class="pack-line__product">{{ line.product_name }}</span>
-            <span class="pack-line__meta">Batch {{ line.batch_id }} · {{ line.location }}</span>
-          </span>
+    <div
+      class="pack-list"
+      data-pack-checklist
+      data-checklist-toggle-url-base="{% url 'ops_orders:pack' order_id=order.pk %}checklist/"
+    >
+      <div class="pack-list__items">
+        {% for line in pick_lines %}
+          <label class="pack-line">
+            <input
+              class="pack-line__checkbox"
+              type="checkbox"
+              data-pack-line-checkbox
+              data-allocation-id="{{ line.allocation_id }}"
+              {% if line.allocation_id in checked_allocation_ids %}checked{% endif %}
+              aria-label="Picked {{ line.quantity_label }} of {{ line.product_name }} from batch {{ line.batch_id }}"
+            >
 
-          <span class="pack-line__quantity">{{ line.quantity_label }}</span>
-        </label>
-      {% endfor %}
+            <span class="pack-line__content">
+              <span class="pack-line__product">{{ line.product_name }}</span>
+              <span class="pack-line__meta">Batch {{ line.batch_id }} · {{ line.location }}</span>
+            </span>
+
+            <span class="pack-line__quantity">{{ line.quantity_label }}</span>
+          </label>
+        {% endfor %}
+      </div>
     </div>
-  </div>
-{% else %}
-  <p class="page__note">No reserved pick lines found for this order.</p>
-{% endif %}
+  {% else %}
+    <p class="page__note">No reserved pick lines found for this order.</p>
+  {% endif %}
+</section>
