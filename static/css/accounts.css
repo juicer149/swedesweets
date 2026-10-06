@@ -16,10 +16,14 @@
   white-space: nowrap;
 }
 
-/* Account */
+/* Account and linked identity take the room, shrinking with the window
+   (clamp) so the table fits a laptop; role and status stay narrow. */
 .account-table th:nth-child(1),
-.account-table td:nth-child(1) {
-  min-width: 14rem;
+.account-table td:nth-child(1),
+.account-table th:nth-child(3),
+.account-table td:nth-child(3) {
+  min-width: clamp(9rem, 18vw, 14rem);
+  overflow-wrap: anywhere;
 }
 
 /* Role */
@@ -29,30 +33,11 @@
   white-space: nowrap;
 }
 
-/* Linked identity */
-.account-table th:nth-child(3),
-.account-table td:nth-child(3) {
-  min-width: 14rem;
-}
-
-/* Status */
+/* Status: a tick or a cross */
 .account-table th:nth-child(4),
 .account-table td:nth-child(4) {
-  width: 6.5rem;
-  white-space: nowrap;
-}
-
-/* Last login */
-.account-table th:nth-child(5),
-.account-table td:nth-child(5) {
-  width: 9.5rem;
-  white-space: nowrap;
-}
-
-/* Joined */
-.account-table th:nth-child(6),
-.account-table td:nth-child(6) {
-  width: 9.5rem;
+  width: 5rem;
+  text-align: center;
   white-space: nowrap;
 }
 

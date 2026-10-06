@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
 
 from django.urls import reverse
-from django.utils import timezone
 
 from accounts.selectors import AccountRecord
 from common.page_header import PageHeader, PageHeaderAction
@@ -35,8 +33,7 @@ class AccountPageRow:
     linked_identity_href: str
     status_label: str
     status_tone: str
-    last_login_label: str
-    date_joined_label: str
+    is_active: bool
     detail_href: str
     icon: str
 
@@ -113,8 +110,7 @@ def _build_account_page_row(
         linked_identity_href=account.linked_identity_href,
         status_label=account.status_label,
         status_tone=_status_tone(is_active=account.is_active),
-        last_login_label=_datetime_label(account.last_login),
-        date_joined_label=_datetime_label(account.date_joined),
+        is_active=account.is_active,
         detail_href=detail_href,
         icon=account_status_icon(account),
     )
@@ -148,14 +144,9 @@ def _accounts_view_href(view: str) -> str:
 
 
 def _status_tone(*, is_active: bool) -> str:
+    """Row tone: active rows in green; inactive rows have no surface."""
+
     if is_active:
         return "success"
 
-    return "neutral"
-
-
-def _datetime_label(value: datetime | None) -> str:
-    if value is None:
-        return "Never"
-
-    return timezone.localtime(value).strftime("%Y-%m-%d %H:%M")
+    return "inactive"

@@ -80,10 +80,6 @@ ACCOUNT_SORTS = {
     "-linked": ("-linked", "email"),
     "status": ("status", "email"),
     "-status": ("-status", "email"),
-    "last_login": ("last_login", "email"),
-    "-last_login": ("-last_login", "email"),
-    "joined": ("date_joined", "email"),
-    "-joined": ("-date_joined", "email"),
 }
 
 ACCOUNT_DEFAULT_SORT = "account"
@@ -93,8 +89,6 @@ ACCOUNT_TABLE_SORTS = [
     TableSortField("role", "Role"),
     TableSortField("linked", "Linked identity"),
     TableSortField("status", "Status"),
-    TableSortField("last_login", "Last login"),
-    TableSortField("joined", "Joined"),
 ]
 
 ACCOUNT_TABLE_CONTROLS_TEMPLATE = TableControlsTemplate(

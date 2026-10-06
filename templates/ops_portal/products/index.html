@@ -68,23 +68,7 @@
             </td>
 
             <td>
-              {% if row.product.vegan %}
-                <span
-                  class="status-text status-text--success product-vegan-icon product-vegan-icon--yes"
-                  aria-label="Vegan"
-                  title="Vegan"
-                >
-                  {% include "includes/ui/icon_block.html" with name="check" size="sm" class_name="status-text__icon" only %}
-                </span>
-              {% else %}
-                <span
-                  class="status-text status-text--muted product-vegan-icon product-vegan-icon--no"
-                  aria-label="Not vegan"
-                  title="Not vegan"
-                >
-                  {% include "includes/ui/icon_block.html" with name="x" size="sm" class_name="status-text__icon" only %}
-                </span>
-              {% endif %}
+              {% include "includes/table/bool_icon.html" with value=row.product.vegan yes_label="Vegan" no_label="Not vegan" only %}
             </td>
 
             <td>

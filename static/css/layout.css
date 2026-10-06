@@ -11,6 +11,16 @@
   border-top: 1px solid var(--color-neutral-200);
 }
 
+/* Pages without the footer (ops): no extra room under the content, so a
+   page that fits the screen does not scroll, and a longer one scrolls
+   just past its last button (the section keeps its own bottom padding).
+   Phones keep their room for the bottom bar. */
+@media (min-width: 768px) {
+  body:not(:has(.site-footer)) .site-main {
+    padding-bottom: 0;
+  }
+}
+
 .site-footer__text {
   margin: 0;
   text-align: center;

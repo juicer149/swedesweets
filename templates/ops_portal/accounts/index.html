@@ -44,17 +44,12 @@
             <td>{{ row.linked_identity }}</td>
 
             <td>
-              <span class="status-text status-text--{{ row.status_tone }}">
-                {{ row.status_label }}
-              </span>
+              {% include "includes/table/bool_icon.html" with value=row.is_active yes_label="Active" no_label="Inactive" only %}
             </td>
-
-            <td>{{ row.last_login_label }}</td>
-            <td>{{ row.date_joined_label }}</td>
           </tr>
         {% empty %}
           <tr>
-            <td class="empty-cell" colspan="6">
+            <td class="empty-cell" colspan="4">
               No accounts found.
             </td>
           </tr>

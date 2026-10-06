@@ -144,6 +144,20 @@
   background: rgb(var(--color-status-muted) / 0.10);
 }
 
+/* Inactive (an account that cannot log in): no surface and no lift, so
+   it reads as switched off next to the green active rows. */
+.data-table tbody tr[data-tone="inactive"] {
+  filter: none;
+}
+
+.data-table tbody tr[data-tone="inactive"] > * {
+  background: transparent;
+}
+
+.data-table tbody tr[data-tone="inactive"]:hover > * {
+  background: rgb(var(--color-status-muted) / 0.055);
+}
+
 .data-table tbody tr[data-tone="warning"]:hover > * {
   background: rgb(var(--color-status-warning) / 0.13);
 }
@@ -205,28 +219,28 @@
 }
 
 /* =============================================================================
-   Boolean / attribute table icons
+   Boolean / attribute table icons (includes/table/bool_icon.html)
    ============================================================================= */
 
-.product-vegan-icon {
+.table-bool {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.product-vegan-icon .ui-icon-block,
-.product-vegan-icon .status-text__icon {
+.table-bool .ui-icon-block,
+.table-bool .status-text__icon {
   width: var(--size-icon-sm);
   height: var(--size-icon-sm);
 }
 
-.product-vegan-icon--yes svg {
+.table-bool--yes svg {
   width: 100%;
   height: 100%;
   --icon-stroke-width: 2.7;
 }
 
-.product-vegan-icon--no .ui-icon-block {
+.table-bool--no .ui-icon-block {
   stroke-width: 2.2;
 }
 

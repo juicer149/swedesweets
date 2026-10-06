@@ -1,0 +1,17 @@
+{% comment %}
+  A yes/no table cell as an icon: a green tick or a grey cross, with the
+  word for screen readers and as a tooltip.
+
+  value       true or false
+  yes_label   e.g. "Vegan", "Active"
+  no_label    e.g. "Not vegan", "Inactive"
+{% endcomment %}
+{% if value %}
+  <span class="status-text status-text--success table-bool table-bool--yes" role="img" aria-label="{{ yes_label }}" title="{{ yes_label }}">
+    {% include "includes/ui/icon_block.html" with name="check" size="sm" class_name="status-text__icon" only %}
+  </span>
+{% else %}
+  <span class="status-text status-text--muted table-bool table-bool--no" role="img" aria-label="{{ no_label }}" title="{{ no_label }}">
+    {% include "includes/ui/icon_block.html" with name="x" size="sm" class_name="status-text__icon" only %}
+  </span>
+{% endif %}
