@@ -173,11 +173,17 @@
   padding: 0;
 }
 
+/* The icon circle shrinks with the screen like a product line's picture,
+   so name and aside keep their room on a narrow phone. */
+.line--link {
+  --line-icon-size: clamp(2.25rem, 9vw, 2.5rem);
+}
+
 .line__link {
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  grid-template-columns: var(--line-icon-size) minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-3);
+  gap: clamp(var(--space-2), 2.5vw, var(--space-3));
   padding-block: var(--space-4);
 
   color: inherit;
@@ -194,8 +200,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--line-icon-size, 2.5rem);
+  height: var(--line-icon-size, 2.5rem);
 
   color: var(--line-tone-text, var(--color-neutral-700));
   background: var(--line-tone-bg, var(--color-neutral-100));
@@ -244,7 +250,7 @@
 
 @media (max-width: 639px) {
   .line__link:has(.line__aside--wide) {
-    grid-template-columns: 2.5rem minmax(0, 1fr);
+    grid-template-columns: var(--line-icon-size) minmax(0, 1fr);
   }
 
   .line__aside--wide {
