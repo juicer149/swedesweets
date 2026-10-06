@@ -340,6 +340,12 @@ body:has(.screen) .site-footer {
   max-height: none;
 }
 
+/* Work pages (an order to pack or deliver): the heading close to the top,
+   so the work starts above the fold. */
+.page-section--top {
+  padding-top: clamp(var(--space-2), 2dvh, var(--space-4));
+}
+
 .page-section .page > .page__actions {
   margin-top: clamp(var(--space-6), 6dvh, var(--space-8));
 }
@@ -476,6 +482,76 @@ body:has(.screen) .site-footer {
 .icon-rows__link:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
+}
+
+
+/* -----------------------------------------------------------------------------
+   Disclosure: a quiet row that slides open to more (smooth-details.js),
+   closed by default, for details that are only sometimes needed (an
+   order's customer). Text left, the FAQ's chevron right.
+
+     <details class="disclosure" data-smooth>
+       <summary class="disclosure__summary">Title + chevron</summary>
+       <div class="disclosure__content" data-smooth-content>…</div>
+     </details>
+   ----------------------------------------------------------------------------- */
+
+.disclosure__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-2);
+
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-16);
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-control) var(--radius-control) 0 0;
+
+  transition: color var(--motion-fast), background var(--motion-fast);
+}
+
+.disclosure__summary::-webkit-details-marker {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .disclosure__summary:hover {
+    color: var(--color-neutral-800);
+    background: var(--color-neutral-100);
+  }
+}
+
+.disclosure__summary:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.disclosure[open] > .disclosure__summary {
+  color: var(--color-neutral-800);
+}
+
+.disclosure__chevron {
+  transition: transform 200ms ease;
+}
+
+.disclosure[open] .disclosure__chevron {
+  transform: rotate(180deg);
+}
+
+/* Padding, not margin, so the sliding height includes the gap. */
+.disclosure__content {
+  padding-top: var(--space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disclosure__summary,
+  .disclosure__chevron {
+    transition: none;
+  }
 }
 
 

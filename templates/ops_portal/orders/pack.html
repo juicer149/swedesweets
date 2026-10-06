@@ -4,7 +4,7 @@
 {% block title %}{{ title }} | SwedeSweets{% endblock %}
 
 {% block content %}
-<section class="page-section" aria-labelledby="ops-order-title">
+<section class="page-section page-section--top" aria-labelledby="ops-order-title">
   <div class="page page--centered page--wide">
     {% include "includes/ui/status_heading.html" with title_id="ops-order-title" title=title status=order.status icon=status_icon label=status_label at=order.status_changed_at who=order.customer_name what=contents_label only %}
 
@@ -23,6 +23,7 @@
 
 {% block scripts %}
   {{ block.super }}
+  <script src="{% static 'js/smooth-details.js' %}" defer></script>
   <script src="{% static 'js/pack_checklist.js' %}" defer></script>
   <script src="{% static 'js/pack_checklist_toggle.js' %}" defer></script>
 {% endblock %}
