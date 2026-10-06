@@ -467,6 +467,29 @@
 }
 
 
+/* Outline: no background, just the tone's edge (list "add" buttons).
+   Hover fills in the tone's light background. */
+.button--outline {
+  color: var(--button-outline-text);
+  background: transparent;
+  border-color: var(--button-outline-border);
+}
+
+.button--outline:hover,
+.button--outline:focus-visible {
+  background: var(--button-outline-bg-hover);
+  border-color: var(--button-outline-border-hover);
+  box-shadow: var(--button-outline-shadow-hover);
+  transform: var(--transform-lift);
+}
+
+.button--outline:active {
+  background: var(--button-outline-bg-active);
+  box-shadow: var(--shadow-pressed);
+  transform: translateY(0);
+}
+
+
 .button--ghost {
   color: var(--button-soft-text);
   background: transparent;

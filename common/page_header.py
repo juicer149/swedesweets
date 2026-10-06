@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-# A list page's "add" action: small and soft (a yellow edge, a hint of
-# yellow), so it is easy to find without outweighing the list it sits by.
+# A list page's "add" action: small, a yellow edge on no background, so
+# it is easy to find without outweighing the list it sits by.
 DEFAULT_PAGE_HEADER_ACTION_CLASS = (
-    "button button--sm button--soft button--tone-place button--with-icon"
+    "button button--sm button--outline button--tone-place button--with-icon"
 )
 
 
