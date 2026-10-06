@@ -63,7 +63,7 @@ def split_password_rules(texts: list[str]) -> tuple[str, list[str]]:
 
     split = [text.split(" ") for text in texts]
     common = 0
-    for words in zip(*split):
+    for words in zip(*split, strict=False):
         if len(set(words)) != 1:
             break
         common += 1

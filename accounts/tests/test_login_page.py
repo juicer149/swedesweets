@@ -54,11 +54,17 @@ def test_password_rules_lead_is_split_off():
         "Your password can’t be entirely numeric.",
     ])
     assert lead == "Your password"
-    assert items == ["must contain at least 8 characters.", "can’t be entirely numeric."]
+    assert items == [
+        "must contain at least 8 characters.",
+        "can’t be entirely numeric.",
+    ]
 
 
 def test_password_rules_without_a_common_lead_stay_whole():
-    assert split_password_rules(["Short.", "Different."]) == ("", ["Short.", "Different."])
+    assert split_password_rules(["Short.", "Different."]) == (
+        "",
+        ["Short.", "Different."],
+    )
     assert split_password_rules(["Only one rule."]) == ("", ["Only one rule."])
 
 
