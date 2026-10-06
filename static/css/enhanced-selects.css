@@ -275,6 +275,18 @@ select.ts-hidden-accessible {
    Product options
    ============================================================================= */
 
+/* Product options are two lines tall; give their list room for about four
+   before scrolling (other selects keep the shorter list). */
+.ts-dropdown:has(.enhanced-product-option) {
+  max-height: min(24rem, 55vh);
+}
+
+@media (max-width: 1023px), (pointer: coarse) {
+  .ts-dropdown:has(.enhanced-product-option) {
+    max-height: min(20rem, 48vh);
+  }
+}
+
 .ts-dropdown .option:has(.enhanced-product-option) {
   display: block;
 
