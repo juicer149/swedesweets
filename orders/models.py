@@ -209,6 +209,17 @@ class Order(models.Model):
         }
 
     @property
+    def status_changed_at(self):
+        """When the order reached its current status (created, for a draft)."""
+
+        return {
+            self.Status.PLACED: self.placed_at,
+            self.Status.PACKED: self.packed_at,
+            self.Status.DELIVERED: self.delivered_at,
+            self.Status.CANCELLED: self.cancelled_at,
+        }.get(self.status) or self.created_at
+
+    @property
     def total(self) -> Decimal | None:
         """Return the commercial total when every line has a price snapshot.
 

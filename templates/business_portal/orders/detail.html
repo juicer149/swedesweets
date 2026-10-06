@@ -9,20 +9,7 @@
   aria-labelledby="portal-order-detail-title"
 >
   <div class="page page--centered page--wide">
-    <header class="page__heading">
-      <h1 id="portal-order-detail-title" class="page__lead">
-        {{ title }}
-      </h1>
-
-      <p class="page__note order-status order-status--{{ order.status }}">
-        <span class="order-status__state">
-          {% include "includes/ui/icon_block.html" with name=status_icon size="sm" only %}
-          {{ customer_status_label }}
-        </span>
-        <span aria-hidden="true">·</span>
-        <span>{{ contents_label }}</span>
-      </p>
-    </header>
+    {% include "includes/ui/status_heading.html" with title_id="portal-order-detail-title" title=title status=order.status icon=status_icon label=customer_status_label at=order.status_changed_at what=contents_label only %}
 
     {% if content_lines %}
       <ul class="lines" aria-label="{% trans 'Items' %}">

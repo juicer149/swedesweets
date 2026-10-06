@@ -1,0 +1,41 @@
+{% comment %}
+  A page title with one quiet line under it: the status in its colour,
+  when it got there, then who and what.
+
+    Order #31
+    ✓ Packed · 2026-10-06 14:32 · Café Blanc · 3 products · 12 units
+
+  title_id  id the page's section points to (aria-labelledby)
+  title     the title
+  status    status key, for the colour (placed, packed, delivered, cancelled)
+  icon      status icon name
+  label     status text
+  at        when the status was reached (optional)
+  who       e.g. the customer (optional)
+  what      e.g. the contents (optional)
+{% endcomment %}
+<header class="page__heading">
+  <h1 id="{{ title_id }}" class="page__lead">{{ title }}</h1>
+
+  <p class="page__note order-status order-status--{{ status }}">
+    <span class="order-status__state">
+      {% include "includes/ui/icon_block.html" with name=icon size="sm" only %}
+      {{ label }}
+    </span>
+
+    {% if at %}
+      <span aria-hidden="true">·</span>
+      <time datetime="{{ at|date:'c' }}">{{ at|date:"Y-m-d H:i" }}</time>
+    {% endif %}
+
+    {% if who %}
+      <span aria-hidden="true">·</span>
+      <span>{{ who }}</span>
+    {% endif %}
+
+    {% if what %}
+      <span aria-hidden="true">·</span>
+      <span>{{ what }}</span>
+    {% endif %}
+  </p>
+</header>

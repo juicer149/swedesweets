@@ -94,13 +94,16 @@
   text-align: center;
 }
 
-/* A lead with a grey line under it. */
+/* A lead with a grey line under it (orders: status · date · who · what).
+   The title a shade darker than a plain lead, since the line under it is
+   grey too; more room under the whole heading than under a lone lead. */
 .page__heading {
-  margin-bottom: clamp(var(--space-5), 4dvh, var(--space-7));
+  margin-bottom: clamp(var(--space-6), 5dvh, var(--space-10));
 }
 
 .page__heading .page__lead {
-  margin-bottom: var(--space-1);
+  margin-bottom: var(--space-2);
+  color: var(--color-neutral-800);
 }
 
 /* Small grey centred line: a count, a status, a description. */
