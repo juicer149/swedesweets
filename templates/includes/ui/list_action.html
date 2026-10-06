@@ -1,0 +1,21 @@
+{% comment %}
+  A list page's "add" action (PageHeaderAction): the small soft yellow
+  button with its icon. Sits on the section-nav row, or beside the search
+  on pages without tabs (includes/table/list_toolbar.html).
+
+  action      PageHeaderAction
+  class_name  extra classes (optional)
+{% endcomment %}
+<a
+  class="{{ action.css_class }}{% if class_name %} {{ class_name }}{% endif %}"
+  href="{{ action.href }}"
+  {% if action.aria_label %}aria-label="{{ action.aria_label }}"{% endif %}
+>
+  {% if action.icon %}
+    <span class="button__icon" aria-hidden="true">
+      {% include "includes/ui/icon.html" with name=action.icon only %}
+    </span>
+  {% endif %}
+
+  <span class="button__label">{{ action.label }}</span>
+</a>

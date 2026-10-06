@@ -133,31 +133,41 @@
 }
 
 /* =============================================================================
-   List page actions
+   List toolbar (includes/table/list_toolbar.html)
 
-   Slim right-aligned row for the page's primary action. Placement is
-   deliberately provisional - button location is still being decided, so
-   this exists as one shared spot to move later without touching every page.
+   Pages without tabs: the search, and the page's small "add" button to
+   its right, as one row; the button wraps under the search when the row
+   is too narrow. Pages with tabs keep the button on the tab row instead.
    ============================================================================= */
 
-.list-page-actions {
+.list-toolbar {
   display: flex;
-  justify-content: flex-end;
-  padding-block: var(--space-4) var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  width: min(100%, 720px);
+  margin: var(--space-6) auto var(--space-5);
 }
 
-.list-page-actions .button {
-  min-height: 48px;
-  padding-inline: var(--space-5);
-  font-size: var(--font-size-16);
+.list-toolbar .quick-jump-search {
+  flex: 1 1 16rem;
+  margin: 0;
+}
+
+/* As tall as the search beside it. */
+.list-toolbar__action.button {
+  flex: 0 0 auto;
+  min-height: 3rem;
 }
 
 @media (max-width: 767px) {
-  .list-page-actions .button {
-    width: 100%;
-    justify-content: center;
-    min-height: 44px;
-    padding-inline: var(--space-4);
+  .list-toolbar {
+    margin-block: var(--space-4) var(--space-3);
+  }
+
+  .list-toolbar__action.button {
+    min-height: 42px;
   }
 }
 

@@ -4,14 +4,14 @@
 
 {% block content %}
 {% include "includes/ui/list_page_head.html" with page_header=page_header %}
-{% include "includes/ui/list_page_actions.html" with page_header=page_header %}
 
 {% comment %}
   Customers as calm link rows at every width (no table): a search that
-  jumps straight to a customer, then everyone by name.
+  jumps straight to a customer (with Add customer beside it), then
+  everyone by name.
 {% endcomment %}
 <section id="customers-list" class="list-section list-rows" aria-labelledby="customers-title">
-  {% include "includes/table/quick_jump_search.html" %}
+  {% include "includes/table/list_toolbar.html" %}
 
   {% if customer_rows %}
     <ul class="lines" aria-label="Customers">

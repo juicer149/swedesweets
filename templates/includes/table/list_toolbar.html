@@ -1,0 +1,15 @@
+{% comment %}
+  The tool row of a list page without tabs: the quick search, and the
+  page's "add" action to its right (wraps under it when there is no room).
+
+  Context: quick_jump_search (optional), page_header.action (optional)
+{% endcomment %}
+{% if quick_jump_search.options or page_header.action %}
+  <div class="list-toolbar">
+    {% include "includes/table/quick_jump_search.html" %}
+
+    {% if page_header.action %}
+      {% include "includes/ui/list_action.html" with action=page_header.action class_name="list-toolbar__action" only %}
+    {% endif %}
+  </div>
+{% endif %}

@@ -122,7 +122,7 @@ def _build_accounts_page_action(
 ) -> PageHeaderAction | None:
     if active_view == ACCOUNT_VIEW_INTERNAL:
         return PageHeaderAction(
-            label="Create internal account",
+            label="Add account",
             href=reverse("ops_accounts:create_internal"),
             icon="plus",
             aria_label="Create internal staff account",
@@ -130,7 +130,7 @@ def _build_accounts_page_action(
 
     if active_view == ACCOUNT_VIEW_CUSTOMER:
         return PageHeaderAction(
-            label="Create customer account",
+            label="Add account",
             href=reverse("ops_accounts:create_customer_account"),
             icon="plus",
             aria_label="Create customer login account",

@@ -128,8 +128,10 @@ select.ts-hidden-accessible {
 /*
   Closed searchable single selects should look like one normal select field.
   The internal search input must not steal width from the selected text.
+  With nothing chosen the input stays, so its placeholder ("Search by…")
+  shows in the empty field.
 */
-.enhanced-select--searchable.single:not(.dropdown-active) .ts-control > input {
+.enhanced-select--searchable.single.has-items:not(.dropdown-active) .ts-control > input {
   flex: 0 0 0 !important;
   width: 0 !important;
   min-width: 0 !important;

@@ -31,19 +31,7 @@ Usage:
     </nav>
 
     {% if page_header.action %}
-      <a      
-        class="section-nav-row__action {{ page_header.action.css_class }}"
-        href="{{ page_header.action.href }}"
-        {% if page_header.action.aria_label %}aria-label="{{ page_header.action.aria_label }}"{% endif %}
-      >
-        {% if page_header.action.icon %}
-          <span class="button__icon" aria-hidden="true">
-            {% include "includes/ui/icon.html" with name=page_header.action.icon only %}
-          </span>
-        {% endif %}
-
-        <span class="button__label">{{ page_header.action.label }}</span>
-      </a>
+      {% include "includes/ui/list_action.html" with action=page_header.action class_name="section-nav-row__action" only %}
     {% endif %}
   </div>
 {% endif %}

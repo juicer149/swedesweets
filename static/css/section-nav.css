@@ -243,19 +243,3 @@
     justify-content: center;
   }
 }
-
-/* =============================================================================
-   Action button inside a section-nav row
-
-   The button's own classes (button--lg via PageHeaderAction's default)
-   are shared with pages that give the action its own row (list-page-actions).
-   There, --lg reads fine standing alone. Sharing a row with lightweight
-   text tabs makes the same size read as oversized by contrast, so this
-   scopes it down to the button--md size already defined in buttons.css
-   - reusing that token rather than inventing a new size.
-   ============================================================================= */
-
-.section-nav-row__action.button {
-  min-height: var(--size-control-md);
-  padding-inline: var(--space-5);
-}
