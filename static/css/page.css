@@ -542,6 +542,11 @@ body:has(.screen) .site-footer {
   transform: rotate(180deg);
 }
 
+/* Several in a row read as one list of rows. */
+.disclosure + .disclosure {
+  margin-top: 0;
+}
+
 /* Padding, not margin, so the sliding height includes the gap. */
 .disclosure__content {
   padding-top: var(--space-3);

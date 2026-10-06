@@ -1,0 +1,24 @@
+{% comment %}
+  The order's products as lines, each linking to its product page.
+  Context: content_lines
+{% endcomment %}
+{% if content_lines %}
+  <ul class="lines" aria-label="Products">
+    {% for line in content_lines %}
+      <li class="line line--static">
+        <a class="line__product" href="{{ line.product_detail_href }}">
+          {% include "includes/ui/line_image.html" with url=line.image_url only %}
+
+          <span class="line__text">
+            <span class="line__name">{{ line.product.display_name }}</span>
+            <span class="line__meta">{{ line.product.code_label }} · {{ line.product.weight_label }}</span>
+          </span>
+        </a>
+
+        <span class="line__quantity-label">{{ line.quantity_label }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="page__note">No order contents found.</p>
+{% endif %}

@@ -1,28 +1,24 @@
 {% comment %}
-  The order's products as lines, each linking to its product page.
-  Context: content_lines
+  The order's products. Open while the order is placed (it still has to
+  be packed); once packed, delivered or cancelled they fold away into a
+  "Products" row like the customer details.
+  Context: order, content_lines
 {% endcomment %}
-<section class="order-section" aria-labelledby="ops-order-products-title">
-  <h2 id="ops-order-products-title" class="order-section__title">Products</h2>
+{% if order.status == "placed" %}
+  <section class="order-section" aria-labelledby="ops-order-products-title">
+    <h2 id="ops-order-products-title" class="order-section__title">Products</h2>
 
-  {% if content_lines %}
-    <ul class="lines" aria-label="Products">
-      {% for line in content_lines %}
-        <li class="line line--static">
-          <a class="line__product" href="{{ line.product_detail_href }}">
-            {% include "includes/ui/line_image.html" with url=line.image_url only %}
+    {% include "ops_portal/orders/includes/order_product_lines.html" %}
+  </section>
+{% else %}
+  <details class="order-section disclosure" data-smooth>
+    <summary class="disclosure__summary">
+      <span>Products</span>
+      {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="disclosure__chevron" only %}
+    </summary>
 
-            <span class="line__text">
-              <span class="line__name">{{ line.product.display_name }}</span>
-              <span class="line__meta">{{ line.product.code_label }} · {{ line.product.weight_label }}</span>
-            </span>
-          </a>
-
-          <span class="line__quantity-label">{{ line.quantity_label }}</span>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="page__note">No order contents found.</p>
-  {% endif %}
-</section>
+    <div class="disclosure__content" data-smooth-content>
+      {% include "ops_portal/orders/includes/order_product_lines.html" %}
+    </div>
+  </details>
+{% endif %}
