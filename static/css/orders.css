@@ -602,3 +602,107 @@
     border-color: transparent;
   }
 }
+
+
+/* =============================================================================
+   Order detail (business portal, calm design)
+
+   The status in its colour, then the contents; the lines (lines.css); the
+   dates in small print.
+   ============================================================================= */
+
+.order-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.order-status__state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--order-status-color, var(--color-neutral-700));
+  font-weight: 600;
+}
+
+.order-status--placed { --order-status-color: var(--color-status-placed-text); }
+.order-status--packed { --order-status-color: var(--color-status-packed-text); }
+.order-status--delivered { --order-status-color: var(--color-status-delivered-text); }
+.order-status--cancelled { --order-status-color: var(--color-status-cancelled-text); }
+
+.order-dates {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-6) 0 0;
+  padding-top: var(--space-4);
+
+  font-size: var(--font-size-14);
+  border-top: 1px solid var(--color-neutral-300);
+}
+
+.order-dates__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.order-dates dt {
+  color: var(--color-neutral-600);
+}
+
+.order-dates dd {
+  margin: 0;
+  color: var(--color-neutral-800);
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* =============================================================================
+   Checkout (shop, calm design): the form, then the order in small print
+   under it; on review, the delivery address.
+   ============================================================================= */
+
+.checkout-form {
+  margin: 0;
+}
+
+.checkout-order,
+.checkout-address {
+  margin-top: var(--space-8);
+}
+
+.checkout-order__title {
+  margin: 0 0 var(--space-3);
+  color: var(--color-neutral-800);
+  font-size: var(--font-size-16);
+  font-weight: 600;
+}
+
+.checkout-order__lines {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.checkout-order__line {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-14);
+  font-variant-numeric: tabular-nums;
+}
+
+.checkout-address__body {
+  color: var(--color-neutral-700);
+  font-style: normal;
+  line-height: 1.6;
+}
+
+.checkout-address__body strong {
+  color: var(--color-neutral-900);
+}

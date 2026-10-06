@@ -8,12 +8,12 @@
   {% if active_tab != "account" %}hidden{% endif %}
 >
   <section
-    class="bare-section"
+    class="page-section"
     aria-labelledby="account-details-title"
   >
-    <div class="auth-card auth-card--bare auth-card--centered">
-      <header class="auth-card__header">
-        <h2 id="account-details-title" class="auth-card__title">
+    <div class="page page--centered">
+      <header class="page__header">
+        <h2 id="account-details-title" class="page__title">
           {{ customer.name }}
         </h2>
       </header>
@@ -41,15 +41,15 @@
         </li>
       </ul>
 
-      <div class="form-actions auth-card__actions">
+      <div class="form-actions page__actions">
         <a
-          class="button button--md button--solid button--tone-place auth-card__submit"
+          class="button button--md button--solid button--tone-place page__submit"
           href="{% url 'business_portal:edit_store' %}"
         >
           {% trans "Edit store information" %}
         </a>
 
-        <a class="auth-card__link" href="{% url 'password_change' %}">
+        <a class="quiet-link" href="{% url 'password_change' %}">
           {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
           {% trans "Change password" %}
         </a>

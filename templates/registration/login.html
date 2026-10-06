@@ -4,12 +4,12 @@
 {% block title %}{% trans "Login" %} | SwedeSweets{% endblock %}
 
 {% block content %}
-<section class="auth-page auth-page--bare" aria-labelledby="login-title">
-  <form class="auth-card auth-card--bare" method="post" action="{% url 'login' %}">
+<section class="screen" aria-labelledby="login-title">
+  <form class="page" method="post" action="{% url 'login' %}">
     {% csrf_token %}
 
-    <header class="auth-card__header">
-      <h1 id="login-title" class="auth-card__title">
+    <header class="page__header">
+      <h1 id="login-title" class="page__title">
         {% trans "Login" %}
       </h1>
     </header>
@@ -23,15 +23,15 @@
       {% include "registration/includes/auth_field.html" with field=form.password label=password_label password=True hide_label=True %}
     </div>
 
-    <div class="form-actions auth-card__actions">
+    <div class="form-actions page__actions">
       <button
-        class="button button--md button--solid button--tone-place auth-card__submit"
+        class="button button--md button--solid button--tone-place page__submit"
         type="submit"
       >
         {% trans "Login" %}
       </button>
 
-      <a class="auth-card__link" href="{% url 'password_reset' %}">
+      <a class="quiet-link" href="{% url 'password_reset' %}">
         {% trans "Forgot password?" %}
       </a>
     </div>

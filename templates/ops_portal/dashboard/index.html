@@ -4,9 +4,9 @@
 {% block title %}Ops dashboard | SwedeSweets{% endblock %}
 
 {% block content %}
-<section class="bare-section dashboard-page" aria-labelledby="ops-dashboard-title">
-  <div class="auth-card auth-card--bare auth-card--centered dashboard-card">
-    <h1 id="ops-dashboard-title" class="contact-lead">Ops dashboard</h1>
+<section class="page-section dashboard-page" aria-labelledby="ops-dashboard-title">
+  <div class="page page--centered dashboard-card">
+    <h1 id="ops-dashboard-title" class="page__lead">Ops dashboard</h1>
 
     <div
       id="dashboard-queue"
@@ -32,14 +32,14 @@
         {% if dashboard_queue_panel %}
           <h2 class="visually-hidden">{{ dashboard_queue_panel.title }}</h2>
 
-          <p class="cart-summary dashboard-queue__description">
+          <p class="page__note dashboard-queue__description">
             {{ dashboard_queue_panel.description }}
           </p>
 
           {% if dashboard_queue_panel.items %}
-            <ul class="cart-lines dashboard-items">
+            <ul class="lines dashboard-items">
               {% for item in dashboard_queue_panel.items %}
-                <li class="cart-line dashboard-item">
+                <li class="line dashboard-item">
                   <a class="dashboard-item__link" href="{{ item.href }}">
                     <span class="dashboard-item__icon dashboard-item__icon--{{ item.tone }}" aria-hidden="true">
                       {% if item.icon %}
@@ -47,9 +47,9 @@
                       {% endif %}
                     </span>
 
-                    <span class="cart-line__text">
-                      <span class="cart-line__name">{{ item.title }}</span>
-                      <span class="cart-line__meta">{{ item.meta }}</span>
+                    <span class="line__text">
+                      <span class="line__name">{{ item.title }}</span>
+                      <span class="line__meta">{{ item.meta }}</span>
                     </span>
 
                     <span class="dashboard-item__action">{{ item.action_label }}</span>
@@ -58,31 +58,31 @@
               {% endfor %}
             </ul>
           {% else %}
-            <p class="cart-summary dashboard-queue__empty">
+            <p class="page__note dashboard-queue__empty">
               Nothing to show in this queue.
             </p>
           {% endif %}
 
           <div class="dashboard-queue__more">
-            <a class="auth-card__link" href="{{ dashboard_queue_panel.view_all_href }}">
+            <a class="quiet-link" href="{{ dashboard_queue_panel.view_all_href }}">
               {{ dashboard_queue_panel.view_all_label }}
             </a>
           </div>
         {% endif %}
       {% else %}
-        <p class="auth-card__text auth-card__message">All clear</p>
-        <p class="cart-summary">
+        <p class="page__text page__message">All clear</p>
+        <p class="page__note">
           No orders waiting, no packed deliveries, and no urgent inventory signals.
         </p>
       {% endif %}
     </div>
 
     {% if dashboard_actions %}
-      <div class="form-actions auth-card__actions cart-actions">
+      <div class="form-actions page__actions page-actions">
         {% for action in dashboard_actions %}
           {% if forloop.first %}
             <a
-              class="button button--md button--solid button--tone-place auth-card__submit"
+              class="button button--md button--solid button--tone-place page__submit"
               href="{{ action.href }}"
               {% if action.aria_label %}aria-label="{{ action.aria_label }}"{% endif %}
             >
@@ -92,11 +92,11 @@
         {% endfor %}
 
         {% if dashboard_actions|length > 1 %}
-          <div class="cart-actions__links">
+          <div class="page-actions__links">
             {% for action in dashboard_actions %}
               {% if not forloop.first %}
                 <a
-                  class="auth-card__link"
+                  class="quiet-link"
                   href="{{ action.href }}"
                   {% if action.aria_label %}aria-label="{{ action.aria_label }}"{% endif %}
                 >

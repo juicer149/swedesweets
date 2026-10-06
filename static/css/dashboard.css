@@ -22,10 +22,10 @@
    No box and no hero: the title centred, the queues as filter chips with
    their count, the queue's rows on the page divided by hairlines, and the
    actions at the bottom (one yellow button, the rest quiet links).
-   The rows reuse the cart's .cart-lines / .cart-line__* text styles.
+   The rows reuse .lines / .line__* text styles (lines.css).
    ============================================================================= */
 
-.auth-card.auth-card--bare.dashboard-card {
+.page.dashboard-card {
   width: min(100%, 720px);
 }
 
@@ -74,7 +74,7 @@
 
 
 /* Rows: the whole row is the link. */
-.cart-line.dashboard-item {
+.line.dashboard-item {
   display: block;
   padding: 0;
 }
@@ -131,7 +131,7 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .dashboard-item__link:hover .cart-line__name {
+  .dashboard-item__link:hover .line__name {
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;

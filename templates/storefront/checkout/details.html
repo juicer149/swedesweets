@@ -5,11 +5,11 @@
 
 {% block content %}
 <section
-  class="bare-section cart-page"
+  class="page-section"
   aria-labelledby="storefront-checkout-title"
 >
-  <div class="auth-card auth-card--bare auth-card--centered cart-card">
-    <h1 id="storefront-checkout-title" class="contact-lead">
+  <div class="page page--centered page--wide">
+    <h1 id="storefront-checkout-title" class="page__lead">
       {% trans "Delivery details" %}
     </h1>
 
@@ -40,7 +40,7 @@
           </ul>
 
           {% if cart_summary.subtotal_label %}
-            <div class="cart-total">
+            <div class="lines-total">
               <span>{% trans "Subtotal" %}</span>
               <strong>{{ cart_summary.subtotal_label }}</strong>
             </div>
@@ -48,16 +48,16 @@
         </section>
       {% endif %}
 
-      <div class="form-actions auth-card__actions cart-actions">
+      <div class="form-actions page__actions page-actions">
         <button
-          class="button button--md button--solid button--tone-place auth-card__submit"
+          class="button button--md button--solid button--tone-place page__submit"
           type="submit"
         >
           {% trans "Continue to review" %}
         </button>
 
-        <div class="cart-actions__links">
-          <a class="auth-card__link" href="{{ cart_url }}" data-dirty-ignore="true">
+        <div class="page-actions__links">
+          <a class="quiet-link" href="{{ cart_url }}" data-dirty-ignore="true">
             {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
             {% trans "Edit cart" %}
           </a>

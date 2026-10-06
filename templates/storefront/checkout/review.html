@@ -5,50 +5,38 @@
 
 {% block content %}
 <section
-  class="bare-section cart-page"
+  class="page-section"
   aria-labelledby="storefront-review-title"
 >
-  <div class="auth-card auth-card--bare auth-card--centered cart-card">
-    <h1 id="storefront-review-title" class="contact-lead">
+  <div class="page page--centered page--wide">
+    <h1 id="storefront-review-title" class="page__lead">
       {% trans "Review order" %}
     </h1>
 
     {% if has_open_payment %}
-      <p class="cart-notice" role="status">
+      <p class="page__notice" role="status">
         {% trans "You have a payment in progress for this order. Continue it, or cancel it to change your order." %}
       </p>
     {% endif %}
 
-    <ul class="cart-lines" aria-label="{% trans 'Items' %}">
+    <ul class="lines" aria-label="{% trans 'Items' %}">
       {% for line in lines %}
-        <li class="cart-line cart-line--review">
-          <div class="cart-line__product">
-            {% if line.image_url %}
-              <img
-                class="cart-line__image"
-                src="{{ line.image_url }}"
-                alt=""
-                width="48"
-                height="48"
-                loading="lazy"
-                decoding="async"
-              >
-            {% else %}
-              <span class="cart-line__image cart-line__image--empty" aria-hidden="true"></span>
-            {% endif %}
+        <li class="line line--static">
+          <div class="line__product">
+            {% include "includes/ui/line_image.html" with url=line.image_url only %}
 
-            <span class="cart-line__text">
-              <span class="cart-line__name">{{ line.product_label }}</span>
-              <span class="cart-line__meta">{{ line.quantity }} × {{ line.unit_price_label }}</span>
+            <span class="line__text">
+              <span class="line__name">{{ line.product_label }}</span>
+              <span class="line__meta">{{ line.quantity }} × {{ line.unit_price_label }}</span>
             </span>
           </div>
 
-          <span class="cart-line__quantity-label">{{ line.line_total_label }}</span>
+          <span class="line__quantity-label">{{ line.line_total_label }}</span>
         </li>
       {% endfor %}
     </ul>
 
-    <div class="cart-total">
+    <div class="lines-total">
       <span>{% trans "Total" %}</span>
       <strong>{{ total_label }}</strong>
     </div>
@@ -67,12 +55,12 @@
       </address>
     </section>
 
-    <div class="form-actions auth-card__actions cart-actions">
-      <form class="cart-actions__primary" method="post" action="{{ pay_url }}" data-submit-once>
+    <div class="form-actions page__actions page-actions">
+      <form class="page-actions__primary" method="post" action="{{ pay_url }}" data-submit-once>
         {% csrf_token %}
 
         <button
-          class="button button--md button--solid button--tone-place auth-card__submit"
+          class="button button--md button--solid button--tone-place page__submit"
           type="submit"
           data-submitting-label="{% trans 'Redirecting to secure payment…' %}"
         >
@@ -83,18 +71,18 @@
           {% endif %}
         </button>
 
-        <p class="cart-total__note">
+        <p class="lines-total__note">
           {% trans "You will be redirected to SumUp to pay securely by card." %}
         </p>
       </form>
 
-      <div class="cart-actions__links">
+      <div class="page-actions__links">
         {% if has_open_payment %}
           <form method="post" action="{{ cancel_payment_url }}" data-submit-once>
             {% csrf_token %}
 
             <button
-              class="auth-card__link"
+              class="quiet-link"
               type="submit"
               data-submitting-label="{% trans 'Cancelling…' %}"
             >
@@ -102,12 +90,12 @@
             </button>
           </form>
         {% else %}
-          <a class="auth-card__link" href="{{ cart_url }}">
+          <a class="quiet-link" href="{{ cart_url }}">
             {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
             {% trans "Edit cart" %}
           </a>
 
-          <a class="auth-card__link" href="{{ edit_details_url }}">
+          <a class="quiet-link" href="{{ edit_details_url }}">
             {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" only %}
             {% trans "Edit details" %}
           </a>

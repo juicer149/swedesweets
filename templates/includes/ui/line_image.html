@@ -1,0 +1,19 @@
+{% comment %}
+  A line's picture cut out as a circle (lines.css), or an empty circle
+  when there is none, so the names still line up.
+
+  url  the picture's URL, or nothing
+{% endcomment %}
+{% if url %}
+  <img
+    class="line__image"
+    src="{{ url }}"
+    alt=""
+    width="48"
+    height="48"
+    loading="lazy"
+    decoding="async"
+  >
+{% else %}
+  <span class="line__image line__image--empty" aria-hidden="true"></span>
+{% endif %}

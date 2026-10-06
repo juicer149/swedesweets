@@ -5,11 +5,11 @@
 
 {% block content %}
 <section
-  class="auth-page auth-page--bare auth-page--in-site"
+  class="screen screen--in-site"
   aria-labelledby="public-faq-title"
 >
-  <div class="auth-card auth-card--bare auth-card--centered faq">
-    <h1 id="public-faq-title" class="contact-lead">
+  <div class="page page--centered faq">
+    <h1 id="public-faq-title" class="page__lead">
       {% trans "Frequently asked questions" %}
     </h1>
 
@@ -28,8 +28,8 @@
       {% endfor %}
     </div>
 
-    <div class="form-actions auth-card__actions">
-      <a class="auth-card__link" href="{{ contact_url }}">
+    <div class="form-actions page__actions">
+      <a class="quiet-link" href="{{ contact_url }}">
         {% include "includes/ui/icon_block.html" with name="mail" size="sm" only %}
         {% trans "Contact us" %}
       </a>

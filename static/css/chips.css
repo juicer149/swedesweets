@@ -260,3 +260,95 @@
 .product-tag-toggle__input:not(:checked) + .product-tag-toggle__surface {
   opacity: 0.78;
 }
+
+
+/* =============================================================================
+   Filter chips
+
+   Quiet pills that refine a list. In the site's calm design: no
+   underline. Inactive chips are grey; the active one is filled; hover
+   and press add only a hint of movement and warmth. The active colours are variables so yellow (the default, like
+   the site's main buttons) and blue can be compared by changing two
+   lines.
+
+   Scoped to .filter-chips so this never touches .sort-direction-button,
+   which also carries .filter-chip but lives outside this wrapper. The
+   overrides of hover / active also cancel the generic .chip effects.
+   ============================================================================= */
+
+.filter-chips {
+  --filter-chip-text: var(--color-neutral-600);
+  --filter-chip-bg: var(--color-neutral-100);
+
+  /* Active: yellow ... */
+  --filter-chip-active-text: var(--color-neutral-900);
+  --filter-chip-active-bg: var(--color-accent-600);
+  /* ... or blue:
+  --filter-chip-active-text: var(--color-white);
+  --filter-chip-active-bg: var(--color-primary-600);
+  */
+}
+
+.filter-chips .filter-chip,
+.filter-chips .filter-chip:hover,
+.filter-chips .filter-chip:active {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px var(--space-3);
+
+  color: var(--filter-chip-text);
+  background: var(--filter-chip-bg);
+  border: 0;
+  border-radius: var(--radius-pill);
+  box-shadow: none;
+
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+
+  transform: none;
+  transition:
+    background var(--motion-fast),
+    color var(--motion-fast),
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.filter-chips .filter-chip[aria-current="page"],
+.filter-chips .filter-chip[aria-pressed="true"] {
+  color: var(--filter-chip-active-text);
+  background: var(--filter-chip-active-bg);
+}
+
+.filter-chips .filter-chip:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* A little life: on hover (real pointers only) the chip warms halfway
+   towards the active yellow and rises a hair; pressed, it sinks in, and
+   it comes back up filled. */
+@media (hover: hover) and (pointer: fine) {
+  .filter-chips .filter-chip:hover:not([aria-current="page"], [aria-pressed="true"]) {
+    color: var(--color-neutral-800);
+    background: color-mix(in srgb, var(--filter-chip-active-bg) 28%, var(--filter-chip-bg));
+    transform: translateY(-1px);
+  }
+}
+
+.filter-chips .filter-chip:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-chips .filter-chip,
+  .filter-chips .filter-chip:hover,
+  .filter-chips .filter-chip:active {
+    transform: none;
+  }
+}

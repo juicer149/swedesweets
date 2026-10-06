@@ -5,16 +5,16 @@
 
 {% block content %}
 <section
-  class="bare-section cart-page"
+  class="page-section"
   aria-labelledby="portal-order-detail-title"
 >
-  <div class="auth-card auth-card--bare auth-card--centered cart-card">
-    <header class="cart-heading">
-      <h1 id="portal-order-detail-title" class="contact-lead">
+  <div class="page page--centered page--wide">
+    <header class="page__heading">
+      <h1 id="portal-order-detail-title" class="page__lead">
         {{ title }}
       </h1>
 
-      <p class="cart-summary order-status order-status--{{ order.status }}">
+      <p class="page__note order-status order-status--{{ order.status }}">
         <span class="order-status__state">
           {% include "includes/ui/icon_block.html" with name=status_icon size="sm" only %}
           {{ customer_status_label }}
@@ -25,42 +25,30 @@
     </header>
 
     {% if content_lines %}
-      <ul class="cart-lines" aria-label="{% trans 'Items' %}">
+      <ul class="lines" aria-label="{% trans 'Items' %}">
         {% for line in content_lines %}
-          <li class="cart-line cart-line--review">
+          <li class="line line--static">
             {% if line.catalog_href %}
-              <a class="cart-line__product" href="{{ line.catalog_href }}">
+              <a class="line__product" href="{{ line.catalog_href }}">
             {% else %}
-              <div class="cart-line__product">
+              <div class="line__product">
             {% endif %}
 
-              {% if line.image_url %}
-                <img
-                  class="cart-line__image"
-                  src="{{ line.image_url }}"
-                  alt=""
-                  width="48"
-                  height="48"
-                  loading="lazy"
-                  decoding="async"
-                >
-              {% else %}
-                <span class="cart-line__image cart-line__image--empty" aria-hidden="true"></span>
-              {% endif %}
+              {% include "includes/ui/line_image.html" with url=line.image_url only %}
 
-              <span class="cart-line__text">
-                <span class="cart-line__name">{{ line.catalog_label }}</span>
+              <span class="line__text">
+                <span class="line__name">{{ line.catalog_label }}</span>
 
                 {% if line.offer_label %}
-                  <span class="cart-line__meta cart-line__meta--offer">{{ line.offer_label }}</span>
+                  <span class="line__meta line__meta--offer">{{ line.offer_label }}</span>
                 {% endif %}
 
                 {% if line.price_label %}
-                  <span class="cart-line__meta">{{ line.price_label }}</span>
+                  <span class="line__meta">{{ line.price_label }}</span>
                 {% endif %}
 
                 {% if not line.catalog_href %}
-                  <span class="cart-line__meta">{% trans "Not currently available in the catalog" %}</span>
+                  <span class="line__meta">{% trans "Not currently available in the catalog" %}</span>
                 {% endif %}
               </span>
 
@@ -70,12 +58,12 @@
               </div>
             {% endif %}
 
-            <span class="cart-line__quantity-label">{{ line.quantity_label }}</span>
+            <span class="line__quantity-label">{{ line.quantity_label }}</span>
           </li>
         {% endfor %}
       </ul>
     {% else %}
-      <p class="auth-card__text auth-card__message">
+      <p class="page__text page__message">
         {% trans "No order items found." %}
       </p>
     {% endif %}
@@ -91,20 +79,20 @@
       </dl>
     {% endif %}
 
-    <div class="form-actions auth-card__actions cart-actions">
-      <form class="cart-actions__primary" method="post" action="{{ repeat_order_url }}">
+    <div class="form-actions page__actions page-actions">
+      <form class="page-actions__primary" method="post" action="{{ repeat_order_url }}">
         {% csrf_token %}
 
         <button
-          class="button button--md button--solid button--tone-place auth-card__submit"
+          class="button button--md button--solid button--tone-place page__submit"
           type="submit"
         >
           {% trans "Order again" %}
         </button>
       </form>
 
-      <div class="cart-actions__links">
-        <a class="auth-card__link" href="{{ cancel_url }}">
+      <div class="page-actions__links">
+        <a class="quiet-link" href="{{ cancel_url }}">
           {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
           {% trans "Back to order history" %}
         </a>

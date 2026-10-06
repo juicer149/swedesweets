@@ -1,0 +1,52 @@
+{% load i18n %}
+{% comment %}
+  The − / number / + control (quantity-stepper.js).
+
+  id_prefix  the number field's id, or its fixed start
+  id_suffix  the rest of the id (a line or product id), when it varies
+  value     starting quantity (default 1)
+  compact   true for the smaller variant (navbar cart)
+
+  The data attributes are what quantity-stepper.js and cart.js read.
+{% endcomment %}
+<div
+  class="quantity-stepper{% if compact %} quantity-stepper--compact{% endif %}"
+  aria-label="{% trans 'Quantity' %}"
+  data-quantity-stepper
+>
+  <button
+    class="quantity-stepper__button quantity-stepper__button--decrease"
+    type="button"
+    aria-label="{% trans 'Decrease quantity' %}"
+    data-quantity-decrease
+  >
+    <span aria-hidden="true">−</span>
+  </button>
+
+  <label class="visually-hidden" for="{{ id_prefix }}{{ id_suffix }}">
+    {% trans "Quantity" %}
+  </label>
+
+  <input
+    id="{{ id_prefix }}{{ id_suffix }}"
+    class="quantity-stepper__input"
+    type="number"
+    name="quantity"
+    value="{{ value|default:1 }}"
+    min="1"
+    step="1"
+    inputmode="numeric"
+    autocomplete="off"
+    required
+    data-quantity-input
+  >
+
+  <button
+    class="quantity-stepper__button quantity-stepper__button--increase"
+    type="button"
+    aria-label="{% trans 'Increase quantity' %}"
+    data-quantity-increase
+  >
+    <span aria-hidden="true">+</span>
+  </button>
+</div>

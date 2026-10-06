@@ -81,63 +81,7 @@
               >
                 {% csrf_token %}
 
-                <div
-                  class="
-                    quantity-stepper
-                    quantity-stepper--compact
-                  "
-                  aria-label="{% trans 'Quantity' %}"
-                  data-quantity-stepper
-                >
-                  <button
-                    class="
-                      quantity-stepper__button
-                      quantity-stepper__button--decrease
-                    "
-                    type="button"
-                    aria-label="{% trans 'Decrease quantity' %}"
-                    data-quantity-decrease
-                  >
-                    <span aria-hidden="true">
-                      −
-                    </span>
-                  </button>
-
-                  <label
-                    class="visually-hidden"
-                    for="navbar-cart-quantity-{{ line.line_id }}"
-                  >
-                    {% trans "Quantity" %}
-                  </label>
-
-                  <input
-                    id="navbar-cart-quantity-{{ line.line_id }}"
-                    class="quantity-stepper__input"
-                    type="number"
-                    name="quantity"
-                    value="{{ line.quantity }}"
-                    min="1"
-                    step="1"
-                    inputmode="numeric"
-                    autocomplete="off"
-                    required
-                    data-quantity-input
-                  >
-
-                  <button
-                    class="
-                      quantity-stepper__button
-                      quantity-stepper__button--increase
-                    "
-                    type="button"
-                    aria-label="{% trans 'Increase quantity' %}"
-                    data-quantity-increase
-                  >
-                    <span aria-hidden="true">
-                      +
-                    </span>
-                  </button>
-                </div>
+                {% include "includes/ui/quantity_stepper.html" with id_prefix="navbar-cart-quantity-" id_suffix=line.line_id value=line.quantity compact=True only %}
 
                 <span
                   class="visually-hidden"

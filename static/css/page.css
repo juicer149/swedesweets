@@ -1,0 +1,546 @@
+/* =============================================================================
+   Page: the calm design
+
+   No box: the content sits on the page itself, in one centred column, with
+   a soft glow behind it that keeps it grouped. One yellow action, quiet
+   grey links, mobile first with the actions at the bottom.
+
+     .screen        one-screen wrapper (login, reset, change password, FAQ):
+                    fills the screen, actions at the bottom on phones
+     .page-section  scrolling wrapper (cart, order, contact, dashboard)
+     .page          the column itself; --centered, --wide
+     .page__*       its parts: heading, title, lead, note, text, message …
+     .page-actions  the yellow button, then a row of quiet links
+
+   Loads before forms.css; rules that must beat .form-actions or
+   .form-grid carry two classes.
+   ============================================================================= */
+
+.screen {
+  display: grid;
+  justify-items: center;
+  padding-block: var(--space-10) var(--space-12);
+  overflow-x: clip; /* the glow must not widen the page on phones */
+}
+
+@media (max-width: 760px) {
+  .screen {
+    padding-block: var(--space-8) var(--space-12);
+  }
+}
+
+.page {
+  position: relative;
+  isolation: isolate;
+
+  width: min(100%, 380px);
+  padding: var(--space-4) 0;
+
+  /* The page's cream, much darker: titles blend in rather than standing
+     out in navy. */
+  --page-title-color: #3b3834;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  /* Wider than the column, but not taller: it never adds scroll. */
+  inset: 0 calc(var(--space-16) * -1);
+  z-index: -1;
+
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--color-row-shadow) / 0.10),
+    rgb(var(--color-row-shadow) / 0.04) 55%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.page--wide {
+  width: min(100%, 640px);
+}
+
+
+/* -----------------------------------------------------------------------------
+   Parts
+   ----------------------------------------------------------------------------- */
+
+.page__header {
+  margin-bottom: clamp(var(--space-3), 5dvh, var(--space-7));
+  text-align: center;
+}
+
+/* The big title (login, reset). */
+.page__title {
+  margin-bottom: 0;
+
+  color: var(--page-title-color);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-28);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+/* The quieter title most pages use ("Order", "Ops dashboard"), or one
+   short line above content (contact). */
+.page__lead {
+  margin: 0 0 clamp(var(--space-5), 4dvh, var(--space-7));
+  color: var(--page-title-color, var(--color-neutral-800));
+  font-family: var(--font-heading);
+  font-size: var(--font-size-20);
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+}
+
+/* A lead with a grey line under it. */
+.page__heading {
+  margin-bottom: clamp(var(--space-5), 4dvh, var(--space-7));
+}
+
+.page__heading .page__lead {
+  margin-bottom: var(--space-1);
+}
+
+/* Small grey centred line: a count, a status, a description. */
+.page__note {
+  margin: 0;
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  text-align: center;
+}
+
+/* A short notice above the content (a payment in progress). */
+.page__notice {
+  margin: 0 0 var(--space-4);
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-14);
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* A line of plain text on a status page (reset link sent, link expired). */
+.page__text {
+  margin: 0;
+  color: var(--color-neutral-700);
+}
+
+/* The one sentence a status page has to say, as its heading. */
+.page__message {
+  color: var(--page-title-color, var(--color-neutral-800));
+  font-family: var(--font-heading);
+  font-size: var(--font-size-20);
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* Password rules under a new-password field: small and quiet. */
+.page__help {
+  margin-top: var(--space-2);
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  line-height: 1.45;
+}
+
+.page__help ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+/* Fields closer to each other than to anything else. */
+.page > .form-grid {
+  gap: var(--space-3);
+}
+
+
+/* -----------------------------------------------------------------------------
+   Actions: the yellow button, then the quiet links.
+   forms.css makes .form-actions a space-between flex row; two classes here
+   win, so the actions stack and centre.
+   ----------------------------------------------------------------------------- */
+
+.page .page__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-8);
+}
+
+.page__submit {
+  width: 100%;
+
+  border-radius: var(--radius-control);
+
+  font-weight: 850;
+}
+
+/* Two classes: beats the button size's own min-height. */
+.page .page__submit {
+  min-height: 2.9rem;
+}
+
+/* With a row of links: they stand apart from the yellow button. */
+.page .page-actions {
+  gap: var(--space-6);
+}
+
+.page-actions__primary {
+  width: 100%;
+  margin: 0;
+}
+
+.page-actions__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2) var(--space-5);
+}
+
+.page-actions__links form {
+  margin: 0;
+}
+
+
+/* -----------------------------------------------------------------------------
+   One screen (.screen): fills the screen without scrolling:
+     header (logo, language) at the top
+     title high up
+     fields in the middle, close together
+     the main button and the quiet link at the bottom
+   On a tall desktop screen the column is capped and centred instead of
+   stretching to the bottom. Vertical spacing shrinks with the screen
+   height (clamp + dvh), so a short window or a zoomed-in page still fits.
+   The screen is a minimum, not a limit: when the content grows (an opened
+   list of password rules, error messages) the page scrolls as usual.
+   ----------------------------------------------------------------------------- */
+
+body:has(.screen) .site-footer {
+  display: none;
+}
+
+@media (min-height: 400px) {
+  body:has(.screen) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  body:has(.screen) .site-main {
+    display: flex;
+    flex: 1;
+    padding-bottom: 0;
+  }
+
+  body:has(.screen) .site-main > .container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .screen {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-block:
+      clamp(var(--space-3), 4dvh, var(--space-6))
+      clamp(var(--space-4), 5dvh, var(--space-8));
+  }
+
+  /* Grows to fill the page (up to 560px on desktop), and past it when
+     the content needs more. */
+  .page {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    max-height: 560px;
+  }
+
+  /* The middle part (fields, or the one line of a status page) takes the
+     free space and sits in its centre; the actions go to the bottom. */
+  .page > .form-grid,
+  .page > .page__text {
+    margin-block: auto;
+  }
+
+  .page > .page__actions {
+    margin-top: 0;
+  }
+
+  /* Status pages with no middle part (reset complete): actions at the
+     bottom all the same. */
+  .page > .page__header + .page__actions {
+    margin-top: auto;
+  }
+}
+
+/* Phones: the column fills all the height, so the actions sit at the very
+   bottom of the screen, like a bottom bar. */
+@media (max-width: 760px) and (min-height: 400px) {
+  .screen {
+    padding-block:
+      clamp(var(--space-3), 4dvh, var(--space-6))
+      calc(clamp(var(--space-3), 3dvh, var(--space-5)) + env(safe-area-inset-bottom));
+  }
+
+  .page {
+    max-height: none;
+  }
+}
+
+/* Desktop, one-field pages (reset password): no stretching; the field is
+   centred with the actions just under it. */
+@media (min-width: 761px) {
+  .page.page--centered {
+    flex: 0 0 auto;
+  }
+
+  .page--centered > .form-grid {
+    margin-block: 0;
+  }
+
+  .page--centered > .page__actions {
+    margin-top: clamp(var(--space-5), 5dvh, var(--space-7));
+  }
+}
+
+/* In-site: the same one-screen layout on pages that keep the site's
+   navbar. On phones that navbar has a fixed bottom bar, so the page keeps
+   room for it instead of putting the actions underneath. */
+@media (max-width: 760px) and (min-height: 400px) {
+  body:has(.screen--in-site) .site-main {
+    padding-bottom: 6.5rem;
+  }
+}
+
+
+/* -----------------------------------------------------------------------------
+   Scrolling section (.page-section): the column inside a normal page.
+   ----------------------------------------------------------------------------- */
+
+.page-section {
+  display: grid;
+  justify-items: center;
+  padding-block:
+    clamp(var(--space-6), 6dvh, var(--space-10))
+    clamp(var(--space-6), 6dvh, var(--space-10));
+  overflow-x: clip; /* the glow must not widen the page on phones */
+}
+
+.page-section .page {
+  flex: 0 0 auto;
+  max-height: none;
+}
+
+.page-section .page > .page__actions {
+  margin-top: clamp(var(--space-6), 6dvh, var(--space-8));
+}
+
+
+/* -----------------------------------------------------------------------------
+   Password rules above the fields: a quiet, centred "Your password…"
+   that opens (native <details>) to the rules as a bulleted list.
+   ----------------------------------------------------------------------------- */
+
+.page__rules {
+  margin-bottom: var(--space-3);
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  line-height: 1.5;
+}
+
+.page__rules-summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+
+  color: var(--color-neutral-700);
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--radius-control);
+}
+
+.page__rules-summary::-webkit-details-marker {
+  display: none;
+}
+
+.page__rules-summary:hover {
+  color: var(--color-neutral-900);
+}
+
+.page__rules-summary:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.page__rules-chevron {
+  transition: transform 150ms ease;
+}
+
+.page__rules[open] .page__rules-chevron {
+  transform: rotate(180deg);
+}
+
+/* Padding, not margin, so the sliding height includes the gap. */
+.page__rules-content {
+  padding-top: var(--space-2);
+}
+
+.page__rules-list {
+  width: fit-content;
+  margin: 0 auto;
+  padding-left: 1.1rem;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page__rules-chevron {
+    transition: none;
+  }
+}
+
+
+/* -----------------------------------------------------------------------------
+   Icon rows: quiet lines of details, each with a small icon (My account,
+   Contact).
+   ----------------------------------------------------------------------------- */
+
+.icon-rows {
+  display: grid;
+  gap: var(--space-4);
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+
+  color: var(--color-neutral-800);
+  line-height: 1.45;
+}
+
+.icon-rows__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  overflow-wrap: anywhere;
+}
+
+.icon-rows__icon {
+  margin-top: 0.1rem;
+  color: var(--color-neutral-600);
+}
+
+/* Rows that are links (contact): larger, easy to tap. Blue says "tap to
+   call / write"; no hover effect. The two colours are variables to try
+   other combinations (e.g. text in primary-600 too). */
+.icon-rows--links {
+  --icon-rows-link-icon: var(--color-primary-600);
+  --icon-rows-link-text: var(--color-primary-900);
+
+  gap: var(--space-2);
+  font-size: var(--font-size-18);
+}
+
+.icon-rows--links .icon-rows__item {
+  align-items: center;
+}
+
+.icon-rows__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 3rem;
+  padding: var(--space-1) var(--space-2);
+
+  color: var(--icon-rows-link-text);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-control);
+}
+
+.icon-rows__link .icon-rows__icon {
+  color: var(--icon-rows-link-icon);
+}
+
+.icon-rows__link:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+
+/* -----------------------------------------------------------------------------
+   FAQ: questions that slide open one at a time (smooth-details.js with a
+   group). Wider than the login column; the open question is lightly lit.
+   ----------------------------------------------------------------------------- */
+
+.page.faq {
+  width: min(100%, 600px);
+}
+
+.faq__list {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.faq__question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-18);
+  font-weight: 600;
+  line-height: 1.35;
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--radius-control);
+
+  transition: background var(--motion-fast), color var(--motion-fast);
+}
+
+.faq__question::-webkit-details-marker {
+  display: none;
+}
+
+.faq__question:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.faq__item[open] > .faq__question {
+  color: var(--color-neutral-900);
+  background: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
+}
+
+.faq__chevron {
+  color: var(--color-neutral-600);
+  transition: transform 200ms ease;
+}
+
+.faq__item[open] .faq__chevron {
+  transform: rotate(180deg);
+}
+
+.faq__answer p {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  color: var(--color-neutral-700);
+  line-height: 1.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq__question,
+  .faq__chevron {
+    transition: none;
+  }
+}
