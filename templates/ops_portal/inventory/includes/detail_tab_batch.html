@@ -22,8 +22,8 @@
   <div class="facts__row">
     <dt>Best before</dt>
     <dd>
+      <span class="facts__before expiry-text expiry-text--{{ expiry.state }}">{{ expiry.label }}</span>
       {{ batch.best_before|date:"Y-m-d" }}
-      <span class="facts__aside expiry-text expiry-text--{{ expiry.state }}">{{ expiry.label }}</span>
     </dd>
   </div>
   <div class="facts__row">

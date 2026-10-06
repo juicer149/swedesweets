@@ -100,8 +100,6 @@
   --color-status-muted: 102 97 92;
 
   --color-status-warning-text: #8a5a00;
-  /* Orange between ok (green) and low (red): running low. */
-  --color-status-caution-text: #c2410c;
   --color-status-info-text: var(--color-primary-800);
   --color-status-success-text: #166534;
   --color-status-danger-text: #991b1b;

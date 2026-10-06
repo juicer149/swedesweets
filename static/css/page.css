@@ -206,6 +206,13 @@
   font-size: var(--font-size-14);
 }
 
+/* The same, before the value, so the value stays at the right edge
+   ("Expires in 10 days  2026-10-16"). */
+.facts__before {
+  margin-right: var(--space-2);
+  font-size: var(--font-size-14);
+}
+
 .facts--small {
   gap: var(--space-1);
   font-size: var(--font-size-14);
