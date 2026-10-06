@@ -272,31 +272,6 @@
    Local grouping inside a larger form, for example product pricing channels.
    ============================================================================= */
 
-.form-section-heading {
-  display: grid;
-  gap: var(--space-2);
-  margin-bottom: var(--space-6);
-}
-
-.form-section-heading h2,
-.form-section-heading__title {
-  margin: 0;
-
-  font-family: var(--font-heading);
-  font-size: var(--font-size-28);
-  font-weight: 700;
-  line-height: var(--line-height-tight);
-  color: var(--color-primary-900);
-}
-
-.form-section-heading .form-help {
-  margin: 0;
-}
-
-.form-section-heading + .form-grid {
-  margin-bottom: var(--space-6);
-}
-
 .form-grid + .pricing-channel {
   margin-top: var(--space-6);
 }

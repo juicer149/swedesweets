@@ -1,0 +1,29 @@
+{% comment %}
+  The Pricing tab: the batch's own prices, when it has any, with the
+  status coloured by state; otherwise the product's standard price applies.
+{% endcomment %}
+{% if pricing.is_configured %}
+  <dl class="facts">
+    <div class="facts__row">
+      <dt>Reason</dt>
+      <dd>{{ pricing.reason_label|default:"—" }}</dd>
+    </div>
+    {% for channel in pricing.channels %}
+      <div class="facts__row">
+        <dt>{{ channel.label }}</dt>
+        <dd>
+          {{ channel.prices_label }}
+          <span class="state state--{{ channel.state }}{% if channel.amounts %} facts__aside{% endif %}">{% if channel.amounts %}{{ channel.status_label }}{% else %}Not configured{% endif %}</span>
+        </dd>
+      </div>
+    {% endfor %}
+  </dl>
+{% else %}
+  <p class="page__note">No batch pricing. The product's standard price applies.</p>
+{% endif %}
+
+{% if edit_href %}
+  <div class="form-actions page__actions">
+    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_href }}#pricing">Edit pricing</a>
+  </div>
+{% endif %}

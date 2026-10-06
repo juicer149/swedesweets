@@ -103,3 +103,11 @@ button.quiet-link {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
 }
+
+/* A quiet link to something that cannot be undone (close a batch): grey
+   like the others, red when pointed at. */
+@media (hover: hover) and (pointer: fine) {
+  .quiet-link--danger:hover {
+    color: var(--color-status-danger-text);
+  }
+}

@@ -1,0 +1,53 @@
+{% comment %}The Pricing tab of the batch form: special prices for this batch.{% endcomment %}
+<p class="page__note form-tab__note">Batch prices, used instead of the product's standard price while this batch offer is active.</p>
+
+{% if pricing_form.non_field_errors %}
+  <div
+    class="form-errors"
+    role="alert"
+  >
+    {% for error in pricing_form.non_field_errors %}
+      <p>{{ error }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="form-grid">
+  {% include "includes/ui/form_field.html" with field=pricing_form.reason only %}
+</div>
+
+<section
+  class="pricing-channel"
+  aria-labelledby="batch-business-pricing-title"
+>
+  <h3
+    class="pricing-channel__title"
+    id="batch-business-pricing-title"
+  >
+    Business
+  </h3>
+
+  <div class="form-grid">
+    {% include "includes/ui/form_field.html" with field=pricing_form.business_eur only %}
+    {% include "includes/ui/form_field.html" with field=pricing_form.business_sek only %}
+    {% include "includes/ui/form_field.html" with field=pricing_form.business_status only %}
+  </div>
+</section>
+
+<section
+  class="pricing-channel"
+  aria-labelledby="batch-retail-pricing-title"
+>
+  <h3
+    class="pricing-channel__title"
+    id="batch-retail-pricing-title"
+  >
+    Retail
+  </h3>
+
+  <div class="form-grid">
+    {% include "includes/ui/form_field.html" with field=pricing_form.retail_eur only %}
+    {% include "includes/ui/form_field.html" with field=pricing_form.retail_sek only %}
+    {% include "includes/ui/form_field.html" with field=pricing_form.retail_status only %}
+  </div>
+</section>

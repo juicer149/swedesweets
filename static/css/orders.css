@@ -209,9 +209,12 @@
 .order-status--delivered { --order-status-color: var(--color-status-delivered-text); }
 .order-status--cancelled { --order-status-color: var(--color-status-cancelled-text); }
 
-/* The same heading line for things that are on or off (a product). */
+/* The same heading line for a product (active/inactive) and a batch
+   (active/depleted/closed). */
 .order-status--active { --order-status-color: var(--color-status-success-text); }
 .order-status--inactive { --order-status-color: var(--color-status-muted-text); }
+.order-status--depleted { --order-status-color: var(--color-status-info-text); }
+.order-status--closed { --order-status-color: var(--color-status-muted-text); }
 
 /* Order (ops): the buyer rows. A name with no page to link to reads as
    plain text. */

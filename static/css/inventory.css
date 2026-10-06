@@ -261,3 +261,18 @@
 .mobile-card--inventory .ui-card__row:has(.ui-card-label) {
   margin-top: var(--space-2);
 }
+
+
+/* =============================================================================
+   Batch detail (calm design): the batch's product as a link row above
+   its stock facts.
+   ============================================================================= */
+
+.batch-product {
+  margin-bottom: var(--space-4);
+}
+
+/* Close batch: the warning line between the facts and the red button. */
+.close-batch__note {
+  margin-top: var(--space-5);
+}

@@ -3,23 +3,43 @@
 {% block title %}{{ title }} | SwedeSweets{% endblock %}
 
 {% block content %}
-{% include "includes/ui/page_header.html" with title_id="close-batch-title" title=title description=description %}
+<section class="page-section page-section--top" aria-labelledby="page-title">
+  <div class="page page--centered page--wide">
+    {% include "includes/ui/status_heading.html" with title_id="page-title" title=title status=batch.status icon=status_icon label=batch.get_status_display who=batch.product.display_name only %}
 
-<section class="form-section" aria-labelledby="close-batch-title">
-  {% include "includes/ui/form_context_card.html" with aria_label="Batch summary" eyebrow="Batch to close" heading=batch.batch_id items=close_batch_context_items only %}
+    <dl class="facts">
+      <div class="facts__row">
+        <dt>Product</dt>
+        <dd>{{ batch.product.catalog_label }}</dd>
+      </div>
+      <div class="facts__row">
+        <dt>In stock</dt>
+        <dd>{{ quantity_label }}</dd>
+      </div>
+      <div class="facts__row">
+        <dt>Location</dt>
+        <dd>{{ batch.location|default:"—" }}</dd>
+      </div>
+    </dl>
 
-  <form method="post" class="form-card" novalidate>
-    {% csrf_token %}
+    <p class="page__note close-batch__note">A closed batch can no longer be ordered from. It can only be closed while none of it is reserved.</p>
 
-    <div class="form-actions">
-      <button class="button button--md button--solid button--tone-danger" type="submit">
-        {{ submit_label }}
-      </button>
+    <form method="post" novalidate>
+      {% csrf_token %}
 
-      <a class="button button--md button--ghost button--tone-neutral" href="{{ cancel_url }}">
-        Back
-      </a>
-    </div>
-  </form>
+      <div class="form-actions page__actions page-actions">
+        <button class="button button--md button--solid button--tone-danger page__submit" type="submit">
+          {{ submit_label }}
+        </button>
+
+        <div class="page-actions__links">
+          <a class="quiet-link" href="{{ cancel_url }}">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+            Back
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
 </section>
 {% endblock %}

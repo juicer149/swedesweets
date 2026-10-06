@@ -1,0 +1,10 @@
+{% comment %}The Usage tab: the orders that reserved, used or released this batch.{% endcomment %}
+{% if usage_rows %}
+  <ul class="lines" aria-label="Orders">
+    {% for row in usage_rows %}
+      {% include "includes/ui/line_link.html" with href=row.order_href label=row.title icon="cart" name=row.title meta=row.meta aside=row.quantity_label only %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="page__note">No order has reserved, used or released this batch yet.</p>
+{% endif %}

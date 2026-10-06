@@ -7,34 +7,39 @@ from django.urls import reverse
 from django.utils import timezone
 
 from accounts.roles import RoleSpec
-from common.detail_cards import (
-    DetailAction,
-    DetailCard,
-    DetailHeader,
-    DetailPanel,
-    build_danger_get_action,
-    build_secondary_get_action,
-)
-from common.ui import UiCard
-from inventory.expiry import build_expiry_info
+from common.page_tabs import PageTab
+from common.ui import QuantityInfo, build_quantity_info
+from inventory.expiry import ExpiryInfo, build_expiry_info
+from inventory.low_stock import LOW_STOCK_THRESHOLD, RUNNING_LOW_THRESHOLD
 from inventory.models import InventoryBatch
 from ops_portal.inventory.access import (
     can_close_batch,
     can_edit_batch,
 )
-from ops_portal.inventory.presentation import (
-    batch_detail_card_class,
-    batch_detail_status_class,
-    batch_status_icon,
-)
-from ops_portal.orders.mini_cards import (
-    build_order_usage_mini_card,
-)
-from ops_portal.products.mini_cards import (
-    build_product_mini_card,
-)
+from ops_portal.inventory.presentation import batch_status_icon
 from pricing.models import CommercialPrice
 from reservations.datatypes import BatchUsage
+
+BATCH_DETAIL_TABS = (
+    PageTab(
+        key="batch",
+        label="Batch",
+        icon="inventory",
+        template="ops_portal/inventory/includes/detail_tab_batch.html",
+    ),
+    PageTab(
+        key="pricing",
+        label="Pricing",
+        icon="tag",
+        template="ops_portal/inventory/includes/detail_tab_pricing.html",
+    ),
+    PageTab(
+        key="usage",
+        label="Usage",
+        icon="cart",
+        template="ops_portal/inventory/includes/detail_tab_usage.html",
+    ),
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,6 +51,16 @@ class BatchStockSummary:
     available_quantity: int
     available_quantity_label: str
     is_orderable: bool
+
+    @property
+    def available_info(self) -> QuantityInfo:
+        """Colour of Available: the same scale as lists and product pages."""
+
+        return build_quantity_info(
+            quantity=self.available_quantity,
+            low_threshold=LOW_STOCK_THRESHOLD,
+            running_low_threshold=RUNNING_LOW_THRESHOLD,
+        )
 
     @classmethod
     def from_batch_and_allocations(
@@ -117,6 +132,22 @@ class BatchChannelPricingSummary:
             else "Inactive"
         )
 
+    @property
+    def state(self) -> str:
+        """Colour of the status: on (green), off (red), none (grey)."""
+
+        if not self.amounts:
+            return "none"
+
+        return "on" if self.enabled else "off"
+
+    @property
+    def prices_label(self) -> str:
+        return " · ".join(
+            f"{amount.price_label} {amount.currency}"
+            for amount in self.amounts
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class BatchPricingSummary:
@@ -124,6 +155,12 @@ class BatchPricingSummary:
     reason_label: str
     business: BatchChannelPricingSummary
     retail: BatchChannelPricingSummary
+
+    @property
+    def channels(self) -> tuple[BatchChannelPricingSummary, ...]:
+        """Business, then retail: one row each on the Pricing tab."""
+
+        return (self.business, self.retail)
 
     @property
     def is_configured(self) -> bool:
@@ -139,15 +176,6 @@ class BatchPricingSummary:
             or self.retail.enabled
         )
 
-    @property
-    def panel_summary(self) -> str:
-        if not self.is_configured:
-            return "Standard pricing"
-
-        if self.reason_label:
-            return self.reason_label
-
-        return "Special pricing"
 
 
 @dataclass(frozen=True, slots=True)
@@ -160,7 +188,14 @@ class BatchUsageRow:
     quantity_label: str
     allocation_status: str
     order_status: str
-    card: UiCard
+
+    @property
+    def title(self) -> str:
+        return f"#{self.order_id} · {self.customer_name}"
+
+    @property
+    def meta(self) -> str:
+        return f"{self.allocation_status} · {self.order_status}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -169,10 +204,12 @@ class BatchDetailContext:
     stock: BatchStockSummary
     pricing: BatchPricingSummary
     product_href: str
-    product_card: UiCard
     usage_rows: list[BatchUsageRow]
     usage_count: int
-    detail_card: DetailCard
+    expiry: ExpiryInfo
+    edit_href: str | None
+    close_href: str | None
+    page_tabs: tuple[PageTab, ...]
     title: str
     description: str
     cancel_url: str
@@ -183,10 +220,16 @@ class BatchDetailContext:
             "stock": self.stock,
             "pricing": self.pricing,
             "product_href": self.product_href,
-            "product_card": self.product_card,
             "usage_rows": self.usage_rows,
             "usage_count": self.usage_count,
-            "detail_card": self.detail_card,
+            "expiry": self.expiry,
+            "edit_href": self.edit_href,
+            "close_href": self.close_href,
+            "status_icon": batch_status_icon(self.batch),
+            "page_tabs": self.page_tabs,
+            "tabs_label": "Batch sections",
+            "back_url": self.cancel_url,
+            "back_label": "Back to inventory",
             "title": self.title,
             "description": self.description,
             "cancel_url": self.cancel_url,
@@ -228,137 +271,42 @@ def build_batch_detail_context(
         stock=stock,
         pricing=pricing,
         product_href=product_href,
-        product_card=build_product_mini_card(
-            product=batch.product,
-            product_href=product_href,
-        ),
         usage_rows=usage_rows,
         usage_count=len(usage_rows),
-        detail_card=DetailCard(
-            header=_build_batch_header(
-                batch,
-            ),
-            panels=_build_batch_detail_panels(
-                stock=stock,
-                pricing=pricing,
-                usage_count=len(usage_rows),
-            ),
-            content_card_class=(
-                batch_detail_card_class(
-                    batch,
-                )
-            ),
-            secondary_actions=(
-                build_batch_secondary_actions(
-                    batch=batch,
-                    role_spec=role_spec,
-                )
-            ),
+        expiry=build_expiry_info(
+            best_before=batch.best_before,
+            today=timezone.localdate(),
         ),
+        edit_href=(
+            reverse(
+                "ops_inventory:edit",
+                kwargs={
+                    "batch_pk": batch.pk,
+                },
+            )
+            if can_edit_batch(
+                batch=batch,
+                role_spec=role_spec,
+            )
+            else None
+        ),
+        close_href=(
+            reverse(
+                "ops_inventory:close",
+                kwargs={
+                    "batch_pk": batch.pk,
+                },
+            )
+            if can_close_batch(
+                batch=batch,
+                role_spec=role_spec,
+            )
+            else None
+        ),
+        page_tabs=BATCH_DETAIL_TABS,
         title=f"Batch {batch.batch_id}",
         description="",
         cancel_url=cancel_url,
-    )
-
-
-def build_batch_secondary_actions(
-    *,
-    batch: InventoryBatch,
-    role_spec: RoleSpec,
-) -> tuple[DetailAction, ...]:
-    actions: list[DetailAction] = []
-
-    if can_edit_batch(
-        batch=batch,
-        role_spec=role_spec,
-    ):
-        actions.append(
-            build_secondary_get_action(
-                label="Edit batch",
-                href=reverse(
-                    "ops_inventory:edit",
-                    kwargs={
-                        "batch_pk": batch.pk,
-                    },
-                ),
-            )
-        )
-
-    if can_close_batch(
-        batch=batch,
-        role_spec=role_spec,
-    ):
-        actions.append(
-            build_danger_get_action(
-                label="Close batch",
-                href=reverse(
-                    "ops_inventory:close",
-                    kwargs={
-                        "batch_pk": batch.pk,
-                    },
-                ),
-            )
-        )
-
-    return tuple(actions)
-
-
-def _build_batch_header(
-    batch: InventoryBatch,
-) -> DetailHeader:
-    return DetailHeader(
-        eyebrow="Batch",
-        title=batch.batch_id,
-        status_label=batch.get_status_display(),
-        status_class=batch_detail_status_class(
-            batch
-        ),
-        status_icon=batch_status_icon(
-            batch
-        ),
-    )
-
-
-def _build_batch_detail_panels(
-    *,
-    stock: BatchStockSummary,
-    pricing: BatchPricingSummary,
-    usage_count: int,
-) -> tuple[DetailPanel, ...]:
-    return (
-        DetailPanel(
-            key="batch",
-            label="Batch",
-            summary=stock.available_quantity_label,
-            body_template=(
-                "ops_portal/inventory/includes/"
-                "detail_panel_batch.html"
-            ),
-            icon="tag",
-            is_active=True,
-        ),
-        DetailPanel(
-            key="pricing",
-            label="Pricing",
-            summary=pricing.panel_summary,
-            body_template=(
-                "ops_portal/inventory/includes/"
-                "detail_panel_pricing.html"
-            ),
-            icon="tag",
-        ),
-        DetailPanel(
-            key="usage",
-            label="Usage",
-            summary=_usage_summary(
-                usage_count
-            ),
-            body_template=(
-                "ops_portal/inventory/includes/"
-                "detail_panel_usage.html"
-            ),
-            icon="inventory",
-        ),
     )
 
 
@@ -481,30 +429,12 @@ def _build_usage_rows(
                     usage.allocation_status
                 ),
                 order_status=usage.order_status,
-                card=build_order_usage_mini_card(
-                    order=usage.order,
-                    order_href=order_href,
-                    customer_name=usage.buyer_name,
-                    allocation_status=(
-                        usage.allocation_status
-                    ),
-                    quantity_label_text=(
-                        usage.quantity_label
-                    ),
-                ),
             )
         )
 
     return rows
 
 
-def _usage_summary(
-    usage_count: int,
-) -> str:
-    if usage_count == 1:
-        return "1 allocation"
-
-    return f"{usage_count} allocations"
 
 
 def batch_expiry_label(

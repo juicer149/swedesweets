@@ -141,7 +141,6 @@
 .ui-text,
 .ui-card-id,
 .ui-card-title,
-.ui-card-meta,
 .ui-card-muted,
 .ui-card-strong,
 .ui-card-link,
@@ -179,7 +178,6 @@
   color: var(--color-primary-950);
 }
 
-.ui-card-meta,
 .ui-card-order-meta {
   font-size: var(--font-size-16);
   font-weight: 550;

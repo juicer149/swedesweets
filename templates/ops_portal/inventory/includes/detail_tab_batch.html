@@ -1,0 +1,60 @@
+{% comment %}
+  The Batch tab: its product, stock (Available on the shared scale), best
+  before (in the expiry colour), location, orderable; Edit and Close.
+{% endcomment %}
+<ul class="lines batch-product" aria-label="Product">
+  {% include "includes/ui/line_link.html" with href=product_href label="View product "|add:batch.product.display_name icon="lollipop" name=batch.product.display_name meta=batch.product.code_label aside=batch.product.unit_weight_label only %}
+</ul>
+
+<dl class="facts{% if not stock.is_orderable %} facts--muted{% endif %}">
+  <div class="facts__row">
+    <dt>Available</dt>
+    <dd><strong class="{{ stock.available_info.css_class }}">{{ stock.available_quantity_label }}</strong></dd>
+  </div>
+  <div class="facts__row">
+    <dt>Reserved</dt>
+    <dd>{{ stock.reserved_quantity_label }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>In stock</dt>
+    <dd>{{ stock.physical_quantity_label }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>Best before</dt>
+    <dd>
+      {{ batch.best_before|date:"Y-m-d" }}
+      <span class="facts__aside expiry-text expiry-text--{{ expiry.state }}">{{ expiry.label }}</span>
+    </dd>
+  </div>
+  <div class="facts__row">
+    <dt>Location</dt>
+    <dd>{{ batch.location|default:"—" }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>Orderable</dt>
+    <dd>
+      {% if stock.is_orderable %}
+        <span class="state state--on">Yes</span>
+      {% else %}
+        <span class="state state--off">No</span>
+      {% endif %}
+    </dd>
+  </div>
+</dl>
+
+{% if edit_href or close_href %}
+  <div class="form-actions page__actions page-actions">
+    {% if edit_href %}
+      <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_href }}#batch">Edit batch</a>
+    {% endif %}
+
+    {% if close_href %}
+      <div class="page-actions__links">
+        <a class="quiet-link quiet-link--danger" href="{{ close_href }}">
+          {% include "includes/ui/icon_block.html" with name="x" size="sm" only %}
+          Close batch
+        </a>
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

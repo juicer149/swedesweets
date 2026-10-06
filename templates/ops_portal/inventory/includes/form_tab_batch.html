@@ -1,0 +1,10 @@
+{% comment %}The Batch tab of the batch form: product (new batch only), quantity, best before, location.{% endcomment %}
+<div class="form-grid">
+  {% if not batch %}
+    {% include "includes/ui/form_field.html" with field=form.product only %}
+  {% endif %}
+
+  {% include "includes/ui/form_field.html" with field=form.quantity only %}
+  {% include "includes/ui/form_field.html" with field=form.best_before only %}
+  {% include "includes/ui/form_field.html" with field=form.location only %}
+</div>
