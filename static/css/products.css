@@ -970,10 +970,6 @@
   margin-top: calc(-1 * var(--space-1));
 }
 
-.mobile-card--product .ui-card-strong {
-  margin-top: var(--space-1);
-}
-
 
 /* =============================================================================
    Product mobile card tags

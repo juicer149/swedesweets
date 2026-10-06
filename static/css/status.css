@@ -165,15 +165,13 @@
    or empty. Stronger selectors keep the colour inside tables and cards. */
 .quantity-text--safe,
 .data-table .numeric-cell .quantity-text--safe,
-.mobile-card .quantity-text--safe,
-.ui-card-strong.quantity-text--safe {
+.mobile-card .quantity-text--safe {
   color: var(--color-status-success-text);
 }
 
 .quantity-text--running-low,
 .data-table .numeric-cell .quantity-text--running-low,
-.mobile-card .quantity-text--running-low,
-.ui-card-strong.quantity-text--running-low {
+.mobile-card .quantity-text--running-low {
   color: var(--color-status-caution-text);
 }
 
@@ -181,10 +179,8 @@
 .quantity-text--empty,
 .data-table .numeric-cell .quantity-text--low,
 .mobile-card .quantity-text--low,
-.ui-card-strong.quantity-text--low,
 .data-table .numeric-cell .quantity-text--empty,
-.mobile-card .quantity-text--empty,
-.ui-card-strong.quantity-text--empty {
+.mobile-card .quantity-text--empty {
   color: var(--color-status-danger-text);
 }
 

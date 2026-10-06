@@ -10,9 +10,6 @@ from common.table_controls import QuickJumpOption, QuickJumpSearch
 from common.ui import (
     QuantityInfo,
     StatusPresentation,
-    UiCard,
-    UiCardRow,
-    UiText,
     build_quantity_info,
 )
 from inventory.low_stock import LOW_STOCK_THRESHOLD, RUNNING_LOW_THRESHOLD
@@ -23,12 +20,10 @@ from inventory.selectors import (
 )
 from ops_portal.inventory.access import can_create_batch
 from ops_portal.inventory.presentation import (
-    INVENTORY_CARD_CLASS,
     batch_quantity_label,
+    batch_status_icon,
     batch_status_presentation,
-    expiry_css_class,
     product_available_quantity_label,
-    product_batch_count_label,
     product_physical_quantity_label,
     product_reserved_quantity_label,
     product_stock_status_presentation,
@@ -52,7 +47,21 @@ class BatchPageRow:
     quantity: QuantityInfo
     quantity_label: str
     detail_href: str
-    card: UiCard
+
+    @property
+    def meta(self) -> str:
+        """Phones: batch id · best before · location under the product."""
+
+        parts = [
+            self.batch.batch_id,
+            f"Best before {self.batch.best_before:%Y-%m-%d}",
+            self.batch.location,
+        ]
+        return " · ".join(part for part in parts if part)
+
+    @property
+    def icon(self) -> str:
+        return batch_status_icon(self.batch)
 
 
 @dataclass(frozen=True, slots=True)
@@ -74,7 +83,16 @@ class ProductStockPageRow:
     available_quantity_label: str
     available_quantity_info: QuantityInfo
     status: StatusPresentation
-    card: UiCard
+
+    @property
+    def meta(self) -> str:
+        """Phones: batches · reserved under the product."""
+
+        batches = "batch" if self.batch_count == 1 else "batches"
+        return (
+            f"{self.batch_count} {batches} · "
+            f"{self.reserved_quantity_label} reserved"
+        )
 
 
 def build_inventory_page_header(*, role_spec: RoleSpec) -> PageHeader:
@@ -128,12 +146,6 @@ def _build_batch_page_row(row: BatchListRow) -> BatchPageRow:
         quantity=quantity,
         quantity_label=quantity_text,
         detail_href=detail_href,
-        card=_batch_card(
-            row=row,
-            status=status,
-            detail_href=detail_href,
-            quantity=quantity,
-        ),
     )
 
 
@@ -170,12 +182,6 @@ def _build_product_stock_page_row(row: AvailableStockRow) -> ProductStockPageRow
         available_quantity_label=product_available_quantity_label(row),
         available_quantity_info=available_quantity_info,
         status=status,
-        card=_product_stock_card(
-            row=row,
-            status=status,
-            product_href=product_href,
-            available_quantity_info=available_quantity_info,
-        ),
     )
 
 
@@ -247,151 +253,8 @@ def _product_stock_product_label(row: AvailableStockRow) -> str:
     return f"{row.code_label} · {row.product.display_name} · {row.product.weight_label}"
 
 
-def _batch_card(
-    *,
-    row: BatchListRow,
-    status: StatusPresentation,
-    detail_href: str,
-    quantity: QuantityInfo,
-) -> UiCard:
-    return UiCard(
-        tone=status.tone,
-        css_class=INVENTORY_CARD_CLASS,
-        href=detail_href,
-        aria_label=f"View batch {row.batch.batch_id}",
-        footer_hint="Open details →",
-        rows=(
-            UiCardRow(
-                left=UiText(
-                    text=row.batch.batch_id,
-                    css_class="ui-card-id",
-                ),
-                right=status.text,
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=row.batch.product.brand,
-                    css_class="ui-card-title",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=row.batch.product.name,
-                    css_class="ui-card-title",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=row.batch.product.weight_label,
-                    css_class="ui-card-muted",
-                ),
-                right=UiText(
-                    text=batch_quantity_label(row.batch),
-                    css_class=f"ui-card-strong {quantity.css_class}",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=row.batch.location,
-                    css_class="ui-card-location",
-                    label="Location",
-                    label_class="ui-card-label",
-                ),
-                right=UiText(
-                    text=row.batch.best_before.strftime("%Y-%m-%d"),
-                    css_class="ui-card-location",
-                    label=row.expiry.label,
-                    label_class=f"ui-card-label {expiry_css_class(row)}",
-                ),
-            ),
-        ),
-    )
 
 
-def _product_stock_card(
-    *,
-    row: AvailableStockRow,
-    status: StatusPresentation,
-    product_href: str,
-    available_quantity_info: QuantityInfo,
-) -> UiCard:
-    physical_quantity_label = row.product.stock_quantity_label(row.physical_quantity)
-    reserved_quantity_label = row.product.stock_quantity_label(row.reserved_quantity)
-    available_quantity_label = row.product.stock_quantity_label(row.available_quantity)
-
-    return UiCard(
-        tone=status.tone,
-        css_class=INVENTORY_CARD_CLASS,
-        href=product_href,
-        aria_label=f"View product {row.product.display_name}",
-        footer_hint="Open details →",
-        rows=(
-            UiCardRow(
-                left=UiText(
-                    text=row.product.code_label,
-                    css_class="ui-card-id",
-                ),
-                right=status.text,
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=row.product.brand,
-                    css_class="ui-card-title",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=row.product.name,
-                    css_class="ui-card-title",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=row.product.weight_label,
-                    css_class="ui-card-muted",
-                ),
-                right=UiText(
-                    text=product_batch_count_label(row),
-                    css_class="ui-card-strong",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text="In stock",
-                    css_class="inventory-card__metric-label",
-                ),
-                center=UiText(
-                    text="Reserved",
-                    css_class="inventory-card__metric-label",
-                ),
-                right=UiText(
-                    text="Available",
-                    css_class="inventory-card__metric-label",
-                ),
-            ),
-            UiCardRow(
-                left=UiText(
-                    text=physical_quantity_label,
-                    css_class="inventory-card__metric-value",
-                ),
-                center=UiText(
-                    text=reserved_quantity_label,
-                    css_class=(
-                        "inventory-card__metric-value "
-                        "inventory-card__metric-value--reserved"
-                    ),
-                ),
-                right=UiText(
-                    text=available_quantity_label,
-                    css_class=(
-                        "inventory-card__metric-value "
-                        "inventory-card__metric-value--available "
-                        f"{available_quantity_info.css_class}"
-                    ),
-                ),
-            ),
-        ),
-    )
 
 
 def _batch_detail_href(batch: InventoryBatch) -> str:

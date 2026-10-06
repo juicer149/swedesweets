@@ -41,14 +41,6 @@
   margin-inline: auto;
 }
 
-.content-card--pack {
-  box-shadow: var(--shadow-content-card-pack);
-}
-
-.content-card--deliver {
-  box-shadow: var(--shadow-content-card-deliver);
-}
-
 .content-card--muted {
   box-shadow: var(--shadow-content-card-muted);
 }

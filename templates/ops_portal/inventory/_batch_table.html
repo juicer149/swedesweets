@@ -65,12 +65,12 @@
   </table>
 </div>
 
-<div class="mobile-card-list">
-  {% for row in inventory_rows %}
-    {% include "includes/ui/card.html" with card=row.card only %}
-  {% empty %}
-    <article class="mobile-card mobile-card--neutral">
-      <p>No inventory batches found.</p>
-    </article>
-  {% endfor %}
-</div>
+{% if inventory_rows %}
+  <ul class="lines mobile-lines" aria-label="Batches">
+    {% for row in inventory_rows %}
+      {% include "includes/ui/line_link.html" with href=row.detail_href label="View batch "|add:row.batch.batch_id tone=row.status.tone.key icon=row.icon name=row.batch.product.display_name meta=row.meta aside=row.quantity_label aside_class=row.quantity.css_class only %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="page__note mobile-lines">No inventory batches found.</p>
+{% endif %}

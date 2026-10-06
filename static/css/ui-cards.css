@@ -142,7 +142,6 @@
 .ui-card-id,
 .ui-card-title,
 .ui-card-muted,
-.ui-card-strong,
 .ui-card-link,
 .ui-card-contact,
 .ui-card-location,
@@ -190,13 +189,6 @@
   font-weight: 500;
   line-height: 1.35;
   color: var(--color-neutral-700);
-}
-
-.ui-card-strong {
-  font-size: var(--font-size-16);
-  font-weight: 800;
-  line-height: 1.35;
-  color: var(--color-primary-900);
 }
 
 .ui-card-link,

@@ -85,3 +85,22 @@ def test_close_batch_page_shows_the_batch_and_a_red_button(staff_client, batch):
     assert response.status_code == 200
     assert response.context["quantity_label"]
     assert "button--tone-danger" in content
+
+
+@pytest.mark.django_db
+def test_inventory_lists_show_tables_and_coloured_phone_rows(staff_client, batch):
+    views = (
+        ({}, "inventory_rows"),
+        ({"view": "products"}, "product_rows"),
+    )
+
+    for params, row_key in views:
+        response = staff_client.get(reverse("ops_inventory:index"), params)
+        content = response.content.decode()
+
+        assert response.status_code == 200
+        assert "data-table" in content
+        assert "mobile-lines" in content
+        assert response.context[row_key]
+        # Phone rows carry the stock colour of the table cells.
+        assert "line__aside quantity-text" in content

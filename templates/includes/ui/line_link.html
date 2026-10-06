@@ -10,6 +10,7 @@
   name, meta  the text
   aside       right side text (optional)
   aside_wide  true: hide the aside on phones (it would squeeze the name)
+  aside_class extra class for the aside (a stock colour: quantity-text--…)
 {% endcomment %}
 <li class="line line--link">
   <a class="line__link" href="{{ href }}"{% if label %} aria-label="{{ label }}"{% endif %}>
@@ -25,7 +26,7 @@
     </span>
 
     {% if aside %}
-      <span class="line__aside{% if aside_wide %} line__aside--wide{% endif %}">{{ aside }}</span>
+      <span class="line__aside{% if aside_wide %} line__aside--wide{% endif %}{% if aside_class %} {{ aside_class }}{% endif %}">{{ aside }}</span>
     {% endif %}
   </a>
 </li>
