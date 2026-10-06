@@ -19,16 +19,6 @@ from common.ui import (
 )
 from orders.models import Order
 
-ORDER_CARD_BASE_CLASS = "mobile-card mobile-card--order"
-
-ORDER_CARD_CLASS_BY_STATUS = {
-    Order.Status.DRAFT: "mobile-card--order-draft",
-    Order.Status.PLACED: "mobile-card--order-placed",
-    Order.Status.PACKED: "mobile-card--order-packed",
-    Order.Status.DELIVERED: "mobile-card--order-delivered",
-    Order.Status.CANCELLED: "mobile-card--order-cancelled",
-}
-
 ORDER_MOBILE_STATUS_CLASS_BY_STATUS = {
     Order.Status.DRAFT: "ui-card-order-status status-text--muted",
     Order.Status.PLACED: "ui-card-order-status status-text--warning",
@@ -53,17 +43,6 @@ ORDER_STATUS_TONE_BY_STATUS = {
     Order.Status.DELIVERED: TONE_SUCCESS,
     Order.Status.CANCELLED: TONE_DANGER,
 }
-
-
-def _order_card_class(status: str) -> str:
-    return ORDER_CARD_CLASS_BY_STATUS.get(
-        status,
-        ORDER_CARD_CLASS_BY_STATUS[Order.Status.DRAFT],
-    )
-
-
-def order_card_css_class(status: str) -> str:
-    return f"{ORDER_CARD_BASE_CLASS} {_order_card_class(status)}"
 
 
 def order_mobile_status_class(status: str) -> str:
@@ -153,24 +132,6 @@ def quantity_label(quantity: int) -> str:
         "%(count)s units",
         quantity,
     ) % {"count": quantity}
-
-
-def order_product_count(order: Order) -> int:
-    annotated_count = getattr(order, "product_count", None)
-
-    if annotated_count is not None:
-        return int(annotated_count)
-
-    prefetched_lines = getattr(
-        order,
-        "_prefetched_objects_cache",
-        {},
-    ).get("lines")
-
-    if prefetched_lines is not None:
-        return len(prefetched_lines)
-
-    return order.lines.count()
 
 
 def order_total_quantity(order: Order) -> int:

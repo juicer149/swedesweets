@@ -206,13 +206,6 @@
   box-shadow: inset 3px 0 0 var(--color-accent-600);
 }
 
-.table-hint {
-  margin: var(--space-3) 0 0;
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-14);
-  font-weight: 600;
-}
-
 .empty-cell {
   padding-block: var(--space-5);
   color: var(--color-neutral-600);

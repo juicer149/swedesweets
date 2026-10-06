@@ -23,8 +23,8 @@
          Low-emphasis tinted button. Use for add/positive secondary actions.
 
        .button--outline
-         Transparent button with a visible border. Use for secondary actions
-         on light surfaces.
+         Transparent button with a visible border (the tone's edge). Used
+         for list pages' "add" actions.
 
        .button--ghost
          Neutral secondary button. Use for back/cancel actions where the action
@@ -32,14 +32,6 @@
 
        .button--text
          Text-only button. Use for compact inline actions.
-
-       .button--hero-action
-         Large action button for dashboard/hero surfaces. It consumes the
-         hero variables from the selected tone.
-
-       .button--card-action
-         Action button for cards, mobile cards and detail cards. It consumes
-         the card variables from the selected tone.
 
      tone:
        .button--tone-place
@@ -65,7 +57,6 @@
      .button.button--md.button--solid.button--tone-place
      .button.button--md.button--ghost.button--tone-neutral
      .button.button--sm.button--soft.button--tone-positive
-     .button.button--card-action.button--tone-pack.button--with-icon
    ============================================================================= */
 
 
@@ -177,20 +168,6 @@
 
   --button-text-color: var(--color-neutral-700);
   --button-text-color-hover: var(--color-primary-900);
-
-  --button-hero-text: var(--color-primary-50);
-  --button-hero-bg: rgba(6, 24, 68, 0.58);
-  --button-hero-bg-hover: var(--color-primary-700);
-  --button-hero-bg-active: var(--color-primary-900);
-  --button-hero-border: var(--color-primary-500);
-  --button-hero-shadow-hover: var(--shadow-accent-glow);
-
-  --button-card-text: var(--color-primary-900);
-  --button-card-bg: var(--color-primary-100);
-  --button-card-bg-hover: var(--color-primary-200);
-  --button-card-bg-active: var(--color-primary-300);
-  --button-card-border: var(--color-primary-500);
-  --button-card-shadow-hover: var(--shadow-accent-glow);
 }
 
 .button--tone-place {
@@ -219,20 +196,6 @@
 
   --button-text-color: var(--color-action-place-on-light);
   --button-text-color-hover: var(--color-action-place);
-
-  --button-hero-text: var(--color-action-place-on-dark);
-  --button-hero-bg: rgba(6, 24, 68, 0.58);
-  --button-hero-bg-hover: var(--color-action-place);
-  --button-hero-bg-active: var(--color-accent-800);
-  --button-hero-border: var(--color-action-place);
-  --button-hero-shadow-hover: var(--shadow-accent-glow);
-
-  --button-card-text: var(--color-action-place-on-light);
-  --button-card-bg: var(--color-action-place-light-bg);
-  --button-card-bg-hover: var(--color-action-place-light-bg-hover);
-  --button-card-bg-active: var(--color-action-place-light-bg-active);
-  --button-card-border: var(--color-action-place);
-  --button-card-shadow-hover: var(--shadow-action-place-on-light);
 }
 
 .button--tone-pack {
@@ -261,20 +224,6 @@
 
   --button-text-color: var(--color-action-pack-on-light);
   --button-text-color-hover: var(--color-action-pack);
-
-  --button-hero-text: var(--color-action-pack-on-dark);
-  --button-hero-bg: rgba(6, 24, 68, 0.58);
-  --button-hero-bg-hover: var(--color-action-pack);
-  --button-hero-bg-active: var(--color-primary-800);
-  --button-hero-border: var(--color-action-pack);
-  --button-hero-shadow-hover: var(--shadow-pack-glow);
-
-  --button-card-text: var(--color-action-pack-on-light);
-  --button-card-bg: var(--color-action-pack-light-bg);
-  --button-card-bg-hover: var(--color-action-pack-light-bg-hover);
-  --button-card-bg-active: var(--color-action-pack-light-bg-active);
-  --button-card-border: var(--color-action-pack);
-  --button-card-shadow-hover: var(--shadow-action-pack-on-light);
 }
 
 .button--tone-deliver,
@@ -304,20 +253,6 @@
 
   --button-text-color: var(--color-action-deliver-on-light);
   --button-text-color-hover: var(--color-action-deliver);
-
-  --button-hero-text: var(--color-action-deliver-on-dark);
-  --button-hero-bg: rgba(6, 24, 68, 0.58);
-  --button-hero-bg-hover: var(--color-action-deliver);
-  --button-hero-bg-active: var(--color-action-deliver-on-light);
-  --button-hero-border: var(--color-action-deliver);
-  --button-hero-shadow-hover: var(--shadow-delivery-glow);
-
-  --button-card-text: var(--color-action-deliver-on-light);
-  --button-card-bg: var(--color-action-deliver-light-bg);
-  --button-card-bg-hover: var(--color-action-deliver-light-bg-hover);
-  --button-card-bg-active: var(--color-action-deliver-light-bg-active);
-  --button-card-border: var(--color-action-deliver);
-  --button-card-shadow-hover: var(--shadow-action-deliver-on-light);
 }
 
 .button--tone-danger {
@@ -346,20 +281,6 @@
 
   --button-text-color: var(--color-action-danger-on-light);
   --button-text-color-hover: var(--color-action-danger);
-
-  --button-hero-text: var(--color-action-danger-on-dark);
-  --button-hero-bg: rgba(6, 24, 68, 0.58);
-  --button-hero-bg-hover: var(--color-action-danger);
-  --button-hero-bg-active: var(--color-action-danger-on-light);
-  --button-hero-border: var(--color-action-danger);
-  --button-hero-shadow-hover: var(--shadow-danger-glow);
-
-  --button-card-text: var(--color-action-danger-on-light);
-  --button-card-bg: var(--color-action-danger-light-bg);
-  --button-card-bg-hover: var(--color-action-danger-light-bg-hover);
-  --button-card-bg-active: var(--color-action-danger-light-bg-active);
-  --button-card-border: var(--color-action-danger);
-  --button-card-shadow-hover: var(--shadow-action-danger-on-light);
 }
 
 
@@ -403,20 +324,6 @@
 
   --button-text-color: var(--color-neutral-700);
   --button-text-color-hover: var(--color-primary-900);
-
-  --button-hero-text: var(--color-primary-50);
-  --button-hero-bg: rgba(6, 24, 68, 0.58);
-  --button-hero-bg-hover: var(--color-primary-700);
-  --button-hero-bg-active: var(--color-primary-900);
-  --button-hero-border: var(--color-accent-600);
-  --button-hero-shadow-hover: var(--shadow-accent-glow);
-
-  --button-card-text: var(--color-primary-900);
-  --button-card-bg: var(--color-primary-100);
-  --button-card-bg-hover: var(--color-primary-200);
-  --button-card-bg-active: var(--color-primary-300);
-  --button-card-border: var(--color-primary-500);
-  --button-card-shadow-hover: var(--shadow-accent-glow);
 }
 
 
@@ -550,47 +457,6 @@
 
 
 /* =============================================================================
-   Card action buttons
-
-   Used inside mobile cards and detail cards.
-   Consumes card variables from tone classes.
-   ============================================================================= */
-
-.button--card-action {
-  justify-content: center;
-  width: min(86%, 320px);
-  min-height: var(--size-control-sm);
-  padding-inline: var(--space-5);
-
-  color: var(--button-card-text);
-  background: var(--button-card-bg);
-  border: 1px solid var(--button-card-border);
-  border-radius: var(--radius-control);
-}
-
-.button--card-action:hover,
-.button--card-action:focus-visible {
-  background: var(--button-card-bg-hover);
-  border-color: var(--button-card-border);
-  box-shadow: var(--button-card-shadow-hover);
-  transform: var(--transform-lift);
-}
-
-.button--card-action:active {
-  background: var(--button-card-bg-active);
-  box-shadow: var(--shadow-pressed);
-  transform: translateY(0);
-}
-
-.button--card-action .button__icon {
-  width: 1.2rem;
-  height: 1.2rem;
-
-  color: currentColor;
-}
-
-
-/* =============================================================================
    Button content
    ============================================================================= */
 
@@ -634,11 +500,4 @@
 .button__label {
   line-height: 1;
   white-space: nowrap;
-}
-
-.button__arrow {
-  margin-left: auto;
-
-  font-size: 1.5em;
-  line-height: 1;
 }

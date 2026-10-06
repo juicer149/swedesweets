@@ -11,7 +11,6 @@ It should not know about HTTP requests.
 Good use:
     Order status "placed" -> warning tone
     8 units -> "8 units left", low/safe/empty quantity class
-    Customer email -> mailto link
 
 Bad use:
     Fetch orders from database
@@ -25,10 +24,11 @@ these objects; templates render them.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from urllib.parse import quote_plus
 
 
 @dataclass(frozen=True)
+
+
 class UiTone:
     """Semantic UI tone.
 
@@ -50,11 +50,12 @@ class UiTone:
 
     key: str
     label: str
-    card_class: str
     text_class: str
 
 
 @dataclass(frozen=True)
+
+
 class UiText:
     """Renderable text atom.
 
@@ -72,49 +73,16 @@ class UiText:
     rel: str = ""
     aria_label: str = ""
     label: str = ""
-    label_class: str = "ui-card-label"
+    label_class: str = ""
     subtext: str = ""
-    subtext_class: str = "ui-card-muted"
+    subtext_class: str = ""
     icon: str = ""
     icon_class: str = "ui-text__icon"
 
 
 @dataclass(frozen=True)
-class UiCardRow:
-    """One visual card row split into left / center / right cells."""
-
-    left: UiText | None = None
-    center: UiText | None = None
-    right: UiText | None = None
 
 
-@dataclass(frozen=True)
-class UiCard:
-    """Generic card view model.
-
-    css_class decides how the card is rendered visually:
-
-        "mobile-card mobile-card--customer"
-        "mobile-card mobile-card--inventory"
-        "dashboard-card"
-
-    If href is set and action is empty, templates may render the whole card
-    as one clickable link.
-
-    If action is set, templates should render the card as an article with an
-    explicit action to avoid nested links.
-    """
-
-    tone: UiTone
-    rows: tuple[UiCardRow, ...]
-    action: UiText | None = None
-    css_class: str = "mobile-card"
-    href: str = ""
-    aria_label: str = ""
-    footer_hint: str = ""
-
-
-@dataclass(frozen=True)
 class QuantityInfo:
     value: int
     level: str
@@ -123,6 +91,8 @@ class QuantityInfo:
 
 
 @dataclass(frozen=True)
+
+
 class StatusPresentation:
     value: str
     label: str
@@ -133,45 +103,33 @@ class StatusPresentation:
     icon: str = ""
 
 
-TONE_NEUTRAL = UiTone(
-    key="neutral",
-    label="Neutral",
-    card_class="mobile-card--neutral",
-    text_class="status-text--neutral",
-)
-
 TONE_MUTED = UiTone(
     key="muted",
     label="Muted",
-    card_class="mobile-card--muted",
     text_class="status-text--muted",
 )
 
 TONE_WARNING = UiTone(
     key="warning",
     label="Warning",
-    card_class="mobile-card--warning",
     text_class="status-text--warning",
 )
 
 TONE_INFO = UiTone(
     key="info",
     label="Info",
-    card_class="mobile-card--info",
     text_class="status-text--info",
 )
 
 TONE_SUCCESS = UiTone(
     key="success",
     label="Success",
-    card_class="mobile-card--success",
     text_class="status-text--success",
 )
 
 TONE_DANGER = UiTone(
     key="danger",
     label="Danger",
-    card_class="mobile-card--danger",
     text_class="status-text--danger",
 )
 
@@ -224,16 +182,3 @@ def build_quantity_info(
         label=label,
         css_class="quantity-text quantity-text--safe",
     )
-
-
-def mailto_link(email: str) -> str:
-    return f"mailto:{email}"
-
-
-def tel_link(phone_number: str) -> str:
-    return f"tel:{phone_number}"
-
-
-def maps_search_link(address: str) -> str:
-    query = quote_plus(address)
-    return f"https://www.google.com/maps/search/?api=1&query={query}"

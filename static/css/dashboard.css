@@ -1,22 +1,4 @@
 /* =============================================================================
-   Eyebrow
-
-   Small uppercase label above a title (forms, account pages).
-   ============================================================================= */
-
-.eyebrow {
-  margin: 0;
-
-  color: var(--color-accent-700);
-  font-size: var(--font-size-14);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-
-/* =============================================================================
    Ops dashboard, in the calm design
 
    No box and no hero: the title centred, each queue a quiet row with its

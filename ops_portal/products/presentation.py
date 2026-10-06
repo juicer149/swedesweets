@@ -13,6 +13,8 @@ from products.models import Product
 
 
 @dataclass(frozen=True)
+
+
 class ProductTagPresentation:
     label: str
     css_class: str
@@ -60,24 +62,6 @@ def product_status_icon(product: Product) -> str:
         return "lollipop"
 
     return "x"
-
-
-def product_manufacturer_label(product: Product) -> str:
-    if product.manufacturer:
-        return product.manufacturer
-
-    return "—"
-
-
-def product_brand_label(product: Product) -> str:
-    if product.brand:
-        return product.brand
-
-    return "—"
-
-
-def product_vegan_label(product: Product) -> str:
-    return "Yes" if product.vegan else "No"
 
 
 def product_attribute_tags(product: Product) -> tuple[ProductTagPresentation, ...]:

@@ -9,11 +9,6 @@
     display: none;
   }
 
-  .mobile-card-list {
-    display: grid;
-    gap: var(--space-4);
-  }
-
 }
 
 @media (max-width: 639px) {
