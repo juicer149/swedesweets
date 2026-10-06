@@ -1,6 +1,7 @@
 """Seed a local database with synthetic demo data.
 
     python manage.py seed_demo_data --with-orders [--reset] [--with-demo-accounts]
+        [--with-images]
 
 Creates the product catalogue, six invented business customers, inbound
 stock (including short-dated and low-stock batches), four retail merch
@@ -11,6 +12,9 @@ it also creates three logins whose password is their username:
     fullstaff        full staff access (ops portal, account management)
     restrictedstaff  restricted staff access (ops portal)
     business         B2B customer, linked to the demo customer with most orders
+
+With --with-images every product gets a drawn picture (_demo_images.py),
+stored through the normal product-image upload so thumbnails exist too.
 
 All customers, batches and orders are invented (see _demo_data.py).
 Orders go through the same services as the ops portal: business placement,
@@ -29,6 +33,7 @@ from typing import Any
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, transaction
 from django.utils import timezone
@@ -57,11 +62,13 @@ from pricing.services import (
     set_commercial_price_enabled,
     set_price_amount,
 )
-from products.models import Product
+from products.image_services import change_product_image
+from products.models import Product, ProductProfile
 from products.services import create_product
 from reservations.models import Allocation
 
 from . import _demo_data as demo
+from ._demo_images import product_picture_jpeg
 
 # username == password; local development only (the command needs DEBUG).
 DEMO_STAFF_ACCOUNTS = (
@@ -97,6 +104,11 @@ class Command(BaseCommand):
             "--with-orders",
             action="store_true",
             help="Seed B2B orders in placed, packed and delivered states.",
+        )
+        parser.add_argument(
+            "--with-images",
+            action="store_true",
+            help="Give every product a drawn picture (written to MEDIA_ROOT).",
         )
 
     @transaction.atomic
@@ -139,6 +151,10 @@ class Command(BaseCommand):
             f"{len(customers)} customers, {len(batches)} batches"
         )
 
+        if options["with_images"]:
+            self._add_images([*products.values(), *merch.values()])
+            summary += ", product pictures"
+
         orders: list[demo.DemoOrder] = []
         if options["with_orders"]:
             orders = demo.build_orders(batches=batches, today=today)
@@ -164,6 +180,11 @@ class Command(BaseCommand):
         )
 
     def _reset(self) -> None:
+        # Product pictures are files: remove them first, or each reset
+        # would leave the previous run's pictures behind in MEDIA_ROOT.
+        for product in Product.objects.filter(profile__image__gt=""):
+            change_product_image(product=product, remove_image=True).commit()
+
         # Children before parents: several relations are PROTECT.
         for model in (
             PaymentAttempt,
@@ -245,6 +266,16 @@ class Command(BaseCommand):
             products[product.internal_number] = product
 
         return products
+
+    def _add_images(self, products: list[Product]) -> None:
+        for product in products:
+            ProductProfile.objects.get_or_create(product=product)
+            picture = SimpleUploadedFile(
+                "demo.jpg",
+                product_picture_jpeg(name=product.name, brand=product.brand),
+                content_type="image/jpeg",
+            )
+            change_product_image(product=product, uploaded_image=picture).commit()
 
     def _create_merch(self) -> dict[int, Product]:
         merch: dict[int, Product] = {}

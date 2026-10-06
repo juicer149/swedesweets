@@ -66,10 +66,10 @@ superuser:
 	$(MANAGE) createsuperuser
 
 seed:
-	$(MANAGE) seed_demo_data --with-orders --with-demo-accounts
+	$(MANAGE) seed_demo_data --with-orders --with-demo-accounts --with-images
 
 reset-demo:
-	$(MANAGE) seed_demo_data --reset --with-orders --with-demo-accounts
+	$(MANAGE) seed_demo_data --reset --with-orders --with-demo-accounts --with-images
 
 collectstatic:
 	$(MANAGE) collectstatic --noinput -v 0

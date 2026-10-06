@@ -169,3 +169,51 @@ def test_business_catalogue_lists_candy_but_not_merch(debug):
 
     assert numbers
     assert not numbers & {item.internal_number for item in demo.MERCH}
+
+
+@pytest.mark.django_db
+def test_with_images_gives_every_product_a_picture_and_reset_removes_them(
+    debug,
+    settings,
+    tmp_path,
+    monkeypatch,
+):
+    from io import BytesIO
+
+    from PIL import Image
+
+    from config.management.commands import seed_demo_data
+    from products.models import ProductProfile
+
+    def tiny_picture(**_):
+        output = BytesIO()
+        Image.new("RGB", (8, 8), (236, 72, 90)).save(output, format="JPEG")
+        return output.getvalue()
+
+    # The plumbing is under test here, not the drawing (tested below).
+    monkeypatch.setattr(seed_demo_data, "product_picture_jpeg", tiny_picture)
+    settings.MEDIA_ROOT = tmp_path
+
+    call_command("seed_demo_data", with_images=True)
+
+    profiles = ProductProfile.objects.all()
+    assert profiles.count() == Product.objects.count()
+    assert all(profile.image and profile.thumbnail for profile in profiles)
+    first_files = {path.name for path in tmp_path.rglob("*") if path.is_file()}
+    assert first_files
+
+    call_command("seed_demo_data", reset=True, with_images=True)
+
+    # The previous run's pictures are gone, not left behind.
+    files = {path.name for path in tmp_path.rglob("*") if path.is_file()}
+    assert not files & first_files
+
+
+def test_demo_pictures_follow_the_name():
+    from config.management.commands._demo_images import product_picture_jpeg
+
+    first = product_picture_jpeg(name="Hallon Lakrits Skalle", brand="BUBS")
+
+    assert first[:2] == b"\xff\xd8"  # JPEG
+    assert first == product_picture_jpeg(name="Hallon Lakrits Skalle", brand="BUBS")
+    assert first != product_picture_jpeg(name="Cool Cola Skalle", brand="BUBS")

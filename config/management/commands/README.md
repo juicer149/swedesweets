@@ -10,7 +10,7 @@
 ## Demo data
 
 ```bash
-make reset-demo   # seed_demo_data --reset --with-orders --with-demo-accounts
+make reset-demo   # seed_demo_data --reset --with-orders --with-demo-accounts --with-images
 ```
 
 Logins (password = username):
@@ -28,6 +28,9 @@ Everything except the product catalogue is invented (`_demo_data.py`):
 - one long-dated batch per active product, plus short-dated batches for the
   expiry queue and a few small ones for the low-stock queue
 - four retail merch products with EUR prices
+- with `--with-images`, a drawn picture for every product (`_demo_images.py`):
+  a heap of sweets in the flavour's colours, chips, dip-mix sachets and
+  merch garments; no network and no third-party pictures
 - 28 B2B orders over the last eight weeks: 4 placed, 4 packed, 20 delivered
 
 Dates are relative to the day it runs, so the queues always look current.
