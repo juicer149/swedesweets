@@ -22,3 +22,17 @@ def test_store_edit_page_shows_form_and_actions(client):
     assert 'name="email"' in content
     assert 'value="store@example.com"' in content
     assert f'href="{reverse("business_portal:index")}"' in content
+
+
+@pytest.mark.django_db
+def test_order_history_on_phones_is_link_rows(client):
+    customer = customer_factory(email="rows@example.fr")
+    client.force_login(customer_user_factory(customer=customer))
+
+    response = client.get(reverse("business_portal:index"))
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert "data-order-card-list" in content
+    assert 'class="lines mobile-lines"' in content
+    assert "mobile-card" not in content

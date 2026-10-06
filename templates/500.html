@@ -1,29 +1,13 @@
-{% extends "base.html" %}
+{% extends "layouts/error.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Something went wrong" %}{% endblock %}
+{% block error_title_text %}{% trans "Something went wrong" %}{% endblock %}
+{% block code %}500{% endblock %}
+{% block error_title %}{% trans "Something went wrong" %}{% endblock %}
 
-{% block content %}
-  <main class="container error-page" aria-labelledby="error-title">
-    <section class="error-card">
-      <p class="error-card__code">500</p>
-
-      <h1 id="error-title" class="error-card__title">
-        {% trans "Something went wrong" %}
-      </h1>
-
-      <p class="error-card__body">
-        {% blocktrans trimmed %}
-          The system hit an unexpected error. Try again, or contact the system
-          owner if it keeps happening.
-        {% endblocktrans %}
-      </p>
-
-      <div class="error-card__actions">
-        <a class="button button--primary" href="{% url 'after_login' %}">
-          {% trans "Back to start" %}
-        </a>
-      </div>
-    </section>
-  </main>
+{% block message %}
+  {% blocktrans trimmed %}
+  The system hit an unexpected error. Try again, or contact the system
+  owner if it keeps happening.
+  {% endblocktrans %}
 {% endblock %}

@@ -44,13 +44,14 @@
         <div class="confirm-dialog__actions">
           <button
             type="button"
-            class="button button--md button--ghost button--tone-neutral"
-            data-confirm-dialog-cancel
+            class="button button--md button--solid button--tone-danger"
+            data-confirm-dialog-confirm
           ></button>
           <button
             type="button"
-            class="button button--md button--solid button--tone-danger"
-            data-confirm-dialog-confirm
+            class="quiet-link"
+            data-confirm-dialog-cancel
+            autofocus
           ></button>
         </div>
       </div>

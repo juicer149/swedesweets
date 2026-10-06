@@ -1,29 +1,13 @@
-{% extends "base.html" %}
+{% extends "layouts/error.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Bad request" %}{% endblock %}
+{% block error_title_text %}{% trans "Bad request" %}{% endblock %}
+{% block code %}400{% endblock %}
+{% block error_title %}{% trans "Bad request" %}{% endblock %}
 
-{% block content %}
-  <main class="container error-page" aria-labelledby="error-title">
-    <section class="error-card">
-      <p class="error-card__code">400</p>
-
-      <h1 id="error-title" class="error-card__title">
-        {% trans "Bad request" %}
-      </h1>
-
-      <p class="error-card__body">
-        {% blocktrans trimmed %}
-          The request could not be understood by the system. Go back and try
-          again, or return to your start page.
-        {% endblocktrans %}
-      </p>
-
-      <div class="error-card__actions">
-        <a class="button button--primary" href="{% url 'after_login' %}">
-          {% trans "Back to start" %}
-        </a>
-      </div>
-    </section>
-  </main>
+{% block message %}
+  {% blocktrans trimmed %}
+  The request could not be understood by the system. Go back and try
+  again, or return to your start page.
+  {% endblocktrans %}
 {% endblock %}

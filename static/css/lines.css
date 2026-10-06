@@ -28,6 +28,11 @@
   border-top: 1px solid var(--color-neutral-200);
 }
 
+/* A row a script hides (a filter) must stay hidden over display: grid. */
+.line[hidden] {
+  display: none;
+}
+
 .line--static {
   grid-template-columns: minmax(0, 1fr) auto;
 }

@@ -1,43 +1,44 @@
 /* =============================================================================
-   Confirm dialog
+   Confirm dialog (confirm_dialog.js), in the calm design
 
-   Native <dialog>-based replacement for window.confirm(), styled to match
-   a white surface with an accent top border
-   instead of the browser's unstyleable native prompt. Built and
-   controlled entirely by confirm_dialog.js - this file only owns
-   appearance.
+   Native <dialog> in place of window.confirm(): the page's own cream, no
+   box edge or coloured bar, the title and a line of text, then the one
+   button (red: it leaves without saving) with the quiet way back under
+   it, like the actions at the foot of a page.
    ============================================================================= */
 
 .confirm-dialog {
-  max-width: min(90vw, 28rem);
+  width: min(100% - 2rem, 24rem);
+  max-width: none;
   padding: 0;
 
   background: transparent;
   border: 0;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-content-card);
+  box-shadow: 0 24px 60px rgb(var(--color-row-shadow) / 0.22);
 }
 
 .confirm-dialog::backdrop {
-  background: rgb(var(--color-row-shadow) / 0.45);
+  background: rgb(var(--color-row-shadow) / 0.35);
 }
 
 .confirm-dialog__card {
-  padding: var(--space-6);
+  padding: clamp(var(--space-5), 5vw, var(--space-7));
 
-  background: var(--color-white);
-  border-top: 5px solid var(--color-accent-600);
+  background: var(--color-neutral-50);
   border-radius: var(--radius-md);
+  text-align: center;
 }
 
 .confirm-dialog__title {
-  margin: 0 0 var(--space-3);
+  margin: 0 0 var(--space-2);
 
-  color: var(--color-text-heading);
+  /* As a page's title (.page__lead). */
+  color: #3b3834;
   font-family: var(--font-heading);
-  font-size: var(--font-size-24);
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: var(--font-size-20);
+  font-weight: 500;
+  line-height: 1.3;
 }
 
 .confirm-dialog__message {
@@ -50,18 +51,12 @@
 
 .confirm-dialog__actions {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: center;
   gap: var(--space-3);
 }
 
-@media (max-width: 479px) {
-  .confirm-dialog__actions {
-    flex-direction: column-reverse;
-  }
-
-  .confirm-dialog__actions .button {
-    width: 100%;
-    justify-content: center;
-  }
+.confirm-dialog__actions .button {
+  width: 100%;
+  justify-content: center;
 }

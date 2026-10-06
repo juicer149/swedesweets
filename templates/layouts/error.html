@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% comment %}
+  An error page (400, 403, 404, 500, an inactive account) in the calm design: one screen, the
+  code small and grey over the title, a line on what happened, and one
+  yellow way back. Each page fills the blocks code, error_title, message
+  (and action, to lead somewhere other than the start page).
+{% endcomment %}
+
+{% block title %}{% block error_title_text %}{% endblock %} | SwedeSweets{% endblock %}
+
+{% block content %}
+<section class="screen screen--in-site error-page" aria-labelledby="error-title">
+  <div class="page page--centered">
+    <header class="page__header">
+      <p class="error-page__code">{% block code %}{% endblock %}</p>
+      <h1 id="error-title" class="page__lead">{% block error_title %}{% endblock %}</h1>
+    </header>
+
+    <p class="page__text page__note">{% block message %}{% endblock %}</p>
+
+    <div class="form-actions page__actions">
+      {% block action %}
+        <a class="button button--md button--solid button--tone-place page__submit" href="{% url 'after_login' %}">
+          {% trans "Back to start" %}
+        </a>
+      {% endblock %}
+    </div>
+  </div>
+</section>
+{% endblock %}

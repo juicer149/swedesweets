@@ -256,12 +256,19 @@
       </table>
     </div>
 
-    <div
-      class="mobile-card-list"
+    {% comment %}
+      Phones: the orders as link rows (the .line--link markup of
+      includes/ui/line_link.html, with the data the sort and filter in
+      order-history.js read on each row).
+    {% endcomment %}
+    <ul
+      class="lines mobile-lines"
+      aria-label="{% trans 'Orders' %}"
       data-order-card-list
     >
       {% for row in order_rows %}
-        <div
+        <li
+          class="line line--link"
           data-order-card
           data-order-id="{{ row.order.id }}"
           data-order-created="{{ row.order.created_at|date:'c' }}"
@@ -269,27 +276,28 @@
           data-order-status-rank="{{ row.order.status_rank }}"
           data-order-quantity="{{ row.total_quantity }}"
         >
-          {% include "includes/ui/card.html" with card=row.card only %}
-        </div>
-      {% empty %}
-        <article class="mobile-card mobile-card--neutral">
-          <p>
-            {% trans "No orders found." %}
-          </p>
-        </article>
+          <a class="line__link" href="{{ row.detail_href }}">
+            <span class="line__icon line__icon--{{ row.status.tone.key }}" aria-hidden="true">
+              {% include "includes/ui/icon_block.html" with name=row.status.text.icon size="sm" only %}
+            </span>
+
+            <span class="line__text">
+              <span class="line__name">{{ row.title }}</span>
+              <span class="line__meta">{{ row.meta }}</span>
+            </span>
+
+            <span class="line__aside">{{ row.quantity_label }}</span>
+          </a>
+        </li>
       {% endfor %}
 
-      {% if order_rows %}
-        <article
-          class="mobile-card mobile-card--neutral"
-          data-order-card-filter-empty
-          hidden
-        >
-          <p>
-            {% trans "No orders found." %}
-          </p>
-        </article>
-      {% endif %}
-    </div>
+      <li
+        class="line line--static"
+        data-order-card-filter-empty
+        {% if order_rows %}hidden{% endif %}
+      >
+        <p class="page__note">{% trans "No orders found." %}</p>
+      </li>
+    </ul>
   </section>
 </section>
