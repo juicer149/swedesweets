@@ -20,17 +20,6 @@ class DashboardAction:
 
 
 @dataclass(frozen=True, slots=True)
-class DashboardQueueTab:
-    key: str
-    label: str
-    count: int
-    href: str
-    tone: str
-    icon: str
-    is_active: bool = False
-
-
-@dataclass(frozen=True, slots=True)
 class DashboardQueueItem:
     title: str
     meta: str
@@ -41,10 +30,13 @@ class DashboardQueueItem:
 
 
 @dataclass(frozen=True, slots=True)
-class DashboardQueuePanel:
+class DashboardQueue:
+    """One queue as a row that slides open to its first few items."""
+
     key: str
     title: str
-    description: str
+    count: int
+    tone: str
     items: tuple[DashboardQueueItem, ...]
     view_all_href: str
     view_all_label: str

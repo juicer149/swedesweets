@@ -8,59 +8,40 @@
   <div class="page page--centered dashboard-card">
     <h1 id="ops-dashboard-title" class="page__lead">Ops dashboard</h1>
 
-    <div
-      id="dashboard-queue"
-      class="dashboard-queue"
-      data-async-list
-    >
-      {% if dashboard_queue_tabs %}
-        <nav class="filter-chips dashboard-chips" aria-label="Queues">
-          {% for tab in dashboard_queue_tabs %}
-            <a
-              href="{{ tab.href }}"
-              class="filter-chip dashboard-queue-nav__link"
-              {% if tab.is_active %}aria-current="page"{% endif %}
-            >
-              {{ tab.label }}
-              <span class="dashboard-chip__count{% if tab.count %} dashboard-chip__count--{{ tab.tone }}{% endif %}">
-                {{ tab.count }}
+    {% if dashboard_queues %}
+      <div class="dashboard-queues">
+        {% for queue in dashboard_queues %}
+          <details class="disclosure dashboard-queue" data-smooth data-smooth-group="dashboard-queues">
+            <summary class="disclosure__summary">
+              <span>{{ queue.title }}</span>
+              <span class="dashboard-queue__end">
+                <span class="dashboard-queue__count dashboard-queue__count--{{ queue.tone }}">{{ queue.count }}</span>
+                {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="disclosure__chevron" only %}
               </span>
-            </a>
-          {% endfor %}
-        </nav>
+            </summary>
 
-        {% if dashboard_queue_panel %}
-          <h2 class="visually-hidden">{{ dashboard_queue_panel.title }}</h2>
+            <div class="disclosure__content" data-smooth-content>
+              <ul class="lines">
+                {% for item in queue.items %}
+                  {% include "includes/ui/line_link.html" with href=item.href tone=item.tone icon=item.icon name=item.title meta=item.meta aside=item.action_label aside_wide=True only %}
+                {% endfor %}
+              </ul>
 
-          <p class="page__note dashboard-queue__description">
-            {{ dashboard_queue_panel.description }}
-          </p>
-
-          {% if dashboard_queue_panel.items %}
-            <ul class="lines">
-              {% for item in dashboard_queue_panel.items %}
-                {% include "includes/ui/line_link.html" with href=item.href tone=item.tone icon=item.icon name=item.title meta=item.meta aside=item.action_label aside_wide=True only %}
-              {% endfor %}
-            </ul>
-          {% else %}
-            <p class="page__note dashboard-queue__empty">
-              Nothing to show in this queue.
-            </p>
-          {% endif %}
-
-          <div class="dashboard-queue__more">
-            <a class="quiet-link" href="{{ dashboard_queue_panel.view_all_href }}">
-              {{ dashboard_queue_panel.view_all_label }}
-            </a>
-          </div>
-        {% endif %}
-      {% else %}
-        <p class="page__text page__message">All clear</p>
-        <p class="page__note">
-          No orders waiting, no packed deliveries, and no urgent inventory signals.
-        </p>
-      {% endif %}
-    </div>
+              <div class="dashboard-queue__more">
+                <a class="quiet-link" href="{{ queue.view_all_href }}">
+                  {{ queue.view_all_label }}
+                </a>
+              </div>
+            </div>
+          </details>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="page__text page__message">All clear</p>
+      <p class="page__note">
+        No orders waiting, no packed deliveries, and no urgent inventory signals.
+      </p>
+    {% endif %}
 
     {% if dashboard_actions %}
       <div class="form-actions page__actions page-actions">
@@ -102,5 +83,5 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script src="{% static 'js/async_list.js' %}" defer></script>
+  <script src="{% static 'js/smooth-details.js' %}" defer></script>
 {% endblock %}

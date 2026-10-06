@@ -19,62 +19,37 @@
 /* =============================================================================
    Ops dashboard, in the calm design
 
-   No box and no hero: the title centred, the queues as filter chips with
-   their count, the queue's rows on the page divided by hairlines, and the
-   actions at the bottom (one yellow button, the rest quiet links).
-   The rows are .line--link rows (lines.css).
+   No box and no hero: the title centred, each queue a quiet row with its
+   count that slides open to its first few items (.disclosure, page.css,
+   one open at a time), and the actions at the bottom (one yellow button,
+   the rest quiet links). The items are .line--link rows (lines.css).
    ============================================================================= */
 
 .page.dashboard-card {
   width: min(100%, 720px);
 }
 
-.dashboard-chips {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-2);
-  margin: 0 0 var(--space-4);
+.dashboard-queues {
+  margin-bottom: var(--space-2);
 }
 
-.dashboard-chip__count {
-  margin-left: var(--space-2);
-  color: var(--color-neutral-600);
+.dashboard-queue__end {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dashboard-queue__count {
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
-.dashboard-chip__count--warning { color: var(--color-status-warning-text); }
-.dashboard-chip__count--info { color: var(--color-status-info-text); }
-.dashboard-chip__count--danger { color: var(--color-status-danger-text); }
-
-/* On the yellow active chip every count reads in the chip's own dark. */
-.filter-chips .filter-chip[aria-current="page"] .dashboard-chip__count {
-  color: inherit;
-}
-
-.dashboard-queue[aria-busy="true"] {
-  opacity: 0.6;
-  transition: opacity var(--motion-fast);
-}
-
-.dashboard-queue__description {
-  margin-bottom: var(--space-4);
-}
-
-.dashboard-queue__empty {
-  margin-block: var(--space-6);
-}
+.dashboard-queue__count--warning { color: var(--color-status-warning-text); }
+.dashboard-queue__count--info { color: var(--color-status-info-text); }
+.dashboard-queue__count--danger { color: var(--color-status-danger-text); }
 
 .dashboard-queue__more {
   display: flex;
   justify-content: center;
-  margin-top: var(--space-4);
-}
-
-
-@media (prefers-reduced-motion: reduce) {
-  .dashboard-queue[aria-busy="true"] {
-    transition: none;
-  }
+  padding-block: var(--space-2) var(--space-4);
 }

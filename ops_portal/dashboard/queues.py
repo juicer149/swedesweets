@@ -1,21 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 
 from django.urls import reverse
 
 from accounts.roles import AccountRole, Capability, RoleSpec
-from inventory.expiry import EXPIRY_SOON_DAYS
 from inventory.selectors import (
     count_expiring_batches,
     list_expiring_batch_rows_for_dashboard,
 )
-from ops_portal.dashboard.viewmodels import (
-    DashboardQueueItem,
-    DashboardQueuePanel,
-    DashboardQueueTab,
-)
+from ops_portal.dashboard.viewmodels import DashboardQueue, DashboardQueueItem
 from ops_portal.inventory.presentation import (
     batch_quantity_label,
     product_available_quantity_label,
@@ -40,38 +35,21 @@ QUEUE_PREVIEW_LIMIT = 4
 
 
 # -----------------------------------------------------------------------------
-# Public output
-#
-# This is the shape consumed by dashboard/views.py. Templates should receive
-# ready-to-render tabs and one active panel, not role/capability logic.
-
-
-@dataclass(frozen=True, slots=True)
-class DashboardQueueContext:
-    tabs: tuple[DashboardQueueTab, ...]
-    panel: DashboardQueuePanel | None
-
-
-# -----------------------------------------------------------------------------
 # Queue specification
 #
 # A DashboardQueueSpec defines one possible dashboard queue.
 #
 # AccountRole chooses a queue family.
 # RoleSpec filters each queue by capability.
-# The generic builder below turns the selected specs into tabs and panels.
+# The generic builder below turns the selected specs into queues.
 
 
 @dataclass(frozen=True, slots=True)
 class DashboardQueueSpec:
     key: str
-    label: str
+    title: str
     capability: Capability
     tone: str
-    icon: str
-
-    panel_title: str
-    panel_description: str
     view_all_label: str
 
     count_items: Callable[[], int]
@@ -79,21 +57,12 @@ class DashboardQueueSpec:
     build_item: Callable[[object], DashboardQueueItem]
     build_view_all_href: Callable[[], str]
 
-    def build_tab(self, *, count: int) -> DashboardQueueTab:
-        return DashboardQueueTab(
+    def build(self, *, count: int) -> DashboardQueue:
+        return DashboardQueue(
             key=self.key,
-            label=self.label,
+            title=self.title,
             count=count,
-            href=_dashboard_queue_href(self.key),
             tone=self.tone,
-            icon=self.icon,
-        )
-
-    def build_panel(self) -> DashboardQueuePanel:
-        return DashboardQueuePanel(
-            key=self.key,
-            title=self.panel_title,
-            description=self.panel_description,
             items=tuple(self.build_item(item) for item in self.list_items()),
             view_all_href=self.build_view_all_href(),
             view_all_label=self.view_all_label,
@@ -210,17 +179,14 @@ def _low_stock_item(row) -> DashboardQueueItem:
 # Available queues
 #
 # Add new dashboard queues here. Each queue is filtered by capability before it
-# can appear in the section nav.
+# can appear on the dashboard.
 
 
 PLACED_ORDERS_QUEUE = DashboardQueueSpec(
     key="placed",
-    label="Placed",
     capability=Capability.PACK_ORDERS,
     tone="warning",
-    icon="cart",
-    panel_title="Placed orders",
-    panel_description="Orders waiting to be packed.",
+    title="Placed orders",
     view_all_label="View all placed orders →",
     count_items=count_placed_orders,
     list_items=_list_placed_orders,
@@ -230,12 +196,9 @@ PLACED_ORDERS_QUEUE = DashboardQueueSpec(
 
 PACKED_ORDERS_QUEUE = DashboardQueueSpec(
     key="packed",
-    label="Packed",
     capability=Capability.DELIVER_ORDERS,
     tone="info",
-    icon="packed",
-    panel_title="Packed orders",
-    panel_description="Orders ready for delivery.",
+    title="Packed orders",
     view_all_label="View all packed orders →",
     count_items=count_packed_orders,
     list_items=_list_packed_orders,
@@ -245,12 +208,9 @@ PACKED_ORDERS_QUEUE = DashboardQueueSpec(
 
 EXPIRING_BATCHES_QUEUE = DashboardQueueSpec(
     key="expiring",
-    label="Expiring",
     capability=Capability.VIEW_INVENTORY_RISKS,
     tone="danger",
-    icon="warning",
-    panel_title="Expiring batches",
-    panel_description=f"Batches expiring in the next {EXPIRY_SOON_DAYS} days.",
+    title="Expiring batches",
     view_all_label="View expiring batches →",
     count_items=count_expiring_batches,
     list_items=_list_expiring_batches,
@@ -260,12 +220,9 @@ EXPIRING_BATCHES_QUEUE = DashboardQueueSpec(
 
 LOW_STOCK_QUEUE = DashboardQueueSpec(
     key="low-stock",
-    label="Low stock",
     capability=Capability.VIEW_INVENTORY_RISKS,
     tone="warning",
-    icon="inventory",
-    panel_title="Low stock",
-    panel_description="Products running low.",
+    title="Low stock",
     view_all_label="View low stock products →",
     count_items=count_low_stock_products,
     list_items=_list_low_stock_products,
@@ -307,96 +264,24 @@ DASHBOARD_QUEUES_BY_ROLE: dict[
 # Public builder
 
 
-def build_dashboard_queue_context(
+def build_dashboard_queues(
     *,
     account_role: AccountRole,
     role_spec: RoleSpec,
-    requested_queue: str,
-) -> DashboardQueueContext:
+) -> tuple[DashboardQueue, ...]:
+    """The queues this role sees, in order; empty queues are left out."""
     candidates = DASHBOARD_QUEUES_BY_ROLE.get(account_role, ())
-    queue_specs = _visible_queue_specs(
-        candidates=candidates,
-        role_spec=role_spec,
-    )
-    tabs = _build_queue_tabs(queue_specs=queue_specs)
-    active_queue = _resolve_active_queue(
-        requested_queue=requested_queue,
-        tabs=tabs,
-    )
-    active_tabs = tuple(replace(tab, is_active=tab.key == active_queue) for tab in tabs)
+    queues: list[DashboardQueue] = []
 
-    return DashboardQueueContext(
-        tabs=active_tabs,
-        panel=_build_active_queue_panel(
-            active_queue=active_queue,
-            queue_specs=queue_specs,
-        ),
-    )
+    for queue_spec in candidates:
+        if not role_spec.allows(queue_spec.capability):
+            continue
 
-
-# -----------------------------------------------------------------------------
-# Builder helpers
-
-
-def _visible_queue_specs(
-    *,
-    candidates: tuple[DashboardQueueSpec, ...],
-    role_spec: RoleSpec,
-) -> tuple[DashboardQueueSpec, ...]:
-    return tuple(
-        queue_spec
-        for queue_spec in candidates
-        if role_spec.allows(queue_spec.capability)
-    )
-
-
-def _build_queue_tabs(
-    *,
-    queue_specs: tuple[DashboardQueueSpec, ...],
-) -> tuple[DashboardQueueTab, ...]:
-    tabs: list[DashboardQueueTab] = []
-
-    for queue_spec in queue_specs:
         count = queue_spec.count_items()
 
         if count <= 0:
             continue
 
-        tabs.append(queue_spec.build_tab(count=count))
+        queues.append(queue_spec.build(count=count))
 
-    return tuple(tabs)
-
-
-def _resolve_active_queue(
-    *,
-    requested_queue: str,
-    tabs: tuple[DashboardQueueTab, ...],
-) -> str:
-    if not tabs:
-        return ""
-
-    visible_keys = {tab.key for tab in tabs}
-
-    if requested_queue in visible_keys:
-        return requested_queue
-
-    return tabs[0].key
-
-
-def _build_active_queue_panel(
-    *,
-    active_queue: str,
-    queue_specs: tuple[DashboardQueueSpec, ...],
-) -> DashboardQueuePanel | None:
-    if not active_queue:
-        return None
-
-    for queue_spec in queue_specs:
-        if queue_spec.key == active_queue:
-            return queue_spec.build_panel()
-
-    return None
-
-
-def _dashboard_queue_href(queue_key: str) -> str:
-    return f"{reverse('ops_dashboard')}?queue={queue_key}#dashboard-queue"
+    return tuple(queues)
