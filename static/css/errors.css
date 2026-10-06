@@ -72,7 +72,7 @@
   min-width: 11rem;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .error-page {
     min-height: calc(100svh - var(--space-8));
     padding-block: var(--space-8);

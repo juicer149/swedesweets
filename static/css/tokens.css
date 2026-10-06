@@ -1,3 +1,18 @@
+/* =============================================================================
+   Breakpoints (Tailwind's ladder). Media queries cannot read custom
+   properties, so these are the only widths a media query may use:
+
+     (max-width: 1023px)   tablet and smaller
+     (max-width:  767px)   phone: mobile navbar, tables become rows or cards,
+                           calm pages put their actions at the bottom
+     (max-width:  639px)   small phone: one-column forms, tighter spacing
+     (max-width:  479px)   very small phone
+     (min-width:  768px)   the same line, from the desktop side
+
+   A new layout change uses one of these. Sizes that should simply shrink
+   (spacing, type) use clamp() instead of another breakpoint.
+   ============================================================================= */
+
 :root {
   /* ==========================================================================
      Primitive colors

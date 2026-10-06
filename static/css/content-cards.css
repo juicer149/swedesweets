@@ -175,13 +175,13 @@
    Responsive
    ============================================================================= */
 
-@media (max-width: 760px) {
+@media (max-width: 767px) {
   .detail-data-list {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .content-section,
   .form-section {
     max-width: none;

@@ -241,7 +241,7 @@
    Responsive
    ============================================================================= */
 
-@media (max-width: 760px) {
+@media (max-width: 767px) {
   .account-detail-card {
     width: min(
       100%,
@@ -280,7 +280,7 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 479px) {
   .account-detail-card {
     width: min(
       100%,

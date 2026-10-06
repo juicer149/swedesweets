@@ -141,7 +141,7 @@
    Business catalog controls — responsive
    ============================================================================= */
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .catalog-controls {
     width: 100%;
   }
@@ -152,7 +152,7 @@
 }
 
 
-@media (max-width: 560px) {
+@media (max-width: 639px) {
   .catalog-controls {
     justify-items: stretch;
     gap: var(--space-2);
@@ -1058,7 +1058,7 @@
    Catalog responsive
    ============================================================================= */
 
-@media (max-width: 800px) {
+@media (max-width: 1023px) {
   .catalog-detail {
     padding-top: var(--space-5);
   }
@@ -1098,7 +1098,7 @@
 }
 
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .catalog {
     padding-top: var(--space-6);
   }
@@ -1140,7 +1140,7 @@
 }
 
 
-@media (max-width: 560px) {
+@media (max-width: 639px) {
   .product-grid {
     grid-template-columns: minmax(0, 1fr);
   }

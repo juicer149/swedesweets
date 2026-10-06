@@ -149,7 +149,7 @@
    Responsive
    ============================================================================= */
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .section-nav {
     justify-content: space-around;
     gap: var(--space-3);
@@ -224,7 +224,7 @@
 }
 
 
-@media (max-width: 720px) {
+@media (max-width: 767px) {
   .section-nav-row {
     flex-direction: column;
     align-items: stretch;

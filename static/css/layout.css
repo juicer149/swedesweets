@@ -17,7 +17,7 @@
   font-size: var(--font-size-14);
 }
 
-@media (max-width: 760px) {
+@media (max-width: 767px) {
   .site-footer {
     display: none;
   }
@@ -66,7 +66,7 @@
    so content and footer do not sit underneath it.
    ============================================================================= */
 
-@media (max-width: 760px) {
+@media (max-width: 767px) {
   .site-main {
     padding-bottom: 6.5rem;
   }
@@ -133,7 +133,7 @@
   font-size: var(--font-size-16);
 }
 
-@media (max-width: 760px) {
+@media (max-width: 767px) {
   .list-page-actions .button {
     width: 100%;
     justify-content: center;

@@ -43,7 +43,7 @@
 }
 
 
-@media (max-width: 700px) {
+@media (max-width: 767px) {
   .form-actions.detail-actions {
     display: grid;
     grid-template-columns: 1fr;

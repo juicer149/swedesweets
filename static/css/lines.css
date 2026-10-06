@@ -242,7 +242,7 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 639px) {
   .line__link:has(.line__aside--wide) {
     grid-template-columns: 2.5rem minmax(0, 1fr);
   }
@@ -285,7 +285,7 @@
 
 /* Phones: the product on its own line, quantity and remove under it.
    A static line keeps its short right side beside the product. */
-@media (max-width: 600px) {
+@media (max-width: 639px) {
   .line {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-3);

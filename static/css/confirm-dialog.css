@@ -55,7 +55,7 @@
   gap: var(--space-3);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 479px) {
   .confirm-dialog__actions {
     flex-direction: column-reverse;
   }
