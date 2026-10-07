@@ -438,9 +438,13 @@ def cart_review(request):
                     },
                 )
 
+                # ?placed: the order page greets it with the crown.
                 return redirect(
-                    "business_portal:order_detail",
-                    order_id=placed_order.id,
+                    reverse(
+                        "business_portal:order_detail",
+                        kwargs={"order_id": placed_order.id},
+                    )
+                    + "?placed=1"
                 )
 
             case _:
@@ -479,6 +483,8 @@ def order_detail(
         order=order,
         language_code=request.LANGUAGE_CODE,
     ).as_dict()
+    # Just placed (the review page's Place order lands here with ?placed).
+    context["just_placed"] = request.GET.get("placed") == "1"
 
     return render(
         request,

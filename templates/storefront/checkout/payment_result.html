@@ -20,6 +20,8 @@
 <section class="screen screen--in-site payment-result" aria-labelledby="payment-result-title">
   <div class="page page--centered">
     {% if result == "confirmed" %}
+      {% include "includes/ui/crown_hero.html" %}
+
       <header class="page__header">
         <h1 id="payment-result-title" class="page__lead">{% trans "Thank you for your order" %}</h1>
       </header>

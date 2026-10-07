@@ -78,6 +78,7 @@ def test_payment_return_is_public_and_shows_confirmation(
 
     assert response.status_code == 200
     assert response.context["result"] == "confirmed"
+    assert 'class="crown-hero"' in response.content.decode()
 
 
 @pytest.mark.django_db

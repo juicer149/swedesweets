@@ -89,3 +89,26 @@ def test_order_detail_shows_lines_dates_and_actions(
 
     assert f'action="{repeat_url}"' in content
     assert f'href="{reverse("business_portal:orders")}"' in content
+
+
+@pytest.mark.django_db
+def test_order_page_greets_a_just_placed_order_with_the_crown(
+    client,
+):
+    customer = customer_factory(email="crown@example.com")
+    client.force_login(customer_user_factory(customer=customer))
+
+    product = product_factory(name="Apple", internal_number=302)
+    standard_business_offer_factory(product=product)
+    batch_factory(product=product, today=TODAY, quantity=100)
+    order = create_order(
+        customer=customer,
+        lines=[OrderLineInput.units(product=product, quantity=1)],
+    )
+    url = reverse(
+        "business_portal:order_detail",
+        kwargs={"order_id": order.id},
+    )
+
+    assert 'class="crown-hero"' in client.get(f"{url}?placed=1").content.decode()
+    assert 'class="crown-hero"' not in client.get(url).content.decode()

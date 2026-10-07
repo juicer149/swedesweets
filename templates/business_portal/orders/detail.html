@@ -9,6 +9,10 @@
   aria-labelledby="portal-order-detail-title"
 >
   <div class="page page--centered page--wide">
+    {% if just_placed %}
+      {% include "includes/ui/crown_hero.html" %}
+    {% endif %}
+
     {% include "includes/ui/status_heading.html" with title_id="portal-order-detail-title" title=title status=order.status icon=status_icon label=customer_status_label at=order.status_changed_at what=contents_label only %}
 
     {% if content_lines %}

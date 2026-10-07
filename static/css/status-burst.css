@@ -140,3 +140,44 @@
   left: 50%;
   translate: -50% -50%;
 }
+
+
+/* =============================================================================
+   Crown hero (includes/ui/crown_hero.html): the crown, large, grows in
+   above the title of a page that says it went through (order placed,
+   payment made). Same easing and --feedback-mark-grow as the burst.
+   ============================================================================= */
+
+.crown-hero {
+  width: clamp(3.5rem, 12vw, 5rem);
+  height: clamp(3.5rem, 12vw, 5rem);
+  margin: 0 auto var(--space-4);
+
+  color: var(--color-brand-yellow);
+
+  animation: crown-hero-in calc(var(--feedback-mark-grow) * 2)
+    cubic-bezier(0.3, 1.6, 0.6, 1) 0.15s both;
+}
+
+.crown-hero .ui-icon-block {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes crown-hero-in {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crown-hero {
+    animation: none;
+  }
+}

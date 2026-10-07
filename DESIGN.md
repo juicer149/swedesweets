@@ -170,6 +170,11 @@ button gives way to the same dots, in its place, until the next page
 arrives; a second press does nothing. No crown here: the next page is the
 answer.
 
+**Crown hero:** `includes/ui/crown_hero.html`, the crown large, growing in
+above the title of the page that says it went through: the shop's "Thank
+you for your order" and a business order just placed (the review page's
+Place order lands on it with `?placed=1`).
+
 **Tables** remain only where ops compare many columns (orders, batches,
 stock). On phones they become rows (`.mobile-lines`).
 
