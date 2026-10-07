@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 15:25+0200\n"
+"POT-Creation-Date: 2026-10-07 16:00+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -322,7 +322,8 @@ msgstr "%(product)s a été ajouté à votre panier."
 msgid "Catalog"
 msgstr "Catalogue"
 
-#: business_portal/navigation.py:36 storefront/navigation.py:42
+#: business_portal/navigation.py:36 storefront/faq.py:62
+#: storefront/navigation.py:42
 #: templates/business_portal/includes/account_details_panel.html:50
 #: templates/business_portal/store_edit.html:31
 #: templates/storefront/find_sweets.html:4
@@ -1043,11 +1044,19 @@ msgstr ""
 "Nous n’avons pas pu annuler votre paiement. Si vous avez déjà payé, votre "
 "commande est bien enregistrée. Sinon, veuillez réessayer ou nous contacter."
 
-#: storefront/faq.py:24
+#: storefront/faq.py:33
+msgid "How do I become a reseller?"
+msgstr "Comment devenir revendeur ?"
+
+#: storefront/faq.py:34
+msgid "Get in touch and we will set up an account for your shop."
+msgstr "Contactez-nous et nous créerons un compte pour votre magasin."
+
+#: storefront/faq.py:41
 msgid "What can I buy online?"
 msgstr "Que puis-je acheter en ligne ?"
 
-#: storefront/faq.py:26
+#: storefront/faq.py:43
 msgid ""
 "Our online shop sells SwedeSweets merch, and now and then candy offers, such "
 "as short-dated stock."
@@ -1055,60 +1064,50 @@ msgstr ""
 "Notre boutique en ligne vend le merch SwedeSweets et, de temps en temps, des "
 "offres de bonbons, comme des produits à date courte."
 
-#: storefront/faq.py:31
+#: storefront/faq.py:48
 msgid "Where do you deliver?"
 msgstr "Où livrez-vous ?"
 
-#: storefront/faq.py:32
+#: storefront/faq.py:49
 msgid "We deliver online orders within Haute-Savoie (74)."
 msgstr "Nous livrons les commandes en ligne en Haute-Savoie (74)."
 
-#: storefront/faq.py:35
+#: storefront/faq.py:52
 msgid "How do I pay?"
 msgstr "Comment puis-je payer ?"
 
-#: storefront/faq.py:37
+#: storefront/faq.py:54
 msgid ""
 "By card. Payment is handled by SumUp, so your card details never reach us."
 msgstr ""
 "Par carte. Le paiement est géré par SumUp : vos données de carte ne nous "
 "parviennent jamais."
 
-#: storefront/faq.py:42
+#: storefront/faq.py:59
 msgid "Where can I find your candy in shops?"
 msgstr "Où trouver vos bonbons en magasin ?"
 
-#: storefront/faq.py:43
-msgid "Ask us and we will tell you the nearest shop that sells SwedeSweets."
-msgstr ""
-"Demandez-nous et nous vous indiquerons le magasin le plus proche qui vend "
-"SwedeSweets."
+#: storefront/faq.py:60
+msgid "The shops that sell our sweets are listed on Find Sweets."
+msgstr "Les boutiques qui vendent nos bonbons sont listées sur « Où acheter »."
 
-#: storefront/faq.py:46
+#: storefront/faq.py:66
 msgid "How long does delivery take, and what does it cost?"
 msgstr "Combien de temps prend la livraison, et combien coûte-t-elle ?"
 
-#: storefront/faq.py:47
+#: storefront/faq.py:67
 msgid "Can I return or exchange merch?"
 msgstr "Puis-je retourner ou échanger du merch ?"
 
-#: storefront/faq.py:48
+#: storefront/faq.py:68
 msgid "Which sizes are available?"
 msgstr "Quelles tailles sont disponibles ?"
 
-#: storefront/faq.py:54
-msgid "How do I become a reseller?"
-msgstr "Comment devenir revendeur ?"
-
-#: storefront/faq.py:56
-msgid "Get in touch and we will set up an account for your shop."
-msgstr "Contactez-nous et nous créerons un compte pour votre magasin."
-
-#: storefront/faq.py:61
+#: storefront/faq.py:75
 msgid "How do I log in?"
 msgstr "Comment me connecter ?"
 
-#: storefront/faq.py:63
+#: storefront/faq.py:77
 msgid ""
 "With the username and password you received from us. If you have forgotten "
 "your password, use the link on the login page."
@@ -1117,11 +1116,11 @@ msgstr ""
 "vous avez oublié votre mot de passe, utilisez le lien sur la page de "
 "connexion."
 
-#: storefront/faq.py:68
+#: storefront/faq.py:82
 msgid "Can I change my store's details?"
 msgstr "Puis-je modifier les informations de mon magasin ?"
 
-#: storefront/faq.py:70
+#: storefront/faq.py:84
 msgid ""
 "Yes, under My account. Orders already placed keep the delivery details they "
 "were placed with."
@@ -1129,15 +1128,15 @@ msgstr ""
 "Oui, dans Mon compte. Les commandes déjà passées gardent les informations de "
 "livraison avec lesquelles elles ont été passées."
 
-#: storefront/faq.py:75
+#: storefront/faq.py:89
 msgid "Is there a minimum order?"
 msgstr "Y a-t-il une commande minimum ?"
 
-#: storefront/faq.py:76
+#: storefront/faq.py:90
 msgid "Which days do you deliver?"
 msgstr "Quels jours livrez-vous ?"
 
-#: storefront/faq.py:77
+#: storefront/faq.py:91
 msgid "How do invoices and payment terms work?"
 msgstr "Comment fonctionnent les factures et les conditions de paiement ?"
 
@@ -1506,6 +1505,10 @@ msgstr "Déconnexion"
 msgid "Site footer"
 msgstr "Pied de page"
 
+#: templates/includes/footer.html:17 templates/storefront/about.html:4
+msgid "About us"
+msgstr "À propos"
+
 #: templates/includes/language_switcher.html:7
 msgid "Language"
 msgstr "Langue"
@@ -1741,6 +1744,42 @@ msgstr "Réinitialiser le mot de passe"
 msgid "Send reset link"
 msgstr "Envoyer le lien de réinitialisation"
 
+#: templates/storefront/about.html:13
+msgid "Who we are"
+msgstr "Qui sommes-nous"
+
+#: templates/storefront/about.html:16
+msgid ""
+"We're Marco Sandelgård and Milo Sandelgård Bascoulergue, two cousins who "
+"grew up in Chamonix with one foot in France and one in Sweden."
+msgstr ""
+"Nous sommes Marco Sandelgård et Milo Sandelgård Bascoulergue, deux cousins "
+"qui ont grandi à Chamonix, un pied en France et l'autre en Suède."
+
+#: templates/storefront/about.html:17
+msgid ""
+"In Sweden, sweets mean lösgodis: a wall of loose candy, a paper bag, and the "
+"serious business of choosing exactly what goes in it. Sour strips, salty "
+"liquorice, fruity jellies, chocolate. Everyone has their own mix."
+msgstr ""
+"En Suède, les bonbons, c'est le lösgodis : un mur de bonbons en vrac, un "
+"sachet en papier, et l'affaire sérieuse de choisir exactement ce qu'on y "
+"met. Lanières acidulées, réglisse salée, gommes aux fruits, chocolat. Chacun "
+"a son propre mélange."
+
+#: templates/storefront/about.html:18
+msgid ""
+"We missed it in France. So we started SwedeSweets to bring the real thing "
+"here: the Swedish pick & mix we grew up with, straight from Sweden."
+msgstr ""
+"Ça nous manquait en France. Alors nous avons créé SwedeSweets pour apporter "
+"ici le vrai : les bonbons suédois en vrac de notre enfance, directement de "
+"Suède."
+
+#: templates/storefront/about.html:21
+msgid "Come and make your own bag."
+msgstr "Venez composer votre propre sachet."
+
 #: templates/storefront/cart.html:21
 msgid ""
 "You have a payment in progress for this cart. Continue it, or cancel it to "
@@ -1907,7 +1946,7 @@ msgstr "Modifier les informations"
 msgid "Frequently asked questions"
 msgstr "Questions fréquentes"
 
-#: templates/storefront/faq.html:37
+#: templates/storefront/faq.html:43
 msgid "Still have questions? Contact us"
 msgstr "Encore des questions ? Contactez-nous"
 
@@ -1918,6 +1957,11 @@ msgstr "Boutiques"
 #: templates/storefront/find_sweets.html:25
 msgid "No shops are listed yet."
 msgstr "Aucune boutique n'est encore listée."
+
+#~ msgid "Ask us and we will tell you the nearest shop that sells SwedeSweets."
+#~ msgstr ""
+#~ "Demandez-nous et nous vous indiquerons le magasin le plus proche qui vend "
+#~ "SwedeSweets."
 
 #~ msgid "Find where to buy our sweets"
 #~ msgstr "Trouvez où acheter nos bonbons"
@@ -2385,40 +2429,3 @@ msgstr "Aucune boutique n'est encore listée."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
-
-msgid "The shops that sell our sweets are listed on Find Sweets."
-msgstr "Les boutiques qui vendent nos bonbons sont listées sur « Où acheter »."
-
-msgid "About us"
-msgstr "À propos"
-
-msgid "Who we are"
-msgstr "Qui sommes-nous"
-
-msgid ""
-"We're Marco Sandelgård and Milo Sandelgård Bascoulergue, two cousins who "
-"grew up in Chamonix with one foot in France and one in Sweden."
-msgstr ""
-"Nous sommes Marco Sandelgård et Milo Sandelgård Bascoulergue, deux cousins "
-"qui ont grandi à Chamonix, un pied en France et l'autre en Suède."
-
-msgid ""
-"In Sweden, sweets mean lösgodis: a wall of loose candy, a paper bag, and the "
-"serious business of choosing exactly what goes in it. Sour strips, salty "
-"liquorice, fruity jellies, chocolate. Everyone has their own mix."
-msgstr ""
-"En Suède, les bonbons, c'est le lösgodis : un mur de bonbons en vrac, un "
-"sachet en papier, et l'affaire sérieuse de choisir exactement ce qu'on y "
-"met. Lanières acidulées, réglisse salée, gommes aux fruits, chocolat. Chacun "
-"a son propre mélange."
-
-msgid ""
-"We missed it in France. So we started SwedeSweets to bring the real thing "
-"here: the Swedish pick & mix we grew up with, straight from Sweden."
-msgstr ""
-"Ça nous manquait en France. Alors nous avons créé SwedeSweets pour apporter "
-"ici le vrai : les bonbons suédois en vrac de notre enfance, directement de "
-"Suède."
-
-msgid "Come and make your own bag."
-msgstr "Venez composer votre propre sachet."
