@@ -107,24 +107,36 @@
 }
 
 /* A heading that is only a line drawing (Find Sweets' binoculars); the
-   h1 is there for screen readers. The drawing stands on its own, with
-   more room under it so it reads as the page's opening, not as part of
-   the first row. */
+   h1 is there for screen readers. The list after it slides up over the
+   drawing's foot, which fades out, so the first row seems to stand in
+   front of the binoculars. */
 .page__heading--illustrated {
+  --illustration-overlap: clamp(1.25rem, 4vw, 2rem);
+
   /* Up by the column's own top padding: the drawing carries its own air. */
   margin-top: calc(var(--space-4) * -1);
-  margin-bottom: clamp(var(--space-8), 7dvh, var(--space-12));
+  margin-bottom: calc(var(--illustration-overlap) * -1);
 }
 
 .page__heading--illustrated .page__illustration {
   margin: 0 auto;
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% - var(--illustration-overlap) - 1.5rem),
+    transparent calc(100% - var(--illustration-overlap) * 0.5)
+  );
+}
+
+/* In front of the drawing, not under it. */
+.page__heading--illustrated + * {
+  position: relative;
 }
 
 /* A large line drawing at the top of a page (Find Sweets' binoculars).
    Drawn in currentColor, so the colour is set here. */
 .page__illustration {
   display: block;
-  width: clamp(11rem, 45vw, 15rem);
+  width: clamp(13rem, 58vw, 19rem);
   height: auto;
   margin: clamp(var(--space-5), 4dvh, var(--space-8)) auto 0;
   /* A shade lighter than the title, so the words lead. */
