@@ -4,8 +4,9 @@
   business portal. The picture beside what to buy: category, name,
   package, price and stock, the offers as chips when there are several,
   quantity and the one yellow button. Under both, Description and
-  Ingredients as tabs (page_tabs). catalog_detail.js keeps the price and
-  stock in step with the chosen offer.
+  Ingredients as tabs (page_tabs), and at the foot the quiet way back, as
+  on every detail page (layouts/detail.html). catalog_detail.js keeps the
+  price and stock in step with the chosen offer.
 
   From the detail viewmodel: product, product_name, category_label,
   image_url, offers, initial_offer, page_tabs, cancel_url
@@ -89,11 +90,6 @@
             </button>
           </div>
         </form>
-
-        <a class="quiet-link product__back" href="{{ cancel_url }}">
-          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
-          {% trans "Back to catalog" %}
-        </a>
       </div>
     </div>
 
@@ -103,5 +99,12 @@
         {% include "includes/ui/page_tabs.html" with page_tabs=page_tabs tabs_label=tabs_label %}
       </div>
     {% endif %}
+
+    <div class="page-actions__links page__back">
+      <a class="quiet-link" href="{{ cancel_url }}">
+        {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+        {% trans "Back to catalog" %}
+      </a>
+    </div>
   </article>
 </section>
