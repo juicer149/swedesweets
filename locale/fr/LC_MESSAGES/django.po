@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 14:41+0200\n"
+"POT-Creation-Date: 2026-10-07 14:56+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -323,6 +323,7 @@ msgid "Catalog"
 msgstr "Catalogue"
 
 #: business_portal/navigation.py:36 storefront/navigation.py:42
+#: templates/business_portal/includes/account_details_panel.html:50
 #: templates/business_portal/store_edit.html:31
 #: templates/storefront/find_sweets.html:4
 msgid "Find Sweets"
@@ -603,29 +604,49 @@ msgstr "Saisissez une adresse."
 msgid "Address is too long."
 msgstr "L’adresse est trop longue."
 
-#: business_portal/store/forms.py:139
-msgid "Show my store on Find Sweets"
-msgstr "Afficher ma boutique sur « Où acheter »"
+#: business_portal/store/forms.py:142
+#: templates/business_portal/includes/account_details_panel.html:53
+msgid "Listed"
+msgstr "Affichée"
 
-#: business_portal/store/forms.py:145
+#: business_portal/store/forms.py:143
+#: templates/business_portal/includes/account_details_panel.html:55
+msgid "Not listed"
+msgstr "Non affichée"
+
+#: business_portal/store/forms.py:148
+#: templates/business_portal/includes/orders_panel.html:78
+#: templates/business_portal/includes/orders_panel.html:156
+msgid "Status"
+msgstr "Statut"
+
+#: business_portal/store/forms.py:150
+msgid ""
+"Let visitors find your store on the public list of shops that sell "
+"SwedeSweets."
+msgstr ""
+"Permettez aux visiteurs de trouver votre boutique dans la liste publique des "
+"boutiques qui vendent SwedeSweets."
+
+#: business_portal/store/forms.py:159
 msgid "Store address"
 msgstr "Adresse de la boutique"
 
-#: business_portal/store/forms.py:147
+#: business_portal/store/forms.py:161
 msgid "Only if visitors find you somewhere else than the delivery address."
 msgstr ""
 "Seulement si les visiteurs vous trouvent ailleurs qu'à l'adresse de "
 "livraison."
 
-#: business_portal/store/forms.py:160
+#: business_portal/store/forms.py:174
 msgid "Store city"
 msgstr "Ville de la boutique"
 
-#: business_portal/store/forms.py:190
+#: business_portal/store/forms.py:204
 msgid "Add the store's city too."
 msgstr "Ajoutez aussi la ville de la boutique."
 
-#: business_portal/store/forms.py:195
+#: business_portal/store/forms.py:209
 msgid "Add the store's street address too."
 msgstr "Ajoutez aussi l'adresse de la boutique."
 
@@ -1220,7 +1241,7 @@ msgid "This account has no recorded activity yet."
 msgstr "Ce compte n’a encore aucune activité enregistrée."
 
 #: templates/accounts/includes/self_tab_account.html:7
-#: templates/business_portal/includes/account_details_panel.html:63
+#: templates/business_portal/includes/account_details_panel.html:71
 #: templates/registration/password_change_form.html:4
 #: templates/registration/password_change_form.html:9
 #: templates/registration/password_change_form.html:45
@@ -1361,9 +1382,9 @@ msgid "Confirm"
 msgstr "Confirmer"
 
 #: templates/business_portal/catalog/index.html:282
-#: templates/business_portal/store_edit.html:52
+#: templates/business_portal/store_edit.html:51
 #: templates/ops_portal/accounts/account_form.html:32
-#: templates/ops_portal/customers/customer_form.html:32
+#: templates/ops_portal/customers/customer_form.html:44
 #: templates/ops_portal/inventory/batch_form.html:30
 #: templates/ops_portal/products/product_form.html:29
 #: templates/storefront/catalog/index.html:282
@@ -1375,20 +1396,11 @@ msgstr "Annulée"
 msgid "No products are currently available."
 msgstr "Aucun produit n’est disponible actuellement."
 
-#: templates/business_portal/includes/account_details_panel.html:47
-#, python-format
-msgid ""
-"Your store is shown on <a class=\"text-link\" "
-"href=\"%(find_sweets_url)s\">Find Sweets</a>."
-msgstr ""
-"Votre boutique est affichée sur <a class=\"text-link\" "
-"href=\"%(find_sweets_url)s\">Où acheter</a>."
+#: templates/business_portal/includes/account_details_panel.html:46
+msgid "Customer since"
+msgstr "Client depuis"
 
-#: templates/business_portal/includes/account_details_panel.html:49
-msgid "Your store is not shown on Find Sweets."
-msgstr "Votre boutique n'est pas affichée sur « Où acheter »."
-
-#: templates/business_portal/includes/account_details_panel.html:58
+#: templates/business_portal/includes/account_details_panel.html:66
 msgid "Edit store information"
 msgstr "Modifier les informations du magasin"
 
@@ -1415,11 +1427,6 @@ msgstr "Trier par"
 #: templates/business_portal/orders/cart.html:15
 msgid "Order"
 msgstr "Commande"
-
-#: templates/business_portal/includes/orders_panel.html:78
-#: templates/business_portal/includes/orders_panel.html:156
-msgid "Status"
-msgstr "Statut"
 
 #: templates/business_portal/includes/orders_panel.html:90
 #: templates/business_portal/includes/orders_panel.html:91
@@ -1489,16 +1496,8 @@ msgstr ""
 "existantes conservent les informations de livraison enregistrées au moment "
 "de la commande."
 
-#: templates/business_portal/store_edit.html:32
-msgid ""
-"Let visitors find your store on the public list of shops that sell "
-"SwedeSweets."
-msgstr ""
-"Permettez aux visiteurs de trouver votre boutique dans la liste publique des "
-"boutiques qui vendent SwedeSweets."
-
 # | msgid "Save and leave"
-#: templates/business_portal/store_edit.html:46
+#: templates/business_portal/store_edit.html:45
 msgid "Save changes"
 msgstr "Enregistrer les modifications"
 
@@ -1926,6 +1925,20 @@ msgstr "Boutiques"
 #: templates/storefront/find_sweets.html:25
 msgid "No shops are listed yet."
 msgstr "Aucune boutique n'est encore listée."
+
+#~ msgid "Show my store on Find Sweets"
+#~ msgstr "Afficher ma boutique sur « Où acheter »"
+
+#, python-format
+#~ msgid ""
+#~ "Your store is shown on <a class=\"text-link\" "
+#~ "href=\"%(find_sweets_url)s\">Find Sweets</a>."
+#~ msgstr ""
+#~ "Votre boutique est affichée sur <a class=\"text-link\" "
+#~ "href=\"%(find_sweets_url)s\">Où acheter</a>."
+
+#~ msgid "Your store is not shown on Find Sweets."
+#~ msgstr "Votre boutique n'est pas affichée sur « Où acheter »."
 
 #~ msgid "Contact & FAQ"
 #~ msgstr "Contact et FAQ"
@@ -2376,12 +2389,3 @@ msgstr "Aucune boutique n'est encore listée."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
-
-msgid "Listed"
-msgstr "Affichée"
-
-msgid "Not listed"
-msgstr "Non affichée"
-
-msgid "Customer since"
-msgstr "Client depuis"
