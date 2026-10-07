@@ -1,7 +1,7 @@
 {% load i18n %}
 {% comment %}
-  The site footer (customer pages; ops hides it): who we are (About us) and
-  how to reach us, quietly.
+  The site footer (customer pages; ops hides it): who we are (About us),
+  the questions (FAQ), how to reach us, and where they post; quietly.
 {% endcomment %}
 <footer class="site-footer" aria-label="{% trans 'Site footer' %}">
   <div class="container site-footer__inner">
@@ -18,6 +18,12 @@
         </a>
       </li>
       <li>
+        <a class="quiet-link" href="{% url 'public_site:faq' %}">
+          {% include "includes/ui/icon_block.html" with name="question" size="sm" only %}
+          {% trans "FAQ" %}
+        </a>
+      </li>
+      <li>
         <a class="quiet-link" href="tel:+46739756195">
           {% include "includes/ui/icon_block.html" with name="phone" size="sm" only %}
           +46 (73) 975 61 95
@@ -27,6 +33,19 @@
         <a class="quiet-link" href="mailto:info@swedesweets.se">
           {% include "includes/ui/icon_block.html" with name="mail" size="sm" only %}
           info@swedesweets.se
+        </a>
+      </li>
+    </ul>
+
+    <ul class="site-footer__social">
+      <li>
+        <a
+          class="quiet-link"
+          href="https://www.instagram.com/swede_sweets/"
+          rel="noopener"
+          aria-label="{% trans 'SwedeSweets on Instagram' %}"
+        >
+          {% include "includes/ui/icon_block.html" with name="instagram" only %}
         </a>
       </li>
     </ul>

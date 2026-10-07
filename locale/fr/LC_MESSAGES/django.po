@@ -2384,3 +2384,7 @@ msgstr "Aucune boutique n'est encore listée."
 #: templates/storefront/landing.html
 msgid "Sweden’s sweetest tradition"
 msgstr "La plus douce tradition suédoise"
+
+#: templates/includes/footer.html
+msgid "SwedeSweets on Instagram"
+msgstr "SwedeSweets sur Instagram"

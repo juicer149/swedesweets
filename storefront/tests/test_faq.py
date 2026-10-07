@@ -74,3 +74,12 @@ def test_about_page_tells_who_we_are(client):
     assert "Who we are" in html
     assert "Marco Sandelgård" in html
     assert f'href="{reverse("public_site:about")}"' in html  # the footer link
+
+
+@pytest.mark.django_db
+def test_footer_links_the_faq_and_their_instagram(client):
+    html = client.get(reverse("public_site:about")).content.decode()
+
+    footer = html[html.index("site-footer"):]
+    assert f'href="{reverse("public_site:faq")}"' in footer
+    assert 'href="https://www.instagram.com/swede_sweets/"' in footer

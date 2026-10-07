@@ -47,6 +47,27 @@
   list-style: none;
 }
 
+/* Where they post: the icons alone, a little larger, below the links. */
+.site-footer__social {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__social .quiet-link {
+  display: inline-flex;
+  padding: var(--space-2);
+  border-radius: var(--radius-pill);
+}
+
+.site-footer__social .ui-icon-block {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 /* Pages without the footer (ops): no extra room under the content, so a
    page that fits the screen does not scroll, and a longer one scrolls
    just past its last button (the section keeps its own bottom padding).
