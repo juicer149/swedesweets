@@ -96,6 +96,8 @@ REDIRECT_VIEW_NAMES = {
     "after_login",
     "business_portal:orders",
     "business_portal:cart_review",
+    # Contact lives on the FAQ page now; the old URL forwards there.
+    "business_portal:contact",
 }
 
 BUSINESS_CUSTOMER_REDIRECT_VIEW_NAMES = {
