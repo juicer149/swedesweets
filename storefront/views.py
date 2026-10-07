@@ -53,9 +53,12 @@ def _is_business_customer(
 
 @require_GET
 def landing(request: HttpRequest) -> HttpResponse:
+    """The start page: the logo, then a menu of the navbar's links."""
+
     return render(
         request,
         "storefront/landing.html",
+        {"hide_site_footer": True},
     )
 
 

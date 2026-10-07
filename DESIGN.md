@@ -241,6 +241,13 @@ drawing's faded foot (Find Sweets).
   Sweets, FAQ, About us. **Ops** has its own links and no footer.
 - **Footer** (customer pages only): the name with the crown, About us,
   phone, mail. Quiet.
+- **Start page** (`storefront/landing.html`, `landing.css`): the one loud
+  page. Cream on primary-600, the logo and "Sweden’s sweetest tradition"
+  alone for a moment, then a menu of the navbar's own links rises under
+  them, like a game's: the crown is the cursor (hover, Tab, ↑↓ in
+  `landing.js`). Cart at the top once it holds something, login or the
+  account at the bottom; no navbar, no footer, one screen, no scroll. The
+  splash plays once per visit.
 - **Head:** favicon (the crown), Open Graph image (logo on cream). Blocks
   `meta_description`, `og_title`, `og_description`, `og_image` in
   `base.html` for pages that want their own.
@@ -287,6 +294,7 @@ drawing's faded foot (Find Sweets).
 
 ## Not calm yet
 
-- **Landing page:** hero, crown, more of the brand.
 - **About and FAQ:** structure done, personality (pictures, the founders'
-  own words) to come after the landing page.
+  own words, their latest posts) to come.
+- **The logo** on the start page is the PNG recoloured; a cream SVG from
+  them should replace it.

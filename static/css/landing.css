@@ -1,0 +1,320 @@
+/* =============================================================================
+   The start page (storefront/landing.html): a menu, like a game's
+
+   The blue of their posts, cream letters. For --landing-splash the logo
+   and the line stand alone, centred; then the menu's row grows from
+   nothing (grid-template-rows 0fr → 1fr), which lifts them, and its links
+   come in one after the other. Login and the language follow last.
+
+   The page is exactly one screen: every size is clamped against the
+   height (dvh), so a short phone and a tall screen both fit without a
+   scroll. Cream on primary-600 is about 7:1; the chosen link's yellow
+   about 4:1, which is enough at this size (large text).
+   ============================================================================= */
+
+body:has(> .landing) {
+  background: var(--color-primary-600);
+}
+
+.landing {
+  --landing-splash: 500ms;
+  --landing-rise: 650ms;
+  --landing-ink: var(--color-neutral-50);
+
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  box-sizing: border-box;
+  height: 100dvh;
+  overflow: hidden;
+  padding:
+    clamp(var(--space-3), 2.5dvh, var(--space-6))
+    var(--space-4)
+    clamp(var(--space-3), 3dvh, var(--space-6));
+
+  color: var(--landing-ink);
+  background: var(--color-primary-600);
+}
+
+
+/* Top: the cart (once it holds something) and the language -------------- */
+
+.landing__top {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  min-height: 2.25rem;
+}
+
+.landing__cart {
+  position: relative;
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0.4rem;
+  box-sizing: border-box;
+  color: var(--landing-ink);
+  border-radius: var(--radius-pill);
+}
+
+.landing__cart-icon.ui-icon-block {
+  width: 100%;
+  height: 100%;
+}
+
+.landing__cart-count {
+  position: absolute;
+  top: -0.15rem;
+  right: -0.25rem;
+  min-width: 1.15rem;
+  padding: 0 0.25rem;
+  box-sizing: border-box;
+
+  color: var(--color-neutral-900);
+  background: var(--color-brand-yellow);
+  border-radius: var(--radius-pill);
+
+  font-size: var(--font-size-12);
+  font-weight: 800;
+  line-height: 1.15rem;
+  text-align: center;
+}
+
+.landing .language-switcher__option {
+  color: var(--landing-ink);
+  border-color: color-mix(in srgb, var(--landing-ink) 70%, transparent);
+}
+
+.landing .language-switcher__option--active,
+.landing .language-switcher__option[aria-current="true"] {
+  color: var(--color-primary-700);
+  background: var(--landing-ink);
+  border-color: var(--landing-ink);
+}
+
+
+/* The stage: the logo and the line, then the menu ------------------------- */
+
+.landing__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.landing__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(var(--space-4), 4.5dvh, var(--space-10));
+  text-align: center;
+}
+
+.landing__logo {
+  margin: 0;
+  line-height: 0;
+}
+
+.landing__logo img {
+  display: block;
+  width: clamp(10rem, min(52vw, 30dvh), 19rem);
+  height: auto;
+}
+
+.landing__tagline {
+  margin: 0;
+  /* the spacing also after the last letter, so it stays centred */
+  padding-left: 0.3em;
+  color: var(--landing-ink);
+  font-family: var(--font-body);
+  font-size: clamp(0.7rem, min(2.4vw, 1.9dvh), 1rem);
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.landing .messages {
+  margin: 0;
+}
+
+.landing__menu {
+  display: grid;
+  grid-template-rows: 0fr;
+  animation: landing-open var(--landing-rise) cubic-bezier(0.2, 0.8, 0.2, 1)
+    var(--landing-splash) both;
+}
+
+.landing__menu-inner {
+  min-height: 0;
+  overflow: hidden;
+  /* room for the focus ring inside the clipping */
+  padding: 0.25rem;
+}
+
+.landing-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(0.15rem, 1.2dvh, 0.75rem);
+  margin: 0;
+  padding: clamp(var(--space-6), 6dvh, var(--space-12)) 0 0;
+  list-style: none;
+}
+
+.landing-menu li {
+  animation: landing-item 450ms ease
+    calc(var(--landing-splash) + 200ms + var(--landing-item, 0) * 70ms) both;
+}
+
+.landing-menu__link {
+  display: grid;
+  grid-template-columns: 1.75rem 1.75rem auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.3rem 0.75rem 0.3rem 0.4rem;
+
+  color: var(--landing-ink);
+  border-radius: var(--radius-md);
+
+  font-family: var(--font-heading);
+  font-size: clamp(1.35rem, 4.4dvh, 2.1rem);
+  font-weight: var(--font-weight-heading);
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.landing-menu__link:focus-visible {
+  outline: 2px solid var(--landing-ink);
+  outline-offset: 2px;
+}
+
+.landing-menu__icon.ui-icon-block {
+  width: 1.6rem;
+  height: 1.6rem;
+  --icon-stroke-width: 2.2;
+}
+
+/* The crown is the cursor: on the chosen link until the pointer or the
+   keyboard is on another one. */
+.landing-menu__crown.ui-icon-block {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--color-brand-yellow);
+  opacity: 0;
+  transform: translateX(-0.4rem);
+  transition:
+    opacity var(--motion-fast),
+    transform var(--motion-fast);
+}
+
+.landing-menu__link--chosen,
+.landing-menu__link:hover,
+.landing-menu__link:focus-visible {
+  color: var(--color-brand-yellow);
+}
+
+.landing-menu__link--chosen .landing-menu__crown,
+.landing-menu__link:hover .landing-menu__crown,
+.landing-menu__link:focus-visible .landing-menu__crown {
+  opacity: 1;
+  transform: none;
+}
+
+.landing-menu:is(:hover, :focus-within)
+  .landing-menu__link--chosen:not(:hover, :focus-visible) {
+  color: var(--landing-ink);
+}
+
+.landing-menu:is(:hover, :focus-within)
+  .landing-menu__link--chosen:not(:hover, :focus-visible)
+  .landing-menu__crown {
+  opacity: 0;
+}
+
+
+/* Bottom: login, or the account ------------------------------------------ */
+
+.landing__bottom {
+  display: flex;
+  justify-content: center;
+}
+
+.landing__account {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+
+  color: var(--landing-ink);
+  border-radius: var(--radius-pill);
+
+  font-size: var(--font-size-14);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.landing__account:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.landing__top,
+.landing__bottom {
+  animation: landing-fade 400ms ease
+    calc(var(--landing-splash) + var(--landing-rise)) both;
+}
+
+.landing__cart:focus-visible,
+.landing__account:focus-visible {
+  outline: 2px solid var(--landing-ink);
+  outline-offset: 2px;
+}
+
+
+/* Coming back in the same visit, or asking for less motion: the menu is
+   simply there. */
+.landing--seen *,
+.landing--seen {
+  animation: none !important;
+}
+
+.landing--seen .landing__menu {
+  grid-template-rows: 1fr;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing *,
+  .landing {
+    animation: none !important;
+  }
+
+  .landing__menu {
+    grid-template-rows: 1fr;
+  }
+}
+
+@keyframes landing-open {
+  to {
+    grid-template-rows: 1fr;
+  }
+}
+
+@keyframes landing-item {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@keyframes landing-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* The lollipop's drawing is small in its box; even it with the others. */
+.landing-menu__icon .ui-icon-svg--tag {
+  --icon-scale: 1.3;
+}

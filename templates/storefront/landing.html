@@ -1,17 +1,113 @@
-{% extends "storefront/base.html" %}
-{% load i18n %}
+{% extends "base.html" %}
+{% load static i18n %}
 
-{% block title %}
-  SwedeSweets
+{% comment %}
+  The start page: a menu, like a game's.
+
+  First the logo and the line from their own posts ("Sweden's sweetest
+  tradition") alone on the blue for a moment (--landing-splash); then they
+  rise and the menu opens under them: the navbar's own links
+  (primary_nav_items, so a business customer gets theirs), the crown in
+  front of the chosen one. The arrow keys move the crown (landing.js).
+  Login, or the account, at the bottom; the cart at the top once it holds
+  something. No navbar, no footer, and the page never scrolls.
+
+  The splash plays once per visit: coming back within the same tab session,
+  the menu is simply there (the class set below, before the first paint).
+{% endcomment %}
+
+{% block title %}SwedeSweets · {% trans "Sweden’s sweetest tradition" %}{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block main %}
+  <main class="landing" data-landing>
+    <script>
+      try {
+        if (sessionStorage.getItem("landing-seen")) {
+          document.currentScript.parentElement.classList.add("landing--seen");
+        }
+        sessionStorage.setItem("landing-seen", "1");
+      } catch (error) {}
+    </script>
+
+    <div class="landing__top">
+      {% if navbar_cart and navbar_cart.has_lines %}
+        <a
+          class="landing__cart"
+          href="{{ navbar_cart.proceed_url }}"
+          aria-label="{{ navbar_cart.proceed_label }}"
+        >
+          {% include "includes/ui/icon_block.html" with name="cart" class_name="landing__cart-icon" only %}
+          <span class="landing__cart-count" aria-hidden="true">{{ navbar_cart.line_count }}</span>
+        </a>
+      {% endif %}
+
+      {% include "includes/language_switcher.html" %}
+    </div>
+
+    <div class="landing__stage">
+      <div class="landing__brand">
+        <h1 class="landing__logo">
+          <img
+            src="{% static 'images/swedesweets-logo-cream.webp' %}"
+            alt="SwedeSweets"
+            width="960"
+            height="623"
+          >
+        </h1>
+
+        <p class="landing__tagline">
+          {% trans "Sweden’s sweetest tradition" %}
+        </p>
+
+        {% include "includes/messages.html" %}
+      </div>
+
+      <nav
+        class="landing__menu"
+        aria-label="{% trans 'Primary navigation' %}"
+      >
+        <div class="landing__menu-inner">
+          <ul class="landing-menu" data-landing-menu>
+            {% for item in primary_nav_items %}
+              <li style="--landing-item: {{ forloop.counter0 }};">
+                <a
+                  class="landing-menu__link{% if forloop.first %} landing-menu__link--chosen{% endif %}"
+                  href="{{ item.href }}"
+                >
+                  {% include "includes/ui/icon_block.html" with name="crown" class_name="landing-menu__crown" only %}
+                  {% include "includes/ui/icon_block.html" with name=item.icon class_name="landing-menu__icon" only %}
+                  <span>{{ item.label }}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="landing__bottom">
+      {% if account_menu %}
+        {% with item=account_menu.items|last %}
+          <a class="landing__account" href="{{ item.href }}">
+            {% include "includes/ui/icon_block.html" with name=item.icon size="sm" only %}
+            {{ item.label }}
+          </a>
+        {% endwith %}
+      {% else %}
+        <a class="landing__account" href="{% url 'login' %}">
+          {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
+          {% trans "Login" %}
+        </a>
+      {% endif %}
+    </div>
+  </main>
 {% endblock %}
 
-{% block content %}
-  <section
-    class="page-section"
-    aria-labelledby="landing-title"
-  >
-    <h1 id="landing-title">
-      SwedeSweets
-    </h1>
-  </section>
+{% block scripts %}
+  <script
+    src="{% static 'js/landing.js' %}"
+    defer
+  ></script>
 {% endblock %}

@@ -52,21 +52,16 @@
       {% include "includes/navbar.html" %}
     {% endblock %}
 
-    <main class="site-main">
-      <div class="container">
-        {% if messages %}
-          <div class="messages" aria-live="polite">
-            {% for message in messages %}
-              <p class="message message--{{ message.tags }}">
-                {{ message }}
-              </p>
-            {% endfor %}
-          </div>
-        {% endif %}
+    {# The start page (storefront/landing.html) replaces the whole main. #}
+    {% block main %}
+      <main class="site-main">
+        <div class="container">
+          {% include "includes/messages.html" %}
 
-        {% block content %}{% endblock %}
-      </div>
-    </main>
+          {% block content %}{% endblock %}
+        </div>
+      </main>
+    {% endblock %}
 
     {% if not hide_site_footer %}
       {% include "includes/footer.html" %}
