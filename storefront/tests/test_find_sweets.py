@@ -78,3 +78,11 @@ def test_a_customer_without_a_listing_is_not_shown(client):
     response = client.get(reverse("public_site:find_sweets"))
 
     assert response.context["shops"] == []
+
+
+@pytest.mark.django_db
+def test_binoculars_sit_under_the_title_hidden_from_screen_readers(client):
+    html = client.get(reverse("public_site:find_sweets")).content.decode()
+
+    assert 'class="page__illustration"' in html
+    assert 'aria-hidden="true"' in html

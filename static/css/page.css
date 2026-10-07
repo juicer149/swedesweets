@@ -106,6 +106,16 @@
   color: var(--color-neutral-800);
 }
 
+/* A large line drawing under a page's title and note (Find Sweets'
+   binoculars). Drawn in currentColor, so the colour is set here. */
+.page__illustration {
+  display: block;
+  width: clamp(10rem, 40vw, 16rem);
+  height: auto;
+  margin: clamp(var(--space-5), 4dvh, var(--space-8)) auto 0;
+  color: var(--color-neutral-700);
+}
+
 /* Small grey centred line: a count, a status, a description. */
 .page__note {
   margin: 0;

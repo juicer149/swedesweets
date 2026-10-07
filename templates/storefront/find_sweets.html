@@ -13,6 +13,7 @@
     <header class="page__heading">
       <h1 id="find-sweets-title" class="page__lead">{% trans "Find Sweets" %}</h1>
       <p class="page__note">{% trans "Shops where you can buy our Swedish sweets." %}</p>
+      {% include "includes/ui/binoculars.html" with class="page__illustration" only %}
     </header>
 
     {% if shops %}
