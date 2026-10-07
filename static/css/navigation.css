@@ -249,6 +249,22 @@
 
 .site-nav-cart__trigger:hover,
 .site-nav-cart__trigger:focus-visible,
+.site-nav-cart[open] .site-nav-cart__trigger {
+  color: var(--color-primary-950);
+  background: var(--color-accent-100);
+  border-color: var(--color-accent-600);
+}
+
+.site-nav-cart__trigger:hover,
+.site-nav-cart__trigger:focus-visible {
+  transform: translateY(-1px);
+}
+
+.site-nav-cart__trigger:focus-visible {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: 4px;
+}
+
 /* Something just went into the cart (catalog "+ Add"): a little jump. */
 .site-nav-cart__trigger.is-bumped {
   animation: site-nav-cart-bump 0.45s cubic-bezier(0.3, 1.6, 0.6, 1);
@@ -265,22 +281,6 @@
   .site-nav-cart__trigger.is-bumped {
     animation: none;
   }
-}
-
-.site-nav-cart[open] .site-nav-cart__trigger {
-  color: var(--color-primary-950);
-  background: var(--color-accent-100);
-  border-color: var(--color-accent-600);
-}
-
-.site-nav-cart__trigger:hover,
-.site-nav-cart__trigger:focus-visible {
-  transform: translateY(-1px);
-}
-
-.site-nav-cart__trigger:focus-visible {
-  outline: 2px solid var(--color-accent-600);
-  outline-offset: 4px;
 }
 
 .site-nav-cart__icon {

@@ -132,8 +132,11 @@
 
     buy.hidden = true;
     quantity.hidden = false;
-    input.focus();
-    input.select();
+
+    // On the stepper's +, the likeliest next press; the number can still
+    // be typed (Tab back, or tap it).
+    const increase = quantity.querySelector("[data-quantity-increase]");
+    (increase || input).focus();
   }
 
   function foldBack(form) {

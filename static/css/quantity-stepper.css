@@ -39,8 +39,10 @@
   min-height: var(--size-control-sm);
   padding: 0;
 
-  color: var(--color-primary-900);
-  background: var(--color-white);
+  /* Warm grey: the − and + read as buttons without taking colour from
+     the page's one action. */
+  color: var(--color-neutral-700);
+  background: var(--color-neutral-100);
   border: 0;
 
   font-family: var(--font-body);
@@ -66,8 +68,8 @@
 }
 
 .quantity-stepper__button:hover:not(:disabled) {
-  color: var(--color-primary-950);
-  background: var(--color-accent-100);
+  color: var(--color-neutral-900);
+  background: var(--color-neutral-200);
 }
 
 .quantity-stepper__button:focus-visible {
@@ -82,8 +84,8 @@
 }
 
 .quantity-stepper__button:active:not(:disabled) {
-  color: var(--color-primary-950);
-  background: var(--color-accent-200);
+  color: var(--color-neutral-900);
+  background: var(--color-neutral-300);
 
   box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.16);
 

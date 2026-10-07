@@ -280,11 +280,28 @@
   outline-offset: 2px;
 }
 
+/* × to put it back: a circle like the tick beside it, in quiet grey. */
 .tile__cancel.quiet-link {
+  display: grid;
+  place-items: center;
   flex: 0 0 auto;
-  padding: var(--space-1);
-  font-size: var(--font-size-20);
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+
+  color: var(--color-neutral-600);
+  border: 1.5px solid var(--color-neutral-300);
+  border-radius: var(--radius-pill);
+
+  font-size: var(--font-size-18);
   line-height: 1;
+  text-decoration: none;
+}
+
+.tile__cancel.quiet-link:hover {
+  color: var(--color-neutral-800);
+  background: var(--color-neutral-100);
+  text-decoration: none;
 }
 
 
