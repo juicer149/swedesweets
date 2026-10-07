@@ -104,7 +104,7 @@ def find_sweets(request: HttpRequest) -> HttpResponse:
             "shops": [
                 FindSweetsShop(
                     name=listing.customer.name,
-                    address=listing.public_address,
+                    address=listing.public_street_address,
                     maps_href=maps_search_href(listing.public_address),
                 )
                 for listing in listings

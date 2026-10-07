@@ -329,6 +329,16 @@ class StoreListing(models.Model):
         return self.city if self.has_own_address else self.customer.city
 
     @property
+    def public_street_address(self) -> str:
+        """Street and town without the country, for showing: the shops are
+        all in France. public_address keeps the country for map searches."""
+
+        if self.has_own_address:
+            return f"{self.address_line}, {self.city}"
+
+        return f"{self.customer.address_line}, {self.customer.city}"
+
+    @property
     def public_address(self) -> str:
         """The shop's own address, else the customer's delivery address."""
 

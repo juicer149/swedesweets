@@ -45,8 +45,9 @@ def test_store_address_wins_over_the_delivery_address(client):
 
     (shop,) = client.get(reverse("public_site:find_sweets")).context["shops"]
 
-    assert shop.address == "2 Place du Lac, Annecy, France"
+    assert shop.address == "2 Place du Lac, Annecy"
     assert "Annecy" in shop.maps_href
+    assert "France" in shop.maps_href
 
 
 @pytest.mark.django_db
