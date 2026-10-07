@@ -18,7 +18,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET
 
 from accounts.roles import AccountRole
-from customers.selectors import list_publicly_listed_customers
+from customers.selectors import list_listed_stores
 from orders.models import Order
 from payments.selectors import get_latest_payment_attempt
 from retail.models import RetailCheckoutSession
@@ -89,9 +89,12 @@ def faq(request: HttpRequest) -> HttpResponse:
 def find_sweets(request: HttpRequest) -> HttpResponse:
     """Find Sweets: the shops that chose to be listed, by town."""
 
-    shops = sorted(
-        list_publicly_listed_customers(),
-        key=lambda shop: (shop.public_city.casefold(), shop.name.casefold()),
+    listings = sorted(
+        list_listed_stores(),
+        key=lambda listing: (
+            listing.public_city.casefold(),
+            listing.customer.name.casefold(),
+        ),
     )
 
     return render(
@@ -100,11 +103,11 @@ def find_sweets(request: HttpRequest) -> HttpResponse:
         {
             "shops": [
                 FindSweetsShop(
-                    name=customer.name,
-                    address=customer.public_address,
-                    maps_href=maps_search_href(customer.public_address),
+                    name=listing.customer.name,
+                    address=listing.public_address,
+                    maps_href=maps_search_href(listing.public_address),
                 )
-                for customer in shops
+                for listing in listings
             ],
         },
     )

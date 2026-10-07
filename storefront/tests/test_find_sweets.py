@@ -3,18 +3,18 @@ from __future__ import annotations
 import pytest
 from django.urls import reverse
 
-from customers.services import deactivate_customer, update_customer_listing
+from customers.services import deactivate_customer, update_store_listing
 from customers.tests.factories import customer_factory
 
 
 def _listed(**kwargs):
     store = kwargs.pop("store", None)
     customer = customer_factory(**kwargs)
-    update_customer_listing(
+    update_store_listing(
         customer=customer,
-        listed_publicly=True,
-        store_address_line=store[0] if store else "",
-        store_city=store[1] if store else "",
+        is_listed=True,
+        address_line=store[0] if store else "",
+        city=store[1] if store else "",
     )
     return customer
 
@@ -56,10 +56,10 @@ def test_a_half_store_address_is_refused():
     customer = customer_factory(email="half@example.fr")
 
     with pytest.raises(InvalidCustomerData):
-        update_customer_listing(
+        update_store_listing(
             customer=customer,
-            listed_publicly=True,
-            store_address_line="2 Place du Lac",
+            is_listed=True,
+            address_line="2 Place du Lac",
         )
 
 
@@ -69,3 +69,12 @@ def test_page_is_open_to_anonymous_visitors_with_nobody_listed(client):
 
     assert response.status_code == 200
     assert "No shops are listed yet." in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_a_customer_without_a_listing_is_not_shown(client):
+    customer_factory(name="Never Listed", email="never@example.fr")
+
+    response = client.get(reverse("public_site:find_sweets"))
+
+    assert response.context["shops"] == []

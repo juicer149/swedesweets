@@ -11,7 +11,7 @@ from __future__ import annotations
 from django.db import IntegrityError, transaction
 
 from customers.errors import InvalidCustomerData
-from customers.models import Customer, normalize_customer_email
+from customers.models import Customer, StoreListing, normalize_customer_email
 
 CUSTOMER_EMAIL_EXISTS_MESSAGE = "Customer with email {email} already exists"
 
@@ -116,42 +116,36 @@ def update_customer(
 
 
 @transaction.atomic
-def update_customer_listing(
+def update_store_listing(
     *,
     customer: Customer,
-    listed_publicly: bool,
-    store_address_line: str = "",
-    store_city: str = "",
-    user=None,
-) -> Customer:
+    is_listed: bool,
+    address_line: str = "",
+    city: str = "",
+) -> StoreListing:
     """Whether the shop is on Find Sweets, and its own street address.
 
-    The store address is both line and city or neither; without it Find
-    Sweets shows the delivery address.
+    The address is both line and city or neither; without it Find Sweets
+    shows the customer's delivery address.
     """
 
-    store_address_line = (store_address_line or "").strip()
-    store_city = (store_city or "").strip()
+    address_line = (address_line or "").strip()
+    city = (city or "").strip()
 
-    if bool(store_address_line) != bool(store_city):
+    if bool(address_line) != bool(city):
         raise InvalidCustomerData(
             "Give both the store's street address and its city, or neither."
         )
 
-    customer = Customer.objects.select_for_update().get(pk=customer.pk)
-    customer.listed_publicly = listed_publicly
-    customer.store_address_line = store_address_line
-    customer.store_city = store_city
-    customer.save(
-        update_fields=[
-            "listed_publicly",
-            "store_address_line",
-            "store_city",
-        ]
+    listing, _created = StoreListing.objects.select_for_update().get_or_create(
+        customer=customer,
     )
-    customer.mark_as_edited(user=user)
+    listing.is_listed = is_listed
+    listing.address_line = address_line
+    listing.city = city
+    listing.save()
 
-    return customer
+    return listing
 
 
 @transaction.atomic

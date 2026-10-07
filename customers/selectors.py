@@ -10,7 +10,7 @@ from enum import StrEnum
 from django.db.models import QuerySet
 
 from common.table_tools import normalize_sort
-from customers.models import Customer
+from customers.models import Customer, StoreListing
 
 DEFAULT_CUSTOMER_SORT = "customer"
 
@@ -118,10 +118,10 @@ def list_customer_activity_for_actor(
     )
 
 
-def list_publicly_listed_customers() -> QuerySet[Customer]:
-    """Shops on Find Sweets: active customers who chose to be listed."""
+def list_listed_stores() -> QuerySet[StoreListing]:
+    """Shops on Find Sweets: listed, and their customer still active."""
 
-    return Customer.objects.filter(
-        is_active=True,
-        listed_publicly=True,
-    ).order_by("name")
+    return StoreListing.objects.filter(
+        is_listed=True,
+        customer__is_active=True,
+    ).select_related("customer")

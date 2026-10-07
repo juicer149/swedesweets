@@ -53,16 +53,16 @@ def test_store_edit_saves_the_find_sweets_listing(client):
             "country": customer.country,
             "city": customer.city,
             "address_line": customer.address_line,
-            "listed_publicly": "on",
+            "is_listed": "on",
             "store_address_line": "2 Place du Lac",
             "store_city": "Annecy",
         },
     )
 
     assert response.status_code == 302
-    customer.refresh_from_db()
-    assert customer.listed_publicly is True
-    assert customer.public_address == "2 Place du Lac, Annecy, France"
+    listing = customer.store_listing
+    assert listing.is_listed is True
+    assert listing.public_address == "2 Place du Lac, Annecy, France"
 
 
 @pytest.mark.django_db

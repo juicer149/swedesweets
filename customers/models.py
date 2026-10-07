@@ -127,20 +127,6 @@ class Customer(models.Model):
 
     is_active = models.BooleanField(default=True)
 
-    # Find Sweets (the public list of shops that sell SwedeSweets): the
-    # customer chooses to be listed, and may give the shop's own street
-    # address when it differs from the delivery address above (same
-    # country). Without one the delivery address is shown.
-    listed_publicly = models.BooleanField(default=False)
-    store_address_line = models.CharField(
-        max_length=MAX_CUSTOMER_ADDRESS_LINE_LENGTH,
-        blank=True,
-    )
-    store_city = models.CharField(
-        max_length=MAX_CUSTOMER_CITY_LENGTH,
-        blank=True,
-    )
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -195,27 +181,6 @@ class Customer(models.Model):
     @property
     def address(self) -> str:
         return f"{self.address_line}, {self.city}, {self.country_name}"
-
-    @property
-    def has_store_address(self) -> bool:
-        return bool(self.store_address_line and self.store_city)
-
-    @property
-    def public_address(self) -> str:
-        """Where Find Sweets sends people: the shop's own address, else
-        the delivery address."""
-
-        if self.has_store_address:
-            return (
-                f"{self.store_address_line}, {self.store_city}, "
-                f"{self.country_name}"
-            )
-
-        return self.address
-
-    @property
-    def public_city(self) -> str:
-        return self.store_city if self.has_store_address else self.city
 
     def save(self, *args, **kwargs) -> None:
         """Normalize customer fields before saving."""
@@ -320,3 +285,57 @@ class Customer(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class StoreListing(models.Model):
+    """A shop on Find Sweets, the public list of shops that sell
+    SwedeSweets.
+
+    Its own model, not fields on Customer: only shops have one (not every
+    customer is a shop), and what a shop shows in public (address now,
+    perhaps opening hours or a website later) is separate from how it is
+    contacted and delivered to. The shop's own street address is optional
+    (same country as the customer); without it the delivery address is
+    shown.
+    """
+
+    customer = models.OneToOneField(
+        Customer,
+        on_delete=models.CASCADE,
+        related_name="store_listing",
+    )
+    is_listed = models.BooleanField(default=False)
+    address_line = models.CharField(
+        max_length=MAX_CUSTOMER_ADDRESS_LINE_LENGTH,
+        blank=True,
+    )
+    city = models.CharField(
+        max_length=MAX_CUSTOMER_CITY_LENGTH,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.customer.name} on Find Sweets"
+
+    @property
+    def has_own_address(self) -> bool:
+        return bool(self.address_line and self.city)
+
+    @property
+    def public_city(self) -> str:
+        return self.city if self.has_own_address else self.customer.city
+
+    @property
+    def public_address(self) -> str:
+        """The shop's own address, else the customer's delivery address."""
+
+        if self.has_own_address:
+            return (
+                f"{self.address_line}, {self.city}, "
+                f"{self.customer.country_name}"
+            )
+
+        return self.customer.address

@@ -16,7 +16,7 @@ from business_portal.store.forms import (
 from customers.errors import InvalidCustomerData
 from customers.services import (
     update_customer,
-    update_customer_listing,
+    update_store_listing,
 )
 
 
@@ -42,10 +42,11 @@ def edit_store(request):
                         user=request.user,
                         **{name: data[name] for name in form.DELIVERY_FIELDS},
                     )
-                    update_customer_listing(
+                    update_store_listing(
                         customer=customer,
-                        user=request.user,
-                        **{name: data[name] for name in form.LISTING_FIELDS},
+                        is_listed=data["is_listed"],
+                        address_line=data["store_address_line"],
+                        city=data["store_city"],
                     )
             except InvalidCustomerData as error:
                 form.add_error(

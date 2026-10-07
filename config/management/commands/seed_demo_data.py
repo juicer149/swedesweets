@@ -47,7 +47,7 @@ from accounts.services import (
 from business.services import create_order
 from carts.models import Cart
 from customers.models import Customer
-from customers.services import create_customer, update_customer_listing
+from customers.services import create_customer, update_store_listing
 from fulfillment.services import pack_order
 from inventory.models import InventoryBatch
 from inventory.services import create_batch
@@ -321,11 +321,11 @@ class Command(BaseCommand):
                 address_line=item.address_line,
             )
             if item.listed_publicly:
-                customer = update_customer_listing(
+                update_store_listing(
                     customer=customer,
-                    listed_publicly=True,
-                    store_address_line=item.store_address_line,
-                    store_city=item.store_city,
+                    is_listed=True,
+                    address_line=item.store_address_line,
+                    city=item.store_city,
                 )
             customers[item.key] = customer
 

@@ -11,6 +11,7 @@ from customers.models import (
     MAX_CUSTOMER_NAME_LENGTH,
     MAX_CUSTOMER_PHONE_LENGTH,
     Customer,
+    StoreListing,
 )
 
 PORTAL_CUSTOMER_COUNTRY_CHOICES = list(
@@ -133,7 +134,7 @@ class CustomerProfileForm(forms.Form):
     )
 
     # Find Sweets: the public list of shops that sell SwedeSweets.
-    listed_publicly = forms.BooleanField(
+    is_listed = forms.BooleanField(
         required=False,
         label=gettext_lazy("Show my store on Find Sweets"),
     )
@@ -173,7 +174,7 @@ class CustomerProfileForm(forms.Form):
         "address_line",
     )
     LISTING_FIELDS = (
-        "listed_publicly",
+        "is_listed",
         "store_address_line",
         "store_city",
     )
@@ -240,7 +241,18 @@ def build_customer_profile_initial_data(
         "country": customer.country,
         "city": customer.city,
         "address_line": customer.address_line,
-        "listed_publicly": customer.listed_publicly,
-        "store_address_line": customer.store_address_line,
-        "store_city": customer.store_city,
+        **_store_listing_initial_data(customer),
+    }
+
+
+def _store_listing_initial_data(customer: Customer) -> dict[str, object]:
+    listing = StoreListing.objects.filter(customer=customer).first()
+
+    if listing is None:
+        return {"is_listed": False, "store_address_line": "", "store_city": ""}
+
+    return {
+        "is_listed": listing.is_listed,
+        "store_address_line": listing.address_line,
+        "store_city": listing.city,
     }
