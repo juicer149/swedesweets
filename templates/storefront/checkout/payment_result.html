@@ -45,7 +45,7 @@
 
       <div class="form-actions page__actions page-actions">
         {% if retry_url %}
-          <form method="post" action="{{ retry_url }}" data-submit-once>
+          <form method="post" action="{{ retry_url }}" data-submit-burst>
             {% csrf_token %}
             <button class="button button--md button--solid button--tone-place page__submit" type="submit">
               {% trans "Try again" %}
@@ -84,8 +84,3 @@
 </section>
 {% endblock %}
 
-{% block scripts %}
-  {{ block.super }}
-
-  <script src="{% static 'js/submit-once.js' %}" defer></script>
-{% endblock %}

@@ -163,6 +163,13 @@ too. Ops can pass `success_icon="check"` and
 `tone="status-burst--ops"` (blue dots, green tick). Used by the catalog's
 green tick; the navbar cart then gives a little jump.
 
+**Submit burst:** a form that leads to the next step (Review order, Place
+order, Continue to review, Pay, Order again) has `data-submit-burst`
+(`submit_burst.js`, loaded on every page). When it is sent its yellow
+button gives way to the same dots, in its place, until the next page
+arrives; a second press does nothing. No crown here: the next page is the
+answer.
+
 **Tables** remain only where ops compare many columns (orders, batches,
 stock). On phones they become rows (`.mobile-lines`).
 

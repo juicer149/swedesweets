@@ -35,7 +35,7 @@
     {% endif %}
 
     <div class="form-actions page__actions page-actions">
-      <form class="page-actions__primary" method="post" action="{{ repeat_order_url }}">
+      <form class="page-actions__primary" method="post" action="{{ repeat_order_url }}" data-submit-burst>
         {% csrf_token %}
 
         <button

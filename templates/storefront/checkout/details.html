@@ -13,7 +13,7 @@
       {% trans "Delivery details" %}
     </h1>
 
-    <form method="post" class="checkout-form" data-dirty-form novalidate>
+    <form method="post" class="checkout-form" data-dirty-form data-submit-burst novalidate>
       {% csrf_token %}
 
       {% include "registration/includes/form_errors.html" with form=form only %}

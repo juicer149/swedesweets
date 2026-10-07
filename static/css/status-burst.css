@@ -109,3 +109,34 @@
     transition: none !important;
   }
 }
+
+
+/* =============================================================================
+   Submit burst (submit_burst.js): the yellow button gives way to the dots
+   while the next page loads. The button keeps its size and place; only
+   its look goes, so nothing below it jumps.
+   ============================================================================= */
+
+.page__submit.is-submitting,
+.page__submit.is-submitting:hover {
+  position: relative;
+  color: transparent;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  pointer-events: none;
+  transform: none;
+}
+
+.page__submit.is-submitting > :not(.submit-burst__dots) {
+  visibility: hidden;
+}
+
+.submit-burst__dots {
+  --status-burst-size: 2.25rem;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}

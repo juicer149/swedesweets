@@ -45,7 +45,7 @@
     </section>
 
     <div class="form-actions page__actions page-actions">
-      <form class="page-actions__primary" method="post" action="{{ pay_url }}" data-submit-once>
+      <form class="page-actions__primary" method="post" action="{{ pay_url }}" data-submit-burst>
         {% csrf_token %}
 
         <button
