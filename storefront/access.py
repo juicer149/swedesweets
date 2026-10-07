@@ -16,6 +16,7 @@ AUTH_EXEMPT_VIEWS = frozenset(
         "storefront:set_cart_line_quantity",
         "storefront:remove_cart_line",
         "storefront:payment_return",
+        "public_site:about",
         "public_site:contact",
         "public_site:faq",
         "public_site:find_sweets",

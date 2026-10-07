@@ -1,0 +1,24 @@
+{% extends "storefront/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "About us" %} | SwedeSweets{% endblock %}
+
+{% block content %}
+{% comment %}
+  Who we are: a short story in the founders' voice. Pictures can join it
+  when the image flow is in place.
+{% endcomment %}
+<section class="page-section" aria-labelledby="about-title">
+  <article class="page page--centered about">
+    <h1 id="about-title" class="page__lead">{% trans "Who we are" %}</h1>
+
+    <div class="about__text">
+      <p>{% trans "We're Marco Sandelgård and Milo Sandelgård Bascoulergue, two cousins who grew up in Chamonix with one foot in France and one in Sweden." %}</p>
+      <p>{% trans "In Sweden, sweets mean lösgodis: a wall of loose candy, a paper bag, and the serious business of choosing exactly what goes in it. Sour strips, salty liquorice, fruity jellies, chocolate. Everyone has their own mix." %}</p>
+      <p>{% trans "We missed it in France. So we started SwedeSweets to bring the real thing here: the Swedish pick & mix we grew up with, straight from Sweden." %}</p>
+    </div>
+
+    <p class="about__signoff">{% trans "Come and make your own bag." %}</p>
+  </article>
+</section>
+{% endblock %}

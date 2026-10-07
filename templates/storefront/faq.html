@@ -28,6 +28,12 @@
 
           <div class="faq__answer" data-smooth-content>
             <p>{{ item.answer }}</p>
+            {% if item.link %}
+              <p><a class="text-link" href="{% url item.link %}">{{ item.link_label }}</a></p>
+            {% endif %}
+            {% if item.contact %}
+              {% include "includes/site_contact_rows.html" %}
+            {% endif %}
           </div>
         </details>
       {% endfor %}

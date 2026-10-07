@@ -43,3 +43,33 @@ def test_contact_is_the_last_question(client):
     assert html.rindex('data-smooth-group="faq"') > contact
     assert html.index('href="mailto:info@swedesweets.se"') > contact
     assert 'href="tel:+46739756195"' in html
+
+
+@pytest.mark.django_db
+def test_reseller_answer_lists_how_to_reach_us(client):
+    html = client.get(reverse("public_site:faq")).content.decode()
+
+    assert "contact page" not in html
+    # Under the reseller answer, before "Still have questions?" (which, and
+    # the footer, have it too).
+    before_last_question = html[: html.index('id="contact"')]
+    assert 'href="mailto:info@swedesweets.se"' in before_last_question
+
+
+@pytest.mark.django_db
+def test_shop_answer_links_to_find_sweets(client):
+    html = client.get(reverse("public_site:faq")).content.decode()
+
+    assert f'href="{reverse("public_site:find_sweets")}"' in html
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
+def test_about_page_tells_who_we_are(client):
+    response = client.get(reverse("public_site:about"), HTTP_ACCEPT_LANGUAGE="en")
+    html = response.content.decode()
+
+    assert response.status_code == 200
+    assert "Who we are" in html
+    assert "Marco Sandelgård" in html
+    assert f'href="{reverse("public_site:about")}"' in html  # the footer link

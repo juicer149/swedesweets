@@ -15,8 +15,25 @@ from django.utils.translation import gettext_lazy as _
 
 @dataclass(frozen=True)
 class FaqItem:
+    """A question and its answer.
+
+    contact     show how to reach us (mail, phone) under the answer
+    link        a URL name to show as a link under the answer
+    link_label  the link's text
+    """
+
     question: str | Promise
     answer: str | Promise | None = None
+    contact: bool = False
+    link: str | None = None
+    link_label: str | Promise = ""
+
+
+BECOME_A_RESELLER = FaqItem(
+    _("How do I become a reseller?"),
+    _("Get in touch and we will set up an account for your shop."),
+    contact=True,
+)
 
 
 PUBLIC_FAQ: tuple[FaqItem, ...] = (
@@ -40,8 +57,11 @@ PUBLIC_FAQ: tuple[FaqItem, ...] = (
     ),
     FaqItem(
         _("Where can I find your candy in shops?"),
-        _("Ask us and we will tell you the nearest shop that sells SwedeSweets."),
+        _("The shops that sell our sweets are listed on Find Sweets."),
+        link="public_site:find_sweets",
+        link_label=_("Find Sweets"),
     ),
+    BECOME_A_RESELLER,
     # Waiting for answers:
     FaqItem(_("How long does delivery take, and what does it cost?")),
     FaqItem(_("Can I return or exchange merch?")),
@@ -50,13 +70,7 @@ PUBLIC_FAQ: tuple[FaqItem, ...] = (
 
 
 BUSINESS_FAQ: tuple[FaqItem, ...] = (
-    FaqItem(
-        _("How do I become a reseller?"),
-        _(
-            "Get in touch through the contact page and we will set up an "
-            "account for your shop."
-        ),
-    ),
+    BECOME_A_RESELLER,
     FaqItem(
         _("How do I log in?"),
         _(

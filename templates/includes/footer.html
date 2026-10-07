@@ -1,7 +1,7 @@
 {% load i18n %}
 {% comment %}
-  The site footer (customer pages; ops hides it): who we are and how to
-  reach us, quietly.
+  The site footer (customer pages; ops hides it): who we are (About us) and
+  how to reach us, quietly.
 {% endcomment %}
 <footer class="site-footer" aria-label="{% trans 'Site footer' %}">
   <div class="container site-footer__inner">
@@ -11,6 +11,12 @@
     </p>
 
     <ul class="site-footer__links">
+      <li>
+        <a class="quiet-link" href="{% url 'public_site:about' %}">
+          {% include "includes/ui/icon_block.html" with name="users" size="sm" only %}
+          {% trans "About us" %}
+        </a>
+      </li>
       <li>
         <a class="quiet-link" href="tel:+46739756195">
           {% include "includes/ui/icon_block.html" with name="phone" size="sm" only %}

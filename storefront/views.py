@@ -70,6 +70,13 @@ def contact(request: HttpRequest) -> HttpResponse:
 
 
 @require_GET
+def about(request: HttpRequest) -> HttpResponse:
+    """Who we are: the two cousins and the Swedish pick & mix."""
+
+    return render(request, "storefront/about.html")
+
+
+@require_GET
 def faq(request: HttpRequest) -> HttpResponse:
     if _is_business_customer(request):
         return redirect(

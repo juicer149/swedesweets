@@ -767,6 +767,31 @@ span.icon-rows__link .icon-rows__icon {
    the open question is lightly lit.
    ----------------------------------------------------------------------------- */
 
+/* About: a short story, a little wider than a form, then one line to
+   close it in the heading font. */
+.page.about {
+  width: min(100%, 560px);
+}
+
+.about__text {
+  display: grid;
+  gap: var(--space-4);
+  color: var(--color-neutral-700);
+  line-height: 1.65;
+}
+
+.about__text p {
+  margin: 0;
+}
+
+.about__signoff {
+  margin: clamp(var(--space-6), 5dvh, var(--space-8)) 0 0;
+  color: var(--page-title-color, var(--color-neutral-800));
+  font-family: var(--font-heading);
+  font-size: var(--font-size-18);
+  text-align: center;
+}
+
 .page.faq {
   width: min(100%, 600px);
 }

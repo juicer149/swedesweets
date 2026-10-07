@@ -1101,12 +1101,8 @@ msgid "How do I become a reseller?"
 msgstr "Comment devenir revendeur ?"
 
 #: storefront/faq.py:56
-msgid ""
-"Get in touch through the contact page and we will set up an account for your "
-"shop."
-msgstr ""
-"Contactez-nous via la page de contact et nous créerons un compte pour votre "
-"magasin."
+msgid "Get in touch and we will set up an account for your shop."
+msgstr "Contactez-nous et nous créerons un compte pour votre magasin."
 
 #: storefront/faq.py:61
 msgid "How do I log in?"
@@ -2389,3 +2385,40 @@ msgstr "Aucune boutique n'est encore listée."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
+
+msgid "The shops that sell our sweets are listed on Find Sweets."
+msgstr "Les boutiques qui vendent nos bonbons sont listées sur « Où acheter »."
+
+msgid "About us"
+msgstr "À propos"
+
+msgid "Who we are"
+msgstr "Qui sommes-nous"
+
+msgid ""
+"We're Marco Sandelgård and Milo Sandelgård Bascoulergue, two cousins who "
+"grew up in Chamonix with one foot in France and one in Sweden."
+msgstr ""
+"Nous sommes Marco Sandelgård et Milo Sandelgård Bascoulergue, deux cousins "
+"qui ont grandi à Chamonix, un pied en France et l'autre en Suède."
+
+msgid ""
+"In Sweden, sweets mean lösgodis: a wall of loose candy, a paper bag, and the "
+"serious business of choosing exactly what goes in it. Sour strips, salty "
+"liquorice, fruity jellies, chocolate. Everyone has their own mix."
+msgstr ""
+"En Suède, les bonbons, c'est le lösgodis : un mur de bonbons en vrac, un "
+"sachet en papier, et l'affaire sérieuse de choisir exactement ce qu'on y "
+"met. Lanières acidulées, réglisse salée, gommes aux fruits, chocolat. Chacun "
+"a son propre mélange."
+
+msgid ""
+"We missed it in France. So we started SwedeSweets to bring the real thing "
+"here: the Swedish pick & mix we grew up with, straight from Sweden."
+msgstr ""
+"Ça nous manquait en France. Alors nous avons créé SwedeSweets pour apporter "
+"ici le vrai : les bonbons suédois en vrac de notre enfance, directement de "
+"Suède."
+
+msgid "Come and make your own bag."
+msgstr "Venez composer votre propre sachet."
