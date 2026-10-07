@@ -249,3 +249,27 @@ def test_cart_review_lists_lines_with_quantity_and_actions(
     assert 'value="place_order"' in content
     assert 'value="clear_cart"' in content
     assert f'href="{reverse("business_portal:cart")}"' in content
+
+
+@pytest.mark.django_db
+def test_cart_remove_form_carries_the_csrf_token(
+    client,
+):
+    customer = _login_customer(
+        client=client,
+    )
+
+    line = _create_cart_line(
+        customer=customer,
+    )
+
+    html = client.get(
+        reverse("business_portal:cart")
+    ).content.decode()
+    remove_url = reverse(
+        "business_portal:remove_cart_line",
+        kwargs={"cart_line_id": line.id},
+    )
+    form = html[html.index(f'action="{remove_url}"'):]
+
+    assert 'name="csrfmiddlewaretoken"' in form[: form.index("</form>")]

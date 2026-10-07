@@ -4,8 +4,11 @@
   (confirm_action.js with confirm_dialog.js; the page loads both), since
   it sits right beside the stepper's + and is easy to hit by mistake.
 
-  url    POST here to remove the line (carts); without it the button only
-         removes the line in the page (data-remove-order-line, order form)
+  url         POST here to remove the line (carts); without it the button
+              only removes the line in the page (data-remove-order-line,
+              order form)
+  csrf_token  the page's token; needed with url (an "only" include
+              leaves it out, and the post is then refused)
   label  aria-label (default "Remove product")
 {% endcomment %}
 {% trans "Remove product" as default_label %}

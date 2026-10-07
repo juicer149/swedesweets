@@ -7,7 +7,7 @@
      .catalog__tools   category tabs on the left, the search on the right
      .tiles > .tile    products on the page itself, no cards: a rounded
                        picture, name, package, a deal hint, price and "+"
-     .tile__quantity   what the "+" opens: stepper, Add, × (catalog.js)
+     .tile__quantity   what the "+" opens: stepper, green tick, × (catalog.js)
      .product          a product's page: picture beside what to buy, then
                        Description and Ingredients as tabs
    ============================================================================= */
@@ -210,8 +210,8 @@
   outline-offset: 2px;
 }
 
-/* A smaller stepper that shares the row with Add and ×, and takes a row
-   of its own when the tile is too narrow (phones). */
+/* A smaller stepper that shares the row with the tick and ×, and takes a
+   row of its own when the tile is too narrow (phones). */
 .tile__quantity {
   flex-wrap: wrap;
 }
@@ -227,8 +227,38 @@
   min-height: 2.25rem;
 }
 
-.tile__confirm.button {
-  flex: 1 0 auto;
+/* The tick that adds: round like the "+", in the deliver green (light
+   inside, dark tick and edge); filled once the product is in the cart. */
+.tile__confirm {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+
+  color: var(--color-action-deliver-on-light);
+  background: var(--color-action-deliver-light-bg);
+  border: 1.5px solid var(--color-action-deliver-on-light);
+  border-radius: var(--radius-pill);
+
+  cursor: pointer;
+  transition: background var(--motion-fast), color var(--motion-fast);
+}
+
+.tile__confirm:hover {
+  background: var(--color-action-deliver-light-bg-hover);
+}
+
+.tile__confirm:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.tile__confirm.is-added {
+  color: var(--color-white);
+  background: var(--color-action-deliver);
+  border-color: var(--color-action-deliver);
 }
 
 .tile__cancel.quiet-link {

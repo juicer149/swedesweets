@@ -180,3 +180,17 @@ def test_navbar_cart_links_to_cart_page(
     )
 
     assert reverse("storefront:cart") in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_remove_form_carries_the_csrf_token(client, cart_with_line):
+    _cart, line = cart_with_line
+
+    html = client.get(reverse("storefront:cart")).content.decode()
+    remove_url = reverse(
+        "storefront:remove_cart_line",
+        kwargs={"cart_line_id": line.id},
+    )
+    form = html[html.index(f'action="{remove_url}"'):]
+
+    assert 'name="csrfmiddlewaretoken"' in form[: form.index("</form>")]

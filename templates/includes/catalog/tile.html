@@ -3,7 +3,7 @@
   One product in the catalog: its picture and name (both lead to the
   product page), the package, a hint when it has a special offer, then
   the price and a round "+". The "+" asks for a quantity (catalog.js) and
-  Add puts that many of the tile's offer in the cart; other offers are
+  the round green tick puts that many of the tile's offer in the cart; other offers are
   chosen on the product page. Without JavaScript the "+" adds one.
 
   card        ProductCardVM
@@ -64,8 +64,8 @@
           <div class="tile__quantity" data-catalog-purchase-quantity hidden>
             {% include "includes/ui/quantity_stepper.html" with id_prefix="catalog-quantity-" id_suffix=card.product_id only %}
 
-            <button class="button button--sm button--solid button--tone-place tile__confirm" type="submit" data-catalog-confirm-button>
-              {% trans "Add" %}
+            <button class="tile__confirm" type="submit" aria-label="{% trans 'Add' %}" data-catalog-confirm-button>
+              {% include "includes/ui/icon_block.html" with name="check" size="sm" only %}
             </button>
 
             <button class="quiet-link tile__cancel" type="button" aria-label="{% trans 'Cancel' %}" data-catalog-cancel-button>

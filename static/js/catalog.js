@@ -2,9 +2,10 @@
   The catalog (includes/catalog/grid.html), shop and business portal alike:
 
   - the category tabs and the search hide the tiles that do not match;
-  - a tile's "+" first asks for a quantity (the stepper, Add and ×), then
-    Add posts the form as JSON, says "Added" for a moment, tells the
-    navbar cart (cart-changed) and folds back to the "+".
+  - a tile's "+" first asks for a quantity (the stepper, the green tick
+    and ×), then the tick posts the form as JSON, fills green ("Added")
+    for a moment, tells the navbar cart (cart-changed) and folds back to
+    the "+".
 
   Without JavaScript the "+" simply posts the form: one of the tile's offer.
 */
@@ -158,7 +159,7 @@
       return;
     }
 
-    const label = confirm.textContent.trim();
+    const label = confirm.getAttribute("aria-label") || "";
     confirm.disabled = true;
 
     try {
@@ -176,19 +177,20 @@
       }
 
       setFeedback(payload.message);
-      confirm.textContent = addedLabel;
+      confirm.classList.add("is-added");
+      confirm.setAttribute("aria-label", addedLabel);
 
       document.dispatchEvent(
         new CustomEvent("cart-changed", { detail: { source: "catalog" } })
       );
 
       window.setTimeout(() => {
-        confirm.textContent = label;
+        confirm.classList.remove("is-added");
+        confirm.setAttribute("aria-label", label);
         confirm.disabled = false;
         foldBack(form);
       }, 700);
     } catch (error) {
-      confirm.textContent = label;
       confirm.disabled = false;
       setFeedback(
         error instanceof Error ? error.message : fallbackErrorMessage
