@@ -130,4 +130,26 @@ def test_build_customer_edit_initial_data(db):
         "country": "FR",
         "city": "Chamonix-Mont-Blanc",
         "address_line": "123 Rue du Mont Blanc",
+        "is_listed": False,
+        "store_address_line": "",
+        "store_city": "",
     }
+
+
+def test_create_form_has_no_find_sweets_fields():
+    form = CustomerForm()
+
+    assert "is_listed" not in form.fields
+    assert form.listing_fields == []
+
+
+def test_edit_form_wants_both_store_address_and_city(db):
+    customer = customer_factory(email="half@example.fr")
+
+    form = CustomerForm(
+        data=valid_customer_form_data(is_listed="on", store_address_line="2 Place du Lac"),
+        customer=customer,
+    )
+
+    assert not form.is_valid()
+    assert "store_city" in form.errors

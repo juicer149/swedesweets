@@ -6,6 +6,7 @@ from django.urls import reverse
 from accounts.tests.factories import full_staff_user_factory
 from business.services import create_order
 from business.tests.factories import standard_business_offer_factory
+from customers.models import StoreListing
 from customers.tests.factories import customer_factory
 from inventory.tests.conftest import TODAY
 from inventory.tests.factories import batch_factory
@@ -110,3 +111,37 @@ def test_create_form_renders_with_a_plain_title(staff_client):
     assert response.status_code == 200
     assert "status_key" not in response.context
     assert 'name="email"' in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_edit_lists_the_shop_on_find_sweets(staff_client, customer):
+    url = reverse("ops_customers:edit", kwargs={"customer_pk": customer.pk})
+
+    assert 'name="is_listed"' in staff_client.get(url).content.decode()
+
+    response = staff_client.post(
+        url,
+        {
+            "name": "Café Blanc",
+            "email": "cafe@example.fr",
+            "phone_number": "+33 6 12 34 56 78",
+            "country": "FR",
+            "city": "Chamonix-Mont-Blanc",
+            "address_line": "1 Rue du Lac",
+            "is_listed": "on",
+            "store_address_line": "2 Place du Lac",
+            "store_city": "Annecy",
+        },
+    )
+
+    assert response.status_code == 302
+    listing = StoreListing.objects.get(customer=customer)
+    assert listing.is_listed
+    assert listing.public_city == "Annecy"
+
+
+@pytest.mark.django_db
+def test_create_form_has_no_find_sweets_fields(staff_client):
+    response = staff_client.get(reverse("ops_customers:create"))
+
+    assert 'name="is_listed"' not in response.content.decode()

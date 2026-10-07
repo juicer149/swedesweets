@@ -10,6 +10,7 @@ from customers.models import (
     MAX_CUSTOMER_NAME_LENGTH,
     MAX_CUSTOMER_PHONE_LENGTH,
     Customer,
+    StoreListing,
 )
 
 CUSTOMER_COUNTRY_CHOICES = list(CUSTOMER_COUNTRY_LABELS.items())
@@ -119,15 +120,90 @@ class CustomerForm(forms.Form):
         ),
     )
 
+    # Find Sweets: the public list of shops. Only when editing; a new
+    # customer starts unlisted and the shop can opt in from its portal.
+    is_listed = forms.BooleanField(
+        required=False,
+        label="Show on Find Sweets",
+    )
+
+    store_address_line = forms.CharField(
+        required=False,
+        max_length=MAX_CUSTOMER_ADDRESS_LINE_LENGTH,
+        label="Store address",
+        help_text="Only if visitors find the shop somewhere else than the delivery address.",
+        widget=forms.TextInput(attrs={"autocomplete": "off"}),
+    )
+
+    store_city = forms.CharField(
+        required=False,
+        max_length=MAX_CUSTOMER_CITY_LENGTH,
+        label="Store city",
+        widget=forms.TextInput(attrs={"autocomplete": "off"}),
+    )
+
+    DELIVERY_FIELDS = (
+        "name",
+        "email",
+        "phone_number",
+        "country",
+        "city",
+        "address_line",
+    )
+    LISTING_FIELDS = (
+        "is_listed",
+        "store_address_line",
+        "store_city",
+    )
+
     def __init__(self, *args, customer: Customer | None = None, **kwargs) -> None:
         self.customer = customer
         super().__init__(*args, **kwargs)
 
+        if customer is None:
+            for name in self.LISTING_FIELDS:
+                del self.fields[name]
+
         set_form_field_layout(
             self,
             full=("name", "address_line"),
-            half=("email", "phone_number", "country", "city"),
+            half=(
+                "email",
+                "phone_number",
+                "country",
+                "city",
+                "store_address_line",
+                "store_city",
+            ),
         )
+
+    def clean(self):
+        cleaned = super().clean()
+
+        if self.customer is None:
+            return cleaned
+
+        line = (cleaned.get("store_address_line") or "").strip()
+        city = (cleaned.get("store_city") or "").strip()
+
+        if line and not city:
+            self.add_error("store_city", "Add the store's city too.")
+        elif city and not line:
+            self.add_error("store_address_line", "Add the store's street address too.")
+
+        return cleaned
+
+    @property
+    def delivery_fields(self):
+        return [self[name] for name in self.DELIVERY_FIELDS]
+
+    @property
+    def listing_fields(self):
+        return [self[name] for name in self.LISTING_FIELDS if name in self.fields]
+
+    @property
+    def delivery_data(self) -> dict[str, object]:
+        return {name: self.cleaned_data[name] for name in self.DELIVERY_FIELDS}
 
 
 def build_customer_edit_initial_data(customer: Customer) -> dict[str, object]:
@@ -138,4 +214,18 @@ def build_customer_edit_initial_data(customer: Customer) -> dict[str, object]:
         "country": customer.country,
         "city": customer.city,
         "address_line": customer.address_line,
+        **_store_listing_initial_data(customer),
+    }
+
+
+def _store_listing_initial_data(customer: Customer) -> dict[str, object]:
+    listing = StoreListing.objects.filter(customer=customer).first()
+
+    if listing is None:
+        return {"is_listed": False, "store_address_line": "", "store_city": ""}
+
+    return {
+        "is_listed": listing.is_listed,
+        "store_address_line": listing.address_line,
+        "store_city": listing.city,
     }

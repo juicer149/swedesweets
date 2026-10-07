@@ -2,13 +2,18 @@ from __future__ import annotations
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from customers.errors import InvalidCustomerData
 from customers.models import Customer
 from customers.selectors import list_customers
-from customers.services import create_customer, update_customer
+from customers.services import (
+    create_customer,
+    update_customer,
+    update_store_listing,
+)
 from ops_portal.customers.detail_viewmodels import (
     build_customer_detail_context,
 )
@@ -93,12 +98,21 @@ def edit(
         )
 
         if form.is_valid():
+            data = form.cleaned_data
+
             try:
-                updated_customer = update_customer(
-                    customer=customer,
-                    user=request.user,
-                    **form.cleaned_data,
-                )
+                with transaction.atomic():
+                    updated_customer = update_customer(
+                        customer=customer,
+                        user=request.user,
+                        **form.delivery_data,
+                    )
+                    update_store_listing(
+                        customer=updated_customer,
+                        is_listed=data["is_listed"],
+                        address_line=data["store_address_line"],
+                        city=data["store_city"],
+                    )
             except InvalidCustomerData as error:
                 form.add_error(None, str(error))
             else:
@@ -141,7 +155,7 @@ def create(request):
         if form.is_valid():
             try:
                 customer = create_customer(
-                    **form.cleaned_data,
+                    **form.delivery_data,
                     user=request.user,
                 )
             except InvalidCustomerData as error:

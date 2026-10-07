@@ -16,10 +16,23 @@
     {% include "registration/includes/form_errors.html" with form=form only %}
 
     <div class="form-grid">
-      {% for field in form %}
+      {% for field in form.delivery_fields %}
         {% include "includes/ui/form_field.html" with field=field only %}
       {% endfor %}
     </div>
+
+    {% if form.listing_fields %}
+      <section class="page-part store-listing" aria-labelledby="store-listing-title">
+        <h2 id="store-listing-title" class="page-part__title">Find Sweets</h2>
+        <p class="page__note">The public list of shops that sell SwedeSweets.</p>
+
+        <div class="form-grid">
+          {% for field in form.listing_fields %}
+            {% include "includes/ui/form_field.html" with field=field only %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
 
     <div class="form-actions page__actions page-actions">
       <button class="button button--md button--solid button--tone-place page__submit" type="submit">
