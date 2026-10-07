@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 12:43+0200\n"
+"POT-Creation-Date: 2026-10-07 13:43+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -330,6 +330,7 @@ msgid "Find Sweets"
 msgstr "Où acheter"
 
 #: business_portal/navigation.py:44 storefront/navigation.py:50
+#: templates/storefront/faq.html:4
 msgid "FAQ"
 msgstr "FAQ"
 
@@ -1227,6 +1228,13 @@ msgstr "Ce compte n’a encore aucune activité enregistrée."
 msgid "Change password"
 msgstr "Modifier le mot de passe"
 
+#: templates/base.html:11 templates/base.html:27
+msgid ""
+"Swedish sweets in the Alps: our shop, and wholesale for shops and cafés."
+msgstr ""
+"Des bonbons suédois dans les Alpes : notre boutique, et la vente en gros "
+"pour les boutiques et cafés."
+
 # | msgid "Back to login"
 #: templates/business_portal/catalog/detail.html:13
 #: templates/storefront/catalog/detail.html:13
@@ -1900,17 +1908,13 @@ msgstr "Annuler le paiement et modifier la commande"
 msgid "Edit details"
 msgstr "Modifier les informations"
 
-#: templates/storefront/faq.html:4
-msgid "Contact & FAQ"
-msgstr "Contact et FAQ"
-
-#: templates/storefront/faq.html:17
-msgid "Want to get in touch?"
-msgstr "Envie de nous contacter ?"
-
-#: templates/storefront/faq.html:23
+#: templates/storefront/faq.html:18
 msgid "Frequently asked questions"
 msgstr "Questions fréquentes"
+
+#: templates/storefront/faq.html:37
+msgid "Still have questions? Contact us"
+msgstr "Encore des questions ? Contactez-nous"
 
 #: templates/storefront/find_sweets.html:15
 msgid "Shops where you can buy our Swedish sweets."
@@ -1923,6 +1927,12 @@ msgstr "Boutiques"
 #: templates/storefront/find_sweets.html:25
 msgid "No shops are listed yet."
 msgstr "Aucune boutique n'est encore listée."
+
+#~ msgid "Contact & FAQ"
+#~ msgstr "Contact et FAQ"
+
+#~ msgid "Want to get in touch?"
+#~ msgstr "Envie de nous contacter ?"
 
 #~ msgid "Contact"
 #~ msgstr "Contact"
@@ -2367,9 +2377,3 @@ msgstr "Aucune boutique n'est encore listée."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
-
-msgid "Swedish sweets in the Alps: our shop, and wholesale for shops and cafés."
-msgstr "Des bonbons suédois dans les Alpes : notre boutique, et la vente en gros pour les boutiques et cafés."
-
-msgid "Still have questions? Contact us"
-msgstr "Encore des questions ? Contactez-nous"
