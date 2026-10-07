@@ -233,6 +233,19 @@
   --line-tone-bg: rgb(var(--color-status-danger) / 0.18);
 }
 
+/* A place (Find Sweets): just the pin, in the red the address rows use,
+   no circle. A tinted red circle would read as "danger" in this tone
+   scale; a bare pin reads as "on the map". */
+.line__icon--pin {
+  --line-tone-text: var(--color-action-danger);
+  --line-tone-bg: transparent;
+}
+
+.line__icon--pin .ui-icon-block {
+  width: var(--size-icon-md);
+  height: var(--size-icon-md);
+}
+
 .line__aside {
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);

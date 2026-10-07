@@ -18,7 +18,7 @@
     {% if shops %}
       <ul class="lines" aria-label="{% trans 'Shops' %}">
         {% for shop in shops %}
-          {% include "includes/ui/line_link.html" with href=shop.maps_href new_tab=True icon="map-pin" name=shop.name meta=shop.address only %}
+          {% include "includes/ui/line_link.html" with href=shop.maps_href new_tab=True tone="pin" icon="map-pin" name=shop.name meta=shop.address only %}
         {% endfor %}
       </ul>
     {% else %}
