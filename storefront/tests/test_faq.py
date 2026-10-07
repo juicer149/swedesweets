@@ -30,15 +30,16 @@ def test_public_faq_shows_only_answered_questions(client):
             assert str(item.question) not in html
         else:
             assert str(item.question) in html
-    assert html.count('data-smooth-group="faq"') == len(answered(PUBLIC_FAQ))
+    # The answered questions, and "Still have questions?" with the contact.
+    assert html.count('data-smooth-group="faq"') == len(answered(PUBLIC_FAQ)) + 1
 
 
 
 @pytest.mark.django_db
-def test_faq_page_starts_with_how_to_reach_us(client):
+def test_contact_is_the_last_question(client):
     html = client.get(reverse("public_site:faq")).content.decode()
 
-    assert html.index('href="mailto:info@swedesweets.se"') < html.index(
-        'data-smooth-group="faq"'
-    )
+    contact = html.index('id="contact"')
+    assert html.rindex('data-smooth-group="faq"') > contact
+    assert html.index('href="mailto:info@swedesweets.se"') > contact
     assert 'href="tel:+46739756195"' in html

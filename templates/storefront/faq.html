@@ -1,27 +1,22 @@
 {% extends "storefront/base.html" %}
 {% load static i18n %}
 
-{% block title %}{% trans "Contact & FAQ" %} | SwedeSweets{% endblock %}
+{% block title %}{% trans "FAQ" %} | SwedeSweets{% endblock %}
 
 {% block content %}
 {% comment %}
-  Contact and FAQ in one page: how to reach us at the top, the questions
-  under it. /contact/ redirects here.
+  The questions, and as the last one how to reach us (phone and mail; the
+  footer has them too, and a contact form could live here later).
+  /contact/ redirects here.
 {% endcomment %}
 <section
   class="page-section"
-  aria-labelledby="public-contact-title"
+  aria-labelledby="public-faq-title"
 >
   <div class="page page--centered faq">
-    <h1 id="public-contact-title" class="page__lead">
-      {% trans "Want to get in touch?" %}
-    </h1>
-
-    {% include "includes/site_contact_rows.html" %}
-
-    <h2 id="public-faq-title" class="page-part__title faq__title">
+    <h1 id="public-faq-title" class="page__lead">
       {% trans "Frequently asked questions" %}
-    </h2>
+    </h1>
 
     <div class="faq__list" aria-labelledby="public-faq-title">
       {% for item in faq_items %}
@@ -36,6 +31,17 @@
           </div>
         </details>
       {% endfor %}
+
+      <details id="contact" class="faq__item faq__item--contact" data-smooth data-smooth-group="faq">
+        <summary class="faq__question">
+          <span>{% trans "Still have questions? Contact us" %}</span>
+          {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="faq__chevron" only %}
+        </summary>
+
+        <div class="faq__answer" data-smooth-content>
+          {% include "includes/site_contact_rows.html" %}
+        </div>
+      </details>
     </div>
   </div>
 </section>

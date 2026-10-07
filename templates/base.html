@@ -8,6 +8,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}SwedeSweets{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{% trans 'Swedish sweets in the Alps: our shop, and wholesale for shops and cafés.' %}{% endblock %}">
+
+    {# The logo's crown in the tab and on a phone's home screen. #}
+    <link rel="icon" href="{% static 'images/favicon.svg' %}" type="image/svg+xml">
+    <link rel="icon" href="{% static 'images/favicon-32.png' %}" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="{% static 'images/apple-touch-icon.png' %}">
+
+    {% comment %}
+      Open Graph: the preview when a link is shared (Messenger, WhatsApp,
+      Slack…). Pages can override og_title, meta_description and og_image
+      (an absolute URL; a product page could give its picture).
+    {% endcomment %}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SwedeSweets">
+    <meta property="og:title" content="{% block og_title %}SwedeSweets{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% trans 'Swedish sweets in the Alps: our shop, and wholesale for shops and cafés.' %}{% endblock %}">
+    {% if request %}
+      <meta property="og:url" content="{{ request.build_absolute_uri }}">
+      <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-image.png' %}{% endblock %}">
+    {% endif %}
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
 
     <!-- <link rel="stylesheet" href="{% static 'vendor/tom-select/css/tom-select.css' %}"> -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">

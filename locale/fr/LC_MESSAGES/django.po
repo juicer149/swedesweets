@@ -2367,3 +2367,9 @@ msgstr "Aucune boutique n'est encore listée."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
+
+msgid "Swedish sweets in the Alps: our shop, and wholesale for shops and cafés."
+msgstr "Des bonbons suédois dans les Alpes : notre boutique, et la vente en gros pour les boutiques et cafés."
+
+msgid "Still have questions? Contact us"
+msgstr "Encore des questions ? Contactez-nous"
