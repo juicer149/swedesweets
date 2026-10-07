@@ -139,7 +139,10 @@ class CustomerForm(forms.Form):
         required=False,
         max_length=MAX_CUSTOMER_ADDRESS_LINE_LENGTH,
         label="Store address",
-        help_text="Only if visitors find the shop somewhere else than the delivery address.",
+        help_text=(
+            "Only if visitors find the shop somewhere else than the "
+            "delivery address."
+        ),
         widget=forms.TextInput(attrs={"autocomplete": "off"}),
     )
 
