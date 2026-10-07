@@ -106,11 +106,37 @@
   color: var(--color-neutral-800);
 }
 
-/* A large line drawing under a page's title and note (Find Sweets'
-   binoculars). Drawn in currentColor, so the colour is set here. */
+/* The title laid over the foot of a line drawing (Find Sweets): the
+   drawing fades out where the title's first line begins, so the lines
+   seem to pass behind it; no background, so the page's glow shows
+   through. However the title wraps, only its first line overlaps. */
+.page__heading--illustrated {
+  --title-overlap: 1.6rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page__heading--illustrated .page__illustration {
+  margin: 0;
+  mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% - var(--title-overlap) - 0.9rem),
+    transparent calc(100% - var(--title-overlap))
+  );
+}
+
+.page__heading--illustrated .page__lead {
+  margin: calc(var(--title-overlap) * -1) 0 0;
+  text-wrap: balance;
+}
+
+/* A large line drawing at the top of a page (Find Sweets' binoculars).
+   Drawn in currentColor, so the colour is set here. */
 .page__illustration {
   display: block;
-  width: clamp(10rem, 40vw, 16rem);
+  width: clamp(13rem, 55vw, 20rem);
   height: auto;
   margin: clamp(var(--space-5), 4dvh, var(--space-8)) auto 0;
   color: var(--color-neutral-700);
