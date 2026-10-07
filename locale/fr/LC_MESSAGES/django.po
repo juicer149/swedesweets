@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 16:00+0200\n"
+"POT-Creation-Date: 2026-10-07 16:48+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -231,33 +231,9 @@ msgid_plural "%(count)d events"
 msgstr[0] "%(count)d événement"
 msgstr[1] "%(count)d événements"
 
-#: business_portal/catalog/detail_viewmodels.py:250
-#: storefront/catalog/detail_viewmodels.py:176
-#: templates/business_portal/catalog/detail.html:166
-#: templates/business_portal/catalog/includes/detail_panel_product.html:36
-#: templates/storefront/catalog/detail.html:166
-msgid "Description"
-msgstr "Description"
-
-#: business_portal/catalog/detail_viewmodels.py:253
-#: storefront/catalog/detail_viewmodels.py:177
-msgid "Product description"
-msgstr "Description du produit"
-
-#: business_portal/catalog/detail_viewmodels.py:269
-#: business_portal/catalog/detail_viewmodels.py:272
-#: storefront/catalog/detail_viewmodels.py:190
-#: storefront/catalog/detail_viewmodels.py:191
-#: templates/business_portal/catalog/detail.html:189
-#: templates/business_portal/catalog/includes/detail_panel_product.html:43
-#: templates/storefront/catalog/detail.html:189
-msgid "Ingredients"
-msgstr "Ingrédients"
-
 # | msgid "Edit order"
 #: business_portal/catalog/viewmodels.py:79
-#: templates/business_portal/catalog/detail.html:153
-#: templates/business_portal/catalog/includes/detail_panel_offers.html:34
+#: templates/business_portal/catalog/detail.html:8
 msgid "Add to order"
 msgstr "Ajouter à la commande"
 
@@ -279,23 +255,23 @@ msgstr "Détails"
 msgid "View details for %(product)s"
 msgstr "Voir les détails de %(product)s"
 
-#: business_portal/catalog/viewmodels.py:183
-#: storefront/catalog/viewmodels.py:141
+#: business_portal/catalog/viewmodels.py:170
+#: storefront/catalog/viewmodels.py:131
 msgid "Standard"
 msgstr "Standard"
 
-#: business_portal/catalog/viewmodels.py:300
-#: business_portal/catalog/viewmodels.py:311
+#: business_portal/catalog/viewmodels.py:287
+#: business_portal/catalog/viewmodels.py:298
 #: business_portal/orders/product_presentation.py:113
 #: business_portal/orders/product_presentation.py:119
-#: storefront/catalog/viewmodels.py:236 storefront/catalog/viewmodels.py:243
+#: storefront/catalog/viewmodels.py:226 storefront/catalog/viewmodels.py:233
 msgid "Special offer"
 msgstr "Offre spéciale"
 
 # | msgid "%(count)s unit"
 # | msgid_plural "%(count)s units"
-#: business_portal/catalog/viewmodels.py:331
-#: storefront/catalog/viewmodels.py:258
+#: business_portal/catalog/viewmodels.py:318
+#: storefront/catalog/viewmodels.py:248
 #, python-format
 msgid "Only %(count)s left"
 msgid_plural "Only %(count)s left"
@@ -303,22 +279,22 @@ msgstr[0] "Plus que %(count)s disponible"
 msgstr[1] "Plus que %(count)s disponibles"
 
 # | msgid "Out of stock"
-#: business_portal/catalog/viewmodels.py:339
-#: storefront/catalog/viewmodels.py:265
+#: business_portal/catalog/viewmodels.py:326
+#: storefront/catalog/viewmodels.py:255
 msgid "In stock"
 msgstr "En stock"
 
 # | msgid "Choose products and quantities for your next order."
-#: business_portal/catalog/views.py:171 storefront/catalog/views.py:331
+#: business_portal/catalog/views.py:170 storefront/catalog/views.py:326
 #, python-format
 msgid "%(product)s added to your cart."
 msgstr "%(product)s a été ajouté à votre panier."
 
 #: business_portal/navigation.py:25
 #: templates/business_portal/catalog/index.html:4
-#: templates/business_portal/catalog/index.html:9
+#: templates/business_portal/catalog/index.html:7
 #: templates/storefront/catalog/index.html:4
-#: templates/storefront/catalog/index.html:9
+#: templates/storefront/catalog/index.html:7
 msgid "Catalog"
 msgstr "Catalogue"
 
@@ -335,6 +311,11 @@ msgstr "Où acheter"
 #: templates/storefront/faq.html:4
 msgid "FAQ"
 msgstr "FAQ"
+
+#: business_portal/navigation.py:54 storefront/navigation.py:60
+#: templates/includes/footer.html:17 templates/storefront/about.html:4
+msgid "About us"
+msgstr "À propos"
 
 #: business_portal/orders/cart_viewmodels.py:82
 #: business_portal/orders/navbar_viewmodels.py:53
@@ -460,8 +441,7 @@ msgid "Promotion"
 msgstr "Promotion"
 
 #: business_portal/orders/product_presentation.py:21 orders/models.py:60
-#: templates/business_portal/catalog/index.html:64
-#: templates/storefront/catalog/index.html:64
+#: templates/includes/catalog/grid.html:28
 msgid "Other"
 msgstr "Autre"
 
@@ -656,10 +636,17 @@ msgstr "Ajoutez aussi l'adresse de la boutique."
 msgid "Store information updated."
 msgstr "Les informations du magasin ont été mises à jour."
 
-#: business_portal/views.py:29 templates/business_portal/catalog/index.html:28
-#: templates/storefront/catalog/index.html:28
+#: business_portal/views.py:29 templates/includes/catalog/grid.html:24
 msgid "All"
 msgstr "Toutes"
+
+#: common/catalog/viewmodels.py:83
+msgid "Description"
+msgstr "Description"
+
+#: common/catalog/viewmodels.py:92
+msgid "Ingredients"
+msgstr "Ingrédients"
 
 #: ops_portal/accounts/detail_viewmodels.py:75
 msgid "Back to accounts"
@@ -837,18 +824,15 @@ msgid_plural "%(count)s cases"
 msgstr[0] "%(count)s caisse"
 msgstr[1] "%(count)s caisses"
 
-#: products/models.py:625 templates/business_portal/catalog/index.html:37
-#: templates/storefront/catalog/index.html:37
+#: products/models.py:625 templates/includes/catalog/grid.html:25
 msgid "Candy"
 msgstr "Bonbons"
 
-#: products/models.py:626 templates/business_portal/catalog/index.html:46
-#: templates/storefront/catalog/index.html:46
+#: products/models.py:626 templates/includes/catalog/grid.html:26
 msgid "Chips"
 msgstr "Chips"
 
-#: products/models.py:627 templates/business_portal/catalog/index.html:55
-#: templates/storefront/catalog/index.html:55
+#: products/models.py:627 templates/includes/catalog/grid.html:27
 msgid "Dip mix"
 msgstr "Préparations pour dip"
 
@@ -883,7 +867,7 @@ msgstr "Action non reconnue pour ce panier."
 
 # | msgid "Edit order"
 #: storefront/catalog/viewmodels.py:66
-#: templates/storefront/catalog/detail.html:153
+#: templates/storefront/catalog/detail.html:8
 msgid "Add to cart"
 msgstr "Ajouter au panier"
 
@@ -893,7 +877,7 @@ msgstr "Ajouter au panier"
 msgid "Add %(product)s to cart"
 msgstr "Ajouter %(product)s au panier"
 
-#: storefront/catalog/views.py:250
+#: storefront/catalog/views.py:245
 msgid "Retail cart actions are not available for business customers."
 msgstr ""
 "Les actions du panier ne sont pas disponibles pour les clients "
@@ -1251,147 +1235,6 @@ msgstr ""
 "Des bonbons suédois dans les Alpes : notre boutique, et la vente en gros "
 "pour les boutiques et cafés."
 
-# | msgid "Back to login"
-#: templates/business_portal/catalog/detail.html:13
-#: templates/storefront/catalog/detail.html:13
-msgid "Back to catalog"
-msgstr "Retour au catalogue"
-
-#: templates/business_portal/catalog/detail.html:75
-#: templates/business_portal/catalog/includes/detail_panel_product.html:20
-#: templates/storefront/catalog/detail.html:75
-msgid "Vegan"
-msgstr "Végane"
-
-#: templates/business_portal/catalog/detail.html:95
-#: templates/business_portal/catalog/index.html:179
-#: templates/business_portal/catalog/index.html:186
-#: templates/storefront/catalog/detail.html:95
-#: templates/storefront/catalog/index.html:179
-#: templates/storefront/catalog/index.html:186
-msgid "Offer"
-msgstr "Offre"
-
-#: templates/business_portal/catalog/detail.html:141
-#: templates/business_portal/catalog/index.html:253
-#: templates/business_portal/includes/orders_panel.html:82
-#: templates/business_portal/includes/orders_panel.html:180
-#: templates/includes/ui/quantity_stepper.html:17
-#: templates/includes/ui/quantity_stepper.html:31
-#: templates/includes/ui/quantity_stepper.html:37
-#: templates/storefront/catalog/detail.html:141
-#: templates/storefront/catalog/index.html:253
-msgid "Quantity"
-msgstr "Quantité"
-
-#: templates/business_portal/catalog/detail.html:214
-#: templates/storefront/catalog/detail.html:214
-msgid "Product information"
-msgstr "Informations sur le produit"
-
-#: templates/business_portal/catalog/includes/detail_panel_description.html:10
-#: templates/storefront/catalog/includes/detail_panel_description.html:10
-msgid "No product description is currently available."
-msgstr "Aucune description du produit n’est disponible actuellement."
-
-#: templates/business_portal/catalog/includes/detail_panel_ingredients.html:10
-#: templates/storefront/catalog/includes/detail_panel_ingredients.html:10
-msgid "No ingredient information is currently available."
-msgstr "Aucune information sur les ingrédients n’est disponible actuellement."
-
-#: templates/business_portal/catalog/includes/detail_panel_offers.html:41
-msgid "Offers"
-msgstr "Offres"
-
-#: templates/business_portal/catalog/includes/detail_panel_offers.html:42
-msgid "No offers are currently available."
-msgstr "Aucune offre n’est disponible actuellement."
-
-#: templates/business_portal/catalog/includes/detail_panel_product.html:5
-msgid "Product"
-msgstr "Produit"
-
-# | msgid "Packed"
-#: templates/business_portal/catalog/includes/detail_panel_product.html:10
-msgid "Package"
-msgstr "Conditionnement"
-
-#: templates/business_portal/catalog/includes/detail_panel_product.html:15
-msgid "SKU"
-msgstr "SKU"
-
-#: templates/business_portal/catalog/includes/detail_panel_product.html:23
-msgid "Yes"
-msgstr "Oui"
-
-#: templates/business_portal/catalog/includes/detail_panel_product.html:25
-msgid "No"
-msgstr "Non"
-
-#: templates/business_portal/catalog/index.html:10
-#: templates/storefront/catalog/index.html:10
-msgid "Added"
-msgstr "Ajouté"
-
-# | msgid "%(count)s product"
-# | msgid_plural "%(count)s products"
-#: templates/business_portal/catalog/index.html:11
-#: templates/storefront/catalog/index.html:11
-msgid "Could not add product."
-msgstr "Impossible d’ajouter le produit."
-
-# | msgid "Catalog"
-#: templates/business_portal/catalog/index.html:16
-#: templates/storefront/catalog/index.html:16
-msgid "Catalog filters"
-msgstr "Filtres du catalogue"
-
-#: templates/business_portal/catalog/index.html:20
-#: templates/storefront/catalog/index.html:20
-msgid "Product categories"
-msgstr "Catégories de produits"
-
-# | msgid "Order products"
-#: templates/business_portal/catalog/index.html:73
-#: templates/business_portal/catalog/index.html:80
-#: templates/storefront/catalog/index.html:73
-#: templates/storefront/catalog/index.html:80
-msgid "Search products"
-msgstr "Rechercher des produits"
-
-#: templates/business_portal/catalog/index.html:93
-#: templates/storefront/catalog/index.html:93
-msgid "No products match your search."
-msgstr "Aucun produit ne correspond à votre recherche."
-
-# | msgid "Product"
-#: templates/business_portal/catalog/index.html:107
-#: templates/ops_portal/orders/order_form.html:37
-#: templates/ops_portal/orders/order_form.html:46
-#: templates/storefront/catalog/index.html:107
-msgid "Products"
-msgstr "Produits"
-
-#: templates/business_portal/catalog/index.html:269
-#: templates/storefront/catalog/index.html:269
-msgid "Confirm"
-msgstr "Confirmer"
-
-#: templates/business_portal/catalog/index.html:282
-#: templates/business_portal/store_edit.html:51
-#: templates/ops_portal/accounts/account_form.html:32
-#: templates/ops_portal/customers/customer_form.html:44
-#: templates/ops_portal/inventory/batch_form.html:30
-#: templates/ops_portal/products/product_form.html:29
-#: templates/storefront/catalog/index.html:282
-msgid "Cancel"
-msgstr "Annulée"
-
-#: templates/business_portal/catalog/index.html:308
-#: templates/storefront/catalog/index.html:308
-msgid "No products are currently available."
-msgstr "Aucun produit n’est disponible actuellement."
-
 #: templates/business_portal/includes/account_details_panel.html:46
 msgid "Customer since"
 msgstr "Client depuis"
@@ -1423,6 +1266,14 @@ msgstr "Trier par"
 #: templates/business_portal/orders/cart.html:15
 msgid "Order"
 msgstr "Commande"
+
+#: templates/business_portal/includes/orders_panel.html:82
+#: templates/business_portal/includes/orders_panel.html:180
+#: templates/includes/ui/quantity_stepper.html:17
+#: templates/includes/ui/quantity_stepper.html:31
+#: templates/includes/ui/quantity_stepper.html:37
+msgid "Quantity"
+msgstr "Quantité"
 
 #: templates/business_portal/includes/orders_panel.html:90
 #: templates/business_portal/includes/orders_panel.html:91
@@ -1497,17 +1348,78 @@ msgstr ""
 msgid "Save changes"
 msgstr "Enregistrer les modifications"
 
+#: templates/business_portal/store_edit.html:51
+#: templates/includes/catalog/tile.html:71
+#: templates/ops_portal/accounts/account_form.html:32
+#: templates/ops_portal/customers/customer_form.html:44
+#: templates/ops_portal/inventory/batch_form.html:30
+#: templates/ops_portal/products/product_form.html:29
+msgid "Cancel"
+msgstr "Annulée"
+
 #: templates/includes/account_menu.html:63
 msgid "Logout"
 msgstr "Déconnexion"
 
+#: templates/includes/catalog/grid.html:15
+msgid "Added"
+msgstr "Ajouté"
+
+# | msgid "%(count)s product"
+# | msgid_plural "%(count)s products"
+#: templates/includes/catalog/grid.html:16
+msgid "Could not add product."
+msgstr "Impossible d’ajouter le produit."
+
+#: templates/includes/catalog/grid.html:23
+msgid "Product categories"
+msgstr "Catégories de produits"
+
+# | msgid "Order products"
+#: templates/includes/catalog/grid.html:32
+#: templates/includes/catalog/grid.html:37
+msgid "Search products"
+msgstr "Rechercher des produits"
+
+#: templates/includes/catalog/grid.html:48
+msgid "No products match your search."
+msgstr "Aucun produit ne correspond à votre recherche."
+
+# | msgid "Product"
+#: templates/includes/catalog/grid.html:51
+#: templates/ops_portal/orders/order_form.html:37
+#: templates/ops_portal/orders/order_form.html:46
+msgid "Products"
+msgstr "Produits"
+
+#: templates/includes/catalog/grid.html:57
+msgid "No products are currently available."
+msgstr "Aucun produit n’est disponible actuellement."
+
+#: templates/includes/catalog/product.html:37
+msgid "Vegan"
+msgstr "Végane"
+
+#: templates/includes/catalog/product.html:58
+msgid "Offer"
+msgstr "Offre"
+
+# | msgid "Back to login"
+#: templates/includes/catalog/product.html:95
+msgid "Back to catalog"
+msgstr "Retour au catalogue"
+
+#: templates/includes/catalog/product.html:102
+msgid "Product information"
+msgstr "Informations sur le produit"
+
+#: templates/includes/catalog/tile.html:68
+msgid "Add"
+msgstr "Ajouter"
+
 #: templates/includes/footer.html:6
 msgid "Site footer"
 msgstr "Pied de page"
-
-#: templates/includes/footer.html:17 templates/storefront/about.html:4
-msgid "About us"
-msgstr "À propos"
 
 #: templates/includes/language_switcher.html:7
 msgid "Language"
@@ -1833,12 +1745,12 @@ msgid "Edit cart"
 msgstr "Modifier le panier"
 
 #: templates/storefront/checkout/payment_result.html:6
-#: templates/storefront/checkout/payment_result.html:23
+#: templates/storefront/checkout/payment_result.html:24
 msgid "Thank you for your order"
 msgstr "Merci pour votre commande"
 
 #: templates/storefront/checkout/payment_result.html:8
-#: templates/storefront/checkout/payment_result.html:44
+#: templates/storefront/checkout/payment_result.html:41
 msgid "Payment not completed"
 msgstr "Paiement non effectué"
 
@@ -1846,7 +1758,7 @@ msgstr "Paiement non effectué"
 msgid "Payment status"
 msgstr "Statut du paiement"
 
-#: templates/storefront/checkout/payment_result.html:27
+#: templates/storefront/checkout/payment_result.html:29
 #, python-format
 msgid ""
 "Your payment was successful and your order number is <strong>%(reference)s</"
@@ -1859,28 +1771,28 @@ msgstr ""
 msgid "We'll contact you when your order is on its way."
 msgstr "Nous vous contacterons lorsque votre commande sera en route."
 
-#: templates/storefront/checkout/payment_result.html:39
+#: templates/storefront/checkout/payment_result.html:36
 msgid "Back to shop"
 msgstr "Retour à la boutique"
 
-#: templates/storefront/checkout/payment_result.html:48
+#: templates/storefront/checkout/payment_result.html:44
 msgid "Your payment could not be completed."
 msgstr "Votre paiement n’a pas pu être finalisé."
 
 # | msgid "Order details"
-#: templates/storefront/checkout/payment_result.html:64
+#: templates/storefront/checkout/payment_result.html:51
 msgid "Try again"
 msgstr "Réessayer"
 
-#: templates/storefront/checkout/payment_result.html:73
+#: templates/storefront/checkout/payment_result.html:59
 msgid "Back to cart"
 msgstr "Retour au panier"
 
-#: templates/storefront/checkout/payment_result.html:78
+#: templates/storefront/checkout/payment_result.html:65
 msgid "We couldn't confirm your payment"
 msgstr "Nous n’avons pas pu confirmer votre paiement"
 
-#: templates/storefront/checkout/payment_result.html:82
+#: templates/storefront/checkout/payment_result.html:70
 msgid ""
 "We couldn't confirm the status of your payment right now. If you were "
 "charged, your order is safe and we will sort it out."
@@ -1889,7 +1801,7 @@ msgstr ""
 "vous avez été débité, votre commande est bien enregistrée et nous réglerons "
 "la situation."
 
-#: templates/storefront/checkout/payment_result.html:86
+#: templates/storefront/checkout/payment_result.html:73
 #, python-format
 msgid ""
 "Please contact us and mention order number <strong>%(reference)s</strong>."
@@ -1897,7 +1809,7 @@ msgstr ""
 "Veuillez nous contacter en indiquant le numéro de commande "
 "<strong>%(reference)s</strong>."
 
-#: templates/storefront/checkout/payment_result.html:94
+#: templates/storefront/checkout/payment_result.html:79
 msgid "Contact us"
 msgstr "Nous contacter"
 
@@ -1957,6 +1869,45 @@ msgstr "Boutiques"
 #: templates/storefront/find_sweets.html:25
 msgid "No shops are listed yet."
 msgstr "Aucune boutique n'est encore listée."
+
+#~ msgid "Product description"
+#~ msgstr "Description du produit"
+
+#~ msgid "No product description is currently available."
+#~ msgstr "Aucune description du produit n’est disponible actuellement."
+
+#~ msgid "No ingredient information is currently available."
+#~ msgstr ""
+#~ "Aucune information sur les ingrédients n’est disponible actuellement."
+
+#~ msgid "Offers"
+#~ msgstr "Offres"
+
+#~ msgid "No offers are currently available."
+#~ msgstr "Aucune offre n’est disponible actuellement."
+
+#~ msgid "Product"
+#~ msgstr "Produit"
+
+# | msgid "Packed"
+#~ msgid "Package"
+#~ msgstr "Conditionnement"
+
+#~ msgid "SKU"
+#~ msgstr "SKU"
+
+#~ msgid "Yes"
+#~ msgstr "Oui"
+
+#~ msgid "No"
+#~ msgstr "Non"
+
+# | msgid "Catalog"
+#~ msgid "Catalog filters"
+#~ msgstr "Filtres du catalogue"
+
+#~ msgid "Confirm"
+#~ msgstr "Confirmer"
 
 #~ msgid "Ask us and we will tell you the nearest shop that sells SwedeSweets."
 #~ msgstr ""
@@ -2429,6 +2380,3 @@ msgstr "Aucune boutique n'est encore listée."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
-
-msgid "Add"
-msgstr "Ajouter"
