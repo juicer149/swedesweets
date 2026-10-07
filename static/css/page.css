@@ -139,8 +139,7 @@
   width: clamp(13rem, 58vw, 19rem);
   height: auto;
   margin: clamp(var(--space-5), 4dvh, var(--space-8)) auto 0;
-  /* A shade lighter than the title, so the words lead. */
-  color: var(--color-neutral-600);
+  color: color-mix(in srgb, var(--color-accent-700) 50%, var(--color-neutral-50));
 }
 
 /* Small grey centred line: a count, a status, a description. */
