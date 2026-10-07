@@ -64,13 +64,15 @@
           <div class="tile__quantity" data-catalog-purchase-quantity hidden>
             {% include "includes/ui/quantity_stepper.html" with id_prefix="catalog-quantity-" id_suffix=card.product_id only %}
 
-            <button class="tile__confirm" type="submit" aria-label="{% trans 'Add' %}" data-catalog-confirm-button>
-              {% include "includes/ui/icon_block.html" with name="check" size="sm" only %}
-            </button>
+            <div class="tile__quantity-actions">
+              <button class="tile__confirm" type="submit" aria-label="{% trans 'Add' %}" data-catalog-confirm-button>
+                {% include "includes/ui/icon_block.html" with name="check" size="sm" only %}
+              </button>
 
-            <button class="quiet-link tile__cancel" type="button" aria-label="{% trans 'Cancel' %}" data-catalog-cancel-button>
-              <span aria-hidden="true">×</span>
-            </button>
+              <button class="quiet-link tile__cancel" type="button" aria-label="{% trans 'Cancel' %}" data-catalog-cancel-button>
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
           </div>
         </form>
       {% endif %}

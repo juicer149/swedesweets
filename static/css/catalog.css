@@ -50,9 +50,11 @@
   font-size: var(--font-size-14);
 }
 
+/* The focus ring inside the edge: the field reaches the column's edge,
+   where an outside ring would be cut off. */
 .catalog__search-input:focus-visible {
   outline: 2px solid var(--color-primary-500);
-  outline-offset: 1px;
+  outline-offset: -2px;
 }
 
 .catalog__feedback:empty {
@@ -210,21 +212,33 @@
   outline-offset: 2px;
 }
 
-/* A smaller stepper that shares the row with the tick and ×, and takes a
-   row of its own when the tile is too narrow (phones). */
+/* One row in the place of the price and "+": the stepper on the left,
+   growing with the room the tile has, the tick and × on the right where
+   the "+" was. Only a very narrow tile wraps the tick and × under it. */
 .tile__quantity {
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .tile__quantity .quantity-stepper {
-  flex: 1 1 7rem;
-  grid-template-columns: 2.25rem minmax(2rem, 1fr) 2.25rem;
+  flex: 1 1 0;
+  grid-template-columns: 2rem minmax(1.5rem, 1fr) 2rem;
   width: auto;
+  min-width: 5.5rem;
+  max-width: 8.5rem;
 }
 
 .tile__quantity .quantity-stepper__button {
-  min-width: 2.25rem;
+  min-width: 2rem;
   min-height: 2.25rem;
+}
+
+.tile__quantity-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
 }
 
 /* The tick that adds: round like the "+", in the deliver green (light
@@ -233,8 +247,8 @@
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
   padding: 0;
 
   color: var(--color-action-deliver-on-light);
@@ -263,7 +277,7 @@
 
 .tile__cancel.quiet-link {
   flex: 0 0 auto;
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-1);
   font-size: var(--font-size-20);
   line-height: 1;
 }
@@ -402,9 +416,6 @@
     white-space: nowrap;
   }
 
-  .tile__quantity .quantity-stepper {
-    flex-basis: 100%;
-  }
 
   .product__main {
     grid-template-columns: 1fr;
