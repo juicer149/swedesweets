@@ -227,6 +227,13 @@
    lighter than a status badge so it reads as one more fact. */
 .facts__status {
   font-weight: 600;
+  text-decoration: none;
+}
+
+/* My account: the facts under the contact rows, with room to breathe
+   before the Edit button. */
+.account-facts {
+  margin-top: clamp(var(--space-6), 5dvh, var(--space-10));
 }
 
 .facts--small {

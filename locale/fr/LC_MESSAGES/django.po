@@ -2376,3 +2376,12 @@ msgstr "Aucune boutique n'est encore listée."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
+
+msgid "Listed"
+msgstr "Affichée"
+
+msgid "Not listed"
+msgstr "Non affichée"
+
+msgid "Customer since"
+msgstr "Client depuis"

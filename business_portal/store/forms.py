@@ -134,9 +134,23 @@ class CustomerProfileForm(forms.Form):
     )
 
     # Find Sweets: the public list of shops that sell SwedeSweets.
-    is_listed = forms.BooleanField(
+    # Same chips as Active/Inactive elsewhere; left out of a post, the
+    # store is not listed.
+    is_listed = forms.TypedChoiceField(
         required=False,
-        label=gettext_lazy("Show my store on Find Sweets"),
+        choices=(
+            ("true", gettext_lazy("Listed")),
+            ("false", gettext_lazy("Not listed")),
+        ),
+        coerce=lambda value: value == "true",
+        empty_value=False,
+        initial="false",
+        label=gettext_lazy("Status"),
+        help_text=gettext_lazy(
+            "Let visitors find your store on the public list of shops that "
+            "sell SwedeSweets."
+        ),
+        widget=forms.RadioSelect(attrs={"class": "radio-chip-group"}),
     )
 
     store_address_line = forms.CharField(
@@ -219,6 +233,7 @@ class CustomerProfileForm(forms.Form):
             full=(
                 "name",
                 "address_line",
+                "is_listed",
             ),
             half=(
                 "email",
@@ -249,10 +264,10 @@ def _store_listing_initial_data(customer: Customer) -> dict[str, object]:
     listing = StoreListing.objects.filter(customer=customer).first()
 
     if listing is None:
-        return {"is_listed": False, "store_address_line": "", "store_city": ""}
+        return {"is_listed": "false", "store_address_line": "", "store_city": ""}
 
     return {
-        "is_listed": listing.is_listed,
+        "is_listed": "true" if listing.is_listed else "false",
         "store_address_line": listing.address_line,
         "store_city": listing.city,
     }

@@ -41,14 +41,22 @@
         </li>
       </ul>
 
-      <p class="page__note store-listing-note">
-        {% if customer.store_listing.is_listed %}
-          {% url "public_site:find_sweets" as find_sweets_url %}
-          {% blocktrans trimmed %}Your store is shown on <a class="text-link" href="{{ find_sweets_url }}">Find Sweets</a>.{% endblocktrans %}
-        {% else %}
-          {% trans "Your store is not shown on Find Sweets." %}
-        {% endif %}
-      </p>
+      <dl class="facts facts--small facts--footer account-facts">
+        <div class="facts__row">
+          <dt>{% trans "Customer since" %}</dt>
+          <dd><time datetime="{{ customer.created_at|date:'c' }}">{{ customer.created_at|date:"Y-m-d" }}</time></dd>
+        </div>
+        <div class="facts__row">
+          <dt>{% trans "Find Sweets" %}</dt>
+          <dd>
+            {% if customer.store_listing.is_listed %}
+              <a class="status-text status-text--success facts__status" href="{% url 'public_site:find_sweets' %}">{% trans "Listed" %}</a>
+            {% else %}
+              <span class="status-text status-text--muted facts__status">{% trans "Not listed" %}</span>
+            {% endif %}
+          </dd>
+        </div>
+      </dl>
 
       <div class="form-actions page__actions">
         <a

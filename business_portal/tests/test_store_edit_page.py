@@ -53,7 +53,7 @@ def test_store_edit_saves_the_find_sweets_listing(client):
             "country": customer.country,
             "city": customer.city,
             "address_line": customer.address_line,
-            "is_listed": "on",
+            "is_listed": "true",
             "store_address_line": "2 Place du Lac",
             "store_city": "Annecy",
         },
@@ -85,3 +85,14 @@ def test_store_edit_asks_for_both_parts_of_the_store_address(client):
 
     assert response.status_code == 200
     assert "store_city" in response.context["form"].errors
+
+
+@pytest.mark.django_db
+def test_my_account_shows_the_listing_as_a_coloured_fact(client):
+    customer = customer_factory(email="facts@example.fr")
+    client.force_login(customer_user_factory(customer=customer))
+
+    content = client.get(reverse("business_portal:index")).content.decode()
+
+    assert "account-facts" in content
+    assert "status-text--muted facts__status\">Not listed" in content
