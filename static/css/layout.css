@@ -19,10 +19,21 @@
 }
 
 .site-footer__brand {
+  position: relative;
   margin: 0;
   color: var(--color-neutral-800);
   font-family: var(--font-heading);
   font-size: var(--font-size-18);
+}
+
+/* The logo's crown, tilted on the last letter as in the logo. */
+.site-footer__crown.ui-icon-block {
+  position: absolute;
+  top: -0.75em;
+  right: -0.6em;
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--color-brand-yellow);
 }
 
 .site-footer__links {

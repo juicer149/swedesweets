@@ -139,6 +139,10 @@
        danger  -> destructive/unsafe action
      ========================================================================== */
 
+  /* The logo's own colours (sampled from swedesweets-logo.png). */
+  --color-brand-yellow: #f9b51a;
+  --color-brand-blue: #2669ff;
+
   --color-action-place: var(--color-accent-600);
   --color-action-pack: var(--color-primary-500);
   --color-action-deliver: #248f4e;
