@@ -6,16 +6,29 @@
       place, "catalog", () => fetch(…)
     );
 
-  The request and a minimum of 0.5 s run side by side, so the dots never
-  make anything slower than the server; then the mark stays 0.7 s (0.2 s
-  to grow, 0.5 s to be seen) and the place is emptied. ok is whether the
+  The request and a minimum time (--feedback-min-loading) run side by
+  side, so the dots never make anything slower than the server; then the
+  mark grows (--feedback-mark-grow) and stays (--feedback-mark-hold), and
+  the place is emptied. The times live in tokens.css. ok is whether the
   request resolved; value is what it resolved to, error what it threw.
 */
 (() => {
   "use strict";
 
-  const MINIMUM_MS = 500;
-  const MARK_MS = 700;
+  /* Timing comes from tokens.css (--feedback-*), shared with the CSS. The
+     numbers here are only the fallback if a token is missing. */
+  function tokenMs(name, fallback) {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue(name)
+      .trim();
+    const number = parseFloat(value);
+
+    if (Number.isNaN(number)) {
+      return fallback;
+    }
+
+    return value.endsWith("ms") ? number : number * 1000;
+  }
 
   const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
@@ -50,12 +63,15 @@
             outcome.error = error;
           }
         ),
-      wait(MINIMUM_MS),
+      wait(tokenMs("--feedback-min-loading", 500)),
     ]);
 
     if (burst) {
       burst.dataset.state = outcome.ok ? "success" : "error";
-      await wait(MARK_MS);
+      await wait(
+        tokenMs("--feedback-mark-grow", 200)
+          + tokenMs("--feedback-mark-hold", 750)
+      );
     }
 
     place.replaceChildren();

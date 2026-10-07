@@ -2,8 +2,9 @@
    Status burst (includes/ui/status_burst.html, status_burst.js)
 
    While something is saved: eight dots in a ring, a bigger one going round.
-   When it is done the dots draw in and a mark grows from nothing in 0.2 s:
-   the success icon (the crown by default), or a red cross.
+   When it is done the dots draw in and a mark grows from nothing: the
+   success icon (the crown by default), or a red cross. How long each part
+   takes is set in tokens.css (--feedback-*).
 
      --status-burst-size     the ring (default 2.5rem)
      --status-burst-dot      the dots' colour (default the brand yellow)
@@ -73,7 +74,7 @@
   opacity: 0;
   transform: scale(0);
   transition:
-    transform 0.2s cubic-bezier(0.3, 1.6, 0.6, 1) 0.12s,
+    transform var(--feedback-mark-grow) cubic-bezier(0.3, 1.6, 0.6, 1) 0.12s,
     opacity 0.1s 0.12s;
 }
 

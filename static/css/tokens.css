@@ -271,6 +271,18 @@
 
   --motion-fast: 140ms ease;
 
+  /* Feedback timing, the one place to tune it. CSS uses these directly;
+     scripts read them with getComputedStyle (status_burst.js), so a
+     change here changes both.
+
+       --feedback-min-loading  the dots show at least this long, side by
+                               side with the request (never added to it)
+       --feedback-mark-grow    the crown / tick / cross grows from nothing
+       --feedback-mark-hold    then stays this long before it goes */
+  --feedback-min-loading: 500ms;
+  --feedback-mark-grow: 200ms;
+  --feedback-mark-hold: 750ms;
+
   --transform-lift: translateY(-1px);
   --transform-lift-scale: translateY(-1px) scale(1.01);
 
