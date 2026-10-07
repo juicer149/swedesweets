@@ -3,59 +3,44 @@
 {% block title %}Fake payment | SwedeSweets{% endblock %}
 
 {% block content %}
-<section class="form-section form-section--wide">
-  <div class="form-card form-card--wide">
-    <p class="muted-text">
-      <strong>Development only.</strong>
-      This page replaces the payment provider. No real money is involved.
-    </p>
+{% comment %}
+  Development only: stands in for the payment provider. The amount as the
+  title, Pay as the yellow action, Decline and Back as quiet links.
+{% endcomment %}
+<section class="screen screen--in-site payment-result" aria-labelledby="fake-payment-title">
+  <div class="page page--centered">
+    <header class="page__header">
+      <p class="error-page__code">Fake payment · development only</p>
+      <h1 id="fake-payment-title" class="page__lead">{{ payment.currency }} {{ payment.amount }}</h1>
+    </header>
 
-    <h1>
-      {{ payment.currency }} {{ payment.amount }}
-    </h1>
+    <div class="payment-result__text">
+      <p class="page__text page__note">{{ payment.description }}</p>
+      <p class="page__text page__note payment-result__reference">
+        Reference {{ payment.reference }} · {{ payment_id }} · status {{ payment.status }}
+      </p>
+    </div>
 
-    <p>
-      {{ payment.description }}
-    </p>
-
-    <p class="muted-text">
-      Reference {{ payment.reference }} · {{ payment_id }} · status {{ payment.status }}
-    </p>
-
-    <div class="portal-place-order-actions">
+    <div class="form-actions page__actions page-actions">
       <form method="post">
         {% csrf_token %}
-
-        <button
-          class="button button--md button--solid button--tone-place"
-          type="submit"
-          name="outcome"
-          value="{{ pay_outcome }}"
-        >
+        <button class="button button--md button--solid button--tone-place page__submit" type="submit" name="outcome" value="{{ pay_outcome }}">
           Pay
         </button>
       </form>
 
-      <form method="post">
-        {% csrf_token %}
+      <div class="page-actions__links">
+        <form method="post">
+          {% csrf_token %}
+          <button class="quiet-link quiet-link--danger" type="submit" name="outcome" value="{{ decline_outcome }}">
+            Decline
+          </button>
+        </form>
 
-        <button
-          class="button button--md button--ghost button--tone-danger"
-          type="submit"
-          name="outcome"
-          value="{{ decline_outcome }}"
-        >
-          Decline
+        <button class="quiet-link" type="button" onclick="history.back()">
+          Back without paying
         </button>
-      </form>
-
-      <button
-        class="button button--md button--ghost button--tone-neutral"
-        type="button"
-        onclick="history.back()"
-      >
-        Back without paying
-      </button>
+      </div>
     </div>
   </div>
 </section>

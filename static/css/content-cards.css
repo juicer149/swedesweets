@@ -1,46 +1,5 @@
 /* =============================================================================
-   Content sections
-
-   Shared page shell for forms, operation pages and detail pages.
-   .form-* names are retained as aliases while templates still use them.
-   ============================================================================= */
-
-.form-section {
-  max-width: 760px;
-  padding-top: var(--space-8);
-}
-
-.form-section--wide {
-  max-width: 900px;
-}
-
-
-/* =============================================================================
-   Content cards
-
-   Generic card container used by forms, pack/deliver pages and detail pages.
-   ============================================================================= */
-
-.content-card,
-.form-card {
-  display: grid;
-  gap: var(--space-6);
-  padding: var(--space-6);
-
-  background: var(--color-primary-50);
-  border: var(--border-subtle);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-content-card);
-}
-
-.form-card--wide {
-  width: min(100%, 900px);
-  margin-inline: auto;
-}
-
-
-/* =============================================================================
-   Detail panels
+   Detail panels (business catalog detail; goes with the catalog redesign)
 
    Detail section navigation is owned by section-nav.css.
    This file owns only the panel body layout and surface.
@@ -130,17 +89,5 @@
 @media (max-width: 767px) {
   .detail-data-list {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 639px) {
-  .form-section {
-    max-width: none;
-    padding-top: var(--space-6);
-  }
-
-  .content-card,
-  .form-card {
-    padding: var(--space-5);
   }
 }

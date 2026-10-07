@@ -13,84 +13,69 @@
 {% endblock %}
 
 {% block content %}
-<section
-  class="form-section form-section--wide"
-  aria-labelledby="storefront-payment-result-title"
->
-  <div class="form-card form-card--wide retail-payment-result retail-payment-result--{{ result }}">
+{% comment %}
+  Where the payment provider sends the buyer back: paid, not paid, or not
+  known yet. One screen in the calm design, one yellow way on.
+{% endcomment %}
+<section class="screen screen--in-site payment-result" aria-labelledby="payment-result-title">
+  <div class="page page--centered">
     {% if result == "confirmed" %}
-      <h1 id="storefront-payment-result-title">
-        {% trans "Thank you for your order" %}
-      </h1>
+      <header class="page__header">
+        <h1 id="payment-result-title" class="page__lead">{% trans "Thank you for your order" %}</h1>
+      </header>
 
-      <p>
-        {% blocktrans with reference=order_reference %}Your payment was successful and your order number is <strong>{{ reference }}</strong>.{% endblocktrans %}
-      </p>
+      <div class="payment-result__text">
+        <p class="page__text page__note">
+          {% blocktrans with reference=order_reference %}Your payment was successful and your order number is <strong>{{ reference }}</strong>.{% endblocktrans %}
+        </p>
+        <p class="page__text page__note">{% trans "We'll contact you when your order is on its way." %}</p>
+      </div>
 
-      <p>
-        {% trans "We'll contact you when your order is on its way." %}
-      </p>
-
-      <div class="portal-place-order-actions">
-        <a
-          class="button button--md button--solid button--tone-place"
-          href="{{ shop_url }}"
-        >
+      <div class="form-actions page__actions">
+        <a class="button button--md button--solid button--tone-place page__submit" href="{{ shop_url }}">
           {% trans "Back to shop" %}
         </a>
       </div>
     {% elif result == "failed" %}
-      <h1 id="storefront-payment-result-title">
-        {% trans "Payment not completed" %}
-      </h1>
+      <header class="page__header">
+        <h1 id="payment-result-title" class="page__lead">{% trans "Payment not completed" %}</h1>
+      </header>
 
-      <p>
-        {% trans "Your payment could not be completed." %}
-      </p>
+      <p class="page__text page__note">{% trans "Your payment could not be completed." %}</p>
 
-      <div class="portal-place-order-actions">
+      <div class="form-actions page__actions page-actions">
         {% if retry_url %}
-          <form
-            method="post"
-            action="{{ retry_url }}"
-            data-submit-once
-          >
+          <form method="post" action="{{ retry_url }}" data-submit-once>
             {% csrf_token %}
-
-            <button
-              class="button button--md button--solid button--tone-place"
-              type="submit"
-            >
+            <button class="button button--md button--solid button--tone-place page__submit" type="submit">
               {% trans "Try again" %}
             </button>
           </form>
         {% endif %}
 
-        <a
-          class="button button--md button--ghost button--tone-neutral"
-          href="{{ cart_url }}"
-        >
-          {% trans "Back to cart" %}
-        </a>
+        <div class="page-actions__links">
+          <a class="quiet-link" href="{{ cart_url }}">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+            {% trans "Back to cart" %}
+          </a>
+        </div>
       </div>
     {% else %}
-      <h1 id="storefront-payment-result-title">
-        {% trans "We couldn't confirm your payment" %}
-      </h1>
+      <header class="page__header">
+        <h1 id="payment-result-title" class="page__lead">{% trans "We couldn't confirm your payment" %}</h1>
+      </header>
 
-      <p>
-        {% trans "We couldn't confirm the status of your payment right now. If you were charged, your order is safe and we will sort it out." %}
-      </p>
+      <div class="payment-result__text">
+        <p class="page__text page__note">
+          {% trans "We couldn't confirm the status of your payment right now. If you were charged, your order is safe and we will sort it out." %}
+        </p>
+        <p class="page__text page__note">
+          {% blocktrans with reference=order_reference %}Please contact us and mention order number <strong>{{ reference }}</strong>.{% endblocktrans %}
+        </p>
+      </div>
 
-      <p>
-        {% blocktrans with reference=order_reference %}Please contact us and mention order number <strong>{{ reference }}</strong>.{% endblocktrans %}
-      </p>
-
-      <div class="portal-place-order-actions">
-        <a
-          class="button button--md button--solid button--tone-place"
-          href="{{ contact_url }}"
-        >
+      <div class="form-actions page__actions">
+        <a class="button button--md button--solid button--tone-place page__submit" href="{{ contact_url }}">
           {% trans "Contact us" %}
         </a>
       </div>
@@ -102,8 +87,5 @@
 {% block scripts %}
   {{ block.super }}
 
-  <script
-    src="{% static 'js/submit-once.js' %}"
-    defer
-  ></script>
+  <script src="{% static 'js/submit-once.js' %}" defer></script>
 {% endblock %}
