@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 13:43+0200\n"
+"POT-Creation-Date: 2026-10-07 14:41+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -325,7 +325,6 @@ msgstr "Catalogue"
 #: business_portal/navigation.py:36 storefront/navigation.py:42
 #: templates/business_portal/store_edit.html:31
 #: templates/storefront/find_sweets.html:4
-#: templates/storefront/find_sweets.html:14
 msgid "Find Sweets"
 msgstr "Où acheter"
 
@@ -1916,7 +1915,7 @@ msgstr "Questions fréquentes"
 msgid "Still have questions? Contact us"
 msgstr "Encore des questions ? Contactez-nous"
 
-#: templates/storefront/find_sweets.html:15
+#: templates/storefront/find_sweets.html:14
 msgid "Shops where you can buy our Swedish sweets"
 msgstr "Les boutiques où acheter nos bonbons suédois"
 
