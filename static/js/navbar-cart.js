@@ -218,6 +218,8 @@
             Accept: "text/html",
           },
           credentials: "same-origin",
+          // Always the cart as it is now, never a copy the browser kept.
+          cache: "no-store",
         }
       );
 
@@ -648,6 +650,32 @@
       void refreshNavbarCart({
         preserveOpenState: true,
       });
+    }
+  );
+
+
+  /*
+   * Back and forward: the browser may show this page as it was when it
+   * was left (the back/forward cache, or its HTTP cache), with the cart
+   * as it was then, though products were added since (add on a product
+   * page, which lands on the catalog, then Back). Ask the server again.
+   */
+  function cameBackOrForward(event) {
+    if (event.persisted) {
+      return true;
+    }
+
+    const [navigation] = performance.getEntriesByType("navigation");
+
+    return navigation?.type === "back_forward";
+  }
+
+  window.addEventListener(
+    "pageshow",
+    (event) => {
+      if (cameBackOrForward(event)) {
+        void refreshNavbarCart();
+      }
     }
   );
 
