@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from django.utils.translation import gettext_lazy as _
+
+from common.page_tabs import PageTab
 from common.ui import UiText
 
 
@@ -46,11 +49,49 @@ class ProductCardVM:
     category_key: str = "other"
     search_text: str = ""
 
-    def catalog_payload(self) -> dict[str, object]:
-        return {
-            "product_id": self.product_id,
-            "offers": [
-                offer.as_dict()
-                for offer in self.offers
-            ],
-        }
+    @property
+    def initial_offer(self) -> CatalogOfferVM | None:
+        """The offer the tile's "+" adds (the first, normally standard)."""
+
+        return self.offers[0] if self.offers else None
+
+    @property
+    def other_deal(self) -> CatalogOfferVM | None:
+        """A special offer besides the one the tile adds: a hint on the
+        tile that the product page has another choice."""
+
+        return next(
+            (offer for offer in self.offers[1:] if offer.badge_label),
+            None,
+        )
+
+
+def build_product_tabs(
+    *,
+    description: str,
+    ingredients: str,
+) -> tuple[PageTab, ...]:
+    """The tabs under a catalog product: Description and Ingredients, each
+    only when the product has it."""
+
+    tabs: list[PageTab] = []
+
+    if description:
+        tabs.append(
+            PageTab(
+                key="description",
+                label=_("Description"),
+                template="includes/catalog/tab_description.html",
+            )
+        )
+
+    if ingredients:
+        tabs.append(
+            PageTab(
+                key="ingredients",
+                label=_("Ingredients"),
+                template="includes/catalog/tab_ingredients.html",
+            )
+        )
+
+    return tuple(tabs)

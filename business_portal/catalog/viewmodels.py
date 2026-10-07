@@ -153,19 +153,6 @@ def _build_business_product_card(
     )
 
 
-def build_business_catalog_payload(
-    *,
-    product_cards: Iterable[
-        ProductCardVM
-    ],
-) -> list[dict[str, object]]:
-    return [
-        card.catalog_payload()
-        for card
-        in product_cards
-    ]
-
-
 def build_business_offer_viewmodel(
     offer: CatalogOffer,
 ) -> CatalogOfferVM:

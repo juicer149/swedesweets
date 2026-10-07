@@ -143,6 +143,14 @@ quiet line under it: the status in its colour, the date, who, what.
 action on the right). The add action is `includes/ui/list_action.html`, the
 small yellow-edged outline button with a plus.
 
+**Catalog:** `includes/catalog/` holds the shop's and the business
+portal's catalog: `grid.html` (category tabs, search, tiles), `tile.html`
+(a product on the page, no card; the round yellow-edged "+" asks for a
+quantity before it adds) and `product.html` (a product's page: picture
+beside what to buy, offers as chips, Description and Ingredients as
+tabs). The channel's pages only say where the form posts and what its
+button says. CSS in `static/css/catalog.css`.
+
 **Tables** remain only where ops compare many columns (orders, batches,
 stock). On phones they become rows (`.mobile-lines`).
 
@@ -248,9 +256,6 @@ drawing's faded foot (Find Sweets).
 
 ## Not calm yet
 
-- **Catalogs** (shop and business portal) and the business catalog detail
-  page, which still uses `includes/ui/detail_panels.html` and the panel
-  CSS in `content-cards.css`. Remove both after the catalog redesign.
 - **Landing page:** hero, crown, more of the brand.
 - **About and FAQ:** structure done, personality (pictures, the founders'
   own words) to come after the landing page.

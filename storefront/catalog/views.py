@@ -37,7 +37,6 @@ from storefront.catalog.detail_viewmodels import (
     build_retail_catalog_product_detail_context,
 )
 from storefront.catalog.viewmodels import (
-    build_retail_catalog_payload,
     build_retail_product_cards,
 )
 
@@ -189,16 +188,12 @@ def product_list(request: HttpRequest):
         language_code=request.LANGUAGE_CODE,
     )
 
-    catalog_data = build_retail_catalog_payload(
-        product_cards=product_cards,
-    )
 
     return render(
         request,
         "storefront/catalog/index.html",
         {
             "product_cards": product_cards,
-            "catalog_data": catalog_data,
         },
     )
 

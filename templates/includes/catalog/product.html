@@ -1,0 +1,107 @@
+{% load i18n %}
+{% comment %}
+  A catalog product's page in the calm design, shared by the shop and the
+  business portal. The picture beside what to buy: category, name,
+  package, price and stock, the offers as chips when there are several,
+  quantity and the one yellow button. Under both, Description and
+  Ingredients as tabs (page_tabs). catalog_detail.js keeps the price and
+  stock in step with the chosen offer.
+
+  From the detail viewmodel: product, product_name, category_label,
+  image_url, offers, initial_offer, page_tabs, cancel_url
+  From the page: add_url (where the form posts), add_label (its button)
+{% endcomment %}
+<section class="page-section" aria-labelledby="product-title">
+  <article class="page product">
+    <div class="product__main">
+      <div class="product__media">
+        {% if image_url %}
+          <img class="product__image" src="{{ image_url }}" alt="{{ product_name }}">
+        {% else %}
+          <span class="product__image product__image--empty" aria-hidden="true"></span>
+        {% endif %}
+      </div>
+
+      <div class="product__buy">
+        {% if category_label %}
+          <p class="product__kicker">{{ category_label }}</p>
+        {% endif %}
+
+        <h1 id="product-title" class="product__name">{{ product_name }}</h1>
+        <p class="product__meta">{{ product.unit_weight_label }}</p>
+
+        {% if product.vegan %}
+          <p class="product-tag-list product__tags">
+            <span class="product-tag product-tag--vegan">
+              {% include "includes/ui/icon_block.html" with name="leaf" size="sm" class_name="product-tag__icon" only %}
+              <span>{% trans "Vegan" %}</span>
+            </span>
+          </p>
+        {% endif %}
+
+        <p class="product__price" data-product-price {% if not initial_offer.price_label %}hidden{% endif %}>
+          {{ initial_offer.price_label|default:"" }}
+        </p>
+
+        <p class="product__stock">
+          <span
+            class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %} facts__status"
+            data-product-stock
+          >{{ initial_offer.availability_label }}</span>
+        </p>
+
+        <form class="product__form" method="post" action="{{ add_url }}">
+          {% csrf_token %}
+
+          {% if offers|length > 1 %}
+            <div class="form-field product__offers">
+              <span id="product-offers-label" class="form-label">{% trans "Offer" %}</span>
+
+              <div class="radio-chip-group" role="radiogroup" aria-labelledby="product-offers-label">
+                {% for offer in offers %}
+                  <div>
+                    <label for="product-offer-{{ forloop.counter }}">
+                      <input
+                        id="product-offer-{{ forloop.counter }}"
+                        type="radio"
+                        name="commercial_price_id"
+                        value="{{ offer.commercial_price_id }}"
+                        data-price-label="{{ offer.price_label|default:'' }}"
+                        data-stock-label="{{ offer.availability_label }}"
+                        data-stock-low="{% if offer.available_units < 10 %}true{% else %}false{% endif %}"
+                        {% if forloop.first %}checked{% endif %}
+                      >
+                      {{ offer.label }}{% if offer.price_label %} · {{ offer.price_label }}{% endif %}
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% else %}
+            <input type="hidden" name="commercial_price_id" value="{{ initial_offer.commercial_price_id }}">
+          {% endif %}
+
+          <div class="product__add">
+            {% include "includes/ui/quantity_stepper.html" with id_prefix="product-quantity" only %}
+
+            <button class="button button--md button--solid button--tone-place page__submit product__submit" type="submit">
+              {{ add_label }}
+            </button>
+          </div>
+        </form>
+
+        <a class="quiet-link product__back" href="{{ cancel_url }}">
+          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+          {% trans "Back to catalog" %}
+        </a>
+      </div>
+    </div>
+
+    {% if page_tabs %}
+      <div class="product__tabs">
+        {% trans "Product information" as tabs_label %}
+        {% include "includes/ui/page_tabs.html" with page_tabs=page_tabs tabs_label=tabs_label %}
+      </div>
+    {% endif %}
+  </article>
+</section>

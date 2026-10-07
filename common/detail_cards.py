@@ -13,18 +13,6 @@ ACTION_TONE_DELIVER = "deliver"
 @dataclass(frozen=True)
 
 
-class DetailPanel:
-    key: str
-    label: str
-    summary: str
-    body_template: str
-    icon: str = ""
-    is_active: bool = False
-
-
-@dataclass(frozen=True)
-
-
 class DetailAction:
     label: str
     href: str = ""

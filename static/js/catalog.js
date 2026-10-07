@@ -1,637 +1,228 @@
+/*
+  The catalog (includes/catalog/grid.html), shop and business portal alike:
+
+  - the category tabs and the search hide the tiles that do not match;
+  - a tile's "+" first asks for a quantity (the stepper, Add and ×), then
+    Add posts the form as JSON, says "Added" for a moment, tells the
+    navbar cart (cart-changed) and folds back to the "+".
+
+  Without JavaScript the "+" simply posts the form: one of the tile's offer.
+*/
 (() => {
   "use strict";
 
-  const catalog = document.querySelector(
-    ".catalog"
-  );
+  const catalog = document.querySelector(".catalog");
 
   if (!catalog) {
     return;
   }
 
-  const forms = document.querySelectorAll(
-    "[data-catalog-add-form]"
+  const tiles = Array.from(
+    catalog.querySelectorAll("[data-catalog-product]")
   );
-
-  const cards = Array.from(
-    document.querySelectorAll(
-      "[data-catalog-product]"
-    )
-  );
-
   const categoryButtons = Array.from(
-    document.querySelectorAll(
-      "[data-catalog-category]"
-    )
+    catalog.querySelectorAll("[data-catalog-category]")
   );
+  const searchInput = catalog.querySelector("[data-catalog-search]");
+  const noResults = catalog.querySelector("[data-catalog-no-results]");
+  const feedback = catalog.querySelector("[data-catalog-feedback]");
 
-  const searchInput = document.querySelector(
-    "[data-catalog-search]"
-  );
-
-  const noResults = document.querySelector(
-    "[data-catalog-no-results]"
-  );
-
-  const feedback = document.querySelector(
-    "[data-catalog-feedback]"
-  );
-
-  const catalogDataElement = document.getElementById(
-    "business-catalog-data"
-  );
-
-  const addedLabel =
-    catalog.dataset.catalogAddedLabel
-    || "Added";
-
+  const addedLabel = catalog.dataset.catalogAddedLabel || "Added";
   const fallbackErrorMessage =
-    catalog.dataset.catalogErrorMessage
-    || "Could not add product.";
+    catalog.dataset.catalogErrorMessage || "Could not add product.";
 
-  const filterState = {
+  const filter = {
     category: "all",
     query: "",
   };
 
 
-  function setFeedback(message) {
-    if (!feedback) {
-      return;
+  /* Filters ---------------------------------------------------------- */
+
+  function normalize(value) {
+    return String(value || "").trim().toLocaleLowerCase();
+  }
+
+  function tileMatches(tile) {
+    const inCategory = (
+      filter.category === "all"
+      || tile.dataset.productCategory === filter.category
+    );
+
+    const inSearch = (
+      !filter.query
+      || normalize(tile.dataset.productSearch).includes(filter.query)
+    );
+
+    return inCategory && inSearch;
+  }
+
+  function applyFilters() {
+    let visible = 0;
+
+    for (const tile of tiles) {
+      const show = tileMatches(tile);
+      tile.hidden = !show;
+      visible += show ? 1 : 0;
     }
-
-    feedback.textContent = message;
-  }
-
-
-  function normalizeSearchValue(
-    value
-  ) {
-    return String(
-      value || ""
-    )
-      .trim()
-      .toLocaleLowerCase();
-  }
-
-
-  function cardMatchesCategory(
-    card
-  ) {
-    return (
-      filterState.category === "all"
-      || card.dataset.productCategory
-        === filterState.category
-    );
-  }
-
-
-  function cardMatchesSearch(
-    card
-  ) {
-    if (!filterState.query) {
-      return true;
-    }
-
-    const searchText = normalizeSearchValue(
-      card.dataset.productSearch
-    );
-
-    return searchText.includes(
-      filterState.query
-    );
-  }
-
-
-  function cardShouldBeVisible(
-    card
-  ) {
-    return (
-      cardMatchesCategory(
-        card
-      )
-      && cardMatchesSearch(
-        card
-      )
-    );
-  }
-
-
-  function renderCategoryButtons() {
-    categoryButtons.forEach(
-      (button) => {
-        const isActive = (
-          button.dataset.catalogCategory
-          === filterState.category
-        );
-
-        button.classList.toggle(
-          "section-nav__link--active",
-          isActive
-        );
-
-        button.setAttribute(
-          "aria-pressed",
-          String(isActive)
-        );
-      }
-    );
-  }
-
-
-  function applyCatalogFilters() {
-    let visibleCount = 0;
-
-    cards.forEach(
-      (card) => {
-        const visible = (
-          cardShouldBeVisible(
-            card
-          )
-        );
-
-        card.hidden = !visible;
-
-        if (visible) {
-          visibleCount += 1;
-        }
-      }
-    );
 
     if (noResults) {
-      noResults.hidden = (
-        visibleCount !== 0
-      );
+      noResults.hidden = visible !== 0;
     }
 
-    renderCategoryButtons();
+    for (const button of categoryButtons) {
+      const active = button.dataset.catalogCategory === filter.category;
+      button.classList.toggle("section-nav__link--active", active);
+      button.setAttribute("aria-pressed", String(active));
+    }
   }
 
+  for (const button of categoryButtons) {
+    button.addEventListener("click", () => {
+      filter.category = button.dataset.catalogCategory || "all";
+      applyFilters();
+    });
+  }
 
-  function initializeCatalogFilters() {
-    categoryButtons.forEach(
-      (button) => {
-        button.addEventListener(
-          "click",
-          () => {
-            filterState.category = (
-              button.dataset.catalogCategory
-              || "all"
-            );
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      filter.query = normalize(searchInput.value);
+      applyFilters();
+    });
+  }
 
-            applyCatalogFilters();
-          }
-        );
-      }
-    );
+  applyFilters();
 
-    if (searchInput) {
-      searchInput.addEventListener(
-        "input",
-        () => {
-          filterState.query = (
-            normalizeSearchValue(
-              searchInput.value
-            )
-          );
 
-          applyCatalogFilters();
-        }
-      );
+  /* Quantity, then add ------------------------------------------------ */
+
+  function setFeedback(message) {
+    if (feedback) {
+      feedback.textContent = message;
+    }
+  }
+
+  function parts(form) {
+    return {
+      buy: form.querySelector("[data-catalog-purchase-default]"),
+      quantity: form.querySelector("[data-catalog-purchase-quantity]"),
+      input: form.querySelector("[data-quantity-input]"),
+      confirm: form.querySelector("[data-catalog-confirm-button]"),
+      add: form.querySelector("[data-catalog-add-button]"),
+    };
+  }
+
+  function isAsking(form) {
+    const { quantity } = parts(form);
+    return Boolean(quantity && !quantity.hidden);
+  }
+
+  function askQuantity(form) {
+    const { buy, quantity, input } = parts(form);
+
+    if (!buy || !quantity || !input) {
+      return;
     }
 
-    applyCatalogFilters();
+    buy.hidden = true;
+    quantity.hidden = false;
+    input.focus();
+    input.select();
   }
 
+  function foldBack(form) {
+    const { buy, quantity, input, add } = parts(form);
 
-  function notifyCartChanged() {
-    document.dispatchEvent(
-      new CustomEvent(
-        "cart-changed",
-        {
-          detail: {
-            source: "catalog",
-          },
-        }
-      )
-    );
-  }
-
-
-  function parseCatalogData() {
-    if (!catalogDataElement) {
-      return [];
+    if (!buy || !quantity) {
+      return;
     }
+
+    if (input) {
+      input.value = "1";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    quantity.hidden = true;
+    buy.hidden = false;
+
+    if (add && quantity.contains(document.activeElement)) {
+      add.focus();
+    }
+  }
+
+  async function addToCart(form) {
+    const { confirm } = parts(form);
+
+    if (!confirm) {
+      return;
+    }
+
+    const label = confirm.textContent.trim();
+    confirm.disabled = true;
 
     try {
-      const value = JSON.parse(
-        catalogDataElement.textContent
-      );
-
-      return Array.isArray(value)
-        ? value
-        : [];
-    } catch {
-      return [];
-    }
-  }
-
-
-  function offerKey(
-    commercialPriceId
-  ) {
-    return commercialPriceId === null
-      ? ""
-      : String(
-          commercialPriceId
-        );
-  }
-
-
-  function findOffer(
-    catalogProduct,
-    commercialPriceId
-  ) {
-    if (!catalogProduct) {
-      return null;
-    }
-
-    const requestedKey = offerKey(
-      commercialPriceId
-    );
-
-    return (
-      catalogProduct.offers.find(
-        (offer) =>
-          offerKey(
-            offer.commercial_price_id
-          ) === requestedKey
-      ) || null
-    );
-  }
-
-
-  function selectedCommercialPriceId(
-    card
-  ) {
-    const select = card.querySelector(
-      "[data-catalog-offer-select]"
-    );
-
-    if (select) {
-      return select.value === ""
-        ? null
-        : Number(
-            select.value
-          );
-    }
-
-    const input = card.querySelector(
-      "[data-catalog-offer-input]"
-    );
-
-    if (
-      !input
-      || input.value === ""
-    ) {
-      return null;
-    }
-
-    return Number(
-      input.value
-    );
-  }
-
-
-  function renderOfferBadge(
-    card,
-    offer
-  ) {
-    const badge = card.querySelector(
-      "[data-catalog-offer-badge]"
-    );
-
-    if (!badge) {
-      return;
-    }
-
-    const label =
-      offer && offer.badge_label
-        ? offer.badge_label
-        : "";
-
-    badge.textContent = label;
-    badge.hidden = !label;
-  }
-
-
-  function initializeOfferControls(
-    catalogProducts
-  ) {
-    const catalogByProductId = new Map(
-      catalogProducts.map(
-        (catalogProduct) => [
-          String(
-            catalogProduct.product_id
-          ),
-          catalogProduct,
-        ]
-      )
-    );
-
-    cards.forEach(
-      (card) => {
-        const catalogProduct =
-          catalogByProductId.get(
-            card.dataset.productId
-          );
-
-        if (!catalogProduct) {
-          return;
-        }
-
-        const renderSelectedOffer = () => {
-          const offer = findOffer(
-            catalogProduct,
-            selectedCommercialPriceId(
-              card
-            )
-          );
-
-          renderOfferBadge(
-            card,
-            offer
-          );
-        };
-
-        const select = card.querySelector(
-          "[data-catalog-offer-select]"
-        );
-
-        if (select) {
-          select.addEventListener(
-            "change",
-            renderSelectedOffer
-          );
-        }
-
-        renderSelectedOffer();
-      }
-    );
-  }
-
-
-  function resetQuantityInput(
-    form
-  ) {
-    const quantityInput = form.querySelector(
-      "[data-quantity-input]"
-    );
-
-    if (!quantityInput) {
-      return;
-    }
-
-    quantityInput.value = "1";
-
-    quantityInput.dispatchEvent(
-      new Event(
-        "input",
-        {
-          bubbles: true,
-        }
-      )
-    );
-
-    quantityInput.dispatchEvent(
-      new Event(
-        "change",
-        {
-          bubbles: true,
-        }
-      )
-    );
-  }
-
-
-  function openQuantityMode(
-    form
-  ) {
-    const defaultState = form.querySelector(
-      "[data-catalog-purchase-default]"
-    );
-
-    const quantityState = form.querySelector(
-      "[data-catalog-purchase-quantity]"
-    );
-
-    const quantityInput = form.querySelector(
-      "[data-quantity-input]"
-    );
-
-    if (
-      !defaultState
-      || !quantityState
-      || !quantityInput
-    ) {
-      return;
-    }
-
-    defaultState.hidden = true;
-    quantityState.hidden = false;
-
-    quantityInput.focus();
-    quantityInput.select();
-  }
-
-
-  function closeQuantityMode(
-    form,
-    {
-      resetQuantity = true,
-    } = {}
-  ) {
-    const defaultState = form.querySelector(
-      "[data-catalog-purchase-default]"
-    );
-
-    const quantityState = form.querySelector(
-      "[data-catalog-purchase-quantity]"
-    );
-
-    if (
-      !defaultState
-      || !quantityState
-    ) {
-      return;
-    }
-
-    if (resetQuantity) {
-      resetQuantityInput(
-        form
-      );
-    }
-
-    quantityState.hidden = true;
-    defaultState.hidden = false;
-  }
-
-
-  function isQuantityModeOpen(
-    form
-  ) {
-    const quantityState = form.querySelector(
-      "[data-catalog-purchase-quantity]"
-    );
-
-    return Boolean(
-      quantityState
-      && !quantityState.hidden
-    );
-  }
-
-
-  async function submitAddForm(
-    form
-  ) {
-    const confirmButton = form.querySelector(
-      "[data-catalog-confirm-button]"
-    );
-
-    if (!confirmButton) {
-      return;
-    }
-
-    const originalLabel = (
-      confirmButton.textContent.trim()
-    );
-
-    confirmButton.disabled = true;
-
-    try {
-      const response = await fetch(
-        form.action,
-        {
-          method: "POST",
-          body: new FormData(
-            form
-          ),
-          headers: {
-            Accept: "application/json",
-          },
-          credentials: "same-origin",
-        }
-      );
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+        credentials: "same-origin",
+      });
 
       const payload = await response.json();
 
-      if (
-        !response.ok
-        || !payload.ok
-      ) {
-        throw new Error(
-          payload.message
-          || fallbackErrorMessage
-        );
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.message || fallbackErrorMessage);
       }
 
-      setFeedback(
-        payload.message
+      setFeedback(payload.message);
+      confirm.textContent = addedLabel;
+
+      document.dispatchEvent(
+        new CustomEvent("cart-changed", { detail: { source: "catalog" } })
       );
 
-      confirmButton.textContent =
-        addedLabel;
-
-      notifyCartChanged();
-
-      window.setTimeout(
-        () => {
-          confirmButton.textContent =
-            originalLabel;
-
-          confirmButton.disabled =
-            false;
-
-          closeQuantityMode(
-            form
-          );
-        },
-        700
-      );
+      window.setTimeout(() => {
+        confirm.textContent = label;
+        confirm.disabled = false;
+        foldBack(form);
+      }, 700);
     } catch (error) {
-      confirmButton.textContent =
-        originalLabel;
-
-      confirmButton.disabled =
-        false;
-
+      confirm.textContent = label;
+      confirm.disabled = false;
       setFeedback(
-        error instanceof Error
-          ? error.message
-          : fallbackErrorMessage
+        error instanceof Error ? error.message : fallbackErrorMessage
       );
     }
   }
 
+  for (const form of catalog.querySelectorAll("[data-catalog-add-form]")) {
+    const cancel = form.querySelector("[data-catalog-cancel-button]");
 
-  function initializePurchaseControls() {
-    forms.forEach(
-      (form) => {
-        const cancelButton = form.querySelector(
-          "[data-catalog-cancel-button]"
-        );
+    if (cancel) {
+      cancel.addEventListener("click", () => foldBack(form));
+    }
 
-        if (cancelButton) {
-          cancelButton.addEventListener(
-            "click",
-            () => {
-              closeQuantityMode(
-                form
-              );
-            }
-          );
-        }
-
-        form.addEventListener(
-          "submit",
-          (event) => {
-            event.preventDefault();
-
-            if (
-              !isQuantityModeOpen(
-                form
-              )
-            ) {
-              openQuantityMode(
-                form
-              );
-
-              return;
-            }
-
-            if (
-              !form.checkValidity()
-            ) {
-              form.reportValidity();
-              return;
-            }
-
-            void submitAddForm(
-              form
-            );
-          }
-        );
+    form.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && isAsking(form)) {
+        foldBack(form);
       }
-    );
+    });
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if (!isAsking(form)) {
+        askQuantity(form);
+        return;
+      }
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      void addToCart(form);
+    });
   }
-
-
-  initializeCatalogFilters();
-
-  initializeOfferControls(
-    parseCatalogData()
-  );
-
-  initializePurchaseControls();
 })();
-

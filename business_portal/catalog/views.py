@@ -26,7 +26,6 @@ from business_portal.catalog.detail_viewmodels import (
     build_business_catalog_product_detail_context,
 )
 from business_portal.catalog.viewmodels import (
-    build_business_catalog_payload,
     build_business_product_cards,
 )
 from business_portal.selectors import (
@@ -208,16 +207,12 @@ def catalog(request):
         language_code=request.LANGUAGE_CODE,
     )
 
-    catalog_data = build_business_catalog_payload(
-        product_cards=product_cards,
-    )
 
     return render(
         request,
         "business_portal/catalog/index.html",
         {
             "product_cards": product_cards,
-            "catalog_data": catalog_data,
         },
     )
 

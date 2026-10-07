@@ -1,0 +1,60 @@
+{% load i18n %}
+{% comment %}
+  The catalog in the calm design, shared by the shop and the business
+  portal: category tabs and a search on one row, then the products as
+  tiles on the page (includes/catalog/tile.html). catalog.js filters the
+  tiles and lets each tile's "+" ask for a quantity before it adds.
+
+  product_cards  ProductCardVM list (common/catalog/viewmodels.py)
+  title          the page's name, for screen readers (the navbar shows it)
+  csrf_token     the page's token, for the tiles' forms
+{% endcomment %}
+<section
+  class="page-section catalog"
+  aria-labelledby="catalog-title"
+  data-catalog-added-label="{% trans 'Added' %}"
+  data-catalog-error-message="{% trans 'Could not add product.' %}"
+>
+  <div class="page catalog__page">
+    <h1 id="catalog-title" class="visually-hidden">{{ title }}</h1>
+
+    {% if product_cards %}
+      <div class="catalog__tools">
+        <nav class="section-nav catalog__categories" aria-label="{% trans 'Product categories' %}">
+          <button class="section-nav__link section-nav__link--active" type="button" data-catalog-category="all" aria-pressed="true">{% trans "All" %}</button>
+          <button class="section-nav__link" type="button" data-catalog-category="candy" aria-pressed="false">{% trans "Candy" %}</button>
+          <button class="section-nav__link" type="button" data-catalog-category="chips" aria-pressed="false">{% trans "Chips" %}</button>
+          <button class="section-nav__link" type="button" data-catalog-category="dip_mix" aria-pressed="false">{% trans "Dip mix" %}</button>
+          <button class="section-nav__link" type="button" data-catalog-category="other" aria-pressed="false">{% trans "Other" %}</button>
+        </nav>
+
+        <div class="catalog__search">
+          <label class="visually-hidden" for="catalog-search">{% trans "Search products" %}</label>
+          <input
+            id="catalog-search"
+            class="catalog__search-input"
+            type="search"
+            placeholder="{% trans 'Search products' %}"
+            autocomplete="off"
+            spellcheck="false"
+            data-catalog-search
+          >
+        </div>
+      </div>
+
+      <p class="page__note catalog__feedback" data-catalog-feedback role="status" aria-live="polite"></p>
+
+      <p class="page__note catalog__no-results" data-catalog-no-results hidden>
+        {% trans "No products match your search." %}
+      </p>
+
+      <div class="tiles" aria-label="{% trans 'Products' %}">
+        {% for card in product_cards %}
+          {% include "includes/catalog/tile.html" with card=card csrf_token=csrf_token only %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="page__note catalog__empty">{% trans "No products are currently available." %}</p>
+    {% endif %}
+  </div>
+</section>

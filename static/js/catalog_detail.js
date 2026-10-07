@@ -1,71 +1,45 @@
-"use strict";
+/*
+  A catalog product's page (includes/catalog/product.html): when the buyer
+  picks another offer chip, the price and the stock line follow it.
+*/
+(() => {
+  "use strict";
 
-
-function initializeOfferStockHint() {
-  const select = document.querySelector(
-    "[data-catalog-detail-offer]"
+  const offers = Array.from(
+    document.querySelectorAll(
+      ".product__offers input[name='commercial_price_id']"
+    )
   );
+  const price = document.querySelector("[data-product-price]");
+  const stock = document.querySelector("[data-product-stock]");
 
-  const stock = document.querySelector(
-    "[data-catalog-detail-stock]"
-  );
-
-  const stockContainer = document.querySelector(
-    "[data-catalog-detail-stock-container]"
-  );
-
-  if (
-    !select
-    || !stock
-    || !stockContainer
-  ) {
+  if (offers.length === 0) {
     return;
   }
 
-  const initialStockLabel = (
-    stock.textContent.trim()
-  );
+  function render() {
+    const chosen = offers.find((offer) => offer.checked);
 
-  const renderStock = () => {
-    const option = select.options[
-      select.selectedIndex
-    ];
-
-    if (!option) {
+    if (!chosen) {
       return;
     }
 
-    const stockLabel = (
-      option.dataset.stockLabel
-      || initialStockLabel
-    ).trim();
+    if (price) {
+      price.textContent = chosen.dataset.priceLabel || "";
+      price.hidden = !chosen.dataset.priceLabel;
+    }
 
-    stock.textContent = stockLabel;
+    if (stock) {
+      const low = chosen.dataset.stockLow === "true";
+      stock.textContent = chosen.dataset.stockLabel || "";
+      stock.classList.toggle("status-text--warning", low);
+      stock.classList.toggle("status-text--success", !low);
+    }
+  }
 
-    stockContainer.hidden = (
-      stockLabel.length === 0
-    );
-  };
+  for (const offer of offers) {
+    offer.addEventListener("change", render);
+  }
 
-  select.addEventListener(
-    "change",
-    renderStock
-  );
-
-  renderStock();
-}
-
-
-function initializeCatalogDetail() {
-  initializeOfferStockHint();
-}
-
-
-if (document.readyState === "loading") {
-  document.addEventListener(
-    "DOMContentLoaded",
-    initializeCatalogDetail
-  );
-} else {
-  initializeCatalogDetail();
-}
+  render();
+})();

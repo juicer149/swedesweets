@@ -3,9 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from django.urls import reverse
-from django.utils.translation import (
-    gettext_lazy as _,
-)
 
 from business_portal.catalog.viewmodels import (
     build_business_offer_viewmodel,
@@ -15,10 +12,9 @@ from common.catalog.contracts import (
 )
 from common.catalog.viewmodels import (
     CatalogOfferVM,
+    build_product_tabs,
 )
-from common.detail_cards import (
-    DetailPanel,
-)
+from common.page_tabs import PageTab
 from products.localization import (
     translated_product_name,
 )
@@ -40,10 +36,7 @@ class BusinessCatalogProductDetailContext:
         ...,
     ]
     initial_offer: CatalogOfferVM
-    detail_panels: tuple[
-        DetailPanel,
-        ...,
-    ]
+    page_tabs: tuple[PageTab, ...]
     title: str
     cancel_url: str
 
@@ -77,9 +70,7 @@ class BusinessCatalogProductDetailContext:
             "initial_offer": (
                 self.initial_offer
             ),
-            "detail_panels": (
-                self.detail_panels
-            ),
+            "page_tabs": self.page_tabs,
             "title": self.title,
             "cancel_url": (
                 self.cancel_url
@@ -157,11 +148,9 @@ def build_business_catalog_product_detail_context(
             ingredients=ingredients,
             offers=offers,
             initial_offer=offers[0],
-            detail_panels=(
-                _build_detail_panels(
-                    description=description,
-                    ingredients=ingredients,
-                )
+            page_tabs=build_product_tabs(
+                description=description,
+                ingredients=ingredients,
             ),
             title=product_name,
             cancel_url=reverse(
@@ -228,58 +217,3 @@ def _ingredients(
         return ""
 
     return profile.ingredients
-
-
-def _build_detail_panels(
-    *,
-    description: str,
-    ingredients: str,
-) -> tuple[
-    DetailPanel,
-    ...,
-]:
-    panels: list[
-        DetailPanel
-    ] = []
-
-    if description:
-        panels.append(
-            DetailPanel(
-                key="description",
-                label=_(
-                    "Description"
-                ),
-                summary=_(
-                    "Product description"
-                ),
-                body_template=(
-                    "business_portal/"
-                    "catalog/includes/"
-                    "detail_panel_description.html"
-                ),
-                is_active=True,
-            )
-        )
-
-    if ingredients:
-        panels.append(
-            DetailPanel(
-                key="ingredients",
-                label=_(
-                    "Ingredients"
-                ),
-                summary=_(
-                    "Ingredients"
-                ),
-                body_template=(
-                    "business_portal/"
-                    "catalog/includes/"
-                    "detail_panel_ingredients.html"
-                ),
-                is_active=not panels,
-            )
-        )
-
-    return tuple(
-        panels
-    )

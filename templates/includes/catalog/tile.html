@@ -1,0 +1,79 @@
+{% load i18n %}
+{% comment %}
+  One product in the catalog: its picture and name (both lead to the
+  product page), the package, a hint when it has a special offer, then
+  the price and a round "+". The "+" asks for a quantity (catalog.js) and
+  Add puts that many of the tile's offer in the cart; other offers are
+  chosen on the product page. Without JavaScript the "+" adds one.
+
+  card        ProductCardVM
+  csrf_token  the page's token
+{% endcomment %}
+{% with offer=card.initial_offer deal=card.other_deal detail_href=card.secondary_action.href %}
+  <article
+    class="tile"
+    data-catalog-product
+    data-product-id="{{ card.product_id }}"
+    data-product-category="{{ card.category_key }}"
+    data-product-search="{{ card.search_text }}"
+  >
+    <a class="tile__media" href="{{ detail_href }}" tabindex="-1" aria-hidden="true">
+      {% if card.image_url %}
+        <img class="tile__image" src="{{ card.image_url }}" alt="" loading="lazy">
+      {% else %}
+        <span class="tile__image tile__image--empty"></span>
+      {% endif %}
+    </a>
+
+    <div class="tile__body">
+      <h2 class="tile__name"><a href="{{ detail_href }}">{{ card.name }}</a></h2>
+      <p class="tile__meta">{{ card.package_label }}</p>
+
+      {% if offer.badge_label %}
+        <p class="tile__deal">{{ offer.badge_label }}</p>
+      {% elif deal %}
+        <p class="tile__deal">
+          <a href="{{ detail_href }}">{{ deal.badge_label }}{% if deal.price_label %} · {{ deal.price_label }}{% endif %}</a>
+        </p>
+      {% endif %}
+
+      {% if offer %}
+        <form
+          id="catalog-add-form-{{ card.product_id }}"
+          class="tile__order"
+          method="post"
+          action="{{ card.primary_action.href }}"
+          data-catalog-add-form
+        >
+          {% csrf_token %}
+          <input type="hidden" name="commercial_price_id" value="{{ offer.commercial_price_id }}">
+
+          <div class="tile__buy" data-catalog-purchase-default>
+            <span class="tile__price">{{ offer.price_label|default:"" }}</span>
+
+            <button
+              class="tile__add"
+              type="submit"
+              aria-label="{{ card.primary_action.aria_label }}"
+              data-catalog-add-button
+            >
+              {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
+            </button>
+          </div>
+
+          <div class="tile__quantity" data-catalog-purchase-quantity hidden>
+            {% include "includes/ui/quantity_stepper.html" with id_prefix="catalog-quantity-" id_suffix=card.product_id only %}
+
+            <button class="button button--sm button--solid button--tone-place tile__confirm" type="submit" data-catalog-confirm-button>
+              {% trans "Add" %}
+            </button>
+
+            <button class="quiet-link tile__cancel" type="button" aria-label="{% trans 'Cancel' %}" data-catalog-cancel-button>
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+        </form>
+      {% endif %}
+    </div>
+  </article>
+{% endwith %}

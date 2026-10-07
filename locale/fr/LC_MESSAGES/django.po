@@ -2429,3 +2429,6 @@ msgstr "Aucune boutique n'est encore listée."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
+
+msgid "Add"
+msgstr "Ajouter"

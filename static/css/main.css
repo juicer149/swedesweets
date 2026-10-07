@@ -12,7 +12,6 @@
 @import url("./buttons.css");
 @import url("./chips.css");
 @import url("./quantity-stepper.css");
-@import url("./content-cards.css");
 @import url("./dashboard.css");
 @import url("./tables.css");
 @import url("./table-controls.css");
@@ -22,6 +21,7 @@
 @import url("./orders.css");
 @import url("./inventory.css");
 @import url("./products.css");
+@import url("./catalog.css");
 @import url("./accounts.css");
 @import url("./enhanced-selects.css");
 @import url("./quick-jump-search.css");
