@@ -22,9 +22,8 @@
     </div>
 
     {% if form.listing_fields %}
-      <section class="page-part store-listing" aria-labelledby="store-listing-title">
-        <h2 id="store-listing-title" class="page-part__title">Find Sweets</h2>
-        <p class="page__note">The public list of shops that sell SwedeSweets.</p>
+      <section class="pricing-channel" aria-labelledby="store-listing-title">
+        <h2 class="pricing-channel__title" id="store-listing-title">Find Sweets</h2>
 
         <div class="form-grid">
           {% for field in form.listing_fields %}

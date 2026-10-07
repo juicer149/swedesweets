@@ -1,4 +1,4 @@
-{% comment %}The Customer tab: how to reach them, since when and how often, then Edit customer.{% endcomment %}
+{% comment %}The Customer tab: how to reach them, since when and how often, active and listed, then Edit customer.{% endcomment %}
 {% include "includes/ui/contact_rows.html" with email=customer.email phone=customer.phone_number address=customer.address maps_href=maps_href only %}
 
 <dl class="facts facts--small facts--footer">
@@ -15,6 +15,26 @@
   <div class="facts__row">
     <dt>Orders</dt>
     <dd>{{ order_summary.total_orders }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>Status</dt>
+    <dd>
+      {% if customer.is_active %}
+        <span class="status-text status-text--success facts__status">Active</span>
+      {% else %}
+        <span class="status-text status-text--danger facts__status">Inactive</span>
+      {% endif %}
+    </dd>
+  </div>
+  <div class="facts__row">
+    <dt>Find Sweets</dt>
+    <dd>
+      {% if customer.store_listing.is_listed %}
+        <span class="status-text status-text--success facts__status">Listed</span>
+      {% else %}
+        <span class="status-text status-text--muted facts__status">Not listed</span>
+      {% endif %}
+    </dd>
   </div>
 </dl>
 

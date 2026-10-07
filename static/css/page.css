@@ -223,6 +223,12 @@
   font-size: var(--font-size-14);
 }
 
+/* A coloured status word as a value (Active in green, Inactive in red);
+   lighter than a status badge so it reads as one more fact. */
+.facts__status {
+  font-weight: 600;
+}
+
 .facts--small {
   gap: var(--space-1);
   font-size: var(--font-size-14);

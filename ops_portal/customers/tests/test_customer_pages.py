@@ -128,7 +128,7 @@ def test_edit_lists_the_shop_on_find_sweets(staff_client, customer):
             "country": "FR",
             "city": "Chamonix-Mont-Blanc",
             "address_line": "1 Rue du Lac",
-            "is_listed": "on",
+            "is_listed": "true",
             "store_address_line": "2 Place du Lac",
             "store_city": "Annecy",
         },
@@ -145,3 +145,14 @@ def test_create_form_has_no_find_sweets_fields(staff_client):
     response = staff_client.get(reverse("ops_customers:create"))
 
     assert 'name="is_listed"' not in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_detail_footer_shows_status_and_listing(staff_client, customer):
+    response = staff_client.get(
+        reverse("ops_customers:detail", kwargs={"customer_pk": customer.pk}),
+    )
+    content = response.content.decode()
+
+    assert "status-text--success facts__status\">Active" in content
+    assert "status-text--muted facts__status\">Not listed" in content

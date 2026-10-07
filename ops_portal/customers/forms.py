@@ -122,9 +122,17 @@ class CustomerForm(forms.Form):
 
     # Find Sweets: the public list of shops. Only when editing; a new
     # customer starts unlisted and the shop can opt in from its portal.
-    is_listed = forms.BooleanField(
-        required=False,
-        label="Show on Find Sweets",
+    is_listed = forms.TypedChoiceField(
+        choices=(("true", "Listed"), ("false", "Not listed")),
+        coerce=lambda value: value == "true",
+        initial="false",
+        label="Status",
+        help_text="Listed shops appear on the public Find Sweets page.",
+        error_messages={
+            "required": "Choose whether the shop is listed.",
+            "invalid_choice": "Choose a valid listing status.",
+        },
+        widget=forms.RadioSelect(attrs={"class": "radio-chip-group"}),
     )
 
     store_address_line = forms.CharField(
@@ -167,15 +175,15 @@ class CustomerForm(forms.Form):
         set_form_field_layout(
             self,
             full=("name", "address_line"),
-            half=(
-                "email",
-                "phone_number",
-                "country",
-                "city",
-                "store_address_line",
-                "store_city",
-            ),
+            half=("email", "phone_number", "country", "city"),
         )
+
+        if customer is not None:
+            set_form_field_layout(
+                self,
+                full=("is_listed",),
+                half=("store_address_line", "store_city"),
+            )
 
     def clean(self):
         cleaned = super().clean()
@@ -222,10 +230,10 @@ def _store_listing_initial_data(customer: Customer) -> dict[str, object]:
     listing = StoreListing.objects.filter(customer=customer).first()
 
     if listing is None:
-        return {"is_listed": False, "store_address_line": "", "store_city": ""}
+        return {"is_listed": "false", "store_address_line": "", "store_city": ""}
 
     return {
-        "is_listed": listing.is_listed,
+        "is_listed": "true" if listing.is_listed else "false",
         "store_address_line": listing.address_line,
         "store_city": listing.city,
     }

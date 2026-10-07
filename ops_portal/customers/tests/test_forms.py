@@ -130,7 +130,7 @@ def test_build_customer_edit_initial_data(db):
         "country": "FR",
         "city": "Chamonix-Mont-Blanc",
         "address_line": "123 Rue du Mont Blanc",
-        "is_listed": False,
+        "is_listed": "false",
         "store_address_line": "",
         "store_city": "",
     }
@@ -147,7 +147,7 @@ def test_edit_form_wants_both_store_address_and_city(db):
     customer = customer_factory(email="half@example.fr")
 
     form = CustomerForm(
-        data=valid_customer_form_data(is_listed="on", store_address_line="2 Place du Lac"),
+        data=valid_customer_form_data(is_listed="true", store_address_line="2 Place du Lac"),
         customer=customer,
     )
 
