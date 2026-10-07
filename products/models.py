@@ -617,8 +617,10 @@ class Product(models.Model):
 class ProductProfile(models.Model):
     """Optional editable catalog information for a product.
 
-    The original image is the permanent source of truth.
-    The thumbnail is a derived asset and may be regenerated.
+    The original image is the permanent source of truth, stored cleaned
+    (no EXIF or other metadata; products/image_processing.py). The display
+    picture and the thumbnail are derived from it and may be regenerated
+    (manage.py rebuild_product_images).
     """
 
     class Category(models.TextChoices):
@@ -653,6 +655,13 @@ class ProductProfile(models.Model):
         upload_to="products/originals/%Y/%m/%d/",
         max_length=255,
         blank=True,
+    )
+
+    display = models.ImageField(
+        upload_to="products/display/%Y/%m/%d/",
+        max_length=255,
+        blank=True,
+        editable=False,
     )
 
     thumbnail = models.ImageField(

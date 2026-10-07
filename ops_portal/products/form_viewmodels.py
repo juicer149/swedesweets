@@ -13,6 +13,7 @@ from ops_portal.products.presentation import product_status_icon
 from ops_portal.products.pricing_forms import (
     ProductPricingForm,
 )
+from products.images import product_display_url
 from products.models import Product
 
 PRODUCT_FORM_TABS = (
@@ -136,16 +137,4 @@ def build_edit_product_form_context(
 def _current_product_image_url(
     product: Product,
 ) -> str:
-    profile = getattr(
-        product,
-        "profile",
-        None,
-    )
-
-    if (
-        profile is None
-        or not profile.image
-    ):
-        return ""
-
-    return profile.image.url
+    return product_display_url(getattr(product, "profile", None)) or ""

@@ -23,6 +23,7 @@ from ops_portal.products.presentation import (
     product_status_icon,
 )
 from pricing.models import CommercialPrice
+from products.images import product_display_url
 from products.models import (
     Product,
     ProductProfile,
@@ -600,9 +601,9 @@ def _build_batch_rows(
 def _profile_original_image_url(
     profile: ProductProfile,
 ) -> str:
-    if profile.image:
-        return profile.image.url
-    return ""
+    """The large picture behind "Open image" (the display size)."""
+
+    return product_display_url(profile) or ""
 
 
 def _product_status_label(

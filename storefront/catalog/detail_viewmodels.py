@@ -12,6 +12,7 @@ from common.catalog.viewmodels import (
     build_product_tabs,
 )
 from common.page_tabs import PageTab
+from products.images import product_display_url
 from products.localization import (
     translated_product_name,
 )
@@ -129,10 +130,7 @@ def _image_url(
     *,
     profile: ProductProfile | None,
 ) -> str | None:
-    if profile is None or not profile.image:
-        return None
-
-    return profile.image.url
+    return product_display_url(profile)
 
 
 def _description(
