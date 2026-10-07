@@ -1,0 +1,28 @@
+/* =============================================================================
+   Fonts: served from our own static files, never from Google's servers
+   (a request there hands the visitor's IP address to Google).
+
+   fredoka.woff2  headings and the start menu; round and glad like the logo.
+   nunito.woff2   everything else; its figures are already equal width, so
+                  prices and quantities line up without tabular-nums.
+
+   Both are variable (one file for every weight) and cut to the Latin
+   letters French, Swedish and English need, plus € and arrows. Licence:
+   SIL Open Font License, next to the files.
+   ============================================================================= */
+
+@font-face {
+  font-family: "Fredoka";
+  src: url("../fonts/fredoka.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nunito";
+  src: url("../fonts/nunito.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}

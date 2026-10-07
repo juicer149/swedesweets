@@ -43,6 +43,7 @@ p {
 h1,
 h2 {
   font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
   line-height: var(--line-height-tight);
   color: var(--color-text-heading);
 }
@@ -50,13 +51,11 @@ h2 {
 h1 {
   margin-bottom: var(--space-4);
   font-size: clamp(2.5rem, 5vw, var(--font-size-48));
-  font-weight: 500;
 }
 
 h2 {
   margin-bottom: var(--space-6);
   font-size: var(--font-size-36);
-  font-weight: 700;
 }
 
 h3 {

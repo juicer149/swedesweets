@@ -77,9 +77,15 @@ Decoration (the binoculars) uses brand yellow softened with
 
 ## Type
 
-- **Body:** Manrope (`--font-body`). **Headings:** Lora (`--font-heading`).
+- **Body:** Nunito (`--font-body`). **Headings:** Fredoka
+  (`--font-heading`, weight `--font-weight-heading`, 600): round like the
+  logo, so the glad voice sits in headings and everything read or filled
+  in stays calm.
+- Both are our own files (`static/fonts/`, `css/fonts.css`), never Google's
+  servers. Nunito's figures are equal width, so prices and quantities line
+  up without `tabular-nums`.
 - Sizes from the scale `--font-size-12 … -64`. Page titles are small and
-  calm (`.page__lead`, `--font-size-20`, weight 500), not hero-sized.
+  calm (`.page__lead`, `--font-size-20`), not hero-sized.
 - Headings have no full stop. Sentences in notes do.
 - A closing line or a quote may use the heading font (`.about__signoff`).
 
