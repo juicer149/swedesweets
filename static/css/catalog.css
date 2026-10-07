@@ -288,12 +288,14 @@
    ----------------------------------------------------------------------------- */
 
 .page.product {
-  width: min(100%, 960px);
+  width: min(100%, 860px);
 }
 
+/* The picture a fixed, modest size beside what to buy; it should show
+   the product, not fill the screen. */
 .product__main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, clamp(16rem, 32vw, 22rem)) minmax(0, 1fr);
   align-items: start;
   gap: clamp(var(--space-6), 5vw, var(--space-16));
 }
@@ -419,6 +421,11 @@
 
   .product__main {
     grid-template-columns: 1fr;
+  }
+
+  .product__media {
+    width: min(100%, 18rem);
+    margin-inline: auto;
   }
 
   .product__tabs .section-nav {
