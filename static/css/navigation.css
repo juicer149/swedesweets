@@ -249,6 +249,24 @@
 
 .site-nav-cart__trigger:hover,
 .site-nav-cart__trigger:focus-visible,
+/* Something just went into the cart (catalog "+ Add"): a little jump. */
+.site-nav-cart__trigger.is-bumped {
+  animation: site-nav-cart-bump 0.45s cubic-bezier(0.3, 1.6, 0.6, 1);
+}
+
+@keyframes site-nav-cart-bump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.18) rotate(-6deg); }
+  70% { transform: scale(0.96) rotate(3deg); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav-cart__trigger.is-bumped {
+    animation: none;
+  }
+}
+
 .site-nav-cart[open] .site-nav-cart__trigger {
   color: var(--color-primary-950);
   background: var(--color-accent-100);

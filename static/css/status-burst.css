@@ -1,0 +1,110 @@
+/* =============================================================================
+   Status burst (includes/ui/status_burst.html, status_burst.js)
+
+   While something is saved: eight dots in a ring, a bigger one going round.
+   When it is done the dots draw in and a mark grows from nothing in 0.2 s:
+   the success icon (the crown by default), or a red cross.
+
+     --status-burst-size     the ring (default 2.5rem)
+     --status-burst-dot      the dots' colour (default the brand yellow)
+     --status-burst-success  the success mark's colour
+   ============================================================================= */
+
+.status-burst {
+  --status-burst-size: 2.5rem;
+  --status-burst-dot: var(--color-brand-yellow);
+  --status-burst-success: var(--color-brand-yellow);
+
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--status-burst-size);
+  height: var(--status-burst-size);
+}
+
+/* Ops: blue dots, a green success mark (pass success_icon="check"). */
+.status-burst--ops {
+  --status-burst-dot: var(--color-primary-500);
+  --status-burst-success: var(--color-action-deliver);
+}
+
+.status-burst__dot {
+  position: absolute;
+  width: 18%;
+  height: 18%;
+  border-radius: 50%;
+  background: var(--status-burst-dot);
+  opacity: 0.45;
+  transform: rotate(calc(var(--i) * 45deg)) translateY(-150%);
+  transition: transform 0.18s ease-in, opacity 0.18s;
+}
+
+.status-burst[data-state="loading"] .status-burst__dot {
+  animation: status-burst-lead 0.8s linear infinite;
+  animation-delay: calc(var(--i) * 0.1s - 0.8s);
+}
+
+@keyframes status-burst-lead {
+  0%, 12% {
+    width: 26%;
+    height: 26%;
+    opacity: 1;
+  }
+
+  13%, 100% {
+    width: 18%;
+    height: 18%;
+    opacity: 0.45;
+  }
+}
+
+.status-burst[data-state="success"] .status-burst__dot,
+.status-burst[data-state="error"] .status-burst__dot {
+  opacity: 0;
+  transform: rotate(calc(var(--i) * 45deg)) translateY(0);
+  animation: none;
+}
+
+.status-burst__mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0);
+  transition:
+    transform 0.2s cubic-bezier(0.3, 1.6, 0.6, 1) 0.12s,
+    opacity 0.1s 0.12s;
+}
+
+.status-burst__mark .ui-icon-block {
+  width: 100%;
+  height: 100%;
+}
+
+.status-burst__mark--success {
+  color: var(--status-burst-success);
+}
+
+.status-burst__mark--error {
+  color: var(--color-status-danger-text);
+}
+
+.status-burst__mark--error .ui-icon-block {
+  width: 70%;
+  height: 70%;
+}
+
+.status-burst[data-state="success"] .status-burst__mark--success,
+.status-burst[data-state="error"] .status-burst__mark--error {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-burst__dot,
+  .status-burst__mark {
+    animation: none !important;
+    transition: none !important;
+  }
+}

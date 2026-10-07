@@ -151,6 +151,16 @@ beside what to buy, offers as chips, Description and Ingredients as
 tabs). The channel's pages only say where the form posts and what its
 button says. CSS in `static/css/catalog.css`.
 
+**Status burst:** `includes/ui/status_burst.html` (once per page, as a
+`<template>`) with `status_burst.js`. While something is saved, a ring of
+yellow dots with a bigger one going round, centred in place of the
+controls; then the dots draw in and a mark grows from nothing in 0.2 s and
+stays 0.5 s: the crown when it worked, a red cross when it did not. The
+request and a minimum of 0.5 s run side by side, so it never slows
+anything down. Ops can pass `success_icon="check"` and
+`tone="status-burst--ops"` (blue dots, green tick). Used by the catalog's
+green tick; the navbar cart then gives a little jump.
+
 **Tables** remain only where ops compare many columns (orders, batches,
 stock). On phones they become rows (`.mobile-lines`).
 

@@ -37,6 +37,10 @@
         </p>
       {% endif %}
 
+      {% if offer.price_label %}
+        <p class="tile__price">{{ offer.price_label }}</p>
+      {% endif %}
+
       {% if offer %}
         <form
           id="catalog-add-form-{{ card.product_id }}"
@@ -49,8 +53,6 @@
           <input type="hidden" name="commercial_price_id" value="{{ offer.commercial_price_id }}">
 
           <div class="tile__buy" data-catalog-purchase-default>
-            <span class="tile__price">{{ offer.price_label|default:"" }}</span>
-
             <button
               class="tile__add"
               type="submit"
@@ -58,8 +60,11 @@
               data-catalog-add-button
             >
               {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
+              <span>{% trans "Add" %}</span>
             </button>
           </div>
+
+          <div class="tile__status" data-catalog-status hidden></div>
 
           <div class="tile__quantity" data-catalog-purchase-quantity hidden>
             {% include "includes/ui/quantity_stepper.html" with id_prefix="catalog-quantity-" id_suffix=card.product_id only %}

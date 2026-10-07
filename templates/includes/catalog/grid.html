@@ -48,6 +48,8 @@
         {% trans "No products match your search." %}
       </p>
 
+      {% include "includes/ui/status_burst.html" with name="catalog" only %}
+
       <div class="tiles" aria-label="{% trans 'Products' %}">
         {% for card in product_cards %}
           {% include "includes/catalog/tile.html" with card=card csrf_token=csrf_token only %}

@@ -647,11 +647,34 @@
         return;
       }
 
-      void refreshNavbarCart({
+      const refreshed = refreshNavbarCart({
         preserveOpenState: true,
       });
+
+      if (event.detail?.bump) {
+        void refreshed.then(bumpCart);
+      }
     }
   );
+
+
+  /* A little jump of the cart button: something just went into it. */
+  function bumpCart() {
+    const trigger = cartTriggerElement();
+
+    if (!trigger) {
+      return;
+    }
+
+    trigger.classList.remove("is-bumped");
+    void trigger.offsetWidth; // restart the animation
+    trigger.classList.add("is-bumped");
+    trigger.addEventListener(
+      "animationend",
+      () => trigger.classList.remove("is-bumped"),
+      { once: true }
+    );
+  }
 
 
   /*

@@ -2,10 +2,11 @@
   The catalog (includes/catalog/grid.html), shop and business portal alike:
 
   - the category tabs and the search hide the tiles that do not match;
-  - a tile's "+" first asks for a quantity (the stepper, the green tick
-    and ×), then the tick posts the form as JSON, fills green ("Added")
-    for a moment, tells the navbar cart (cart-changed) and folds back to
-    the "+".
+  - a tile's "+ Add" first asks for a quantity (the stepper, the green
+    tick and ×); the tick posts the form as JSON while only the status
+    burst shows (status_burst.js: dots, then the crown or a red cross),
+    then folds back to "+ Add" and tells the navbar cart, which refreshes
+    and gives a little jump (cart-changed with bump).
 
   Without JavaScript the "+" simply posts the form: one of the tile's offer.
 */
@@ -97,9 +98,12 @@
 
   /* Quantity, then add ------------------------------------------------ */
 
-  function setFeedback(message) {
+  /* The line under the tools: read out by screen readers every time, seen
+     only when something went wrong (success has the crown). */
+  function setFeedback(message, { quiet = false } = {}) {
     if (feedback) {
       feedback.textContent = message;
+      feedback.classList.toggle("visually-hidden", quiet);
     }
   }
 
@@ -110,6 +114,7 @@
       input: form.querySelector("[data-quantity-input]"),
       confirm: form.querySelector("[data-catalog-confirm-button]"),
       add: form.querySelector("[data-catalog-add-button]"),
+      status: form.querySelector("[data-catalog-status]"),
     };
   }
 
@@ -152,49 +157,70 @@
     }
   }
 
-  async function addToCart(form) {
-    const { confirm } = parts(form);
+  async function postAdd(form) {
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: new FormData(form),
+      headers: { Accept: "application/json" },
+      credentials: "same-origin",
+    });
 
-    if (!confirm) {
+    const payload = await response.json();
+
+    if (!response.ok || !payload.ok) {
+      throw new Error(payload.message || fallbackErrorMessage);
+    }
+
+    return payload;
+  }
+
+  /* While the product is added only the status burst shows, centred where
+     the quantity row was: the dots, then the crown (or a red cross).
+     Without the burst script it simply posts and folds back. */
+  async function addToCart(form) {
+    const { quantity, status, confirm } = parts(form);
+
+    if (!quantity || !status || form.dataset.adding === "true") {
       return;
     }
 
-    const label = confirm.getAttribute("aria-label") || "";
-    confirm.disabled = true;
+    form.dataset.adding = "true";
+    quantity.hidden = true;
+    status.hidden = false;
 
-    try {
-      const response = await fetch(form.action, {
-        method: "POST",
-        body: new FormData(form),
-        headers: { Accept: "application/json" },
-        credentials: "same-origin",
-      });
+    const run = window.statusBurst
+      ? window.statusBurst.run
+      : async (_place, _name, request) => {
+          try {
+            return { ok: true, value: await request() };
+          } catch (error) {
+            return { ok: false, error };
+          }
+        };
 
-      const payload = await response.json();
+    const { ok, value, error } = await run(status, "catalog", () =>
+      postAdd(form)
+    );
 
-      if (!response.ok || !payload.ok) {
-        throw new Error(payload.message || fallbackErrorMessage);
-      }
+    status.hidden = true;
+    delete form.dataset.adding;
 
-      setFeedback(payload.message);
-      confirm.classList.add("is-added");
-      confirm.setAttribute("aria-label", addedLabel);
-
+    if (ok) {
+      setFeedback(value.message || addedLabel, { quiet: true });
+      foldBack(form);
       document.dispatchEvent(
-        new CustomEvent("cart-changed", { detail: { source: "catalog" } })
+        new CustomEvent("cart-changed", {
+          detail: { source: "catalog", bump: true },
+        })
       );
+      return;
+    }
 
-      window.setTimeout(() => {
-        confirm.classList.remove("is-added");
-        confirm.setAttribute("aria-label", label);
-        confirm.disabled = false;
-        foldBack(form);
-      }, 700);
-    } catch (error) {
-      confirm.disabled = false;
-      setFeedback(
-        error instanceof Error ? error.message : fallbackErrorMessage
-      );
+    // Back to the quantity, as it was, to try again.
+    quantity.hidden = false;
+    setFeedback(error instanceof Error ? error.message : fallbackErrorMessage);
+    if (confirm) {
+      confirm.focus();
     }
   }
 
@@ -213,6 +239,10 @@
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
+
+      if (form.dataset.adding === "true") {
+        return;
+      }
 
       if (!isAsking(form)) {
         askQuantity(form);

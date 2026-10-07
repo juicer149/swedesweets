@@ -6,8 +6,9 @@
 
      .catalog__tools   category tabs on the left, the search on the right
      .tiles > .tile    products on the page itself, no cards: a rounded
-                       picture, name, package, a deal hint, price and "+"
-     .tile__quantity   what the "+" opens: stepper, green tick, × (catalog.js)
+                       picture, name, package, a deal hint, price, "+ Add"
+     .tile__quantity   what "+ Add" opens: stepper, green tick, ×
+     .tile__status     while adding: only the status burst (catalog.js)
      .product          a product's page: picture beside what to buy, then
                        Description and Ingredients as tabs
    ============================================================================= */
@@ -157,47 +158,57 @@
   text-decoration: underline;
 }
 
+.tile__price {
+  margin: var(--space-2) 0 0;
+  color: var(--color-neutral-800);
+  font-weight: 700;
+}
+
 .tile__order {
   margin-top: auto;
-  padding-top: var(--space-2);
+  padding-top: var(--space-3);
 }
 
 .tile__buy,
-.tile__quantity {
+.tile__quantity,
+.tile__status {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   min-height: 2.5rem;
 }
 
-.tile__buy {
-  justify-content: space-between;
-}
-
 .tile__buy[hidden],
-.tile__quantity[hidden] {
+.tile__quantity[hidden],
+.tile__status[hidden] {
   display: none;
 }
 
-.tile__price {
-  color: var(--color-neutral-800);
-  font-weight: 700;
+/* While the product is added: only the status burst, centred. */
+.tile__status {
+  justify-content: center;
 }
 
-/* The "+": round, edged in the action yellow, not filled (the filled
-   yellow is the one action of a page; a catalog has one per product). */
+/* "+ Add": as wide as the tile, edged in the action yellow, not filled
+   (the filled yellow is the one action of a page; a catalog has one per
+   product). */
 .tile__add {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0;
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.5rem;
+  padding: 0 var(--space-4);
 
   color: var(--color-accent-900);
   background: transparent;
   border: 1.5px solid var(--color-accent-600);
   border-radius: var(--radius-pill);
+
+  font: inherit;
+  font-size: var(--font-size-14);
+  font-weight: 700;
 
   cursor: pointer;
   transition: background var(--motion-fast);
@@ -212,9 +223,9 @@
   outline-offset: 2px;
 }
 
-/* One row in the place of the price and "+": the stepper on the left,
-   growing with the room the tile has, the tick and × on the right where
-   the "+" was. Only a very narrow tile wraps the tick and × under it. */
+/* One row in the place of "+ Add": the stepper on the left, growing with
+   the room the tile has, the tick and × on the right. Only a very narrow
+   tile wraps the tick and × under it. */
 .tile__quantity {
   flex-wrap: wrap;
   justify-content: space-between;
@@ -241,8 +252,8 @@
   margin-left: auto;
 }
 
-/* The tick that adds: round like the "+", in the deliver green (light
-   inside, dark tick and edge); filled once the product is in the cart. */
+/* The tick that adds: round, in the deliver green (light inside, dark
+   tick and edge). */
 .tile__confirm {
   display: grid;
   place-items: center;
@@ -267,12 +278,6 @@
 .tile__confirm:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
-}
-
-.tile__confirm.is-added {
-  color: var(--color-white);
-  background: var(--color-action-deliver);
-  border-color: var(--color-action-deliver);
 }
 
 .tile__cancel.quiet-link {

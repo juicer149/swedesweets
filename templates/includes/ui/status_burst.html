@@ -1,0 +1,22 @@
+{% comment %}
+  The status burst (status_burst.js, status-burst.css): a ring of dots
+  while something is saved, then a mark that grows in from nothing: the
+  success icon, or a red cross if it failed. Rendered once per page as a
+  <template>; the script clones it where it is needed.
+
+  name          what the script asks for (data-status-burst="name")
+  success_icon  icon name for success (default "crown", the brand's mark;
+                ops could use "check")
+  tone          extra class for another colour (e.g. "status-burst--ops")
+{% endcomment %}
+<template data-status-burst="{{ name }}">
+  <span class="status-burst{% if tone %} {{ tone }}{% endif %}" data-state="loading">
+    {% for i in "01234567" %}<span class="status-burst__dot" style="--i: {{ i }}"></span>{% endfor %}
+    <span class="status-burst__mark status-burst__mark--success">
+      {% include "includes/ui/icon_block.html" with name=success_icon|default:"crown" only %}
+    </span>
+    <span class="status-burst__mark status-burst__mark--error">
+      {% include "includes/ui/icon_block.html" with name="x" only %}
+    </span>
+  </span>
+</template>
