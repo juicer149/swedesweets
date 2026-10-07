@@ -106,39 +106,25 @@
   color: var(--color-neutral-800);
 }
 
-/* The title laid over the foot of a line drawing (Find Sweets): the
-   drawing fades out where the title's first line begins, so the lines
-   seem to pass behind it; no background, so the page's glow shows
-   through. However the title wraps, only its first line overlaps. */
+/* A heading that is only a line drawing (Find Sweets' binoculars); the
+   h1 is there for screen readers. The drawing stands on its own, with
+   more room under it so it reads as the page's opening, not as part of
+   the first row. */
 .page__heading--illustrated {
-  --title-overlap: 1.6rem;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   /* Up by the column's own top padding: the drawing carries its own air. */
   margin-top: calc(var(--space-4) * -1);
+  margin-bottom: clamp(var(--space-8), 7dvh, var(--space-12));
 }
 
 .page__heading--illustrated .page__illustration {
-  margin: 0;
-  mask-image: linear-gradient(
-    to bottom,
-    #000 calc(100% - var(--title-overlap) - 0.9rem),
-    transparent calc(100% - var(--title-overlap))
-  );
-}
-
-.page__heading--illustrated .page__lead {
-  margin: calc(var(--title-overlap) * -1) 0 0;
-  text-wrap: balance;
+  margin: 0 auto;
 }
 
 /* A large line drawing at the top of a page (Find Sweets' binoculars).
    Drawn in currentColor, so the colour is set here. */
 .page__illustration {
   display: block;
-  width: clamp(13rem, 55vw, 20rem);
+  width: clamp(11rem, 45vw, 15rem);
   height: auto;
   margin: clamp(var(--space-5), 4dvh, var(--space-8)) auto 0;
   /* A shade lighter than the title, so the words lead. */
