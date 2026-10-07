@@ -618,7 +618,7 @@ span.icon-rows__link .icon-rows__icon {
 
 /* Each kind of contact detail in its own colour, wherever the rows are
    (contact page, my account, an order's customer): mail blue, phone
-   green, address red like a map pin. */
+   green, address in the place red of a map pin. */
 .icon-rows .icon-rows__item .icon-rows__icon--mail {
   color: var(--color-primary-600);
 }
@@ -628,7 +628,7 @@ span.icon-rows__link .icon-rows__icon {
 }
 
 .icon-rows .icon-rows__item .icon-rows__icon--place {
-  color: var(--color-action-danger);
+  color: var(--color-place);
 }
 
 .icon-rows__link:focus-visible {

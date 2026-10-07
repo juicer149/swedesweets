@@ -143,6 +143,10 @@
   --color-brand-yellow: #f9b51a;
   --color-brand-blue: #2669ff;
 
+  /* A place on the map (address rows, Find Sweets): a deep brick red,
+     darker than the danger red so a pin never reads as a warning. */
+  --color-place: #a3392c;
+
   --color-action-place: var(--color-accent-600);
   --color-action-pack: var(--color-primary-500);
   --color-action-deliver: #248f4e;
