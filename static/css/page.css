@@ -116,6 +116,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Up by the column's own top padding: the drawing carries its own air. */
+  margin-top: calc(var(--space-4) * -1);
 }
 
 .page__heading--illustrated .page__illustration {
@@ -139,7 +141,8 @@
   width: clamp(13rem, 55vw, 20rem);
   height: auto;
   margin: clamp(var(--space-5), 4dvh, var(--space-8)) auto 0;
-  color: var(--color-neutral-700);
+  /* A shade lighter than the title, so the words lead. */
+  color: var(--color-neutral-600);
 }
 
 /* Small grey centred line: a count, a status, a description. */
