@@ -188,3 +188,36 @@
     background: var(--color-white);
   }
 }
+
+
+/* =============================================================================
+   The number hops when − or + changes it (quantity-stepper.js): up for +,
+   down for −.
+   ============================================================================= */
+
+.quantity-stepper__input--bump-up {
+  animation: quantity-bump-up 0.24s ease-out;
+}
+
+.quantity-stepper__input--bump-down {
+  animation: quantity-bump-down 0.24s ease-out;
+}
+
+@keyframes quantity-bump-up {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-3px) scale(1.18); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes quantity-bump-down {
+  0% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(3px) scale(0.88); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quantity-stepper__input--bump-up,
+  .quantity-stepper__input--bump-down {
+    animation: none;
+  }
+}

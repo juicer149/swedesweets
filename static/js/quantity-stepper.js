@@ -189,6 +189,40 @@
   }
 
 
+  /*
+   * A small hop of the number when − or + changed it (not when a script
+   * resets it), up for +, down for −, so the change is seen.
+   */
+  function bumpNumber(
+    stepper,
+    direction
+  ) {
+    const input = getInput(
+      stepper
+    );
+
+    if (!input) {
+      return;
+    }
+
+    const className = `quantity-stepper__input--bump-${direction}`;
+
+    input.classList.remove(
+      "quantity-stepper__input--bump-up",
+      "quantity-stepper__input--bump-down"
+    );
+    void input.offsetWidth; // restart the animation
+    input.classList.add(
+      className
+    );
+    input.addEventListener(
+      "animationend",
+      () => input.classList.remove(className),
+      { once: true }
+    );
+  }
+
+
   function decreaseQuantity(button) {
     const stepper = getStepper(
       button
@@ -231,6 +265,11 @@
         minimum,
         quantity - step
       )
+    );
+
+    bumpNumber(
+      stepper,
+      "down"
     );
   }
 
@@ -280,6 +319,11 @@
         maximum,
         nextQuantity
       )
+    );
+
+    bumpNumber(
+      stepper,
+      "up"
     );
   }
 
