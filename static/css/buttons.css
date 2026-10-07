@@ -26,10 +26,6 @@
          Transparent button with a visible border (the tone's edge). Used
          for list pages' "add" actions.
 
-       .button--ghost
-         Neutral secondary button. Use for back/cancel actions where the action
-         should not feel destructive.
-
        .button--text
          Text-only button. Use for compact inline actions.
 
@@ -55,7 +51,6 @@
 
    New templates should prefer explicit composition, for example:
      .button.button--md.button--solid.button--tone-place
-     .button.button--md.button--ghost.button--tone-neutral
      .button.button--sm.button--soft.button--tone-positive
    ============================================================================= */
 
@@ -392,27 +387,6 @@
 
 .button--outline:active {
   background: var(--button-outline-bg-active);
-  box-shadow: var(--shadow-pressed);
-  transform: translateY(0);
-}
-
-
-.button--ghost {
-  color: var(--button-soft-text);
-  background: transparent;
-  border-color: var(--button-soft-border);
-}
-
-.button--ghost:hover,
-.button--ghost:focus-visible {
-  background: var(--button-soft-bg-hover);
-  border-color: var(--button-soft-border-hover);
-  box-shadow: var(--button-soft-shadow-hover);
-  transform: var(--transform-lift-scale);
-}
-
-.button--ghost:active {
-  background: var(--button-soft-bg-active);
   box-shadow: var(--shadow-pressed);
   transform: translateY(0);
 }

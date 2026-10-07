@@ -308,8 +308,4 @@
   --shadow-focus-info: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
   --shadow-focus-danger: 0 0 0 3px rgb(var(--color-status-danger) / 0.10);
   --shadow-focus-danger-strong: 0 0 0 3px rgb(var(--color-status-danger) / 0.14);
-
-  --shadow-content-card:
-    0 8px 18px rgb(var(--color-row-shadow) / 0.08),
-    inset 0 5px 0 var(--color-accent-600);
 }

@@ -116,25 +116,21 @@
 /* Stock left, one scale everywhere (common.ui.build_quantity_info with
    the inventory.low_stock thresholds): green above running low, amber
    when running low (under ten), red when low (the dashboard's Low stock)
-   or empty. Stronger selectors keep the colour inside tables and cards. */
+   or empty. Stronger selectors keep the colour inside tables. */
 .quantity-text--safe,
-.data-table .numeric-cell .quantity-text--safe,
-.mobile-card .quantity-text--safe {
+.data-table .numeric-cell .quantity-text--safe {
   color: var(--color-status-success-text);
 }
 
 .quantity-text--running-low,
-.data-table .numeric-cell .quantity-text--running-low,
-.mobile-card .quantity-text--running-low {
+.data-table .numeric-cell .quantity-text--running-low {
   color: var(--color-status-warning-text);
 }
 
 .quantity-text--low,
 .quantity-text--empty,
 .data-table .numeric-cell .quantity-text--low,
-.mobile-card .quantity-text--low,
-.data-table .numeric-cell .quantity-text--empty,
-.mobile-card .quantity-text--empty {
+.data-table .numeric-cell .quantity-text--empty {
   color: var(--color-status-danger-text);
 }
 

@@ -111,32 +111,6 @@
 
 
 /* =============================================================================
-   Form context card
-
-   Low-hierarchy context shown above edit forms. It describes the locked/current
-   record without competing visually with the editable form card.
-   ============================================================================= */
-
-.form-context-card {
-  width: min(100%, var(--form-card-max-width));
-  margin: 0 auto var(--space-5);
-  padding: var(--space-4) var(--space-5);
-
-  background: rgb(255 255 255 / 0.52);
-  border: 1px solid rgb(var(--color-row-shadow) / 0.10);
-  border-radius: var(--radius-md);
-  box-shadow: 0 8px 18px rgb(var(--color-row-shadow) / 0.045);
-}
-
-
-@media (max-width: 767px) {
-  .form-context-card {
-    padding: var(--space-4);
-  }
-}
-
-
-/* =============================================================================
    Form help and errors
    ============================================================================= */
 
