@@ -9,7 +9,9 @@ def test_pages_carry_favicon_and_a_shareable_preview(client):
     html = client.get(reverse("public_site:faq")).content.decode()
 
     assert 'rel="icon"' in html
-    assert "favicon.svg" in html
+    # Static files carry a hash in production storage: favicon.<hash>.svg
+    assert "/static/images/favicon" in html
+    assert 'type="image/svg+xml"' in html
     assert 'rel="apple-touch-icon"' in html
     assert '<meta property="og:title" content="SwedeSweets">' in html
     # Sharing services need the picture's full address.
