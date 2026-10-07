@@ -1915,8 +1915,8 @@ msgid "Still have questions? Contact us"
 msgstr "Encore des questions ? Contactez-nous"
 
 #: templates/storefront/find_sweets.html:14
-msgid "Shops where you can buy our Swedish sweets"
-msgstr "Les boutiques où acheter nos bonbons suédois"
+msgid "Find where to buy our sweets"
+msgstr "Trouvez où acheter nos bonbons"
 
 #: templates/storefront/find_sweets.html:19
 msgid "Shops"
