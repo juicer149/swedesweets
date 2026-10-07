@@ -15,6 +15,7 @@ def test_business_navigation_has_shared_site_shape():
         "Catalog",
         "Find Sweets",
         "FAQ",
+        "About us",
     )
 
 
@@ -51,3 +52,10 @@ def test_business_find_sweets_is_public_and_faq_stays_in_business_portal():
         == reverse("business_portal:faq")
     )
     assert faq_item.icon == "question"
+
+
+def test_about_is_the_shared_public_page():
+    about_item = build_business_primary_nav_items()[3]
+
+    assert about_item.href == reverse("public_site:about")
+    assert about_item.icon == "info"

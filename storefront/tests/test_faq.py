@@ -41,7 +41,8 @@ def test_contact_is_the_last_question(client):
 
     contact = html.index('id="contact"')
     assert html.rindex('data-smooth-group="faq"') > contact
-    assert html.index('href="mailto:info@swedesweets.se"') > contact
+    # The reseller answer lists the mail too; this is the one after it.
+    assert html.index('href="mailto:info@swedesweets.se"', contact) > contact
     assert 'href="tel:+46739756195"' in html
 
 

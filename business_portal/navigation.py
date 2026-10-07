@@ -50,10 +50,20 @@ BUSINESS_FAQ_NAV_ITEM = BusinessNavItem(
 )
 
 
+BUSINESS_ABOUT_NAV_ITEM = BusinessNavItem(
+    label=_("About us"),
+    route_name="public_site:about",
+    namespace="public_site",
+    icon="info",
+    active_url_names=("about",),
+)
+
+
 BUSINESS_PRIMARY_NAV_ITEMS = (
     BUSINESS_CATALOG_NAV_ITEM,
     BUSINESS_FIND_SWEETS_NAV_ITEM,
     BUSINESS_FAQ_NAV_ITEM,
+    BUSINESS_ABOUT_NAV_ITEM,
 )
 
 
