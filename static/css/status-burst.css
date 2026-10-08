@@ -245,7 +245,7 @@
 
 .status-burst[data-style="dots"][data-state="loading"] .status-burst__beat {
   animation: crown-dot-wave var(--feedback-burst-cycle) ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.18s);
+  animation-delay: calc(var(--i) * var(--feedback-burst-cycle) / 6);
 }
 
 .status-burst[data-state="success"] .status-burst__beat,
@@ -281,7 +281,7 @@
 /* wave: the dots grow and shrink one after the other. */
 .status-burst[data-style="wave"][data-state="loading"] .status-burst__crown-dot {
   animation: crown-dot-wave var(--feedback-burst-cycle) ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.18s);
+  animation-delay: calc(var(--i) * var(--feedback-burst-cycle) / 6);
 }
 
 @keyframes crown-dot-wave {
@@ -297,7 +297,7 @@
 /* is_writing: the dots hop, like someone typing. */
 .status-burst[data-style="is_writing"][data-state="loading"] .status-burst__crown-dot {
   animation: crown-dot-hop var(--feedback-burst-cycle) ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.18s);
+  animation-delay: calc(var(--i) * var(--feedback-burst-cycle) / 6);
 }
 
 @keyframes crown-dot-hop {
@@ -313,7 +313,7 @@
 /* color_wave: another colour runs through the dots. */
 .status-burst[data-style="color_wave"][data-state="loading"] .status-burst__crown-dot {
   animation: crown-dot-glint var(--feedback-burst-cycle) ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.18s);
+  animation-delay: calc(var(--i) * var(--feedback-burst-cycle) / 6);
 }
 
 @keyframes crown-dot-glint {
@@ -343,7 +343,7 @@
 
 .status-burst[data-style="candy"][data-state="loading"] .status-burst__crown-dot {
   animation: crown-dot-wave var(--feedback-burst-cycle) ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.18s);
+  animation-delay: calc(var(--i) * var(--feedback-burst-cycle) / 6);
 }
 
 /* Done: the dots settle, the crown grows a little and glows. */
