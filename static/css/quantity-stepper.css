@@ -24,13 +24,13 @@
        --stepper-line-width  their width
        --stepper-number-bg   behind the number */
   --stepper-number: 3rem;
-  --stepper-bg: color-mix(in srgb, var(--color-primary-200) 40%, var(--color-white));
-  --stepper-bg-hover: color-mix(in srgb, var(--color-primary-200) 75%, var(--color-white));
+  --stepper-bg: color-mix(in srgb, var(--color-primary-100) 30%, transparent);
+  --stepper-bg-hover: color-mix(in srgb, var(--color-primary-100) 90%, transparent);
   --stepper-bg-press: var(--color-primary-200);
   --stepper-ink: var(--color-primary-800);
   --stepper-line: var(--color-primary-500);
-  --stepper-line-width: 1.5px;
-  --stepper-number-bg: var(--color-white);
+  --stepper-line-width: 1px;
+  --stepper-number-bg: transparent;
 
   display: grid;
   grid-template-columns:
