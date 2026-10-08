@@ -361,9 +361,9 @@
   /* the dots at least about one round, hardly a pause; the cart shows
      a moment, then the navbar's cart catches it (its jump and green
      flash) */
-  --feedback-min-loading: 850ms;
+  --feedback-min-loading: 600ms;
   --feedback-burst-rest: 100ms;
-  --feedback-mark-hold: 300ms;
+  --feedback-mark-hold: 650ms;
 }
 
 /* Login: three dots, then a tick (a cross if it did not work), yellow:

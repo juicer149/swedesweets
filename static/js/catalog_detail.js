@@ -5,10 +5,8 @@
     follow it;
   - Add is sent in the background, as on a catalog tile: the quantity and
     the button give way to the status burst (the dots, then the green
-    cart), the navbar's cart jumps, and the buyer stays on the page. A
-    problem is said under it.
-
-  Without JavaScript the form is sent as usual (and the catalog opens).
+    cart), and then the catalog opens (data-done-url), as it does without
+    JavaScript. A problem is said under it, on the page.
 */
 (() => {
   "use strict";
@@ -112,6 +110,12 @@
     status.hidden = false;
 
     const { ok, value, error } = await window.statusBurst.run(status, "default", post);
+
+    // Added: on to the catalog, the cart having shown it.
+    if (ok && form.dataset.doneUrl) {
+      window.location.assign(form.dataset.doneUrl);
+      return;
+    }
 
     status.hidden = true;
     add.hidden = false;

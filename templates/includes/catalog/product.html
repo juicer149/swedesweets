@@ -3,9 +3,8 @@
   A catalog product's page in the calm design, shared by the shop and the
   business portal. The picture beside what to buy: category, name,
   package, price and stock, the offers as chips when there are several,
-  quantity and the one yellow button (catalog_detail.js adds without
-  leaving the page: the dots, then the green cart, and the navbar's cart
-  jumps). Under both, Description and
+  quantity and the one yellow button (catalog_detail.js: the dots, then
+  the green cart, then back to the catalog, as without JavaScript). Under both, Description and
   Ingredients as tabs (page_tabs), and at the foot the quiet way back, as
   on every detail page (layouts/detail.html). catalog_detail.js keeps the
   price and stock in step with the chosen offer.
@@ -58,6 +57,7 @@
           method="post"
           action="{{ add_url }}"
           data-product-add-form
+          data-done-url="{{ cancel_url }}"
           data-error-message="{% trans 'Could not add product.' %}"
         >
           {% csrf_token %}
