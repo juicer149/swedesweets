@@ -308,11 +308,16 @@
     color: var(--color-action-deliver);
     background: var(--color-action-deliver-light-bg);
     border-color: var(--color-action-deliver);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-action-deliver-light-bg) 80%, transparent);
+    /* a soft glow, blurred outwards, no ring */
+    box-shadow:
+      0 0 12px 3px color-mix(in srgb, var(--color-action-deliver) 35%, transparent),
+      0 0 26px 10px color-mix(in srgb, var(--color-action-deliver-light-bg) 85%, transparent);
   }
 
   70% {
-    box-shadow: 0 0 10px 6px color-mix(in srgb, var(--color-action-deliver-light-bg) 55%, transparent);
+    box-shadow:
+      0 0 16px 4px color-mix(in srgb, var(--color-action-deliver) 15%, transparent),
+      0 0 32px 14px color-mix(in srgb, var(--color-action-deliver-light-bg) 45%, transparent);
   }
 }
 
