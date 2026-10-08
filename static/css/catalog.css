@@ -393,6 +393,24 @@
   margin: 0;
 }
 
+/* While adding: only the status burst, centred where the quantity and
+   the button were, at their height, so nothing below jumps. */
+.product__status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.9rem;
+}
+
+.product__status[hidden],
+.product__add[hidden] {
+  display: none;
+}
+
+.product__feedback:empty {
+  display: none;
+}
+
 .product__tabs {
   margin-top: clamp(var(--space-8), 6dvh, var(--space-12));
 }
@@ -444,4 +462,8 @@
     width: min(100%, 18rem);
     margin-inline: auto;
   }
+}
+
+.product__status .status-burst {
+  --status-burst-size: 2.75rem;
 }

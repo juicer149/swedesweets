@@ -349,9 +349,10 @@
    Places with their own burst (--feedback-burst-style / -mark above)
    ============================================================================= */
 
-/* The catalog's "Add": three dots, then the cart, green like the tick
-   that was pressed. */
-.tile__status {
+/* The catalog's "Add", on a tile and on a product's page: three dots,
+   then the cart, green like the tick that was pressed. */
+.tile__status,
+.product__status {
   --feedback-burst-style: dots;
   --feedback-burst-mark: cart;
   --status-burst-success: var(--color-action-deliver);

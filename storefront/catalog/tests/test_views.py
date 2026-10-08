@@ -76,6 +76,21 @@ def test_product_detail_is_reachable_by_anonymous_visitors(client):
 
 
 @pytest.mark.django_db
+def test_product_detail_adds_in_place_with_the_burst(client):
+    product = product_factory(name="Apple")
+    retail_product_price_factory(product=product, enabled=True, price=Decimal("12.50"))
+    retail_inventory_batch_factory(product=product, quantity=10)
+
+    html = client.get(
+        reverse("storefront:product_detail", kwargs={"product_id": product.id})
+    ).content.decode()
+
+    assert "data-product-add-form" in html
+    assert "data-product-status" in html
+    assert 'data-status-burst="default"' in html
+
+
+@pytest.mark.django_db
 def test_product_detail_returns_404_for_unknown_product(client):
     response = client.get(
         reverse(

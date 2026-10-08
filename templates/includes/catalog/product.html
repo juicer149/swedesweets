@@ -3,7 +3,9 @@
   A catalog product's page in the calm design, shared by the shop and the
   business portal. The picture beside what to buy: category, name,
   package, price and stock, the offers as chips when there are several,
-  quantity and the one yellow button. Under both, Description and
+  quantity and the one yellow button (catalog_detail.js adds without
+  leaving the page: the dots, then the green cart, and the navbar's cart
+  jumps). Under both, Description and
   Ingredients as tabs (page_tabs), and at the foot the quiet way back, as
   on every detail page (layouts/detail.html). catalog_detail.js keeps the
   price and stock in step with the chosen offer.
@@ -51,7 +53,13 @@
           >{{ initial_offer.availability_label }}</span>
         </p>
 
-        <form class="product__form" method="post" action="{{ add_url }}">
+        <form
+          class="product__form"
+          method="post"
+          action="{{ add_url }}"
+          data-product-add-form
+          data-error-message="{% trans 'Could not add product.' %}"
+        >
           {% csrf_token %}
 
           {% if offers|length > 1 %}
@@ -82,13 +90,18 @@
             <input type="hidden" name="commercial_price_id" value="{{ initial_offer.commercial_price_id }}">
           {% endif %}
 
-          <div class="product__add">
+          <div class="product__add" data-product-add>
             {% include "includes/ui/quantity_stepper.html" with id_prefix="product-quantity" only %}
 
             <button class="button button--md button--solid button--tone-place page__submit product__submit" type="submit">
               {{ add_label }}
             </button>
           </div>
+
+          {# While adding (catalog_detail.js): the dots, then the green cart, in its place. #}
+          <div class="product__status" data-product-status hidden></div>
+
+          <p class="page__note product__feedback" data-product-feedback role="status" aria-live="polite"></p>
         </form>
       </div>
     </div>
