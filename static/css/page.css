@@ -492,6 +492,11 @@ body:has(.screen) .site-footer {
     margin-block: 0;
   }
 
+  /* A problem above the fields keeps some air before the first one. */
+  .page--auth > .form-errors {
+    margin-bottom: clamp(var(--space-4), 2.5dvh, var(--space-5));
+  }
+
   .page.page--auth > .page__actions {
     margin-top: clamp(var(--space-5), 4dvh, var(--space-7));
   }

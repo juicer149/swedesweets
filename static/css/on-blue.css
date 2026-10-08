@@ -7,7 +7,9 @@
 
    Red cannot be read on this blue, so a problem is said in cream with a
    yellow mark (accent-600) beside it, and a field with a problem gets a
-   yellow ring.
+   yellow ring. The focus is yellow too (accent-600): the usual blue ring
+   would vanish. The chosen language stays cream: on these pages yellow
+   belongs to the one button.
    ============================================================================= */
 
 body.on-blue {
@@ -129,9 +131,24 @@ body.on-blue {
   color: inherit;
 }
 
+/* Focus: the field's blue ring cannot be seen on blue; a yellow one. */
+.on-blue .form-field input:focus,
+.on-blue .form-field select:focus,
+.on-blue .form-field textarea:focus,
+.on-blue .form-field--error input:focus {
+  background: var(--color-white);
+  border-color: var(--on-blue-mark);
+  box-shadow: 0 0 0 3px var(--on-blue-mark);
+}
+
+.on-blue .password-field__toggle:focus-visible {
+  outline-color: var(--on-blue-mark);
+}
+
 .on-blue .form-field--error input,
 .on-blue .form-field--error select,
 .on-blue .form-field--error textarea {
   border-color: var(--on-blue-mark);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--on-blue-mark) 55%, transparent);
+  /* thinner than the focus ring, so the field you are in still shows */
+  box-shadow: 0 0 0 1px var(--on-blue-mark);
 }
