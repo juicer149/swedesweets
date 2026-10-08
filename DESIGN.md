@@ -168,7 +168,8 @@ How it looks is two tokens in `tokens.css`: `--feedback-burst-style`
 `--feedback-burst-mark` (after `ring` or `dots`: `crown`, `cart` or
 `check`). Every style but the ring ends on a whole round of its dots
 (`--feedback-burst-cycle`), the dots stop a moment
-(`--feedback-burst-rest`), then the mark grows, or the crown glows. A place
+(`--feedback-burst-rest`), then the mark grows, or the crown glows, with a
+soft halo of the place's colour behind it (`--status-burst-halo`). A place
 gets its own look by setting the tokens on its element, at the end of
 `tokens.css`: the crown's wave is the default and belongs to orders; the
 catalog's Add is dots then the cart; login is dots then a tick. The request
