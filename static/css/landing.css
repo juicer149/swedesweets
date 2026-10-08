@@ -149,11 +149,14 @@ body:has(> .landing) {
     var(--landing-splash) both;
 }
 
+/* The clipping is only there for the opening; a wide margin of room
+   inside it (taken back with the negative margin) keeps the crowns, which
+   stand out over the words, from being cut on any browser. */
 .landing__menu-inner {
   min-height: 0;
+  margin: -1rem -2.5rem;
+  padding: 1rem 2.5rem;
   overflow: hidden;
-  /* room for the focus ring inside the clipping */
-  padding: 0.25rem;
 }
 
 .landing-menu {
