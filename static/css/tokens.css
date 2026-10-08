@@ -298,6 +298,9 @@
      the wave always finishes before the crown glows. */
   --feedback-burst-cycle: 1050ms;
 
+  /* After the last round the crown stands still this long, then glows. */
+  --feedback-burst-rest: 250ms;
+
   --transform-lift: translateY(-1px);
   --transform-lift-scale: translateY(-1px) scale(1.01);
 

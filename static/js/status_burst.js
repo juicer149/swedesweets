@@ -68,8 +68,8 @@
   }
 
   /* The crown styles end on a whole round of their dots
-     (--feedback-burst-cycle), never in the middle of one, so the wave
-     always finishes before the crown glows. */
+     (--feedback-burst-cycle), never in the middle of one, and the crown
+     then stands still a moment (--feedback-burst-rest) before it glows. */
   function untilRoundEnds(burst, startedAt) {
     if (!burst || burst.dataset.style === "ring") {
       return Promise.resolve();
@@ -77,9 +77,10 @@
 
     const round = tokenMs("--feedback-burst-cycle", 1050);
     const elapsed = performance.now() - startedAt;
-    const rest = round - (elapsed % round);
+    const left = round - (elapsed % round);
 
-    return wait(rest < round ? rest : 0);
+    // Then a still moment (--feedback-burst-rest) before the glow.
+    return wait((left < round ? left : 0) + tokenMs("--feedback-burst-rest", 250));
   }
 
   async function run(place, name, request) {
