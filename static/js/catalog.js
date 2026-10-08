@@ -193,16 +193,35 @@
 
     const run = window.statusBurst
       ? window.statusBurst.run
-      : async (_place, _name, request) => {
+      : async (_place, _name, request, options = {}) => {
           try {
-            return { ok: true, value: await request() };
+            const value = await request();
+            options.onMark?.(true);
+            return { ok: true, value };
           } catch (error) {
             return { ok: false, error };
           }
         };
 
-    const { ok, value, error } = await run(status, "default", () =>
-      postAdd(form)
+    // The navbar's cart catches the product while the green cart still
+    // shows on the tile (a moment after it appears), so the two overlap.
+    const catchIt = (added) => {
+      if (added) {
+        window.setTimeout(() => {
+          document.dispatchEvent(
+            new CustomEvent("cart-changed", {
+              detail: { source: "catalog", bump: true },
+            })
+          );
+        }, 250);
+      }
+    };
+
+    const { ok, value, error } = await run(
+      status,
+      "default",
+      () => postAdd(form),
+      { onMark: catchIt }
     );
 
     status.hidden = true;
@@ -211,11 +230,6 @@
     if (ok) {
       setFeedback(value.message || addedLabel, { quiet: true });
       foldBack(form);
-      document.dispatchEvent(
-        new CustomEvent("cart-changed", {
-          detail: { source: "catalog", bump: true },
-        })
-      );
       return;
     }
 

@@ -95,7 +95,10 @@
     await wait(tokenMs("--feedback-burst-rest", 250, burst));
   }
 
-  async function run(place, name, request) {
+  /* options.onMark(ok) is called the moment the mark (or the cross)
+     appears, while it still shows: the catalog lets the navbar's cart
+     catch the product then, so the two overlap. */
+  async function run(place, name, request, options = {}) {
     const burst = create(name, place);
 
     if (burst) {
@@ -119,7 +122,7 @@
       wait(tokenMs("--feedback-min-loading", 500, place)),
     ]);
 
-    await finish(burst, outcome.ok);
+    await finish(burst, outcome.ok, options.onMark);
 
     place.replaceChildren();
 
@@ -129,13 +132,15 @@
   /* The end of a burst: the dots settle, then the mark (or the cross)
      grows and stays its while. submit_burst.js calls it too, before the
      next page. */
-  async function finish(burst, ok = true) {
+  async function finish(burst, ok = true, onMark = null) {
     if (!burst) {
+      onMark?.(ok);
       return;
     }
 
     await settle(burst);
     burst.dataset.state = ok ? "success" : "error";
+    onMark?.(ok);
     await wait(
       tokenMs("--feedback-mark-grow", 200, burst)
         + tokenMs("--feedback-mark-hold", 750, burst)

@@ -120,6 +120,11 @@ def test_navbar_cart_fragment_reads_customer_cart(
     assert navbar_line.line_id == line.id
     assert navbar_line.quantity == 3
 
+    # Little room: the name and the weight only, no number or unit.
+    assert not navbar_line.label.startswith("#")
+    assert "/" not in navbar_line.label
+    assert navbar_line.label.endswith(" g")
+
     # Read-only in the navbar: the quantity shown, changed on the cart's page.
     assert navbar_line.line_view.aside == "× 3"
     html = response.content.decode()

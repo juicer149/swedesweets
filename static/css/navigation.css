@@ -502,7 +502,8 @@
   height: 2rem;
   padding: 0;
 
-  color: var(--color-neutral-600);
+  /* a muted dark red: it takes something away */
+  color: color-mix(in srgb, var(--color-action-danger-on-light) 75%, var(--color-neutral-600));
   background: transparent;
   border: 0;
   border-radius: var(--radius-pill);
@@ -515,20 +516,22 @@
     transform var(--motion-fast);
 }
 
-.site-nav-cart-line__remove-button:hover,
-.site-nav-cart-line__remove-button:focus-visible {
-  color: var(--color-primary-950);
-  background: var(--color-accent-100);
-  transform: translateY(-1px);
+/* Dark red when pointed at, a little press, as on the cart's page
+   (lines.css); no yellow, which is for going on. */
+@media (hover: hover) and (pointer: fine) {
+  .site-nav-cart-line__remove-button:hover {
+    color: var(--color-action-danger-on-light);
+  }
 }
 
 .site-nav-cart-line__remove-button:focus-visible {
-  outline: 2px solid var(--color-accent-600);
-  outline-offset: 3px;
+  color: var(--color-action-danger-on-light);
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
 }
 
 .site-nav-cart-line__remove-button:active {
-  transform: translateY(0);
+  transform: scale(0.9);
 }
 
 .site-nav-cart-line__remove-button:disabled {

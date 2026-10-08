@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from business_portal.orders.product_presentation import (
     business_cart_line_presentation,
+    business_product_short_label,
 )
 from carts.models import Cart
 from common.navbar_cart import (
@@ -128,7 +129,10 @@ def _build_business_navbar_cart_line(
 
     return NavbarCartLine(
         line_id=line.id,
-        label=presentation.catalog_label,
+        label=business_product_short_label(
+            product,
+            language_code=language_code,
+        ),
         product_url=reverse(
             "business_portal:catalog_product",
             kwargs={

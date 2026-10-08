@@ -41,6 +41,20 @@ def business_product_catalog_label(
     )
 
 
+def business_product_short_label(
+    product: Product,
+    *,
+    language_code: str,
+) -> str:
+    """Name and weight only ("Rambo — Twist · 2000 g"): where there is
+    little room, as in the navbar's cart."""
+
+    return (
+        f"{translated_product_name(product, language_code=language_code)} · "
+        f"{product.weight_label}"
+    )
+
+
 def business_order_line_presentation(
     line: OrderLine,
     *,
