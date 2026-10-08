@@ -35,17 +35,18 @@
 
   const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
-  /* Which look: --feedback-burst-style, read where the burst goes, so the
-     CSS chooses it: the whole site in tokens.css, and a place of its own
-     by setting the token on its element (login's ring, in tokens.css too). */
-  function burstStyle(place) {
+  /* Which look: --feedback-burst-style and --feedback-burst-mark, read
+     where the burst goes, so the CSS chooses them: the whole site in
+     tokens.css, and a place of its own by setting them on its element
+     (the end of tokens.css). */
+  function token(place, name, fallback) {
     const element = place instanceof Element ? place : document.documentElement;
 
     return (
       getComputedStyle(element)
-        .getPropertyValue("--feedback-burst-style")
+        .getPropertyValue(name)
         .trim()
-        .replace(/["']/g, "") || "ring"
+        .replace(/["']/g, "") || fallback
     );
   }
 
@@ -59,11 +60,12 @@
     }
 
     const burst = template.content.firstElementChild.cloneNode(true);
-    burst.dataset.style = burstStyle(place);
+    burst.dataset.style = token(place, "--feedback-burst-style", "ring");
+    burst.dataset.mark = token(place, "--feedback-burst-mark", "crown");
     return burst;
   }
 
-  /* The crown styles end on a whole round of their dots
+  /* Every style but the ring ends on a whole round of its dots
      (--feedback-burst-cycle), never in the middle of one; then the dots
      stop and the crown stands still a moment (--feedback-burst-rest,
      data-state "still") before it glows. */

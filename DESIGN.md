@@ -161,17 +161,17 @@ button says. CSS in `static/css/catalog.css`.
 **Status burst:** `includes/ui/status_burst.html`, rendered once in
 `base.html` as a `<template>`, with `status_burst.js` (also loaded there).
 While something is saved something waits in place of the controls; then a
-mark says how it went: the crown when it worked, a cross when it did not.
-How the waiting looks is one token, `--feedback-burst-style` in
-`tokens.css` (being tried out):
-`ring` (eight dots, then the crown grows in), `wave` (the logo's crown, its
-three dots growing in turn), `is_writing` (the dots hop), `color_wave` (a
-colour runs through the dots), `candy` (three sweet colours). With the
-crown styles, the wait ends on a whole round of the dots
-(`--feedback-burst-cycle`), the dots stop and the crown stands still a
-moment (`--feedback-burst-rest`), then grows a little with a glow. A
-place gets its own look by setting the token on its element, at the end of
-`tokens.css` (login: `ring`). The request
+mark says how it went, or a cross when it did not.
+How it looks is two tokens in `tokens.css`: `--feedback-burst-style`
+(`ring`, `dots`, or the crown styles `wave`, `is_writing`, `color_wave`,
+`candy`, where the logo's crown waits and its dots move) and
+`--feedback-burst-mark` (after `ring` or `dots`: `crown`, `cart` or
+`check`). Every style but the ring ends on a whole round of its dots
+(`--feedback-burst-cycle`), the dots stop a moment
+(`--feedback-burst-rest`), then the mark grows, or the crown glows. A place
+gets its own look by setting the tokens on its element, at the end of
+`tokens.css`: the crown's wave is the default and belongs to orders; the
+catalog's Add is dots then the cart; login is dots then a tick. The request
 and a minimum time run side by side, so it never slows anything down. The
 times (`--feedback-min-loading`, `--feedback-mark-grow`,
 `--feedback-mark-hold`) are tokens too, read by the script. Used by the

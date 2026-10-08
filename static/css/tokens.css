@@ -284,16 +284,17 @@
   --feedback-mark-grow: 200ms;
   --feedback-mark-hold: 750ms;
 
-  /* How the waiting looks (includes/ui/status_burst.html), one of:
-       ring        eight dots in a ring, then the crown grows in
-       wave        the crown, its three dots growing one after the other
-       is_writing  the crown, its dots hopping like someone typing
-       color_wave  the crown, a cream glint running through its dots
-       candy       the crown, its dots in three sweet colours, in turn
-     status_burst.js reads it where the burst goes and sets data-style on
-     the burst, so a place can have its own: set the token on it (see
-     "Places with their own burst" at the end of this file). */
+  /* How the waiting looks (includes/ui/status_burst.html):
+       --feedback-burst-style  ring, dots, wave, is_writing, color_wave,
+                               candy (the last four: the logo's crown,
+                               its dots moving)
+       --feedback-burst-mark   after ring or dots, what grows in when it
+                               worked: crown, cart or check
+     status_burst.js reads them where the burst goes, so a place can have
+     its own: set them on it (the end of this file). The default, the
+     crown's wave, is for orders: the crown is an order going through. */
   --feedback-burst-style: wave;
+  --feedback-burst-mark: crown;
 
   /* One round of the crown's dots. The wait ends on a whole round, so
      the wave always finishes before the crown glows. */
@@ -343,10 +344,17 @@
 
 
 /* =============================================================================
-   Places with their own burst (--feedback-burst-style above)
+   Places with their own burst (--feedback-burst-style / -mark above)
    ============================================================================= */
 
-/* Login: the ring of dots, then the crown grows in. */
+/* The catalog's "Add": three dots, then the cart. */
+.tile__status {
+  --feedback-burst-style: dots;
+  --feedback-burst-mark: cart;
+}
+
+/* Login: three dots, then a tick (a cross if it did not work). */
 .login__burst {
-  --feedback-burst-style: ring;
+  --feedback-burst-style: dots;
+  --feedback-burst-mark: check;
 }

@@ -125,14 +125,84 @@
   --status-burst-glint: var(--color-primary-500);
 }
 
-.status-burst:not([data-style]) .status-burst__crown,
-.status-burst[data-style="ring"] .status-burst__crown {
+/* Which parts show: the ring's dots for ring (or no style), the row of
+   dots for dots, the crown for the crown styles; and the one success mark
+   --feedback-burst-mark names (data-mark), except with the crown styles,
+   whose crown is the mark. */
+.status-burst__crown,
+.status-burst__beats,
+.status-burst__mark--success {
   display: none;
 }
 
-.status-burst[data-style]:not([data-style="ring"]) .status-burst__dot,
-.status-burst[data-style]:not([data-style="ring"]) .status-burst__mark--success {
+.status-burst:is(
+  [data-style="wave"],
+  [data-style="is_writing"],
+  [data-style="color_wave"],
+  [data-style="candy"]
+) .status-burst__crown {
+  display: block;
+}
+
+.status-burst[data-style]:not([data-style="ring"]) .status-burst__dot {
   display: none;
+}
+
+.status-burst[data-style="dots"] .status-burst__beats {
+  display: flex;
+}
+
+.status-burst:not(:is(
+  [data-style="wave"],
+  [data-style="is_writing"],
+  [data-style="color_wave"],
+  [data-style="candy"]
+)):is(
+  :not([data-mark]),
+  [data-mark="crown"]
+) .status-burst__mark--success[data-mark="crown"],
+.status-burst:not(:is(
+  [data-style="wave"],
+  [data-style="is_writing"],
+  [data-style="color_wave"],
+  [data-style="candy"]
+))[data-mark="cart"] .status-burst__mark--success[data-mark="cart"],
+.status-burst:not(:is(
+  [data-style="wave"],
+  [data-style="is_writing"],
+  [data-style="color_wave"],
+  [data-style="candy"]
+))[data-mark="check"] .status-burst__mark--success[data-mark="check"] {
+  display: grid;
+}
+
+/* dots: three in a row, growing one after the other; then they draw in
+   and the mark grows. */
+.status-burst__beats {
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 16%;
+}
+
+.status-burst__beat {
+  width: 17%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--status-burst-dot);
+  transition: transform 0.18s ease-in, opacity 0.18s;
+}
+
+.status-burst[data-style="dots"][data-state="loading"] .status-burst__beat {
+  animation: crown-dot-wave var(--feedback-burst-cycle) ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.18s);
+}
+
+.status-burst[data-state="success"] .status-burst__beat,
+.status-burst[data-state="error"] .status-burst__beat {
+  opacity: 0;
+  transform: scale(0);
 }
 
 .status-burst__crown {
@@ -258,7 +328,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .status-burst__crown,
-  .status-burst__crown-dot {
+  .status-burst__crown-dot,
+  .status-burst__beat {
     animation: none !important;
     transition: none !important;
   }
