@@ -285,9 +285,39 @@
   outline-offset: 4px;
 }
 
-/* Something just went into the cart (catalog "+ Add"): a little jump. */
+/* Something just went into the cart (catalog "+ Add"): a little jump,
+   and a light green flash of the button, its icon and its count, the
+   green of the tick that was pressed and the cart that grew in. */
 .site-nav-cart__trigger.is-bumped {
-  animation: site-nav-cart-bump 0.45s cubic-bezier(0.3, 1.6, 0.6, 1);
+  animation:
+    site-nav-cart-bump 0.45s cubic-bezier(0.3, 1.6, 0.6, 1),
+    site-nav-cart-flash 0.9s ease-out;
+}
+
+.site-nav-cart__trigger.is-bumped .site-nav-cart__count {
+  animation: site-nav-cart-count-flash 0.9s ease-out;
+}
+
+@keyframes site-nav-cart-flash {
+  0%, 100% {
+    /* the button's own colours */
+  }
+
+  25%, 45% {
+    color: var(--color-action-deliver);
+    background: var(--color-action-deliver-light-bg);
+    border-color: var(--color-action-deliver);
+  }
+}
+
+@keyframes site-nav-cart-count-flash {
+  0%, 100% {
+    /* the count's own colours */
+  }
+
+  25%, 45% {
+    background: var(--color-action-deliver);
+  }
 }
 
 @keyframes site-nav-cart-bump {
@@ -297,9 +327,10 @@
   100% { transform: scale(1); }
 }
 
+/* Less motion: no jump, the green flash only. */
 @media (prefers-reduced-motion: reduce) {
   .site-nav-cart__trigger.is-bumped {
-    animation: none;
+    animation: site-nav-cart-flash 0.9s ease-out;
   }
 }
 

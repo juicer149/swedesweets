@@ -658,7 +658,8 @@
   );
 
 
-  /* A little jump of the cart button: something just went into it. */
+  /* A little jump and a green flash of the cart button: something just
+     went into it (navigation.css). */
   function bumpCart() {
     const trigger = cartTriggerElement();
 
@@ -669,11 +670,17 @@
     trigger.classList.remove("is-bumped");
     void trigger.offsetWidth; // restart the animation
     trigger.classList.add("is-bumped");
-    trigger.addEventListener(
-      "animationend",
-      () => trigger.classList.remove("is-bumped"),
-      { once: true }
-    );
+    // Done when the green flash (the longer of the two) has ended.
+    const done = (event) => {
+      if (event.target !== trigger || event.animationName !== "site-nav-cart-flash") {
+        return;
+      }
+
+      trigger.classList.remove("is-bumped");
+      trigger.removeEventListener("animationend", done);
+    };
+
+    trigger.addEventListener("animationend", done);
   }
 
 
