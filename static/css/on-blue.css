@@ -188,11 +188,6 @@ body.on-blue {
   color: var(--on-blue-ink);
 }
 
-/* The glint in color_wave is cream on blue. */
-body.on-blue {
-  --status-burst-glint: var(--color-neutral-50);
-}
-
 /* The ring's dots: see-through yellow turns grey on blue, so here they
    stay whole and only the leading one grows. */
 .on-blue .status-burst__dot {

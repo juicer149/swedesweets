@@ -163,8 +163,8 @@ button says. CSS in `static/css/catalog.css`.
 While something is saved something waits in place of the controls; then a
 mark says how it went, or a cross when it did not.
 How it looks is two tokens in `tokens.css`: `--feedback-burst-style`
-(`ring`, `dots`, or the crown styles `wave`, `is_writing`, `color_wave`,
-`candy`, where the logo's crown waits and its dots move) and
+(`ring`, `dots`, or `wave`, where the logo's crown waits and its dots
+move) and
 `--feedback-burst-mark` (after `ring` or `dots`: `crown`, `cart` or
 `check`). The dots go round at one steady speed (`--feedback-burst-cycle`)
 until the answer is in, but at least `--feedback-min-loading`; then they

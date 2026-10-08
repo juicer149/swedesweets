@@ -16,7 +16,6 @@
 :root {
   --status-burst-dot: var(--color-brand-yellow);
   --status-burst-success: var(--color-brand-yellow);
-  --status-burst-glint: var(--color-primary-500);
   --status-burst-halo: var(--color-primary-200);
 }
 
@@ -165,31 +164,24 @@
 
 
 /* =============================================================================
-   The crown styles (--feedback-burst-style in tokens.css, set on each
-   burst as data-style by status_burst.js): the logo's crown stands there
-   while it waits, and its three dots move. Done: the dots settle, the
-   crown grows a little and glows. A problem: the crown goes, the cross
-   comes. "ring" (or no style) keeps the ring of dots above.
-
-     --status-burst-glint  the colour running through color_wave
+   The styles (--feedback-burst-style in tokens.css, set on each burst as
+   data-style by status_burst.js): wave, the logo's crown standing there
+   while its three dots move, then growing a little and glowing; dots,
+   three in a row, then the mark (--feedback-burst-mark) grows in; ring
+   (or no style), the ring of dots above. A problem: the cross.
    ============================================================================= */
 
 /* Which parts show: the ring's dots for ring (or no style), the row of
-   dots for dots, the crown for the crown styles; and the one success mark
-   --feedback-burst-mark names (data-mark), except with the crown styles,
-   whose crown is the mark. */
+   dots for dots, the crown for wave; and the one success mark
+   --feedback-burst-mark names (data-mark), except with wave, whose crown
+   is the mark. */
 .status-burst__crown,
 .status-burst__beats,
 .status-burst__mark--success {
   display: none;
 }
 
-.status-burst:is(
-  [data-style="wave"],
-  [data-style="is_writing"],
-  [data-style="color_wave"],
-  [data-style="candy"]
-) .status-burst__crown {
+.status-burst[data-style="wave"] .status-burst__crown {
   display: block;
 }
 
@@ -201,27 +193,12 @@
   display: flex;
 }
 
-.status-burst:not(:is(
-  [data-style="wave"],
-  [data-style="is_writing"],
-  [data-style="color_wave"],
-  [data-style="candy"]
-)):is(
+.status-burst:not([data-style="wave"]):is(
   :not([data-mark]),
   [data-mark="crown"]
 ) .status-burst__mark--success[data-mark="crown"],
-.status-burst:not(:is(
-  [data-style="wave"],
-  [data-style="is_writing"],
-  [data-style="color_wave"],
-  [data-style="candy"]
-))[data-mark="cart"] .status-burst__mark--success[data-mark="cart"],
-.status-burst:not(:is(
-  [data-style="wave"],
-  [data-style="is_writing"],
-  [data-style="color_wave"],
-  [data-style="candy"]
-))[data-mark="check"] .status-burst__mark--success[data-mark="check"] {
+.status-burst:not([data-style="wave"])[data-mark="cart"] .status-burst__mark--success[data-mark="cart"],
+.status-burst:not([data-style="wave"])[data-mark="check"] .status-burst__mark--success[data-mark="check"] {
   display: grid;
 }
 
@@ -292,58 +269,6 @@
   25% {
     transform: scale(1.8);
   }
-}
-
-/* is_writing: the dots hop, like someone typing. */
-.status-burst[data-style="is_writing"][data-state="loading"] .status-burst__crown-dot {
-  animation: crown-dot-hop var(--feedback-burst-cycle) ease-in-out infinite;
-  animation-delay: calc(var(--i) * var(--feedback-burst-cycle) / 6);
-}
-
-@keyframes crown-dot-hop {
-  0%, 60%, 100% {
-    transform: translateY(0);
-  }
-
-  25% {
-    transform: translateY(-18px) scale(1.15);
-  }
-}
-
-/* color_wave: another colour runs through the dots. */
-.status-burst[data-style="color_wave"][data-state="loading"] .status-burst__crown-dot {
-  animation: crown-dot-glint var(--feedback-burst-cycle) ease-in-out infinite;
-  animation-delay: calc(var(--i) * var(--feedback-burst-cycle) / 6);
-}
-
-@keyframes crown-dot-glint {
-  0%, 60%, 100% {
-    fill: currentColor;
-    transform: scale(1);
-  }
-
-  25% {
-    fill: var(--status-burst-glint);
-    transform: scale(1.25);
-  }
-}
-
-/* candy: three sweet colours, growing in turn. */
-.status-burst[data-style="candy"] .status-burst__crown-dot:nth-of-type(2) {
-  fill: #ef5b8c;
-}
-
-.status-burst[data-style="candy"] .status-burst__crown-dot:nth-of-type(3) {
-  fill: #2fb37a;
-}
-
-.status-burst[data-style="candy"] .status-burst__crown-dot:nth-of-type(4) {
-  fill: #ff8a3d;
-}
-
-.status-burst[data-style="candy"][data-state="loading"] .status-burst__crown-dot {
-  animation: crown-dot-wave var(--feedback-burst-cycle) ease-in-out infinite;
-  animation-delay: calc(var(--i) * var(--feedback-burst-cycle) / 6);
 }
 
 /* Done: the dots settle, the crown grows a little and glows. */

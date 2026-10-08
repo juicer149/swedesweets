@@ -285,9 +285,8 @@
   --feedback-mark-hold: 750ms;
 
   /* How the waiting looks (includes/ui/status_burst.html):
-       --feedback-burst-style  ring, dots, wave, is_writing, color_wave,
-                               candy (the last four: the logo's crown,
-                               its dots moving)
+       --feedback-burst-style  ring (eight dots), dots (three in a row) or
+                               wave (the logo's crown, its dots moving)
        --feedback-burst-mark   after ring or dots, what grows in when it
                                worked: crown, cart or check
      status_burst.js reads them where the burst goes, so a place can have
