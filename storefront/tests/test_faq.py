@@ -82,5 +82,9 @@ def test_footer_links_the_faq_instagram_and_tiktok(client):
 
     footer = html[html.index("site-footer"):]
     assert f'href="{reverse("public_site:faq")}"' in footer
+    # How to reach us: icons only, the number and the address in their labels.
+    assert 'href="tel:+46739756195"' in footer
+    assert 'href="mailto:info@swedesweets.se"' in footer
+    assert ">+46 (73) 975 61 95<" not in footer.replace("\n", "").replace("  ", "")
     assert 'href="https://www.instagram.com/swede_sweets/"' in footer
     assert 'href="https://www.tiktok.com/@swede_sweets"' in footer

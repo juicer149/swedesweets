@@ -1,7 +1,8 @@
 {% load i18n %}
 {% comment %}
-  The site footer (customer pages; ops hides it): who we are (About us),
-  the questions (FAQ), how to reach us, and where they post; quietly.
+  The site footer (customer pages; ops hides it): who we are (About us)
+  and the questions (FAQ) in words; how to reach us (phone, mail) and
+  where they post (Instagram, TikTok) as icons; quietly.
 {% endcomment %}
 <footer class="site-footer" aria-label="{% trans 'Site footer' %}">
   <div class="container site-footer__inner">
@@ -23,21 +24,31 @@
           {% trans "FAQ" %}
         </a>
       </li>
-      <li>
-        <a class="quiet-link" href="tel:+46739756195">
-          {% include "includes/ui/icon_block.html" with name="phone" size="sm" only %}
-          +46 (73) 975 61 95
-        </a>
-      </li>
-      <li>
-        <a class="quiet-link" href="mailto:info@swedesweets.se">
-          {% include "includes/ui/icon_block.html" with name="mail" size="sm" only %}
-          info@swedesweets.se
-        </a>
-      </li>
     </ul>
 
+    {# How to reach us and where they post: the icons alone (the number and #}
+    {# the address are on the FAQ page, under "Still have questions?"). #}
     <ul class="site-footer__social">
+      <li>
+        <a
+          class="quiet-link"
+          href="tel:+46739756195"
+          aria-label="{% trans 'Call us' %}: +46 (73) 975 61 95"
+          title="+46 (73) 975 61 95"
+        >
+          {% include "includes/ui/icon_block.html" with name="phone" only %}
+        </a>
+      </li>
+      <li>
+        <a
+          class="quiet-link"
+          href="mailto:info@swedesweets.se"
+          aria-label="{% trans 'Email us' %}: info@swedesweets.se"
+          title="info@swedesweets.se"
+        >
+          {% include "includes/ui/icon_block.html" with name="mail" only %}
+        </a>
+      </li>
       <li>
         <a
           class="quiet-link"

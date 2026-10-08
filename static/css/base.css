@@ -164,6 +164,11 @@ p {
   --icon-scale: 1.2;
 }
 
+/* The note sits small in its box; even it with the other footer icons. */
+.ui-icon-svg--tiktok {
+  --icon-scale: 1.2;
+}
+
 .ui-icon-svg--crown {
   fill: currentColor;
   stroke: none;

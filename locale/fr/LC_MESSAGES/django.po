@@ -2393,3 +2393,11 @@ msgstr "La plus douce tradition suédoise"
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
+
+#: templates/includes/footer.html
+msgid "Call us"
+msgstr "Appelez-nous"
+
+#: templates/includes/footer.html
+msgid "Email us"
+msgstr "Écrivez-nous"
