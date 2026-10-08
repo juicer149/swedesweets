@@ -73,6 +73,63 @@ body:has(.site-footer) .site-main {
   flex: 1 0 auto;
 }
 
+/* The ops footer (includes/ops_footer.html): one thin, quiet row at the
+   foot of the screen (who is signed in, My account, Log out). Thinner
+   than the customers' footer: ops pages are made to fit one screen. */
+body:has(.ops-footer) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+body:has(.ops-footer) .site-main {
+  flex: 1 0 auto;
+}
+
+.ops-footer {
+  padding-block: clamp(var(--space-1), 1dvh, var(--space-2));
+
+  color: var(--color-neutral-600);
+  border-top: 1px solid var(--color-neutral-200);
+
+  font-size: var(--font-size-14);
+}
+
+.ops-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 var(--space-1);
+}
+
+.ops-footer__who {
+  padding-inline: var(--space-2);
+}
+
+.ops-footer__who strong {
+  color: var(--color-neutral-800);
+  font-weight: 700;
+}
+
+.ops-footer__logout {
+  margin: 0;
+}
+
+.ops-footer .quiet-link {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-14);
+}
+
+.ops-footer .quiet-link[aria-current="page"] {
+  color: var(--color-neutral-800);
+}
+
+/* The one-screen pages (password change) have no footer. */
+body:has(.screen) .ops-footer {
+  display: none;
+}
+
 /* Pages without the footer (ops): no extra room under the content, so a
    page that fits the screen does not scroll, and a longer one scrolls
    just past its last button (the section keeps its own bottom padding).
@@ -93,6 +150,24 @@ body:has(.site-footer) .site-main {
   .site-footer {
     margin-top: 0;
     padding-bottom: calc(6.5rem + var(--space-4));
+  }
+
+  body:has(.ops-footer) .site-main {
+    padding-bottom: var(--space-4);
+  }
+
+  .ops-footer {
+    padding-bottom: calc(6.5rem + var(--space-2));
+  }
+
+  /* Who on a line of its own, the two links under it. */
+  .ops-footer__who {
+    flex-basis: 100%;
+    text-align: center;
+  }
+
+  .ops-footer__sep--who {
+    display: none;
   }
 }
 

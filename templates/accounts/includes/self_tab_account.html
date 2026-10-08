@@ -1,13 +1,7 @@
-{% comment %}The Account tab of My account: the facts, then Change password and Log out.{% endcomment %}
+{% comment %}The Account tab of My account: the facts, then Change password (Log out is in the ops footer).{% endcomment %}
 {% load i18n %}
 {% include "accounts/includes/account_facts.html" with account=account only %}
 
 <div class="form-actions page__actions">
   <a class="button button--md button--solid button--tone-place page__submit" href="{{ password_change_href }}">{% trans "Change password" %}</a>
-
-  {# Logging out lives here, not in the navbar: it is rarely done. #}
-  <form method="post" action="{% url 'logout' %}">
-    {% csrf_token %}
-    <button class="quiet-link" type="submit">{% trans "Log out" %}</button>
-  </form>
 </div>

@@ -247,8 +247,10 @@ def _build_ops_navigation(
         ),
         "navbar_cart": None,
         "account_menu": account_menu,
-        # A work tool: no site footer under the pages.
+        # A work tool: not the customers' footer, but its own thin one
+        # (who is signed in, My account, Log out).
         "hide_site_footer": True,
+        "show_ops_footer": account_menu is not None,
     }
 
 

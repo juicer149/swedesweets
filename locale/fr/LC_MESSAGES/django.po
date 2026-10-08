@@ -1357,6 +1357,9 @@ msgstr "Enregistrer les modifications"
 msgid "Cancel"
 msgstr "Annulée"
 
+msgid "Signed in as"
+msgstr "Connecté en tant que"
+
 msgid "Log out"
 msgstr "Se déconnecter"
 

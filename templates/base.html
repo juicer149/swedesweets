@@ -64,7 +64,9 @@
       </main>
     {% endblock %}
 
-    {% if not hide_site_footer %}
+    {% if show_ops_footer %}
+      {% include "includes/ops_footer.html" %}
+    {% elif not hide_site_footer %}
       {% include "includes/footer.html" %}
     {% endif %}
 

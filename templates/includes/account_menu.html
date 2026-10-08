@@ -2,20 +2,22 @@
 
 {% comment %}
   The navbar's account slot: links like the page links beside them (the
-  crown when you are on one). Staff first get the switch between the
-  public site and ops; everyone gets "My account" at the far right. The
-  logout is on the account page (one rarely logs out).
+  crown when you are on one). Business customers get "My account" (the
+  logout is on that page); staff get the switch between the public site
+  and ops (their account and the logout are in the ops footer).
 
   The caller supplies an already-composed AccountMenu; this template
   knows nothing about roles.
 
   Expects:
     account_menu.switch   AccountMenuItem | None
-    account_menu.account  AccountMenuItem
+    account_menu.account  AccountMenuItem | None
 {% endcomment %}
 
 {% if account_menu.switch %}
   {% include "includes/account_menu_link.html" with item=account_menu.switch %}
 {% endif %}
 
-{% include "includes/account_menu_link.html" with item=account_menu.account %}
+{% if account_menu.account %}
+  {% include "includes/account_menu_link.html" with item=account_menu.account %}
+{% endif %}

@@ -1,14 +1,15 @@
 """
 Identity links for the shared navbar account slot.
 
-No menu, only links, like the page links beside them: at the far right
-"My account" (the account page, which has the logout: one rarely logs
-out, so it needs no place in the navbar). Staff get one more link before
-it, a switch between the public site and ops: "Ops dashboard" on the
-public site, "Public site" in ops.
+No menu, only links, like the page links beside them. A business
+customer gets "My account" (their orders and details, with the logout:
+one rarely logs out, so it needs no place in the navbar). Staff get a
+switch between the public site and ops instead: "Ops dashboard" on the
+public site, "Public site" in ops; their own account and the logout are
+in the ops footer (includes/ops_footer.html).
 
-Logout is a POST action with CSRF protection; the account pages render
-it (business_portal account tab, accounts self tab).
+Logout is a POST action with CSRF protection; the business account tab
+and the ops footer render it.
 """
 
 from __future__ import annotations
@@ -34,15 +35,9 @@ class AccountMenuItem:
 
 @dataclass(frozen=True, slots=True)
 class AccountMenu:
-    account: AccountMenuItem
+    account: AccountMenuItem | None = None
     switch: AccountMenuItem | None = None
 
-
-MY_ACCOUNT_MENU_ITEM = AccountMenuItem(
-    label=_("My account"),
-    route_name="accounts:me",
-    icon="users",
-)
 
 BUSINESS_ACCOUNT_MENU_ITEM = AccountMenuItem(
     label=_("My account"),
@@ -71,10 +66,7 @@ def build_storefront_account_menu(
     """The account links while browsing the public storefront."""
 
     if role_spec.allows(Capability.VIEW_STAFF_OPS):
-        return AccountMenu(
-            account=MY_ACCOUNT_MENU_ITEM,
-            switch=OPS_DASHBOARD_MENU_ITEM,
-        )
+        return AccountMenu(switch=OPS_DASHBOARD_MENU_ITEM)
 
     if account_role == AccountRole.BUSINESS_CUSTOMER:
         return build_business_account_menu()
@@ -91,7 +83,4 @@ def build_business_account_menu() -> AccountMenu:
 def build_ops_account_menu() -> AccountMenu:
     """The account links inside the operations portal."""
 
-    return AccountMenu(
-        account=MY_ACCOUNT_MENU_ITEM,
-        switch=PUBLIC_SITE_MENU_ITEM,
-    )
+    return AccountMenu(switch=PUBLIC_SITE_MENU_ITEM)

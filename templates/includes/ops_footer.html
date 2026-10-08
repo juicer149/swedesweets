@@ -1,0 +1,33 @@
+{% load i18n %}
+{% comment %}
+  The ops footer (staff, in ops): one thin, quiet row. Who is signed in
+  (a shared tablet in the shop shows it at a glance), their own account
+  page, and Log out: things rarely needed, so out of the navbar.
+{% endcomment %}
+<footer class="ops-footer" aria-label="{% trans 'Account' %}">
+  <div class="container ops-footer__inner">
+    <span class="ops-footer__who">
+      {% trans "Signed in as" %}
+      <strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong>
+    </span>
+
+    <span class="ops-footer__sep ops-footer__sep--who" aria-hidden="true">·</span>
+
+    <a
+      class="quiet-link ops-footer__link"
+      href="{% url 'accounts:me' %}"
+      {% if request.resolver_match.view_name == "accounts:me" %}aria-current="page"{% endif %}
+    >
+      {% trans "My account" %}
+    </a>
+
+    <span class="ops-footer__sep" aria-hidden="true">·</span>
+
+    <form class="ops-footer__logout" method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button class="quiet-link ops-footer__link" type="submit">
+        {% trans "Log out" %}
+      </button>
+    </form>
+  </div>
+</footer>
