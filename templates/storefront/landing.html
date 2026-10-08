@@ -94,7 +94,7 @@
 
     <div class="landing__bottom">
       {% if account_menu %}
-        {% with item=account_menu.items|last %}
+        {% with item=account_menu.switch|default:account_menu.account %}
           <a class="landing__account" href="{{ item.href }}">
             {% include "includes/ui/icon_block.html" with name=item.icon size="sm" only %}
             {{ item.label }}

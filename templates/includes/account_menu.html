@@ -1,90 +1,21 @@
 {% load i18n %}
 
 {% comment %}
-  Shared identity/context menu for navbar account slots.
+  The navbar's account slot: links like the page links beside them (the
+  crown when you are on one). Staff first get the switch between the
+  public site and ops; everyone gets "My account" at the far right. The
+  logout is on the account page (one rarely logs out).
 
-  The caller supplies an already-composed AccountMenu. This template knows
-  nothing about roles, portals or sales channels.
-
-  Logout is a POST form rather than a menu item because logging out mutates
-  authentication state and must carry CSRF protection.
-
-  One item (a business customer's "My account") is no menu: a plain link
-  that looks like the page links beside it (the crown when you are on
-  it), and the logout is on that page instead.
+  The caller supplies an already-composed AccountMenu; this template
+  knows nothing about roles.
 
   Expects:
-    account_menu.label
-    account_menu.items
-    account_menu.single_item
+    account_menu.switch   AccountMenuItem | None
+    account_menu.account  AccountMenuItem
 {% endcomment %}
 
-{% with item=account_menu.single_item %}
-{% if item %}
-<a
-  class="site-nav__link site-nav__account-link"
-  href="{{ item.href }}"
-  {% if request.resolver_match.view_name == item.route_name %}aria-current="page"{% endif %}
->
-  {% if item.icon %}
-    <span class="site-nav__icon" aria-hidden="true">
-      {% include "includes/ui/icon.html" with name=item.icon %}
-    </span>
-  {% endif %}
-
-  <span>{{ item.label }}</span>
-</a>
-{% else %}
-<details
-  class="site-nav-account"
-  data-dismiss-on-outside-click
->
-  <summary
-    class="site-nav-account__trigger site-nav__auth-action"
-    aria-label="{{ account_menu.label }}"
-  >
-    {% include "includes/ui/icon_block.html" with name="users" size="sm" only %}
-
-    <span class="site-nav-account__label">
-      {{ account_menu.label }}
-    </span>
-  </summary>
-
-  <div class="site-nav-account__popover">
-    {% if account_menu.items %}
-      <div class="site-nav-account__links">
-        {% for item in account_menu.items %}
-          <a
-            class="site-nav-account__link"
-            href="{{ item.href }}"
-          >
-            {% if item.icon %}
-              {% include "includes/ui/icon_block.html" with name=item.icon size="sm" only %}
-            {% endif %}
-
-            <span>
-              {{ item.label }}
-            </span>
-          </a>
-        {% endfor %}
-      </div>
-    {% endif %}
-
-    <form
-      class="site-nav-account__logout"
-      method="post"
-      action="{% url 'logout' %}"
-    >
-      {% csrf_token %}
-
-      <button
-        class="site-nav-account__logout-button"
-        type="submit"
-      >
-        {% trans "Logout" %}
-      </button>
-    </form>
-  </div>
-</details>
+{% if account_menu.switch %}
+  {% include "includes/account_menu_link.html" with item=account_menu.switch %}
 {% endif %}
-{% endwith %}
+
+{% include "includes/account_menu_link.html" with item=account_menu.account %}

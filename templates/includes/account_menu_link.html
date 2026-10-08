@@ -1,0 +1,17 @@
+{% comment %}
+  One link of the navbar's account slot (includes/account_menu.html).
+  Expects: item (AccountMenuItem), request.
+{% endcomment %}
+<a
+  class="site-nav__link site-nav__account-link"
+  href="{{ item.href }}"
+  {% if request.resolver_match.view_name == item.route_name %}aria-current="page"{% endif %}
+>
+  {% if item.icon %}
+    <span class="site-nav__icon" aria-hidden="true">
+      {% include "includes/ui/icon.html" with name=item.icon %}
+    </span>
+  {% endif %}
+
+  <span>{{ item.label }}</span>
+</a>

@@ -1,16 +1,14 @@
 """
-Identity menus for shared navbar account slots.
+Identity links for the shared navbar account slot.
 
-The account slot is shared presentation. Its contents depend on both
-identity and the current application zone.
+No menu, only links, like the page links beside them: at the far right
+"My account" (the account page, which has the logout: one rarely logs
+out, so it needs no place in the navbar). Staff get one more link before
+it, a switch between the public site and ops: "Ops dashboard" on the
+public site, "Public site" in ops.
 
-Logout is deliberately not represented as an AccountMenuItem because it is
-a POST action. includes/account_menu.html renders it separately with CSRF
-protection.
-
-A menu with one item (a business customer's) is not a menu: the navbar
-shows that one item as a plain link, like the page links beside it, and
-logging out lives on the account page (one rarely logs out).
+Logout is a POST action with CSRF protection; the account pages render
+it (business_portal account tab, accounts self tab).
 """
 
 from __future__ import annotations
@@ -36,14 +34,8 @@ class AccountMenuItem:
 
 @dataclass(frozen=True, slots=True)
 class AccountMenu:
-    label: str
-    items: tuple[AccountMenuItem, ...]
-
-    @property
-    def single_item(self) -> AccountMenuItem | None:
-        """The one item, when there is only one: shown as a plain link."""
-
-        return self.items[0] if len(self.items) == 1 else None
+    account: AccountMenuItem
+    switch: AccountMenuItem | None = None
 
 
 MY_ACCOUNT_MENU_ITEM = AccountMenuItem(
@@ -76,15 +68,12 @@ def build_storefront_account_menu(
     account_role: AccountRole,
     role_spec: RoleSpec,
 ) -> AccountMenu | None:
-    """Build the identity menu while browsing the public storefront."""
+    """The account links while browsing the public storefront."""
 
     if role_spec.allows(Capability.VIEW_STAFF_OPS):
         return AccountMenu(
-            label=_("Account"),
-            items=(
-                MY_ACCOUNT_MENU_ITEM,
-                OPS_DASHBOARD_MENU_ITEM,
-            ),
+            account=MY_ACCOUNT_MENU_ITEM,
+            switch=OPS_DASHBOARD_MENU_ITEM,
         )
 
     if account_role == AccountRole.BUSINESS_CUSTOMER:
@@ -94,23 +83,15 @@ def build_storefront_account_menu(
 
 
 def build_business_account_menu() -> AccountMenu:
-    """Build the identity menu for the business customer site."""
+    """The account link on the business customer site."""
 
-    return AccountMenu(
-        label=_("Account"),
-        items=(
-            BUSINESS_ACCOUNT_MENU_ITEM,
-        ),
-    )
+    return AccountMenu(account=BUSINESS_ACCOUNT_MENU_ITEM)
 
 
 def build_ops_account_menu() -> AccountMenu:
-    """Build identity/context navigation inside the operations portal."""
+    """The account links inside the operations portal."""
 
     return AccountMenu(
-        label=_("Account"),
-        items=(
-            MY_ACCOUNT_MENU_ITEM,
-            PUBLIC_SITE_MENU_ITEM,
-        ),
+        account=MY_ACCOUNT_MENU_ITEM,
+        switch=PUBLIC_SITE_MENU_ITEM,
     )
