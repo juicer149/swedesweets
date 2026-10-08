@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 02:00+0200\n"
+"POT-Creation-Date: 2026-10-08 02:40+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -1425,12 +1425,16 @@ msgstr "Pied de page"
 msgid "SwedeSweets on Instagram"
 msgstr "SwedeSweets sur Instagram"
 
+#: templates/includes/footer.html:56
+msgid "SwedeSweets on TikTok"
+msgstr "SwedeSweets sur TikTok"
+
 #: templates/includes/language_switcher.html:7
 msgid "Language"
 msgstr "Langue"
 
 #: templates/includes/navbar.html:9 templates/includes/site_navbar.html:26
-#: templates/storefront/landing.html:69
+#: templates/storefront/landing.html:70
 msgid "Primary navigation"
 msgstr "Navigation principale"
 
@@ -1441,7 +1445,7 @@ msgstr "Accueil SwedeSweets"
 
 #: templates/includes/navbar.html:99 templates/includes/site_navbar.html:115
 #: templates/registration/login.html:4 templates/registration/login.html:13
-#: templates/registration/login.html:31 templates/storefront/landing.html:101
+#: templates/registration/login.html:31 templates/storefront/landing.html:104
 msgid "Login"
 msgstr "Connexion"
 
@@ -1875,7 +1879,7 @@ msgstr "Boutiques"
 msgid "No shops are listed yet."
 msgstr "Aucune boutique n'est encore listée."
 
-#: templates/storefront/landing.html:19 templates/storefront/landing.html:61
+#: templates/storefront/landing.html:20 templates/storefront/landing.html:62
 msgid "Sweden’s sweetest tradition"
 msgstr "La plus douce tradition suédoise"
 
@@ -2389,7 +2393,3 @@ msgstr "La plus douce tradition suédoise"
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
-
-#: templates/includes/footer.html
-msgid "SwedeSweets on TikTok"
-msgstr "SwedeSweets sur TikTok"
