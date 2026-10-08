@@ -11,10 +11,16 @@
      --status-burst-success  the success mark's colour
    ============================================================================= */
 
-.status-burst {
-  --status-burst-size: 2.5rem;
+/* The colours are set on the page, not on the burst, so a place can give
+   its burst its own (the end of tokens.css: the catalog's green cart). */
+:root {
   --status-burst-dot: var(--color-brand-yellow);
   --status-burst-success: var(--color-brand-yellow);
+  --status-burst-glint: var(--color-primary-500);
+}
+
+.status-burst {
+  --status-burst-size: 2.5rem;
 
   position: relative;
   display: inline-grid;
@@ -120,10 +126,6 @@
 
      --status-burst-glint  the colour running through color_wave
    ============================================================================= */
-
-.status-burst {
-  --status-burst-glint: var(--color-primary-500);
-}
 
 /* Which parts show: the ring's dots for ring (or no style), the row of
    dots for dots, the crown for the crown styles; and the one success mark
