@@ -60,6 +60,16 @@ def test_the_ways_in_are_blue_and_the_shop_is_not(client):
     assert "on-blue" not in html
 
 
+@pytest.mark.django_db
+def test_login_shows_the_burst_while_it_logs_in(client):
+    html = client.get(reverse("login")).content.decode()
+
+    assert "data-login" in html
+    assert 'data-status-burst="login"' in html
+    assert "js/status_burst" in html
+    assert "js/login" in html
+
+
 def test_password_rules_lead_is_split_off():
     lead, items = split_password_rules([
         "Your password must contain at least 8 characters.",

@@ -152,3 +152,60 @@ body.on-blue {
   /* thinner than the focus ring, so the field you are in still shows */
   box-shadow: 0 0 0 1px var(--on-blue-mark);
 }
+
+
+/* Logging in (login.js): the form fades and the status burst stands where
+   it was, larger; its cross is cream here, red cannot be read on blue. */
+.page--auth > .login__burst {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.page--auth > .login__burst:empty {
+  display: none;
+}
+
+.page--auth > * {
+  transition: opacity var(--motion-fast);
+}
+
+.page--auth.is-sending > :not(.login__burst) {
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity var(--motion-fast),
+    visibility 0s linear 140ms;
+}
+
+.login__burst .status-burst {
+  --status-burst-size: clamp(3rem, 8dvh, 4rem);
+}
+
+.on-blue .status-burst__mark--error {
+  color: var(--on-blue-ink);
+}
+
+/* The dots: see-through yellow turns grey on blue, so here they stay
+   whole and only the leading one grows. */
+.on-blue .status-burst__dot {
+  opacity: 1;
+}
+
+.on-blue .status-burst[data-state="loading"] .status-burst__dot {
+  animation-name: status-burst-lead-solid;
+}
+
+@keyframes status-burst-lead-solid {
+  0%, 12% {
+    width: 26%;
+    height: 26%;
+  }
+
+  13%, 100% {
+    width: 16%;
+    height: 16%;
+  }
+}

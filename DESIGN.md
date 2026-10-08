@@ -258,6 +258,10 @@ drawing's faded foot (Find Sweets).
   door, cream is the shop. Red cannot be read on it, so problems are cream
   words with a yellow mark (accent-600). Changing the password from My
   account stays cream, inside the site.
+- **Logging in** (`login.js`): the form fades, the yellow dots stand in
+  its place while it is sent in the background, then the crown and the
+  next page; a wrong password gives a cream cross and the form back with
+  the problem above the fields.
 - **Head:** favicon (the crown), Open Graph image (logo on cream). Blocks
   `meta_description`, `og_title`, `og_description`, `og_image` in
   `base.html` for pages that want their own.
