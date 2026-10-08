@@ -1360,6 +1360,12 @@ msgstr "Annulée"
 msgid "Signed in as"
 msgstr "Connecté en tant que"
 
+msgid "I forgot my password. What do I do?"
+msgstr "J'ai oublié mon mot de passe. Que faire ?"
+
+msgid "For now, email us and we will get back to you."
+msgstr "Pour l'instant, écrivez-nous par e-mail et nous reviendrons vers vous."
+
 msgid "Log out"
 msgstr "Se déconnecter"
 

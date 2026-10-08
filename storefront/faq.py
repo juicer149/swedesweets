@@ -62,6 +62,13 @@ PUBLIC_FAQ: tuple[FaqItem, ...] = (
         link_label=_("Find Sweets"),
     ),
     BECOME_A_RESELLER,
+    # For now by mail; once the mail server sends mail, the answer points
+    # to "Forgot your password?" on the login page instead.
+    FaqItem(
+        _("I forgot my password. What do I do?"),
+        _("For now, email us and we will get back to you."),
+        contact=True,
+    ),
     # Waiting for answers:
     FaqItem(_("How long does delivery take, and what does it cost?")),
     FaqItem(_("Can I return or exchange merch?")),
@@ -70,14 +77,7 @@ PUBLIC_FAQ: tuple[FaqItem, ...] = (
 
 
 BUSINESS_FAQ: tuple[FaqItem, ...] = (
-    BECOME_A_RESELLER,
-    FaqItem(
-        _("How do I log in?"),
-        _(
-            "With the username and password you received from us. If you have "
-            "forgotten your password, use the link on the login page."
-        ),
-    ),
+    # Only for signed-in customers: no "become a reseller" or "log in".
     FaqItem(
         _("Can I change my store's details?"),
         _(
@@ -89,6 +89,14 @@ BUSINESS_FAQ: tuple[FaqItem, ...] = (
     FaqItem(_("Is there a minimum order?")),
     FaqItem(_("Which days do you deliver?")),
     FaqItem(_("How do invoices and payment terms work?")),
+    FaqItem(_("How long is the best-before date on delivery?")),
+    FaqItem(_("Can I order less than a whole box?")),
+    FaqItem(_("What do I do if something is damaged or missing in a delivery?")),
+    FaqItem(_("Can I cancel or change an order after placing it?")),
+    FaqItem(
+        _("Do you provide material for the shop, such as shelves, boxes, "
+          "signs, prices and pictures?")
+    ),
 )
 
 

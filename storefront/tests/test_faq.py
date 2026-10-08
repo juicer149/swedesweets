@@ -13,6 +13,13 @@ def test_answered_keeps_order_and_drops_unanswered_questions():
     assert [item.question for item in answered(items)] == ["A?", "C?"]
 
 
+def test_business_faq_has_no_questions_for_people_not_yet_signed_in():
+    questions = [str(item.question) for item in BUSINESS_FAQ]
+
+    assert "How do I become a reseller?" not in questions
+    assert "How do I log in?" not in questions
+
+
 def test_every_faq_list_has_answered_questions():
     assert answered(PUBLIC_FAQ)
     assert answered(BUSINESS_FAQ)
