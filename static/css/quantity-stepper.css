@@ -10,10 +10,10 @@
    ============================================================================= */
 
 .quantity-stepper {
-  /* Its look, in one place to try others. Now as the catalog's "+ Add":
-     edged in the action yellow, not filled, its signs dark. (The blue one
-     tried before: bg primary-200, hover between 200 and 300, press 300,
-     ink and line primary-800, line width 1px.)
+  /* Its look, in one place to try others: blue, as light as the
+     catalog's "+ Add" is yellow (an edge of the 500/600 strength, a very
+     light fill, dark signs). (Tried before: edged in the action yellow,
+     transparent, accent-900 signs, accent-100/200 when pointed/pressed.)
        --stepper-number      room for the number (three digits)
        --stepper-bg          the − and + buttons (and behind the parts,
                              so no white shows at the rounded edge)
@@ -21,14 +21,16 @@
        --stepper-bg-press    pressed
        --stepper-ink         the − and + themselves
        --stepper-line        the outline and the lines between the parts
-       --stepper-line-width  their width */
+       --stepper-line-width  their width
+       --stepper-number-bg   behind the number */
   --stepper-number: 3rem;
-  --stepper-bg: transparent;
-  --stepper-bg-hover: var(--color-accent-100);
-  --stepper-bg-press: var(--color-accent-200);
-  --stepper-ink: var(--color-accent-900);
-  --stepper-line: var(--color-accent-600);
+  --stepper-bg: color-mix(in srgb, var(--color-primary-200) 40%, var(--color-white));
+  --stepper-bg-hover: color-mix(in srgb, var(--color-primary-200) 75%, var(--color-white));
+  --stepper-bg-press: var(--color-primary-200);
+  --stepper-ink: var(--color-primary-800);
+  --stepper-line: var(--color-primary-500);
   --stepper-line-width: 1.5px;
+  --stepper-number-bg: var(--color-white);
 
   display: grid;
   grid-template-columns:
@@ -147,7 +149,7 @@
   padding: 0 var(--space-1);
 
   color: var(--color-primary-950);
-  background: transparent;
+  background: var(--stepper-number-bg);
   border: 0;
   border-radius: 0;
 
@@ -202,7 +204,7 @@
   }
 
   .quantity-stepper__input:hover {
-    background: transparent;
+    background: var(--stepper-number-bg);
   }
 }
 
