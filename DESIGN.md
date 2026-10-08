@@ -256,8 +256,10 @@ drawing's faded foot (Find Sweets).
   on the right) with only the bin; the quantity is changed on the cart's
   page, reached by the yellow button. Something added: it jumps and
   flashes green.
-- **Footer** (customer pages only): the name with the crown, About us,
-  phone, mail. Quiet.
+- **Footer** (customer pages only): the name with the crown, About us
+  and FAQ, then phone, mail, Instagram and TikTok as icons. Quiet and
+  small: one row on a wide screen (name left, links centre, icons right),
+  stacked on a phone, every size clamped so it never takes much room.
 - **Start page** (`storefront/landing.html`, `landing.css`): the one loud
   page. Cream on primary-600, the logo and "Sweden’s sweetest tradition"
   alone for a moment, then a menu of the navbar's own links rises under
