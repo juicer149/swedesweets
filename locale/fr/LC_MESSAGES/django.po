@@ -1357,6 +1357,9 @@ msgstr "Enregistrer les modifications"
 msgid "Cancel"
 msgstr "Annulée"
 
+msgid "Log out"
+msgstr "Se déconnecter"
+
 #: templates/includes/account_menu.html:63
 msgid "Logout"
 msgstr "Déconnexion"

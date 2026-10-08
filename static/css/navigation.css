@@ -732,6 +732,36 @@
   border-top: 1px solid var(--color-neutral-200);
 }
 
+/* "My account" when it is the only item (business customers): a page link
+   like the others, at the far right of the navbar; the crown when you
+   are on it. On a phone the header has no room for words: the icon. */
+.site-nav__account-link {
+  margin-left: var(--space-2);
+}
+
+@media (max-width: 767px) {
+  .site-nav__account-link {
+    display: inline-flex;
+    min-height: 2rem;
+    margin-left: var(--space-1);
+    padding: var(--space-1);
+  }
+
+  /* room for the crown tilted on the icon */
+  .site-nav__auth .site-nav__account-link[aria-current="page"] {
+    margin-right: 0.35rem;
+  }
+
+  .site-nav__account-link > span:last-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
 /* =============================================================================
    Mobile navigation
    Variant 1: text-width underline

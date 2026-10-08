@@ -7,6 +7,10 @@ identity and the current application zone.
 Logout is deliberately not represented as an AccountMenuItem because it is
 a POST action. includes/account_menu.html renders it separately with CSRF
 protection.
+
+A menu with one item (a business customer's) is not a menu: the navbar
+shows that one item as a plain link, like the page links beside it, and
+logging out lives on the account page (one rarely logs out).
 """
 
 from __future__ import annotations
@@ -34,6 +38,12 @@ class AccountMenuItem:
 class AccountMenu:
     label: str
     items: tuple[AccountMenuItem, ...]
+
+    @property
+    def single_item(self) -> AccountMenuItem | None:
+        """The one item, when there is only one: shown as a plain link."""
+
+        return self.items[0] if len(self.items) == 1 else None
 
 
 MY_ACCOUNT_MENU_ITEM = AccountMenuItem(

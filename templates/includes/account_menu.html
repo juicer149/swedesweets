@@ -9,11 +9,32 @@
   Logout is a POST form rather than a menu item because logging out mutates
   authentication state and must carry CSRF protection.
 
+  One item (a business customer's "My account") is no menu: a plain link
+  that looks like the page links beside it (the crown when you are on
+  it), and the logout is on that page instead.
+
   Expects:
     account_menu.label
     account_menu.items
+    account_menu.single_item
 {% endcomment %}
 
+{% with item=account_menu.single_item %}
+{% if item %}
+<a
+  class="site-nav__link site-nav__account-link"
+  href="{{ item.href }}"
+  {% if request.resolver_match.view_name == item.route_name %}aria-current="page"{% endif %}
+>
+  {% if item.icon %}
+    <span class="site-nav__icon" aria-hidden="true">
+      {% include "includes/ui/icon.html" with name=item.icon %}
+    </span>
+  {% endif %}
+
+  <span>{{ item.label }}</span>
+</a>
+{% else %}
 <details
   class="site-nav-account"
   data-dismiss-on-outside-click
@@ -65,3 +86,5 @@
     </form>
   </div>
 </details>
+{% endif %}
+{% endwith %}

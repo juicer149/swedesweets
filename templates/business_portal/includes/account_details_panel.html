@@ -70,6 +70,14 @@
           {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
           {% trans "Change password" %}
         </a>
+
+        {# Logging out lives here, not in the navbar: it is rarely done. #}
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button class="quiet-link" type="submit">
+            {% trans "Log out" %}
+          </button>
+        </form>
       </div>
     </div>
   </section>
