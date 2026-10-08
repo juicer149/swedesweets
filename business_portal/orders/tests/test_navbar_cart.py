@@ -120,12 +120,11 @@ def test_navbar_cart_fragment_reads_customer_cart(
     assert navbar_line.line_id == line.id
     assert navbar_line.quantity == 3
 
-    assert navbar_line.quantity_url == reverse(
-        "business_portal:set_cart_line_quantity",
-        kwargs={
-            "cart_line_id": line.id,
-        },
-    )
+    # Read-only in the navbar: the quantity shown, changed on the cart's page.
+    assert navbar_line.line_view.aside == "× 3"
+    html = response.content.decode()
+    assert "data-navbar-cart-quantity-form" not in html
+    assert "× 3" in html
 
     assert navbar_line.remove_url == reverse(
         "business_portal:remove_cart_line",

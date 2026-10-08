@@ -54,56 +54,11 @@
             data-navbar-cart-line
             data-line-id="{{ line.line_id }}"
           >
-            <div class="site-nav-cart-line__content">
-              <strong class="site-nav-cart-line__label">
-                <a
-                  class="text-link site-nav-cart-line__product-link"
-                  href="{{ line.product_url }}"
-                >
-                  {{ line.label }}
-                </a>
-              </strong>
-
-              {% for metadata in line.metadata %}
-                <span class="site-nav-cart-line__metadata">
-                  {{ metadata }}
-                </span>
-              {% endfor %}
-            </div>
+            {# Read-only, like an order's line; the quantity is changed on the cart's page. #}
+            {% include "includes/ui/line_product.html" with line=line.line_view only %}
 
             <div class="site-nav-cart-line__controls">
-              <form
-                class="site-nav-cart-line__quantity"
-                method="post"
-                action="{{ line.quantity_url }}"
-                data-navbar-cart-quantity-form
-                data-confirmed-quantity="{{ line.quantity }}"
-              >
-                {% csrf_token %}
-
-                {% include "includes/ui/quantity_stepper.html" with id_prefix="navbar-cart-quantity-" id_suffix=line.line_id value=line.quantity compact=True only %}
-
-                <span
-                  class="visually-hidden"
-                  role="status"
-                  aria-live="polite"
-                  data-navbar-cart-quantity-status
-                ></span>
-
-                <noscript>
-                  <button
-                    class="
-                      button
-                      button--sm
-                      button--text
-                      button--tone-neutral
-                    "
-                    type="submit"
-                  >
-                    {% trans "Update" %}
-                  </button>
-                </noscript>
-              </form>
+              <span class="line__quantity-label site-nav-cart-line__quantity">{{ line.line_view.aside }}</span>
 
               <form
                 class="site-nav-cart-line__remove"

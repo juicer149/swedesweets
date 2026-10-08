@@ -251,6 +251,11 @@ drawing's faded foot (Find Sweets).
   (`--site-nav-count` columns); pages leave room for it.
 - **Customer pages** (shop and business portal): Catalog/Shop, Find
   Sweets, FAQ, About us. **Ops** has its own links and no footer.
+- **Navbar cart** (`includes/navbar_cart.html`): a look, not a place to
+  edit. Its lines are the read-only line (picture, name, grey lines, `× 2`
+  on the right) with only the bin; the quantity is changed on the cart's
+  page, reached by the yellow button. Something added: it jumps and
+  flashes green.
 - **Footer** (customer pages only): the name with the crown, About us,
   phone, mail. Quiet.
 - **Start page** (`storefront/landing.html`, `landing.css`): the one loud

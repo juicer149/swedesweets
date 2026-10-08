@@ -8,6 +8,7 @@ from common.navbar_cart import (
     NavbarCart,
     NavbarCartLine,
 )
+from products.images import product_image_url
 
 
 def build_retail_navbar_cart(
@@ -21,6 +22,8 @@ def build_retail_navbar_cart(
         cart.lines
         .select_related(
             "commercial_price__product",
+            # the line's picture
+            "commercial_price__product__profile",
         )
         .order_by("id")
     )
@@ -113,12 +116,7 @@ def _build_retail_navbar_cart_line(
         ),
         metadata=metadata,
         quantity=line.quantity,
-        quantity_url=reverse(
-            "storefront:set_cart_line_quantity",
-            kwargs={
-                "cart_line_id": line.id,
-            },
-        ),
+        image_url=product_image_url(product),
         remove_url=reverse(
             "storefront:remove_cart_line",
             kwargs={

@@ -11,6 +11,7 @@ from common.navbar_cart import (
     NavbarCart,
     NavbarCartLine,
 )
+from products.images import product_image_url
 
 
 def build_business_navbar_cart(
@@ -26,6 +27,8 @@ def build_business_navbar_cart(
         .select_related(
             "commercial_price",
             "commercial_price__product",
+            # the line's picture
+            "commercial_price__product__profile",
         )
         .prefetch_related(
             "commercial_price__amounts",
@@ -134,12 +137,7 @@ def _build_business_navbar_cart_line(
         ),
         metadata=metadata,
         quantity=line.quantity,
-        quantity_url=reverse(
-            "business_portal:set_cart_line_quantity",
-            kwargs={
-                "cart_line_id": line.id,
-            },
-        ),
+        image_url=product_image_url(product),
         remove_url=reverse(
             "business_portal:remove_cart_line",
             kwargs={
