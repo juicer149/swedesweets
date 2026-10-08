@@ -1,8 +1,8 @@
 {% load i18n %}
 {% comment %}
-  The site footer (customer pages; ops hides it): who we are (About us)
-  and the questions (FAQ) in words; how to reach us (phone, mail) and
-  where they post (Instagram, TikTok) as icons; quietly.
+  The site footer (customer pages; ops hides it), centred and quiet: the
+  name with the crown, then how to reach us (phone, mail) and where they
+  post (Instagram, TikTok) as icons. About us and FAQ are in the navbar.
 {% endcomment %}
 <footer class="site-footer" aria-label="{% trans 'Site footer' %}">
   <div class="container site-footer__inner">
@@ -11,20 +11,6 @@
       {% include "includes/ui/icon_block.html" with name="crown" class_name="site-footer__crown" only %}
     </p>
 
-    <ul class="site-footer__links">
-      <li>
-        <a class="quiet-link" href="{% url 'public_site:about' %}">
-          {% include "includes/ui/icon_block.html" with name="users" size="sm" only %}
-          {% trans "About us" %}
-        </a>
-      </li>
-      <li>
-        <a class="quiet-link" href="{% url 'public_site:faq' %}">
-          {% include "includes/ui/icon_block.html" with name="question" size="sm" only %}
-          {% trans "FAQ" %}
-        </a>
-      </li>
-    </ul>
 
     {# How to reach us and where they post: the icons alone (the number and #}
     {# the address are on the FAQ page, under "Still have questions?"). #}

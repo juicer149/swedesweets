@@ -73,15 +73,17 @@ def test_about_page_tells_who_we_are(client):
     assert response.status_code == 200
     assert "Who we are" in html
     assert "Marco Sandelgård" in html
-    assert f'href="{reverse("public_site:about")}"' in html  # the footer link
+    assert f'href="{reverse("public_site:about")}"' in html  # the navbar link
 
 
 @pytest.mark.django_db
-def test_footer_links_the_faq_instagram_and_tiktok(client):
+def test_footer_has_the_ways_to_reach_us_not_the_navbar_pages(client):
     html = client.get(reverse("public_site:about")).content.decode()
 
     footer = html[html.index("site-footer"):]
-    assert f'href="{reverse("public_site:faq")}"' in footer
+    # About us and FAQ are in the navbar; the footer does not repeat them.
+    assert f'href="{reverse("public_site:faq")}"' not in footer
+    assert f'href="{reverse("public_site:about")}"' not in footer
     # How to reach us: icons only, the number and the address in their labels.
     assert 'href="tel:+46739756195"' in footer
     assert 'href="mailto:info@swedesweets.se"' in footer
