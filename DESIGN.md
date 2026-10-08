@@ -182,10 +182,10 @@ catalog's green tick (the navbar cart then gives a little jump) and login.
 **Submit burst:** a form that leads to the next step (Review order, Place
 order, Continue to review, Pay, Order again) has `data-submit-burst`
 (`submit_burst.js`, loaded on every page). When it is sent its yellow
-button gives way to the same burst, in its place; they show at least
-`--feedback-min-loading` before the form goes, and stay until the next
-page arrives; a second press does nothing. No crown here: the next page is the
-answer.
+button gives way to the same burst, in its place: the crown's wave for
+`--feedback-min-loading`, then the crown settles and glows a moment, then
+the form goes (the times on `.page__submit` at the end of `tokens.css`); a
+second press does nothing. The next page is the real answer.
 
 **Crown hero:** `includes/ui/crown_hero.html`, the crown large, growing in
 above the title of the page that says it went through: the shop's "Thank

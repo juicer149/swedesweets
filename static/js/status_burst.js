@@ -119,20 +119,28 @@
       wait(tokenMs("--feedback-min-loading", 500, place)),
     ]);
 
-    await settle(burst);
-
-    if (burst) {
-      burst.dataset.state = outcome.ok ? "success" : "error";
-      await wait(
-        tokenMs("--feedback-mark-grow", 200, place)
-          + tokenMs("--feedback-mark-hold", 750, place)
-      );
-    }
+    await finish(burst, outcome.ok);
 
     place.replaceChildren();
 
     return outcome;
   }
 
-  window.statusBurst = { run, create };
+  /* The end of a burst: the dots settle, then the mark (or the cross)
+     grows and stays its while. submit_burst.js calls it too, before the
+     next page. */
+  async function finish(burst, ok = true) {
+    if (!burst) {
+      return;
+    }
+
+    await settle(burst);
+    burst.dataset.state = ok ? "success" : "error";
+    await wait(
+      tokenMs("--feedback-mark-grow", 200, burst)
+        + tokenMs("--feedback-mark-hold", 750, burst)
+    );
+  }
+
+  window.statusBurst = { run, create, finish };
 })();

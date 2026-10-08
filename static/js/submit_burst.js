@@ -1,10 +1,10 @@
 /*
   A form that leads to the next step (Review order, Place order, Pay…):
-  when it is sent, its yellow button gives way to the status burst's dots,
-  in the same place; they show at least --feedback-min-loading (tokens.css)
-  before the form goes, and stay until the next page arrives. The next
-  page is the answer (the crown on "Thank you" and on an order just
-  placed), so there is no crown or cross here.
+  when it is sent, its yellow button gives way to the status burst, in the
+  same place: the crown's wave for --feedback-min-loading (tokens.css, read
+  on the button), then the crown settles and glows a moment (on to the
+  next step), then the form goes. The next page is the real answer (the
+  crown hero on "Thank you" and on an order just placed).
 
     <form method="post" data-submit-burst> … <button class="page__submit">
 
@@ -31,9 +31,9 @@
     return burst;
   }
 
-  /* Timing from tokens.css, as in status_burst.js. */
-  function tokenMs(name, fallback) {
-    const value = getComputedStyle(document.documentElement)
+  /* Timing from tokens.css, read on the button, as in status_burst.js. */
+  function tokenMs(name, fallback, element = document.documentElement) {
+    const value = getComputedStyle(element)
       .getPropertyValue(name)
       .trim();
     const number = parseFloat(value);
@@ -49,7 +49,9 @@
     form.dataset.submitting = "true";
     button.classList.add("is-submitting");
     button.setAttribute("aria-busy", "true");
-    button.append(dots(button));
+    const burst = dots(button);
+    button.append(burst);
+    return burst;
   }
 
   function reset(form) {
@@ -97,7 +99,7 @@
     // browser's own send would drop the pressed button's name/value
     // (intent=place_order), so it is carried in a hidden field.
     event.preventDefault();
-    show(form, button);
+    const burst = show(form, button);
 
     const submitter = event.submitter;
     if (submitter?.name) {
@@ -109,10 +111,16 @@
       form.append(carried);
     }
 
-    window.setTimeout(
-      () => HTMLFormElement.prototype.submit.call(form),
-      tokenMs("--feedback-min-loading", 500)
-    );
+    // The dots their while, then the crown settles and glows a moment
+    // (on to the next step), then the form goes. Without the burst
+    // script it simply goes after the while.
+    window.setTimeout(async () => {
+      if (window.statusBurst?.finish && burst.classList.contains("status-burst")) {
+        await window.statusBurst.finish(burst, true);
+      }
+
+      HTMLFormElement.prototype.submit.call(form);
+    }, tokenMs("--feedback-min-loading", 500, button));
   });
 
   window.addEventListener("pageshow", (event) => {

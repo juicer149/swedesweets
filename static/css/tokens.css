@@ -380,3 +380,12 @@
   --feedback-burst-rest: 80ms;
   --feedback-mark-hold: 450ms;
 }
+
+/* The next-step buttons (Review order, Place order, Pay…, submit_burst.js):
+   the crown's wave a moment, then it settles and glows briefly, and the
+   next page comes. */
+.page__submit {
+  --feedback-min-loading: 500ms;
+  --feedback-burst-rest: 120ms;
+  --feedback-mark-hold: 350ms;
+}
