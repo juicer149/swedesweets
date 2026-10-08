@@ -897,14 +897,16 @@
   .site-nav__link[aria-current="page"] .site-nav__icon::after {
     content: "";
     position: absolute;
-    /* in proportion to the icon: as big as the icon itself, so the page
-       you are on shows at a glance on a phone */
-    top: -60%;
-    right: -85%;
-    width: 105%;
-    height: 105%;
+    /* in proportion to the icon: bigger than the icon, peeking up over
+       the bar's edge, with a soft shadow under it so it seems to stand
+       on the bar */
+    top: -95%;
+    right: -90%;
+    width: 115%;
+    height: 115%;
 
     background: url("../images/favicon.svg") center / contain no-repeat;
+    filter: drop-shadow(0 2px 2px rgb(var(--color-row-shadow) / 0.35));
     pointer-events: none;
   }
 
