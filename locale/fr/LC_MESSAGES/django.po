@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 16:48+0200\n"
+"POT-Creation-Date: 2026-10-08 02:00+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -308,7 +308,7 @@ msgid "Find Sweets"
 msgstr "Où acheter"
 
 #: business_portal/navigation.py:44 storefront/navigation.py:50
-#: templates/storefront/faq.html:4
+#: templates/includes/footer.html:23 templates/storefront/faq.html:4
 msgid "FAQ"
 msgstr "FAQ"
 
@@ -491,7 +491,7 @@ msgid "Product removed from your cart."
 msgstr "Produit retiré de votre panier."
 
 #: business_portal/orders/views.py:297 business_portal/orders/views.py:340
-#: business_portal/orders/views.py:393 business_portal/orders/views.py:449
+#: business_portal/orders/views.py:393 business_portal/orders/views.py:453
 msgid "Unknown order action."
 msgstr "Action non reconnue pour cette commande."
 
@@ -824,19 +824,19 @@ msgid_plural "%(count)s cases"
 msgstr[0] "%(count)s caisse"
 msgstr[1] "%(count)s caisses"
 
-#: products/models.py:625 templates/includes/catalog/grid.html:25
+#: products/models.py:627 templates/includes/catalog/grid.html:25
 msgid "Candy"
 msgstr "Bonbons"
 
-#: products/models.py:626 templates/includes/catalog/grid.html:26
+#: products/models.py:628 templates/includes/catalog/grid.html:26
 msgid "Chips"
 msgstr "Chips"
 
-#: products/models.py:627 templates/includes/catalog/grid.html:27
+#: products/models.py:629 templates/includes/catalog/grid.html:27
 msgid "Dip mix"
 msgstr "Préparations pour dip"
 
-#: products/models.py:628
+#: products/models.py:630
 msgid "Merchandise"
 msgstr "Marchandise"
 
@@ -1302,7 +1302,7 @@ msgid "Could not update quantity."
 msgstr "Impossible de mettre à jour la quantité."
 
 #: templates/business_portal/orders/cart.html:19
-#: templates/business_portal/orders/detail.html:15
+#: templates/business_portal/orders/detail.html:19
 #: templates/business_portal/orders/review.html:22
 #: templates/storefront/cart.html:25
 #: templates/storefront/checkout/review.html:22
@@ -1315,16 +1315,16 @@ msgstr "Articles"
 msgid "Update quantity"
 msgstr "Mettre à jour la quantité"
 
-#: templates/business_portal/orders/detail.html:22
+#: templates/business_portal/orders/detail.html:26
 msgid "No order items found."
 msgstr "Aucun article trouvé pour cette commande."
 
 # | msgid "Order details"
-#: templates/business_portal/orders/detail.html:45
+#: templates/business_portal/orders/detail.html:49
 msgid "Order again"
 msgstr "Commander à nouveau"
 
-#: templates/business_portal/orders/detail.html:52
+#: templates/business_portal/orders/detail.html:56
 msgid "Back to order history"
 msgstr "Retour à l’historique des commandes"
 
@@ -1349,7 +1349,7 @@ msgid "Save changes"
 msgstr "Enregistrer les modifications"
 
 #: templates/business_portal/store_edit.html:51
-#: templates/includes/catalog/tile.html:71
+#: templates/includes/catalog/tile.html:77
 #: templates/ops_portal/accounts/account_form.html:32
 #: templates/ops_portal/customers/customer_form.html:44
 #: templates/ops_portal/inventory/batch_form.html:30
@@ -1386,34 +1386,34 @@ msgid "No products match your search."
 msgstr "Aucun produit ne correspond à votre recherche."
 
 # | msgid "Product"
-#: templates/includes/catalog/grid.html:51
+#: templates/includes/catalog/grid.html:53
 #: templates/ops_portal/orders/order_form.html:37
 #: templates/ops_portal/orders/order_form.html:46
 msgid "Products"
 msgstr "Produits"
 
-#: templates/includes/catalog/grid.html:57
+#: templates/includes/catalog/grid.html:59
 msgid "No products are currently available."
 msgstr "Aucun produit n’est disponible actuellement."
 
-#: templates/includes/catalog/product.html:37
+#: templates/includes/catalog/product.html:38
 msgid "Vegan"
 msgstr "Végane"
 
-#: templates/includes/catalog/product.html:58
+#: templates/includes/catalog/product.html:59
 msgid "Offer"
 msgstr "Offre"
 
-# | msgid "Back to login"
-#: templates/includes/catalog/product.html:95
-msgid "Back to catalog"
-msgstr "Retour au catalogue"
-
-#: templates/includes/catalog/product.html:102
+#: templates/includes/catalog/product.html:98
 msgid "Product information"
 msgstr "Informations sur le produit"
 
-#: templates/includes/catalog/tile.html:68
+# | msgid "Back to login"
+#: templates/includes/catalog/product.html:106
+msgid "Back to catalog"
+msgstr "Retour au catalogue"
+
+#: templates/includes/catalog/tile.html:73
 msgid "Add"
 msgstr "Ajouter"
 
@@ -1421,11 +1421,16 @@ msgstr "Ajouter"
 msgid "Site footer"
 msgstr "Pied de page"
 
+#: templates/includes/footer.html:46
+msgid "SwedeSweets on Instagram"
+msgstr "SwedeSweets sur Instagram"
+
 #: templates/includes/language_switcher.html:7
 msgid "Language"
 msgstr "Langue"
 
 #: templates/includes/navbar.html:9 templates/includes/site_navbar.html:26
+#: templates/storefront/landing.html:69
 msgid "Primary navigation"
 msgstr "Navigation principale"
 
@@ -1436,7 +1441,7 @@ msgstr "Accueil SwedeSweets"
 
 #: templates/includes/navbar.html:99 templates/includes/site_navbar.html:115
 #: templates/registration/login.html:4 templates/registration/login.html:13
-#: templates/registration/login.html:31
+#: templates/registration/login.html:31 templates/storefront/landing.html:101
 msgid "Login"
 msgstr "Connexion"
 
@@ -1497,9 +1502,9 @@ msgstr "Mettre à jour"
 # | msgid "Choose product"
 #: templates/includes/navbar_cart.html:119
 #: templates/includes/navbar_cart.html:124
-#: templates/includes/ui/line_remove.html:11
-#: templates/includes/ui/line_remove.html:21
-#: templates/includes/ui/line_remove.html:36
+#: templates/includes/ui/line_remove.html:14
+#: templates/includes/ui/line_remove.html:24
+#: templates/includes/ui/line_remove.html:39
 msgid "Remove product"
 msgstr "Retirer le produit"
 
@@ -1507,18 +1512,18 @@ msgstr "Retirer le produit"
 msgid "Phone"
 msgstr "Téléphone"
 
-#: templates/includes/ui/line_remove.html:20
-#: templates/includes/ui/line_remove.html:35
+#: templates/includes/ui/line_remove.html:23
+#: templates/includes/ui/line_remove.html:38
 msgid "Remove this product from the order?"
 msgstr "Retirer ce produit de la commande ?"
 
-#: templates/includes/ui/line_remove.html:22
-#: templates/includes/ui/line_remove.html:37
+#: templates/includes/ui/line_remove.html:25
+#: templates/includes/ui/line_remove.html:40
 msgid "Remove"
 msgstr "Retirer"
 
-#: templates/includes/ui/line_remove.html:23
-#: templates/includes/ui/line_remove.html:38
+#: templates/includes/ui/line_remove.html:26
+#: templates/includes/ui/line_remove.html:41
 msgid "Keep it"
 msgstr "Le garder"
 
@@ -1745,12 +1750,12 @@ msgid "Edit cart"
 msgstr "Modifier le panier"
 
 #: templates/storefront/checkout/payment_result.html:6
-#: templates/storefront/checkout/payment_result.html:24
+#: templates/storefront/checkout/payment_result.html:26
 msgid "Thank you for your order"
 msgstr "Merci pour votre commande"
 
 #: templates/storefront/checkout/payment_result.html:8
-#: templates/storefront/checkout/payment_result.html:41
+#: templates/storefront/checkout/payment_result.html:43
 msgid "Payment not completed"
 msgstr "Paiement non effectué"
 
@@ -1758,7 +1763,7 @@ msgstr "Paiement non effectué"
 msgid "Payment status"
 msgstr "Statut du paiement"
 
-#: templates/storefront/checkout/payment_result.html:29
+#: templates/storefront/checkout/payment_result.html:31
 #, python-format
 msgid ""
 "Your payment was successful and your order number is <strong>%(reference)s</"
@@ -1767,32 +1772,32 @@ msgstr ""
 "Votre paiement a été effectué avec succès et votre numéro de commande est "
 "<strong>%(reference)s</strong>."
 
-#: templates/storefront/checkout/payment_result.html:31
+#: templates/storefront/checkout/payment_result.html:33
 msgid "We'll contact you when your order is on its way."
 msgstr "Nous vous contacterons lorsque votre commande sera en route."
 
-#: templates/storefront/checkout/payment_result.html:36
+#: templates/storefront/checkout/payment_result.html:38
 msgid "Back to shop"
 msgstr "Retour à la boutique"
 
-#: templates/storefront/checkout/payment_result.html:44
+#: templates/storefront/checkout/payment_result.html:46
 msgid "Your payment could not be completed."
 msgstr "Votre paiement n’a pas pu être finalisé."
 
 # | msgid "Order details"
-#: templates/storefront/checkout/payment_result.html:51
+#: templates/storefront/checkout/payment_result.html:53
 msgid "Try again"
 msgstr "Réessayer"
 
-#: templates/storefront/checkout/payment_result.html:59
+#: templates/storefront/checkout/payment_result.html:61
 msgid "Back to cart"
 msgstr "Retour au panier"
 
-#: templates/storefront/checkout/payment_result.html:65
+#: templates/storefront/checkout/payment_result.html:67
 msgid "We couldn't confirm your payment"
 msgstr "Nous n’avons pas pu confirmer votre paiement"
 
-#: templates/storefront/checkout/payment_result.html:70
+#: templates/storefront/checkout/payment_result.html:72
 msgid ""
 "We couldn't confirm the status of your payment right now. If you were "
 "charged, your order is safe and we will sort it out."
@@ -1801,7 +1806,7 @@ msgstr ""
 "vous avez été débité, votre commande est bien enregistrée et nous réglerons "
 "la situation."
 
-#: templates/storefront/checkout/payment_result.html:73
+#: templates/storefront/checkout/payment_result.html:75
 #, python-format
 msgid ""
 "Please contact us and mention order number <strong>%(reference)s</strong>."
@@ -1809,7 +1814,7 @@ msgstr ""
 "Veuillez nous contacter en indiquant le numéro de commande "
 "<strong>%(reference)s</strong>."
 
-#: templates/storefront/checkout/payment_result.html:79
+#: templates/storefront/checkout/payment_result.html:81
 msgid "Contact us"
 msgstr "Nous contacter"
 
@@ -1869,6 +1874,10 @@ msgstr "Boutiques"
 #: templates/storefront/find_sweets.html:25
 msgid "No shops are listed yet."
 msgstr "Aucune boutique n'est encore listée."
+
+#: templates/storefront/landing.html:19 templates/storefront/landing.html:61
+msgid "Sweden’s sweetest tradition"
+msgstr "La plus douce tradition suédoise"
 
 #~ msgid "Product description"
 #~ msgstr "Description du produit"
@@ -2380,11 +2389,3 @@ msgstr "Aucune boutique n'est encore listée."
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
-
-#: templates/storefront/landing.html
-msgid "Sweden’s sweetest tradition"
-msgstr "La plus douce tradition suédoise"
-
-#: templates/includes/footer.html
-msgid "SwedeSweets on Instagram"
-msgstr "SwedeSweets sur Instagram"
