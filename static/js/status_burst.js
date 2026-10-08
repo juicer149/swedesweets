@@ -35,8 +35,16 @@
 
   const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
-  /* Which look, from --feedback-burst-style (tokens.css). */
-  function burstStyle() {
+  /* Which look: a place can ask for its own (data-burst-style on it or
+     around it, e.g. login's ring); otherwise --feedback-burst-style in
+     tokens.css. */
+  function burstStyle(place) {
+    const asked = place?.closest?.("[data-burst-style]")?.dataset.burstStyle;
+
+    if (asked) {
+      return asked;
+    }
+
     return (
       getComputedStyle(document.documentElement)
         .getPropertyValue("--feedback-burst-style")
@@ -45,7 +53,7 @@
     );
   }
 
-  function create(name) {
+  function create(name, place) {
     const template = document.querySelector(
       `template[data-status-burst="${name}"]`
     );
@@ -55,12 +63,28 @@
     }
 
     const burst = template.content.firstElementChild.cloneNode(true);
-    burst.dataset.style = burstStyle();
+    burst.dataset.style = burstStyle(place);
     return burst;
   }
 
+  /* The crown styles end on a whole round of their dots
+     (--feedback-burst-cycle), never in the middle of one, so the wave
+     always finishes before the crown glows. */
+  function untilRoundEnds(burst, startedAt) {
+    if (!burst || burst.dataset.style === "ring") {
+      return Promise.resolve();
+    }
+
+    const round = tokenMs("--feedback-burst-cycle", 1050);
+    const elapsed = performance.now() - startedAt;
+    const rest = round - (elapsed % round);
+
+    return wait(rest < round ? rest : 0);
+  }
+
   async function run(place, name, request) {
-    const burst = create(name);
+    const burst = create(name, place);
+    const startedAt = performance.now();
 
     if (burst) {
       place.replaceChildren(burst);
@@ -82,6 +106,8 @@
         ),
       wait(tokenMs("--feedback-min-loading", 500)),
     ]);
+
+    await untilRoundEnds(burst, startedAt);
 
     if (burst) {
       burst.dataset.state = outcome.ok ? "success" : "error";

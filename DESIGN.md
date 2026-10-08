@@ -167,7 +167,9 @@ How the waiting looks is one token, `--feedback-burst-style` in
 `ring` (eight dots, then the crown grows in), `wave` (the logo's crown, its
 three dots growing in turn), `is_writing` (the dots hop), `color_wave` (a
 colour runs through the dots), `candy` (three sweet colours). With the
-crown styles, done is the crown growing a little with a glow. The request
+crown styles, the wait ends on a whole round of the dots
+(`--feedback-burst-cycle`), then the crown grows a little with a glow. A
+place can ask for its own look with `data-burst-style` (login: `ring`). The request
 and a minimum time run side by side, so it never slows anything down. The
 times (`--feedback-min-loading`, `--feedback-mark-grow`,
 `--feedback-mark-hold`) are tokens too, read by the script. Used by the

@@ -161,7 +161,7 @@
 
 /* wave: the dots grow and shrink one after the other. */
 .status-burst[data-style="wave"][data-state="loading"] .status-burst__crown-dot {
-  animation: crown-dot-wave 1.05s ease-in-out infinite;
+  animation: crown-dot-wave var(--feedback-burst-cycle) ease-in-out infinite;
   animation-delay: calc(var(--i) * 0.18s);
 }
 
@@ -177,7 +177,7 @@
 
 /* is_writing: the dots hop, like someone typing. */
 .status-burst[data-style="is_writing"][data-state="loading"] .status-burst__crown-dot {
-  animation: crown-dot-hop 1.05s ease-in-out infinite;
+  animation: crown-dot-hop var(--feedback-burst-cycle) ease-in-out infinite;
   animation-delay: calc(var(--i) * 0.18s);
 }
 
@@ -193,7 +193,7 @@
 
 /* color_wave: another colour runs through the dots. */
 .status-burst[data-style="color_wave"][data-state="loading"] .status-burst__crown-dot {
-  animation: crown-dot-glint 1.05s ease-in-out infinite;
+  animation: crown-dot-glint var(--feedback-burst-cycle) ease-in-out infinite;
   animation-delay: calc(var(--i) * 0.18s);
 }
 
@@ -223,7 +223,7 @@
 }
 
 .status-burst[data-style="candy"][data-state="loading"] .status-burst__crown-dot {
-  animation: crown-dot-wave 1.05s ease-in-out infinite;
+  animation: crown-dot-wave var(--feedback-burst-cycle) ease-in-out infinite;
   animation-delay: calc(var(--i) * 0.18s);
 }
 

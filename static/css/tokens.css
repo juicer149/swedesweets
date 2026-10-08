@@ -290,8 +290,13 @@
        is_writing  the crown, its dots hopping like someone typing
        color_wave  the crown, a cream glint running through its dots
        candy       the crown, its dots in three sweet colours, in turn
-     status_burst.js reads it and sets data-style on each burst. */
+     status_burst.js reads it and sets data-style on each burst. A place
+     can ask for its own with data-burst-style (login: the ring). */
   --feedback-burst-style: wave;
+
+  /* One round of the crown's dots. The wait ends on a whole round, so
+     the wave always finishes before the crown glows. */
+  --feedback-burst-cycle: 1050ms;
 
   --transform-lift: translateY(-1px);
   --transform-lift-scale: translateY(-1px) scale(1.01);

@@ -19,8 +19,8 @@
 
   /* The burst from base.html's template, in the look --feedback-burst-style
      chooses (status_burst.js). */
-  function dots() {
-    const burst = window.statusBurst?.create("default");
+  function dots(button) {
+    const burst = window.statusBurst?.create("default", button);
 
     if (!burst) {
       return document.createElement("span");
@@ -49,7 +49,7 @@
     form.dataset.submitting = "true";
     button.classList.add("is-submitting");
     button.setAttribute("aria-busy", "true");
-    button.append(dots());
+    button.append(dots(button));
   }
 
   function reset(form) {
