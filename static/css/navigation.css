@@ -123,11 +123,35 @@
   transform: translateY(-1px);
 }
 
+/* The underline answers the pointer; the page you are on gets the crown. */
 .site-nav__link:hover::after,
-.site-nav__link:focus-visible::after,
-.site-nav__link--active::after,
-.site-nav__link[aria-current="page"]::after {
+.site-nav__link:focus-visible::after {
   width: 100%;
+}
+
+/* The crown marks the page you are on, tilted on the last letter as on
+   the logo and the start page's menu. Drawn from the favicon (the logo's
+   crown), so the links need no extra markup. */
+.site-nav__link > span:last-child {
+  position: relative;
+}
+
+.site-nav__link--active > span:last-child::before,
+.site-nav__link[aria-current="page"] > span:last-child::before {
+  content: "";
+  position: absolute;
+  top: -0.95em;
+  right: -0.85em;
+  width: 1.15em;
+  height: 1.15em;
+
+  background: url("../images/favicon.svg") center / contain no-repeat;
+  pointer-events: none;
+}
+
+.site-nav__link--active,
+.site-nav__link[aria-current="page"] {
+  margin-right: 0.5em;
 }
 
 .site-nav__link:focus-visible {
@@ -899,10 +923,38 @@
   }
 
   .site-nav__link:hover > span:last-child::after,
-  .site-nav__link:focus-visible > span:last-child::after,
-  .site-nav__link--active > span:last-child::after,
-  .site-nav__link[aria-current="page"] > span:last-child::after {
+  .site-nav__link:focus-visible > span:last-child::after {
     width: 100%;
+  }
+
+  /* The labels are too small to carry the crown: it sits tilted on the
+     icon instead. */
+  .site-nav__link--active > span:last-child::before,
+  .site-nav__link[aria-current="page"] > span:last-child::before {
+    content: none;
+  }
+
+  .site-nav__link--active,
+  .site-nav__link[aria-current="page"] {
+    margin-right: 0;
+  }
+
+  .site-nav__icon {
+    position: relative;
+  }
+
+  .site-nav__link--active .site-nav__icon::after,
+  .site-nav__link[aria-current="page"] .site-nav__icon::after {
+    content: "";
+    position: absolute;
+    /* in proportion to the icon */
+    top: -45%;
+    right: -55%;
+    width: 75%;
+    height: 75%;
+
+    background: url("../images/favicon.svg") center / contain no-repeat;
+    pointer-events: none;
   }
 
   .site-nav__icon {

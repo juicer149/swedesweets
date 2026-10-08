@@ -233,8 +233,10 @@ drawing's faded foot (Find Sweets).
 
 ## Navigation and chrome
 
-- **Desktop:** links in the top bar, with icons; the active one gets the
-  yellow underline.
+- **Desktop:** links in the top bar, with icons; the page you are on gets
+  the crown tilted on its last letter (as on the logo and the start page),
+  and the yellow underline only answers the pointer. On a phone the crown
+  sits on the icon, the labels being too small for it.
 - **Phone:** the same links as a fixed bottom bar
   (`--site-nav-count` columns); pages leave room for it.
 - **Customer pages** (shop and business portal): Catalog/Shop, Find
