@@ -95,6 +95,8 @@
    with no edge. The colours are the place's own (the end of tokens.css):
      --status-burst-halo       its colour (soft yellow by default)
      --status-burst-halo-size  how far it reaches past the burst
+     --status-burst-halo-blend how it lies on the page (screen on blue: a
+                               see-through yellow would turn muddy)
      --status-burst-mark-icon  the success icon's size within the burst */
 .status-burst {
   isolation: isolate;
@@ -113,12 +115,15 @@
     color-mix(in srgb, var(--status-burst-halo) 50%, transparent) 60%,
     transparent 100%
   );
+  mix-blend-mode: var(--status-burst-halo-blend, normal);
   opacity: 0;
   transform: scale(0.5);
   pointer-events: none;
+  /* a hair before the mark (which waits 0.12s), and as fast, so the two
+     come up together */
   transition:
-    opacity var(--feedback-mark-grow) ease-out 0.12s,
-    transform calc(var(--feedback-mark-grow) * 1.5) ease-out 0.12s;
+    opacity var(--feedback-mark-grow) ease-out 0.04s,
+    transform var(--feedback-mark-grow) ease-out 0.04s;
 }
 
 .status-burst[data-state="success"]::before {

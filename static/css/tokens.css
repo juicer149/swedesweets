@@ -363,12 +363,14 @@
 }
 
 /* Login: three dots, then a tick (a cross if it did not work), yellow:
-   green cannot be read on the blue; its halo is a cream glow (a see-
-   through yellow turns muddy on blue). Quick: the next page is waiting. */
+   green cannot be read on the blue. Its yellow halo is laid on as light
+   (screen); plain see-through yellow turns muddy on blue. Quick: the next
+   page is waiting. */
 .login__burst {
   --feedback-burst-style: dots;
   --feedback-burst-mark: check;
-  --status-burst-halo: color-mix(in srgb, var(--color-neutral-50) 28%, transparent);
+  --status-burst-halo: color-mix(in srgb, var(--color-brand-yellow) 55%, transparent);
+  --status-burst-halo-blend: screen;
 
   --feedback-min-loading: 400ms;
   --feedback-burst-cycle: 780ms;
