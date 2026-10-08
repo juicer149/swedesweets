@@ -296,8 +296,9 @@
   --feedback-burst-style: wave;
   --feedback-burst-mark: crown;
 
-  /* One round of the crown's dots. The wait ends on a whole round, so
-     the wave always finishes before the crown glows. */
+  /* One round of the dots. The wait ends on a whole round, so the wave
+     always finishes before the mark: the shortest wait is one round (or
+     --feedback-min-loading, if that is longer). */
   --feedback-burst-cycle: 1050ms;
 
   /* After the last round the crown stands still this long, then glows. */
@@ -356,10 +357,13 @@
   --status-burst-halo: var(--color-action-deliver-light-bg);
   --status-burst-mark-icon: 60%;
 
-  /* quicker than an order: one short round, hardly a pause */
+  /* quicker than an order: one short round, hardly a pause; the cart
+     shows only a moment, and the navbar's cart catches it right after
+     (its jump and green flash) */
   --feedback-min-loading: 200ms;
   --feedback-burst-cycle: 850ms;
   --feedback-burst-rest: 100ms;
+  --feedback-mark-hold: 300ms;
 }
 
 /* Login: three dots, then a tick (a cross if it did not work), yellow:
@@ -372,8 +376,8 @@
   --status-burst-halo: color-mix(in srgb, var(--color-brand-yellow) 30%, transparent);
   --status-burst-halo-blend: screen;
 
-  --feedback-min-loading: 400ms;
-  --feedback-burst-cycle: 780ms;
-  --feedback-burst-rest: 120ms;
+  --feedback-min-loading: 200ms;
+  --feedback-burst-cycle: 600ms;
+  --feedback-burst-rest: 80ms;
   --feedback-mark-hold: 450ms;
 }
