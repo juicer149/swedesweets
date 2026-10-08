@@ -473,6 +473,30 @@ body:has(.screen) .site-footer {
   }
 }
 
+/* Login and the password forms (.page--auth): a few fields only, so the
+   title, the fields and the button stay together as one group, a little
+   above the middle of the screen, on phones and desktops alike, instead
+   of spreading over the whole height. */
+@media (min-height: 400px) {
+  .page.page--auth {
+    flex: 0 0 auto;
+    max-height: none;
+    margin-bottom: clamp(0rem, 6dvh, var(--space-12));
+  }
+
+  .page--auth > .page__header {
+    margin-bottom: clamp(var(--space-4), 3dvh, var(--space-6));
+  }
+
+  .page--auth > .form-grid {
+    margin-block: 0;
+  }
+
+  .page.page--auth > .page__actions {
+    margin-top: clamp(var(--space-5), 4dvh, var(--space-7));
+  }
+}
+
 /* In-site: the same one-screen layout on pages that keep the site's
    navbar. On phones that navbar has a fixed bottom bar, so the page keeps
    room for it instead of putting the actions underneath. */

@@ -5,7 +5,7 @@
 
 {% block content %}
 <section class="screen" aria-labelledby="login-title">
-  <form class="page" method="post" action="{% url 'login' %}">
+  <form class="page page--auth" method="post" action="{% url 'login' %}">
     {% csrf_token %}
 
     <header class="page__header">

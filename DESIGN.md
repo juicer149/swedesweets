@@ -109,6 +109,7 @@ Every page starts from one of these (`static/css/page.css`).
 | `.screen` (`--in-site` with the navbar) | One-screen pages: login, password, errors, payment result. Actions at the bottom on phones. |
 | `.page-section` | Pages that scroll: lists, detail pages, cart, FAQ, Find Sweets, About. `--top` puts work pages close to the navbar. |
 | `.page`, `--centered`, `--wide` | The column inside either shell. Carries the glow. |
+| `.page--auth` | Login and the password forms: title, fields and button kept together as one group a little above the middle, on every screen. |
 | `layouts/detail.html` | A detail page or an edit form: status heading, tabs (`page_tabs`), back link. Each tab carries its own actions at its foot. |
 | `layouts/error.html` | 400/403/404/500 and similar: small grey code, title, one line, one yellow way back. |
 
