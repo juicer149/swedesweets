@@ -89,6 +89,20 @@
   height: 100%;
 }
 
+/* A place can set a soft disc behind its success mark, the icon then a
+   little smaller inside it (the catalog's cart on light green):
+     --status-burst-mark-bg    the disc's colour (none by default)
+     --status-burst-mark-icon  the icon's size within the burst */
+.status-burst__mark--success {
+  border-radius: 50%;
+  background: var(--status-burst-mark-bg, transparent);
+}
+
+.status-burst__mark--success .ui-icon-block {
+  width: var(--status-burst-mark-icon, 100%);
+  height: var(--status-burst-mark-icon, 100%);
+}
+
 .status-burst__mark--success {
   color: var(--status-burst-success);
 }

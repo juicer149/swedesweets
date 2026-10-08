@@ -18,10 +18,13 @@
 (() => {
   "use strict";
 
-  /* Timing comes from tokens.css (--feedback-*), shared with the CSS. The
-     numbers here are only the fallback if a token is missing. */
-  function tokenMs(name, fallback) {
-    const value = getComputedStyle(document.documentElement)
+  /* Timing comes from tokens.css (--feedback-*), shared with the CSS, read
+     where the burst goes, so a place can have its own times (the end of
+     tokens.css). The numbers here are only the fallback if a token is
+     missing. */
+  function tokenMs(name, fallback, place) {
+    const element = place instanceof Element ? place : document.documentElement;
+    const value = getComputedStyle(element)
       .getPropertyValue(name)
       .trim();
     const number = parseFloat(value);
@@ -74,12 +77,12 @@
       return;
     }
 
-    const round = tokenMs("--feedback-burst-cycle", 1050);
+    const round = tokenMs("--feedback-burst-cycle", 1050, burst);
     const left = round - ((performance.now() - startedAt) % round);
 
     await wait(left < round ? left : 0);
     burst.dataset.state = "still";
-    await wait(tokenMs("--feedback-burst-rest", 250));
+    await wait(tokenMs("--feedback-burst-rest", 250, burst));
   }
 
   async function run(place, name, request) {
@@ -104,7 +107,7 @@
             outcome.error = error;
           }
         ),
-      wait(tokenMs("--feedback-min-loading", 500)),
+      wait(tokenMs("--feedback-min-loading", 500, place)),
     ]);
 
     await finishRound(burst, startedAt);
@@ -112,8 +115,8 @@
     if (burst) {
       burst.dataset.state = outcome.ok ? "success" : "error";
       await wait(
-        tokenMs("--feedback-mark-grow", 200)
-          + tokenMs("--feedback-mark-hold", 750)
+        tokenMs("--feedback-mark-grow", 200, place)
+          + tokenMs("--feedback-mark-hold", 750, place)
       );
     }
 
