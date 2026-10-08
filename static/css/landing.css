@@ -101,6 +101,9 @@ body:has(> .landing) {
   align-items: center;
   justify-content: center;
   min-height: 0;
+  /* a little above the middle: the eye's centre sits higher than the
+     screen's */
+  padding-bottom: clamp(var(--space-6), 9dvh, var(--space-16));
 }
 
 .landing__brand {
@@ -159,7 +162,10 @@ body:has(> .landing) {
   align-items: flex-start;
   gap: clamp(0.15rem, 1.2dvh, 0.75rem);
   margin: 0;
-  padding: clamp(var(--space-6), 6dvh, var(--space-12)) 0 0;
+  /* as much room on the right as the crown's column takes on the left,
+     so the icons and words sit in the middle */
+  padding: clamp(var(--space-6), 6dvh, var(--space-12))
+    calc(1.75rem + 0.75rem) 0 0;
   list-style: none;
 }
 
