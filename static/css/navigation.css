@@ -291,11 +291,11 @@
 .site-nav-cart__trigger.is-bumped {
   animation:
     site-nav-cart-bump 0.45s cubic-bezier(0.3, 1.6, 0.6, 1),
-    site-nav-cart-flash 0.9s ease-out;
+    site-nav-cart-flash 1.6s ease-out;
 }
 
 .site-nav-cart__trigger.is-bumped .site-nav-cart__count {
-  animation: site-nav-cart-count-flash 0.9s ease-out;
+  animation: site-nav-cart-count-flash 1.6s ease-out;
 }
 
 @keyframes site-nav-cart-flash {
@@ -303,10 +303,16 @@
     /* the button's own colours */
   }
 
-  25%, 45% {
+  /* green at once, held a while, then a long soft fade with an afterglow */
+  12%, 35% {
     color: var(--color-action-deliver);
     background: var(--color-action-deliver-light-bg);
     border-color: var(--color-action-deliver);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-action-deliver-light-bg) 80%, transparent);
+  }
+
+  70% {
+    box-shadow: 0 0 10px 6px color-mix(in srgb, var(--color-action-deliver-light-bg) 55%, transparent);
   }
 }
 
@@ -315,7 +321,7 @@
     /* the count's own colours */
   }
 
-  25%, 45% {
+  12%, 35% {
     background: var(--color-action-deliver);
   }
 }
@@ -330,7 +336,7 @@
 /* Less motion: no jump, the green flash only. */
 @media (prefers-reduced-motion: reduce) {
   .site-nav-cart__trigger.is-bumped {
-    animation: site-nav-cart-flash 0.9s ease-out;
+    animation: site-nav-cart-flash 1.6s ease-out;
   }
 }
 
