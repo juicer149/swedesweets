@@ -30,7 +30,7 @@
   --stepper-ink: var(--color-primary-800);
   --stepper-line: var(--color-primary-500);
   --stepper-line-width: 1px;
-  --stepper-number-bg: transparent;
+  --stepper-number-bg: var(--color-white);
 
   display: grid;
   grid-template-columns:
@@ -173,8 +173,10 @@
   appearance: none;
 }
 
+/* The number does not answer the pointer: it stays white; it only hops
+   when − or + changes it. */
 .quantity-stepper__input:hover {
-  background: color-mix(in srgb, var(--stepper-bg-hover) 50%, transparent);
+  background: var(--stepper-number-bg);
 }
 
 .quantity-stepper__input:focus {
@@ -203,9 +205,6 @@
     background: var(--stepper-bg);
   }
 
-  .quantity-stepper__input:hover {
-    background: var(--stepper-number-bg);
-  }
 }
 
 
