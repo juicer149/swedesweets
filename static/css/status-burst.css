@@ -17,7 +17,7 @@
   --status-burst-dot: var(--color-brand-yellow);
   --status-burst-success: var(--color-brand-yellow);
   --status-burst-glint: var(--color-primary-500);
-  --status-burst-halo: color-mix(in srgb, var(--color-brand-yellow) 32%, transparent);
+  --status-burst-halo: var(--color-primary-200);
 }
 
 .status-burst {
