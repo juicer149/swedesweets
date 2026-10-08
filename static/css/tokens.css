@@ -354,10 +354,10 @@
   --feedback-burst-mark: cart;
   --status-burst-success: var(--color-action-deliver);
   --status-burst-halo: var(--color-action-deliver-light-bg);
-  --status-burst-mark-icon: 70%;
+  --status-burst-mark-icon: 60%;
 
   /* quicker than an order: one short round, hardly a pause */
-  --feedback-min-loading: 400ms;
+  --feedback-min-loading: 200ms;
   --feedback-burst-cycle: 850ms;
   --feedback-burst-rest: 100ms;
 }
@@ -369,7 +369,7 @@
 .login__burst {
   --feedback-burst-style: dots;
   --feedback-burst-mark: check;
-  --status-burst-halo: color-mix(in srgb, var(--color-brand-yellow) 55%, transparent);
+  --status-burst-halo: color-mix(in srgb, var(--color-brand-yellow) 30%, transparent);
   --status-burst-halo-blend: screen;
 
   --feedback-min-loading: 400ms;
