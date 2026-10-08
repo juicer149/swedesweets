@@ -8,11 +8,10 @@
   <form class="page page--auth" method="post" action="{% url 'login' %}">
     {% csrf_token %}
 
-    <header class="page__header">
-      <h1 id="login-title" class="page__title">
-        {% trans "Login" %}
-      </h1>
-    </header>
+    {# No visible title: the button and the fields say it already. #}
+    <h1 id="login-title" class="visually-hidden">
+      {% trans "Login" %}
+    </h1>
 
     {% include "registration/includes/form_errors.html" %}
 
