@@ -211,6 +211,11 @@
   width: 0.85em;
   height: 0.85em;
   color: var(--color-brand-yellow);
+  /* a dark blue shadow under it, so it stands on the page (as in the
+     phone's bottom bar) */
+  filter: drop-shadow(
+    0 0.08em 0.06em color-mix(in srgb, var(--color-primary-900) 70%, transparent)
+  );
   opacity: 0;
   transform: scale(0.4);
   transform-origin: bottom left;
