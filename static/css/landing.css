@@ -162,10 +162,7 @@ body:has(> .landing) {
   align-items: flex-start;
   gap: clamp(0.15rem, 1.2dvh, 0.75rem);
   margin: 0;
-  /* as much room on the right as the crown's column takes on the left,
-     so the icons and words sit in the middle */
-  padding: clamp(var(--space-6), 6dvh, var(--space-12))
-    calc(1.75rem + 0.75rem) 0 0;
+  padding: clamp(var(--space-6), 6dvh, var(--space-12)) 0 0;
   list-style: none;
 }
 
@@ -176,10 +173,11 @@ body:has(> .landing) {
 
 .landing-menu__link {
   display: grid;
-  grid-template-columns: 1.75rem 1.75rem auto;
+  grid-template-columns: 1.75rem auto;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.3rem 0.75rem 0.3rem 0.4rem;
+  /* room on the right for the crown over the last letter */
+  padding: 0.3rem 1.1rem 0.3rem 0.4rem;
 
   color: var(--landing-ink);
   border-radius: var(--radius-md);
@@ -189,6 +187,8 @@ body:has(> .landing) {
   font-weight: var(--font-weight-heading);
   line-height: 1.2;
   text-decoration: none;
+
+  transition: color var(--motion-fast);
 }
 
 .landing-menu__link:focus-visible {
@@ -202,41 +202,40 @@ body:has(> .landing) {
   --icon-stroke-width: 2.2;
 }
 
-/* The crown is the cursor: on the chosen link until the pointer or the
-   keyboard is on another one. */
+.landing-menu__label {
+  position: relative;
+}
+
+/* The crown is the cursor, tilted on the last letter as on the logo (and
+   in the footer). It sits on the chosen link, and landing.js moves the
+   choice to where the pointer or the focus goes, and leaves it there. */
 .landing-menu__crown.ui-icon-block {
-  width: 1.6rem;
-  height: 1.6rem;
+  position: absolute;
+  top: -0.55em;
+  right: -0.75em;
+  width: 0.85em;
+  height: 0.85em;
   color: var(--color-brand-yellow);
   opacity: 0;
-  transform: translateX(-0.4rem);
+  transform: scale(0.4);
+  transform-origin: bottom left;
   transition:
     opacity var(--motion-fast),
     transform var(--motion-fast);
 }
 
-.landing-menu__link--chosen,
-.landing-menu__link:hover,
-.landing-menu__link:focus-visible {
+.landing-menu__link--chosen {
   color: var(--color-brand-yellow);
 }
 
-.landing-menu__link--chosen .landing-menu__crown,
-.landing-menu__link:hover .landing-menu__crown,
-.landing-menu__link:focus-visible .landing-menu__crown {
+.landing-menu__link--chosen .landing-menu__crown {
   opacity: 1;
   transform: none;
 }
 
-.landing-menu:is(:hover, :focus-within)
-  .landing-menu__link--chosen:not(:hover, :focus-visible) {
-  color: var(--landing-ink);
-}
-
-.landing-menu:is(:hover, :focus-within)
-  .landing-menu__link--chosen:not(:hover, :focus-visible)
-  .landing-menu__crown {
-  opacity: 0;
+/* Without the script the words still answer the pointer. */
+.landing-menu:not([data-landing-live]) .landing-menu__link:hover {
+  color: var(--color-brand-yellow);
 }
 
 

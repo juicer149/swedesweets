@@ -7,8 +7,9 @@
   First the logo and the line from their own posts ("Sweden's sweetest
   tradition") alone on the blue for a moment (--landing-splash); then they
   rise and the menu opens under them: the navbar's own links
-  (primary_nav_items, so a business customer gets theirs), the crown in
-  front of the chosen one. The arrow keys move the crown (landing.js).
+  (primary_nav_items, so a business customer gets theirs), the crown on
+  the last letter of the chosen one, as on the logo. The pointer, Tab or
+  the arrow keys move it, and it stays where it was last put (landing.js).
   Login, or the account, at the bottom; the cart at the top once it holds
   something. No navbar, no footer, and the page never scrolls.
 
@@ -76,9 +77,11 @@
                   class="landing-menu__link{% if forloop.first %} landing-menu__link--chosen{% endif %}"
                   href="{{ item.href }}"
                 >
-                  {% include "includes/ui/icon_block.html" with name="crown" class_name="landing-menu__crown" only %}
                   {% include "includes/ui/icon_block.html" with name=item.icon class_name="landing-menu__icon" only %}
-                  <span>{{ item.label }}</span>
+                  <span class="landing-menu__label">
+                    {{ item.label }}
+                    {% include "includes/ui/icon_block.html" with name="crown" class_name="landing-menu__crown" only %}
+                  </span>
                 </a>
               </li>
             {% endfor %}

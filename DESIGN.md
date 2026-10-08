@@ -244,8 +244,9 @@ drawing's faded foot (Find Sweets).
 - **Start page** (`storefront/landing.html`, `landing.css`): the one loud
   page. Cream on primary-600, the logo and "Sweden’s sweetest tradition"
   alone for a moment, then a menu of the navbar's own links rises under
-  them, like a game's: the crown is the cursor (hover, Tab, ↑↓ in
-  `landing.js`). Cart at the top once it holds something, login or the
+  them, like a game's: the crown is the cursor, tilted on the chosen
+  word's last letter as on the logo; pointer, Tab or ↑↓ move it and it
+  stays where it was last put (`landing.js`). Cart at the top once it holds something, login or the
   account at the bottom; no navbar, no footer, one screen, no scroll. The
   splash plays once per visit.
 - **Head:** favicon (the crown), Open Graph image (logo on cream). Blocks
