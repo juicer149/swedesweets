@@ -296,12 +296,13 @@
   --feedback-burst-style: wave;
   --feedback-burst-mark: crown;
 
-  /* One round of the dots. The wait ends on a whole round, so the wave
-     always finishes before the mark: the shortest wait is one round (or
-     --feedback-min-loading, if that is longer). */
-  --feedback-burst-cycle: 1050ms;
+  /* The dots' speed: one round, the same everywhere. They go round for as
+     long as it takes; a place sets how long they show at least
+     (--feedback-min-loading), not how fast. */
+  --feedback-burst-cycle: 900ms;
 
-  /* After the last round the crown stands still this long, then glows. */
+  /* When the answer is in, the dots ease back and stand still this long,
+     then the mark comes. */
   --feedback-burst-rest: 250ms;
 
   --transform-lift: translateY(-1px);
@@ -357,11 +358,10 @@
   --status-burst-halo: var(--color-action-deliver-light-bg);
   --status-burst-mark-icon: 60%;
 
-  /* quicker than an order: one short round, hardly a pause; the cart
-     shows only a moment, and the navbar's cart catches it right after
-     (its jump and green flash) */
-  --feedback-min-loading: 200ms;
-  --feedback-burst-cycle: 850ms;
+  /* the dots at least about one round, hardly a pause; the cart shows
+     a moment, then the navbar's cart catches it (its jump and green
+     flash) */
+  --feedback-min-loading: 850ms;
   --feedback-burst-rest: 100ms;
   --feedback-mark-hold: 300ms;
 }
@@ -376,8 +376,7 @@
   --status-burst-halo: color-mix(in srgb, var(--color-brand-yellow) 30%, transparent);
   --status-burst-halo-blend: screen;
 
-  --feedback-min-loading: 200ms;
-  --feedback-burst-cycle: 600ms;
+  --feedback-min-loading: 600ms;
   --feedback-burst-rest: 80ms;
   --feedback-mark-hold: 450ms;
 }

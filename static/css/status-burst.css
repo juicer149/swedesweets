@@ -240,7 +240,7 @@
   aspect-ratio: 1;
   border-radius: 50%;
   background: var(--status-burst-dot);
-  transition: transform 0.18s ease-in, opacity 0.18s;
+  transition: transform 0.15s ease-out, opacity 0.18s;
 }
 
 .status-burst[data-style="dots"][data-state="loading"] .status-burst__beat {
@@ -275,7 +275,7 @@
 
 .status-burst__crown-dot {
   transform-box: view-box;
-  transition: transform 0.2s, fill 0.2s;
+  transition: transform 0.15s ease-out, fill 0.2s;
 }
 
 /* wave: the dots grow and shrink one after the other. */

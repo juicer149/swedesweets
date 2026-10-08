@@ -166,9 +166,10 @@ How it looks is two tokens in `tokens.css`: `--feedback-burst-style`
 (`ring`, `dots`, or the crown styles `wave`, `is_writing`, `color_wave`,
 `candy`, where the logo's crown waits and its dots move) and
 `--feedback-burst-mark` (after `ring` or `dots`: `crown`, `cart` or
-`check`). Every style but the ring ends on a whole round of its dots
-(`--feedback-burst-cycle`), the dots stop a moment
-(`--feedback-burst-rest`), then the mark grows, or the crown glows, with a
+`check`). The dots go round at one steady speed (`--feedback-burst-cycle`)
+until the answer is in, but at least `--feedback-min-loading`; then they
+settle a moment (`--feedback-burst-rest`) and the mark grows, or the crown
+glows, with a
 soft halo of the place's colour behind it (`--status-burst-halo`). A place
 gets its own look by setting the tokens on its element, at the end of
 `tokens.css`: the crown's wave is the default and belongs to orders; the

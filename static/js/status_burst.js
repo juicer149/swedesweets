@@ -9,10 +9,12 @@
   window.statusBurst.create(name) gives a fresh burst to place yourself
   (submit_burst.js). Its look comes from --feedback-burst-style.
 
-  The request and a minimum time (--feedback-min-loading) run side by
-  side, so the dots never make anything slower than the server; then the
-  mark grows (--feedback-mark-grow) and stays (--feedback-mark-hold), and
-  the place is emptied. The times live in tokens.css. ok is whether the
+  The dots go round at one steady speed (--feedback-burst-cycle) for as
+  long as it takes: the request and a minimum time (--feedback-min-loading)
+  run side by side, so a quick answer still shows the dots that long and a
+  slow one shows them until it comes. Then the dots settle
+  (--feedback-burst-rest), the mark grows (--feedback-mark-grow) and stays
+  (--feedback-mark-hold), and the place is emptied. The times live in tokens.css. ok is whether the
   request resolved; value is what it resolved to, error what it threw.
 */
 (() => {
@@ -68,26 +70,33 @@
     return burst;
   }
 
-  /* Every style but the ring ends on a whole round of its dots
-     (--feedback-burst-cycle), never in the middle of one; then the dots
-     stop and the crown stands still a moment (--feedback-burst-rest,
-     data-state "still") before it glows. */
-  async function finishRound(burst, startedAt) {
+  /* When the answer is in (and the minimum has passed), every style but
+     the ring settles: the dots ease back and stand still a moment
+     (--feedback-burst-rest, data-state "still") before the mark. */
+  async function settle(burst) {
     if (!burst || burst.dataset.style === "ring") {
       return;
     }
 
-    const round = tokenMs("--feedback-burst-cycle", 1050, burst);
-    const left = round - ((performance.now() - startedAt) % round);
+    // Wherever the wave is, the dots ease back from there rather than
+    // jump: hold each one's pose, stop the wave, then let it go.
+    const dots = burst.querySelectorAll(".status-burst__beat, .status-burst__crown-dot");
+    for (const dot of dots) {
+      dot.style.transform = getComputedStyle(dot).transform;
+    }
 
-    await wait(left < round ? left : 0);
     burst.dataset.state = "still";
+    void burst.offsetWidth;
+
+    for (const dot of dots) {
+      dot.style.transform = "";
+    }
+
     await wait(tokenMs("--feedback-burst-rest", 250, burst));
   }
 
   async function run(place, name, request) {
     const burst = create(name, place);
-    const startedAt = performance.now();
 
     if (burst) {
       place.replaceChildren(burst);
@@ -110,7 +119,7 @@
       wait(tokenMs("--feedback-min-loading", 500, place)),
     ]);
 
-    await finishRound(burst, startedAt);
+    await settle(burst);
 
     if (burst) {
       burst.dataset.state = outcome.ok ? "success" : "error";
