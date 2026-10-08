@@ -10,16 +10,30 @@
    ============================================================================= */
 
 .quantity-stepper {
+  /* Its look, in one place to try others:
+       --stepper-number    room for the number (three digits)
+       --stepper-bg        the − and + buttons
+       --stepper-bg-hover  pointed at
+       --stepper-bg-press  pressed
+       --stepper-ink       the − and + themselves
+       --stepper-line      the outline and the lines between the parts */
+  --stepper-number: 3rem;
+  --stepper-bg: var(--color-primary-200);
+  --stepper-bg-hover: color-mix(in srgb, var(--color-primary-200) 50%, var(--color-primary-300));
+  --stepper-bg-press: var(--color-primary-300);
+  --stepper-ink: var(--color-primary-800);
+  --stepper-line: var(--color-primary-800);
+
   display: grid;
   grid-template-columns:
     var(--size-control-sm)
-    minmax(3.5rem, 4.5rem)
+    var(--stepper-number)
     var(--size-control-sm);
 
   width: fit-content;
 
   background: var(--color-white);
-  border: 1px solid var(--color-neutral-300);
+  border: 1px solid var(--stepper-line);
   border-radius: var(--radius-pill);
 
   overflow: hidden;
@@ -39,10 +53,10 @@
   min-height: var(--size-control-sm);
   padding: 0;
 
-  /* Warm grey: the − and + read as buttons without taking colour from
-     the page's one action. */
-  color: var(--color-neutral-700);
-  background: var(--color-neutral-100);
+  /* Light blue with dark blue signs: buttons, without taking the yellow
+     of the page's one action. */
+  color: var(--stepper-ink);
+  background: var(--stepper-bg);
   border: 0;
 
   font-family: var(--font-body);
@@ -62,18 +76,18 @@
 /* Rounded on the outer side like the stepper, so the grey, the pressed
    shade and the focus ring all follow its pill shape. */
 .quantity-stepper__button--decrease {
-  border-right: 1px solid var(--color-neutral-300);
+  border-right: 1px solid var(--stepper-line);
   border-radius: var(--radius-pill) 0 0 var(--radius-pill);
 }
 
 .quantity-stepper__button--increase {
-  border-left: 1px solid var(--color-neutral-300);
+  border-left: 1px solid var(--stepper-line);
   border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
 }
 
 .quantity-stepper__button:hover:not(:disabled) {
-  color: var(--color-neutral-900);
-  background: var(--color-neutral-200);
+  color: var(--stepper-ink);
+  background: var(--stepper-bg-hover);
 }
 
 .quantity-stepper__button:focus-visible {
@@ -90,8 +104,8 @@
 /* Pressed: only darker. The button's grey runs to the stepper's rounded
    edge, so a shrinking or shadowed square would show its corners. */
 .quantity-stepper__button:active:not(:disabled) {
-  color: var(--color-neutral-900);
-  background: var(--color-neutral-300);
+  color: var(--stepper-ink);
+  background: var(--stepper-bg-press);
 }
 
 /* The − and + are drawn icons (not text), so they sit in the middle. */
@@ -180,8 +194,8 @@
 
 @media (hover: none), (pointer: coarse) {
   .quantity-stepper__button:hover:not(:disabled) {
-    color: var(--color-primary-900);
-    background: var(--color-white);
+    color: var(--stepper-ink);
+    background: var(--stepper-bg);
   }
 
   .quantity-stepper__input:hover {

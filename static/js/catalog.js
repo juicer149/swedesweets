@@ -204,7 +204,8 @@
         };
 
     // The navbar's cart catches the product while the green cart still
-    // shows on the tile (a moment after it appears), so the two overlap.
+    // shows on the tile (almost half a second after it appears), so the
+    // two overlap a little.
     const catchIt = (added) => {
       if (added) {
         window.setTimeout(() => {
@@ -213,7 +214,7 @@
               detail: { source: "catalog", bump: true },
             })
           );
-        }, 250);
+        }, 450);
       }
     };
 
