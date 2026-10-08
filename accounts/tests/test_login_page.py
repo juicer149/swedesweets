@@ -65,7 +65,7 @@ def test_login_shows_the_burst_while_it_logs_in(client):
     html = client.get(reverse("login")).content.decode()
 
     assert "data-login" in html
-    assert 'data-status-burst="login"' in html
+    assert 'data-status-burst="default"' in html
     assert "js/status_burst" in html
     assert "js/login" in html
 

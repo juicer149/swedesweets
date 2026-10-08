@@ -284,6 +284,15 @@
   --feedback-mark-grow: 200ms;
   --feedback-mark-hold: 750ms;
 
+  /* How the waiting looks (includes/ui/status_burst.html), one of:
+       ring        eight dots in a ring, then the crown grows in
+       wave        the crown, its three dots growing one after the other
+       is_writing  the crown, its dots hopping like someone typing
+       color_wave  the crown, a cream glint running through its dots
+       candy       the crown, its dots in three sweet colours, in turn
+     status_burst.js reads it and sets data-style on each burst. */
+  --feedback-burst-style: wave;
+
   --transform-lift: translateY(-1px);
   --transform-lift-scale: translateY(-1px) scale(1.01);
 

@@ -158,22 +158,25 @@ beside what to buy, offers as chips, Description and Ingredients as
 tabs). The channel's pages only say where the form posts and what its
 button says. CSS in `static/css/catalog.css`.
 
-**Status burst:** `includes/ui/status_burst.html` (once per page, as a
-`<template>`) with `status_burst.js`. While something is saved, a ring of
-yellow dots with a bigger one going round, centred in place of the
-controls; then the dots draw in and a mark grows from nothing and stays a
-moment: the crown when it worked, a red cross when it did not. The
-request and a minimum time run side by side, so it never slows anything
-down. The times (`--feedback-min-loading`, `--feedback-mark-grow`,
-`--feedback-mark-hold`) are tokens in `tokens.css`, read by the script
-too. Ops can pass `success_icon="check"` and
-`tone="status-burst--ops"` (blue dots, green tick). Used by the catalog's
-green tick; the navbar cart then gives a little jump.
+**Status burst:** `includes/ui/status_burst.html`, rendered once in
+`base.html` as a `<template>`, with `status_burst.js` (also loaded there).
+While something is saved something waits in place of the controls; then a
+mark says how it went: the crown when it worked, a cross when it did not.
+How the waiting looks is one token, `--feedback-burst-style` in
+`tokens.css` (being tried out):
+`ring` (eight dots, then the crown grows in), `wave` (the logo's crown, its
+three dots growing in turn), `is_writing` (the dots hop), `color_wave` (a
+colour runs through the dots), `candy` (three sweet colours). With the
+crown styles, done is the crown growing a little with a glow. The request
+and a minimum time run side by side, so it never slows anything down. The
+times (`--feedback-min-loading`, `--feedback-mark-grow`,
+`--feedback-mark-hold`) are tokens too, read by the script. Used by the
+catalog's green tick (the navbar cart then gives a little jump) and login.
 
 **Submit burst:** a form that leads to the next step (Review order, Place
 order, Continue to review, Pay, Order again) has `data-submit-burst`
 (`submit_burst.js`, loaded on every page). When it is sent its yellow
-button gives way to the same dots, in its place; they show at least
+button gives way to the same burst, in its place; they show at least
 `--feedback-min-loading` before the form goes, and stay until the next
 page arrives; a second press does nothing. No crown here: the next page is the
 answer.

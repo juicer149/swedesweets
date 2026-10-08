@@ -17,19 +17,17 @@
 (() => {
   "use strict";
 
+  /* The burst from base.html's template, in the look --feedback-burst-style
+     chooses (status_burst.js). */
   function dots() {
-    const burst = document.createElement("span");
-    burst.className = "status-burst submit-burst__dots";
-    burst.dataset.state = "loading";
-    burst.setAttribute("aria-hidden", "true");
+    const burst = window.statusBurst?.create("default");
 
-    for (let i = 0; i < 8; i += 1) {
-      const dot = document.createElement("span");
-      dot.className = "status-burst__dot";
-      dot.style.setProperty("--i", String(i));
-      burst.append(dot);
+    if (!burst) {
+      return document.createElement("span");
     }
 
+    burst.classList.add("submit-burst__dots");
+    burst.setAttribute("aria-hidden", "true");
     return burst;
   }
 

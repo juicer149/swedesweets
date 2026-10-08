@@ -88,7 +88,15 @@
       defer
     ></script>
 
-    {# Forms that lead to the next step opt in with data-submit-burst. #}
+    {# The waiting, everywhere: one burst to clone (status_burst.js), and the #}
+    {# forms that lead to the next step opt in with data-submit-burst. #}
+    {% include "includes/ui/status_burst.html" with name="default" only %}
+
+    <script
+      src="{% static 'js/status_burst.js' %}"
+      defer
+    ></script>
+
     <script
       src="{% static 'js/submit_burst.js' %}"
       defer

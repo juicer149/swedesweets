@@ -45,11 +45,9 @@
   </form>
 </section>
 
-{% include "includes/ui/status_burst.html" with name="login" %}
 {% endblock %}
 
 {% block scripts %}
   {{ block.super }}
-  <script src="{% static 'js/status_burst.js' %}" defer></script>
   <script src="{% static 'js/login.js' %}" defer></script>
 {% endblock %}

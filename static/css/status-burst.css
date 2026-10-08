@@ -112,6 +112,160 @@
 
 
 /* =============================================================================
+   The crown styles (--feedback-burst-style in tokens.css, set on each
+   burst as data-style by status_burst.js): the logo's crown stands there
+   while it waits, and its three dots move. Done: the dots settle, the
+   crown grows a little and glows. A problem: the crown goes, the cross
+   comes. "ring" (or no style) keeps the ring of dots above.
+
+     --status-burst-glint  the colour running through color_wave
+   ============================================================================= */
+
+.status-burst {
+  --status-burst-glint: var(--color-primary-500);
+}
+
+.status-burst:not([data-style]) .status-burst__crown,
+.status-burst[data-style="ring"] .status-burst__crown {
+  display: none;
+}
+
+.status-burst[data-style]:not([data-style="ring"]) .status-burst__dot,
+.status-burst[data-style]:not([data-style="ring"]) .status-burst__mark--success {
+  display: none;
+}
+
+.status-burst__crown {
+  position: absolute;
+  inset: 4%;
+  width: 92%;
+  height: 92%;
+  overflow: visible;
+
+  color: var(--status-burst-success);
+
+  transform-origin: 50% 75%;
+  transition:
+    opacity 0.15s,
+    transform var(--feedback-mark-grow) cubic-bezier(0.3, 1.6, 0.6, 1);
+}
+
+.status-burst__crown path {
+  fill: currentColor;
+}
+
+.status-burst__crown-dot {
+  transform-box: view-box;
+  transition: transform 0.2s, fill 0.2s;
+}
+
+/* wave: the dots grow and shrink one after the other. */
+.status-burst[data-style="wave"][data-state="loading"] .status-burst__crown-dot {
+  animation: crown-dot-wave 1.05s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.18s);
+}
+
+@keyframes crown-dot-wave {
+  0%, 60%, 100% {
+    transform: scale(1);
+  }
+
+  25% {
+    transform: scale(1.8);
+  }
+}
+
+/* is_writing: the dots hop, like someone typing. */
+.status-burst[data-style="is_writing"][data-state="loading"] .status-burst__crown-dot {
+  animation: crown-dot-hop 1.05s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.18s);
+}
+
+@keyframes crown-dot-hop {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+
+  25% {
+    transform: translateY(-18px) scale(1.15);
+  }
+}
+
+/* color_wave: another colour runs through the dots. */
+.status-burst[data-style="color_wave"][data-state="loading"] .status-burst__crown-dot {
+  animation: crown-dot-glint 1.05s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.18s);
+}
+
+@keyframes crown-dot-glint {
+  0%, 60%, 100% {
+    fill: currentColor;
+    transform: scale(1);
+  }
+
+  25% {
+    fill: var(--status-burst-glint);
+    transform: scale(1.25);
+  }
+}
+
+/* candy: three sweet colours, growing in turn. */
+.status-burst[data-style="candy"] .status-burst__crown-dot:nth-of-type(2) {
+  fill: #ef5b8c;
+}
+
+.status-burst[data-style="candy"] .status-burst__crown-dot:nth-of-type(3) {
+  fill: #2fb37a;
+}
+
+.status-burst[data-style="candy"] .status-burst__crown-dot:nth-of-type(4) {
+  fill: #ff8a3d;
+}
+
+.status-burst[data-style="candy"][data-state="loading"] .status-burst__crown-dot {
+  animation: crown-dot-wave 1.05s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.18s);
+}
+
+/* Done: the dots settle, the crown grows a little and glows. */
+.status-burst[data-state="success"] .status-burst__crown {
+  transform: scale(1.14);
+  animation: crown-glow calc(var(--feedback-mark-hold) + var(--feedback-mark-grow))
+    ease-out both;
+}
+
+@keyframes crown-glow {
+  0% {
+    filter: drop-shadow(0 0 0 transparent);
+  }
+
+  35% {
+    filter:
+      drop-shadow(0 0 0.35rem color-mix(in srgb, var(--status-burst-success) 85%, transparent))
+      brightness(1.12);
+  }
+
+  100% {
+    filter: drop-shadow(0 0 0.15rem color-mix(in srgb, var(--status-burst-success) 40%, transparent));
+  }
+}
+
+/* A problem: the crown goes, the cross comes. */
+.status-burst[data-state="error"] .status-burst__crown {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-burst__crown,
+  .status-burst__crown-dot {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* =============================================================================
    Submit burst (submit_burst.js): the yellow button gives way to the dots
    while the next page loads. The button keeps its size and place; only
    its look goes, so nothing below it jumps.

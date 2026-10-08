@@ -201,7 +201,7 @@
           }
         };
 
-    const { ok, value, error } = await run(status, "catalog", () =>
+    const { ok, value, error } = await run(status, "default", () =>
       postAdd(form)
     );
 

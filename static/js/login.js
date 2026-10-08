@@ -82,7 +82,7 @@
 
     const { ok, value, error } = await window.statusBurst.run(
       place,
-      "login",
+      "default",
       () => send(form)
     );
 

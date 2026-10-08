@@ -6,6 +6,9 @@
       place, "catalog", () => fetch(…)
     );
 
+  window.statusBurst.create(name) gives a fresh burst to place yourself
+  (submit_burst.js). Its look comes from --feedback-burst-style.
+
   The request and a minimum time (--feedback-min-loading) run side by
   side, so the dots never make anything slower than the server; then the
   mark grows (--feedback-mark-grow) and stays (--feedback-mark-hold), and
@@ -32,14 +35,28 @@
 
   const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
+  /* Which look, from --feedback-burst-style (tokens.css). */
+  function burstStyle() {
+    return (
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--feedback-burst-style")
+        .trim()
+        .replace(/["']/g, "") || "ring"
+    );
+  }
+
   function create(name) {
     const template = document.querySelector(
       `template[data-status-burst="${name}"]`
     );
 
-    return template
-      ? template.content.firstElementChild.cloneNode(true)
-      : null;
+    if (!template) {
+      return null;
+    }
+
+    const burst = template.content.firstElementChild.cloneNode(true);
+    burst.dataset.style = burstStyle();
+    return burst;
   }
 
   async function run(place, name, request) {
@@ -79,5 +96,5 @@
     return outcome;
   }
 
-  window.statusBurst = { run };
+  window.statusBurst = { run, create };
 })();
