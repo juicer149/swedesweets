@@ -897,11 +897,12 @@
   .site-nav__link[aria-current="page"] .site-nav__icon::after {
     content: "";
     position: absolute;
-    /* in proportion to the icon */
-    top: -45%;
-    right: -55%;
-    width: 75%;
-    height: 75%;
+    /* in proportion to the icon: as big as the icon itself, so the page
+       you are on shows at a glance on a phone */
+    top: -60%;
+    right: -85%;
+    width: 105%;
+    height: 105%;
 
     background: url("../images/favicon.svg") center / contain no-repeat;
     pointer-events: none;
