@@ -2389,3 +2389,7 @@ msgstr "La plus douce tradition suédoise"
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
+
+#: templates/includes/footer.html
+msgid "SwedeSweets on TikTok"
+msgstr "SwedeSweets sur TikTok"

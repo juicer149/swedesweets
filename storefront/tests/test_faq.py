@@ -77,9 +77,10 @@ def test_about_page_tells_who_we_are(client):
 
 
 @pytest.mark.django_db
-def test_footer_links_the_faq_and_their_instagram(client):
+def test_footer_links_the_faq_instagram_and_tiktok(client):
     html = client.get(reverse("public_site:about")).content.decode()
 
     footer = html[html.index("site-footer"):]
     assert f'href="{reverse("public_site:faq")}"' in footer
     assert 'href="https://www.instagram.com/swede_sweets/"' in footer
+    assert 'href="https://www.tiktok.com/@swede_sweets"' in footer
