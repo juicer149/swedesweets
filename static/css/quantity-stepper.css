@@ -10,19 +10,25 @@
    ============================================================================= */
 
 .quantity-stepper {
-  /* Its look, in one place to try others:
-       --stepper-number    room for the number (three digits)
-       --stepper-bg        the − and + buttons
-       --stepper-bg-hover  pointed at
-       --stepper-bg-press  pressed
-       --stepper-ink       the − and + themselves
-       --stepper-line      the outline and the lines between the parts */
+  /* Its look, in one place to try others. Now as the catalog's "+ Add":
+     edged in the action yellow, not filled, its signs dark. (The blue one
+     tried before: bg primary-200, hover between 200 and 300, press 300,
+     ink and line primary-800, line width 1px.)
+       --stepper-number      room for the number (three digits)
+       --stepper-bg          the − and + buttons (and behind the parts,
+                             so no white shows at the rounded edge)
+       --stepper-bg-hover    pointed at
+       --stepper-bg-press    pressed
+       --stepper-ink         the − and + themselves
+       --stepper-line        the outline and the lines between the parts
+       --stepper-line-width  their width */
   --stepper-number: 3rem;
-  --stepper-bg: var(--color-primary-200);
-  --stepper-bg-hover: color-mix(in srgb, var(--color-primary-200) 50%, var(--color-primary-300));
-  --stepper-bg-press: var(--color-primary-300);
-  --stepper-ink: var(--color-primary-800);
-  --stepper-line: var(--color-primary-800);
+  --stepper-bg: transparent;
+  --stepper-bg-hover: var(--color-accent-100);
+  --stepper-bg-press: var(--color-accent-200);
+  --stepper-ink: var(--color-accent-900);
+  --stepper-line: var(--color-accent-600);
+  --stepper-line-width: 1.5px;
 
   display: grid;
   grid-template-columns:
@@ -32,8 +38,8 @@
 
   width: fit-content;
 
-  background: var(--color-white);
-  border: 1px solid var(--stepper-line);
+  background: var(--stepper-bg);
+  border: var(--stepper-line-width) solid var(--stepper-line);
   border-radius: var(--radius-pill);
 
   overflow: hidden;
@@ -76,12 +82,12 @@
 /* Rounded on the outer side like the stepper, so the grey, the pressed
    shade and the focus ring all follow its pill shape. */
 .quantity-stepper__button--decrease {
-  border-right: 1px solid var(--stepper-line);
+  border-right: 1px solid color-mix(in srgb, var(--stepper-line) 55%, transparent);
   border-radius: var(--radius-pill) 0 0 var(--radius-pill);
 }
 
 .quantity-stepper__button--increase {
-  border-left: 1px solid var(--stepper-line);
+  border-left: 1px solid color-mix(in srgb, var(--stepper-line) 55%, transparent);
   border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
 }
 
@@ -116,20 +122,17 @@
   height: 0.95rem;
 }
 
-.quantity-stepper__button:disabled {
-  color: var(--color-neutral-400);
-  background: var(--color-neutral-50);
-
-  cursor: not-allowed;
-}
-
+/* At its limit (− at 1): the same look, its sign faded, so the two ends
+   still match. */
+.quantity-stepper__button:disabled,
 .quantity-stepper__button:disabled:hover,
 .quantity-stepper__button:disabled:active {
-  color: var(--color-neutral-400);
-  background: var(--color-neutral-50);
+  color: color-mix(in srgb, var(--stepper-ink) 35%, transparent);
+  background: var(--stepper-bg);
 
   box-shadow: none;
   transform: none;
+  cursor: not-allowed;
 }
 
 
@@ -144,7 +147,7 @@
   padding: 0 var(--space-1);
 
   color: var(--color-primary-950);
-  background: var(--color-white);
+  background: transparent;
   border: 0;
   border-radius: 0;
 
@@ -169,7 +172,7 @@
 }
 
 .quantity-stepper__input:hover {
-  background: var(--color-primary-50);
+  background: color-mix(in srgb, var(--stepper-bg-hover) 50%, transparent);
 }
 
 .quantity-stepper__input:focus {
@@ -199,7 +202,7 @@
   }
 
   .quantity-stepper__input:hover {
-    background: var(--color-white);
+    background: transparent;
   }
 }
 
