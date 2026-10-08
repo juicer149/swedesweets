@@ -34,20 +34,9 @@ def business_product_catalog_label(
     *,
     language_code: str,
 ) -> str:
-    return (
-        f"{product.code_label} · "
-        f"{translated_product_name(product, language_code=language_code)} · "
-        f"{product.unit_weight_label}"
-    )
-
-
-def business_product_short_label(
-    product: Product,
-    *,
-    language_code: str,
-) -> str:
-    """Name and weight only ("Rambo — Twist · 2000 g"): where there is
-    little room, as in the navbar's cart."""
+    """What a customer reads: the name and the weight ("Rambo — Twist ·
+    2000 g"). The internal number and the stock unit are for ops (their
+    pages use Product.catalog_label)."""
 
     return (
         f"{translated_product_name(product, language_code=language_code)} · "
