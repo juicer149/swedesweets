@@ -91,6 +91,19 @@
   height: 1.25rem;
 }
 
+/* The footer stays at the foot of the screen: a short page (an empty
+   shop) grows its main to fill the screen instead of leaving the
+   footer halfway up with empty page below it. */
+body:has(.site-footer) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+body:has(.site-footer) .site-main {
+  flex: 1 0 auto;
+}
+
 /* Pages without the footer (ops): no extra room under the content, so a
    page that fits the screen does not scroll, and a longer one scrolls
    just past its last button (the section keeps its own bottom padding).
