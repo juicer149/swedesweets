@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 21:07+0200\n"
+"POT-Creation-Date: 2026-10-09 00:27+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -18,25 +18,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: accounts/account_menus.py:40 accounts/account_menus.py:46
+#: accounts/account_menus.py:43
 #: templates/business_portal/includes/account_section_nav.html:3
 #: templates/business_portal/index.html:4
 #: templates/business_portal/index.html:11
+#: templates/includes/ops_footer.html:21
 msgid "My account"
 msgstr "Mon compte"
 
-#: accounts/account_menus.py:52
+#: accounts/account_menus.py:49
 msgid "Ops dashboard"
 msgstr "Tableau de bord des opérations"
 
-#: accounts/account_menus.py:58
+#: accounts/account_menus.py:55
 msgid "Public site"
 msgstr "Site public"
-
-#: accounts/account_menus.py:73 accounts/account_menus.py:90
-#: accounts/account_menus.py:101
-msgid "Account"
-msgstr "Compte"
 
 #: accounts/activity_viewmodels.py:85
 msgid "Placed order"
@@ -308,12 +304,12 @@ msgid "Find Sweets"
 msgstr "Où acheter"
 
 #: business_portal/navigation.py:44 storefront/navigation.py:50
-#: templates/includes/footer.html:24 templates/storefront/faq.html:4
+#: templates/storefront/faq.html:4
 msgid "FAQ"
 msgstr "FAQ"
 
 #: business_portal/navigation.py:54 storefront/navigation.py:60
-#: templates/includes/footer.html:18 templates/storefront/about.html:4
+#: templates/storefront/about.html:4
 msgid "About us"
 msgstr "À propos"
 
@@ -1075,30 +1071,25 @@ msgstr "Où trouver vos bonbons en magasin ?"
 msgid "The shops that sell our sweets are listed on Find Sweets."
 msgstr "Les boutiques qui vendent nos bonbons sont listées sur « Où acheter »."
 
-#: storefront/faq.py:66
+#: storefront/faq.py:68
+msgid "I forgot my password. What do I do?"
+msgstr "J'ai oublié mon mot de passe. Que faire ?"
+
+#: storefront/faq.py:69
+msgid "For now, email us and we will get back to you."
+msgstr "Pour l'instant, écrivez-nous par e-mail et nous reviendrons vers vous."
+
+#: storefront/faq.py:73
 msgid "How long does delivery take, and what does it cost?"
 msgstr "Combien de temps prend la livraison, et combien coûte-t-elle ?"
 
-#: storefront/faq.py:67
+#: storefront/faq.py:74
 msgid "Can I return or exchange merch?"
 msgstr "Puis-je retourner ou échanger du merch ?"
 
-#: storefront/faq.py:68
+#: storefront/faq.py:75
 msgid "Which sizes are available?"
 msgstr "Quelles tailles sont disponibles ?"
-
-#: storefront/faq.py:75
-msgid "How do I log in?"
-msgstr "Comment me connecter ?"
-
-#: storefront/faq.py:77
-msgid ""
-"With the username and password you received from us. If you have forgotten "
-"your password, use the link on the login page."
-msgstr ""
-"Avec le nom d'utilisateur et le mot de passe que nous vous avons envoyés. Si "
-"vous avez oublié votre mot de passe, utilisez le lien sur la page de "
-"connexion."
 
 #: storefront/faq.py:82
 msgid "Can I change my store's details?"
@@ -1123,6 +1114,28 @@ msgstr "Quels jours livrez-vous ?"
 #: storefront/faq.py:91
 msgid "How do invoices and payment terms work?"
 msgstr "Comment fonctionnent les factures et les conditions de paiement ?"
+
+#: storefront/faq.py:92
+msgid "How long is the best-before date on delivery?"
+msgstr ""
+
+#: storefront/faq.py:93
+msgid "Can I order less than a whole box?"
+msgstr ""
+
+#: storefront/faq.py:94
+msgid "What do I do if something is damaged or missing in a delivery?"
+msgstr ""
+
+#: storefront/faq.py:95
+msgid "Can I cancel or change an order after placing it?"
+msgstr ""
+
+#: storefront/faq.py:97
+msgid ""
+"Do you provide material for the shop, such as shelves, boxes, signs, prices "
+"and pictures?"
+msgstr ""
 
 #: storefront/navbar_viewmodels.py:42 storefront/navbar_viewmodels.py:43
 #: storefront/navbar_viewmodels.py:67 storefront/navbar_viewmodels.py:68
@@ -1243,6 +1256,11 @@ msgstr "Client depuis"
 msgid "Edit store information"
 msgstr "Modifier les informations du magasin"
 
+#: templates/business_portal/includes/account_details_panel.html:78
+#: templates/includes/ops_footer.html:29
+msgid "Log out"
+msgstr "Se déconnecter"
+
 #: templates/business_portal/includes/account_section_nav.html:4
 #: templates/business_portal/includes/orders_panel.html:267
 msgid "Orders"
@@ -1357,22 +1375,6 @@ msgstr "Enregistrer les modifications"
 msgid "Cancel"
 msgstr "Annulée"
 
-msgid "Signed in as"
-msgstr "Connecté en tant que"
-
-msgid "I forgot my password. What do I do?"
-msgstr "J'ai oublié mon mot de passe. Que faire ?"
-
-msgid "For now, email us and we will get back to you."
-msgstr "Pour l'instant, écrivez-nous par e-mail et nous reviendrons vers vous."
-
-msgid "Log out"
-msgstr "Se déconnecter"
-
-#: templates/includes/account_menu.html:63
-msgid "Logout"
-msgstr "Déconnexion"
-
 #: templates/includes/catalog/grid.html:15
 msgid "Added"
 msgstr "Ajouté"
@@ -1434,19 +1436,19 @@ msgstr "Ajouter"
 msgid "Site footer"
 msgstr "Pied de page"
 
-#: templates/includes/footer.html:36
+#: templates/includes/footer.html:22
 msgid "Call us"
 msgstr "Appelez-nous"
 
-#: templates/includes/footer.html:46
+#: templates/includes/footer.html:32
 msgid "Email us"
 msgstr "Écrivez-nous"
 
-#: templates/includes/footer.html:57
+#: templates/includes/footer.html:43
 msgid "SwedeSweets on Instagram"
 msgstr "SwedeSweets sur Instagram"
 
-#: templates/includes/footer.html:67
+#: templates/includes/footer.html:53
 msgid "SwedeSweets on TikTok"
 msgstr "SwedeSweets sur TikTok"
 
@@ -1528,6 +1530,14 @@ msgstr[1] ""
 #: templates/includes/ui/line_remove.html:39
 msgid "Remove product"
 msgstr "Retirer le produit"
+
+#: templates/includes/ops_footer.html:7
+msgid "Account"
+msgstr "Compte"
+
+#: templates/includes/ops_footer.html:10
+msgid "Signed in as"
+msgstr "Connecté en tant que"
 
 #: templates/includes/site_contact_rows.html:19
 msgid "Phone"
@@ -1895,6 +1905,20 @@ msgstr "Aucune boutique n'est encore listée."
 #: templates/storefront/landing.html:20 templates/storefront/landing.html:64
 msgid "Sweden’s sweetest tradition"
 msgstr "La plus douce tradition suédoise"
+
+#~ msgid "How do I log in?"
+#~ msgstr "Comment me connecter ?"
+
+#~ msgid ""
+#~ "With the username and password you received from us. If you have "
+#~ "forgotten your password, use the link on the login page."
+#~ msgstr ""
+#~ "Avec le nom d'utilisateur et le mot de passe que nous vous avons envoyés. "
+#~ "Si vous avez oublié votre mot de passe, utilisez le lien sur la page de "
+#~ "connexion."
+
+#~ msgid "Logout"
+#~ msgstr "Déconnexion"
 
 #~ msgid "Update"
 #~ msgstr "Mettre à jour"
