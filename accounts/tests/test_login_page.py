@@ -48,6 +48,18 @@ def test_change_password_page_uses_the_field_labels_as_placeholders(client):
     assert 'placeholder="New password confirmation"' in html
 
 
+@pytest.mark.django_db
+def test_the_ways_in_are_blue_and_the_shop_is_not(client):
+    for name in ("login", "password_reset", "password_reset_done"):
+        html = client.get(reverse(name)).content.decode()
+        assert '<body class="on-blue">' in html, name
+        assert "swedesweets-logo-cream" in html, name
+
+    client.force_login(user_factory())
+    html = client.get(reverse("password_change")).content.decode()
+    assert "on-blue" not in html
+
+
 def test_password_rules_lead_is_split_off():
     lead, items = split_password_rules([
         "Your password must contain at least 8 characters.",

@@ -6,15 +6,12 @@
    nothing (grid-template-rows 0fr → 1fr), which lifts them, and its links
    come in one after the other. Login and the language follow last.
 
-   The page is exactly one screen: every size is clamped against the
+   The blue, the language buttons and the links on it come from
+   on-blue.css, shared with login. The page is exactly one screen: every size is clamped against the
    height (dvh), so a short phone and a tall screen both fit without a
    scroll. Cream on primary-600 is about 7:1; the chosen link's yellow
    about 4:1, which is enough at this size (large text).
    ============================================================================= */
-
-body:has(> .landing) {
-  background: var(--color-primary-600);
-}
 
 .landing {
   --landing-splash: 500ms;
@@ -78,18 +75,6 @@ body:has(> .landing) {
   font-weight: 800;
   line-height: 1.15rem;
   text-align: center;
-}
-
-.landing .language-switcher__option {
-  color: var(--landing-ink);
-  border-color: color-mix(in srgb, var(--landing-ink) 70%, transparent);
-}
-
-.landing .language-switcher__option--active,
-.landing .language-switcher__option[aria-current="true"] {
-  color: var(--color-primary-700);
-  background: var(--landing-ink);
-  border-color: var(--landing-ink);
 }
 
 

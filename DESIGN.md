@@ -109,7 +109,7 @@ Every page starts from one of these (`static/css/page.css`).
 | `.screen` (`--in-site` with the navbar) | One-screen pages: login, password, errors, payment result. Actions at the bottom on phones. |
 | `.page-section` | Pages that scroll: lists, detail pages, cart, FAQ, Find Sweets, About. `--top` puts work pages close to the navbar. |
 | `.page`, `--centered`, `--wide` | The column inside either shell. Carries the glow. |
-| `.page--auth` | Login and the password forms: title, fields and button kept together as one group a little above the middle, on every screen. |
+| `.page--auth` | Login and the password reset pages: title, fields and button kept together as one group a little above the middle, on every screen. |
 | `layouts/detail.html` | A detail page or an edit form: status heading, tabs (`page_tabs`), back link. Each tab carries its own actions at its foot. |
 | `layouts/error.html` | 400/403/404/500 and similar: small grey code, title, one line, one yellow way back. |
 
@@ -252,6 +252,12 @@ drawing's faded foot (Find Sweets).
   stays where it was last put (`landing.js`). Cart at the top once it holds something, login or the
   account at the bottom; no navbar, no footer, one screen, no scroll. The
   splash plays once per visit.
+- **On blue** (`<body class="on-blue">`, `on-blue.css`): the ways in, the
+  start page, login and the password reset, are the blue of their posts
+  with cream letters, the cream logo in the middle at the top; blue is the
+  door, cream is the shop. Red cannot be read on it, so problems are cream
+  words with a yellow mark (accent-600). Changing the password from My
+  account stays cream, inside the site.
 - **Head:** favicon (the crown), Open Graph image (logo on cream). Blocks
   `meta_description`, `og_title`, `og_description`, `og_image` in
   `base.html` for pages that want their own.

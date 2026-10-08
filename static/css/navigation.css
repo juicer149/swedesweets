@@ -11,10 +11,6 @@
   border-bottom: 1px solid var(--color-neutral-200);
 }
 
-.site-header--auth .site-nav {
-  justify-content: space-between;
-}
-
 .site-nav {
   display: flex;
   align-items: center;
@@ -732,16 +728,12 @@
     border-bottom: 1px solid var(--color-neutral-200);
   }
 
-  .site-header--auth .site-nav {
-    justify-content: space-between;
-  }
-
   .site-nav {
     min-height: 58px;
     padding-block: var(--space-2);
   }
 
-  .site-header:not(.site-header--auth) .site-nav {
+  .site-header .site-nav {
     flex-direction: row;
     align-items: center;
   }

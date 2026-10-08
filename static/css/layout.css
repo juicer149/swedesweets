@@ -121,8 +121,7 @@
     padding-bottom: 6.5rem;
   }
 
-  .site-header--auth + .site-main,
-  .site-header--auth ~ .site-main {
+  .entrance-header ~ .site-main {
     padding-bottom: 0;
   }
 }

@@ -1,0 +1,137 @@
+/* =============================================================================
+   On blue: the ways in (the start page, login and the password reset)
+
+   <body class="on-blue">: the blue of their posts (primary-600), cream
+   letters, the yellow button as everywhere. Blue is the door, cream is
+   the shop. Cream on this blue is about 7:1.
+
+   Red cannot be read on this blue, so a problem is said in cream with a
+   yellow mark (accent-600) beside it, and a field with a problem gets a
+   yellow ring.
+   ============================================================================= */
+
+body.on-blue {
+  --on-blue-ink: var(--color-neutral-50);
+  --on-blue-mark: var(--color-accent-600);
+  --page-title-color: var(--on-blue-ink);
+
+  color: var(--on-blue-ink);
+  background: var(--color-primary-600);
+}
+
+
+/* The language buttons ----------------------------------------------------- */
+
+.on-blue .language-switcher__option {
+  color: var(--on-blue-ink);
+  border-color: color-mix(in srgb, var(--on-blue-ink) 70%, transparent);
+}
+
+.on-blue .language-switcher__option--active,
+.on-blue .language-switcher__option[aria-current="true"] {
+  color: var(--color-primary-700);
+  background: var(--on-blue-ink);
+  border-color: var(--on-blue-ink);
+}
+
+
+/* The header of the ways in: the logo in the middle, the language right.
+   (The start page has its own, larger logo in the middle of the screen.) */
+
+.entrance-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: var(--space-3);
+  padding:
+    clamp(var(--space-3), 3dvh, var(--space-6))
+    var(--space-4)
+    0;
+}
+
+.entrance-header__brand {
+  grid-column: 2;
+  display: block;
+  border-radius: var(--radius-md);
+}
+
+.entrance-header__brand img {
+  display: block;
+  width: clamp(6.5rem, min(32vw, 18dvh), 10rem);
+  height: auto;
+}
+
+.entrance-header__language {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.entrance-header__brand:focus-visible {
+  outline: 2px solid var(--on-blue-mark);
+  outline-offset: 4px;
+}
+
+
+/* The page on blue ---------------------------------------------------------- */
+
+/* No glow: it is there to group things on cream. */
+.on-blue .page::before {
+  content: none;
+}
+
+.on-blue .page__text,
+.on-blue .page__help,
+.on-blue .form-label {
+  color: var(--on-blue-ink);
+}
+
+.on-blue .quiet-link {
+  color: var(--on-blue-ink);
+}
+
+.on-blue .quiet-link:hover {
+  color: var(--on-blue-ink);
+}
+
+.on-blue .quiet-link:focus-visible,
+.on-blue .button:focus-visible {
+  outline-color: var(--on-blue-mark);
+}
+
+/* The yellow button: its usual yellow is a little see-through, which
+   turns mustard on blue; here it is the whole yellow. */
+.on-blue .button--tone-place {
+  --button-solid-bg: var(--color-action-place);
+}
+
+/* Problems: cream words, a yellow mark beside them. */
+.on-blue .form-errors {
+  padding: var(--space-1) 0 var(--space-1) var(--space-3);
+
+  color: var(--on-blue-ink);
+  background: none;
+  border: 0;
+  border-left: 3px solid var(--on-blue-mark);
+  border-radius: 0;
+
+  font-weight: 700;
+}
+
+.on-blue .form-field__errors {
+  padding-left: var(--space-2);
+
+  color: var(--on-blue-ink);
+  border-left: 3px solid var(--on-blue-mark);
+}
+
+.on-blue .form-errors p,
+.on-blue .form-field__errors p {
+  color: inherit;
+}
+
+.on-blue .form-field--error input,
+.on-blue .form-field--error select,
+.on-blue .form-field--error textarea {
+  border-color: var(--on-blue-mark);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--on-blue-mark) 55%, transparent);
+}

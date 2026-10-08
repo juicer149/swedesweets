@@ -40,7 +40,8 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
   </head>
 
-  <body>
+  {# The blue entrances (start page, login) set class="on-blue". #}
+  <body{% block body_attrs %}{% endblock %}>
     {% comment %}
       Zone base templates (storefront/base.html, business_portal/base.html,
       ops_portal/base.html) override this block with their own navbar.

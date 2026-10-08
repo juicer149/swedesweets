@@ -2,33 +2,30 @@
 {% load static i18n %}
 
 {% comment %}
-Shared frame for login and password reset: logo and language only in the
-header, and the bare auth card (no box, a soft glow behind) for the form.
+Shared frame for login and password reset: the blue of the start page,
+the way in. The cream logo at the top in the middle (home), the language
+on the right, nothing else; the form under it (css/on-blue.css).
 {% endcomment %}
 
-{% block navbar %}
-<header class="site-header site-header--auth">
-  <div class="container">
-    <nav
-      class="site-nav"
-      aria-label="{% trans 'Authentication navigation' %}"
-    >
-      <a
-        class="site-brand"
-        href="{% url 'index' %}"
-        aria-label="{% trans 'SwedeSweets home' %}"
-      >
-        <img
-          class="site-brand__logo"
-          src="{% static 'images/swedesweets-logo.png' %}"
-          alt="SwedeSweets"
-        >
-      </a>
+{% block body_attrs %} class="on-blue"{% endblock %}
 
-      <div class="site-nav__auth">
-        {% include "includes/language_switcher.html" %}
-      </div>
-    </nav>
+{% block navbar %}
+<header class="entrance-header">
+  <a
+    class="entrance-header__brand"
+    href="{% url 'index' %}"
+    aria-label="{% trans 'SwedeSweets home' %}"
+  >
+    <img
+      src="{% static 'images/swedesweets-logo-cream.webp' %}"
+      alt="SwedeSweets"
+      width="960"
+      height="623"
+    >
+  </a>
+
+  <div class="entrance-header__language">
+    {% include "includes/language_switcher.html" %}
   </div>
 </header>
 {% endblock %}
