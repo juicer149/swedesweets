@@ -176,8 +176,9 @@ body:has(> .landing) {
   grid-template-columns: 1.75rem auto;
   align-items: center;
   gap: 0.75rem;
-  /* room on the right for the crown over the last letter */
-  padding: 0.3rem 1.1rem 0.3rem 0.4rem;
+  /* room on the right for the crown over the last letter (in em, so it
+     grows with the words; the menu clips what goes past it) */
+  padding: 0.3rem 0.95em 0.3rem 0.4rem;
 
   color: var(--landing-ink);
   border-radius: var(--radius-md);
@@ -191,7 +192,13 @@ body:has(> .landing) {
   transition: color var(--motion-fast);
 }
 
-.landing-menu__link:focus-visible {
+/* The crown and the yellow are the focus here: a focused link is the
+   chosen one (landing.js), so no ring around it as well. */
+.landing-menu[data-landing-live] .landing-menu__link:focus-visible {
+  outline: none;
+}
+
+.landing-menu:not([data-landing-live]) .landing-menu__link:focus-visible {
   outline: 2px solid var(--landing-ink);
   outline-offset: 2px;
 }
