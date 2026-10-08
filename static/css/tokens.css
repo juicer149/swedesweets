@@ -290,8 +290,9 @@
        is_writing  the crown, its dots hopping like someone typing
        color_wave  the crown, a cream glint running through its dots
        candy       the crown, its dots in three sweet colours, in turn
-     status_burst.js reads it and sets data-style on each burst. A place
-     can ask for its own with data-burst-style (login: the ring). */
+     status_burst.js reads it where the burst goes and sets data-style on
+     the burst, so a place can have its own: set the token on it (see
+     "Places with their own burst" at the end of this file). */
   --feedback-burst-style: wave;
 
   /* One round of the crown's dots. The wait ends on a whole round, so
@@ -338,4 +339,14 @@
   --shadow-focus-info: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
   --shadow-focus-danger: 0 0 0 3px rgb(var(--color-status-danger) / 0.10);
   --shadow-focus-danger-strong: 0 0 0 3px rgb(var(--color-status-danger) / 0.14);
+}
+
+
+/* =============================================================================
+   Places with their own burst (--feedback-burst-style above)
+   ============================================================================= */
+
+/* Login: the ring of dots, then the crown grows in. */
+.login__burst {
+  --feedback-burst-style: ring;
 }

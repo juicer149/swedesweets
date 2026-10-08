@@ -35,18 +35,14 @@
 
   const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
-  /* Which look: a place can ask for its own (data-burst-style on it or
-     around it, e.g. login's ring); otherwise --feedback-burst-style in
-     tokens.css. */
+  /* Which look: --feedback-burst-style, read where the burst goes, so the
+     CSS chooses it: the whole site in tokens.css, and a place of its own
+     by setting the token on its element (login's ring, in tokens.css too). */
   function burstStyle(place) {
-    const asked = place?.closest?.("[data-burst-style]")?.dataset.burstStyle;
-
-    if (asked) {
-      return asked;
-    }
+    const element = place instanceof Element ? place : document.documentElement;
 
     return (
-      getComputedStyle(document.documentElement)
+      getComputedStyle(element)
         .getPropertyValue("--feedback-burst-style")
         .trim()
         .replace(/["']/g, "") || "ring"
@@ -68,19 +64,20 @@
   }
 
   /* The crown styles end on a whole round of their dots
-     (--feedback-burst-cycle), never in the middle of one, and the crown
-     then stands still a moment (--feedback-burst-rest) before it glows. */
-  function untilRoundEnds(burst, startedAt) {
+     (--feedback-burst-cycle), never in the middle of one; then the dots
+     stop and the crown stands still a moment (--feedback-burst-rest,
+     data-state "still") before it glows. */
+  async function finishRound(burst, startedAt) {
     if (!burst || burst.dataset.style === "ring") {
-      return Promise.resolve();
+      return;
     }
 
     const round = tokenMs("--feedback-burst-cycle", 1050);
-    const elapsed = performance.now() - startedAt;
-    const left = round - (elapsed % round);
+    const left = round - ((performance.now() - startedAt) % round);
 
-    // Then a still moment (--feedback-burst-rest) before the glow.
-    return wait((left < round ? left : 0) + tokenMs("--feedback-burst-rest", 250));
+    await wait(left < round ? left : 0);
+    burst.dataset.state = "still";
+    await wait(tokenMs("--feedback-burst-rest", 250));
   }
 
   async function run(place, name, request) {
@@ -108,7 +105,7 @@
       wait(tokenMs("--feedback-min-loading", 500)),
     ]);
 
-    await untilRoundEnds(burst, startedAt);
+    await finishRound(burst, startedAt);
 
     if (burst) {
       burst.dataset.state = outcome.ok ? "success" : "error";

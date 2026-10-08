@@ -168,9 +168,10 @@ How the waiting looks is one token, `--feedback-burst-style` in
 three dots growing in turn), `is_writing` (the dots hop), `color_wave` (a
 colour runs through the dots), `candy` (three sweet colours). With the
 crown styles, the wait ends on a whole round of the dots
-(`--feedback-burst-cycle`), the crown stands still a moment
-(`--feedback-burst-rest`), then grows a little with a glow. A
-place can ask for its own look with `data-burst-style` (login: `ring`). The request
+(`--feedback-burst-cycle`), the dots stop and the crown stands still a
+moment (`--feedback-burst-rest`), then grows a little with a glow. A
+place gets its own look by setting the token on its element, at the end of
+`tokens.css` (login: `ring`). The request
 and a minimum time run side by side, so it never slows anything down. The
 times (`--feedback-min-loading`, `--feedback-mark-grow`,
 `--feedback-mark-hold`) are tokens too, read by the script. Used by the
