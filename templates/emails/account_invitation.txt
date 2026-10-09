@@ -1,0 +1,17 @@
+{% load i18n %}{% autoescape off %}{% trans "Hello," %}
+
+{% trans "An account has been created for you at SwedeSweets." %}
+
+{% trans "Choose your password:" %}
+{{ set_password_url }}
+
+{% trans "Your username:" %}
+{{ user.get_username }}
+
+{% blocktrans trimmed %}
+The link works for a few days. If it has expired, use “Forgot password?” on the login page:
+{% endblocktrans %}
+{{ login_url }}
+
+SwedeSweets
+{% endautoescape %}

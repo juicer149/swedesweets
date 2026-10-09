@@ -1,0 +1,28 @@
+{% extends "emails/base.html" %}
+{% load i18n %}
+{% comment %}
+  A new account's invitation: a link to choose a password, instead of a
+  password typed in by staff (the .txt beside it is the plain version).
+{% endcomment %}
+{% block card %}
+{% trans "Welcome to SwedeSweets" as title %}
+{% include "emails/includes/heading.html" with title=title only %}
+
+<p style="margin:0 0 8px;">
+  {% trans "Hello," %}<br>
+  {% trans "An account has been created for you at SwedeSweets." %}
+</p>
+
+<p style="margin:0; color:#66615c;">
+  {% trans "Your username:" %} <strong style="color:#191715;">{{ user.get_username }}</strong>
+</p>
+
+{% trans "Choose your password" as label %}
+{% include "emails/includes/button.html" with href=set_password_url label=label only %}
+
+<p style="margin:28px 0 0; color:#66615c; font-size:14px;">
+  {% blocktrans trimmed %}
+  The link works for a few days. If it has expired, use “Forgot password?” on the login page.
+  {% endblocktrans %}
+</p>
+{% endblock %}

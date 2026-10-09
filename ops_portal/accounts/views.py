@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -8,6 +9,7 @@ from django.urls import reverse
 
 from accounts.activity_selectors import list_account_activities
 from accounts.errors import AccountCreationError
+from accounts.invitations import send_account_invitation_on_commit
 from accounts.models import (
     CustomerMembership,
     StaffAccount,
@@ -208,9 +210,6 @@ def create_internal(request):
                     access_level=form.cleaned_data[
                         "access_level"
                     ],
-                    password=form.cleaned_data[
-                        "password1"
-                    ],
                 )
             except AccountCreationError as error:
                 form.add_error(
@@ -218,11 +217,17 @@ def create_internal(request):
                     str(error),
                 )
             else:
+                send_account_invitation_on_commit(
+                    user=result.user,
+                    site_url=_site_url(request),
+                    language="en",
+                )
+
                 messages.success(
                     request,
                     (
-                        f"Internal account "
-                        f"{result.user.email} created."
+                        f"Internal account {result.user.email} created. "
+                        "An invitation to choose a password is on its way."
                     ),
                 )
 
@@ -336,9 +341,6 @@ def create_customer_account(request):
                     customer=form.cleaned_data[
                         "customer"
                     ],
-                    password=form.cleaned_data[
-                        "password1"
-                    ],
                 )
             except AccountCreationError as error:
                 form.add_error(
@@ -346,11 +348,20 @@ def create_customer_account(request):
                     str(error),
                 )
             else:
+                customer = form.cleaned_data["customer"]
+
+                send_account_invitation_on_commit(
+                    user=result.user,
+                    site_url=_site_url(request),
+                    # Shops in France get it in French.
+                    language="fr" if customer.country == "FR" else "en",
+                )
+
                 messages.success(
                     request,
                     (
-                        f"Customer account "
-                        f"{result.user.email} created."
+                        f"Customer account {result.user.email} created. "
+                        "An invitation to choose a password is on its way."
                     ),
                 )
 
@@ -551,3 +562,10 @@ def _accounts_unlinked_url() -> str:
         f"{reverse('ops_accounts:index')}"
         "?view=unlinked#accounts-list"
     )
+
+
+def _site_url(request) -> str:
+    """The site's address for links in mails: SITE_URL, else this
+    request's own address."""
+
+    return settings.SITE_URL or request.build_absolute_uri("/")

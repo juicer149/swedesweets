@@ -1276,6 +1276,27 @@ msgstr "Client depuis"
 msgid "Edit store information"
 msgstr "Modifier les informations du magasin"
 
+msgid "Your SwedeSweets account"
+msgstr "Votre compte SwedeSweets"
+
+msgid "An account has been created for you at SwedeSweets."
+msgstr "Un compte SwedeSweets a été créé pour vous."
+
+msgid "Choose your password:"
+msgstr "Choisissez votre mot de passe :"
+
+msgid "Choose your password"
+msgstr "Choisir mon mot de passe"
+
+msgid "Welcome to SwedeSweets"
+msgstr "Bienvenue chez SwedeSweets"
+
+msgid "The link works for a few days. If it has expired, use “Forgot password?” on the login page:"
+msgstr "Le lien est valable quelques jours. S’il a expiré, utilisez « Mot de passe oublié ? » sur la page de connexion :"
+
+msgid "The link works for a few days. If it has expired, use “Forgot password?” on the login page."
+msgstr "Le lien est valable quelques jours. S’il a expiré, utilisez « Mot de passe oublié ? » sur la page de connexion."
+
 #: templates/business_portal/includes/account_section_nav.html:4
 #: templates/business_portal/includes/orders_panel.html:267
 msgid "Orders"

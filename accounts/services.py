@@ -206,10 +206,9 @@ def _create_user_for_account(
         email=email,
     )
 
-    # TODO: Replace manually assigned temporary passwords with an emailed
-    # password setup flow. This helper already supports password=None, which
-    # creates an unusable password until the user sets one through a tokenized
-    # setup/reset link.
+    # Ops creates accounts without a password: the person is invited by
+    # mail to choose one (accounts/invitations.py). A password is still
+    # accepted here for seeding and tests.
     if password:
         user.set_password(password)
     else:

@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from django import forms
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from accounts.roles import StaffAccessLevel
@@ -19,6 +17,10 @@ class InternalAccountCreateForm(forms.Form):
     email = forms.EmailField(
         max_length=254,
         label="Email",
+        help_text=(
+            "We email an invitation to this address, with a link to "
+            "choose their own password."
+        ),
         error_messages={
             "required": "Enter an email address.",
             "invalid": "Enter a valid email address.",
@@ -51,31 +53,6 @@ class InternalAccountCreateForm(forms.Form):
         ),
     )
 
-    password1 = forms.CharField(
-        label="Temporary password",
-        strip=False,
-        error_messages={
-            "required": "Enter a temporary password.",
-        },
-        widget=forms.PasswordInput(
-            attrs={
-                "autocomplete": "new-password",
-            }
-        ),
-    )
-
-    password2 = forms.CharField(
-        label="Confirm password",
-        strip=False,
-        error_messages={
-            "required": "Confirm the temporary password.",
-        },
-        widget=forms.PasswordInput(
-            attrs={
-                "autocomplete": "new-password",
-            }
-        ),
-    )
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -83,31 +60,10 @@ class InternalAccountCreateForm(forms.Form):
         set_form_field_layout(
             self,
             full=("email", "access_level"),
-            half=("password1", "password2"),
         )
 
     def clean_email(self) -> str:
         return self.cleaned_data["email"].strip().lower()
-
-    def clean(self) -> dict:
-        cleaned_data = super().clean()
-
-        password1 = cleaned_data.get("password1")
-        password2 = cleaned_data.get("password2")
-
-        if not password1 or not password2:
-            return cleaned_data
-
-        if password1 != password2:
-            self.add_error("password2", "Passwords do not match.")
-            return cleaned_data
-
-        try:
-            validate_password(password1)
-        except ValidationError as error:
-            self.add_error("password1", error)
-
-        return cleaned_data
 
 
 class CustomerChoiceField(forms.ModelChoiceField):
@@ -138,7 +94,10 @@ class CustomerAccountCreateForm(forms.Form):
     email = forms.EmailField(
         max_length=254,
         label="Account email",
-        help_text="This email will be used to log in to the customer portal.",
+        help_text=(
+            "They log in to the customer portal with it. We email an "
+            "invitation here, with a link to choose their own password."
+        ),
         error_messages={
             "required": "Enter an email address.",
             "invalid": "Enter a valid email address.",
@@ -152,31 +111,6 @@ class CustomerAccountCreateForm(forms.Form):
         ),
     )
 
-    password1 = forms.CharField(
-        label="Temporary password",
-        strip=False,
-        error_messages={
-            "required": "Enter a temporary password.",
-        },
-        widget=forms.PasswordInput(
-            attrs={
-                "autocomplete": "new-password",
-            }
-        ),
-    )
-
-    password2 = forms.CharField(
-        label="Confirm password",
-        strip=False,
-        error_messages={
-            "required": "Confirm the temporary password.",
-        },
-        widget=forms.PasswordInput(
-            attrs={
-                "autocomplete": "new-password",
-            }
-        ),
-    )
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -191,31 +125,10 @@ class CustomerAccountCreateForm(forms.Form):
         set_form_field_layout(
             self,
             full=("customer", "email"),
-            half=("password1", "password2"),
         )
 
     def clean_email(self) -> str:
         return self.cleaned_data["email"].strip().lower()
-
-    def clean(self) -> dict:
-        cleaned_data = super().clean()
-
-        password1 = cleaned_data.get("password1")
-        password2 = cleaned_data.get("password2")
-
-        if not password1 or not password2:
-            return cleaned_data
-
-        if password1 != password2:
-            self.add_error("password2", "Passwords do not match.")
-            return cleaned_data
-
-        try:
-            validate_password(password1)
-        except ValidationError as error:
-            self.add_error("password1", error)
-
-        return cleaned_data
 
 
 class InternalAccountEditForm(forms.Form):

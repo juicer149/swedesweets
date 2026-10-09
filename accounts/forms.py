@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from django.contrib.auth import password_validation
+from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
     PasswordResetForm,
     SetPasswordForm,
+    _unicode_ci_compare,
 )
 from django.utils.translation import gettext_lazy as _
+
+UserModel = get_user_model()
 
 
 class LoginForm(AuthenticationForm):
@@ -24,11 +27,31 @@ class LoginForm(AuthenticationForm):
 
 
 class ResetRequestForm(PasswordResetForm):
-    """Django's password reset form, with "Email" as the placeholder."""
+    """Django's password reset form, with "Email" as the placeholder.
+
+    Unlike Django's, it also reaches accounts that have no password yet:
+    a new account is invited to choose one, and if that invitation link
+    has expired, "Forgot password?" sends a new one.
+    """
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields["email"].widget.attrs["placeholder"] = _("Email")
+
+    def get_users(self, email):
+        email_field_name = UserModel.get_email_field_name()
+        active_users = UserModel._default_manager.filter(
+            **{
+                f"{email_field_name}__iexact": email,
+                "is_active": True,
+            }
+        )
+        # As Django's, minus its "has a usable password" condition.
+        return (
+            user
+            for user in active_users
+            if _unicode_ci_compare(email, getattr(user, email_field_name))
+        )
 
 
 class _PasswordFormLook:
