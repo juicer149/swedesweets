@@ -7,7 +7,8 @@ import pytest
 from django.test import override_settings
 from django.urls import reverse
 
-from accounts.tests.factories import user_factory
+from accounts.tests.factories import customer_user_factory
+from customers.tests.factories import customer_factory
 
 
 def _footer(client) -> str:
@@ -27,9 +28,10 @@ def test_visitors_get_a_reseller_login(client):
 @pytest.mark.django_db
 @override_settings(LANGUAGE_CODE="en")
 def test_signed_in_users_see_who_they_are_and_can_log_out(client):
-    client.force_login(user_factory(username="shop@example.com"))
+    customer = customer_factory(name="Butiken i Chamonix")
+    client.force_login(customer_user_factory(customer=customer))
 
     footer = _footer(client)
 
-    assert "shop@example.com" in footer
+    assert "Butiken i Chamonix" in footer
     assert f'action="{reverse("logout")}"' in footer
