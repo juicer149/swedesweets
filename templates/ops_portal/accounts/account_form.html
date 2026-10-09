@@ -13,6 +13,10 @@
   <form method="post" novalidate data-dirty-form>
     {% csrf_token %}
 
+    {% if intro %}
+      <p class="page__note form-page__intro">{{ intro }}</p>
+    {% endif %}
+
     {% include "registration/includes/form_errors.html" with form=form only %}
 
     <div class="form-grid">

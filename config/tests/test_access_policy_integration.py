@@ -63,6 +63,7 @@ CART_LINE_KWARGS = {
 VIEW_KWARGS = {
     "ops_accounts:detail": ACCOUNT_USER_KWARGS,
     "ops_accounts:edit_internal": ACCOUNT_USER_KWARGS,
+    "ops_accounts:edit_customer": ACCOUNT_USER_KWARGS,
     "ops_accounts:activate_customer_account": ACCOUNT_USER_KWARGS,
     "ops_accounts:deactivate_customer_account": ACCOUNT_USER_KWARGS,
     "ops_orders:detail": ORDER_KWARGS,

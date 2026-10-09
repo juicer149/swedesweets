@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError, transaction
+from django.db.models import Q
 
 from accounts.errors import AccountCreationError
 from accounts.models import CustomerMembership, StaffAccount
@@ -139,6 +140,56 @@ def create_customer_account(
         raise AccountCreationError("Could not create customer account.") from error
 
     return CreatedAccount(user=user)
+
+
+@dataclass(frozen=True, slots=True)
+class LoginEmailChange:
+    user: object
+    old_email: str
+
+
+@transaction.atomic
+def change_customer_login_email(
+    *,
+    user,
+    email: str,
+) -> LoginEmailChange:
+    """Give a shop's login another address (done by SwedeSweets when the
+    shop asks). The password stays; the shop's contact email (Customer)
+    is a separate field and is left as it is."""
+
+    email = _normalize_email(email)
+
+    if not CustomerMembership.objects.filter(user=user).exists():
+        raise AccountCreationError("This is not a customer account.")
+
+    user = User.objects.select_for_update().get(pk=user.pk)
+    old_email = user.email
+
+    if email == old_email:
+        raise AccountCreationError("This is already their login.")
+
+    taken = (
+        User.objects
+        .filter(Q(username__iexact=email) | Q(email__iexact=email))
+        .exclude(pk=user.pk)
+        .exists()
+    )
+
+    if taken:
+        raise AccountCreationError("An account with this email already exists.")
+
+    user.username = email
+    user.email = email
+
+    try:
+        user.save(update_fields=["username", "email"])
+    except IntegrityError as error:
+        raise AccountCreationError(
+            "An account with this email already exists."
+        ) from error
+
+    return LoginEmailChange(user=user, old_email=old_email)
 
 
 @transaction.atomic

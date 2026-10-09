@@ -87,6 +87,15 @@ BUSINESS_FAQ: tuple[FaqItem, ...] = (
             "details they were placed with."
         ),
     ),
+    FaqItem(
+        _("Can I change the email I log in with?"),
+        _(
+            "Your login stays the address we invited you with, even if you "
+            "change your store's contact email. To log in with another "
+            "address, get in touch and we will change it for you."
+        ),
+        contact=True,
+    ),
     # Waiting for answers:
     FaqItem(_("Is there a minimum order?")),
     FaqItem(_("Which days do you deliver?")),

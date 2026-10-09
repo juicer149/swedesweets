@@ -1560,6 +1560,53 @@ msgstr "Enregistrer et commencer à commander"
 msgid "Thank you! You can now order."
 msgstr "Merci ! Vous pouvez maintenant commander."
 
+msgid "Contact email"
+msgstr "E-mail de contact"
+
+msgid "contact us"
+msgstr "contactez-nous"
+
+#, python-brace-format
+msgid ""
+"Order confirmations go here. You log in with {login}; to change that, "
+"{contact_link}."
+msgstr ""
+"Les confirmations de commande arrivent ici. Vous vous connectez avec "
+"{login} ; pour le changer, {contact_link}."
+
+msgid "Can I change the email I log in with?"
+msgstr "Puis-je changer l’e-mail avec lequel je me connecte ?"
+
+msgid ""
+"Your login stays the address we invited you with, even if you change your "
+"store's contact email. To log in with another address, get in touch and we "
+"will change it for you."
+msgstr ""
+"Votre identifiant reste l’adresse à laquelle nous vous avons invité, même si "
+"vous changez l’e-mail de contact de votre magasin. Pour vous connecter avec "
+"une autre adresse, contactez-nous et nous la changerons pour vous."
+
+msgid "Your SwedeSweets login has changed"
+msgstr "Votre identifiant SwedeSweets a changé"
+
+msgid "Your login has changed"
+msgstr "Votre identifiant a changé"
+
+#, python-format
+msgid ""
+"You now log in to SwedeSweets with %(new_email)s. Your password is the same "
+"as before."
+msgstr ""
+"Vous vous connectez désormais à SwedeSweets avec %(new_email)s. Votre mot de "
+"passe reste le même."
+
+msgid "Log in:"
+msgstr "Se connecter :"
+
+#, python-format
+msgid "If you did not ask for this, contact us at %(contact_email)s."
+msgstr "Si vous n’avez rien demandé, contactez-nous à %(contact_email)s."
+
 msgid "Log out"
 msgstr "Se déconnecter"
 

@@ -123,6 +123,15 @@
   color: var(--color-neutral-600);
 }
 
+/* A link in a field's help (contact us): the help's own colour, so it
+   reads on cream and on blue alike, underlined to show it is a link. */
+.form-help a {
+  color: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .form-help ul {
   display: grid;
   gap: var(--space-1);

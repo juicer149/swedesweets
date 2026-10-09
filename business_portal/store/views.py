@@ -32,6 +32,7 @@ def edit_store(request):
         form = CustomerProfileForm(
             request.POST,
             customer=customer,
+            login_email=request.user.get_username(),
         )
 
         if form.is_valid():
@@ -74,6 +75,7 @@ def edit_store(request):
                 customer
             ),
             customer=customer,
+            login_email=request.user.get_username(),
         )
 
     return render(

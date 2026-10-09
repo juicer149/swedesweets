@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from django import forms
-from django.utils.translation import gettext_lazy
+from django.utils.html import format_html
+from django.utils.translation import gettext, gettext_lazy
 
+from common.contact import CONTACT_EMAIL
 from common.form_layout import set_form_field_layout
 from customers.models import (
     CUSTOMER_COUNTRY_LABELS,
@@ -38,9 +40,12 @@ class CustomerProfileForm(forms.Form):
         ),
     )
 
+    # The shop's contact address (order confirmations), not the login:
+    # the login stays the invited address, changed by SwedeSweets on
+    # request (ops Accounts). Both are the same until the shop changes this.
     email = forms.EmailField(
         max_length=254,
-        label=gettext_lazy("Email"),
+        label=gettext_lazy("Contact email"),
         error_messages={
             "required": gettext_lazy(
                 "Enter an email address."
@@ -223,10 +228,14 @@ class CustomerProfileForm(forms.Form):
         self,
         *args,
         customer: Customer,
+        login_email: str = "",
         **kwargs,
     ) -> None:
         self.customer = customer
         super().__init__(*args, **kwargs)
+
+        if login_email:
+            self.fields["email"].help_text = contact_email_help(login_email)
 
         set_form_field_layout(
             self,
@@ -244,6 +253,26 @@ class CustomerProfileForm(forms.Form):
                 "store_city",
             ),
         )
+
+
+def contact_email_help(login_email: str) -> str:
+    """Says the field is not the login, which address is, and who changes
+    it (us, on request)."""
+
+    contact_link = format_html(
+        '<a href="mailto:{}">{}</a>',
+        CONTACT_EMAIL,
+        gettext("contact us"),
+    )
+
+    return format_html(
+        gettext(
+            "Order confirmations go here. You log in with {login}; to "
+            "change that, {contact_link}."
+        ),
+        login=login_email,
+        contact_link=contact_link,
+    )
 
 
 def build_customer_profile_initial_data(

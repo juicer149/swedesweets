@@ -1,0 +1,27 @@
+{% extends "emails/base.html" %}
+{% load i18n %}
+{% comment %}
+  A shop's login has another address now (changed by SwedeSweets on
+  request): sent to the old and the new address. The .txt beside it is
+  the plain version.
+{% endcomment %}
+{% block card %}
+{% trans "Your login has changed" as title %}
+{% include "emails/includes/heading.html" with title=title only %}
+
+<p style="margin:0 0 8px;">
+  {% trans "Hello," %}<br>
+  {% blocktrans trimmed %}
+  You now log in to SwedeSweets with {{ new_email }}. Your password is the same as before.
+  {% endblocktrans %}
+</p>
+
+{% trans "Log in" as label %}
+{% include "emails/includes/button.html" with href=login_url label=label only %}
+
+<p style="margin:28px 0 0; color:#66615c; font-size:14px;">
+  {% blocktrans trimmed %}
+  If you did not ask for this, contact us at {{ contact_email }}.
+  {% endblocktrans %}
+</p>
+{% endblock %}

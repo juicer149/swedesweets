@@ -293,12 +293,12 @@
   margin: calc(var(--space-4) * -1) 0 var(--space-6);
 }
 
-/* A grey line between a form's fields and its button, saying what
-   happens when it is sent (Invite shop). Room above, so it reads apart
-   from the last field. */
-.form-page__next {
+/* A grey line above a form's fields, saying what happens when it is
+   sent (Invite shop, a customer's login). Room under it, so it reads
+   apart from the first field. */
+.form-page__intro {
   max-width: 46ch;
-  margin: var(--space-8) auto var(--space-4);
+  margin: 0 auto var(--space-8);
   line-height: 1.5;
 }
 

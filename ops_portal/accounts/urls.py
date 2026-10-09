@@ -24,6 +24,11 @@ urlpatterns = [
         name="edit_internal",
     ),
     path(
+        "customer/<int:user_id>/edit/",
+        views.edit_customer,
+        name="edit_customer",
+    ),
+    path(
         "customer/<int:user_id>/activate/",
         views.activate_customer_account,
         name="activate_customer_account",

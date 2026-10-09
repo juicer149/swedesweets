@@ -5,8 +5,9 @@ from typing import Any
 
 from django.urls import reverse
 
-from accounts.models import StaffAccount
+from accounts.models import CustomerMembership, StaffAccount
 from ops_portal.accounts.forms import (
+    CustomerLoginEmailForm,
     InternalAccountCreateForm,
     InternalAccountEditForm,
 )
@@ -24,11 +25,14 @@ class AccountFormContext:
     form: (
         InternalAccountCreateForm
         | InternalAccountEditForm
+        | CustomerLoginEmailForm
     )
     staff_account: StaffAccount | None = None
+    intro: str = ""
 
     def as_dict(self) -> dict[str, Any]:
         context: dict[str, Any] = {
+            "intro": self.intro,
             "title": self.title,
             "submit_label": self.submit_label,
             "cancel_url": self.cancel_url,
@@ -76,6 +80,40 @@ def build_edit_internal_account_form_context(
             "ops_accounts:detail",
             kwargs={
                 "user_id": staff_account.user_id,
+            },
+        ),
+    )
+
+
+def build_customer_login_email_form_context(
+    *,
+    form: CustomerLoginEmailForm,
+    membership: CustomerMembership,
+) -> AccountFormContext:
+    user = membership.user
+
+    if user.has_usable_password():
+        intro = (
+            f"The address {membership.customer.name} logs in with. Their "
+            "password stays the same, and we email both the old and the "
+            "new address about the change."
+        )
+    else:
+        intro = (
+            f"The address {membership.customer.name} logs in with. They "
+            "have not chosen a password yet, so the invitation goes out "
+            "again, to the new address."
+        )
+
+    return AccountFormContext(
+        form=form,
+        title=f"Edit {user.email}",
+        submit_label="Save login",
+        intro=intro,
+        cancel_url=reverse(
+            "ops_accounts:detail",
+            kwargs={
+                "user_id": user.pk,
             },
         ),
     )

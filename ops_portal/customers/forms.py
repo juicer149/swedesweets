@@ -38,7 +38,11 @@ class CustomerForm(forms.Form):
 
     email = forms.EmailField(
         max_length=254,
-        label="Email",
+        label="Contact email",
+        help_text=(
+            "Where order confirmations go. Logins are separate, under "
+            "Accounts."
+        ),
         error_messages={
             "required": "Enter an email address.",
             "invalid": "Enter a valid email address.",
@@ -290,6 +294,9 @@ class InviteShopForm(CustomerForm):
         for name in self.LEFT_TO_THE_SHOP:
             del self.fields[name]
 
+        # One address for both at the start: the login, and where order
+        # confirmations go. The shop can change the contact one later.
+        self.fields["email"].label = "Email"
         self.fields["email"].help_text = "Their login, and where the invitation goes."
 
     def clean_email(self) -> str:

@@ -1,0 +1,15 @@
+{% load i18n %}{% autoescape off %}{% trans "Hello," %}
+
+{% blocktrans trimmed %}
+You now log in to SwedeSweets with {{ new_email }}. Your password is the same as before.
+{% endblocktrans %}
+
+{% trans "Log in:" %}
+{{ login_url }}
+
+{% blocktrans trimmed %}
+If you did not ask for this, contact us at {{ contact_email }}.
+{% endblocktrans %}
+
+SwedeSweets
+{% endautoescape %}

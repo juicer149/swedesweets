@@ -153,3 +153,33 @@ class InternalAccountEditForm(forms.Form):
 
     def clean_last_name(self) -> str:
         return self.cleaned_data["last_name"].strip()
+
+
+class CustomerLoginEmailForm(forms.Form):
+    """A shop's login, given another address on the shop's request."""
+
+    email = forms.EmailField(
+        max_length=254,
+        label="Login email",
+        help_text=(
+            "The shop's contact email (order confirmations) is separate: "
+            "change it under the customer."
+        ),
+        error_messages={
+            "required": "Enter an email address.",
+            "invalid": "Enter a valid email address.",
+            "max_length": "Email address must be at most 254 characters.",
+        },
+        widget=forms.EmailInput(
+            attrs={
+                "autocomplete": "off",
+            }
+        ),
+    )
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        set_form_field_layout(self, full=("email",))
+
+    def clean_email(self) -> str:
+        return self.cleaned_data["email"].strip().lower()

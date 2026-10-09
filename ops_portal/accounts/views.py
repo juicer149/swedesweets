@@ -4,12 +4,14 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from accounts.activity_selectors import list_account_activities
 from accounts.errors import AccountCreationError
 from accounts.invitations import send_account_invitation_on_commit
+from accounts.login_change import notify_login_email_change_on_commit
 from accounts.models import (
     CustomerMembership,
     StaffAccount,
@@ -23,6 +25,7 @@ from accounts.selectors import (
     list_unlinked_account_records,
 )
 from accounts.services import (
+    change_customer_login_email,
     create_internal_account,
     set_customer_account_active_status,
     update_internal_account,
@@ -42,9 +45,11 @@ from ops_portal.accounts.detail_viewmodels import (
 )
 from ops_portal.accounts.form_viewmodels import (
     build_create_internal_account_form_context,
+    build_customer_login_email_form_context,
     build_edit_internal_account_form_context,
 )
 from ops_portal.accounts.forms import (
+    CustomerLoginEmailForm,
     InternalAccountCreateForm,
     InternalAccountEditForm,
 )
@@ -179,7 +184,7 @@ def detail(
             account
         ),
         role_spec=request.role_spec,
-        edit_url=_internal_account_edit_url(
+        edit_url=_account_edit_url(
             account_user
         ),
     ).as_dict()
@@ -321,6 +326,77 @@ def edit_internal(
 
 
 @login_required
+def edit_customer(
+    request,
+    user_id: int,
+):
+    """A shop's login gets another address, when the shop asks for it."""
+
+    membership = get_object_or_404(
+        CustomerMembership.objects.select_related(
+            "user",
+            "customer",
+        ),
+        user_id=user_id,
+    )
+    account_user = membership.user
+
+    if request.method == "POST":
+        form = CustomerLoginEmailForm(request.POST)
+
+        if form.is_valid():
+            try:
+                with transaction.atomic():
+                    change = change_customer_login_email(
+                        user=account_user,
+                        email=form.cleaned_data["email"],
+                    )
+                    invited_again = notify_login_email_change_on_commit(
+                        user=change.user,
+                        old_email=change.old_email,
+                        site_url=_site_url(request),
+                        # Shops in France get it in French.
+                        language=(
+                            "fr" if membership.customer.country == "FR" else "en"
+                        ),
+                    )
+            except AccountCreationError as error:
+                form.add_error("email", str(error))
+            else:
+                new_email = change.user.email
+                messages.success(
+                    request,
+                    (
+                        f"Login changed to {new_email}. The invitation is on "
+                        "its way to the new address."
+                        if invited_again
+                        else f"Login changed to {new_email}. We emailed the "
+                        "old and the new address."
+                    ),
+                )
+
+                return redirect(
+                    "ops_accounts:detail",
+                    user_id=account_user.pk,
+                )
+    else:
+        form = CustomerLoginEmailForm(
+            initial={"email": account_user.email},
+        )
+
+    context = build_customer_login_email_form_context(
+        form=form,
+        membership=membership,
+    ).as_dict()
+
+    return render(
+        request,
+        "ops_portal/accounts/account_form.html",
+        context,
+    )
+
+
+@login_required
 def activate_customer_account(
     request,
     user_id: int,
@@ -450,21 +526,28 @@ def _internal_account_edit_initial(
     }
 
 
-def _internal_account_edit_url(
+def _account_edit_url(
     user,
 ) -> str:
-    if not hasattr(
-        user,
-        "staff_account",
-    ):
-        return ""
+    """Staff: the whole account. A shop: its login email."""
 
-    return reverse(
-        "ops_accounts:edit_internal",
-        kwargs={
-            "user_id": user.pk,
-        },
-    )
+    if hasattr(user, "staff_account"):
+        return reverse(
+            "ops_accounts:edit_internal",
+            kwargs={
+                "user_id": user.pk,
+            },
+        )
+
+    if hasattr(user, "customer_membership"):
+        return reverse(
+            "ops_accounts:edit_customer",
+            kwargs={
+                "user_id": user.pk,
+            },
+        )
+
+    return ""
 
 
 def _accounts_url_for_account(
