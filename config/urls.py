@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.views import (
     LoginView,
     PasswordChangeView,
+    PasswordResetConfirmView,
     PasswordResetView,
 )
 from django.urls import (
@@ -13,6 +14,7 @@ from django.urls import (
 
 from accounts.forms import (
     AccountPasswordChangeForm,
+    AccountSetPasswordForm,
     LoginForm,
     ResetRequestForm,
 )
@@ -63,6 +65,11 @@ urlpatterns = [
         "accounts/password_reset/",
         PasswordResetView.as_view(form_class=ResetRequestForm),
         name="password_reset",
+    ),
+    path(
+        "accounts/reset/<uidb64>/<token>/",
+        PasswordResetConfirmView.as_view(form_class=AccountSetPasswordForm),
+        name="password_reset_confirm",
     ),
     path(
         "accounts/password_change/",

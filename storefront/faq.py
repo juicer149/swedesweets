@@ -62,12 +62,14 @@ PUBLIC_FAQ: tuple[FaqItem, ...] = (
         link_label=_("Find Sweets"),
     ),
     BECOME_A_RESELLER,
-    # For now by mail; once the mail server sends mail, the answer points
-    # to "Forgot your password?" on the login page instead.
     FaqItem(
         _("I forgot my password. What do I do?"),
-        _("For now, email us and we will get back to you."),
-        contact=True,
+        _(
+            "Use “Forgot password?” on the login page, and we will "
+            "email you a link to choose a new one."
+        ),
+        link="password_reset",
+        link_label=_("Reset your password"),
     ),
     # Waiting for answers:
     FaqItem(_("How long does delivery take, and what does it cost?")),

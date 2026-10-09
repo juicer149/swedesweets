@@ -97,3 +97,34 @@ def test_password_rules_work_in_french():
     ])
     assert lead == "Votre mot de passe"
     assert items[0].startswith("doit contenir")
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
+def test_reset_link_page_looks_like_changing_the_password(client):
+    from django.contrib.auth.tokens import default_token_generator
+    from django.utils.encoding import force_bytes
+    from django.utils.http import urlsafe_base64_encode
+
+    from accounts.forms import AccountSetPasswordForm
+
+    user = user_factory()
+    url = reverse(
+        "password_reset_confirm",
+        kwargs={
+            "uidb64": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": default_token_generator.make_token(user),
+        },
+    )
+
+    response = client.get(url, follow=True, HTTP_ACCEPT_LANGUAGE="en")
+
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], AccountSetPasswordForm)
+
+    html = response.content.decode()
+    # No heading; the rules as a dropdown above the fields, placeholders.
+    assert "<h1" not in html
+    assert "page__rules" in html
+    assert 'placeholder="New password"' in html
+    assert 'class="form-label visually-hidden"' in html

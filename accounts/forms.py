@@ -5,6 +5,7 @@ from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm,
     PasswordResetForm,
+    SetPasswordForm,
 )
 from django.utils.translation import gettext_lazy as _
 
@@ -30,11 +31,12 @@ class ResetRequestForm(PasswordResetForm):
         self.fields["email"].widget.attrs["placeholder"] = _("Email")
 
 
-class AccountPasswordChangeForm(PasswordChangeForm):
-    """Django's change-password form, each field's label as its placeholder.
+class _PasswordFormLook:
+    """Each field's label as its placeholder, and the password rules for
+    the "Your password…" dropdown above the fields.
 
-    The labels are Django's own (already translated); the page hides them
-    visually and keeps them for screen readers.
+    The labels are Django's own (already translated); the pages hide them
+    visually and keep them for screen readers.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -48,6 +50,15 @@ class AccountPasswordChangeForm(PasswordChangeForm):
         in the current language (computed per request)."""
         lead, items = password_rules()
         return {"lead": lead, "list": items}
+
+
+class AccountPasswordChangeForm(_PasswordFormLook, PasswordChangeForm):
+    """Django's change-password form (My account), in the site's look."""
+
+
+class AccountSetPasswordForm(_PasswordFormLook, SetPasswordForm):
+    """Django's new-password form (the link in the reset mail), in the
+    same look as changing the password under My account."""
 
 
 def split_password_rules(texts: list[str]) -> tuple[str, list[str]]:

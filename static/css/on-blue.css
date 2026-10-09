@@ -100,6 +100,17 @@ body.on-blue {
   outline-color: var(--on-blue-mark);
 }
 
+.on-blue .page__title,
+.on-blue .page__rules,
+.on-blue .page__rules-summary,
+.on-blue .page__rules-summary:hover {
+  color: var(--on-blue-ink);
+}
+
+.on-blue .page__rules-summary:focus-visible {
+  outline-color: var(--on-blue-mark);
+}
+
 /* The yellow button: its usual yellow is a little see-through, which
    turns mustard on blue; here it is the whole yellow. */
 .on-blue .button--tone-place {
