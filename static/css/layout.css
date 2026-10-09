@@ -278,6 +278,12 @@ body:has(.screen) .ops-footer {
     display: contents;
   }
 
+  /* In the column its 16rem width (beside the action) would become a
+     16rem height. */
+  .list-toolbar:has(> .list-toolbar__action) > .quick-jump-search {
+    flex: 0 0 auto;
+  }
+
   .list-toolbar > .list-toolbar__action.button {
     order: -1;
     width: 100%;
