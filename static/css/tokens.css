@@ -187,6 +187,7 @@
 
   --font-body: Nunito, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-heading: Fredoka, Nunito, system-ui, sans-serif;
+  --font-display: Sniglet, Fredoka, Nunito, system-ui, sans-serif;
   --font-weight-heading: 600;
 
   --font-size-data-table-td: 0.9375rem;

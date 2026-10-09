@@ -1450,6 +1450,12 @@ msgstr "Enregistrer et commencer à commander"
 
 #: templates/business_portal/store_onboarding.html:51
 #: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
+msgid "Q & A"
+msgstr "Q & R"
+
+msgid "Who we are, you ask?"
+msgstr "Qui sommes-nous, demandez-vous ?"
+
 msgid "Log out"
 msgstr "Se déconnecter"
 

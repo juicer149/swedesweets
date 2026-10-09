@@ -142,6 +142,26 @@
   color: color-mix(in srgb, var(--color-accent-700) 50%, var(--color-neutral-50));
 }
 
+/* Phones: the shops first, the binoculars after them, closing the page,
+   with the drawing's air above it and a little more under it. Whole
+   there: nothing slides over its foot, so no fade. */
+@media (max-width: 767px) {
+  .find-sweets {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .find-sweets > .page__heading--illustrated {
+    order: 2;
+    margin: 0 0 clamp(var(--space-6), 5dvh, var(--space-10));
+  }
+
+  .find-sweets > .page__heading--illustrated .page__illustration {
+    margin-top: clamp(var(--space-8), 6dvh, var(--space-12));
+    mask-image: none;
+  }
+}
+
 /* Small grey centred line: a count, a status, a description. */
 .page__note {
   margin: 0;
@@ -809,6 +829,42 @@ span.icon-rows__link .icon-rows__icon {
 
 /* About: a short story, a little wider than a form, then one line to
    close it in the heading font. */
+/* Display titles (Q & A, About): Sniglet, chubby and a little seventies,
+   in the yellow scale a few shades darker than the binoculars, with a
+   slight inner shadow of the darkest yellow (includes/ui/display_title_
+   filter.html). Big: they are the page's picture as much as its title. */
+.display-title {
+  margin: 0;
+  color: var(--color-accent-700);
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  /* Sniglet's spaces are wide; closer words read as one title. */
+  word-spacing: -0.12em;
+  filter: url("#display-title-inner-shadow");
+}
+
+.display-title--faq {
+  margin-bottom: clamp(var(--space-4), 3dvh, var(--space-6));
+  font-size: clamp(3.75rem, 20vw, 6rem);
+  word-spacing: -0.25em;
+  text-align: center;
+}
+
+/* Left, in line with the story under it; the first letter large, as a
+   book's first page. */
+.display-title--about {
+  margin-bottom: clamp(var(--space-5), 4dvh, var(--space-7));
+  font-size: clamp(2rem, 9vw, 2.75rem);
+  text-align: left;
+}
+
+.display-title--about::first-letter {
+  font-size: 1.6em;
+  line-height: 0.9;
+}
+
 .page.about {
   width: min(100%, 560px);
 }
@@ -824,13 +880,11 @@ span.icon-rows__link .icon-rows__icon {
   margin: 0;
 }
 
+/* The last line, in the title's style, left in line with the story. */
 .about__signoff {
-  margin: clamp(var(--space-6), 5dvh, var(--space-8)) 0 0;
-  color: var(--page-title-color, var(--color-neutral-800));
-  font-family: var(--font-heading);
-  font-size: var(--font-size-18);
-  font-weight: var(--font-weight-heading);
-  text-align: center;
+  margin-top: clamp(var(--space-6), 5dvh, var(--space-8));
+  font-size: clamp(1.5rem, 6.5vw, 1.875rem);
+  text-align: left;
 }
 
 .page.faq {

@@ -1,0 +1,15 @@
+{% comment %}
+The display titles' inner shadow (.display-title in page.css): a little
+of the darkest yellow (accent-950) inside each letter's upper edge, as if
+pressed into the page. Include once on a page that has a display title.
+{% endcomment %}
+<svg class="visually-hidden" aria-hidden="true" focusable="false" width="0" height="0">
+  <filter id="display-title-inner-shadow" x="-5%" y="-5%" width="110%" height="110%">
+    <feOffset dx="0" dy="2.5" in="SourceAlpha" result="moved"/>
+    <feGaussianBlur stdDeviation="1.4" in="moved" result="blurred"/>
+    <feComposite operator="out" in="SourceAlpha" in2="blurred" result="inside"/>
+    <feFlood flood-color="#4a3405" flood-opacity="0.55"/>
+    <feComposite operator="in" in2="inside" result="shadow"/>
+    <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
+  </filter>
+</svg>

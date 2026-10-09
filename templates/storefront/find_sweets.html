@@ -6,10 +6,11 @@
 {% block content %}
 {% comment %}
   The shops that sell SwedeSweets and chose to be listed (StoreListing
-  is_listed), by town; each opens its address on the map.
+  is_listed), by town; each opens its address on the map. On phones the
+  shops come first and the binoculars close the page (css/page.css).
 {% endcomment %}
 <section class="page-section" aria-labelledby="find-sweets-title">
-  <div class="page page--centered page--wide">
+  <div class="page page--centered page--wide find-sweets">
     <header class="page__heading page__heading--illustrated">
       {% include "includes/ui/binoculars.html" with class="page__illustration" only %}
       <h1 id="find-sweets-title" class="visually-hidden">{% trans "Find Sweets" %}</h1>

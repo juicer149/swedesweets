@@ -3,10 +3,12 @@
    (a request there hands the visitor's IP address to Google).
 
    fredoka.woff2  headings and the start menu; round and glad like the logo.
+   sniglet.woff2  the big display titles (Q & A, About): chubby, one weight
+                  (ExtraBold); only downloaded on the pages that use it.
    nunito.woff2   everything else; its figures are already equal width, so
                   prices and quantities line up without tabular-nums.
 
-   Both are variable (one file for every weight) and cut to the Latin
+   Fredoka and Nunito are variable (one file for every weight) and cut to the Latin
    letters French, Swedish and English need, plus € and arrows. Licence:
    SIL Open Font License, next to the files.
    ============================================================================= */
@@ -15,6 +17,14 @@
   font-family: "Fredoka";
   src: url("../fonts/fredoka.woff2") format("woff2");
   font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sniglet";
+  src: url("../fonts/sniglet.woff2") format("woff2");
+  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
