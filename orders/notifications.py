@@ -112,11 +112,10 @@ def _send_staff_notification(order: Order) -> None:
             reverse("ops_orders:detail", kwargs={"order_id": order.pk})
         )
 
-        subject = "New order #%(number)s – %(channel)s – %(buyer)s" % {
-            "number": order.pk,
-            "channel": order.get_channel_display(),
-            "buyer": order.buyer_name,
-        }
+        subject = (
+            f"New order #{order.pk} – "
+            f"{order.get_channel_display()} – {order.buyer_name}"
+        )
 
         body = render_to_string(
             "emails/order_placed_staff.txt",
