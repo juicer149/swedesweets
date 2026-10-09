@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 15:15+0200\n"
+"POT-Creation-Date: 2026-10-09 15:23+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -174,40 +174,40 @@ msgstr "Limité"
 msgid "Full"
 msgstr "Complet"
 
-#: accounts/roles.py:177
-msgid "Owner"
-msgstr "Propriétaire"
-
 #: accounts/roles.py:178
+msgid "Admin"
+msgstr "Administrateur"
+
+#: accounts/roles.py:179
 msgid "Full staff"
 msgstr "Personnel complet"
 
-#: accounts/roles.py:179
+#: accounts/roles.py:180
 msgid "Restricted staff"
 msgstr "Personnel limité"
 
 # | msgid "Linked customer"
-#: accounts/roles.py:180
+#: accounts/roles.py:181
 msgid "Business customer"
 msgstr "Client professionnel"
 
-#: accounts/roles.py:181
+#: accounts/roles.py:182
 msgid "Unlinked"
 msgstr "Non associé"
 
-#: accounts/roles.py:194
+#: accounts/roles.py:195
 msgid "Restricted access"
 msgstr "Accès limité"
 
-#: accounts/roles.py:195
+#: accounts/roles.py:196
 msgid "Full access"
 msgstr "Accès complet"
 
-#: accounts/roles.py:204
+#: accounts/roles.py:205
 msgid "Unknown"
 msgstr "Inconnu"
 
-#: accounts/roles.py:215 accounts/roles.py:219
+#: accounts/roles.py:216 accounts/roles.py:220
 msgid "Unknown access"
 msgstr "Accès inconnu"
 
@@ -1276,17 +1276,6 @@ msgstr "Client depuis"
 msgid "Edit store information"
 msgstr "Modifier les informations du magasin"
 
-#: templates/business_portal/includes/account_details_panel.html:78
-#: templates/includes/ops_footer.html:29
-msgid "Admin"
-msgstr "Administrateur"
-
-msgid "Reseller login"
-msgstr "Connexion revendeurs"
-
-msgid "Log out"
-msgstr "Se déconnecter"
-
 #: templates/business_portal/includes/account_section_nav.html:4
 #: templates/business_portal/includes/orders_panel.html:267
 msgid "Orders"
@@ -1513,25 +1502,37 @@ msgstr "Retour au catalogue"
 msgid "Add"
 msgstr "Ajouter"
 
-#: templates/includes/footer.html:7
+#: templates/includes/footer.html:9
 msgid "Site footer"
 msgstr "Pied de page"
 
-#: templates/includes/footer.html:22
+#: templates/includes/footer.html:24
 msgid "Call us"
 msgstr "Appelez-nous"
 
-#: templates/includes/footer.html:32
+#: templates/includes/footer.html:34
 msgid "Email us"
 msgstr "Écrivez-nous"
 
-#: templates/includes/footer.html:43
+#: templates/includes/footer.html:45
 msgid "SwedeSweets on Instagram"
 msgstr "SwedeSweets sur Instagram"
 
-#: templates/includes/footer.html:53
+#: templates/includes/footer.html:55
 msgid "SwedeSweets on TikTok"
 msgstr "SwedeSweets sur TikTok"
+
+#: templates/includes/footer.html:65 templates/includes/ops_footer.html:10
+msgid "Signed in as"
+msgstr "Connecté en tant que"
+
+#: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
+msgid "Log out"
+msgstr "Se déconnecter"
+
+#: templates/includes/footer.html:74
+msgid "Reseller login"
+msgstr "Connexion revendeurs"
 
 #: templates/includes/language_switcher.html:7
 msgid "Language"
@@ -1615,10 +1616,6 @@ msgstr "Retirer le produit"
 #: templates/includes/ops_footer.html:7
 msgid "Account"
 msgstr "Compte"
-
-#: templates/includes/ops_footer.html:10
-msgid "Signed in as"
-msgstr "Connecté en tant que"
 
 #: templates/includes/site_contact_rows.html:19
 msgid "Phone"
@@ -1982,6 +1979,9 @@ msgstr "Aucune boutique n'est encore listée."
 #: templates/storefront/landing.html:20 templates/storefront/landing.html:64
 msgid "Sweden’s sweetest tradition"
 msgstr "La plus douce tradition suédoise"
+
+#~ msgid "Owner"
+#~ msgstr "Propriétaire"
 
 #~ msgid "How do I log in?"
 #~ msgstr "Comment me connecter ?"
