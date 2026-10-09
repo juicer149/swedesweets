@@ -934,3 +934,22 @@ def test_cart_is_editable_again_after_cancelling_payment(
 
     assert response.status_code == 200
     assert response.json()["quantity"] == 1
+
+
+@pytest.mark.django_db
+def test_expired_checkout_with_open_payment_goes_to_payment_return(
+    client,
+    cart,
+):
+    # Back after the checkout ran out with a payment still open: no loop
+    # between details and review, the return page settles the payment.
+    checkout = _open_payment(client)
+
+    RetailCheckoutSession.objects.filter(pk=checkout.pk).update(
+        expires_at=timezone.now() - timedelta(minutes=1),
+    )
+
+    response = client.get(_review_url(checkout))
+
+    assert response.status_code == 302
+    assert response.url == _return_url(checkout)

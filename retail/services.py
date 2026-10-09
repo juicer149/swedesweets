@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from decimal import Decimal
 
 from django.db import transaction
@@ -22,6 +23,7 @@ from orders.datatypes import BuyerInput
 from orders.models import Order, OrderLine
 from orders.notifications import (
     send_order_placed_mails_on_commit,
+    send_paid_order_needs_attention_on_commit,
 )
 from orders.services import cancel_order as cancel_shared_order
 from orders.services import place_order as place_shared_order
@@ -35,6 +37,7 @@ from payments.services import (
 )
 from pricing.models import CommercialPrice, PriceAmount
 from products.models import Product
+from reservations.models import Allocation
 from reservations.planning import InsufficientReservationCapacity
 from reservations.policies import (
     make_order_reservations_permanent_before_placement,
@@ -446,17 +449,17 @@ def start_retail_payment(
             "retail order already has a pending payment attempt"
         )
 
-    lines = list(
-        order.lines
-        .select_related(
-            "product",
-            "commercial_offer__product",
-            "commercial_offer__batch__product",
+    # Paid, but the order could not be placed (its stock was gone): staff
+    # sort it out. Paying again would take the money twice.
+    if PaymentAttempt.objects.filter(
+        order=order,
+        status=PaymentAttempt.Status.SUCCEEDED,
+    ).exists():
+        raise InvalidRetailOrder(
+            "retail order has already been paid"
         )
-        .order_by("id")
-    )
 
-    if not lines:
+    if not order.lines.exists():
         raise InvalidRetailOrder(
             "retail checkout has no order lines"
         )
@@ -465,9 +468,37 @@ def start_retail_payment(
         order=order,
     )
 
-    reserved_until = (
-        now
-        + RETAIL_PAYMENT_RESERVATION_WINDOW
+    _reserve_retail_order_lines(
+        order=order,
+        reserved_until=(
+            now
+            + RETAIL_PAYMENT_RESERVATION_WINDOW
+        ),
+    )
+
+    return create_payment_attempt(
+        order=order,
+    )
+
+
+def _reserve_retail_order_lines(
+    *,
+    order: Order,
+    reserved_until: datetime,
+) -> None:
+    """Hold stock for every line until reserved_until (FEFO, per offer).
+
+    Raises InsufficientStockError when a line cannot be covered; the
+    caller's transaction rolls the partial holds back."""
+
+    lines = (
+        order.lines
+        .select_related(
+            "product",
+            "commercial_offer__product",
+            "commercial_offer__batch__product",
+        )
+        .order_by("id")
     )
 
     for line in lines:
@@ -491,9 +522,17 @@ def start_retail_payment(
                 missing_quantity=exc.missing_quantity,
             ) from exc
 
-    return create_payment_attempt(
+
+def _has_active_payment_hold(
+    *,
+    order: Order,
+    now: datetime,
+) -> bool:
+    return Allocation.objects.filter(
         order=order,
-    )
+        status=Allocation.Status.RESERVED,
+        reserved_until__gt=now,
+    ).exists()
 
 
 @transaction.atomic
@@ -506,6 +545,15 @@ def complete_retail_payment(
 
     Lock ordering is Order -> PaymentAttempt, matching payment-start paths.
     The source cart is consumed only after the order is placed.
+
+    Already completed (the webhook and the buyer's return can race): the
+    order is returned as it is, no error and no second mail.
+
+    Paid after the stock hold ran out: the stock is held again if it is
+    still there. If it is not, the money has been taken for stock that is
+    gone: the payment is recorded as succeeded (so it is never charged or
+    retried again), the order stays a draft, and staff are alerted to
+    refund or fulfil it by hand.
     """
 
     order_id = (
@@ -532,6 +580,9 @@ def complete_retail_payment(
             "payment attempt order changed unexpectedly"
         )
 
+    if attempt.status == PaymentAttempt.Status.SUCCEEDED:
+        return order
+
     if attempt.status != PaymentAttempt.Status.PENDING:
         raise InvalidPaymentAttempt(
             "only pending payment attempts can complete retail payment"
@@ -541,6 +592,35 @@ def complete_retail_payment(
         raise InvalidRetailOrder(
             "payment attempt does not belong to a retail order"
         )
+
+    now = timezone.now()
+
+    if (
+        order.status == Order.Status.DRAFT
+        and not _has_active_payment_hold(order=order, now=now)
+    ):
+        cancel_temporary_reservations_for_order(
+            order=order,
+        )
+
+        try:
+            with transaction.atomic():
+                _reserve_retail_order_lines(
+                    order=order,
+                    reserved_until=(
+                        now
+                        + RETAIL_PAYMENT_RESERVATION_WINDOW
+                    ),
+                )
+        except InsufficientStockError:
+            mark_payment_attempt_succeeded(
+                attempt=attempt,
+                provider_transaction_id=provider_transaction_id,
+            )
+
+            send_paid_order_needs_attention_on_commit(order)
+
+            return order
 
     order = place_shared_order(
         order=order,
@@ -597,6 +677,10 @@ def fail_retail_payment(
         raise InvalidPaymentAttempt(
             "payment attempt order changed unexpectedly"
         )
+
+    # Already failed (the webhook and the buyer's return can race).
+    if attempt.status == PaymentAttempt.Status.FAILED:
+        return attempt
 
     if attempt.status != PaymentAttempt.Status.PENDING:
         raise InvalidPaymentAttempt(

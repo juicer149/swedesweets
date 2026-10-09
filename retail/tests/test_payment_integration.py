@@ -449,7 +449,7 @@ def test_successful_webhook_is_idempotent_across_full_payment_flow(
 
 
 @pytest.mark.django_db
-def test_paid_webhook_after_temporary_reservation_expiry_does_not_place_order(
+def test_paid_webhook_after_hold_expiry_places_order_while_stock_remains(
     client,
     monkeypatch,
 ):
@@ -498,25 +498,27 @@ def test_paid_webhook_after_temporary_reservation_expiry_does_not_place_order(
         provider_payment_id="checkout-integration-123",
     )
 
-    assert response.status_code == 500
+    # Paid after the hold ran out, but the stock is still there: it is held
+    # again and the order goes through.
+    assert response.status_code == 204
 
     attempt.refresh_from_db()
     order.refresh_from_db()
-    allocation.refresh_from_db()
 
     assert (
         attempt.status
-        == PaymentAttempt.Status.PENDING
+        == PaymentAttempt.Status.SUCCEEDED
     )
     assert (
         order.status
-        == Order.Status.DRAFT
+        == Order.Status.PLACED
     )
     assert (
-        allocation.status
-        == Allocation.Status.RESERVED
-    )
-    assert (
-        allocation.reserved_until
-        <= timezone.now()
+        order.allocations
+        .filter(
+            status=Allocation.Status.RESERVED,
+            reserved_until__isnull=True,
+        )
+        .count()
+        == 1
     )

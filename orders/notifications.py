@@ -11,6 +11,11 @@ public API:
     send_order_placed_mails(order_id=...)
         -> Send them now.
 
+    send_paid_order_needs_attention_on_commit(order)
+        -> Tell the shop that a buyer has paid but the order could not be
+           placed (the stock ran out while they paid): refund or fulfil
+           it by hand. Logged as an error as well, mail or not.
+
 A mail that fails is logged, never raised: the order stands whether or not
 the mail goes out (the shop still sees it in ops).
 """
@@ -63,6 +68,57 @@ def send_order_placed_mails(*, order_id: int) -> None:
                 send.__name__,
                 order.pk,
             )
+
+
+def send_paid_order_needs_attention_on_commit(order: Order) -> None:
+    order_id = order.pk
+
+    transaction.on_commit(
+        lambda: send_paid_order_needs_attention_mail(order_id=order_id),
+        robust=True,
+    )
+
+
+def send_paid_order_needs_attention_mail(*, order_id: int) -> None:
+    logger.error(
+        "Order %s was paid but could not be placed: its stock is gone. "
+        "Refund or fulfil it by hand.",
+        order_id,
+    )
+
+    recipients = settings.ORDER_NOTIFICATION_EMAILS
+
+    if not recipients:
+        return
+
+    order = (
+        Order.objects
+        .prefetch_related("lines__product")
+        .get(pk=order_id)
+    )
+
+    try:
+        with translation.override(STAFF_LANGUAGE):
+            context = _mail_context(order)
+
+            body = render_to_string(
+                "emails/order_paid_needs_attention_staff.txt",
+                context,
+            )
+
+        send_mail(
+            subject=(
+                f"Action needed: order #{order.pk} paid but not placed"
+            ),
+            message=body,
+            from_email=None,
+            recipient_list=list(recipients),
+        )
+    except Exception:
+        logger.exception(
+            "Could not send the needs-attention mail for order %s",
+            order.pk,
+        )
 
 
 def _send_buyer_confirmation(order: Order) -> None:

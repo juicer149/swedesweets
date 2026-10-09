@@ -9,6 +9,8 @@ from payments.selectors import (
     list_pending_payment_attempt_ids,
 )
 from retail.payments import (
+    cancel_open_retail_payment,
+    is_past_payment_hold,
     is_past_unconfirmed_grace,
     reconcile_retail_payment,
     resolve_unconfirmed_retail_payment,
@@ -40,6 +42,14 @@ def reconcile_pending_retail_payments() -> PaymentReconciliationSummary:
     Pending attempts without a provider payment id are left alone during a
     short grace period, then resolved by searching the provider for our
     payment reference.
+
+    A payment still open after its stock hold has run out is abandoned (the
+    buyer left): it is cancelled at the provider and here, so its checkout
+    can no longer be paid and the buyer's cart is free again. If the buyer
+    paid at the last moment, the payment wins and the order is placed.
+
+    Meant to run every few minutes (a Railway cron service running
+    `manage.py reconcile_payments`).
     """
 
     attempt_ids = list_pending_payment_attempt_ids(
@@ -115,6 +125,24 @@ def reconcile_pending_retail_payments() -> PaymentReconciliationSummary:
                 logger.exception(
                     "Could not reconcile payment attempt %s.",
                     attempt.pk,
+                )
+
+                continue
+
+        if (
+            reconciled.status == PaymentAttempt.Status.PENDING
+            and is_past_payment_hold(reconciled)
+        ):
+            try:
+                reconciled = cancel_open_retail_payment(
+                    attempt=reconciled,
+                ).attempt
+            except Exception:
+                errors += 1
+
+                logger.exception(
+                    "Could not cancel abandoned payment attempt %s.",
+                    reconciled.pk,
                 )
 
                 continue

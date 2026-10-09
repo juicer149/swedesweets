@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 from enum import StrEnum
 
 from django.utils import timezone
 
+from orders.models import Order
 from payments.contracts import (
     HostedPaymentError,
     HostedPaymentProvider,
@@ -23,6 +24,7 @@ from payments.services import (
     reconcile_payment_attempt,
 )
 from retail.models import RetailCheckoutSession
+from retail.rules import RETAIL_PAYMENT_RESERVATION_WINDOW
 from retail.services import (
     cancel_retail_payment,
     complete_retail_payment,
@@ -38,7 +40,9 @@ __all__ = [
     "RetailPaymentRedirect",
     "begin_retail_hosted_payment",
     "cancel_open_retail_payment",
+    "is_past_payment_hold",
     "is_past_unconfirmed_grace",
+    "payment_hold_ends_at",
     "reconcile_retail_payment",
     "recover_retail_payment",
     "resolve_unconfirmed_retail_payment",
@@ -51,6 +55,24 @@ logger = logging.getLogger(__name__)
 # it is resolved automatically. Resolving earlier could race a provider
 # call that is still in flight.
 UNCONFIRMED_ATTEMPT_GRACE = timedelta(minutes=2)
+
+# The provider stops taking the payment this long before the stock hold
+# ends, so a payment made at the last moment still finds its stock held.
+PROVIDER_EXPIRY_MARGIN = timedelta(minutes=5)
+
+
+def payment_hold_ends_at(
+    attempt: PaymentAttempt,
+) -> datetime:
+    """When the stock held for this attempt is released (about)."""
+
+    return attempt.created_at + RETAIL_PAYMENT_RESERVATION_WINDOW
+
+
+def is_past_payment_hold(
+    attempt: PaymentAttempt,
+) -> bool:
+    return timezone.now() >= payment_hold_ends_at(attempt)
 
 
 class RetailPaymentRecoveryAction(StrEnum):
@@ -272,7 +294,7 @@ def recover_retail_payment(
     if attempt.status == PaymentAttempt.Status.SUCCEEDED:
         return RetailPaymentRecovery(
             attempt=attempt,
-            action=RetailPaymentRecoveryAction.CONFIRMED,
+            action=_action_for_succeeded(attempt),
         )
 
     if attempt.status == PaymentAttempt.Status.FAILED:
@@ -319,7 +341,7 @@ def recover_retail_payment(
             return RetailPaymentRecovery(
                 attempt=attempt,
                 action=(
-                    RetailPaymentRecoveryAction.CONFIRMED
+                    _action_for_succeeded(attempt)
                     if attempt.status == PaymentAttempt.Status.SUCCEEDED
                     else RetailPaymentRecoveryAction.PAYMENT_FAILED
                 ),
@@ -349,7 +371,7 @@ def recover_retail_payment(
 
     match reconciled.status:
         case PaymentAttempt.Status.SUCCEEDED:
-            action = RetailPaymentRecoveryAction.CONFIRMED
+            action = _action_for_succeeded(reconciled)
 
         case PaymentAttempt.Status.FAILED | PaymentAttempt.Status.CANCELLED:
             action = RetailPaymentRecoveryAction.PAYMENT_FAILED
@@ -392,11 +414,30 @@ def reconcile_retail_payment(
     return result.attempt
 
 
+def _action_for_succeeded(
+    attempt: PaymentAttempt,
+) -> RetailPaymentRecoveryAction:
+    """Paid. Confirmed, unless the order could not be placed (its stock
+    ran out while the buyer paid): then the buyer is asked to contact us,
+    and staff have been alerted."""
+
+    order_status = (
+        Order.objects
+        .values_list("status", flat=True)
+        .get(pk=attempt.order_id)
+    )
+
+    if order_status == Order.Status.DRAFT:
+        return RetailPaymentRecoveryAction.NEEDS_SUPPORT
+
+    return RetailPaymentRecoveryAction.CONFIRMED
+
+
 def _recovery_for_settled_attempt(
     attempt: PaymentAttempt,
 ) -> RetailPaymentRecovery:
     if attempt.status == PaymentAttempt.Status.SUCCEEDED:
-        action = RetailPaymentRecoveryAction.CONFIRMED
+        action = _action_for_succeeded(attempt)
     elif attempt.status in {
         PaymentAttempt.Status.FAILED,
         PaymentAttempt.Status.CANCELLED,
@@ -423,6 +464,10 @@ def _create_retail_hosted_payment_session(
         provider=provider,
         customer_return_url=customer_return_url,
         webhook_url=webhook_url,
+        expires_at=(
+            payment_hold_ends_at(attempt)
+            - PROVIDER_EXPIRY_MARGIN
+        ),
     )
 
     attempt.refresh_from_db()

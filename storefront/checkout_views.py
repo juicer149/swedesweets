@@ -270,6 +270,15 @@ def checkout_review(
         )
 
     if checkout.expires_at <= timezone.now():
+        # A payment is still open for it: the details page would send the
+        # buyer straight back here. The return page settles the payment
+        # (paid, failed or cancelled) and shows what to do next.
+        if get_pending_payment_attempt(order=order) is not None:
+            return redirect(
+                "storefront:payment_return",
+                checkout_id=checkout.pk,
+            )
+
         messages.info(
             request,
             _(

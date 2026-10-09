@@ -396,3 +396,67 @@ def test_reconcile_payments_management_command_reports_summary(
     assert "cancelled=0" in output
     assert "unresolved=1" in output
     assert "errors=0" in output
+
+
+class FakeCancellableProvider(FakeReconciliationProvider):
+    """Reports the checkout open until it is cancelled, then failed."""
+
+    def __init__(self, *, provider_payment_id: str) -> None:
+        super().__init__(
+            results={
+                provider_payment_id: ExternalPaymentState(
+                    provider_payment_id=provider_payment_id,
+                    status=ExternalPaymentStatus.PENDING,
+                ),
+            }
+        )
+        self.cancelled_payment_ids: list[str] = []
+
+    def cancel_payment(self, *, provider_payment_id: str) -> None:
+        self.cancelled_payment_ids.append(provider_payment_id)
+        self.results[provider_payment_id] = ExternalPaymentState(
+            provider_payment_id=provider_payment_id,
+            status=ExternalPaymentStatus.FAILED,
+        )
+
+
+@pytest.mark.django_db
+def test_batch_reconciliation_cancels_payment_abandoned_after_its_hold(
+    monkeypatch,
+):
+    retail_postal_area_factory()
+
+    order, attempt, allocation = _create_pending_attempt(
+        suffix="ABANDONED",
+        provider_payment_id="checkout-abandoned",
+    )
+
+    # The buyer left: the hold has run out and SumUp still has it open.
+    PaymentAttempt.objects.filter(pk=attempt.pk).update(
+        created_at=timezone.now() - timedelta(hours=1),
+    )
+
+    provider = FakeCancellableProvider(
+        provider_payment_id="checkout-abandoned",
+    )
+
+    monkeypatch.setattr(
+        "retail.payments.get_default_hosted_payment_provider",
+        lambda: provider,
+    )
+
+    summary = reconcile_pending_retail_payments()
+
+    attempt.refresh_from_db()
+    order.refresh_from_db()
+    allocation.refresh_from_db()
+
+    assert provider.cancelled_payment_ids == ["checkout-abandoned"]
+    assert attempt.status in {
+        PaymentAttempt.Status.FAILED,
+        PaymentAttempt.Status.CANCELLED,
+    }
+    assert summary.pending == 0
+    assert summary.errors == 0
+    assert order.status == Order.Status.DRAFT
+    assert allocation.status == Allocation.Status.CANCELLED

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import datetime
 
 from django.db import transaction
 
@@ -272,6 +273,7 @@ def create_hosted_payment_session(
     provider: HostedPaymentProvider,
     customer_return_url: str,
     webhook_url: str,
+    expires_at: datetime | None = None,
 ) -> HostedPaymentSession:
     """Create and persist an external hosted payment session.
 
@@ -307,6 +309,7 @@ def create_hosted_payment_session(
             ),
             customer_return_url=customer_return_url,
             webhook_url=webhook_url,
+            expires_at=expires_at,
         ),
     )
 
@@ -457,6 +460,11 @@ def _apply_reconciliation(
                 f"for local {attempt.status} attempt"
             )
 
+        _require_matching_amount(
+            attempt=attempt,
+            external=external,
+        )
+
         on_succeeded(
             attempt=attempt,
             provider_transaction_id=(
@@ -492,3 +500,28 @@ def _apply_reconciliation(
     raise PaymentReconciliationConflict(
         f"unsupported external payment status: {external.status}"
     )
+
+
+def _require_matching_amount(
+    *,
+    attempt: PaymentAttempt,
+    external: ExternalPaymentState,
+) -> None:
+    """Refuse a payment the provider charged differently than we asked.
+
+    A provider that does not report the amount is trusted, as before."""
+
+    if external.amount is not None and external.amount != attempt.amount:
+        raise PaymentReconciliationConflict(
+            f"provider charged {external.amount}, "
+            f"attempt {attempt.pk} expects {attempt.amount}"
+        )
+
+    if (
+        external.currency is not None
+        and external.currency != attempt.currency
+    ):
+        raise PaymentReconciliationConflict(
+            f"provider charged in {external.currency}, "
+            f"attempt {attempt.pk} expects {attempt.currency}"
+        )

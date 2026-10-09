@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from decimal import Decimal
 from enum import StrEnum
 from typing import Protocol
@@ -25,6 +26,10 @@ class HostedPaymentRequest:
     description: str
     customer_return_url: str
     webhook_url: str
+    # When the provider should stop accepting the payment (the end of the
+    # stock hold): a payment after it would take money for stock that may
+    # be gone. None: the provider's own default.
+    expires_at: datetime | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,7 +44,10 @@ class ExternalPaymentState:
     status: ExternalPaymentStatus
     provider_transaction_id: str | None = None
     hosted_payment_url: str | None = None
-
+    # What the provider says it charges, when it says: checked against the
+    # local attempt before a payment is accepted.
+    amount: Decimal | None = None
+    currency: str | None = None
 
 
 class HostedPaymentProvider(Protocol):

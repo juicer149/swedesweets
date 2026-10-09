@@ -1,0 +1,13 @@
+{% autoescape off %}Order #{{ order.pk }} has been paid, but it could not be placed: some of its stock ran out while the buyer was paying.
+
+The money has been taken. Please refund the payment in SumUp, or fulfil the order by hand and contact the buyer.
+
+{{ order.buyer_name }}
+{{ order.buyer_email }}{% if order.buyer_phone_number %}
+{{ order.buyer_phone_number }}{% endif %}
+{{ order.buyer_address }}
+
+{% for line in lines %}{{ line.quantity }} × {{ line.name }}{% if line.total %}   {{ line.total }}{% endif %}
+{% endfor %}{% if total %}
+Total paid: {{ total }}
+{% endif %}{% endautoescape %}

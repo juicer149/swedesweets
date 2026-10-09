@@ -4,8 +4,10 @@ from datetime import timedelta
 from decimal import Decimal
 
 import pytest
+from django.test import override_settings
 from django.utils import timezone
 
+from inventory.models import InventoryBatch
 from inventory.services import create_batch
 from orders.errors import InvalidOrderOperation
 from orders.models import Order
@@ -15,6 +17,7 @@ from payments.services import (
     cancel_pending_payment_attempts_for_order,
 )
 from reservations.models import Allocation
+from retail.errors import InvalidRetailOrder
 from retail.services import (
     AnonymousBuyerInput,
     RetailOrderLineInput,
@@ -147,7 +150,7 @@ def test_complete_retail_payment_rejects_cancelled_attempt():
 
 
 @pytest.mark.django_db
-def test_complete_retail_payment_rejects_expired_reservations():
+def test_complete_retail_payment_holds_stock_again_after_hold_expired():
     checkout, attempt = _create_checkout_with_payment_attempt()
 
     checkout.order.allocations.update(
@@ -157,28 +160,71 @@ def test_complete_retail_payment_rejects_expired_reservations():
         ),
     )
 
-    with pytest.raises(
-        InvalidOrderOperation,
-        match="no active payment reservations",
-    ):
-        complete_retail_payment(
-            attempt=attempt,
-        )
+    order = complete_retail_payment(
+        attempt=attempt,
+    )
 
-    checkout.order.refresh_from_db()
     attempt.refresh_from_db()
 
-    allocation = checkout.order.allocations.get()
+    assert order.status == Order.Status.PLACED
+    assert attempt.status == PaymentAttempt.Status.SUCCEEDED
+    assert (
+        order.allocations
+        .filter(
+            status=Allocation.Status.RESERVED,
+            reserved_until__isnull=True,
+        )
+        .count()
+        == 1
+    )
 
-    assert (
-        checkout.order.status
-        == Order.Status.DRAFT
+
+@pytest.mark.django_db
+@override_settings(ORDER_NOTIFICATION_EMAILS=["info@swedesweets.se"])
+def test_paid_after_hold_expired_and_stock_gone_alerts_staff(
+    mailoutbox,
+    django_capture_on_commit_callbacks,
+):
+    checkout, attempt = _create_checkout_with_payment_attempt()
+
+    checkout.order.allocations.update(
+        reserved_until=(
+            timezone.now()
+            - timedelta(seconds=1)
+        ),
     )
-    assert (
-        attempt.status
-        == PaymentAttempt.Status.PENDING
-    )
-    assert allocation.reserved_until is not None
+    InventoryBatch.objects.update(quantity=0)
+
+    with django_capture_on_commit_callbacks(execute=True):
+        order = complete_retail_payment(
+            attempt=attempt,
+            provider_transaction_id="tx-late",
+        )
+
+    attempt.refresh_from_db()
+
+    # The money is taken: recorded, never retried, and the order cannot be
+    # paid again. It stays a draft for staff to refund or fulfil.
+    assert attempt.status == PaymentAttempt.Status.SUCCEEDED
+    assert order.status == Order.Status.DRAFT
+
+    (alert,) = mailoutbox
+    assert alert.to == ["info@swedesweets.se"]
+    assert f"#{order.pk}" in alert.subject
+
+    with pytest.raises(InvalidRetailOrder, match="already been paid"):
+        start_retail_payment(checkout=checkout)
+
+
+@pytest.mark.django_db
+def test_complete_retail_payment_twice_returns_the_order_quietly():
+    _checkout, attempt = _create_checkout_with_payment_attempt()
+
+    first = complete_retail_payment(attempt=attempt)
+    second = complete_retail_payment(attempt=attempt)
+
+    assert second.pk == first.pk
+    assert second.status == Order.Status.PLACED
 
 
 @pytest.mark.django_db

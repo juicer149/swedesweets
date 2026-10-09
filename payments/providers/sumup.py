@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
-from decimal import Decimal
+from datetime import UTC
+from decimal import Decimal, InvalidOperation
+from http.client import HTTPException
 from urllib.error import (
     HTTPError,
     URLError,
@@ -77,6 +79,13 @@ class SumUpHostedPaymentProvider:
                 "enabled": True,
             },
         }
+
+        if request.expires_at is not None:
+            payload["valid_until"] = (
+                request.expires_at
+                .astimezone(UTC)
+                .isoformat(timespec="seconds")
+            )
 
         response = self._request_json(
             method="POST",
@@ -273,6 +282,13 @@ class SumUpHostedPaymentProvider:
                 "Could not reach SumUp"
             ) from exc
 
+        # A timeout or a dropped connection while waiting for the answer is
+        # not wrapped in URLError by urllib.
+        except (OSError, HTTPException) as exc:
+            raise SumUpPaymentError(
+                "SumUp did not answer"
+            ) from exc
+
         if not response_body:
             return None
 
@@ -308,6 +324,10 @@ def _checkout_state(
     ) or not hosted_payment_url:
         hosted_payment_url = None
 
+    amount, currency = _checkout_amount(
+        checkout
+    )
+
     status = checkout.get(
         "status"
     )
@@ -317,6 +337,8 @@ def _checkout_state(
             provider_payment_id=response_id,
             status=ExternalPaymentStatus.PENDING,
             hosted_payment_url=hosted_payment_url,
+            amount=amount,
+            currency=currency,
         )
 
     if status in {
@@ -327,6 +349,8 @@ def _checkout_state(
             provider_payment_id=response_id,
             status=ExternalPaymentStatus.FAILED,
             hosted_payment_url=hosted_payment_url,
+            amount=amount,
+            currency=currency,
         )
 
     if status == "PAID":
@@ -347,11 +371,40 @@ def _checkout_state(
             status=ExternalPaymentStatus.SUCCEEDED,
             provider_transaction_id=transaction_id,
             hosted_payment_url=hosted_payment_url,
+            amount=amount,
+            currency=currency,
         )
 
     raise SumUpPaymentError(
         f"unsupported SumUp checkout status: {status!r}"
     )
+
+
+def _checkout_amount(
+    checkout: dict[str, object],
+) -> tuple[Decimal | None, str | None]:
+    """The amount and currency SumUp says the checkout is for, if given."""
+
+    amount = checkout.get("amount")
+    currency = checkout.get("currency")
+
+    try:
+        amount = (
+            Decimal(str(amount))
+            if isinstance(amount, int | float | str)
+            and not isinstance(amount, bool)
+            else None
+        )
+    except InvalidOperation:
+        amount = None
+
+    currency = (
+        currency.upper()
+        if isinstance(currency, str) and currency
+        else None
+    )
+
+    return amount, currency
 
 
 def _required_payment_id(
