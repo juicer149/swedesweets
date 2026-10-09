@@ -243,25 +243,26 @@ def _store_listing_initial_data(customer: Customer) -> dict[str, object]:
 
 
 class InviteShopForm(CustomerForm):
-    """A new shop and its login in one go: name, email and country. The
-    shop fills in phone, city and address itself on first login (Marco
-    may fill them in already)."""
+    """A new shop and its login in one go: name, email and country only.
+    The shop fills in phone, city and address itself on first login."""
 
-    OPTIONAL_FIELDS = ("phone_number", "city", "address_line")
+    DELIVERY_FIELDS = ("name", "email", "country")
+    LEFT_TO_THE_SHOP = ("phone_number", "city", "address_line")
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, customer=None, **kwargs)
 
-        self.fields["email"].help_text = (
-            "Their login. We email an invitation here, with a link to choose "
-            "a password and fill in the shop's details."
-        )
+        for name in self.LEFT_TO_THE_SHOP:
+            del self.fields[name]
 
-        for name in self.OPTIONAL_FIELDS:
-            field = self.fields[name]
-            field.required = False
-            field.initial = None
-            field.help_text = "Optional: the shop can fill it in."
+        self.fields["email"].help_text = "Their login, and where the invitation goes."
+
+    @property
+    def delivery_data(self) -> dict[str, object]:
+        return {
+            **{name: self.cleaned_data[name] for name in self.DELIVERY_FIELDS},
+            **{name: "" for name in self.LEFT_TO_THE_SHOP},
+        }
 
 
 class InviteLoginForm(forms.Form):

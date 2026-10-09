@@ -21,9 +21,11 @@ class CustomerFormContext:
     submit_label: str
     cancel_url: str
     customer: Customer | None = None
+    intro: str = ""
 
     def as_dict(self) -> dict[str, object]:
         context: dict[str, object] = {
+            "intro": self.intro,
             "form": self.form,
             "customer": self.customer,
             "title": self.title,
@@ -76,6 +78,11 @@ def build_invite_shop_form_context(
         form=form,
         title="Invite shop",
         submit_label="Send invitation",
+        intro=(
+            "We email the shop a link to choose a password. On first login "
+            "they fill in their phone, address and city themselves, and can "
+            "order once that is done."
+        ),
         cancel_url=reverse("ops_customers:index"),
     )
 

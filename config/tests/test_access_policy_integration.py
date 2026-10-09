@@ -78,6 +78,7 @@ VIEW_KWARGS = {
     "ops_products:edit": PRODUCT_KWARGS,
     "ops_customers:detail": CUSTOMER_KWARGS,
     "ops_customers:edit": CUSTOMER_KWARGS,
+    "ops_customers:invite_login": CUSTOMER_KWARGS,
     "business_portal:order_detail": ORDER_KWARGS,
     "business_portal:catalog_product": CATALOG_PRODUCT_KWARGS,
     "business_portal:catalog_add_product": CATALOG_PRODUCT_KWARGS,
