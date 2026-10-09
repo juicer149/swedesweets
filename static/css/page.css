@@ -855,12 +855,12 @@ span.icon-rows__link .icon-rows__icon {
   text-align: center;
 }
 
-/* Left, in line with the story under it; the first letter large, as a
-   book's first page. */
+/* On the page's middle line, like the story and the photo under it; the
+   first letter large, as a book's first page. */
 .display-title--about {
   margin-bottom: clamp(var(--space-5), 4dvh, var(--space-7));
   font-size: clamp(2rem, 9vw, 2.75rem);
-  text-align: left;
+  text-align: center;
 }
 
 .display-title--about::first-letter {
@@ -872,11 +872,14 @@ span.icon-rows__link .icon-rows__icon {
   width: min(100%, 560px);
 }
 
+/* Centred: the title, the story, the last line and the photo all hang on
+   one middle line. */
 .about__text {
   display: grid;
   gap: var(--space-4);
   color: var(--color-neutral-700);
   line-height: 1.65;
+  text-align: center;
 }
 
 .about__text p {
@@ -904,11 +907,11 @@ span.icon-rows__link .icon-rows__icon {
   mask-composite: intersect;
 }
 
-/* The last line, in the title's style, left in line with the story. */
+/* The last line, in the title's style, on the middle line too. */
 .about__signoff {
   margin-top: clamp(var(--space-6), 5dvh, var(--space-8));
   font-size: clamp(1.5rem, 6.5vw, 1.875rem);
-  text-align: left;
+  text-align: center;
 }
 
 .page.faq {

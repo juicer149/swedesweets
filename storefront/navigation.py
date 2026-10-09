@@ -47,7 +47,7 @@ STOREFRONT_FIND_SWEETS_NAV_ITEM = PublicNavItem(
 )
 
 STOREFRONT_FAQ_NAV_ITEM = PublicNavItem(
-    label=_("FAQ"),
+    label=_("Q & A"),
     route_name="public_site:faq",
     namespace="public_site",
     icon="question",

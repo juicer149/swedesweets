@@ -41,7 +41,7 @@ BUSINESS_FIND_SWEETS_NAV_ITEM = BusinessNavItem(
 )
 
 BUSINESS_FAQ_NAV_ITEM = BusinessNavItem(
-    label=_("FAQ"),
+    label=_("Q & A"),
     route_name="business_portal:faq",
     namespace="business_portal",
     icon="question",

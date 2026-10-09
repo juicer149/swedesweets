@@ -14,7 +14,7 @@ def test_business_navigation_has_shared_site_shape():
     ) == (
         "Catalog",
         "Find Sweets",
-        "FAQ",
+        "Q & A",
         "About us",
     )
 
