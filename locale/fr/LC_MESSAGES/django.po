@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 14:13+0200\n"
+"POT-Creation-Date: 2026-10-09 15:15+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -113,15 +113,15 @@ msgstr "Client désactivé"
 msgid "Order #%(order_id)s"
 msgstr "Commande n° %(order_id)s"
 
-#: accounts/forms.py:21 templates/registration/login.html:23
+#: accounts/forms.py:22 templates/registration/login.html:23
 msgid "Username"
 msgstr "Nom d’utilisateur"
 
-#: accounts/forms.py:22 templates/registration/login.html:24
+#: accounts/forms.py:23 templates/registration/login.html:24
 msgid "Password"
 msgstr "Mot de passe"
 
-#: accounts/forms.py:30 business_portal/store/forms.py:43
+#: accounts/forms.py:31 business_portal/store/forms.py:43
 #: storefront/checkout_forms.py:54
 #: templates/business_portal/includes/account_details_panel.html:24
 #: templates/includes/site_contact_rows.html:11
@@ -468,7 +468,7 @@ msgstr "Passer une commande"
 #: templates/ops_portal/accounts/customer_account_status.html:24
 #: templates/ops_portal/orders/order_form.html:77
 #: templates/registration/password_change_done.html:16
-#: templates/registration/password_change_form.html:50
+#: templates/registration/password_change_form.html:34
 msgid "Back"
 msgstr "Retour"
 
@@ -752,12 +752,12 @@ msgstr "kg"
 msgid "Grams"
 msgstr "Grammes"
 
-#: orders/notifications.py:86
+#: orders/notifications.py:142
 #, python-format
 msgid "Order #%(number)s received – SwedeSweets"
 msgstr "Commande n° %(number)s reçue – SwedeSweets"
 
-#: orders/notifications.py:88
+#: orders/notifications.py:144
 #, python-format
 msgid "Thank you for your order #%(number)s – SwedeSweets"
 msgstr "Merci pour votre commande n° %(number)s – SwedeSweets"
@@ -996,26 +996,26 @@ msgstr ""
 "Cette validation de commande a été remplacée par une plus récente. Veuillez "
 "confirmer à nouveau vos informations."
 
-#: storefront/checkout_views.py:276 storefront/checkout_views.py:374
+#: storefront/checkout_views.py:285 storefront/checkout_views.py:383
 msgid "Your checkout has expired. Please confirm your details again."
 msgstr ""
 "Votre session de validation a expiré. Veuillez confirmer à nouveau vos "
 "informations."
 
-#: storefront/checkout_views.py:354
+#: storefront/checkout_views.py:363
 msgid ""
 "Some items in your cart are no longer in stock. Please update your cart."
 msgstr ""
 "Certains articles de votre panier ne sont plus en stock. Veuillez mettre à "
 "jour votre panier."
 
-#: storefront/checkout_views.py:400
+#: storefront/checkout_views.py:409
 msgid "We couldn't reach the payment provider. Please try again in a moment."
 msgstr ""
 "Nous n’avons pas pu joindre le prestataire de paiement. Veuillez réessayer "
 "dans un instant."
 
-#: storefront/checkout_views.py:454
+#: storefront/checkout_views.py:463
 msgid ""
 "We couldn't reach the payment provider to cancel your payment. Please try "
 "again in a moment."
@@ -1023,12 +1023,12 @@ msgstr ""
 "Nous n’avons pas pu joindre le prestataire de paiement pour annuler votre "
 "paiement. Veuillez réessayer dans un instant."
 
-#: storefront/checkout_views.py:477
+#: storefront/checkout_views.py:486
 msgid "Your payment was cancelled. You can now change your order."
 msgstr ""
 "Votre paiement a été annulé. Vous pouvez maintenant modifier votre commande."
 
-#: storefront/checkout_views.py:489
+#: storefront/checkout_views.py:498
 msgid ""
 "We couldn't cancel your payment. If you already paid, your order is safe. "
 "Otherwise, please try again or contact us."
@@ -1083,28 +1083,39 @@ msgstr "Où trouver vos bonbons en magasin ?"
 msgid "The shops that sell our sweets are listed on Find Sweets."
 msgstr "Les boutiques qui vendent nos bonbons sont listées sur « Où acheter »."
 
-#: storefront/faq.py:68
+#: storefront/faq.py:66
 msgid "I forgot my password. What do I do?"
 msgstr "J'ai oublié mon mot de passe. Que faire ?"
 
-#: storefront/faq.py:69
-#: storefront/faq.py:73
+#: storefront/faq.py:68
+msgid ""
+"Use “Forgot password?” on the login page, and we will email you a link to "
+"choose a new one."
+msgstr ""
+"Utilisez « Mot de passe oublié ? » sur la page de connexion : nous vous "
+"enverrons par e-mail un lien pour en choisir un nouveau."
+
+#: storefront/faq.py:72
+msgid "Reset your password"
+msgstr "Réinitialiser votre mot de passe"
+
+#: storefront/faq.py:75
 msgid "How long does delivery take, and what does it cost?"
 msgstr "Combien de temps prend la livraison, et combien coûte-t-elle ?"
 
-#: storefront/faq.py:74
+#: storefront/faq.py:76
 msgid "Can I return or exchange merch?"
 msgstr "Puis-je retourner ou échanger du merch ?"
 
-#: storefront/faq.py:75
+#: storefront/faq.py:77
 msgid "Which sizes are available?"
 msgstr "Quelles tailles sont disponibles ?"
 
-#: storefront/faq.py:82
+#: storefront/faq.py:84
 msgid "Can I change my store's details?"
 msgstr "Puis-je modifier les informations de mon magasin ?"
 
-#: storefront/faq.py:84
+#: storefront/faq.py:86
 msgid ""
 "Yes, under My account. Orders already placed keep the delivery details they "
 "were placed with."
@@ -1112,35 +1123,35 @@ msgstr ""
 "Oui, dans Mon compte. Les commandes déjà passées gardent les informations de "
 "livraison avec lesquelles elles ont été passées."
 
-#: storefront/faq.py:89
+#: storefront/faq.py:91
 msgid "Is there a minimum order?"
 msgstr "Y a-t-il une commande minimum ?"
 
-#: storefront/faq.py:90
+#: storefront/faq.py:92
 msgid "Which days do you deliver?"
 msgstr "Quels jours livrez-vous ?"
 
-#: storefront/faq.py:91
+#: storefront/faq.py:93
 msgid "How do invoices and payment terms work?"
 msgstr "Comment fonctionnent les factures et les conditions de paiement ?"
 
-#: storefront/faq.py:92
+#: storefront/faq.py:94
 msgid "How long is the best-before date on delivery?"
 msgstr ""
 
-#: storefront/faq.py:93
+#: storefront/faq.py:95
 msgid "Can I order less than a whole box?"
 msgstr ""
 
-#: storefront/faq.py:94
+#: storefront/faq.py:96
 msgid "What do I do if something is damaged or missing in a delivery?"
 msgstr ""
 
-#: storefront/faq.py:95
+#: storefront/faq.py:97
 msgid "Can I cancel or change an order after placing it?"
 msgstr ""
 
-#: storefront/faq.py:97
+#: storefront/faq.py:99
 msgid ""
 "Do you provide material for the shop, such as shelves, boxes, signs, prices "
 "and pictures?"
@@ -1246,7 +1257,7 @@ msgstr "Ce compte n’a encore aucune activité enregistrée."
 #: templates/business_portal/includes/account_details_panel.html:71
 #: templates/registration/password_change_form.html:4
 #: templates/registration/password_change_form.html:9
-#: templates/registration/password_change_form.html:45
+#: templates/registration/password_change_form.html:29
 msgid "Change password"
 msgstr "Modifier le mot de passe"
 
@@ -1267,16 +1278,6 @@ msgstr "Modifier les informations du magasin"
 
 #: templates/business_portal/includes/account_details_panel.html:78
 #: templates/includes/ops_footer.html:29
-msgid ""
-"Use “Forgot password?” on the login page, and we will email you a link to "
-"choose a new one."
-msgstr ""
-"Utilisez « Mot de passe oublié ? » sur la page de connexion : nous vous "
-"enverrons par e-mail un lien pour en choisir un nouveau."
-
-msgid "Reset your password"
-msgstr "Réinitialiser votre mot de passe"
-
 msgid "Log out"
 msgstr "Se déconnecter"
 
@@ -1667,6 +1668,10 @@ msgstr "Afficher le mot de passe"
 msgid "Hide password"
 msgstr "Masquer le mot de passe"
 
+#: templates/registration/includes/password_rules.html:10
+msgid "Password rules"
+msgstr "Règles du mot de passe"
+
 #: templates/registration/login.html:39
 msgid "Forgot password?"
 msgstr "Mot de passe oublié ?"
@@ -1679,10 +1684,6 @@ msgstr "Mot de passe modifié"
 msgid "Your password has been updated."
 msgstr "Votre mot de passe a été mis à jour."
 
-#: templates/registration/password_change_form.html:21
-msgid "Password rules"
-msgstr "Règles du mot de passe"
-
 #: templates/registration/password_reset_complete.html:4
 #: templates/registration/password_reset_complete.html:11
 msgid "Password reset complete"
@@ -1693,27 +1694,27 @@ msgid "Log in"
 msgstr "Se connecter"
 
 #: templates/registration/password_reset_confirm.html:4
-#: templates/registration/password_reset_confirm.html:14
-#: templates/registration/password_reset_confirm.html:30
+#: templates/registration/password_reset_confirm.html:10
+#: templates/registration/password_reset_confirm.html:28
 msgid "Set new password"
 msgstr "Définir un nouveau mot de passe"
 
-#: templates/registration/password_reset_confirm.html:35
-#: templates/registration/password_reset_confirm.html:63
+#: templates/registration/password_reset_confirm.html:33
+#: templates/registration/password_reset_confirm.html:61
 #: templates/registration/password_reset_done.html:16
 #: templates/registration/password_reset_form.html:27
 msgid "Back to login"
 msgstr "Retour à la connexion"
 
-#: templates/registration/password_reset_confirm.html:45
+#: templates/registration/password_reset_confirm.html:43
 msgid "Reset link expired"
 msgstr "Lien de réinitialisation expiré"
 
-#: templates/registration/password_reset_confirm.html:50
+#: templates/registration/password_reset_confirm.html:48
 msgid "This password reset link is invalid or has already been used."
 msgstr "Ce lien de réinitialisation est invalide ou a déjà été utilisé."
 
-#: templates/registration/password_reset_confirm.html:58
+#: templates/registration/password_reset_confirm.html:56
 msgid "Request new link"
 msgstr "Demander un nouveau lien"
 
