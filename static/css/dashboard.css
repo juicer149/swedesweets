@@ -46,6 +46,7 @@
 .dashboard-queue--packed[open] .dashboard-queue__icon { color: var(--color-primary-600); }
 .dashboard-queue--expiring[open] .dashboard-queue__icon { color: var(--color-status-danger-text); }
 .dashboard-queue--low-stock[open] .dashboard-queue__icon { color: var(--color-status-warning-text); }
+.dashboard-queue--waiting-for-details[open] .dashboard-queue__icon { color: var(--color-primary-600); }
 
 @media (prefers-reduced-motion: reduce) {
   .dashboard-queue__icon {

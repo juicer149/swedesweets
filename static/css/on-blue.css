@@ -83,6 +83,7 @@ body.on-blue {
 
 .on-blue .page__text,
 .on-blue .page__help,
+.on-blue .form-help,
 .on-blue .form-label {
   color: var(--on-blue-ink);
 }
@@ -162,6 +163,14 @@ body.on-blue {
   border-color: var(--on-blue-mark);
   /* thinner than the focus ring, so the field you are in still shows */
   box-shadow: 0 0 0 1px var(--on-blue-mark);
+}
+
+
+/* The shop's first visit (business_portal/store_onboarding.html): the
+   line under the title, a little apart from it. */
+.onboarding__note {
+  margin-top: var(--space-3);
+  line-height: 1.5;
 }
 
 

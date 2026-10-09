@@ -78,7 +78,11 @@ def edit_store(request):
 
     return render(
         request,
-        "business_portal/store_edit.html",
+        (
+            "business_portal/store_onboarding.html"
+            if onboarding
+            else "business_portal/store_edit.html"
+        ),
         {
             "form": form,
             "customer": customer,

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from django import forms
+from django.contrib.auth import get_user_model
+from django.db.models import Q
 
 from common.form_layout import set_form_field_layout
 from customers.models import (
@@ -242,6 +244,39 @@ def _store_listing_initial_data(customer: Customer) -> dict[str, object]:
     }
 
 
+def email_taken_message(email: str, *, check_customers: bool) -> str | None:
+    """Why this email cannot get an invitation, or None when it is free.
+
+    Checked before anything is created, so the answer shows on the email
+    field itself (the services refuse the same, as a last guard)."""
+
+    if check_customers:
+        customer = Customer.objects.filter(email__iexact=email).first()
+
+        if customer is not None:
+            return (
+                f"{customer.name} already uses this email. To give them a "
+                "login, open the customer and choose Invite to the portal."
+            )
+
+    user = (
+        get_user_model().objects
+        .filter(Q(email__iexact=email) | Q(username__iexact=email))
+        .select_related("customer_membership__customer")
+        .first()
+    )
+
+    if user is None:
+        return None
+
+    membership = getattr(user, "customer_membership", None)
+
+    if membership is not None:
+        return f"This email already has a login, for {membership.customer.name}."
+
+    return "This email already has a login."
+
+
 class InviteShopForm(CustomerForm):
     """A new shop and its login in one go: name, email and country only.
     The shop fills in phone, city and address itself on first login."""
@@ -256,6 +291,15 @@ class InviteShopForm(CustomerForm):
             del self.fields[name]
 
         self.fields["email"].help_text = "Their login, and where the invitation goes."
+
+    def clean_email(self) -> str:
+        email = self.cleaned_data["email"].strip().lower()
+        taken = email_taken_message(email, check_customers=True)
+
+        if taken:
+            raise forms.ValidationError(taken)
+
+        return email
 
     @property
     def delivery_data(self) -> dict[str, object]:
@@ -291,7 +335,15 @@ class InviteLoginForm(forms.Form):
         set_form_field_layout(self, full=("email",))
 
     def clean_email(self) -> str:
-        return self.cleaned_data["email"].strip().lower()
+        email = self.cleaned_data["email"].strip().lower()
+        # The customer's own email is the usual choice here, so only an
+        # existing login stops it.
+        taken = email_taken_message(email, check_customers=False)
+
+        if taken:
+            raise forms.ValidationError(taken)
+
+        return email
 
     @property
     def delivery_fields(self):

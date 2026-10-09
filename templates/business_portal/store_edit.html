@@ -7,23 +7,13 @@
 <section class="page-section" aria-labelledby="customer-profile-edit-title">
   <div class="page page--centered page--wide">
     <header class="page__heading">
-      {% if onboarding %}
-        <h1 id="customer-profile-edit-title" class="page__lead">
-          {% trans "Complete your shop details" %}
-        </h1>
+      <h1 id="customer-profile-edit-title" class="page__lead">
+        {% trans "Edit store" %}
+      </h1>
 
-        <p class="page__note">
-          {% trans "Before you can order, we need to know how to reach you and where to deliver." %}
-        </p>
-      {% else %}
-        <h1 id="customer-profile-edit-title" class="page__lead">
-          {% trans "Edit store" %}
-        </h1>
-
-        <p class="page__note">
-          {% trans "Changes apply to future orders. Existing orders keep the delivery details that were saved when the order was placed." %}
-        </p>
-      {% endif %}
+      <p class="page__note">
+        {% trans "Changes apply to future orders. Existing orders keep the delivery details that were saved when the order was placed." %}
+      </p>
     </header>
 
     <form method="post" novalidate>
@@ -52,17 +42,15 @@
           class="button button--md button--solid button--tone-place page__submit"
           type="submit"
         >
-          {% if onboarding %}{% trans "Save and start ordering" %}{% else %}{% trans "Save changes" %}{% endif %}
+          {% trans "Save changes" %}
         </button>
 
-        {% if not onboarding %}
-          <div class="page-actions__links">
-            <a class="quiet-link" href="{% url 'business_portal:index' %}">
-              {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
-              {% trans "Cancel" %}
-            </a>
-          </div>
-        {% endif %}
+        <div class="page-actions__links">
+          <a class="quiet-link" href="{% url 'business_portal:index' %}">
+            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+            {% trans "Cancel" %}
+          </a>
+        </div>
       </div>
     </form>
   </div>

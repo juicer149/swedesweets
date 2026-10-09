@@ -4,8 +4,13 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 
 from django.urls import reverse
+from django.utils import timezone
 
 from accounts.roles import AccountRole, Capability, RoleSpec
+from customers.selectors import (
+    count_customers_waiting_for_details,
+    list_customers_waiting_for_details,
+)
 from inventory.selectors import (
     count_expiring_batches,
     list_expiring_batch_rows_for_dashboard,
@@ -101,6 +106,10 @@ def _list_low_stock_products() -> Iterable[object]:
     )
 
 
+def _list_customers_waiting_for_details() -> Iterable[object]:
+    return list_customers_waiting_for_details(limit=QUEUE_PREVIEW_LIMIT)
+
+
 # -----------------------------------------------------------------------------
 # View-all href callbacks
 
@@ -115,6 +124,10 @@ def _packed_orders_view_all_href() -> str:
 
 def _expiring_batches_view_all_href() -> str:
     return f"{reverse('ops_inventory:index')}?sort=best_before#inventory-list"
+
+
+def _customers_view_all_href() -> str:
+    return reverse("ops_customers:index")
 
 
 def _low_stock_products_view_all_href() -> str:
@@ -174,6 +187,34 @@ def _low_stock_item(row) -> DashboardQueueItem:
         action_label="Open product →",
         tone="warning",
         icon="inventory",
+    )
+
+
+def _days_ago_label(moment) -> str:
+    days = (timezone.localdate() - timezone.localtime(moment).date()).days
+
+    if days <= 0:
+        return "today"
+
+    if days == 1:
+        return "yesterday"
+
+    return f"{days} days ago"
+
+
+def _waiting_for_details_item(customer) -> DashboardQueueItem:
+    if customer.invited_at is None:
+        meta = "No login yet"
+    else:
+        meta = f"Invited {_days_ago_label(customer.invited_at)}"
+
+    return DashboardQueueItem(
+        title=customer.name,
+        meta=f"{meta} · {customer.email}",
+        href=reverse("ops_customers:detail", kwargs={"customer_pk": customer.pk}),
+        action_label="Open customer →",
+        tone="info",
+        icon="mail",
     )
 
 
@@ -237,6 +278,22 @@ LOW_STOCK_QUEUE = DashboardQueueSpec(
 )
 
 
+# Shops invited to the portal that have not filled in their phone, city
+# and address yet (they cannot order until they do).
+WAITING_FOR_DETAILS_QUEUE = DashboardQueueSpec(
+    key="waiting-for-details",
+    capability=Capability.VIEW_CUSTOMERS,
+    tone="info",
+    title="Waiting for shop details",
+    icon="mail",
+    view_all_label="View all customers →",
+    count_items=count_customers_waiting_for_details,
+    list_items=_list_customers_waiting_for_details,
+    build_item=_waiting_for_details_item,
+    build_view_all_href=_customers_view_all_href,
+)
+
+
 # -----------------------------------------------------------------------------
 # Role-specific queue families
 #
@@ -249,6 +306,7 @@ OPS_DASHBOARD_QUEUES = (
     PACKED_ORDERS_QUEUE,
     EXPIRING_BATCHES_QUEUE,
     LOW_STOCK_QUEUE,
+    WAITING_FOR_DETAILS_QUEUE,
 )
 
 RESTRICTED_STAFF_DASHBOARD_QUEUES = (

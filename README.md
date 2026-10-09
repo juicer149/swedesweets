@@ -81,6 +81,7 @@ Log in with any of these (password = username):
 | `fullstaff` | ops portal, including account management |
 | `restrictedstaff` | ops portal |
 | `business` | business portal for a demo shop with order history |
+| `business_incomplete` | a newly invited shop: asked for its phone, city and address first |
 
 The storefront needs no login. Payments use the fake provider locally.
 

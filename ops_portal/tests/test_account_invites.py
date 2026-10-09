@@ -112,3 +112,62 @@ def test_forgot_password_reaches_an_account_with_no_password_yet(
 
     (mail,) = mailoutbox
     assert mail.to == ["new@example.com"]
+
+
+@pytest.mark.django_db
+def test_invite_shop_refuses_an_email_a_customer_uses(owner_client, mailoutbox):
+    customer_factory(name="Café Blanc", email="cafe@example.fr")
+
+    response = owner_client.post(
+        reverse("ops_customers:invite"),
+        {"name": "Café Noir", "email": "CAFE@example.fr", "country": "FR"},
+    )
+
+    assert response.status_code == 200
+    errors = response.context["form"].errors["email"]
+    assert "Café Blanc already uses this email" in errors[0]
+    assert not Customer.objects.filter(name="Café Noir").exists()
+    assert mailoutbox == []
+
+
+@pytest.mark.django_db
+def test_invite_shop_refuses_an_email_with_a_login(owner_client, mailoutbox):
+    User.objects.create_user(username="staff@example.fr", email="staff@example.fr")
+
+    response = owner_client.post(
+        reverse("ops_customers:invite"),
+        {"name": "Café Noir", "email": "staff@example.fr", "country": "FR"},
+    )
+
+    assert response.status_code == 200
+    assert response.context["form"].errors["email"] == [
+        "This email already has a login."
+    ]
+    assert not Customer.objects.filter(name="Café Noir").exists()
+    assert mailoutbox == []
+
+
+@pytest.mark.django_db
+def test_invite_login_takes_the_customers_own_email_but_not_a_used_login(
+    owner_client,
+    mailoutbox,
+    django_capture_on_commit_callbacks,
+):
+    first = customer_factory(name="Café Blanc", email="cafe@example.fr")
+    other = customer_factory(name="Café Noir", email="noir@example.fr")
+    url = reverse("ops_customers:invite_login", kwargs={"customer_pk": other.pk})
+
+    # Its own customer email is free for a login.
+    with django_capture_on_commit_callbacks(execute=True):
+        owner_client.post(url, {"email": "noir@example.fr"})
+    assert User.objects.filter(email="noir@example.fr").exists()
+
+    # A login that exists already is named on the field.
+    first_url = reverse("ops_customers:invite_login", kwargs={"customer_pk": first.pk})
+    response = owner_client.post(first_url, {"email": "noir@example.fr"})
+
+    assert response.status_code == 200
+    assert response.context["form"].errors["email"] == [
+        "This email already has a login, for Café Noir."
+    ]
+    assert len(mailoutbox) == 1

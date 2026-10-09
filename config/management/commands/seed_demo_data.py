@@ -7,11 +7,14 @@ Creates the product catalogue, six invented business customers, inbound
 stock (including short-dated and low-stock batches), four retail merch
 products with EUR prices, and, with --with-orders, about four weeks of
 B2B orders in placed, packed and delivered states. With --with-demo-accounts
-it also creates three logins whose password is their username:
+it also creates four logins whose password is their username:
 
-    fullstaff        full staff access (ops portal, account management)
-    restrictedstaff  restricted staff access (ops portal)
-    business         B2B customer, linked to the demo customer with most orders
+    fullstaff            full staff access (ops portal, account management)
+    restrictedstaff      restricted staff access (ops portal)
+    business             B2B customer, linked to the demo customer with most orders
+    business_incomplete  a newly invited shop that has not filled in its phone,
+                         city and address yet (its own customer, Le Nouveau
+                         Comptoir): it lands on Complete your shop details
 
 With --with-images every product gets a drawn picture (_demo_images.py),
 stored through the normal product-image upload so thumbnails exist too.
@@ -76,8 +79,10 @@ DEMO_STAFF_ACCOUNTS = (
     ("restrictedstaff", create_restricted_staff_account),
 )
 DEMO_BUSINESS_USERNAME = "business"
+DEMO_ONBOARDING_USERNAME = "business_incomplete"
 DEMO_USERNAMES = tuple(name for name, _ in DEMO_STAFF_ACCOUNTS) + (
     DEMO_BUSINESS_USERNAME,
+    DEMO_ONBOARDING_USERNAME,
 )
 
 PRODUCT_CATALOG_PATH = Path(__file__).resolve().parent / "seed_demo_products.json"
@@ -96,8 +101,8 @@ class Command(BaseCommand):
             "--with-demo-accounts",
             action="store_true",
             help=(
-                "Create logins fullstaff, restrictedstaff and business, "
-                "each with its username as password."
+                "Create logins fullstaff, restrictedstaff, business and "
+                "business_incomplete, each with its username as password."
             ),
         )
         parser.add_argument(
@@ -163,6 +168,7 @@ class Command(BaseCommand):
 
         if options["with_demo_accounts"]:
             self._create_business_account(customers, orders)
+            self._create_onboarding_account()
             summary += f"; logins: {', '.join(DEMO_USERNAMES)} (password = username)"
 
         self.stdout.write(self.style.SUCCESS(f"Demo data seeded: {summary}."))
@@ -234,6 +240,28 @@ class Command(BaseCommand):
                 customer=customers[key],
             ),
             DEMO_BUSINESS_USERNAME,
+        )
+
+    def _create_onboarding_account(self) -> None:
+        """A shop just invited: only name, email and country, as Invite
+        shop leaves it. Logging in shows Complete your shop details, and
+        the ops dashboard lists it under Waiting for shop details."""
+
+        customer = create_customer(
+            name="Le Nouveau Comptoir",
+            email="nouveau-comptoir@example.com",
+            phone_number="",
+            country="FR",
+            city="",
+            address_line="",
+        )
+        _demo_login(
+            create_customer_account(
+                email=f"{DEMO_ONBOARDING_USERNAME}@example.com",
+                password=DEMO_ONBOARDING_USERNAME,
+                customer=customer,
+            ),
+            DEMO_ONBOARDING_USERNAME,
         )
 
     # ------------------------------------------------------------------

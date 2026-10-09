@@ -119,7 +119,12 @@ def test_orders_never_take_more_than_long_dated_stock():
 def test_demo_accounts_log_in_with_their_username_as_password(debug, client):
     _seed(with_demo_accounts=True)
 
-    for username in ("fullstaff", "restrictedstaff", "business"):
+    for username in (
+        "fullstaff",
+        "restrictedstaff",
+        "business",
+        "business_incomplete",
+    ):
         assert client.login(username=username, password=username), username
         client.logout()
 
@@ -144,6 +149,12 @@ def test_demo_accounts_have_the_right_roles(debug):
 
     customer = users.get(username="business").customer_membership.customer
     assert Order.objects.filter(customer=customer).exists()
+    assert customer.is_complete
+
+    # A shop just invited: it has to fill in its details before ordering.
+    new_shop = users.get(username="business_incomplete").customer_membership.customer
+    assert not new_shop.is_complete
+    assert not Order.objects.filter(customer=new_shop).exists()
 
 
 @pytest.mark.django_db
@@ -154,8 +165,13 @@ def test_demo_accounts_survive_a_reset(debug):
     from django.contrib.auth import get_user_model
 
     assert get_user_model().objects.filter(
-        username__in=["fullstaff", "restrictedstaff", "business"]
-    ).count() == 3
+        username__in=[
+            "fullstaff",
+            "restrictedstaff",
+            "business",
+            "business_incomplete",
+        ]
+    ).count() == 4
 
 
 @pytest.mark.django_db

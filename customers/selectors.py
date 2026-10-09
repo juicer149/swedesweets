@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 
-from django.db.models import QuerySet
+from django.db.models import Min, Q, QuerySet
 
 from common.table_tools import normalize_sort
 from customers.models import Customer, StoreListing
@@ -39,6 +39,30 @@ def list_customers(
     )
 
     return Customer.objects.order_by(*CUSTOMER_SORTS[normalized_sort])
+
+def _waiting_for_details() -> QuerySet[Customer]:
+    """Active customers still missing phone, city or address: shops
+    invited to the portal that have not filled in their details yet."""
+
+    return Customer.objects.filter(is_active=True).filter(
+        Q(phone_number="") | Q(city="") | Q(address_line="")
+    )
+
+
+def count_customers_waiting_for_details() -> int:
+    return _waiting_for_details().count()
+
+
+def list_customers_waiting_for_details(*, limit: int) -> list[Customer]:
+    """Longest waiting first. `invited_at` is when the first login was
+    made (None when the customer has no login yet)."""
+
+    return list(
+        _waiting_for_details()
+        .annotate(invited_at=Min("memberships__created_at"))
+        .order_by("created_at", "pk")[:limit]
+    )
+
 
 class CustomerActivityKind(StrEnum):
     CREATED = "created"

@@ -1,0 +1,57 @@
+{% extends "registration/auth_base.html" %}
+{% load i18n %}
+
+{% comment %}
+A shop's first visit after the invitation: its phone, city and address
+are still missing, and every portal page leads here until they are filled
+in (ShopDetailsRequiredMiddleware). Still the way in, so still blue, like
+the login and choosing a password just before it. Find Sweets waits for
+Edit store, later. There is no footer on these one-screen pages, so
+Log out sits under the button.
+{% endcomment %}
+
+{% block title %}{% trans "Complete your shop details" %} | SwedeSweets{% endblock %}
+
+{% block content %}
+<section class="screen" aria-labelledby="onboarding-title">
+  <form class="page page--auth page--wide" method="post" novalidate>
+    {% csrf_token %}
+
+    <header class="page__header">
+      <h1 id="onboarding-title" class="page__title">
+        {% trans "Complete your shop details" %}
+      </h1>
+
+      <p class="page__text onboarding__note">
+        {% trans "Before you can order, we need to know how to reach you and where to deliver." %}
+      </p>
+    </header>
+
+    {% include "registration/includes/form_errors.html" with form=form only %}
+
+    <div class="form-grid">
+      {% for field in form.delivery_fields %}
+        {% include "includes/ui/form_field.html" with field=field only %}
+      {% endfor %}
+    </div>
+
+    <div class="form-actions page__actions">
+      <button
+        class="button button--md button--solid button--tone-place page__submit"
+        type="submit"
+      >
+        {% trans "Save and start ordering" %}
+      </button>
+
+      {# One-screen pages have no footer, so the way out is here. #}
+      <button class="quiet-link" type="submit" form="onboarding-logout">
+        {% trans "Log out" %}
+      </button>
+    </div>
+  </form>
+
+  <form id="onboarding-logout" method="post" action="{% url 'logout' %}" hidden>
+    {% csrf_token %}
+  </form>
+</section>
+{% endblock %}

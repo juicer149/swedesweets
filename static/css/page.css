@@ -293,6 +293,15 @@
   margin: calc(var(--space-4) * -1) 0 var(--space-6);
 }
 
+/* A grey line between a form's fields and its button, saying what
+   happens when it is sent (Invite shop). Room above, so it reads apart
+   from the last field. */
+.form-page__next {
+  max-width: 46ch;
+  margin: var(--space-8) auto var(--space-4);
+  line-height: 1.5;
+}
+
 /* A grey line at the top of a form tab, saying what the tab is for. */
 .form-tab__note {
   margin-bottom: var(--space-5);
@@ -399,9 +408,11 @@ body:has(.screen) .site-footer {
     padding-bottom: 0;
   }
 
+  /* Full height (the row stretches it), but its own width: growing
+     sideways too would drop the container's side gutter on phones. */
   body:has(.screen) .site-main > .container {
     display: flex;
-    flex: 1;
+    flex: 0 1 auto;
     flex-direction: column;
   }
 

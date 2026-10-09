@@ -20,6 +20,7 @@ Logins (password = username):
 | `fullstaff` | full staff: ops portal and account management |
 | `restrictedstaff` | restricted staff: ops portal |
 | `business` | B2B customer, linked to the demo shop with the most orders |
+| `business_incomplete` | a newly invited shop (Le Nouveau Comptoir) that has not filled in its phone, city and address |
 
 Everything except the product catalogue is invented (`_demo_data.py`):
 

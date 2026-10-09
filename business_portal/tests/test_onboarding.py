@@ -37,8 +37,41 @@ def test_portal_pages_lead_to_the_details_form_until_filled_in(new_shop_client):
         assert response.url == reverse("business_portal:edit_store")
 
     response = client.get(reverse("business_portal:edit_store"))
+    content = response.content.decode()
     assert response.status_code == 200
-    assert "Complete your shop details" in response.content.decode()
+    assert "Complete your shop details" in content
+    # Still the way in: blue, like the login just before it.
+    assert 'class="on-blue"' in content
+    assert [t.name for t in response.templates][0] == (
+        "business_portal/store_onboarding.html"
+    )
+
+
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
+def test_filling_in_the_details_opens_the_portal(new_shop_client):
+    client, customer = new_shop_client
+
+    response = client.post(
+        reverse("business_portal:edit_store"),
+        {
+            "name": "Café Blanc",
+            "email": "cafe@example.fr",
+            "phone_number": "+33 6 12 34 56 78",
+            "country": "FR",
+            "city": "Annecy",
+            "address_line": "1 Rue du Lac",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse("business_portal:index")
+    customer.refresh_from_db()
+    assert customer.is_complete
+    assert client.get(reverse("business_portal:index")).status_code == 200
+    # Edit store is the usual cream page again.
+    edit = client.get(reverse("business_portal:edit_store")).content.decode()
+    assert 'class="on-blue"' not in edit
 
 
 @pytest.mark.django_db
