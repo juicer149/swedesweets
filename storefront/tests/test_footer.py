@@ -11,8 +11,8 @@ from accounts.tests.factories import customer_user_factory
 from customers.tests.factories import customer_factory
 
 
-def _footer(client) -> str:
-    html = client.get(reverse("public_site:about")).content.decode()
+def _footer(client, url_name: str = "public_site:about") -> str:
+    html = client.get(reverse(url_name)).content.decode()
     return html[html.index('class="site-footer"'):]
 
 
@@ -31,7 +31,7 @@ def test_signed_in_users_see_who_they_are_and_can_log_out(client):
     customer = customer_factory(name="Butiken i Chamonix")
     client.force_login(customer_user_factory(customer=customer))
 
-    footer = _footer(client)
+    footer = _footer(client, "business_portal:faq")
 
     assert "Butiken i Chamonix" in footer
     assert f'action="{reverse("logout")}"' in footer
