@@ -106,62 +106,6 @@
   color: var(--color-neutral-800);
 }
 
-/* A heading that is only a line drawing (Find Sweets' binoculars); the
-   h1 is there for screen readers. The list after it slides up over the
-   drawing's foot, which fades out, so the first row seems to stand in
-   front of the binoculars. */
-.page__heading--illustrated {
-  --illustration-overlap: clamp(1.25rem, 4vw, 2rem);
-
-  /* Up by the column's own top padding: the drawing carries its own air. */
-  margin-top: calc(var(--space-4) * -1);
-  margin-bottom: calc(var(--illustration-overlap) * -1);
-}
-
-.page__heading--illustrated .page__illustration {
-  margin: 0 auto;
-  mask-image: linear-gradient(
-    to bottom,
-    #000 calc(100% - var(--illustration-overlap) - 1.5rem),
-    transparent calc(100% - var(--illustration-overlap) * 0.5)
-  );
-}
-
-/* In front of the drawing, not under it. */
-.page__heading--illustrated + * {
-  position: relative;
-}
-
-/* A large line drawing at the top of a page (Find Sweets' binoculars).
-   Drawn in currentColor, so the colour is set here. */
-.page__illustration {
-  display: block;
-  width: clamp(13rem, 58vw, 19rem);
-  height: auto;
-  margin: clamp(var(--space-5), 4dvh, var(--space-8)) auto 0;
-  color: color-mix(in srgb, var(--color-accent-700) 50%, var(--color-neutral-50));
-}
-
-/* Phones: the shops first, the binoculars after them, closing the page,
-   with the drawing's air above it and a little more under it. Whole
-   there: nothing slides over its foot, so no fade. */
-@media (max-width: 767px) {
-  .find-sweets {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .find-sweets > .page__heading--illustrated {
-    order: 2;
-    margin: 0 0 clamp(var(--space-6), 5dvh, var(--space-10));
-  }
-
-  .find-sweets > .page__heading--illustrated .page__illustration {
-    margin-top: clamp(var(--space-8), 6dvh, var(--space-12));
-    mask-image: none;
-  }
-}
-
 /* Small grey centred line: a count, a status, a description. */
 .page__note {
   margin: 0;
@@ -829,10 +773,9 @@ span.icon-rows__link .icon-rows__icon {
 
 /* About: a short story, a little wider than a form, then one line to
    close it in the heading font. */
-/* Display titles (Q & A, About): Sniglet, chubby and a little seventies,
-   in the yellow scale a few shades darker than the binoculars, with a
-   slight inner shadow of the darkest yellow (includes/ui/display_title_
-   filter.html). Big: they are the page's picture as much as its title. */
+/* Display titles: Sniglet, chubby and a little seventies, in the yellow
+   scale with a slight inner shadow of the darkest yellow (includes/ui/
+   display_title_filter.html). About's last line. */
 .display-title {
   margin: 0;
   color: var(--color-accent-700);
@@ -845,27 +788,24 @@ span.icon-rows__link .icon-rows__icon {
   filter: url("#display-title-inner-shadow");
 }
 
+/* The page titles (Q & A, Who we are?): stamped into the page, in
+   nearly its own colour; the shadow inside the letters and the light lip
+   under them draw them. Big: the page's picture as much as its title. */
+.display-title--stamped {
+  color: var(--color-neutral-200);
+  text-align: center;
+  filter: url("#display-title-stamped");
+}
+
 .display-title--faq {
   margin-bottom: clamp(var(--space-4), 3dvh, var(--space-6));
-  /* A shade lighter than the other display titles: alone over the
-     questions, it can be the brightest thing on the page. */
-  color: var(--color-accent-600);
   font-size: clamp(3.75rem, 20vw, 6rem);
   word-spacing: -0.25em;
-  text-align: center;
 }
 
-/* On the page's middle line, like the story and the photo under it; the
-   first letter large, as a book's first page. */
 .display-title--about {
   margin-bottom: clamp(var(--space-5), 4dvh, var(--space-7));
-  font-size: clamp(2rem, 9vw, 2.75rem);
-  text-align: center;
-}
-
-.display-title--about::first-letter {
-  font-size: 1.6em;
-  line-height: 0.9;
+  font-size: clamp(2.5rem, 11vw, 3.75rem);
 }
 
 .page.about {

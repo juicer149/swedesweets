@@ -1,7 +1,13 @@
 {% comment %}
-The display titles' inner shadow (.display-title in page.css): a little
-of the darkest yellow (accent-950) inside each letter's upper edge, as if
-pressed into the page. Include once on a page that has a display title.
+The display titles' filters (.display-title in page.css). Include once on
+a page that has a display title.
+
+  display-title-inner-shadow  a little of the darkest yellow inside each
+                              letter's upper edge (the yellow lines)
+  display-title-stamped       pressed into the page: a soft dark shadow
+                              inside each letter's upper edge, and a thin
+                              light lip under it, outside (the page titles,
+                              in nearly the page's own colour)
 {% endcomment %}
 <svg class="visually-hidden" aria-hidden="true" focusable="false" width="0" height="0">
   <filter id="display-title-inner-shadow" x="-5%" y="-5%" width="110%" height="110%">
@@ -11,5 +17,22 @@ pressed into the page. Include once on a page that has a display title.
     <feFlood flood-color="#4a3405" flood-opacity="0.55"/>
     <feComposite operator="in" in2="inside" result="shadow"/>
     <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
+  </filter>
+
+  <filter id="display-title-stamped" x="-5%" y="-10%" width="110%" height="125%">
+    <feOffset dx="0" dy="3" in="SourceAlpha" result="moved"/>
+    <feGaussianBlur stdDeviation="2" in="moved" result="blurred"/>
+    <feComposite operator="out" in="SourceAlpha" in2="blurred" result="inside"/>
+    <feFlood flood-color="#292622" flood-opacity="0.42"/>
+    <feComposite operator="in" in2="inside" result="shadow"/>
+    <feOffset dx="0" dy="1.5" in="SourceAlpha" result="lipMoved"/>
+    <feComposite operator="out" in="lipMoved" in2="SourceAlpha" result="lipOnly"/>
+    <feFlood flood-color="#ffffff" flood-opacity="0.9"/>
+    <feComposite operator="in" in2="lipOnly" result="lip"/>
+    <feMerge>
+      <feMergeNode in="lip"/>
+      <feMergeNode in="SourceGraphic"/>
+      <feMergeNode in="shadow"/>
+    </feMerge>
   </filter>
 </svg>

@@ -82,8 +82,8 @@ def test_a_customer_without_a_listing_is_not_shown(client):
 
 
 @pytest.mark.django_db
-def test_binoculars_sit_under_the_title_hidden_from_screen_readers(client):
+def test_the_shops_are_the_page_with_a_title_for_screen_readers(client):
     html = client.get(reverse("public_site:find_sweets")).content.decode()
 
-    assert 'class="page__illustration"' in html
-    assert 'aria-hidden="true"' in html
+    assert 'class="page__illustration"' not in html
+    assert 'id="find-sweets-title" class="visually-hidden"' in html

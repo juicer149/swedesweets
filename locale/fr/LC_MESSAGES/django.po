@@ -1897,8 +1897,8 @@ msgid "Send reset link"
 msgstr "Envoyer le lien de réinitialisation"
 
 #: templates/storefront/about.html:15
-msgid "Who we are, you ask?"
-msgstr "Qui sommes-nous, demandez-vous ?"
+msgid "Who we are?"
+msgstr "Qui sommes-nous ?"
 
 #: templates/storefront/about.html:19
 msgid ""

@@ -84,9 +84,10 @@ select.sort-select.ts-hidden-accessible {
 }
 
 /* The direction toggle: the square itself is the button, as tall as the
-   field beside it. Ascending: a yellow arrow up on blue. Descending: the
-   colours swap and the arrow turns down (data-direction; the click turns
-   it at once, before the list comes back: async_list.js). */
+   field beside it and outlined like it, so it stays quiet. Ascending: a
+   blue arrow up on the page's cream. Descending: a soft yellow square and
+   the arrow turned down (data-direction; the click turns it at once,
+   before the list comes back: async_list.js). */
 .sort-direction-button {
   --sort-size: clamp(2.75rem, 12vw, 3.25rem);
 
@@ -100,8 +101,9 @@ select.sort-select.ts-hidden-accessible {
   padding: 0;
 
   background: transparent;
-  border: 0;
+  border: 1.5px solid var(--color-primary-500);
   border-radius: var(--radius-control);
+  overflow: hidden;
 
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -130,9 +132,8 @@ select.sort-select.ts-hidden-accessible {
 
   flex: 1;
 
-  color: var(--color-accent-500);
-  background: var(--color-primary-700);
-  border-radius: inherit;
+  color: var(--color-primary-600);
+  background: var(--color-neutral-50);
 
   transition:
     background 220ms ease,
@@ -144,7 +145,7 @@ select.sort-select.ts-hidden-accessible {
   height: calc(var(--sort-size) * 0.46);
 
   stroke: currentColor;
-  stroke-width: 2.6;
+  stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 
@@ -153,7 +154,7 @@ select.sort-select.ts-hidden-accessible {
 
 .sort-direction-button[data-direction="desc"] .sort-direction-button__dial {
   color: var(--color-primary-800);
-  background: var(--color-accent-500);
+  background: var(--color-accent-200);
 }
 
 .sort-direction-button[data-direction="desc"] .sort-direction-button__arrow {
