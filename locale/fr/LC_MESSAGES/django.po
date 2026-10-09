@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 15:23+0200\n"
+"POT-Creation-Date: 2026-10-09 18:48+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -113,20 +113,27 @@ msgstr "Client désactivé"
 msgid "Order #%(order_id)s"
 msgstr "Commande n° %(order_id)s"
 
-#: accounts/forms.py:22 templates/registration/login.html:23
+#: accounts/forms.py:25 templates/registration/login.html:23
 msgid "Username"
 msgstr "Nom d’utilisateur"
 
-#: accounts/forms.py:23 templates/registration/login.html:24
+#: accounts/forms.py:26 templates/registration/login.html:24
 msgid "Password"
 msgstr "Mot de passe"
 
-#: accounts/forms.py:31 business_portal/store/forms.py:43
-#: storefront/checkout_forms.py:54
+#: accounts/forms.py:39 storefront/checkout_forms.py:54
 #: templates/business_portal/includes/account_details_panel.html:24
 #: templates/includes/site_contact_rows.html:11
 msgid "Email"
 msgstr "E-mail"
+
+#: accounts/invitations.py:74
+msgid "Your SwedeSweets account"
+msgstr "Votre compte SwedeSweets"
+
+#: accounts/login_change.py:83
+msgid "Your SwedeSweets login has changed"
+msgstr "Votre identifiant SwedeSweets a changé"
 
 #: accounts/presentation.py:56
 msgid "Invalid identity"
@@ -509,98 +516,102 @@ msgstr "Aucun panier à vérifier."
 msgid "Order #%(order_id)s placed."
 msgstr "Commande n° %(order_id)s passée."
 
-#: business_portal/store/forms.py:25
+#: business_portal/store/forms.py:27
 msgid "Store name"
 msgstr "Nom du magasin"
 
-#: business_portal/store/forms.py:28
+#: business_portal/store/forms.py:30
 msgid "Enter the store name."
 msgstr "Saisissez le nom du magasin."
 
-#: business_portal/store/forms.py:31
+#: business_portal/store/forms.py:33
 msgid "Store name is too long."
 msgstr "Le nom du magasin est trop long."
 
-#: business_portal/store/forms.py:46
+#: business_portal/store/forms.py:48
+msgid "Contact email"
+msgstr "E-mail de contact"
+
+#: business_portal/store/forms.py:51
 msgid "Enter an email address."
 msgstr "Saisissez une adresse e-mail."
 
-#: business_portal/store/forms.py:49 storefront/checkout_forms.py:58
+#: business_portal/store/forms.py:54 storefront/checkout_forms.py:58
 msgid "Enter a valid email address."
 msgstr "Saisissez une adresse e-mail valide."
 
-#: business_portal/store/forms.py:52
+#: business_portal/store/forms.py:57
 msgid "Email address is too long."
 msgstr "L’adresse e-mail est trop longue."
 
-#: business_portal/store/forms.py:64 storefront/checkout_forms.py:69
+#: business_portal/store/forms.py:69 storefront/checkout_forms.py:69
 #: templates/business_portal/includes/account_details_panel.html:30
 msgid "Phone number"
 msgstr "Numéro de téléphone"
 
-#: business_portal/store/forms.py:67
+#: business_portal/store/forms.py:72
 msgid "Enter a phone number."
 msgstr "Saisissez un numéro de téléphone."
 
-#: business_portal/store/forms.py:70
+#: business_portal/store/forms.py:75
 msgid "Phone number is too long."
 msgstr "Le numéro de téléphone est trop long."
 
-#: business_portal/store/forms.py:82
+#: business_portal/store/forms.py:87
 msgid "Country"
 msgstr "Pays"
 
-#: business_portal/store/forms.py:85
+#: business_portal/store/forms.py:90
 msgid "Choose a country."
 msgstr "Choisissez un pays."
 
-#: business_portal/store/forms.py:88
+#: business_portal/store/forms.py:93
 msgid "Choose a valid country."
 msgstr "Choisissez un pays valide."
 
-#: business_portal/store/forms.py:102
+#: business_portal/store/forms.py:107
 msgid "City"
 msgstr "Ville"
 
-#: business_portal/store/forms.py:105
+#: business_portal/store/forms.py:110
 msgid "Enter a city."
 msgstr "Saisissez une ville."
 
-#: business_portal/store/forms.py:108
+#: business_portal/store/forms.py:113
 msgid "City is too long."
 msgstr "La ville est trop longue."
 
-#: business_portal/store/forms.py:120
-#: templates/emails/order_placed_buyer.html:68
+#: business_portal/store/forms.py:125
+#: templates/emails/order_placed_buyer.html:45
 #: templates/emails/order_placed_buyer.txt:9
 msgid "Delivery address"
 msgstr "Adresse de livraison"
 
-#: business_portal/store/forms.py:123
+#: business_portal/store/forms.py:128
 msgid "Enter a street address."
 msgstr "Saisissez une adresse."
 
-#: business_portal/store/forms.py:126
+#: business_portal/store/forms.py:131
 msgid "Address is too long."
 msgstr "L’adresse est trop longue."
 
-#: business_portal/store/forms.py:142
+#: business_portal/store/forms.py:147
 #: templates/business_portal/includes/account_details_panel.html:53
 msgid "Listed"
 msgstr "Affichée"
 
-#: business_portal/store/forms.py:143
+#: business_portal/store/forms.py:148
 #: templates/business_portal/includes/account_details_panel.html:55
 msgid "Not listed"
 msgstr "Non affichée"
 
-#: business_portal/store/forms.py:148
+#: business_portal/store/forms.py:153
 #: templates/business_portal/includes/orders_panel.html:78
 #: templates/business_portal/includes/orders_panel.html:156
 msgid "Status"
 msgstr "Statut"
 
-#: business_portal/store/forms.py:150
+#: business_portal/store/forms.py:155
 msgid ""
 "Let visitors find your store on the public list of shops that sell "
 "SwedeSweets."
@@ -608,29 +619,46 @@ msgstr ""
 "Permettez aux visiteurs de trouver votre boutique dans la liste publique des "
 "boutiques qui vendent SwedeSweets."
 
-#: business_portal/store/forms.py:159
+#: business_portal/store/forms.py:164
 msgid "Store address"
 msgstr "Adresse de la boutique"
 
-#: business_portal/store/forms.py:161
+#: business_portal/store/forms.py:166
 msgid "Only if visitors find you somewhere else than the delivery address."
 msgstr ""
 "Seulement si les visiteurs vous trouvent ailleurs qu'à l'adresse de "
 "livraison."
 
-#: business_portal/store/forms.py:174
+#: business_portal/store/forms.py:179
 msgid "Store city"
 msgstr "Ville de la boutique"
 
-#: business_portal/store/forms.py:204
+#: business_portal/store/forms.py:209
 msgid "Add the store's city too."
 msgstr "Ajoutez aussi la ville de la boutique."
 
-#: business_portal/store/forms.py:209
+#: business_portal/store/forms.py:214
 msgid "Add the store's street address too."
 msgstr "Ajoutez aussi l'adresse de la boutique."
 
-#: business_portal/store/views.py:59
+#: business_portal/store/forms.py:265
+msgid "contact us"
+msgstr "contactez-nous"
+
+#: business_portal/store/forms.py:270
+#, python-brace-format
+msgid ""
+"Order confirmations go here. You log in with {login}; to change that, "
+"{contact_link}."
+msgstr ""
+"Les confirmations de commande arrivent ici. Vous vous connectez avec "
+"{login} ; pour le changer, {contact_link}."
+
+#: business_portal/store/views.py:63
+msgid "Thank you! You can now order."
+msgstr "Merci ! Vous pouvez maintenant commander."
+
+#: business_portal/store/views.py:65
 msgid "Store information updated."
 msgstr "Les informations du magasin ont été mises à jour."
 
@@ -752,12 +780,12 @@ msgstr "kg"
 msgid "Grams"
 msgstr "Grammes"
 
-#: orders/notifications.py:142
+#: orders/notifications.py:141
 #, python-format
 msgid "Order #%(number)s received – SwedeSweets"
 msgstr "Commande n° %(number)s reçue – SwedeSweets"
 
-#: orders/notifications.py:144
+#: orders/notifications.py:143
 #, python-format
 msgid "Thank you for your order #%(number)s – SwedeSweets"
 msgstr "Merci pour votre commande n° %(number)s – SwedeSweets"
@@ -1095,7 +1123,7 @@ msgstr ""
 "Utilisez « Mot de passe oublié ? » sur la page de connexion : nous vous "
 "enverrons par e-mail un lien pour en choisir un nouveau."
 
-#: storefront/faq.py:72
+#: storefront/faq.py:72 templates/emails/password_reset.html:8
 msgid "Reset your password"
 msgstr "Réinitialiser votre mot de passe"
 
@@ -1124,34 +1152,48 @@ msgstr ""
 "livraison avec lesquelles elles ont été passées."
 
 #: storefront/faq.py:91
+msgid "Can I change the email I log in with?"
+msgstr "Puis-je changer l’e-mail avec lequel je me connecte ?"
+
+#: storefront/faq.py:93
+msgid ""
+"Your login stays the address we invited you with, even if you change your "
+"store's contact email. To log in with another address, get in touch and we "
+"will change it for you."
+msgstr ""
+"Votre identifiant reste l’adresse à laquelle nous vous avons invité, même si "
+"vous changez l’e-mail de contact de votre magasin. Pour vous connecter avec "
+"une autre adresse, contactez-nous et nous la changerons pour vous."
+
+#: storefront/faq.py:100
 msgid "Is there a minimum order?"
 msgstr "Y a-t-il une commande minimum ?"
 
-#: storefront/faq.py:92
+#: storefront/faq.py:101
 msgid "Which days do you deliver?"
 msgstr "Quels jours livrez-vous ?"
 
-#: storefront/faq.py:93
+#: storefront/faq.py:102
 msgid "How do invoices and payment terms work?"
 msgstr "Comment fonctionnent les factures et les conditions de paiement ?"
 
-#: storefront/faq.py:94
+#: storefront/faq.py:103
 msgid "How long is the best-before date on delivery?"
 msgstr ""
 
-#: storefront/faq.py:95
+#: storefront/faq.py:104
 msgid "Can I order less than a whole box?"
 msgstr ""
 
-#: storefront/faq.py:96
+#: storefront/faq.py:105
 msgid "What do I do if something is damaged or missing in a delivery?"
 msgstr ""
 
-#: storefront/faq.py:97
+#: storefront/faq.py:106
 msgid "Can I cancel or change an order after placing it?"
 msgstr ""
 
-#: storefront/faq.py:99
+#: storefront/faq.py:108
 msgid ""
 "Do you provide material for the shop, such as shelves, boxes, signs, prices "
 "and pictures?"
@@ -1276,27 +1318,6 @@ msgstr "Client depuis"
 msgid "Edit store information"
 msgstr "Modifier les informations du magasin"
 
-msgid "Your SwedeSweets account"
-msgstr "Votre compte SwedeSweets"
-
-msgid "An account has been created for you at SwedeSweets."
-msgstr "Un compte SwedeSweets a été créé pour vous."
-
-msgid "Choose your password:"
-msgstr "Choisissez votre mot de passe :"
-
-msgid "Choose your password"
-msgstr "Choisir mon mot de passe"
-
-msgid "Welcome to SwedeSweets"
-msgstr "Bienvenue chez SwedeSweets"
-
-msgid "The link works for a few days. If it has expired, use “Forgot password?” on the login page:"
-msgstr "Le lien est valable quelques jours. S’il a expiré, utilisez « Mot de passe oublié ? » sur la page de connexion :"
-
-msgid "The link works for a few days. If it has expired, use “Forgot password?” on the login page."
-msgstr "Le lien est valable quelques jours. S’il a expiré, utilisez « Mot de passe oublié ? » sur la page de connexion."
-
 #: templates/business_portal/includes/account_section_nav.html:4
 #: templates/business_portal/includes/orders_panel.html:267
 msgid "Orders"
@@ -1404,33 +1425,136 @@ msgstr "Enregistrer les modifications"
 
 #: templates/business_portal/store_edit.html:51
 #: templates/includes/catalog/tile.html:77
-#: templates/ops_portal/accounts/account_form.html:32
-#: templates/ops_portal/customers/customer_form.html:44
+#: templates/ops_portal/accounts/account_form.html:36
+#: templates/ops_portal/customers/customer_form.html:48
 #: templates/ops_portal/inventory/batch_form.html:30
 #: templates/ops_portal/products/product_form.html:29
 msgid "Cancel"
 msgstr "Annulée"
 
-#: templates/emails/order_placed_buyer.html:34
+#: templates/business_portal/store_onboarding.html:13
+#: templates/business_portal/store_onboarding.html:25
+msgid "Complete your shop details"
+msgstr "Complétez les informations de votre magasin"
+
+#: templates/business_portal/store_onboarding.html:29
+msgid ""
+"Before you can order, we need to know how to reach you and where to deliver."
+msgstr ""
+"Avant de pouvoir commander, nous avons besoin de savoir comment vous joindre "
+"et où livrer."
+
+#: templates/business_portal/store_onboarding.html:46
+msgid "Save and start ordering"
+msgstr "Enregistrer et commencer à commander"
+
+#: templates/business_portal/store_onboarding.html:51
+#: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
+msgid "Log out"
+msgstr "Se déconnecter"
+
+#: templates/emails/account_invitation.html:8
+msgid "Welcome to SwedeSweets"
+msgstr "Bienvenue chez SwedeSweets"
+
+#: templates/emails/account_invitation.html:12
+#: templates/emails/account_invitation.txt:1
+#: templates/emails/login_email_changed.html:13
+#: templates/emails/login_email_changed.txt:1
+#: templates/emails/password_reset.html:12
+#: templates/registration/password_reset_email.html:3
+msgid "Hello,"
+msgstr "Bonjour,"
+
+#: templates/emails/account_invitation.html:13
+#: templates/emails/account_invitation.txt:3
+msgid "An account has been created for you at SwedeSweets."
+msgstr "Un compte SwedeSweets a été créé pour vous."
+
+#: templates/emails/account_invitation.html:17
+#: templates/emails/account_invitation.txt:8
+#: templates/emails/password_reset.html:19
+#: templates/registration/password_reset_email.html:12
+msgid "Your username:"
+msgstr "Votre nom d’utilisateur :"
+
+#: templates/emails/account_invitation.html:20
+msgid "Choose your password"
+msgstr "Choisir mon mot de passe"
+
+#: templates/emails/account_invitation.html:24
+msgid ""
+"The link works for a few days. If it has expired, use “Forgot password?” on "
+"the login page."
+msgstr ""
+"Le lien est valable quelques jours. S’il a expiré, utilisez « Mot de passe "
+"oublié ? » sur la page de connexion."
+
+#: templates/emails/account_invitation.txt:5
+msgid "Choose your password:"
+msgstr "Choisissez votre mot de passe :"
+
+#: templates/emails/account_invitation.txt:11
+msgid ""
+"The link works for a few days. If it has expired, use “Forgot password?” on "
+"the login page:"
+msgstr ""
+"Le lien est valable quelques jours. S’il a expiré, utilisez « Mot de passe "
+"oublié ? » sur la page de connexion :"
+
+#: templates/emails/base.html:36 templates/emails/order_placed_buyer.txt:14
+msgid "Questions? Just reply to this email."
+msgstr "Une question ? Répondez simplement à cet e-mail."
+
+#: templates/emails/login_email_changed.html:9
+msgid "Your login has changed"
+msgstr "Votre identifiant a changé"
+
+#: templates/emails/login_email_changed.html:14
+#: templates/emails/login_email_changed.txt:3
+#, python-format
+msgid ""
+"You now log in to SwedeSweets with %(new_email)s. Your password is the same "
+"as before."
+msgstr ""
+"Vous vous connectez désormais à SwedeSweets avec %(new_email)s. Votre mot de "
+"passe reste le même."
+
+#: templates/emails/login_email_changed.html:19
+#: templates/registration/password_reset_complete.html:20
+msgid "Log in"
+msgstr "Se connecter"
+
+#: templates/emails/login_email_changed.html:23
+#: templates/emails/login_email_changed.txt:10
+#, python-format
+msgid "If you did not ask for this, contact us at %(contact_email)s."
+msgstr "Si vous n’avez rien demandé, contactez-nous à %(contact_email)s."
+
+#: templates/emails/login_email_changed.txt:7
+msgid "Log in:"
+msgstr "Se connecter :"
+
+#: templates/emails/order_placed_buyer.html:12
 #, python-format
 msgid "Order #%(number)s"
 msgstr "Commande n° %(number)s"
 
-#: templates/emails/order_placed_buyer.html:37
+#: templates/emails/order_placed_buyer.html:13
 msgid "We have received your order"
 msgstr "Nous avons bien reçu votre commande"
 
-#: templates/emails/order_placed_buyer.html:37
+#: templates/emails/order_placed_buyer.html:13
 msgid "Thank you for your order!"
 msgstr "Merci pour votre commande !"
 
-#: templates/emails/order_placed_buyer.html:48
+#: templates/emails/order_placed_buyer.html:25
 #: templates/emails/order_placed_buyer.txt:1
 #, python-format
 msgid "Hello %(name)s,"
 msgstr "Bonjour %(name)s,"
 
-#: templates/emails/order_placed_buyer.html:49
+#: templates/emails/order_placed_buyer.html:26
 #: templates/emails/order_placed_buyer.txt:3
 #, python-format
 msgid ""
@@ -1440,7 +1564,7 @@ msgstr ""
 "Merci, nous avons bien reçu votre commande n° %(number)s. Nous la préparons "
 "et la livrons comme convenu."
 
-#: templates/emails/order_placed_buyer.html:49
+#: templates/emails/order_placed_buyer.html:26
 #: templates/emails/order_placed_buyer.txt:3
 #, python-format
 msgid ""
@@ -1450,21 +1574,31 @@ msgstr ""
 "Merci pour votre commande n° %(number)s. Votre paiement a bien été accepté ; "
 "nous préparons et livrons votre commande dès que possible."
 
-#: templates/emails/order_placed_buyer.html:62
+#: templates/emails/order_placed_buyer.html:39
 #: templates/emails/order_placed_buyer.txt:7
 #: templates/storefront/checkout/review.html:29
 msgid "Total"
 msgstr "Total"
 
-#: templates/emails/order_placed_buyer.html:75
+#: templates/emails/order_placed_buyer.html:49
 #: templates/emails/order_placed_buyer.txt:12
 msgid "Your orders"
 msgstr "Vos commandes"
 
-#: templates/emails/order_placed_buyer.html:85
-#: templates/emails/order_placed_buyer.txt:14
-msgid "Questions? Just reply to this email."
-msgstr "Une question ? Répondez simplement à cet e-mail."
+#: templates/emails/password_reset.html:13
+#: templates/registration/password_reset_email.html:5
+msgid ""
+"We received a request to reset the password for your SwedeSweets account."
+msgstr ""
+"Nous avons reçu une demande de réinitialisation du mot de passe de votre "
+"compte SwedeSweets."
+
+#: templates/emails/password_reset.html:28
+#: templates/registration/password_reset_email.html:15
+msgid "If you did not request this password reset, you can ignore this email."
+msgstr ""
+"Si vous n’avez pas demandé cette réinitialisation, vous pouvez ignorer cet e-"
+"mail."
 
 #: templates/includes/catalog/grid.html:15
 msgid "Added"
@@ -1547,69 +1681,6 @@ msgstr "SwedeSweets sur TikTok"
 msgid "Signed in as"
 msgstr "Connecté en tant que"
 
-#: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
-msgid "Complete your shop details"
-msgstr "Complétez les informations de votre magasin"
-
-msgid "Before you can order, we need to know how to reach you and where to deliver."
-msgstr "Avant de pouvoir commander, nous avons besoin de savoir comment vous joindre et où livrer."
-
-msgid "Save and start ordering"
-msgstr "Enregistrer et commencer à commander"
-
-msgid "Thank you! You can now order."
-msgstr "Merci ! Vous pouvez maintenant commander."
-
-msgid "Contact email"
-msgstr "E-mail de contact"
-
-msgid "contact us"
-msgstr "contactez-nous"
-
-#, python-brace-format
-msgid ""
-"Order confirmations go here. You log in with {login}; to change that, "
-"{contact_link}."
-msgstr ""
-"Les confirmations de commande arrivent ici. Vous vous connectez avec "
-"{login} ; pour le changer, {contact_link}."
-
-msgid "Can I change the email I log in with?"
-msgstr "Puis-je changer l’e-mail avec lequel je me connecte ?"
-
-msgid ""
-"Your login stays the address we invited you with, even if you change your "
-"store's contact email. To log in with another address, get in touch and we "
-"will change it for you."
-msgstr ""
-"Votre identifiant reste l’adresse à laquelle nous vous avons invité, même si "
-"vous changez l’e-mail de contact de votre magasin. Pour vous connecter avec "
-"une autre adresse, contactez-nous et nous la changerons pour vous."
-
-msgid "Your SwedeSweets login has changed"
-msgstr "Votre identifiant SwedeSweets a changé"
-
-msgid "Your login has changed"
-msgstr "Votre identifiant a changé"
-
-#, python-format
-msgid ""
-"You now log in to SwedeSweets with %(new_email)s. Your password is the same "
-"as before."
-msgstr ""
-"Vous vous connectez désormais à SwedeSweets avec %(new_email)s. Votre mot de "
-"passe reste le même."
-
-msgid "Log in:"
-msgstr "Se connecter :"
-
-#, python-format
-msgid "If you did not ask for this, contact us at %(contact_email)s."
-msgstr "Si vous n’avez rien demandé, contactez-nous à %(contact_email)s."
-
-msgid "Log out"
-msgstr "Se déconnecter"
-
 #: templates/includes/footer.html:74
 msgid "Reseller login"
 msgstr "Connexion revendeurs"
@@ -1624,7 +1695,7 @@ msgid "Primary navigation"
 msgstr "Navigation principale"
 
 #: templates/includes/navbar.html:14 templates/includes/site_navbar.html:31
-#: templates/registration/auth_base.html:17
+#: templates/registration/auth_base.html:19
 msgid "SwedeSweets home"
 msgstr "Accueil SwedeSweets"
 
@@ -1772,10 +1843,6 @@ msgstr "Votre mot de passe a été mis à jour."
 msgid "Password reset complete"
 msgstr "Réinitialisation du mot de passe terminée"
 
-#: templates/registration/password_reset_complete.html:20
-msgid "Log in"
-msgstr "Se connecter"
-
 #: templates/registration/password_reset_confirm.html:4
 #: templates/registration/password_reset_confirm.html:10
 #: templates/registration/password_reset_confirm.html:28
@@ -1812,30 +1879,9 @@ msgstr ""
 "Si un compte existe pour cette adresse e-mail, un lien de réinitialisation a "
 "été envoyé."
 
-#: templates/registration/password_reset_email.html:3
-msgid "Hello,"
-msgstr "Bonjour,"
-
-#: templates/registration/password_reset_email.html:5
-msgid ""
-"We received a request to reset the password for your SwedeSweets account."
-msgstr ""
-"Nous avons reçu une demande de réinitialisation du mot de passe de votre "
-"compte SwedeSweets."
-
 #: templates/registration/password_reset_email.html:9
 msgid "Reset your password:"
 msgstr "Réinitialiser votre mot de passe :"
-
-#: templates/registration/password_reset_email.html:12
-msgid "Your username:"
-msgstr "Votre nom d’utilisateur :"
-
-#: templates/registration/password_reset_email.html:15
-msgid "If you did not request this password reset, you can ignore this email."
-msgstr ""
-"Si vous n’avez pas demandé cette réinitialisation, vous pouvez ignorer cet e-"
-"mail."
 
 #: templates/registration/password_reset_form.html:4
 #: templates/registration/password_reset_form.html:7
