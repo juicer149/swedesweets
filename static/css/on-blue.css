@@ -94,8 +94,18 @@ body.on-blue {
 
 .on-blue .page__text,
 .on-blue .page__help,
-.on-blue .form-help,
 .on-blue .form-label {
+  color: var(--on-blue-ink);
+}
+
+/* A field's help reads as the quieter line under it: a light blue
+   (primary-200, about 5.5:1 here) instead of cream. A link in it stays
+   cream, so it stands out. */
+.on-blue .form-help {
+  color: var(--color-primary-200);
+}
+
+.on-blue .form-help a {
   color: var(--on-blue-ink);
 }
 
