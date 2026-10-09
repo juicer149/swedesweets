@@ -18,20 +18,32 @@
 
         {% if logo_url %}
         <tr>
-          <td align="center" style="padding-bottom:24px;">
-            <img src="{{ logo_url }}" width="120" alt="SwedeSweets" style="display:block; width:120px; height:auto; border:0;">
+          <td align="left" style="padding:0 4px 16px;">
+            <img src="{{ logo_url }}" width="104" alt="SwedeSweets" style="display:block; width:104px; height:auto; border:0;">
           </td>
         </tr>
         {% endif %}
 
         <tr>
-          <td style="background:#ffffff; border:1px solid #ebe4d8; border-radius:16px; padding:32px 28px;">
-            <p style="margin:0 0 4px; color:#66615c; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">
-              {% blocktrans with number=order.pk %}Order #{{ number }}{% endblocktrans %}
-            </p>
-            <h1 style="margin:0 0 16px; color:#0947d7; font-size:24px; line-height:1.25;">
-              {% if is_business %}{% trans "We have received your order" %}{% else %}{% trans "Thank you for your order!" %}{% endif %}
-            </h1>
+          <td style="background:#ffffff; border:1px solid #ebe4d8; border-radius:16px; padding:0 28px 32px;">
+            {# The crown in the card's top right corner, as big as the heading beside it. #}
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding-top:32px; vertical-align:top;">
+                  <p style="margin:0 0 4px; color:#66615c; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">
+                    {% blocktrans with number=order.pk %}Order #{{ number }}{% endblocktrans %}
+                  </p>
+                  <h1 style="margin:0 0 16px; color:#0947d7; font-size:24px; line-height:1.25;">
+                    {% if is_business %}{% trans "We have received your order" %}{% else %}{% trans "Thank you for your order!" %}{% endif %}
+                  </h1>
+                </td>
+                {% if crown_url %}
+                <td align="right" width="88" style="width:88px; padding:14px 0 0 12px; vertical-align:top;">
+                  <img src="{{ crown_url }}" width="88" alt="" style="display:block; width:88px; height:auto; border:0;">
+                </td>
+                {% endif %}
+              </tr>
+            </table>
             <p style="margin:0 0 24px;">
               {% blocktrans with name=order.buyer_name %}Hello {{ name }},{% endblocktrans %}<br>
               {% if is_business %}{% blocktrans with number=order.pk %}Thank you, we have received your order #{{ number }}. We will pack it and deliver it as agreed.{% endblocktrans %}{% else %}{% blocktrans with number=order.pk %}Thank you for your order #{{ number }}. Your payment has gone through, and we will pack and deliver your order as soon as we can.{% endblocktrans %}{% endif %}

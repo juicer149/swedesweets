@@ -90,6 +90,7 @@ def _send_buyer_confirmation(order: Order) -> None:
 
         context["language"] = language
         context["logo_url"] = _absolute_url(static("images/email-logo.png"))
+        context["crown_url"] = _absolute_url(static("images/email-crown.png"))
 
         body = render_to_string(
             "emails/order_placed_buyer.txt",
