@@ -5,7 +5,6 @@ refused, and missing keys are reported at start."""
 from __future__ import annotations
 
 import json
-import socket
 from datetime import UTC, datetime
 from decimal import Decimal
 from unittest.mock import patch
@@ -80,7 +79,7 @@ def test_sumup_checkout_expires_when_the_hold_ends():
 
 @pytest.mark.parametrize(
     "error",
-    [socket.timeout("timed out"), ConnectionResetError("reset")],
+    [TimeoutError("timed out"), ConnectionResetError("reset")],
 )
 def test_sumup_slow_or_dropped_answer_is_a_payment_error(error):
     with patch(

@@ -261,6 +261,10 @@ def test_recovery_confirms_already_succeeded_local_payment(
             "updated_at",
         ]
     )
+    Order.objects.filter(pk=order.pk).update(
+        status=Order.Status.PLACED,
+        placed_at=timezone.now(),
+    )
 
     def unexpected_provider():
         raise AssertionError(
@@ -449,3 +453,19 @@ def test_recovery_requires_support_for_provider_local_conflict(
         recovery.action
         == RetailPaymentRecoveryAction.NEEDS_SUPPORT
     )
+
+
+@pytest.mark.django_db
+def test_recovery_asks_buyer_to_contact_us_when_paid_order_was_not_placed(
+    monkeypatch,
+):
+    # Paid after the stock ran out: the order stays a draft, staff are
+    # alerted, and the buyer is asked to get in touch.
+    _order, attempt = _create_attempt()
+
+    attempt.status = PaymentAttempt.Status.SUCCEEDED
+    attempt.save(update_fields=["status", "updated_at"])
+
+    recovery = recover_retail_payment(attempt=attempt)
+
+    assert recovery.action == RetailPaymentRecoveryAction.NEEDS_SUPPORT
