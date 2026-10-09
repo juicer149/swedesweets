@@ -60,6 +60,30 @@
   height: 1.25rem;
 }
 
+/* Under the icons, small: who is signed in and Log out, or the login for
+   the shops we sell to. */
+.site-footer__account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 var(--space-1);
+  font-size: var(--font-size-14);
+}
+
+.site-footer__account strong {
+  color: var(--color-neutral-800);
+}
+
+.site-footer__account form {
+  margin: 0;
+}
+
+.site-footer__account .quiet-link {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-14);
+}
+
 /* The footer stays at the foot of the screen: a short page (an empty
    shop) grows its main to fill the screen instead of leaving the
    footer halfway up with empty page below it. */

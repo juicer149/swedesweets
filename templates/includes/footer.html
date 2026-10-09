@@ -3,6 +3,8 @@
   The site footer (customer pages; ops hides it), centred and quiet: the
   name with the crown, then how to reach us (phone, mail) and where they
   post (Instagram, TikTok) as icons. About us and FAQ are in the navbar.
+  Under them, small: who is signed in and Log out, or a login for the
+  shops we sell to (the navbar keeps its Login button too).
 {% endcomment %}
 <footer class="site-footer" aria-label="{% trans 'Site footer' %}">
   <div class="container site-footer__inner">
@@ -56,5 +58,21 @@
         </a>
       </li>
     </ul>
+
+    <div class="site-footer__account">
+      {% if request.user.is_authenticated %}
+        <span>
+          {% trans "Signed in as" %}
+          <strong>{% firstof request.user.customer_membership.customer.name request.user.get_full_name request.user.get_username %}</strong>
+        </span>
+        <span aria-hidden="true">·</span>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button class="quiet-link" type="submit">{% trans "Log out" %}</button>
+        </form>
+      {% else %}
+        <a class="quiet-link" href="{% url 'login' %}">{% trans "Reseller login" %}</a>
+      {% endif %}
+    </div>
   </div>
 </footer>

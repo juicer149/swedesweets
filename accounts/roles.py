@@ -174,7 +174,8 @@ ROLE_SPECS: dict[AccountRole, RoleSpec] = {
 
 
 ROLE_LABELS: dict[AccountRole, str] = {
-    AccountRole.OWNER: _("Owner"),
+    # The superuser: the site's administrator, not the business's owner.
+    AccountRole.OWNER: _("Admin"),
     AccountRole.FULL_STAFF: _("Full staff"),
     AccountRole.RESTRICTED_STAFF: _("Restricted staff"),
     AccountRole.BUSINESS_CUSTOMER: _("Business customer"),

@@ -1278,6 +1278,12 @@ msgstr "Modifier les informations du magasin"
 
 #: templates/business_portal/includes/account_details_panel.html:78
 #: templates/includes/ops_footer.html:29
+msgid "Admin"
+msgstr "Administrateur"
+
+msgid "Reseller login"
+msgstr "Connexion revendeurs"
+
 msgid "Log out"
 msgstr "Se déconnecter"
 
