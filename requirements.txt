@@ -2,6 +2,7 @@
 # in pyproject.toml; dev tools live in the "dev" extra there.
 Django>=6.0,<6.1
 Pillow>=10.0
+django-anymail[brevo]>=15.0,<16.0
 django-extensions>=4.1,<5.0
 django-storages[s3]>=1.14.6,<2.0
 gunicorn>=23.0,<24.0

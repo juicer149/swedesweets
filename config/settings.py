@@ -138,6 +138,7 @@ INSTALLED_APPS = [
     # Third-party apps
     "django_extensions",
     "storages",
+    "anymail",
 
     # Local apps
     "config",
@@ -405,6 +406,30 @@ EMAIL_TIMEOUT = int(
         "10",
     )
 )
+
+
+# Brevo (mail over HTTPS): Railway blocks outgoing SMTP, so production
+# sends through Brevo's API instead. Turn it on with
+#   EMAIL_BACKEND=anymail.backends.brevo.EmailBackend
+#   BREVO_API_KEY=<key from Brevo: Settings, SMTP & API, API keys>
+# EMAIL_REPLY_TO (optional): where answers to the site's mails go, for
+# example info@ when DEFAULT_FROM_EMAIL is no-reply@.
+EMAIL_REPLY_TO = os.environ.get(
+    "EMAIL_REPLY_TO",
+    "",
+)
+
+ANYMAIL = {
+    "BREVO_API_KEY": os.environ.get(
+        "BREVO_API_KEY",
+        "",
+    ),
+    "SEND_DEFAULTS": (
+        {"reply_to": [EMAIL_REPLY_TO]}
+        if EMAIL_REPLY_TO
+        else {}
+    ),
+}
 
 
 # =============================================================================
