@@ -20,6 +20,9 @@ from inventory.errors import InsufficientStockError
 from inventory.models import InventoryBatch
 from orders.datatypes import BuyerInput
 from orders.models import Order, OrderLine
+from orders.notifications import (
+    send_order_placed_mails_on_commit,
+)
 from orders.services import cancel_order as cancel_shared_order
 from orders.services import place_order as place_shared_order
 from payments.models import PaymentAttempt
@@ -554,6 +557,8 @@ def complete_retail_payment(
     _consume_cart_for_placed_order(
         order=order,
     )
+
+    send_order_placed_mails_on_commit(order)
 
     return order
 

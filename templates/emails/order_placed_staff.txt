@@ -1,0 +1,13 @@
+{% autoescape off %}New {{ order.get_channel_display|lower }} order #{{ order.pk }}.
+
+{{ order.buyer_name }}
+{{ order.buyer_email }}{% if order.buyer_phone_number %}
+{{ order.buyer_phone_number }}{% endif %}
+{{ order.buyer_address }}
+
+{% for line in lines %}{{ line.quantity }} × {{ line.name }}{% if line.total %}   {{ line.total }}{% endif %}
+{% endfor %}{% if total %}
+Total: {{ total }}
+{% endif %}{% if ops_url %}
+Open in ops: {{ ops_url }}
+{% endif %}{% endautoescape %}

@@ -1,0 +1,17 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=order.buyer_name %}Hello {{ name }},{% endblocktrans %}
+
+{% if is_business %}{% blocktrans with number=order.pk %}Thank you, we have received your order #{{ number }}. We will pack it and deliver it as agreed.{% endblocktrans %}{% else %}{% blocktrans with number=order.pk %}Thank you for your order #{{ number }}. Your payment has gone through, and we will pack and deliver your order as soon as we can.{% endblocktrans %}{% endif %}
+
+{% for line in lines %}{{ line.quantity }} × {{ line.name }}{% if line.total %}   {{ line.total }}{% endif %}
+{% endfor %}{% if total %}
+{% trans "Total" %}: {{ total }}
+{% endif %}
+{% trans "Delivery address" %}:
+{{ order.buyer_address }}
+{% if account_url %}
+{% trans "Your orders" %}: {{ account_url }}
+{% endif %}
+{% trans "Questions? Just reply to this email." %}
+
+SwedeSweets
+{% endautoescape %}

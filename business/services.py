@@ -26,6 +26,9 @@ from customers.models import Customer
 from orders.datatypes import OrderLineInput
 from orders.errors import InvalidOrderOperation
 from orders.models import Order
+from orders.notifications import (
+    send_order_placed_mails_on_commit,
+)
 from orders.services import (
     create_draft_order as create_shared_draft_order,
 )
@@ -160,6 +163,8 @@ def place_customer_cart(
             "business cart invariant violated: "
             "cart disappeared during placement"
         ) from exc
+
+    send_order_placed_mails_on_commit(order)
 
     return order
 

@@ -432,6 +432,25 @@ ANYMAIL = {
 }
 
 
+# The site's own address, for links in mails ("https://www.swedesweets.se").
+# Without it the mails carry no links.
+SITE_URL = os.environ.get(
+    "SITE_URL",
+    "",
+).rstrip("/")
+
+# Who gets a note about every new order (comma separated, e.g.
+# "info@swedesweets.se"). Empty: no note.
+ORDER_NOTIFICATION_EMAILS = [
+    address.strip()
+    for address in os.environ.get(
+        "ORDER_NOTIFICATION_EMAILS",
+        "",
+    ).split(",")
+    if address.strip()
+]
+
+
 # =============================================================================
 # Payments
 # =============================================================================

@@ -56,6 +56,9 @@ class BuyerInput:
     city: str
     address_line: str
     postal_code: str = ""
+    # The site language the buyer used ("en", "fr"); their mails are
+    # written in it. Empty: the language active when the order is created.
+    language: str = ""
 
 
 @dataclass(frozen=True)

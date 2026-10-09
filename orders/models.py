@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 
 from customers.models import (
@@ -113,6 +114,11 @@ class Order(models.Model):
     )
     buyer_address_line_snapshot = models.CharField(
         max_length=MAX_CUSTOMER_ADDRESS_LINE_LENGTH,
+        blank=True,
+    )
+    # The language the buyer used on the site; order mails go out in it.
+    buyer_language_snapshot = models.CharField(
+        max_length=10,
         blank=True,
     )
 
@@ -365,6 +371,7 @@ class Order(models.Model):
         self.buyer_postal_code_snapshot = buyer.postal_code
         self.buyer_city_snapshot = buyer.city
         self.buyer_address_line_snapshot = buyer.address_line
+        self.buyer_language_snapshot = buyer.language or get_language() or ""
 
     def _transition_to(self, target: str) -> None:
         if self.status == target:

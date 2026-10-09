@@ -1258,6 +1258,27 @@ msgstr "Modifier les informations du magasin"
 
 #: templates/business_portal/includes/account_details_panel.html:78
 #: templates/includes/ops_footer.html:29
+msgid "Hello %(name)s,"
+msgstr "Bonjour %(name)s,"
+
+msgid "Thank you, we have received your order #%(number)s. We will pack it and deliver it as agreed."
+msgstr "Merci, nous avons bien reçu votre commande n° %(number)s. Nous la préparons et la livrons comme convenu."
+
+msgid "Thank you for your order #%(number)s. Your payment has gone through, and we will pack and deliver your order as soon as we can."
+msgstr "Merci pour votre commande n° %(number)s. Votre paiement a bien été accepté ; nous préparons et livrons votre commande dès que possible."
+
+msgid "Your orders"
+msgstr "Vos commandes"
+
+msgid "Questions? Just reply to this email."
+msgstr "Une question ? Répondez simplement à cet e-mail."
+
+msgid "Order #%(number)s received – SwedeSweets"
+msgstr "Commande n° %(number)s reçue – SwedeSweets"
+
+msgid "Thank you for your order #%(number)s – SwedeSweets"
+msgstr "Merci pour votre commande n° %(number)s – SwedeSweets"
+
 msgid "Log out"
 msgstr "Se déconnecter"
 
