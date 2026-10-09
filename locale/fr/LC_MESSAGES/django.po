@@ -1279,6 +1279,15 @@ msgstr "Commande n° %(number)s reçue – SwedeSweets"
 msgid "Thank you for your order #%(number)s – SwedeSweets"
 msgstr "Merci pour votre commande n° %(number)s – SwedeSweets"
 
+msgid "Order #%(number)s"
+msgstr "Commande n° %(number)s"
+
+msgid "We have received your order"
+msgstr "Nous avons bien reçu votre commande"
+
+msgid "Thank you for your order!"
+msgstr "Merci pour votre commande !"
+
 msgid "Log out"
 msgstr "Se déconnecter"
 

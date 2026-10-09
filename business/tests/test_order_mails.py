@@ -42,6 +42,10 @@ def test_placing_the_cart_mails_the_shop_and_the_owner(
     assert f"#{order.pk}" in buyer_mail.subject
     assert "€28.50" in buyer_mail.body
     assert "https://www.swedesweets.se/" in buyer_mail.body
+    html, mimetype = buyer_mail.alternatives[0]
+    assert mimetype == "text/html"
+    assert "email-logo" in html
+    assert "€28.50" in html
 
     assert staff_mail.to == ["info@swedesweets.se"]
     assert f"#{order.pk}" in staff_mail.subject

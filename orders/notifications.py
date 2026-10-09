@@ -1,6 +1,6 @@
 """
-Mails about a placed order: the buyer's confirmation, and a note to the
-shop (ORDER_NOTIFICATION_EMAILS).
+Mails about a placed order: the buyer's confirmation (HTML, with the logo,
+and plain text), and a note to the shop (ORDER_NOTIFICATION_EMAILS, plain).
 
 public API:
     send_order_placed_mails_on_commit(order)
@@ -24,6 +24,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db import transaction
 from django.template.loader import render_to_string
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import gettext as _
@@ -87,8 +88,15 @@ def _send_buyer_confirmation(order: Order) -> None:
             else _("Thank you for your order #%(number)s – SwedeSweets")
         ) % {"number": order.pk}
 
+        context["language"] = language
+        context["logo_url"] = _absolute_url(static("images/email-logo.png"))
+
         body = render_to_string(
             "emails/order_placed_buyer.txt",
+            context,
+        )
+        html_body = render_to_string(
+            "emails/order_placed_buyer.html",
             context,
         )
 
@@ -97,6 +105,7 @@ def _send_buyer_confirmation(order: Order) -> None:
         message=body,
         from_email=None,
         recipient_list=[recipient],
+        html_message=html_body,
     )
 
 
