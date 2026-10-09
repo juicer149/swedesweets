@@ -29,7 +29,6 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.db import transaction
 from django.template.loader import render_to_string
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import gettext as _
@@ -144,9 +143,6 @@ def _send_buyer_confirmation(order: Order) -> None:
             else _("Thank you for your order #%(number)s – SwedeSweets")
         ) % {"number": order.pk}
 
-        context["language"] = language
-        context["logo_url"] = _absolute_url(static("images/email-logo.png"))
-        context["crown_url"] = _absolute_url(static("images/email-crown.png"))
 
         body = render_to_string(
             "emails/order_placed_buyer.txt",

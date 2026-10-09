@@ -1,0 +1,44 @@
+{% load i18n mail_assets %}{% get_current_language as language %}{% mail_asset_url "images/email-logo.png" as logo_url %}<!doctype html>
+<html lang="{{ language }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SwedeSweets</title>
+</head>
+{% comment %}
+  Every mail's frame: the logo top left, a white card on the site's
+  cream, and a quiet line under it. Mail programs know only old HTML:
+  tables and inline styles. A mail fills block card (and may replace
+  block footer). The plain-text .txt beside each mail stays the fallback.
+{% endcomment %}
+<body style="margin:0; padding:0; background:#fffaf0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fffaf0;">
+  <tr>
+    <td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px; font-family:Nunito, 'Segoe UI', Helvetica, Arial, sans-serif; color:#191715; font-size:16px; line-height:1.5;">
+
+        {% if logo_url %}
+        <tr>
+          <td align="left" style="padding:0 4px 16px;">
+            <img src="{{ logo_url }}" width="104" alt="SwedeSweets" style="display:block; width:104px; height:auto; border:0;">
+          </td>
+        </tr>
+        {% endif %}
+
+        <tr>
+          <td style="background:#ffffff; border:1px solid #ebe4d8; border-radius:16px; padding:0 28px 32px;">
+            {% block card %}{% endblock %}
+          </td>
+        </tr>
+
+        <tr>
+          <td align="center" style="padding:24px 8px 0; color:#66615c; font-size:14px;">
+            {% block footer %}{% trans "Questions? Just reply to this email." %}<br>SwedeSweets{% endblock %}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

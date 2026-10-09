@@ -1,0 +1,8 @@
+{% comment %}A mail's heading, with an optional small line above it.
+Expects: title; kicker (optional).{% endcomment %}
+<div style="padding-top:32px;">
+  {% if kicker %}
+  <p style="margin:0 0 4px; color:#66615c; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">{{ kicker }}</p>
+  {% endif %}
+  <h1 style="margin:0 0 16px; color:#0947d7; font-size:24px; line-height:1.25;">{{ title }}</h1>
+</div>
