@@ -789,10 +789,11 @@ span.icon-rows__link .icon-rows__icon {
 }
 
 /* The page titles (Q & A, Who we are?): stamped into the page, in
-   nearly its own colour; the shadow inside the letters and the light lip
-   under them draw them. Big: the page's picture as much as its title. */
+   nearly its own colour, a little warm; the shadow inside the letters
+   (the darkest yellow) and the light lip under them draw them. Big: the page's picture as much as its title. */
 .display-title--stamped {
-  color: var(--color-neutral-200);
+  /* The page's cream, a little warmer: a touch of the yellow scale. */
+  color: color-mix(in srgb, var(--color-accent-200) 40%, var(--color-neutral-200));
   text-align: center;
   filter: url("#display-title-stamped");
 }
@@ -826,32 +827,44 @@ span.icon-rows__link .icon-rows__icon {
   margin: 0;
 }
 
-/* The photo under the last line: its edges dissolve into the page, a
-   little dreamy, so it reads as part of the page rather than a framed
-   picture. */
+/* The photo, with the last line written in its sky like a cloud and the
+   hand with the sweets under it. Its edges dissolve into the page, a
+   little dreamy, so it reads as part of the page, not a framed picture. */
+.about__sky {
+  position: relative;
+  margin: clamp(var(--space-5), 4dvh, var(--space-8)) 0 0;
+}
+
 .about__photo {
   display: block;
   width: 100%;
   height: auto;
-  margin-top: clamp(var(--space-5), 4dvh, var(--space-8));
 
   /* Two soft fades (sides, top and foot) laid over each other: a picture
      with no hard edge anywhere, still mostly a rectangle. */
   -webkit-mask-image:
     linear-gradient(to right, transparent, #000 16%, #000 84%, transparent),
-    linear-gradient(to bottom, transparent, #000 14%, #000 80%, transparent);
+    linear-gradient(to bottom, transparent, #000 12%, #000 84%, transparent);
   -webkit-mask-composite: source-in;
   mask-image:
     linear-gradient(to right, transparent, #000 16%, #000 84%, transparent),
-    linear-gradient(to bottom, transparent, #000 14%, #000 80%, transparent);
+    linear-gradient(to bottom, transparent, #000 12%, #000 84%, transparent);
   mask-composite: intersect;
 }
 
-/* The last line, in the title's style, on the middle line too. */
+/* White and puffy in the deep blue, below the fade at the top. */
 .about__signoff {
-  margin-top: clamp(var(--space-6), 5dvh, var(--space-8));
-  font-size: clamp(1.5rem, 6.5vw, 1.875rem);
+  position: absolute;
+  top: 15%;
+  right: 12%;
+  left: 12%;
+  margin: 0;
+
+  color: var(--color-white);
+  font-size: clamp(1.75rem, 8.5vw, 2.5rem);
+  line-height: 1.1;
   text-align: center;
+  filter: url("#display-title-cloud");
 }
 
 .page.faq {

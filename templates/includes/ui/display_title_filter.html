@@ -4,6 +4,8 @@ a page that has a display title.
 
   display-title-inner-shadow  a little of the darkest yellow inside each
                               letter's upper edge (the yellow lines)
+  display-title-cloud         a cloud: white with a soft glow around it and
+                              a blue-grey shade along its underside
   display-title-stamped       pressed into the page: a soft dark shadow
                               inside each letter's upper edge, and a thin
                               light lip under it, outside (the page titles,
@@ -19,11 +21,27 @@ a page that has a display title.
     <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
   </filter>
 
+  <filter id="display-title-cloud" x="-15%" y="-30%" width="130%" height="160%">
+    <feGaussianBlur stdDeviation="5" in="SourceAlpha" result="haze"/>
+    <feFlood flood-color="#ffffff" flood-opacity="0.45"/>
+    <feComposite operator="in" in2="haze" result="glow"/>
+    <feOffset dx="0" dy="-3" in="SourceAlpha" result="up"/>
+    <feGaussianBlur stdDeviation="1.8" in="up" result="upBlur"/>
+    <feComposite operator="out" in="SourceAlpha" in2="upBlur" result="under"/>
+    <feFlood flood-color="#8ea3c4" flood-opacity="0.7"/>
+    <feComposite operator="in" in2="under" result="shade"/>
+    <feMerge>
+      <feMergeNode in="glow"/>
+      <feMergeNode in="SourceGraphic"/>
+      <feMergeNode in="shade"/>
+    </feMerge>
+  </filter>
+
   <filter id="display-title-stamped" x="-5%" y="-10%" width="110%" height="125%">
     <feOffset dx="0" dy="3" in="SourceAlpha" result="moved"/>
     <feGaussianBlur stdDeviation="2" in="moved" result="blurred"/>
     <feComposite operator="out" in="SourceAlpha" in2="blurred" result="inside"/>
-    <feFlood flood-color="#292622" flood-opacity="0.42"/>
+    <feFlood flood-color="#4a3405" flood-opacity="0.4"/>
     <feComposite operator="in" in2="inside" result="shadow"/>
     <feOffset dx="0" dy="1.5" in="SourceAlpha" result="lipMoved"/>
     <feComposite operator="out" in="lipMoved" in2="SourceAlpha" result="lipOnly"/>

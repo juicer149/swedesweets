@@ -20,18 +20,20 @@
       <p>{% trans "We missed it in France. So we started SwedeSweets to bring the real thing here: the Swedish pick & mix we grew up with, straight from Sweden." %}</p>
     </div>
 
-    <p class="display-title about__signoff">{% trans "Come and make your own bag." %}</p>
-
-    {# Fading into the page at its edges, like a memory of the mountain. #}
-    <img
-      class="about__photo"
-      src="{% static 'images/about-sweets-in-the-snow.webp' %}"
-      alt="{% trans 'A handful of our sweets held up in the snow, high above the clouds in the mountains.' %}"
-      width="1080"
-      height="1351"
-      loading="lazy"
-      decoding="async"
-    >
+    {# The last line written in the sky of the photo, like a cloud, the #}
+    {# hand with the sweets under it; the photo's edges fade into the page. #}
+    <figure class="about__sky">
+      <img
+        class="about__photo"
+        src="{% static 'images/about-sweets-in-the-snow.webp' %}"
+        alt="{% trans 'A handful of our sweets held up in the snow, high above the clouds in the mountains.' %}"
+        width="1080"
+        height="1771"
+        loading="lazy"
+        decoding="async"
+      >
+      <p class="display-title about__signoff">{% trans "Come and make your own bag." %}</p>
+    </figure>
   </article>
 </section>
 {% endblock %}
