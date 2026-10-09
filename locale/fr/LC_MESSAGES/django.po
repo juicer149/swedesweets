@@ -1548,6 +1548,18 @@ msgid "Signed in as"
 msgstr "Connecté en tant que"
 
 #: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
+msgid "Complete your shop details"
+msgstr "Complétez les informations de votre magasin"
+
+msgid "Before you can order, we need to know how to reach you and where to deliver."
+msgstr "Avant de pouvoir commander, nous avons besoin de savoir comment vous joindre et où livrer."
+
+msgid "Save and start ordering"
+msgstr "Enregistrer et commencer à commander"
+
+msgid "Thank you! You can now order."
+msgstr "Merci ! Vous pouvez maintenant commander."
+
 msgid "Log out"
 msgstr "Se déconnecter"
 

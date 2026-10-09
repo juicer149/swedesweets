@@ -9,6 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import Resolver404, resolve
 
+from accounts.roles import AccountRole
 from config.policies import (
     AUTH_EXEMPT_VIEWS,
     EXEMPT_PATH_PREFIXES,
@@ -143,3 +144,51 @@ class ViewCapabilityMiddleware:
             raise PermissionDenied("You do not have permission to access this page.")
 
         return None
+
+
+class ShopDetailsRequiredMiddleware:
+    """A shop invited by mail fills in its details before anything else.
+
+    Until its customer record has phone, city and address (is_complete), a
+    business customer's portal pages lead to the store form: we need to
+    know where to deliver before they can order. Public pages, the store
+    form itself and the auth pages stay open. Runs after
+    ViewCapabilityMiddleware, so the role is known and denied pages are
+    already refused.
+    """
+
+    ALLOWED_VIEWS = frozenset(
+        {
+            "business_portal:edit_store",
+        }
+    )
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        if getattr(request, "account_role", None) != AccountRole.BUSINESS_CUSTOMER:
+            return None
+
+        resolver_match = getattr(request, "resolver_match", None)
+
+        if resolver_match is None:
+            return None
+
+        view_name = resolver_match.view_name
+
+        if (
+            not view_name.startswith("business_portal:")
+            or view_name in self.ALLOWED_VIEWS
+        ):
+            return None
+
+        membership = getattr(request.user, "customer_membership", None)
+
+        if membership is None or membership.customer.is_complete:
+            return None
+
+        return redirect("business_portal:edit_store")

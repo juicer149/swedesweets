@@ -148,3 +148,21 @@ def test_customer_address_formats_address_for_display(customer):
 @pytest.mark.django_db
 def test_customer_string_is_name(customer):
     assert str(customer) == "Nordic Corner Shop"
+
+
+@pytest.mark.django_db
+def test_customer_may_wait_with_phone_city_and_address():
+    # An invited shop fills these in itself on first login.
+    from customers.services import create_customer
+
+    customer = create_customer(
+        name="Café Blanc",
+        email="cafe@example.fr",
+        phone_number="",
+        country="FR",
+        city="",
+        address_line="",
+    )
+
+    assert not customer.is_complete
+    assert customer.address == "France"

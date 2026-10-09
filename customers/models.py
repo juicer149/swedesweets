@@ -116,14 +116,28 @@ def normalize_customer_phone_number(value: str) -> str:
     return value
 
 
+def _normalize_optional(value: str, normalize) -> str:
+    """Empty stays empty; anything else is normalized as usual."""
+
+    if not (value or "").strip(" -"):
+        return ""
+
+    return normalize(value)
+
+
 class Customer(models.Model):
     name = models.CharField(max_length=MAX_CUSTOMER_NAME_LENGTH)
     email = models.EmailField(max_length=254, unique=True)
-    phone_number = models.CharField(max_length=MAX_CUSTOMER_PHONE_LENGTH)
+    # Phone, city and address may wait: a shop invited by mail fills them
+    # in itself on first login (is_complete), and cannot order until then.
+    phone_number = models.CharField(max_length=MAX_CUSTOMER_PHONE_LENGTH, blank=True)
 
     country = models.CharField(max_length=MAX_CUSTOMER_COUNTRY_LENGTH)
-    city = models.CharField(max_length=MAX_CUSTOMER_CITY_LENGTH)
-    address_line = models.CharField(max_length=MAX_CUSTOMER_ADDRESS_LINE_LENGTH)
+    city = models.CharField(max_length=MAX_CUSTOMER_CITY_LENGTH, blank=True)
+    address_line = models.CharField(
+        max_length=MAX_CUSTOMER_ADDRESS_LINE_LENGTH,
+        blank=True,
+    )
 
     is_active = models.BooleanField(default=True)
 
@@ -179,8 +193,15 @@ class Customer(models.Model):
         return CUSTOMER_COUNTRY_LABELS.get(self.country, self.country)
 
     @property
+    def is_complete(self) -> bool:
+        """Whether we know how to reach and deliver to this customer."""
+
+        return bool(self.phone_number and self.city and self.address_line)
+
+    @property
     def address(self) -> str:
-        return f"{self.address_line}, {self.city}, {self.country_name}"
+        parts = (self.address_line, self.city, self.country_name)
+        return ", ".join(part for part in parts if part)
 
     def save(self, *args, **kwargs) -> None:
         """Normalize customer fields before saving."""
@@ -206,17 +227,24 @@ class Customer(models.Model):
         if should_handle_email:
             self.email = normalize_customer_email(self.email)
 
+        # Phone, city and address may be left empty (not yet given).
         if should_handle_phone:
-            self.phone_number = normalize_customer_phone_number(self.phone_number)
+            self.phone_number = _normalize_optional(
+                self.phone_number,
+                normalize_customer_phone_number,
+            )
 
         if should_handle_country:
             self.country = normalize_customer_country(self.country)
 
         if should_handle_city:
-            self.city = normalize_customer_city(self.city)
+            self.city = _normalize_optional(self.city, normalize_customer_city)
 
         if should_handle_address_line:
-            self.address_line = normalize_customer_address_line(self.address_line)
+            self.address_line = _normalize_optional(
+                self.address_line,
+                normalize_customer_address_line,
+            )
 
         if update_fields is not None:
             kwargs["update_fields"] = update_fields

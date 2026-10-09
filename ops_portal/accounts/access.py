@@ -13,7 +13,6 @@ VIEW_CAPABILITIES = {
     "ops_accounts:index": Capability.MANAGE_ACCOUNTS,
     "ops_accounts:create_internal": Capability.MANAGE_ACCOUNTS,
     "ops_accounts:edit_internal": Capability.MANAGE_ACCOUNTS,
-    "ops_accounts:create_customer_account": Capability.MANAGE_ACCOUNTS,
     "ops_accounts:activate_customer_account": Capability.MANAGE_ACCOUNTS,
     "ops_accounts:deactivate_customer_account": Capability.MANAGE_ACCOUNTS,
     "ops_accounts:detail": Capability.MANAGE_ACCOUNTS,

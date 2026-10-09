@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from django.urls import reverse
 
 from customers.models import Customer
-from ops_portal.customers.forms import CustomerForm
+from ops_portal.customers.forms import CustomerForm, InviteLoginForm
 from ops_portal.customers.presentation import (
     customer_place_label,
     customer_status_icon,
@@ -16,7 +16,7 @@ from ops_portal.customers.presentation import (
 
 @dataclass(frozen=True, slots=True)
 class CustomerFormContext:
-    form: CustomerForm
+    form: CustomerForm | InviteLoginForm
     title: str
     submit_label: str
     cancel_url: str
@@ -65,4 +65,33 @@ def build_edit_customer_form_context(
         title=f"Edit {customer.name}",
         submit_label="Save customer",
         cancel_url=reverse("ops_customers:detail", kwargs={"customer_pk": customer.pk}),
+    )
+
+
+def build_invite_shop_form_context(
+    *,
+    form: CustomerForm,
+) -> CustomerFormContext:
+    return CustomerFormContext(
+        form=form,
+        title="Invite shop",
+        submit_label="Send invitation",
+        cancel_url=reverse("ops_customers:index"),
+    )
+
+
+def build_invite_login_form_context(
+    *,
+    form: InviteLoginForm,
+    customer: Customer,
+) -> CustomerFormContext:
+    return CustomerFormContext(
+        form=form,
+        customer=customer,
+        title=f"Invite {customer.name} to the portal",
+        submit_label="Send invitation",
+        cancel_url=reverse(
+            "ops_customers:detail",
+            kwargs={"customer_pk": customer.pk},
+        ),
     )

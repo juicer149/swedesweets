@@ -9,6 +9,7 @@ from django.test import override_settings
 from django.urls import reverse
 
 from accounts.tests.factories import superuser_factory
+from customers.models import Customer
 from customers.tests.factories import customer_factory
 
 User = get_user_model()
@@ -22,23 +23,29 @@ def owner_client(client):
 
 @pytest.mark.django_db
 @override_settings(SITE_URL="https://www.swedesweets.se")
-def test_new_customer_account_gets_an_invitation_in_french(
+def test_invite_shop_creates_customer_and_login_and_mails_in_french(
     owner_client,
     mailoutbox,
     django_capture_on_commit_callbacks,
 ):
-    customer = customer_factory(name="Café Blanc", country="FR")
-
+    # Name, email and country are enough: the shop fills in the rest.
     with django_capture_on_commit_callbacks(execute=True):
         response = owner_client.post(
-            reverse("ops_accounts:create_customer_account"),
-            {"customer": customer.pk, "email": "Cafe@Example.fr"},
+            reverse("ops_customers:invite"),
+            {"name": "Café Blanc", "email": "Cafe@Example.fr", "country": "FR"},
         )
 
+    customer = Customer.objects.get(email="cafe@example.fr")
     assert response.status_code == 302
+    assert response.url == reverse(
+        "ops_customers:detail",
+        kwargs={"customer_pk": customer.pk},
+    )
+    assert not customer.is_complete
 
     user = User.objects.get(email="cafe@example.fr")
     assert not user.has_usable_password()
+    assert user.customer_membership.customer == customer
 
     (mail,) = mailoutbox
     assert mail.to == ["cafe@example.fr"]
@@ -46,6 +53,26 @@ def test_new_customer_account_gets_an_invitation_in_french(
     html, _mimetype = mail.alternatives[0]
     assert "https://www.swedesweets.se/accounts/reset/" in html
     assert 'lang="fr"' in html
+
+
+@pytest.mark.django_db
+def test_an_existing_customer_can_be_invited_to_the_portal(
+    owner_client,
+    mailoutbox,
+    django_capture_on_commit_callbacks,
+):
+    customer = customer_factory(name="Café Blanc", email="cafe@example.fr")
+
+    with django_capture_on_commit_callbacks(execute=True):
+        owner_client.post(
+            reverse("ops_customers:invite_login", kwargs={"customer_pk": customer.pk}),
+            {"email": "second@example.fr"},
+        )
+
+    user = User.objects.get(email="second@example.fr")
+    assert user.customer_membership.customer == customer
+    (mail,) = mailoutbox
+    assert mail.to == ["second@example.fr"]
 
 
 @pytest.mark.django_db

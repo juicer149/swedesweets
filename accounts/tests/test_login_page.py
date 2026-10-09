@@ -128,3 +128,29 @@ def test_reset_link_page_looks_like_changing_the_password(client):
     assert "page__rules" in html
     assert 'placeholder="New password"' in html
     assert 'class="form-label visually-hidden"' in html
+
+
+@pytest.mark.django_db
+def test_choosing_a_password_logs_in_and_goes_on(client):
+    from django.contrib.auth.tokens import default_token_generator
+    from django.utils.encoding import force_bytes
+    from django.utils.http import urlsafe_base64_encode
+
+    user = user_factory()
+    url = reverse(
+        "password_reset_confirm",
+        kwargs={
+            "uidb64": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": default_token_generator.make_token(user),
+        },
+    )
+    set_password_url = client.get(url).url
+
+    response = client.post(
+        set_password_url,
+        {"new_password1": "a-long-new-pass-77", "new_password2": "a-long-new-pass-77"},
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse("after_login")
+    assert int(client.session["_auth_user_id"]) == user.pk

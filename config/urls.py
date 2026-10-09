@@ -10,6 +10,7 @@ from django.contrib.auth.views import (
 from django.urls import (
     include,
     path,
+    reverse_lazy,
 )
 
 from accounts.forms import (
@@ -71,7 +72,13 @@ urlpatterns = [
     ),
     path(
         "accounts/reset/<uidb64>/<token>/",
-        PasswordResetConfirmView.as_view(form_class=AccountSetPasswordForm),
+        # Logged in at once and on to their start page (a new shop: its
+        # details form), instead of a "now log in" page.
+        PasswordResetConfirmView.as_view(
+            form_class=AccountSetPasswordForm,
+            post_reset_login=True,
+            success_url=reverse_lazy("after_login"),
+        ),
         name="password_reset_confirm",
     ),
     path(

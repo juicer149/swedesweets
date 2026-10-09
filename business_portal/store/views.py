@@ -25,6 +25,8 @@ def edit_store(request):
     customer = get_portal_customer_for_user(
         user=request.user,
     )
+    # First visit after the invitation: the details are still missing.
+    onboarding = not customer.is_complete
 
     if request.method == "POST":
         form = CustomerProfileForm(
@@ -56,7 +58,11 @@ def edit_store(request):
             else:
                 messages.success(
                     request,
-                    _("Store information updated."),
+                    (
+                        _("Thank you! You can now order.")
+                        if onboarding
+                        else _("Store information updated.")
+                    ),
                 )
 
                 return redirect(
@@ -76,5 +82,6 @@ def edit_store(request):
         {
             "form": form,
             "customer": customer,
+            "onboarding": onboarding,
         },
     )

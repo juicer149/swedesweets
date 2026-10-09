@@ -57,6 +57,10 @@ def _add_batch_href() -> str:
     return reverse("ops_inventory:create")
 
 
+def _invite_shop_href() -> str:
+    return reverse("ops_customers:invite")
+
+
 # ------------------------------------------------------------------------------
 # Available actions
 #
@@ -100,6 +104,15 @@ ADD_BATCH_ACTION = DashboardActionSpec(
     build_href=_add_batch_href,
 )
 
+INVITE_SHOP_ACTION = DashboardActionSpec(
+    label="Invite shop",
+    capability=Capability.MANAGE_ACCOUNTS,
+    css_tone="button--tone-place",
+    aria_label="Invite a new shop to order online",
+    icon="mail",
+    build_href=_invite_shop_href,
+)
+
 
 # ------------------------------------------------------------------------------
 # Role-specific action families
@@ -115,6 +128,7 @@ ADD_BATCH_ACTION = DashboardActionSpec(
 STAFF_DASHBOARD_ACTIONS = (
     PLACE_ORDER_ACTION,
     ADD_BATCH_ACTION,
+    INVITE_SHOP_ACTION,
 )
 
 RESTRICTED_STAFF_DASHBOARD_ACTIONS = (

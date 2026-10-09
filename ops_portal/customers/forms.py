@@ -240,3 +240,62 @@ def _store_listing_initial_data(customer: Customer) -> dict[str, object]:
         "store_address_line": listing.address_line,
         "store_city": listing.city,
     }
+
+
+class InviteShopForm(CustomerForm):
+    """A new shop and its login in one go: name, email and country. The
+    shop fills in phone, city and address itself on first login (Marco
+    may fill them in already)."""
+
+    OPTIONAL_FIELDS = ("phone_number", "city", "address_line")
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, customer=None, **kwargs)
+
+        self.fields["email"].help_text = (
+            "Their login. We email an invitation here, with a link to choose "
+            "a password and fill in the shop's details."
+        )
+
+        for name in self.OPTIONAL_FIELDS:
+            field = self.fields[name]
+            field.required = False
+            field.initial = None
+            field.help_text = "Optional: the shop can fill it in."
+
+
+class InviteLoginForm(forms.Form):
+    """A login for a customer that exists already (or a second person)."""
+
+    email = forms.EmailField(
+        max_length=254,
+        label="Login email",
+        help_text=(
+            "We email an invitation here, with a link to choose a password."
+        ),
+        error_messages={
+            "required": "Enter an email address.",
+            "invalid": "Enter a valid email address.",
+        },
+        widget=forms.EmailInput(
+            attrs={
+                "placeholder": "e.g. orders@example.fr",
+                "autocomplete": "email",
+            }
+        ),
+    )
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        set_form_field_layout(self, full=("email",))
+
+    def clean_email(self) -> str:
+        return self.cleaned_data["email"].strip().lower()
+
+    @property
+    def delivery_fields(self):
+        return [self["email"]]
+
+    @property
+    def listing_fields(self):
+        return []

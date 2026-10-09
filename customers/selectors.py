@@ -119,9 +119,15 @@ def list_customer_activity_for_actor(
 
 
 def list_listed_stores() -> QuerySet[StoreListing]:
-    """Shops on Find Sweets: listed, and their customer still active."""
+    """Shops on Find Sweets: listed, their customer still active, and with
+    an address (a shop still to fill in its details is not shown)."""
 
-    return StoreListing.objects.filter(
-        is_listed=True,
-        customer__is_active=True,
-    ).select_related("customer")
+    return (
+        StoreListing.objects.filter(
+            is_listed=True,
+            customer__is_active=True,
+        )
+        .exclude(customer__address_line="")
+        .exclude(customer__city="")
+        .select_related("customer")
+    )

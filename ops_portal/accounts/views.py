@@ -23,9 +23,6 @@ from accounts.selectors import (
     list_unlinked_account_records,
 )
 from accounts.services import (
-    create_customer_account as create_customer_login_account,
-)
-from accounts.services import (
     create_internal_account,
     set_customer_account_active_status,
     update_internal_account,
@@ -44,12 +41,10 @@ from ops_portal.accounts.detail_viewmodels import (
     customer_account_status_success_message,
 )
 from ops_portal.accounts.form_viewmodels import (
-    build_create_customer_account_form_context,
     build_create_internal_account_form_context,
     build_edit_internal_account_form_context,
 )
 from ops_portal.accounts.forms import (
-    CustomerAccountCreateForm,
     InternalAccountCreateForm,
     InternalAccountEditForm,
 )
@@ -316,63 +311,6 @@ def edit_internal(
     context = build_edit_internal_account_form_context(
         form=form,
         staff_account=staff_account,
-    ).as_dict()
-
-    return render(
-        request,
-        "ops_portal/accounts/account_form.html",
-        context,
-    )
-
-
-@login_required
-def create_customer_account(request):
-    if request.method == "POST":
-        form = CustomerAccountCreateForm(
-            request.POST
-        )
-
-        if form.is_valid():
-            try:
-                result = create_customer_login_account(
-                    email=form.cleaned_data[
-                        "email"
-                    ],
-                    customer=form.cleaned_data[
-                        "customer"
-                    ],
-                )
-            except AccountCreationError as error:
-                form.add_error(
-                    None,
-                    str(error),
-                )
-            else:
-                customer = form.cleaned_data["customer"]
-
-                send_account_invitation_on_commit(
-                    user=result.user,
-                    site_url=_site_url(request),
-                    # Shops in France get it in French.
-                    language="fr" if customer.country == "FR" else "en",
-                )
-
-                messages.success(
-                    request,
-                    (
-                        f"Customer account {result.user.email} created. "
-                        "An invitation to choose a password is on its way."
-                    ),
-                )
-
-                return redirect(
-                    _accounts_customer_url()
-                )
-    else:
-        form = CustomerAccountCreateForm()
-
-    context = build_create_customer_account_form_context(
-        form=form,
     ).as_dict()
 
     return render(

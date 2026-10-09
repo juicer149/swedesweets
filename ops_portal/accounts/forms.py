@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 from django import forms
-from django.urls import reverse
 
 from accounts.roles import StaffAccessLevel
 from common.form_layout import set_form_field_layout
-from customers.models import Customer
 
 INTERNAL_ACCOUNT_ACCESS_LEVEL_CHOICES = (
     (StaffAccessLevel.RESTRICTED.value, "Restricted staff"),
@@ -60,71 +58,6 @@ class InternalAccountCreateForm(forms.Form):
         set_form_field_layout(
             self,
             full=("email", "access_level"),
-        )
-
-    def clean_email(self) -> str:
-        return self.cleaned_data["email"].strip().lower()
-
-
-class CustomerChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, customer: Customer) -> str:
-        return f"{customer.name} · {customer.email} · {customer.city}"
-
-
-class CustomerAccountCreateForm(forms.Form):
-    customer = CustomerChoiceField(
-        queryset=Customer.objects.filter(is_active=True).order_by(
-            "name",
-            "email",
-        ),
-        label="Customer",
-        empty_label="Choose customer",
-        error_messages={
-            "required": "Choose a customer.",
-            "invalid_choice": "Choose a valid active customer.",
-        },
-        widget=forms.Select(
-            attrs={
-                "data-enhanced-select": "true",
-                "data-enhanced-select-search": "true",
-            }
-        ),
-    )
-
-    email = forms.EmailField(
-        max_length=254,
-        label="Account email",
-        help_text=(
-            "They log in to the customer portal with it. We email an "
-            "invitation here, with a link to choose their own password."
-        ),
-        error_messages={
-            "required": "Enter an email address.",
-            "invalid": "Enter a valid email address.",
-            "max_length": "Email address must be at most 254 characters.",
-        },
-        widget=forms.EmailInput(
-            attrs={
-                "placeholder": "e.g. customer@example.com",
-                "autocomplete": "email",
-            }
-        ),
-    )
-
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        create_customer_url = reverse("ops_customers:create")
-        self.fields["customer"].help_text = (
-            "Can’t find the customer? "
-            f'<a href="{create_customer_url}">Create the customer record</a> '
-            "before adding a login account."
-        )
-
-        set_form_field_layout(
-            self,
-            full=("customer", "email"),
         )
 
     def clean_email(self) -> str:

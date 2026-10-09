@@ -1,4 +1,5 @@
-{% comment %}The Customer tab: how to reach them, since when and how often, active and listed, then Edit customer.{% endcomment %}
+{% load i18n %}
+{% comment %}The Customer tab: how to reach them, since when and how often, active and listed (and whether the shop has still to fill in its details), then Edit customer and Invite to the portal.{% endcomment %}
 {% include "includes/ui/contact_rows.html" with email=customer.email phone=customer.phone_number address=customer.address maps_href=maps_href only %}
 
 <dl class="facts facts--small facts--footer">
@@ -26,6 +27,12 @@
       {% endif %}
     </dd>
   </div>
+  {% if not customer.is_complete %}
+    <div class="facts__row">
+      <dt>Details</dt>
+      <dd><span class="status-text status-text--warning facts__status">Awaiting the shop</span></dd>
+    </div>
+  {% endif %}
   <div class="facts__row">
     <dt>Find Sweets</dt>
     <dd>
@@ -38,8 +45,16 @@
   </div>
 </dl>
 
-{% if edit_href %}
+{% if edit_href or invite_href %}
   <div class="form-actions page__actions">
-    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_href }}">Edit customer</a>
+    {% if edit_href %}
+      <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_href }}">Edit customer</a>
+    {% endif %}
+    {% if invite_href %}
+      <a class="quiet-link" href="{{ invite_href }}">
+        {% include "includes/ui/icon_block.html" with name="mail" size="sm" only %}
+        Invite to the portal
+      </a>
+    {% endif %}
   </div>
 {% endif %}

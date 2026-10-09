@@ -24,11 +24,6 @@ urlpatterns = [
         name="edit_internal",
     ),
     path(
-        "customer/create/",
-        views.create_customer_account,
-        name="create_customer_account",
-    ),
-    path(
         "customer/<int:user_id>/activate/",
         views.activate_customer_account,
         name="activate_customer_account",

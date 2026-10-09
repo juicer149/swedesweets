@@ -7,7 +7,6 @@ from django.urls import reverse
 
 from accounts.models import StaffAccount
 from ops_portal.accounts.forms import (
-    CustomerAccountCreateForm,
     InternalAccountCreateForm,
     InternalAccountEditForm,
 )
@@ -23,8 +22,7 @@ class AccountFormContext:
     submit_label: str
     cancel_url: str
     form: (
-        CustomerAccountCreateForm
-        | InternalAccountCreateForm
+        InternalAccountCreateForm
         | InternalAccountEditForm
     )
     staff_account: StaffAccount | None = None
@@ -50,18 +48,6 @@ class AccountFormContext:
             }
 
         return context
-
-
-def build_create_customer_account_form_context(
-    *,
-    form: CustomerAccountCreateForm,
-) -> AccountFormContext:
-    return AccountFormContext(
-        form=form,
-        title="Create customer account",
-        submit_label="Create account",
-        cancel_url=_accounts_customer_url(),
-    )
 
 
 def build_create_internal_account_form_context(

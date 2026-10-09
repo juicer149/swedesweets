@@ -8,7 +8,7 @@ from accounts.roles import RoleSpec
 from common.page_tabs import PageTab
 from common.ui import StatusPresentation
 from customers.models import Customer
-from ops_portal.customers.access import can_edit_customer
+from ops_portal.customers.access import can_edit_customer, can_invite_logins
 from ops_portal.customers.presentation import (
     customer_place_label,
     customer_status_icon,
@@ -66,6 +66,7 @@ class CustomerDetailContext:
     order_rows: list[CustomerOrderRow]
     maps_href: str
     edit_href: str | None
+    invite_href: str | None
     back_url: str
 
     def as_dict(self) -> dict[str, object]:
@@ -76,6 +77,7 @@ class CustomerDetailContext:
             "order_rows": self.order_rows,
             "maps_href": self.maps_href,
             "edit_href": self.edit_href,
+            "invite_href": self.invite_href,
             "title": self.customer.name,
             "status_key": customer_status_key(self.customer),
             "status_label": customer_status_label(self.customer),
@@ -104,6 +106,11 @@ def build_customer_detail_context(
         edit_href=(
             reverse("ops_customers:edit", kwargs={"customer_pk": customer.pk})
             if can_edit_customer(customer=customer, role_spec=role_spec)
+            else None
+        ),
+        invite_href=(
+            reverse("ops_customers:invite_login", kwargs={"customer_pk": customer.pk})
+            if can_invite_logins(role_spec=role_spec)
             else None
         ),
         back_url=back_url,

@@ -129,11 +129,12 @@ def _build_accounts_page_action(
         )
 
     if active_view == ACCOUNT_VIEW_CUSTOMER:
+        # A shop's login comes with an invitation (Customers).
         return PageHeaderAction(
-            label="Add account",
-            href=reverse("ops_accounts:create_customer_account"),
-            icon="plus",
-            aria_label="Create customer login account",
+            label="Invite shop",
+            href=reverse("ops_customers:invite"),
+            icon="mail",
+            aria_label="Invite a new shop to order online",
         )
 
     return None
