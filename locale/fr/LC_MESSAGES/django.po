@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 00:27+0200\n"
+"POT-Creation-Date: 2026-10-09 14:13+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -349,7 +349,7 @@ msgstr "Continuer les achats"
 msgid "Not currently available in the catalog"
 msgstr "Actuellement indisponible dans le catalogue"
 
-#: business_portal/orders/detail_viewmodels.py:172 orders/models.py:50
+#: business_portal/orders/detail_viewmodels.py:172 orders/models.py:51
 msgid "Placed"
 msgstr "Passée"
 
@@ -359,12 +359,12 @@ msgid "Prepared"
 msgstr "Préparée"
 
 #: business_portal/orders/detail_viewmodels.py:174
-#: business_portal/orders/presentation.py:46 orders/models.py:52
+#: business_portal/orders/presentation.py:46 orders/models.py:53
 msgid "Delivered"
 msgstr "Livrée"
 
 #: business_portal/orders/detail_viewmodels.py:175
-#: business_portal/orders/presentation.py:47 orders/models.py:53
+#: business_portal/orders/presentation.py:47 orders/models.py:54
 #: reservations/models.py:43
 msgid "Cancelled"
 msgstr "Annulée"
@@ -394,7 +394,7 @@ msgstr "Votre commande est vide."
 msgid "Browse catalog"
 msgstr "Parcourir le catalogue"
 
-#: business_portal/orders/presentation.py:43 orders/models.py:49
+#: business_portal/orders/presentation.py:43 orders/models.py:50
 msgid "Draft"
 msgstr "Brouillon"
 
@@ -436,7 +436,7 @@ msgstr "Emballage endommagé"
 msgid "Promotion"
 msgstr "Promotion"
 
-#: business_portal/orders/product_presentation.py:21 orders/models.py:60
+#: business_portal/orders/product_presentation.py:21 orders/models.py:61
 #: templates/includes/catalog/grid.html:28
 msgid "Other"
 msgstr "Autre"
@@ -571,6 +571,8 @@ msgid "City is too long."
 msgstr "La ville est trop longue."
 
 #: business_portal/store/forms.py:120
+#: templates/emails/order_placed_buyer.html:68
+#: templates/emails/order_placed_buyer.txt:9
 msgid "Delivery address"
 msgstr "Adresse de livraison"
 
@@ -705,50 +707,60 @@ msgstr "Créée le %(date)s"
 msgid "%(prefix)s %(elapsed)s ago"
 msgstr "%(prefix)s il y a %(elapsed)s"
 
-#: orders/models.py:42
+#: orders/models.py:43
 msgid "Business"
 msgstr "Professionnel"
 
 # | msgid "Details"
-#: orders/models.py:43
+#: orders/models.py:44
 msgid "Retail"
 msgstr "Vente au détail"
 
-#: orders/models.py:46
+#: orders/models.py:47
 msgid "Euro"
 msgstr "Euro"
 
-#: orders/models.py:51
+#: orders/models.py:52
 msgid "Packed"
 msgstr "Préparée"
 
-#: orders/models.py:56
+#: orders/models.py:57
 msgid "Customer request"
 msgstr "Demande du client"
 
-#: orders/models.py:57
+#: orders/models.py:58
 msgid "Order entry error"
 msgstr "Erreur de saisie de commande"
 
-#: orders/models.py:58
+#: orders/models.py:59
 msgid "Duplicate order"
 msgstr "Commande en double"
 
-#: orders/models.py:59
+#: orders/models.py:60
 msgid "Out of stock"
 msgstr "Rupture de stock"
 
-#: orders/models.py:462
+#: orders/models.py:469
 msgid "Stock unit"
 msgstr "Unité de stock"
 
-#: orders/models.py:463
+#: orders/models.py:470
 msgid "Kg"
 msgstr "kg"
 
-#: orders/models.py:464
+#: orders/models.py:471
 msgid "Grams"
 msgstr "Grammes"
+
+#: orders/notifications.py:86
+#, python-format
+msgid "Order #%(number)s received – SwedeSweets"
+msgstr "Commande n° %(number)s reçue – SwedeSweets"
+
+#: orders/notifications.py:88
+#, python-format
+msgid "Thank you for your order #%(number)s – SwedeSweets"
+msgstr "Merci pour votre commande n° %(number)s – SwedeSweets"
 
 #: products/models.py:68
 msgid "Box"
@@ -1258,36 +1270,6 @@ msgstr "Modifier les informations du magasin"
 
 #: templates/business_portal/includes/account_details_panel.html:78
 #: templates/includes/ops_footer.html:29
-msgid "Hello %(name)s,"
-msgstr "Bonjour %(name)s,"
-
-msgid "Thank you, we have received your order #%(number)s. We will pack it and deliver it as agreed."
-msgstr "Merci, nous avons bien reçu votre commande n° %(number)s. Nous la préparons et la livrons comme convenu."
-
-msgid "Thank you for your order #%(number)s. Your payment has gone through, and we will pack and deliver your order as soon as we can."
-msgstr "Merci pour votre commande n° %(number)s. Votre paiement a bien été accepté ; nous préparons et livrons votre commande dès que possible."
-
-msgid "Your orders"
-msgstr "Vos commandes"
-
-msgid "Questions? Just reply to this email."
-msgstr "Une question ? Répondez simplement à cet e-mail."
-
-msgid "Order #%(number)s received – SwedeSweets"
-msgstr "Commande n° %(number)s reçue – SwedeSweets"
-
-msgid "Thank you for your order #%(number)s – SwedeSweets"
-msgstr "Merci pour votre commande n° %(number)s – SwedeSweets"
-
-msgid "Order #%(number)s"
-msgstr "Commande n° %(number)s"
-
-msgid "We have received your order"
-msgstr "Nous avons bien reçu votre commande"
-
-msgid "Thank you for your order!"
-msgstr "Merci pour votre commande !"
-
 msgid "Log out"
 msgstr "Se déconnecter"
 
@@ -1404,6 +1386,61 @@ msgstr "Enregistrer les modifications"
 #: templates/ops_portal/products/product_form.html:29
 msgid "Cancel"
 msgstr "Annulée"
+
+#: templates/emails/order_placed_buyer.html:34
+#, python-format
+msgid "Order #%(number)s"
+msgstr "Commande n° %(number)s"
+
+#: templates/emails/order_placed_buyer.html:37
+msgid "We have received your order"
+msgstr "Nous avons bien reçu votre commande"
+
+#: templates/emails/order_placed_buyer.html:37
+msgid "Thank you for your order!"
+msgstr "Merci pour votre commande !"
+
+#: templates/emails/order_placed_buyer.html:48
+#: templates/emails/order_placed_buyer.txt:1
+#, python-format
+msgid "Hello %(name)s,"
+msgstr "Bonjour %(name)s,"
+
+#: templates/emails/order_placed_buyer.html:49
+#: templates/emails/order_placed_buyer.txt:3
+#, python-format
+msgid ""
+"Thank you, we have received your order #%(number)s. We will pack it and "
+"deliver it as agreed."
+msgstr ""
+"Merci, nous avons bien reçu votre commande n° %(number)s. Nous la préparons "
+"et la livrons comme convenu."
+
+#: templates/emails/order_placed_buyer.html:49
+#: templates/emails/order_placed_buyer.txt:3
+#, python-format
+msgid ""
+"Thank you for your order #%(number)s. Your payment has gone through, and we "
+"will pack and deliver your order as soon as we can."
+msgstr ""
+"Merci pour votre commande n° %(number)s. Votre paiement a bien été accepté ; "
+"nous préparons et livrons votre commande dès que possible."
+
+#: templates/emails/order_placed_buyer.html:62
+#: templates/emails/order_placed_buyer.txt:7
+#: templates/storefront/checkout/review.html:29
+msgid "Total"
+msgstr "Total"
+
+#: templates/emails/order_placed_buyer.html:75
+#: templates/emails/order_placed_buyer.txt:12
+msgid "Your orders"
+msgstr "Vos commandes"
+
+#: templates/emails/order_placed_buyer.html:85
+#: templates/emails/order_placed_buyer.txt:14
+msgid "Questions? Just reply to this email."
+msgstr "Une question ? Répondez simplement à cet e-mail."
 
 #: templates/includes/catalog/grid.html:15
 msgid "Added"
@@ -1882,10 +1919,6 @@ msgid ""
 msgstr ""
 "Un paiement est en cours pour cette commande. Poursuivez-le ou annulez-le "
 "pour modifier votre commande."
-
-#: templates/storefront/checkout/review.html:29
-msgid "Total"
-msgstr "Total"
 
 #: templates/storefront/checkout/review.html:54
 msgid "Redirecting to secure payment…"
