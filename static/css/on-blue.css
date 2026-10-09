@@ -68,6 +68,17 @@ body.on-blue {
   justify-self: end;
 }
 
+/* Past the door (the shop's first details): the logo smaller, at the
+   left where the navbar keeps it, so the form leads. */
+.entrance-header--aside .entrance-header__brand {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.entrance-header--aside .entrance-header__brand img {
+  width: clamp(4.5rem, min(22vw, 11dvh), 6.5rem);
+}
+
 .entrance-header__brand:focus-visible {
   outline: 2px solid var(--on-blue-mark);
   outline-offset: 4px;
@@ -167,10 +178,26 @@ body.on-blue {
 
 
 /* The shop's first visit (business_portal/store_onboarding.html): the
-   line under the title, a little apart from it. */
+   line under the title, a little apart from it; and more fields than a
+   login, so the same wider room before the fields as after them. */
 .onboarding__note {
   margin-top: var(--space-3);
   line-height: 1.5;
+}
+
+@media (min-height: 400px) {
+  .page.page--onboarding > .page__header,
+  .page.page--auth.page--onboarding > .page__actions {
+    --onboarding-gap: clamp(var(--space-6), 5dvh, var(--space-10));
+  }
+
+  .page.page--onboarding > .page__header {
+    margin-bottom: var(--onboarding-gap);
+  }
+
+  .page.page--auth.page--onboarding > .page__actions {
+    margin-top: var(--onboarding-gap);
+  }
 }
 
 

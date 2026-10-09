@@ -4,13 +4,15 @@
 {% comment %}
 Shared frame for login and password reset: the blue of the start page,
 the way in. The cream logo at the top in the middle (home), the language
-on the right, nothing else; the form under it (css/on-blue.css).
+on the right, nothing else; the form under it (css/on-blue.css). A page
+past the door (the shop's first details) sets entrance_header_modifier
+to " entrance-header--aside": the logo smaller, at the left.
 {% endcomment %}
 
 {% block body_attrs %} class="on-blue"{% endblock %}
 
 {% block navbar %}
-<header class="entrance-header">
+<header class="entrance-header{% block entrance_header_modifier %}{% endblock %}">
   <a
     class="entrance-header__brand"
     href="{% url 'index' %}"

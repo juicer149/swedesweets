@@ -12,9 +12,12 @@ Log out sits under the button.
 
 {% block title %}{% trans "Complete your shop details" %} | SwedeSweets{% endblock %}
 
+{# Past the door now: the logo smaller and at the left, the form leads. #}
+{% block entrance_header_modifier %} entrance-header--aside{% endblock %}
+
 {% block content %}
 <section class="screen" aria-labelledby="onboarding-title">
-  <form class="page page--auth page--wide" method="post" novalidate>
+  <form class="page page--auth page--wide page--onboarding" method="post" novalidate>
     {% csrf_token %}
 
     <header class="page__header">
