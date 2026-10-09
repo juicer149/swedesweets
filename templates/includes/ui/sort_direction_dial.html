@@ -1,0 +1,12 @@
+{% comment %}
+The inside of the sort direction toggle (.sort-direction-button): a round
+dial with an arrow. Its button's data-direction ("asc" / "desc") colours
+it and turns the arrow (css/table-controls.css): up and yellow on blue for
+ascending, down and blue on yellow for descending.
+{% endcomment %}
+<span class="sort-direction-button__dial" aria-hidden="true">
+  <svg class="sort-direction-button__arrow" viewBox="0 0 24 24" fill="none" focusable="false">
+    <path d="M12 18.5V6" />
+    <path d="M6.75 11.25 12 6l5.25 5.25" />
+  </svg>
+</span>

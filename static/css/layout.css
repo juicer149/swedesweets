@@ -259,13 +259,31 @@ body:has(.screen) .ops-footer {
   min-height: 3rem;
 }
 
+/* Phones: the page's action first, the whole width, as on the pages with
+   tabs (.section-nav-row__action); then the filters and the search. The
+   toolbar lets go of its two children so they can take their places in
+   the list section's column. */
 @media (max-width: 767px) {
   .list-toolbar {
     margin-block: var(--space-4) var(--space-3);
   }
 
-  .list-toolbar__action.button {
+  .list-section:has(> .list-toolbar > .list-toolbar__action) {
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--space-3);
+  }
+
+  .list-section > .list-toolbar:has(> .list-toolbar__action) {
+    display: contents;
+  }
+
+  .list-toolbar > .list-toolbar__action.button {
+    order: -1;
+    width: 100%;
     min-height: 42px;
+    margin-bottom: var(--space-4);
+    justify-content: center;
   }
 }
 

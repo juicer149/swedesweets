@@ -87,10 +87,11 @@
           class="filter-chip sort-direction-button"
           type="button"
           data-order-sort-direction
+          data-direction="asc"
           aria-label="{% trans 'Change sort direction' %}"
           title="{% trans 'Change sort direction' %}"
         >
-          ↓
+          {% include "includes/ui/sort_direction_dial.html" %}
         </button>
       </div>
     </div>

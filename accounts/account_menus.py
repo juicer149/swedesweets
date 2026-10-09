@@ -27,6 +27,9 @@ class AccountMenuItem:
     label: str
     route_name: str
     icon: str = ""
+    # The word a phone has room for, beside the icon (staff's switch);
+    # without it a phone shows the icon alone.
+    short_label: str = ""
 
     @property
     def href(self) -> str:
@@ -48,13 +51,15 @@ BUSINESS_ACCOUNT_MENU_ITEM = AccountMenuItem(
 OPS_DASHBOARD_MENU_ITEM = AccountMenuItem(
     label=_("Ops dashboard"),
     route_name="ops_dashboard",
-    icon="inventory",
+    icon="wrench",
+    short_label=_("Ops"),
 )
 
 PUBLIC_SITE_MENU_ITEM = AccountMenuItem(
     label=_("Public site"),
     route_name="storefront:product_list",
-    icon="lollipop",
+    icon="storefront",
+    short_label=_("Public site"),
 )
 
 

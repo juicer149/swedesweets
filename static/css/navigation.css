@@ -661,13 +661,60 @@
     margin-right: 0.35rem;
   }
 
-  .site-nav__account-link > span:last-child {
+  .site-nav__account-link > .site-nav__account-label {
     position: absolute;
     width: 1px;
     height: 1px;
     overflow: hidden;
     clip: rect(0 0 0 0);
     white-space: nowrap;
+  }
+
+  /* Staff's switch (Public site / Ops) keeps a word beside its icon, so
+     it reads as the way between the two: a small outlined pill, like the
+     language buttons next to it. The full label stays for screen
+     readers. */
+  .site-nav__auth .site-nav__account-link--worded {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+
+    min-height: 2rem;
+    padding: 0.3rem 0.65rem 0.3rem 0.5rem;
+
+    color: var(--color-primary-800);
+    border: 1px solid var(--color-primary-800);
+    border-radius: var(--radius-pill);
+
+    font-size: var(--font-size-12);
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .site-nav__account-link--worded > .site-nav__account-label--short {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+  }
+
+  .site-nav__account-link--worded > .site-nav__account-label--short::after {
+    content: none;
+  }
+
+  .site-nav__account-link--worded .site-nav__icon {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+/* Wide screens: the full label; the phone's word is not needed. */
+@media (min-width: 768px) {
+  .site-nav__account-label--short {
+    display: none;
   }
 }
 

@@ -1,12 +1,13 @@
 {% extends "storefront/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% trans "About us" %} | SwedeSweets{% endblock %}
 
 {% block content %}
 {% comment %}
-  Who we are: a short story in the founders' voice. Pictures can join it
-  when the image flow is in place.
+  Who we are: a short story in the founders' voice, and under it a
+  picture from the mountains (static/images, its Instagram tag painted
+  out of the sky).
 {% endcomment %}
 <section class="page-section" aria-labelledby="about-title">
   <article class="page page--centered about">
@@ -21,6 +22,17 @@
     </div>
 
     <p class="display-title about__signoff">{% trans "Come and make your own bag." %}</p>
+
+    {# Fading into the page at its edges, like a memory of the mountain. #}
+    <img
+      class="about__photo"
+      src="{% static 'images/about-sweets-in-the-snow.webp' %}"
+      alt="{% trans 'A handful of our sweets held up in the snow, high above the clouds in the mountains.' %}"
+      width="1080"
+      height="1351"
+      loading="lazy"
+      decoding="async"
+    >
   </article>
 </section>
 {% endblock %}

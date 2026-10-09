@@ -107,6 +107,12 @@
     }
 
     event.preventDefault();
+
+    // Turn the dial at once; the list that comes back has it this way too.
+    directionButton.dataset.direction = (
+      directionButton.dataset.direction === "desc" ? "asc" : "desc"
+    );
+
     navigate(directionButton.href);
   });
 

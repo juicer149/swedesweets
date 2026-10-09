@@ -847,6 +847,9 @@ span.icon-rows__link .icon-rows__icon {
 
 .display-title--faq {
   margin-bottom: clamp(var(--space-4), 3dvh, var(--space-6));
+  /* A shade lighter than the other display titles: alone over the
+     questions, it can be the brightest thing on the page. */
+  color: var(--color-accent-600);
   font-size: clamp(3.75rem, 20vw, 6rem);
   word-spacing: -0.25em;
   text-align: center;
@@ -878,6 +881,27 @@ span.icon-rows__link .icon-rows__icon {
 
 .about__text p {
   margin: 0;
+}
+
+/* The photo under the last line: its edges dissolve into the page, a
+   little dreamy, so it reads as part of the page rather than a framed
+   picture. */
+.about__photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: clamp(var(--space-5), 4dvh, var(--space-8));
+
+  /* Two soft fades (sides, top and foot) laid over each other: a picture
+     with no hard edge anywhere, still mostly a rectangle. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 16%, #000 84%, transparent),
+    linear-gradient(to bottom, transparent, #000 14%, #000 80%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 16%, #000 84%, transparent),
+    linear-gradient(to bottom, transparent, #000 14%, #000 80%, transparent);
+  mask-composite: intersect;
 }
 
 /* The last line, in the title's style, left in line with the story. */

@@ -83,18 +83,84 @@ select.sort-select.ts-hidden-accessible {
   border: 0 !important;
 }
 
+/* The direction toggle: a square button like the field beside it, with a
+   round dial in it. Ascending: a yellow arrow up on blue. Descending: the
+   colours swap and the arrow turns down (data-direction; the click turns
+   it at once, before the list comes back: async_list.js). */
 .sort-direction-button {
-  width: 56px;
-  min-width: 56px;
-  min-height: 56px;
-  padding-inline: 0;
+  --sort-size: clamp(2.75rem, 12vw, 3.25rem);
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-grid;
+  place-items: center;
 
-  font-size: var(--font-size-20);
-  line-height: 1;
+  width: var(--sort-size);
+  min-width: var(--sort-size);
+  height: var(--sort-size);
+  min-height: var(--sort-size);
+  padding: 0;
+
+  background: var(--color-neutral-50);
+  border: 1.5px solid var(--color-primary-500);
+  border-radius: var(--radius-control);
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    border-color var(--motion-fast),
+    box-shadow var(--motion-fast);
+}
+
+.sort-direction-button:focus-visible {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: 3px;
+}
+
+.sort-direction-button:active {
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.14);
+}
+
+.sort-direction-button__dial {
+  display: grid;
+  place-items: center;
+
+  width: calc(var(--sort-size) * 0.66);
+  height: calc(var(--sort-size) * 0.66);
+
+  color: var(--color-accent-500);
+  background: var(--color-primary-700);
+  border-radius: 50%;
+
+  transition:
+    background 220ms ease,
+    color 220ms ease;
+}
+
+.sort-direction-button__arrow {
+  width: 62%;
+  height: 62%;
+
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  transition: transform 260ms cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+
+.sort-direction-button[data-direction="desc"] .sort-direction-button__dial {
+  color: var(--color-primary-800);
+  background: var(--color-accent-500);
+}
+
+.sort-direction-button[data-direction="desc"] .sort-direction-button__arrow {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sort-direction-button__dial,
+  .sort-direction-button__arrow {
+    transition: none;
+  }
 }
 
 .sort-arrow {
@@ -135,6 +201,10 @@ select.sort-select.ts-hidden-accessible {
 .sort-control .ts-control .item {
   display: flex;
   align-items: center;
+  /* Not the whole width (enhanced-selects.css): only as wide as the
+     words, so they sit in the middle. */
+  flex: 0 1 auto;
+  width: auto;
   min-height: 100%;
 }
 
@@ -202,11 +272,10 @@ select.sort-select.ts-hidden-accessible {
     flex: 0 0 auto;
   }
 
-  /* Narrower than the screen and centred, like the chips above it. */
+  /* The whole width: the field and the toggle beside it. */
   .sort-control {
     display: grid;
-    width: min(100%, 20rem);
-    margin-inline: auto;
+    width: 100%;
   }
 }
 
@@ -232,26 +301,25 @@ select.sort-select.ts-hidden-accessible {
     margin-bottom: var(--space-4);
   }
 
+  /* Squarer, with a primary outline; the chosen sort in the middle; as
+     tall as the toggle beside it, both growing a little with the phone. */
   .sort-control__field {
-    grid-template-columns: minmax(0, 1fr) 44px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
     gap: var(--space-2);
   }
 
   select.sort-select,
   .sort-control .ts-control {
-    min-height: 44px;
-    font-size: var(--font-size-14);
+    min-height: clamp(2.75rem, 12vw, 3.25rem);
+    background: var(--color-neutral-50);
+    border: 1.5px solid var(--color-primary-500);
+    border-radius: var(--radius-control);
+    font-size: clamp(0.9rem, 3.8vw, 1.0625rem);
   }
 
   .sort-control .ts-control {
-    padding: 0 2rem;
-  }
-
-  .sort-direction-button {
-    width: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    font-size: var(--font-size-16);
+    padding: 0 clamp(1.75rem, 8vw, 2.4rem);
   }
 
   .sort-control .ts-dropdown .option {

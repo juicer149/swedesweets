@@ -402,11 +402,8 @@
     }
 
     if (sortDirectionButton) {
-      sortDirectionButton.textContent = (
-        sortState.direction === "asc"
-          ? "↓"
-          : "↑"
-      );
+      // The dial shows the direction now (css/table-controls.css).
+      sortDirectionButton.dataset.direction = sortState.direction;
     }
   }
 

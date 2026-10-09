@@ -3,7 +3,7 @@
   Expects: item (AccountMenuItem), request.
 {% endcomment %}
 <a
-  class="site-nav__link site-nav__account-link"
+  class="site-nav__link site-nav__account-link{% if item.short_label %} site-nav__account-link--worded{% endif %}"
   href="{{ item.href }}"
   {% if request.resolver_match.view_name == item.route_name %}aria-current="page"{% endif %}
 >
@@ -13,5 +13,8 @@
     </span>
   {% endif %}
 
-  <span>{{ item.label }}</span>
+  <span class="site-nav__account-label">{{ item.label }}</span>
+  {% if item.short_label %}
+    <span class="site-nav__account-label site-nav__account-label--short" aria-hidden="true">{{ item.short_label }}</span>
+  {% endif %}
 </a>

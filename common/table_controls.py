@@ -85,6 +85,9 @@ class MobileSortDirection:
     label: str
     symbol: str
     url: str
+    # The direction the list is in now ("asc" or "desc"): the toggle shows
+    # it (its arrow up or down); label and url are the other one.
+    current: str = "asc"
 
 
 @dataclass(frozen=True)
@@ -232,6 +235,7 @@ class TableControls:
                     direction=next_direction,
                 ),
             ),
+            current=active_direction,
         )
 
     def _build_url(

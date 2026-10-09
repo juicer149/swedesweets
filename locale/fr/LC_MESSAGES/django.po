@@ -1456,6 +1456,12 @@ msgstr "Q & R"
 msgid "Who we are, you ask?"
 msgstr "Qui sommes-nous, demandez-vous ?"
 
+msgid "A handful of our sweets held up in the snow, high above the clouds in the mountains."
+msgstr "Une poignée de nos bonbons tenue dans la neige, bien au-dessus des nuages, en montagne."
+
+msgid "Ops"
+msgstr "Ops"
+
 msgid "Log out"
 msgstr "Se déconnecter"
 
