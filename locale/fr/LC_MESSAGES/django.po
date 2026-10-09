@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 18:48+0200\n"
+"POT-Creation-Date: 2026-10-10 01:05+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: accounts/account_menus.py:43
+#: accounts/account_menus.py:46
 #: templates/business_portal/includes/account_section_nav.html:3
 #: templates/business_portal/index.html:4
 #: templates/business_portal/index.html:11
@@ -26,11 +26,15 @@ msgstr ""
 msgid "My account"
 msgstr "Mon compte"
 
-#: accounts/account_menus.py:49
+#: accounts/account_menus.py:52
 msgid "Ops dashboard"
 msgstr "Tableau de bord des opérations"
 
 #: accounts/account_menus.py:55
+msgid "Ops"
+msgstr "Ops"
+
+#: accounts/account_menus.py:59 accounts/account_menus.py:62
 msgid "Public site"
 msgstr "Site public"
 
@@ -306,7 +310,7 @@ msgstr "Catalogue"
 #: templates/business_portal/includes/account_details_panel.html:50
 #: templates/business_portal/store_edit.html:31
 #: templates/storefront/find_sweets.html:4
-#: templates/storefront/find_sweets.html:15
+#: templates/storefront/find_sweets.html:16
 msgid "Find Sweets"
 msgstr "Où acheter"
 
@@ -378,7 +382,7 @@ msgstr "Annulée"
 
 #: business_portal/orders/detail_viewmodels.py:190
 #: templates/business_portal/includes/orders_panel.html:71
-#: templates/business_portal/includes/orders_panel.html:133
+#: templates/business_portal/includes/orders_panel.html:134
 msgid "Created"
 msgstr "Créée"
 
@@ -607,7 +611,7 @@ msgstr "Non affichée"
 
 #: business_portal/store/forms.py:153
 #: templates/business_portal/includes/orders_panel.html:78
-#: templates/business_portal/includes/orders_panel.html:156
+#: templates/business_portal/includes/orders_panel.html:157
 msgid "Status"
 msgstr "Statut"
 
@@ -1319,7 +1323,7 @@ msgid "Edit store information"
 msgstr "Modifier les informations du magasin"
 
 #: templates/business_portal/includes/account_section_nav.html:4
-#: templates/business_portal/includes/orders_panel.html:267
+#: templates/business_portal/includes/orders_panel.html:268
 msgid "Orders"
 msgstr "Commandes"
 
@@ -1336,38 +1340,38 @@ msgid "Order by"
 msgstr "Trier par"
 
 #: templates/business_portal/includes/orders_panel.html:67
-#: templates/business_portal/includes/orders_panel.html:112
+#: templates/business_portal/includes/orders_panel.html:113
 #: templates/business_portal/orders/cart.html:4
 #: templates/business_portal/orders/cart.html:15
 msgid "Order"
 msgstr "Commande"
 
 #: templates/business_portal/includes/orders_panel.html:82
-#: templates/business_portal/includes/orders_panel.html:180
+#: templates/business_portal/includes/orders_panel.html:181
 #: templates/includes/ui/quantity_stepper.html:17
 #: templates/includes/ui/quantity_stepper.html:31
 #: templates/includes/ui/quantity_stepper.html:37
 msgid "Quantity"
 msgstr "Quantité"
 
-#: templates/business_portal/includes/orders_panel.html:90
 #: templates/business_portal/includes/orders_panel.html:91
+#: templates/business_portal/includes/orders_panel.html:92
 msgid "Change sort direction"
 msgstr "Modifier le sens du tri"
 
-#: templates/business_portal/includes/orders_panel.html:207
+#: templates/business_portal/includes/orders_panel.html:208
 #, python-format
 msgid "View order #%(order_id)s"
 msgstr "Voir la commande n° %(order_id)s"
 
-#: templates/business_portal/includes/orders_panel.html:211
+#: templates/business_portal/includes/orders_panel.html:212
 #, python-format
 msgid "#%(order_id)s"
 msgstr "n° %(order_id)s"
 
-#: templates/business_portal/includes/orders_panel.html:237
-#: templates/business_portal/includes/orders_panel.html:251
-#: templates/business_portal/includes/orders_panel.html:300
+#: templates/business_portal/includes/orders_panel.html:238
+#: templates/business_portal/includes/orders_panel.html:252
+#: templates/business_portal/includes/orders_panel.html:301
 msgid "No orders found."
 msgstr "Aucune commande trouvée."
 
@@ -1450,18 +1454,6 @@ msgstr "Enregistrer et commencer à commander"
 
 #: templates/business_portal/store_onboarding.html:51
 #: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
-msgid "Q & A"
-msgstr "Q & R"
-
-msgid "Who we are, you ask?"
-msgstr "Qui sommes-nous, demandez-vous ?"
-
-msgid "A handful of our sweets held up in the snow, high above the clouds in the mountains."
-msgstr "Une poignée de nos bonbons tenue dans la neige, bien au-dessus des nuages, en montagne."
-
-msgid "Ops"
-msgstr "Ops"
-
 msgid "Log out"
 msgstr "Se déconnecter"
 
@@ -1904,11 +1896,11 @@ msgstr "Réinitialiser le mot de passe"
 msgid "Send reset link"
 msgstr "Envoyer le lien de réinitialisation"
 
-#: templates/storefront/about.html:13
-msgid "Who we are"
-msgstr "Qui sommes-nous"
+#: templates/storefront/about.html:15
+msgid "Who we are, you ask?"
+msgstr "Qui sommes-nous, demandez-vous ?"
 
-#: templates/storefront/about.html:16
+#: templates/storefront/about.html:19
 msgid ""
 "We're Marco Sandelgård and Milo Sandelgård Bascoulergue, two cousins who "
 "grew up in Chamonix with one foot in France and one in Sweden."
@@ -1916,7 +1908,7 @@ msgstr ""
 "Nous sommes Marco Sandelgård et Milo Sandelgård Bascoulergue, deux cousins "
 "qui ont grandi à Chamonix, un pied en France et l'autre en Suède."
 
-#: templates/storefront/about.html:17
+#: templates/storefront/about.html:20
 msgid ""
 "In Sweden, sweets mean lösgodis: a wall of loose candy, a paper bag, and the "
 "serious business of choosing exactly what goes in it. Sour strips, salty "
@@ -1927,7 +1919,7 @@ msgstr ""
 "met. Lanières acidulées, réglisse salée, gommes aux fruits, chocolat. Chacun "
 "a son propre mélange."
 
-#: templates/storefront/about.html:18
+#: templates/storefront/about.html:21
 msgid ""
 "We missed it in France. So we started SwedeSweets to bring the real thing "
 "here: the Swedish pick & mix we grew up with, straight from Sweden."
@@ -1936,9 +1928,17 @@ msgstr ""
 "ici le vrai : les bonbons suédois en vrac de notre enfance, directement de "
 "Suède."
 
-#: templates/storefront/about.html:21
+#: templates/storefront/about.html:24
 msgid "Come and make your own bag."
 msgstr "Venez composer votre propre sachet."
+
+#: templates/storefront/about.html:30
+msgid ""
+"A handful of our sweets held up in the snow, high above the clouds in the "
+"mountains."
+msgstr ""
+"Une poignée de nos bonbons tenue dans la neige, bien au-dessus des nuages, "
+"en montagne."
 
 #: templates/storefront/cart.html:21
 msgid ""
@@ -2099,24 +2099,30 @@ msgid "Edit details"
 msgstr "Modifier les informations"
 
 #: templates/storefront/faq.html:18
-msgid "Frequently asked questions"
-msgstr "Questions fréquentes"
+msgid "Q & A"
+msgstr "Q & R"
 
-#: templates/storefront/faq.html:43
+#: templates/storefront/faq.html:44
 msgid "Still have questions? Contact us"
 msgstr "Encore des questions ? Contactez-nous"
 
-#: templates/storefront/find_sweets.html:19
+#: templates/storefront/find_sweets.html:20
 msgid "Shops"
 msgstr "Boutiques"
 
-#: templates/storefront/find_sweets.html:25
+#: templates/storefront/find_sweets.html:26
 msgid "No shops are listed yet."
 msgstr "Aucune boutique n'est encore listée."
 
 #: templates/storefront/landing.html:20 templates/storefront/landing.html:64
 msgid "Sweden’s sweetest tradition"
 msgstr "La plus douce tradition suédoise"
+
+#~ msgid "Who we are"
+#~ msgstr "Qui sommes-nous"
+
+#~ msgid "Frequently asked questions"
+#~ msgstr "Questions fréquentes"
 
 #~ msgid "Owner"
 #~ msgstr "Propriétaire"
