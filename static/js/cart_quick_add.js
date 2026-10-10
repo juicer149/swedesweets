@@ -132,9 +132,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // As in the catalog (catalog.js): the navbar's cart catches the product
+  // a moment after the bag appears, so the two overlap a little.
+  const CART_CATCH_DELAY = 450;
+
   // Lines the server drew ({cart_line_id, quantity, line_html}) go in
-  // place; each glows, the first in view; the navbar cart catches up.
-  function showAddedLines(lines) {
+  // place; each glows, the first in view; the navbar cart catches up
+  // (after catchDelay ms: with the burst, CART_CATCH_DELAY).
+  function showAddedLines(lines, { catchDelay = 0 } = {}) {
     const placed = lines
       .map((item) => placeLine(item.line_html, item.cart_line_id))
       .filter(Boolean);
@@ -146,11 +151,17 @@ document.addEventListener("DOMContentLoaded", () => {
       placed.forEach(glow);
     }
 
-    notifyCartChanged({
+    const catchIt = () => notifyCartChanged({
       lineId: lines.length === 1 ? lines[0].cart_line_id : null,
       quantity: lines.length === 1 ? lines[0].quantity : null,
       bump: true,
     });
+
+    if (catchDelay > 0) {
+      window.setTimeout(catchIt, catchDelay);
+    } else {
+      catchIt();
+    }
   }
 
   /* Quick add */
@@ -294,7 +305,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
           return payload;
         },
-        (payload) => showAddedLines([payload])
+        (payload) => showAddedLines(
+          [payload],
+          { catchDelay: CART_CATCH_DELAY }
+        )
       );
     } else {
       await runWithBurst(
@@ -311,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return { lines, notes };
         },
         ({ lines, notes }) => {
-          showAddedLines(lines);
+          showAddedLines(lines, { catchDelay: CART_CATCH_DELAY });
           setNote(form, notes);
         }
       );
