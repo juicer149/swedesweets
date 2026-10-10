@@ -46,6 +46,8 @@ BUSINESS_ACCOUNT_MENU_ITEM = AccountMenuItem(
     label=_("My account"),
     route_name="business_portal:index",
     icon="users",
+    # A shop finds its orders and details here: the words on a phone too.
+    short_label=_("My account"),
 )
 
 OPS_DASHBOARD_MENU_ITEM = AccountMenuItem(

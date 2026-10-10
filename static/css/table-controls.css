@@ -105,7 +105,8 @@ select.sort-select.ts-hidden-accessible {
   padding: 0;
 
   background: transparent;
-  border: 1.5px solid var(--color-primary-500);
+  /* a light blue edge, like the field beside it: present, not calling */
+  border: 1.5px solid var(--color-primary-300);
   border-radius: var(--radius-control);
   overflow: hidden;
 
@@ -326,7 +327,7 @@ select.sort-select.ts-hidden-accessible {
   .sort-control .ts-control {
     min-height: clamp(2.75rem, 12vw, 3.25rem);
     background: var(--color-neutral-50);
-    border: 1.5px solid var(--color-primary-500);
+    border: 1.5px solid var(--color-primary-300);
     border-radius: var(--radius-control);
     font-size: clamp(0.9rem, 3.8vw, 1.0625rem);
   }

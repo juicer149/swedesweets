@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from accounts.roles import RoleSpec
 from common.page_header import PageHeader, PageHeaderAction
+from common.table_controls import QuickJumpOption, QuickJumpSearch
 from common.table_tools import build_query_url
 from common.ui import (
     StatusPresentation,
@@ -92,6 +93,28 @@ def build_order_page_rows(
         )
         for order in orders
     ]
+
+
+def build_order_quick_jump_search(
+    rows: list[OrderPageRow],
+) -> QuickJumpSearch:
+    """Jump straight to an order in the list shown: by its number or the
+    customer's name ("#31 · Café Blanc")."""
+
+    return QuickJumpSearch(
+        title="Find",
+        title_id="orders-quick-jump-title",
+        select_id="orders-quick-jump",
+        placeholder="Search by order number or customer",
+        aria_label="Find order",
+        options=[
+            QuickJumpOption(
+                label=row.title,
+                url=row.detail_href,
+            )
+            for row in rows
+        ],
+    )
 
 
 def _build_order_page_row(

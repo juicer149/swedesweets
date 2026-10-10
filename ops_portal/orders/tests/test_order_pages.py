@@ -137,3 +137,16 @@ def test_order_list_shows_table_and_phone_rows(staff_client, placed_order):
     assert row.title == f"#{placed_order.pk} · {placed_order.customer_name}"
     # A placed order opens straight on its pack page, from both views.
     assert content.count(f'"{_url("ops_orders:pack", placed_order)}"') == 2
+
+
+@pytest.mark.django_db
+def test_orders_list_has_a_search_by_number_or_customer(staff_client, placed_order):
+    response = staff_client.get(
+        reverse("ops_orders:index") + f"?channel={placed_order.channel}"
+    )
+    content = response.content.decode()
+
+    search = response.context["quick_jump_search"]
+    (option,) = search.options
+    assert option.label == f"#{placed_order.pk} · {placed_order.customer_name}"
+    assert 'id="orders-quick-jump"' in content

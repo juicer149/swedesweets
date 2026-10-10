@@ -86,6 +86,19 @@ BATCH_SORTS: dict[str, tuple[str, ...]] = {
 }
 
 
+# Sorting by best before or quantity is looking for stock to use: closed
+# batches (no longer stock) would only be in the way. They still show
+# under the default sort, and whenever the list is filtered to them.
+SORTS_WITHOUT_CLOSED_BATCHES = frozenset(
+    {
+        "best_before",
+        "-best_before",
+        "quantity",
+        "-quantity",
+    }
+)
+
+
 @dataclass(frozen=True)
 class BatchListRow:
     batch: InventoryBatch
@@ -175,6 +188,10 @@ def list_batches(
     if status in InventoryBatch.Status.values:
         batches = batches.filter(
             status=status,
+        )
+    elif normalized_sort in SORTS_WITHOUT_CLOSED_BATCHES:
+        batches = batches.exclude(
+            status=InventoryBatch.Status.CLOSED,
         )
 
     return batches.order_by(

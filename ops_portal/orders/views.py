@@ -51,6 +51,7 @@ from ops_portal.orders.forms import (
 from ops_portal.orders.list_viewmodels import (
     build_order_channel_tabs,
     build_order_page_rows,
+    build_order_quick_jump_search,
     build_orders_page_header,
 )
 from ops_portal.orders.services import (
@@ -128,6 +129,11 @@ def index(request):
         )
     )
 
+    order_rows = build_order_page_rows(
+        orders=orders,
+        role_spec=request.role_spec,
+    )
+
     context = {
         "page_header": build_orders_page_header(
             role_spec=request.role_spec,
@@ -135,10 +141,8 @@ def index(request):
         "channel_tabs": build_order_channel_tabs(
             active_channel=channel,
         ),
-        "order_rows": build_order_page_rows(
-            orders=orders,
-            role_spec=request.role_spec,
-        ),
+        "order_rows": order_rows,
+        "quick_jump_search": build_order_quick_jump_search(order_rows),
         "filters": controls.build_filter_links(
             ORDER_FILTERS,
         ),

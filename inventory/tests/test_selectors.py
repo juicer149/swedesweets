@@ -120,6 +120,36 @@ def test_list_batches_filters_by_valid_status(apple, batch_factory):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize(
+    "sort", ["best_before", "-best_before", "quantity", "-quantity"]
+)
+def test_sorting_by_best_before_or_quantity_leaves_closed_batches_out(
+    apple, batch_factory, sort
+):
+    open_batch = batch_factory(product=apple, batch_id="A-001")
+    closed_batch = batch_factory(product=apple, batch_id="A-002")
+    closed_batch.close()
+
+    batches = list(list_batches(sort=sort))
+
+    assert open_batch in batches
+    assert closed_batch not in batches
+
+
+@pytest.mark.django_db
+def test_closed_batches_show_under_the_default_sort_and_their_filter(
+    apple, batch_factory
+):
+    closed_batch = batch_factory(product=apple, batch_id="A-002")
+    closed_batch.close()
+
+    assert closed_batch in list(list_batches())
+    assert closed_batch in list(
+        list_batches(status=InventoryBatch.Status.CLOSED, sort="best_before")
+    )
+
+
+@pytest.mark.django_db
 def test_list_batch_rows_adds_expiry_info(apple, batch_factory):
     batch_factory(
         product=apple,
