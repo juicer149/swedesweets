@@ -27,30 +27,64 @@
   display: none;
 }
 
-/* A line just added: a green glow that fades out. A layer of its own
-   behind the row: a little wider than the row, so it has room around the
-   picture and the trash, rounded, and a little inside the hairlines above
-   and below. */
-.line--added {
+/* A flash behind a line (line_flash.js): green as it comes in, fading
+   out; red while it goes, before it fades and folds away. A layer of its
+   own behind the row, a little wider than it (room around the picture and
+   the trash; --line-flash-room), rounded, and a little inside the
+   hairlines above and below. Only the colour and the timing differ. */
+.line-flash {
   position: relative;
   isolation: isolate;
 }
 
-.line--added::before {
+.line-flash::before {
   content: "";
   position: absolute;
   z-index: -1;
   inset-block: var(--space-1);
-  inset-inline: calc(-1 * var(--space-3));
+  inset-inline: var(--line-flash-room, calc(-1 * var(--space-3)));
 
-  background: rgb(var(--color-status-success) / 0.18);
+  background: rgb(var(--line-flash-color) / 0.18);
   border-radius: var(--radius-card-inner);
+  opacity: 0;
   pointer-events: none;
-
-  animation: line-added 1.6s ease-out forwards;
 }
 
-@keyframes line-added {
+.line-flash--added {
+  --line-flash-color: var(--color-status-success);
+}
+
+.line-flash--added::before {
+  animation: line-flash-out 1.6s ease-out forwards;
+}
+
+.line-flash--removed {
+  --line-flash-color: var(--color-status-danger);
+}
+
+.line-flash--removed::before {
+  animation: line-flash-in 450ms ease-out forwards;
+}
+
+/* The trash that was pressed turns red with it. */
+.line-flash--removed .line__remove-button,
+.line-flash--removed .site-nav-cart-line__remove-button {
+  color: rgb(var(--color-status-danger));
+}
+
+.line-flash--folding {
+  overflow: hidden;
+  padding-block: 0;
+  border-color: transparent;
+  opacity: 0;
+  transition:
+    height 280ms cubic-bezier(0.2, 0, 0, 1),
+    padding 280ms cubic-bezier(0.2, 0, 0, 1),
+    opacity 200ms ease-out,
+    border-color 200ms ease-out;
+}
+
+@keyframes line-flash-out {
   0%,
   25% {
     opacity: 1;
@@ -61,15 +95,35 @@
   }
 }
 
-/* A line on its way out (the trash, while the post is under way). */
-.line--removing {
-  opacity: 0.4;
-  transition: opacity var(--motion-fast);
+@keyframes line-flash-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1.01);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .line--added::before {
+  .line-flash--added::before {
     animation-duration: 0.01ms;
+  }
+
+  .line-flash--removed::before {
+    animation: none;
+    opacity: 1;
+  }
+
+  .line-flash--folding {
+    transition: none;
   }
 }
 

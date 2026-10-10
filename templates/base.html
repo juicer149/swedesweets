@@ -104,6 +104,13 @@
       defer
     ></script>
 
+    {# A line's flash: green as it comes in, red as it goes (a cart, the #}
+    {# navbar cart, the ops order form). #}
+    <script
+      src="{% static 'js/line_flash.js' %}"
+      defer
+    ></script>
+
     {% block scripts %}{% endblock %}
   </body>
 </html>

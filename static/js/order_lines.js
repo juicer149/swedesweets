@@ -94,10 +94,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return wrapper.firstElementChild;
   }
 
-  // A short green glow on the line just added, or the one that got one
-  // more (line_glow.js).
+  // A short green flash on the line just added, or the one that got
+  // more (line_flash.js).
   function glowOrderLine(orderLine) {
-    window.glowLine?.(orderLine);
+    window.lineFlash?.added(orderLine);
   }
 
   function scrollOrderLineIntoView(orderLine) {

@@ -268,42 +268,17 @@
    * Remove mutation
    * ------------------------------------------------------------------
    *
-   * The trash: a red burst over the line while the request runs (at
-   * least REMOVE_BURST_MS), then the line fades and folds away, and only
-   * then the server's fragment comes in (the empty cart, when it was the
-   * last), so nothing jumps.
+   * The trash: a red flash over the line while the request runs, then
+   * the line fades and folds away (line_flash.js), and only then the
+   * server's fragment comes in (the empty cart, when it was the last),
+   * so nothing jumps.
    *
    * Success:
-   *   red burst -> fades and folds -> removed -> fragment refresh
+   *   red flash -> fades and folds -> removed -> fragment refresh
    *
    * Failure:
-   *   red burst -> the line as it was
+   *   red flash -> the line as it was
    */
-
-  const REMOVE_BURST_MS = 450;
-  const REMOVE_FOLD_MS = 280;
-
-  const reducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  );
-
-  const pause = (ms) => new Promise(
-    (resolve) => window.setTimeout(
-      resolve,
-      reducedMotion.matches ? 0 : ms
-    )
-  );
-
-  // The line's height goes from what it is to nothing, so the lines
-  // below (or the empty cart) move up smoothly.
-  async function foldAway(line) {
-    line.style.height = `${line.offsetHeight}px`;
-    void line.offsetHeight;
-    line.classList.add("is-folding");
-    line.style.height = "0px";
-    await pause(REMOVE_FOLD_MS);
-  }
-
 
   async function removeNavbarCartLine(
     form
@@ -339,10 +314,7 @@
       submitButton.disabled = true;
     }
 
-    line.classList.add("is-removing");
-    const burst = pause(REMOVE_BURST_MS);
-
-    try {
+    const request = async () => {
       const response = await fetch(
         form.action,
         {
@@ -369,8 +341,18 @@
         );
       }
 
-      await burst;
-      await foldAway(line);
+      return payload;
+    };
+
+    try {
+      if (window.lineFlash) {
+        await window.lineFlash.remove(
+          line,
+          request
+        );
+      } else {
+        await request();
+      }
 
       navbarCartLineRemove(
         form
@@ -386,9 +368,6 @@
         preserveOpenState: true,
       });
     } catch (error) {
-      line.classList.remove("is-removing", "is-folding");
-      line.style.height = "";
-
       navbarCartLineShow(
         line
       );

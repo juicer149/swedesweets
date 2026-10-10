@@ -458,74 +458,10 @@
   border-bottom: 1px solid var(--color-neutral-200);
 }
 
-/* The trash (navbar-cart.js): a red burst over the line while it is
-   removed, as the green one glows over a line just added; then the line
-   fades and folds away (its height is set and run to 0 by the script). */
+/* The trash's red flash (line_flash.js, lines.css) a little closer in,
+   in the popover's narrower room. */
 .site-nav-cart-line {
-  position: relative;
-  isolation: isolate;
-}
-
-.site-nav-cart-line::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset-block: var(--space-1);
-  inset-inline: calc(-1 * var(--space-2));
-
-  background: rgb(var(--color-status-danger) / 0.16);
-  border-radius: var(--radius-card-inner);
-  opacity: 0;
-  transform: scale(0.96);
-  pointer-events: none;
-}
-
-.site-nav-cart-line.is-removing::before {
-  animation: navbar-line-removed 450ms ease-out forwards;
-}
-
-@keyframes navbar-line-removed {
-  0% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-
-  40% {
-    opacity: 1;
-    transform: scale(1.01);
-  }
-
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.site-nav-cart-line.is-removing .site-nav-cart-line__remove-button {
-  color: rgb(var(--color-status-danger));
-}
-
-.site-nav-cart-line.is-folding {
-  overflow: hidden;
-  padding-block: 0;
-  border-bottom-color: transparent;
-  opacity: 0;
-  transition:
-    height 280ms cubic-bezier(0.2, 0, 0, 1),
-    padding 280ms cubic-bezier(0.2, 0, 0, 1),
-    opacity 200ms ease-out,
-    border-color 200ms ease-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .site-nav-cart-line.is-removing::before {
-    animation: none;
-    opacity: 1;
-  }
-
-  .site-nav-cart-line.is-folding {
-    transition: none;
-  }
+  --line-flash-room: calc(-1 * var(--space-2));
 }
 
 /* The line itself is the shared read-only line (includes/ui/line_product.html,

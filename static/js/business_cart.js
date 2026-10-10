@@ -9,8 +9,8 @@
  *     its "Order again" puts all the lines it added in place (and says
  *     beside the order which products were left out, and why), both with
  *     the catalog's burst while they run (scoop, then bag);
- *   - the trash: after its question (confirm_action.js) the line is
- *     removed in place.
+ *   - the trash: after its question (confirm_action.js) the line turns
+ *     red, then fades and folds away (line_flash.js).
  *
  * The lines and the empty order are both on the page; whichever fits is
  * shown. The navbar cart refreshes on "cart-changed". Without this script
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  const glow = (line) => window.glowLine?.(line);
+  const glow = (line) => window.lineFlash?.added(line);
 
   function placeLine(html, cartLineId) {
     const template = document.createElement("template");
@@ -341,21 +341,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     line.dataset.removing = "true";
-    line.classList.add("line--removing");
 
-    try {
+    // After the dialog's yes: the line turns red, then fades and folds
+    // away (line_flash.js), as in the navbar cart.
+    const request = async () => {
       const { response, payload } = await postForm(form);
 
       // The cart is locked (an open payment): reload to show it.
       if (response.status === 409) {
         window.location.reload();
-        return;
+        throw new Error("locked");
       }
 
       if (!response.ok || !payload.ok) {
         throw new Error(payload.message || "");
       }
-    } catch {
+
+      return payload;
+    };
+
+    try {
+      if (window.lineFlash) {
+        await window.lineFlash.remove(line, request);
+      } else {
+        await request();
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message === "locked") {
+        return;
+      }
+
       // Post it the plain way: the page comes back with the reason.
       HTMLFormElement.prototype.submit.call(form);
       return;
