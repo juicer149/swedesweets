@@ -4,7 +4,9 @@ from typing import assert_never
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import redirect
+from django.template.loader import render_to_string
 from django.utils.translation import (
     gettext as _,
 )
@@ -14,8 +16,12 @@ from django.utils.translation import (
 from django.views.decorators.http import require_POST
 
 from business.repeat_services import (
+    RepeatOrderResult,
     RepeatOrderSkipReason,
     repeat_order_into_cart,
+)
+from business_portal.orders.cart_viewmodels import (
+    build_portal_cart_lines,
 )
 from business_portal.orders.selectors import (
     get_portal_order_for_user,
@@ -45,6 +51,12 @@ def repeat_order(
         customer=customer,
         source_order=source_order,
     )
+
+    if _wants_json(request):
+        return _repeat_json_response(
+            request,
+            result=result,
+        )
 
     if result.added_count:
         messages.success(
@@ -81,6 +93,61 @@ def repeat_order(
     return redirect(
         "business_portal:order_detail",
         order_id=source_order.id,
+    )
+
+
+def _wants_json(request) -> bool:
+    return "application/json" in request.headers.get("Accept", "")
+
+
+def _repeat_json_response(
+    request,
+    *,
+    result: RepeatOrderResult,
+) -> JsonResponse:
+    """The cart page's "Order again" (cart_quick_add.js): the lines it
+    added or raised, drawn, for the page to put in place; and why any
+    product was left out, to say beside the order."""
+
+    notes = [
+        _skip_message(
+            product_name=translated_product_name(
+                skipped.product,
+                language_code=request.LANGUAGE_CODE,
+            ),
+            reason=skipped.reason,
+        )
+        for skipped in result.skipped
+    ]
+
+    lines = (
+        build_portal_cart_lines(
+            cart=result.cart,
+            cart_line_ids=result.added_line_ids,
+            language_code=request.LANGUAGE_CODE,
+        )
+        if result.cart is not None
+        else ()
+    )
+
+    return JsonResponse(
+        {
+            "ok": result.has_added_lines,
+            "notes": notes,
+            "lines": [
+                {
+                    "cart_line_id": line.cart_line_id,
+                    "quantity": line.quantity,
+                    "line_html": render_to_string(
+                        "business_portal/orders/includes/cart_line.html",
+                        {"line": line},
+                        request=request,
+                    ),
+                }
+                for line in lines
+            ],
+        },
+        status=200 if result.has_added_lines else 400,
     )
 
 

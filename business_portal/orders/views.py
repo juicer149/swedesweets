@@ -41,6 +41,7 @@ from business_portal.orders.detail_viewmodels import (
 from business_portal.orders.quick_add import (
     build_cart_quick_add_options,
 )
+from business_portal.orders.recent_orders import build_recent_orders
 from business_portal.orders.review_viewmodels import (
     build_portal_order_review_context,
 )
@@ -356,8 +357,17 @@ def cart(request):
         cart=cart,
         language_code=request.LANGUAGE_CODE,
     ).as_dict()
-    context["quick_add_options"] = build_cart_quick_add_options(
+    quick_add_options = build_cart_quick_add_options(
         language_code=request.LANGUAGE_CODE,
+    )
+    context["quick_add_options"] = quick_add_options
+    context["recent_orders"] = build_recent_orders(
+        customer=customer,
+        language_code=request.LANGUAGE_CODE,
+        orderable_offer_ids={
+            option.commercial_price_id
+            for option in quick_add_options
+        },
     )
 
     return render(

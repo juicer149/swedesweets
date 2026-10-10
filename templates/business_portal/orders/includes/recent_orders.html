@@ -1,0 +1,77 @@
+{% load i18n %}
+{% comment %}
+  A shop's last few orders above the quick add, folded like the FAQ:
+  one row each with "Order again" beside it; open, its products, each
+  with a "+" when it can still be ordered. cart_quick_add.js adds in
+  place; without it the forms post and the page reloads.
+
+  recent_orders  RecentOrder tuple (business_portal/orders/recent_orders.py)
+{% endcomment %}
+{% if recent_orders %}
+  <section class="recent-orders" aria-labelledby="recent-orders-title">
+    <h2 id="recent-orders-title" class="recent-orders__title">{% trans "Previous orders" %}</h2>
+
+    <div class="recent-orders__list">
+      {% for order in recent_orders %}
+        <div class="recent-order" data-recent-order>
+          <details class="faq__item recent-order__details" data-smooth data-smooth-group="recent-orders">
+            <summary class="faq__question recent-order__summary">
+              <span class="recent-order__heading">
+                <span class="recent-order__title">{{ order.title }}</span>
+                <span class="recent-order__meta">{{ order.date_label }} · {{ order.summary }}</span>
+              </span>
+              {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="faq__chevron" only %}
+            </summary>
+
+            <div class="faq__answer" data-smooth-content>
+              <ul class="lines recent-order__lines">
+                {% for line in order.lines %}
+                  <li class="line">
+                    {% include "includes/ui/line_product.html" with line=line.view only %}
+
+                    <span class="line__quantity-label">{{ line.view.aside }}</span>
+
+                    {% if line.commercial_price_id %}
+                      <form
+                        class="recent-order__add"
+                        method="post"
+                        action="{% url 'business_portal:add_cart_offer' %}"
+                        data-cart-add-offer
+                      >
+                        {% csrf_token %}
+                        <input type="hidden" name="commercial_price_id" value="{{ line.commercial_price_id }}">
+                        <button
+                          class="recent-order__add-button"
+                          type="submit"
+                          aria-label="{% blocktrans with product=line.name %}Add {{ product }} to order{% endblocktrans %}"
+                        >
+                          {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
+                        </button>
+                      </form>
+                    {% else %}
+                      <span class="recent-order__add" aria-hidden="true"></span>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </details>
+
+          <form
+            class="recent-order__repeat"
+            method="post"
+            action="{{ order.repeat_url }}"
+            data-cart-repeat
+          >
+            {% csrf_token %}
+            <button class="button button--sm button--soft button--tone-positive" type="submit">
+              {% trans "Order again" %}
+            </button>
+          </form>
+
+          <p class="recent-order__note" role="status" data-recent-order-note hidden></p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}

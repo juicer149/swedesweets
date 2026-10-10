@@ -31,6 +31,9 @@ class RepeatOrderResult:
     cart: Cart | None
     added_count: int
     skipped: tuple[RepeatOrderSkippedLine, ...]
+    # The cart lines the repeat added to or created, in the order's order
+    # (a page can draw them in place).
+    added_line_ids: tuple[int, ...] = ()
 
     @property
     def has_added_lines(self) -> bool:
@@ -72,6 +75,7 @@ def repeat_order_into_cart(
     cart: Cart | None = None
     added_count = 0
     skipped: list[RepeatOrderSkippedLine] = []
+    added_line_ids: list[int] = []
 
     for line in source_lines:
         if not line.product.active:
@@ -108,10 +112,14 @@ def repeat_order_into_cart(
         cart = cart_line.cart
         added_count += 1
 
+        if cart_line.pk not in added_line_ids:
+            added_line_ids.append(cart_line.pk)
+
     return RepeatOrderResult(
         cart=cart,
         added_count=added_count,
         skipped=tuple(skipped),
+        added_line_ids=tuple(added_line_ids),
     )
 
 

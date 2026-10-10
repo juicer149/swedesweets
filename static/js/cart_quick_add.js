@@ -5,6 +5,9 @@
  *     answer carries the line drawn by the server, which goes in at the
  *     end of the lines (or replaces the line, one more, when the product
  *     is already there) with a short green glow;
+ *   - a previous order's "+" on one of its products does the same, and
+ *     its "Order again" puts all the lines it added in place (and says
+ *     beside the order which products were left out, and why);
  *   - the trash: after its question (confirm_action.js) the line is
  *     removed in place.
  *
@@ -112,6 +115,43 @@ document.addEventListener("DOMContentLoaded", () => {
     return { response, payload };
   }
 
+  // Post an add form; put its line in place. False when it did not work.
+  async function addOffer(form) {
+    try {
+      const { response, payload } = await postForm(form);
+
+      if (!response.ok || !payload.ok || !payload.line_html) {
+        return false;
+      }
+
+      showAddedLines([payload]);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // Lines the server drew ({cart_line_id, quantity, line_html}) go in
+  // place; each glows, the first in view; the navbar cart catches up.
+  function showAddedLines(lines) {
+    const placed = lines
+      .map((item) => placeLine(item.line_html, item.cart_line_id))
+      .filter(Boolean);
+
+    updateEmptyState();
+
+    if (placed.length) {
+      placed[0].scrollIntoView({ behavior: "smooth", block: "nearest" });
+      placed.forEach(glow);
+    }
+
+    notifyCartChanged({
+      lineId: lines.length === 1 ? lines[0].cart_line_id : null,
+      quantity: lines.length === 1 ? lines[0].quantity : null,
+      bump: true,
+    });
+  }
+
   /* Quick add */
 
   root.querySelectorAll("[data-cart-quick-add]").forEach((form) => {
@@ -147,29 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
         select.tomselect.lock();
       }
 
-      try {
-        const { response, payload } = await postForm(form);
-
-        if (!response.ok || !payload.ok || !payload.line_html) {
-          throw new Error(payload.message || "");
-        }
-
-        const line = placeLine(payload.line_html, payload.cart_line_id);
-
-        updateEmptyState();
-
-        if (line) {
-          line.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          glow(line);
-        }
-
-        notifyCartChanged({
-          lineId: payload.cart_line_id,
-          quantity: payload.quantity,
-          payload,
-          bump: true,
-        });
-      } catch {
+      if (!(await addOffer(form))) {
         // Not added: post it the plain way, so the page comes back with
         // the reason (the same refusal, as a message).
         HTMLFormElement.prototype.submit.call(form);
@@ -178,6 +196,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
       reset();
     });
+  });
+
+  /* A previous order's "+" and "Order again" */
+
+  root.addEventListener("submit", async (event) => {
+    const form = event.target.closest(
+      "[data-cart-add-offer], [data-cart-repeat]"
+    );
+
+    if (!form || form.classList.contains("is-adding")) {
+      if (form) {
+        event.preventDefault();
+      }
+      return;
+    }
+
+    event.preventDefault();
+    form.classList.add("is-adding");
+
+    if (form.matches("[data-cart-add-offer]")) {
+      if (!(await addOffer(form))) {
+        HTMLFormElement.prototype.submit.call(form);
+        return;
+      }
+
+      form.classList.remove("is-adding");
+      return;
+    }
+
+    const order = form.closest("[data-recent-order]");
+    const note = order && order.querySelector("[data-recent-order-note]");
+
+    try {
+      const { response, payload } = await postForm(form);
+
+      if (Array.isArray(payload.lines) && payload.lines.length) {
+        showAddedLines(payload.lines);
+      }
+
+      if (note) {
+        const notes = Array.isArray(payload.notes) ? payload.notes : [];
+        note.textContent = notes.join(" ");
+        note.hidden = notes.length === 0;
+      }
+
+      if (!response.ok && !(payload.notes && payload.notes.length)) {
+        throw new Error("");
+      }
+    } catch {
+      HTMLFormElement.prototype.submit.call(form);
+      return;
+    }
+
+    form.classList.remove("is-adding");
   });
 
   /* Trash: remove the line in place (after confirm_action.js's yes). */

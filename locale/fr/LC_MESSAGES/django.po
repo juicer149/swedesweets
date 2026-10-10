@@ -1389,6 +1389,14 @@ msgstr "Aucune commande trouvée."
 msgid "Could not update quantity."
 msgstr "Impossible de mettre à jour la quantité."
 
+#: templates/business_portal/orders/includes/recent_orders.html
+msgid "Previous orders"
+msgstr "Commandes précédentes"
+
+#: business_portal/orders/recent_orders.py
+msgid "Not available right now"
+msgstr "Pas disponible pour le moment"
+
 #: templates/business_portal/orders/cart.html:25
 msgid "Search for a product to add"
 msgstr "Rechercher un produit à ajouter"

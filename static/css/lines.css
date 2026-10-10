@@ -20,6 +20,127 @@
   pointer-events: none;
 }
 
+/* A shop's last orders above the quick add (recent_orders.html): the
+   FAQ's folded rows, "Order again" laid over the row's right end, beside
+   the chevron, outside the summary so it does not open the row. */
+.recent-orders {
+  margin-block: var(--space-4) var(--space-2);
+}
+
+.recent-orders__title {
+  margin: 0 0 var(--space-1);
+  padding-inline: var(--space-4);
+
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-12);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.recent-orders__list {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.recent-order {
+  --recent-order-row: 3.5rem;
+
+  position: relative;
+}
+
+.recent-order__summary {
+  min-height: var(--recent-order-row);
+  padding-block: var(--space-2);
+  /* room for "Order again" and the chevron on the right */
+  padding-right: var(--space-4);
+}
+
+.recent-order__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
+  min-width: 0;
+  margin-right: auto;
+}
+
+.recent-order__title {
+  color: var(--color-neutral-900);
+  font-size: var(--font-size-16);
+  font-weight: 700;
+}
+
+.recent-order__meta {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  font-weight: 500;
+}
+
+.recent-order__summary .faq__chevron {
+  margin-left: calc(var(--recent-order-button, 8.5rem) + var(--space-2));
+}
+
+.recent-order__repeat {
+  position: absolute;
+  top: 0;
+  right: calc(var(--space-4) + 1.25rem + var(--space-2));
+  display: flex;
+  align-items: center;
+  height: var(--recent-order-row);
+  margin: 0;
+}
+
+.lines.recent-order__lines {
+  padding: 0 var(--space-4) var(--space-2);
+}
+
+.recent-order__lines .line {
+  padding-block: var(--space-2);
+}
+
+.recent-order__add {
+  display: flex;
+  width: 2.25rem;
+  margin: 0;
+}
+
+.recent-order__add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+
+  color: var(--color-primary-800);
+  background: var(--color-white);
+  border: 1px solid var(--color-primary-300);
+  border-radius: 50%;
+  cursor: pointer;
+
+  transition: background var(--motion-fast), border-color var(--motion-fast);
+}
+
+.recent-order__add-button:hover,
+.recent-order__add-button:focus-visible {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-500);
+}
+
+.recent-order__note {
+  margin: var(--space-1) 0 0;
+  padding-inline: var(--space-4);
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-14);
+}
+
+.recent-order.is-adding .recent-order__repeat,
+.recent-order__add.is-adding {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 /* On a shop's cart the lines and the empty order are both on the page
    (cart_quick_add.js shows the one that fits). */
 [data-current-order] [data-cart-lines][hidden],

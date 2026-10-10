@@ -47,7 +47,7 @@ def build_portal_order_page_rows(
             status=build_order_status_presentation(order.status),
             detail_href=_order_detail_href(order),
             total_quantity=getattr(order, "total_quantity", 0),
-            created_at_label=_date_label(order.created_at),
+            created_at_label=date_label(order.created_at),
         )
         for order in orders
     ]
@@ -64,7 +64,7 @@ def _order_detail_href(
     )
 
 
-def _date_label(
+def date_label(
     value: datetime,
 ) -> str:
     return timezone.localtime(

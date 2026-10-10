@@ -106,13 +106,38 @@ def build_portal_cart_line(
 
     return next(
         iter(
-            _build_portal_cart_lines(
+            build_portal_cart_lines(
                 cart=cart,
+                cart_line_ids=(cart_line_id,),
                 language_code=language_code,
-                cart_line_id=cart_line_id,
             )
         ),
         None,
+    )
+
+
+def build_portal_cart_lines(
+    *,
+    cart: Cart,
+    cart_line_ids: tuple[int, ...],
+    language_code: str | None = None,
+) -> tuple[PortalCartLine, ...]:
+    """Some lines of the cart, in the order of the ids given ("Order
+    again" puts them in the page without reloading it)."""
+
+    lines_by_id = {
+        line.cart_line_id: line
+        for line in _build_portal_cart_lines(
+            cart=cart,
+            language_code=language_code,
+            cart_line_ids=cart_line_ids,
+        )
+    }
+
+    return tuple(
+        lines_by_id[line_id]
+        for line_id in cart_line_ids
+        if line_id in lines_by_id
     )
 
 
@@ -120,12 +145,12 @@ def _build_portal_cart_lines(
     *,
     cart: Cart,
     language_code: str | None,
-    cart_line_id: int | None = None,
+    cart_line_ids: tuple[int, ...] | None = None,
 ) -> tuple[PortalCartLine, ...]:
     lines = cart.lines.all()
 
-    if cart_line_id is not None:
-        lines = lines.filter(pk=cart_line_id)
+    if cart_line_ids is not None:
+        lines = lines.filter(pk__in=cart_line_ids)
 
     lines = (
         lines

@@ -15,6 +15,8 @@
       {% trans "Order" %}
     </h1>
 
+    {% include "business_portal/orders/includes/recent_orders.html" with recent_orders=recent_orders csrf_token=csrf_token only %}
+
     {% comment %}
       Quick add: any product of the catalog straight into the order. The
       chosen offer is posted at once and its line put in the page
@@ -138,6 +140,7 @@
   <script src="{% static 'js/quantity-stepper.js' %}" defer></script>
   <script src="{% static 'js/cart.js' %}" defer></script>
   <script src="{% static 'js/cart_quick_add.js' %}" defer></script>
+  <script src="{% static 'js/smooth-details.js' %}" defer></script>
   <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script src="{% static 'js/confirm_action.js' %}" defer></script>
 {% endblock %}
