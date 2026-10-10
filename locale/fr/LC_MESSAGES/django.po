@@ -1457,6 +1457,18 @@ msgstr ""
 msgid "Save and start ordering"
 msgstr "Enregistrer et commencer à commander"
 
+#: templates/business_portal/orders/cart.html
+msgid "Search for a product to add"
+msgstr "Rechercher un produit à ajouter"
+
+#: templates/business_portal/orders/cart.html
+msgid "Add a product"
+msgstr "Ajouter un produit"
+
+#: business_portal/orders/views.py
+msgid "Choose a product to add."
+msgstr "Choisissez un produit à ajouter."
+
 #: templates/business_portal/store_onboarding.html:51
 #: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
 msgid "Log out"

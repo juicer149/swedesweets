@@ -310,18 +310,31 @@ def _price_label(
     )
 
 
+# Under ten a shop sees how many are left; above it only "In stock".
+FEW_LEFT_BELOW = 10
+
+
+def few_left_label(
+    available_units: int,
+) -> str:
+    """"Only 3 left" when few are left, else nothing (the cart's quick
+    add shows the count only then)."""
+
+    if available_units >= FEW_LEFT_BELOW:
+        return ""
+
+    return ngettext(
+        "Only %(count)s left",
+        "Only %(count)s left",
+        available_units,
+    ) % {
+        "count": available_units,
+    }
+
+
 def _availability_label(
     available_units: int,
 ) -> str:
-    if available_units < 10:
-        return ngettext(
-            "Only %(count)s left",
-            "Only %(count)s left",
-            available_units,
-        ) % {
-            "count": available_units,
-        }
-
-    return str(
+    return few_left_label(available_units) or str(
         _("In stock")
     )

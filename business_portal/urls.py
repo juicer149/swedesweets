@@ -48,6 +48,11 @@ urlpatterns = [
         name="navbar_cart_fragment",
     ),
     path(
+        "cart/add/",
+        order_views.add_cart_offer,
+        name="add_cart_offer",
+    ),
+    path(
         "cart/review/",
         order_views.cart_review,
         name="cart_review",

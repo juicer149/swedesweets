@@ -15,6 +15,52 @@
       {% trans "Order" %}
     </h1>
 
+    {% comment %}
+      Quick add: any product of the catalog straight into the order. The
+      chosen offer is posted at once (cart_quick_add.js); without the
+      script the button posts it.
+    {% endcomment %}
+    {% if quick_add_options %}
+      {% trans "Search for a product to add" as quick_add_hint %}
+      <form
+        class="cart-quick-add"
+        method="post"
+        action="{% url 'business_portal:add_cart_offer' %}"
+        data-cart-quick-add
+      >
+        {% csrf_token %}
+
+        <label class="visually-hidden" for="cart-quick-add">{% trans "Add a product" %}</label>
+        <select
+          id="cart-quick-add"
+          name="commercial_price_id"
+          data-enhanced-select="true"
+          data-enhanced-select-search="true"
+          placeholder="{{ quick_add_hint }}"
+        >
+          <option value="">{{ quick_add_hint }}</option>
+          {% for option in quick_add_options %}
+            <option
+              value="{{ option.commercial_price_id }}"
+              data-name="{{ option.name }}"
+              data-weight="{{ option.package_label }}"
+              data-offer-detail="{{ option.offer_label }}"
+              data-price="{{ option.price_label }}"
+              data-stock="{{ option.stock_label }}"
+              data-image="{{ option.image_url }}"
+              search="{{ option.search_text }}"
+            >{{ option.text }}</option>
+          {% endfor %}
+        </select>
+
+        <noscript>
+          <button class="button button--sm button--soft button--tone-positive" type="submit">
+            {% trans "Add" %}
+          </button>
+        </noscript>
+      </form>
+    {% endif %}
+
     {% if cart_lines %}
       <ul class="lines" aria-label="{% trans 'Items' %}">
         {% for line in cart_lines %}
@@ -109,6 +155,7 @@
 
   <script src="{% static 'js/quantity-stepper.js' %}" defer></script>
   <script src="{% static 'js/cart.js' %}" defer></script>
+  <script src="{% static 'js/cart_quick_add.js' %}" defer></script>
   <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script src="{% static 'js/confirm_action.js' %}" defer></script>
 {% endblock %}

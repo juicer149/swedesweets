@@ -10,6 +10,7 @@ VIEW_CAPABILITIES = {
     "business_portal:repeat_order": Capability.PLACE_BUSINESS_ORDERS,
     "business_portal:cart": Capability.PLACE_BUSINESS_ORDERS,
     "business_portal:navbar_cart_fragment": Capability.PLACE_BUSINESS_ORDERS,
+    "business_portal:add_cart_offer": Capability.PLACE_BUSINESS_ORDERS,
     "business_portal:cart_review": Capability.PLACE_BUSINESS_ORDERS,
     "business_portal:set_cart_line_quantity": Capability.PLACE_BUSINESS_ORDERS,
     "business_portal:remove_cart_line": Capability.PLACE_BUSINESS_ORDERS,

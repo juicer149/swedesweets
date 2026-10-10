@@ -27,6 +27,7 @@
       weight: option.dataset.weight || "",
       offerDetail: option.dataset.offerDetail || "",
       image: option.dataset.image || "",
+      price: option.dataset.price || "",
       stock: option.dataset.stock || "",
       search: optionSearchText(option),
     };
@@ -62,8 +63,9 @@
 
   // A product option reads like a line of a cart: the picture circle
   // (an empty one when there is none, so the names line up), the name,
-  // and under it the weight and how many are left, then the offer when it
-  // is not the standard one. The code stays searchable but is not shown.
+  // and under it the weight, the price (a shop's cart) and how many are
+  // left, then the offer when it is not the standard one. The code stays
+  // searchable but is not shown.
   function renderOption(data, escape) {
     if (!hasProductData(data)) {
       return `
@@ -79,6 +81,7 @@
 
     const meta = [
       data.weight,
+      data.price,
       data.stock,
     ]
       .filter(Boolean)

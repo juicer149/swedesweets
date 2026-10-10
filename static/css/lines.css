@@ -10,6 +10,16 @@
      .lines-total               a total under the lines
    ============================================================================= */
 
+/* A shop's cart: the quick add above the lines (cart_quick_add.js). */
+.cart-quick-add {
+  margin-block: var(--space-4) var(--space-5);
+}
+
+.cart-quick-add.is-adding {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 .lines {
   margin: 0;
   padding: 0;

@@ -22,6 +22,7 @@ from business.cart_selectors import (
 )
 from business.cart_services import (
     InvalidBusinessCart,
+    add_catalog_offer_to_cart,
     clear_customer_cart,
     remove_customer_cart_line,
     set_customer_cart_line_quantity,
@@ -34,6 +35,9 @@ from business_portal.orders.cart_viewmodels import (
 )
 from business_portal.orders.detail_viewmodels import (
     build_portal_order_detail_context,
+)
+from business_portal.orders.quick_add import (
+    build_cart_quick_add_options,
 )
 from business_portal.orders.review_viewmodels import (
     build_portal_order_review_context,
@@ -49,6 +53,8 @@ from common.channels import SalesChannel
 from customers.models import Customer
 from inventory.errors import InvalidStockOperation
 from orders.errors import InvalidOrderOperation
+from pricing.models import CommercialPrice
+from products.localization import translated_product_name
 
 
 class PortalOrderIntent(StrEnum):
@@ -348,12 +354,75 @@ def cart(request):
         cart=cart,
         language_code=request.LANGUAGE_CODE,
     ).as_dict()
+    context["quick_add_options"] = build_cart_quick_add_options(
+        language_code=request.LANGUAGE_CODE,
+    )
 
     return render(
         request,
         "business_portal/orders/cart.html",
         context,
     )
+
+
+@login_required
+@require_POST
+def add_cart_offer(request):
+    """The cart's quick add: one of the catalog's offers, one unit, then
+    back to the cart (adding it again raises the quantity)."""
+
+    customer = get_portal_customer_for_user(
+        user=request.user,
+    )
+
+    try:
+        commercial_price_id = int(
+            request.POST.get("commercial_price_id", "")
+        )
+    except ValueError:
+        commercial_price_id = None
+
+    offer = (
+        CommercialPrice.objects
+        .select_related("product")
+        .filter(pk=commercial_price_id)
+        .first()
+        if commercial_price_id
+        else None
+    )
+
+    if offer is None:
+        messages.error(
+            request,
+            _("Choose a product to add."),
+        )
+        return redirect("business_portal:cart")
+
+    try:
+        add_catalog_offer_to_cart(
+            customer=customer,
+            product=offer.product,
+            commercial_price_id=offer.pk,
+            quantity=1,
+        )
+    except InvalidBusinessCart as error:
+        messages.error(
+            request,
+            str(error),
+        )
+    else:
+        messages.success(
+            request,
+            _("%(product)s added to your cart.")
+            % {
+                "product": translated_product_name(
+                    offer.product,
+                    language_code=request.LANGUAGE_CODE,
+                ),
+            },
+        )
+
+    return redirect("business_portal:cart")
 
 
 @login_required
