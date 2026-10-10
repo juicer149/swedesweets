@@ -1,0 +1,40 @@
+{% load i18n %}
+{% comment %}
+  One line of a shop's cart: the product, the stepper and the trash. The
+  cart page draws every line with it, and the quick add draws the line it
+  adds (business_portal.orders.views.add_cart_offer), so cart.js can put
+  it in the page without reloading it.
+
+  line        a PortalCartLine
+  csrf_token  the page's token
+{% endcomment %}
+<li class="line" data-cart-line-id="{{ line.cart_line_id }}">
+  {% include "includes/ui/line_product.html" with line=line.view only %}
+
+  <form
+    class="line__quantity"
+    method="post"
+    action="{{ line.quantity_url }}"
+    data-current-order-quantity-form
+    data-confirmed-quantity="{{ line.quantity }}"
+  >
+    {% csrf_token %}
+
+    {% include "includes/ui/quantity_stepper.html" with id_prefix="quantity-" id_suffix=line.cart_line_id value=line.quantity only %}
+
+    <span
+      class="visually-hidden"
+      role="status"
+      aria-live="polite"
+      data-current-order-quantity-status
+    ></span>
+
+    <noscript>
+      <button class="quiet-link" type="submit">
+        {% trans "Update quantity" %}
+      </button>
+    </noscript>
+  </form>
+
+  {% include "includes/ui/line_remove.html" with url=line.remove_url csrf_token=csrf_token inline=True only %}
+</li>

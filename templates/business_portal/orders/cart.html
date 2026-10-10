@@ -17,8 +17,8 @@
 
     {% comment %}
       Quick add: any product of the catalog straight into the order. The
-      chosen offer is posted at once (cart_quick_add.js); without the
-      script the button posts it.
+      chosen offer is posted at once and its line put in the page
+      (cart_quick_add.js); without the script the button posts it.
     {% endcomment %}
     {% if quick_add_options %}
       {% trans "Search for a product to add" as quick_add_hint %}
@@ -61,91 +61,73 @@
       </form>
     {% endif %}
 
-    {% if cart_lines %}
-      <ul class="lines" aria-label="{% trans 'Items' %}">
-        {% for line in cart_lines %}
-          <li class="line">
-            {% include "includes/ui/line_product.html" with line=line.view only %}
+    {% comment %}
+      The lines and their actions, and the empty order, are all on the
+      page; cart.js shows the one that fits as lines come and go.
+    {% endcomment %}
+    <ul class="lines" aria-label="{% trans 'Items' %}" data-cart-lines {% if not cart_lines %}hidden{% endif %}>
+      {% for line in cart_lines %}
+        {% include "business_portal/orders/includes/cart_line.html" with line=line csrf_token=csrf_token only %}
+      {% endfor %}
+    </ul>
 
-            <form
-              class="line__quantity"
-              method="post"
-              action="{{ line.quantity_url }}"
-              data-current-order-quantity-form
-              data-confirmed-quantity="{{ line.quantity }}"
-            >
-              {% csrf_token %}
+    <div class="form-actions page__actions page-actions" data-cart-lines {% if not cart_lines %}hidden{% endif %}>
+      <form class="page-actions__primary" method="post" data-submit-burst>
+        {% csrf_token %}
 
-              {% include "includes/ui/quantity_stepper.html" with id_prefix="quantity-" id_suffix=line.cart_line_id value=line.quantity only %}
+        <button
+          class="button button--md button--solid button--tone-place page__submit"
+          type="submit"
+          name="intent"
+          value="review_order"
+        >
+          {{ submit_label }}
+        </button>
+      </form>
 
-              <span
-                class="visually-hidden"
-                role="status"
-                aria-live="polite"
-                data-current-order-quantity-status
-              ></span>
+      <div class="page-actions__links">
+        <a class="quiet-link" href="{{ continue_shopping_url }}">
+          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+          {{ continue_shopping_label }}
+        </a>
 
-              <noscript>
-                <button class="quiet-link" type="submit">
-                  {% trans "Update quantity" %}
-                </button>
-              </noscript>
-            </form>
-
-            {% include "includes/ui/line_remove.html" with url=line.remove_url csrf_token=csrf_token only %}
-          </li>
-        {% endfor %}
-      </ul>
-
-      <div class="form-actions page__actions page-actions">
-        <form class="page-actions__primary" method="post" data-submit-burst>
+        <form method="post">
           {% csrf_token %}
 
           <button
-            class="button button--md button--solid button--tone-place page__submit"
+            class="quiet-link"
             type="submit"
             name="intent"
-            value="review_order"
+            value="clear_cart"
           >
-            {{ submit_label }}
+            {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+            {{ clear_cart_label }}
           </button>
         </form>
-
-        <div class="page-actions__links">
-          <a class="quiet-link" href="{{ continue_shopping_url }}">
-            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
-            {{ continue_shopping_label }}
-          </a>
-
-          <form method="post">
-            {% csrf_token %}
-
-            <button
-              class="quiet-link"
-              type="submit"
-              name="intent"
-              value="clear_cart"
-            >
-              {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
-              {{ clear_cart_label }}
-            </button>
-          </form>
-        </div>
       </div>
-    {% else %}
-      <p class="page__text page__message">
-        {% trans "Your order is empty." %}
-      </p>
+    </div>
 
-      <div class="form-actions page__actions">
+    {# Empty: the quick add above is the way in; the catalog stays a #}
+    {# quiet link (the whole button when there is nothing to search). #}
+    <p class="page__text page__message" data-cart-empty {% if cart_lines %}hidden{% endif %}>
+      {% trans "Your order is empty." %}
+    </p>
+
+    <div class="form-actions page__actions" data-cart-empty {% if cart_lines %}hidden{% endif %}>
+      {% if quick_add_options %}
+        <a class="quiet-link" href="{{ continue_shopping_url }}">
+          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+          {% trans "Browse catalog" %}
+        </a>
+      {% else %}
         <a
           class="button button--md button--solid button--tone-place page__submit"
           href="{{ continue_shopping_url }}"
         >
           {{ continue_shopping_label }}
         </a>
-      </div>
-    {% endif %}
+      {% endif %}
+    </div>
   </div>
 </section>
 {% endblock %}

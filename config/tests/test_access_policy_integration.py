@@ -109,6 +109,7 @@ BUSINESS_CUSTOMER_REDIRECT_VIEW_NAMES = {
 POST_ONLY_VIEW_NAMES = {
     "business_portal:repeat_order",
     "business_portal:catalog_add_product",
+    "business_portal:add_cart_offer",
     "business_portal:set_cart_line_quantity",
     "business_portal:remove_cart_line",
     "ops_orders:toggle_checklist_mark",

@@ -20,6 +20,44 @@
   pointer-events: none;
 }
 
+/* On a shop's cart the lines and the empty order are both on the page
+   (cart_quick_add.js shows the one that fits). */
+[data-current-order] [data-cart-lines][hidden],
+[data-current-order] [data-cart-empty][hidden] {
+  display: none;
+}
+
+/* A line just added: a green glow that fades out. */
+.line--added {
+  border-radius: var(--radius-card-inner);
+  animation: line-added 1.6s ease-out;
+}
+
+@keyframes line-added {
+  0%,
+  25% {
+    background: rgb(var(--color-status-success) / 0.18);
+    box-shadow: 0 0 0 var(--space-2) rgb(var(--color-status-success) / 0.18);
+  }
+
+  100% {
+    background: transparent;
+    box-shadow: 0 0 0 var(--space-2) transparent;
+  }
+}
+
+/* A line on its way out (the trash, while the post is under way). */
+.line--removing {
+  opacity: 0.4;
+  transition: opacity var(--motion-fast);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line--added {
+    animation-duration: 0.01ms;
+  }
+}
+
 .lines {
   margin: 0;
   padding: 0;

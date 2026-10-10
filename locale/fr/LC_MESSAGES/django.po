@@ -1465,6 +1465,10 @@ msgstr "Rechercher un produit à ajouter"
 msgid "Add a product"
 msgstr "Ajouter un produit"
 
+#: business_portal/orders/navbar_viewmodels.py
+msgid "Start an order"
+msgstr "Commencer une commande"
+
 #: business_portal/orders/views.py
 msgid "Choose a product to add."
 msgstr "Choisissez un produit à ajouter."

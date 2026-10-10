@@ -71,6 +71,10 @@ def test_navbar_cart_fragment_does_not_create_empty_cart(
 
     assert navbar_cart.line_count == 0
     assert navbar_cart.lines == ()
+    # Empty: straight to the order, to add from its search.
+    assert navbar_cart.empty_action_url == reverse(
+        "business_portal:cart"
+    )
 
     assert not BusinessCart.objects.filter(
         customer=customer,

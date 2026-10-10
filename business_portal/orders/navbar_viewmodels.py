@@ -67,11 +67,13 @@ def build_business_navbar_cart(
         empty_message=_(
             "Your order is empty."
         ),
+        # A shop goes straight to its order and adds from the search
+        # there (the catalog is a link on that page).
         empty_action_label=_(
-            "Browse catalog"
+            "Start an order"
         ),
         empty_action_url=reverse(
-            "business_portal:catalog"
+            "business_portal:cart"
         ),
     )
 
@@ -92,11 +94,13 @@ def _empty_business_navbar_cart() -> NavbarCart:
         empty_message=_(
             "Your order is empty."
         ),
+        # A shop goes straight to its order and adds from the search
+        # there (the catalog is a link on that page).
         empty_action_label=_(
-            "Browse catalog"
+            "Start an order"
         ),
         empty_action_url=reverse(
-            "business_portal:catalog"
+            "business_portal:cart"
         ),
     )
 

@@ -10,6 +10,7 @@ from django.shortcuts import (
     redirect,
     render,
 )
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import (
@@ -32,6 +33,7 @@ from business.services import (
 )
 from business_portal.orders.cart_viewmodels import (
     build_portal_cart_context,
+    build_portal_cart_line,
 )
 from business_portal.orders.detail_viewmodels import (
     build_portal_order_detail_context,
@@ -368,12 +370,15 @@ def cart(request):
 @login_required
 @require_POST
 def add_cart_offer(request):
-    """The cart's quick add: one of the catalog's offers, one unit, then
-    back to the cart (adding it again raises the quantity)."""
+    """The cart's quick add: one of the catalog's offers, one unit (again
+    adds one more). Asked for JSON (cart_quick_add.js) it answers with the
+    line drawn, for the page to put in place; otherwise back to the cart.
+    """
 
     customer = get_portal_customer_for_user(
         user=request.user,
     )
+    wants_json = _wants_json(request)
 
     try:
         commercial_price_id = int(
@@ -391,38 +396,69 @@ def add_cart_offer(request):
         else None
     )
 
-    if offer is None:
-        messages.error(
-            request,
-            _("Choose a product to add."),
-        )
-        return redirect("business_portal:cart")
-
     try:
-        add_catalog_offer_to_cart(
+        if offer is None:
+            raise InvalidBusinessCart(
+                _("Choose a product to add.")
+            )
+
+        line = add_catalog_offer_to_cart(
             customer=customer,
             product=offer.product,
             commercial_price_id=offer.pk,
             quantity=1,
         )
     except InvalidBusinessCart as error:
+        message = str(error)
+
+        if wants_json:
+            return JsonResponse(
+                {
+                    "ok": False,
+                    "message": message,
+                },
+                status=400,
+            )
+
         messages.error(
             request,
-            str(error),
+            message,
         )
-    else:
+        return redirect("business_portal:cart")
+
+    message = _("%(product)s added to your cart.") % {
+        "product": translated_product_name(
+            offer.product,
+            language_code=request.LANGUAGE_CODE,
+        ),
+    }
+
+    if not wants_json:
         messages.success(
             request,
-            _("%(product)s added to your cart.")
-            % {
-                "product": translated_product_name(
-                    offer.product,
-                    language_code=request.LANGUAGE_CODE,
-                ),
-            },
+            message,
         )
+        return redirect("business_portal:cart")
 
-    return redirect("business_portal:cart")
+    cart_line = build_portal_cart_line(
+        cart=line.cart,
+        cart_line_id=line.id,
+        language_code=request.LANGUAGE_CODE,
+    )
+
+    return JsonResponse(
+        {
+            "ok": True,
+            "message": message,
+            "cart_line_id": line.id,
+            "quantity": line.quantity,
+            "line_html": render_to_string(
+                "business_portal/orders/includes/cart_line.html",
+                {"line": cart_line},
+                request=request,
+            ),
+        }
+    )
 
 
 @login_required

@@ -95,13 +95,40 @@ def build_portal_cart_context(
     )
 
 
+def build_portal_cart_line(
+    *,
+    cart: Cart,
+    cart_line_id: int,
+    language_code: str | None = None,
+) -> PortalCartLine | None:
+    """One line of the cart, drawn alone (the quick add puts it in the
+    page without reloading it)."""
+
+    return next(
+        iter(
+            _build_portal_cart_lines(
+                cart=cart,
+                language_code=language_code,
+                cart_line_id=cart_line_id,
+            )
+        ),
+        None,
+    )
+
+
 def _build_portal_cart_lines(
     *,
     cart: Cart,
     language_code: str | None,
+    cart_line_id: int | None = None,
 ) -> tuple[PortalCartLine, ...]:
+    lines = cart.lines.all()
+
+    if cart_line_id is not None:
+        lines = lines.filter(pk=cart_line_id)
+
     lines = (
-        cart.lines
+        lines
         .select_related(
             "commercial_price",
             "commercial_price__product",

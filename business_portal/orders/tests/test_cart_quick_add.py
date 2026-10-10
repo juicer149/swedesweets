@@ -57,6 +57,7 @@ def _stocked_offer(
         product=product,
         today=TODAY,
         quantity=quantity,
+        batch_id=f"QA-{name.upper()}",
     )
 
     return offer
@@ -227,3 +228,88 @@ def test_quick_add_requires_post(
     )
 
     assert response.status_code == 405
+
+
+@pytest.mark.django_db
+def test_quick_add_answers_a_script_with_the_line_drawn(
+    client,
+):
+    customer = _login_customer(
+        client=client,
+    )
+    offer = _stocked_offer(
+        name="Apple",
+        quantity=10,
+    )
+    url = reverse("business_portal:add_cart_offer")
+
+    response = client.post(
+        url,
+        {"commercial_price_id": str(offer.pk)},
+        HTTP_ACCEPT="application/json",
+    )
+    payload = response.json()
+    line = _cart_lines(customer).get()
+
+    assert response.status_code == 200
+    assert payload["ok"] is True
+    assert payload["cart_line_id"] == line.pk
+    assert payload["quantity"] == 1
+    assert f'data-cart-line-id="{line.pk}"' in payload["line_html"]
+    # Its stepper and trash work in place like the others.
+    assert "data-current-order-quantity-form" in payload["line_html"]
+    assert "data-current-order-remove" in payload["line_html"]
+    assert "csrfmiddlewaretoken" in payload["line_html"]
+
+    again = client.post(
+        url,
+        {"commercial_price_id": str(offer.pk)},
+        HTTP_ACCEPT="application/json",
+    ).json()
+
+    assert again["cart_line_id"] == line.pk
+    assert again["quantity"] == 2
+
+
+@pytest.mark.django_db
+def test_quick_add_answers_a_script_with_the_reason_it_could_not(
+    client,
+):
+    _login_customer(
+        client=client,
+    )
+
+    response = client.post(
+        reverse("business_portal:add_cart_offer"),
+        {"commercial_price_id": "999999"},
+        HTTP_ACCEPT="application/json",
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {
+        "ok": False,
+        "message": "Choose a product to add.",
+    }
+
+
+@pytest.mark.django_db
+def test_cart_lines_and_empty_order_are_both_on_the_page(
+    client,
+):
+    _login_customer(
+        client=client,
+    )
+    _stocked_offer(
+        name="Apple",
+        quantity=10,
+    )
+
+    content = client.get(
+        reverse("business_portal:cart")
+    ).content.decode()
+
+    # Empty: the lines' list is there (hidden) for the script to fill,
+    # and the catalog is a quiet link, not the main button.
+    assert "data-cart-lines hidden" in content
+    assert "data-cart-empty" in content
+    assert reverse("business_portal:catalog") in content

@@ -10,10 +10,12 @@
   csrf_token  the page's token; needed with url (an "only" include
               leaves it out, and the post is then refused)
   label  aria-label (default "Remove product")
+  inline  with url: removed in the page, without reloading it (cart.js
+          on a shop's cart)
 {% endcomment %}
 {% trans "Remove product" as default_label %}
 {% if url %}
-  <form class="line__remove" method="post" action="{{ url }}">
+  <form class="line__remove" method="post" action="{{ url }}"{% if inline %} data-current-order-remove{% endif %}>
     {% csrf_token %}
 
     <button
