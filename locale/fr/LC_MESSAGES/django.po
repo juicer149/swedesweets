@@ -1812,6 +1812,11 @@ msgstr "Commandes précédentes"
 msgid "Phone"
 msgstr "Téléphone"
 
+#: templates/includes/ui/line_remove.html
+#, python-format
+msgid "Remove %(name)s from the order?"
+msgstr "Retirer %(name)s de la commande ?"
+
 #: templates/includes/ui/line_remove.html:25
 #: templates/includes/ui/line_remove.html:40
 msgid "Remove this product from the order?"

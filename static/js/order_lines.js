@@ -261,6 +261,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setLineImage(orderLine, offer.image);
 
+    // The trash's question names the product (line_remove.html).
+    const removeButton = orderLine.querySelector("[data-remove-order-line]");
+
+    if (removeButton && removeButton.dataset.confirmNamed && offer.name) {
+      removeButton.dataset.confirm = removeButton.dataset.confirmNamed.replace(
+        "%(name)s",
+        offer.name
+      );
+    }
+
     if (quantityInput) {
       quantityInput.value = String(quantity);
       quantityInput.dispatchEvent(new Event("input", { bubbles: true }));

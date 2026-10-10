@@ -24,7 +24,7 @@
 
       <ul class="lines" aria-label="{% trans 'Items' %}">
         {% for line in cart_lines %}
-          <li class="line{% if open_payment_url %} line--static{% endif %}">
+          <li class="line{% if open_payment_url %} line--static{% endif %}" data-cart-line-id="{{ line.cart_line_id }}">
             {% include "includes/ui/line_product.html" with line=line.view only %}
 
             {% if open_payment_url %}
@@ -55,7 +55,7 @@
                 </noscript>
               </form>
 
-              {% include "includes/ui/line_remove.html" with url=line.remove_url csrf_token=csrf_token only %}
+              {% include "includes/ui/line_remove.html" with url=line.remove_url csrf_token=csrf_token inline=True name=line.view.name only %}
             {% endif %}
           </li>
         {% endfor %}

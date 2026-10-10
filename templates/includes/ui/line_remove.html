@@ -10,10 +10,18 @@
   csrf_token  the page's token; needed with url (an "only" include
               leaves it out, and the post is then refused)
   label  aria-label (default "Remove product")
-  inline  with url: removed in the page, without reloading it (cart.js
-          on a shop's cart)
+  inline  with url: removed in the page, without reloading it (cart.js)
+  name    the product's name, for the question ("Remove Rambo — Twist
+          from the order?"); without it "this product". A line the
+          ops form adds later gets its name from order_lines.js
+          (data-confirm-named)
 {% endcomment %}
 {% trans "Remove product" as default_label %}
+{% if name %}
+  {% blocktrans asvar question %}Remove {{ name }} from the order?{% endblocktrans %}
+{% else %}
+  {% trans "Remove this product from the order?" as question %}
+{% endif %}
 {% if url %}
   <form class="line__remove" method="post" action="{{ url }}"{% if inline %} data-current-order-remove{% endif %}>
     {% csrf_token %}
@@ -22,7 +30,7 @@
       class="line__remove-button"
       type="submit"
       aria-label="{{ label|default:default_label }}"
-      data-confirm="{% trans 'Remove this product from the order?' %}"
+      data-confirm="{{ question }}"
       data-confirm-title="{% trans 'Remove product' %}"
       data-confirm-label="{% trans 'Remove' %}"
       data-confirm-cancel="{% trans 'Keep it' %}"
@@ -37,7 +45,8 @@
       type="button"
       aria-label="{{ label|default:default_label }}"
       data-remove-order-line
-      data-confirm="{% trans 'Remove this product from the order?' %}"
+      data-confirm="{{ question }}"
+      data-confirm-named="{% blocktrans with name='%(name)s' %}Remove {{ name }} from the order?{% endblocktrans %}"
       data-confirm-title="{% trans 'Remove product' %}"
       data-confirm-label="{% trans 'Remove' %}"
       data-confirm-cancel="{% trans 'Keep it' %}"

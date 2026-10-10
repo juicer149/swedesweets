@@ -194,3 +194,43 @@ def test_remove_form_carries_the_csrf_token(client, cart_with_line):
     form = html[html.index(f'action="{remove_url}"'):]
 
     assert 'name="csrfmiddlewaretoken"' in form[: form.index("</form>")]
+
+
+@pytest.mark.django_db
+def test_remove_in_the_page_answers_with_the_new_subtotal(
+    client,
+    cart_with_line,
+):
+    _cart, line = cart_with_line
+
+    response = client.post(
+        reverse(
+            "storefront:remove_cart_line",
+            kwargs={"cart_line_id": line.id},
+        ),
+        HTTP_ACCEPT="application/json",
+    )
+    payload = response.json()
+
+    assert response.status_code == 200
+    assert payload["ok"] is True
+    assert "subtotal_label" in payload
+    assert not CartLine.objects.filter(pk=line.id).exists()
+
+
+@pytest.mark.django_db
+def test_the_trash_asks_by_the_products_name_and_removes_in_place(
+    client,
+    retail_price,
+    cart_with_line,
+):
+    _cart, line = cart_with_line
+
+    html = client.get(reverse("storefront:cart")).content.decode()
+
+    assert f'data-cart-line-id="{line.id}"' in html
+    assert "data-current-order-remove" in html
+    assert (
+        f"Remove {retail_price.product.display_name} from the order?"
+        in html
+    )

@@ -36,5 +36,5 @@
     </noscript>
   </form>
 
-  {% include "includes/ui/line_remove.html" with url=line.remove_url csrf_token=csrf_token inline=True only %}
+  {% include "includes/ui/line_remove.html" with url=line.remove_url csrf_token=csrf_token inline=True name=line.view.name only %}
 </li>

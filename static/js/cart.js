@@ -327,4 +327,104 @@
       );
     }
   );
+
+  /* The trash (a shop's cart and the retail cart): after its question
+     (confirm_action.js) the line goes red and its trash spins while the
+     removal is under way, then it fades and folds away (line_flash.js);
+     the subtotal and the navbar cart catch up. When the last line has
+     gone, a page that has its empty order on it shows it (cart-line-
+     removed, business_cart.js); one that has not comes back as the empty
+     cart. If it does not go through, the form posts the plain way and the
+     page comes back with the reason. */
+
+  root.addEventListener(
+    "submit",
+    async (event) => {
+      const form = event.target.closest(
+        "[data-current-order-remove]"
+      );
+
+      if (!form) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const line = form.closest("[data-cart-line-id]");
+
+      if (!line || line.dataset.removing) {
+        return;
+      }
+
+      line.dataset.removing = "true";
+
+      const request = async () => {
+        const response = await fetch(
+          form.action,
+          {
+            method: "POST",
+            body: new FormData(form),
+            headers: {
+              Accept: "application/json",
+            },
+            credentials: "same-origin",
+          }
+        );
+
+        // The cart is locked (an open payment): show it as it is.
+        if (response.status === 409) {
+          window.location.reload();
+          throw new Error("locked");
+        }
+
+        const payload = await response.json();
+
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.message || "");
+        }
+
+        return payload;
+      };
+
+      let payload;
+
+      try {
+        payload = window.lineFlash
+          ? await window.lineFlash.remove(line, request)
+          : await request();
+      } catch (error) {
+        if (error instanceof Error && error.message === "locked") {
+          return;
+        }
+
+        HTMLFormElement.prototype.submit.call(form);
+        return;
+      }
+
+      const lineId = Number(line.dataset.cartLineId);
+      line.remove();
+
+      document.dispatchEvent(
+        new CustomEvent(
+          "cart-changed",
+          {
+            detail: {
+              source: "current-order",
+              lineId,
+              quantity: 0,
+              payload,
+            },
+          }
+        )
+      );
+
+      const linesLeft = root.querySelector("[data-cart-line-id]");
+
+      if (root.querySelector("[data-cart-empty]")) {
+        root.dispatchEvent(new CustomEvent("cart-line-removed"));
+      } else if (!linesLeft) {
+        window.location.reload();
+      }
+    }
+  );
 })();

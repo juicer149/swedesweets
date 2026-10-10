@@ -392,6 +392,12 @@ def remove_cart_line(
             {
                 "ok": True,
                 "message": str(message),
+                # The cart page updates its subtotal as the line folds away.
+                "subtotal_label": (
+                    build_retail_cart_context(
+                        cart=cart,
+                    ).subtotal_label
+                ),
             }
         )
 
