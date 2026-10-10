@@ -6,7 +6,7 @@ from django.db.models import ProtectedError
 
 from products.catalog import variant_display_name
 from products.errors import InvalidProductData
-from products.models import ProductVariant
+from products.models import Product, ProductVariant
 from products.services import create_product
 from products.tests.factories import product_factory, variant_factory
 
@@ -183,3 +183,29 @@ def test_a_product_with_variants_cannot_be_deleted():
 
     with pytest.raises(ProtectedError), transaction.atomic():
         product.delete()
+
+
+@pytest.mark.django_db
+def test_a_product_saved_directly_also_has_its_only_variant():
+    product = Product.objects.create(
+        brand="SwedeSweets",
+        name="Sticker",
+        weight_per_unit=10,
+    )
+
+    variant = product.variants.get()
+
+    assert variant.sku == product.sku
+    assert variant.weight_per_unit == 10
+
+
+@pytest.mark.django_db
+def test_only_variant_is_there_while_a_product_has_one():
+    product = product_factory(name="Hoodie")
+    only = product.variants.get()
+
+    assert product.only_variant() == only
+
+    variant_factory(product=product, label="M")
+
+    assert product.only_variant() is None

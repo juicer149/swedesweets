@@ -3,7 +3,8 @@ Inventory domain model.
 
 class InventoryBatch
 fields:
-    batch_id, product(FK), quantity, best_before, location, status
+    batch_id, product(FK), variant(FK), quantity, best_before, location,
+    status
 
 public API:
     .is_available
@@ -32,6 +33,7 @@ from inventory.errors import (
     InvalidBatchStatusTransition,
     InvalidStockOperation,
 )
+from products.models import ProductVariant
 
 
 def normalize_batch_id(value: str) -> str:
@@ -57,6 +59,10 @@ class InventoryBatch(models.Model):
 
     InventoryBatch owns physical stock quantity and physical lifecycle.
 
+    A batch is stock of one variant of its product (a size, a weight). For
+    a product with only one variant it is filled in on its own; `product`
+    stays beside it and always equals `variant.product`.
+
     Reservation ownership belongs to the reservation domain.
     InventoryBatch does not know how reservation records are stored.
     """
@@ -75,6 +81,11 @@ class InventoryBatch(models.Model):
     batch_id = models.CharField(max_length=50, unique=True)
     product = models.ForeignKey(
         "products.Product",
+        on_delete=models.PROTECT,
+        related_name="batches",
+    )
+    variant = models.ForeignKey(
+        "products.ProductVariant",
         on_delete=models.PROTECT,
         related_name="batches",
     )
@@ -204,6 +215,11 @@ class InventoryBatch(models.Model):
             update_fields = set(update_fields)
 
         should_save_all_fields = update_fields is None
+        should_handle_variant = (
+            self.pk is None
+            or should_save_all_fields
+            or bool({"product", "variant"} & update_fields)
+        )
         should_handle_batch_id = should_save_all_fields or "batch_id" in update_fields
         should_handle_location = should_save_all_fields or "location" in update_fields
         should_handle_stock_state = (
@@ -211,6 +227,12 @@ class InventoryBatch(models.Model):
             or "quantity" in update_fields
             or "status" in update_fields
         )
+
+        if should_handle_variant:
+            self._resolve_variant()
+
+            if update_fields is not None:
+                update_fields |= {"product", "variant"}
 
         if should_handle_batch_id:
             self.batch_id = normalize_batch_id(self.batch_id)
@@ -230,6 +252,44 @@ class InventoryBatch(models.Model):
             kwargs["update_fields"] = update_fields
 
         super().save(*args, **kwargs)
+
+    def _resolve_variant(self) -> None:
+        """Fill in the variant of a product that has only one (or the
+        product of a given variant), and keep a batch's variant one of its
+        product's."""
+
+        if self.variant_id is None:
+            variant = (
+                self.product.only_variant()
+                if self.product_id is not None
+                else None
+            )
+
+            if variant is None:
+                raise InvalidStockOperation(
+                    "choose which variant of the product this batch is"
+                )
+
+            self.variant = variant
+            return
+
+        if type(self).variant.is_cached(self):
+            variant_product_id = self.variant.product_id
+        else:
+            variant_product_id = (
+                ProductVariant.objects
+                .values_list("product_id", flat=True)
+                .get(pk=self.variant_id)
+            )
+
+        if self.product_id is None:
+            self.product_id = variant_product_id
+            return
+
+        if variant_product_id != self.product_id:
+            raise InvalidStockOperation(
+                "the variant belongs to another product"
+            )
 
     def mark_as_created(self, *, user=None) -> None:
         self.created_by = user

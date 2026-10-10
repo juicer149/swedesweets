@@ -227,6 +227,32 @@ class Product(models.Model):
 
         super().save(*args, **kwargs)
 
+        if is_create:
+            self._create_only_variant()
+
+    def _create_only_variant(self) -> None:
+        """Every product has at least one variant: a new one starts with
+        one, unlabelled, carrying the product's SKU and weight."""
+
+        ProductVariant.objects.create(
+            product=self,
+            label="",
+            position=1,
+            sku=self.sku,
+            weight_per_unit=self.weight_per_unit,
+        )
+
+    def only_variant(self) -> ProductVariant | None:
+        """The product's variant when it has just one (no choice to make);
+        None when it has several."""
+
+        variants = list(self.variants.all()[:2])
+
+        if len(variants) != 1:
+            return None
+
+        return variants[0]
+
     def _normalize_catalog_fields(
         self,
         *,

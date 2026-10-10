@@ -1,6 +1,6 @@
 # Product variants
 
-Status: agreed; step 1 (the model) in progress.
+Status: agreed; steps 1 (the model) and 2 (inventory) done or in progress.
 
 A product can come in variants: a hoodie in XS–XL, a chocolate bar in 60, 100
 and 120 g. Variants are modelled the way Shopify does it: **every product has
@@ -32,7 +32,7 @@ The three relations that point at `Product` today move to the variant:
 
 | Model | Today | After |
 | --- | --- | --- |
-| `inventory.InventoryBatch` | `product` | `variant` (required) |
+| `inventory.InventoryBatch` | `product` | `variant` (required), `product` kept |
 | `pricing.CommercialPrice` | `product` (+ optional `batch`) | `variant` (+ optional `batch`) |
 | `orders.OrderLine` | `product` | `variant` (required), `product` kept |
 
@@ -43,7 +43,10 @@ Everything else follows from those:
 - **Reservations** (`Allocation`) point at a batch and an order line, both
   of which know their variant.
 - `OrderLine.product` stays as a plain historical fact (reports, "Order
-  again"), always equal to `variant.product`.
+  again"), always equal to `variant.product`. `InventoryBatch.product` stays
+  too, for the same reason and so stock queries by product keep working;
+  the batch keeps the two in step (it fills in the product of a given
+  variant, and the only variant of a given product).
 
 ## Rules
 
@@ -125,8 +128,10 @@ variants into view.
 
 1. **Model** — `ProductVariant`, the migration, factories that make a
    product's variant automatically, the name helper.
-2. **Inventory** — batches by variant; stock and low stock per variant; ops
-   inventory pages.
+2. **Inventory** — every batch is of one variant (`inventory/0003–0004`);
+   a product with one variant fills it in on its own. Stock and low stock
+   per variant come with the pages that show them (steps 5–6): with one
+   variant per product they equal the product's.
 3. **Pricing** — prices by variant; catalog offers per variant; ops pricing
    (all variants at once).
 4. **Orders** — order lines by variant; allocation by variant; packing list,

@@ -15,7 +15,7 @@ from django.db import IntegrityError, transaction
 
 from inventory.errors import InvalidStockOperation
 from inventory.models import InventoryBatch, normalize_batch_id
-from products.models import Product
+from products.models import Product, ProductVariant
 
 BATCH_ID_SEQUENCE_WIDTH = 3
 BATCH_ID_GENERATION_ATTEMPTS = 3
@@ -30,6 +30,7 @@ def create_batch(
     quantity: int,
     best_before: date,
     location: str,
+    variant: ProductVariant | None = None,
     batch_id: str | None = None,
     today: date | None = None,
     allow_non_future_best_before: bool = False,
@@ -38,7 +39,8 @@ def create_batch(
     """Create a new physical inventory batch.
 
     A new batch must start with positive physical stock. If batch_id is omitted,
-    a product-based id is generated.
+    a product-based id is generated. The variant may be left out for a
+    product that has only one.
     """
 
     today = today or date.today()
@@ -58,6 +60,7 @@ def create_batch(
             return _create_batch_with_id(
                 batch_id=normalized_batch_id,
                 product=product,
+                variant=variant,
                 quantity=quantity,
                 best_before=best_before,
                 location=location,
@@ -77,6 +80,7 @@ def create_batch(
             return _create_batch_with_id(
                 batch_id=generated_batch_id,
                 product=product,
+                variant=variant,
                 quantity=quantity,
                 best_before=best_before,
                 location=location,
@@ -90,14 +94,11 @@ def create_batch(
     )
 
 
-
-
-
-
 def _create_batch_with_id(
     *,
     batch_id: str,
     product: Product,
+    variant: ProductVariant | None,
     quantity: int,
     best_before: date,
     location: str,
@@ -106,6 +107,7 @@ def _create_batch_with_id(
     batch = InventoryBatch.objects.create(
         batch_id=batch_id,
         product=product,
+        variant=variant,
         quantity=quantity,
         best_before=best_before,
         location=location,

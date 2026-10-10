@@ -3,8 +3,8 @@ Product application services.
 
 public API:
     create_product(...)
-        -> Create product (with its only variant) or return existing product
-           with same SKU/internal number.
+        -> Create product or return existing product with same SKU/internal
+           number. A new product gets its only variant (Product.save).
 
     update_product(...)
         -> Update editable product catalog fields and profile data.
@@ -38,7 +38,6 @@ from products.models import (
     Product,
     ProductProfile,
     ProductTranslation,
-    ProductVariant,
 )
 
 CUSTOMER_FACING_LANGUAGE_CODE = "fr"
@@ -184,10 +183,6 @@ def create_product(
         user=user
     )
 
-    _create_only_variant(
-        product=product,
-    )
-
     _set_product_profile(
         product=product,
         category=category,
@@ -209,22 +204,6 @@ def create_product(
             "Product added to the catalog."
         ),
         created=True,
-    )
-
-
-def _create_only_variant(
-    *,
-    product: Product,
-) -> ProductVariant:
-    """Every product has at least one variant: a new one starts with one,
-    unlabelled, carrying the product's SKU and weight."""
-
-    return ProductVariant.objects.create(
-        product=product,
-        label="",
-        position=1,
-        sku=product.sku,
-        weight_per_unit=product.weight_per_unit,
     )
 
 
