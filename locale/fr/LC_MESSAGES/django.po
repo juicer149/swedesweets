@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 01:05+0200\n"
+"POT-Creation-Date: 2026-10-10 03:21+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -310,14 +310,14 @@ msgstr "Catalogue"
 #: templates/business_portal/includes/account_details_panel.html:50
 #: templates/business_portal/store_edit.html:31
 #: templates/storefront/find_sweets.html:4
-#: templates/storefront/find_sweets.html:16
+#: templates/storefront/find_sweets.html:14
 msgid "Find Sweets"
 msgstr "Où acheter"
 
 #: business_portal/navigation.py:44 storefront/navigation.py:50
-#: templates/storefront/faq.html:4
-msgid "FAQ"
-msgstr "FAQ"
+#: templates/storefront/faq.html:4 templates/storefront/faq.html:18
+msgid "Q & A"
+msgstr "Q & R"
 
 #: business_portal/navigation.py:54 storefront/navigation.py:60
 #: templates/storefront/about.html:4
@@ -448,7 +448,7 @@ msgid "Promotion"
 msgstr "Promotion"
 
 #: business_portal/orders/product_presentation.py:21 orders/models.py:61
-#: templates/includes/catalog/grid.html:28
+#: templates/includes/catalog/grid.html:32
 msgid "Other"
 msgstr "Autre"
 
@@ -666,7 +666,7 @@ msgstr "Merci ! Vous pouvez maintenant commander."
 msgid "Store information updated."
 msgstr "Les informations du magasin ont été mises à jour."
 
-#: business_portal/views.py:29 templates/includes/catalog/grid.html:24
+#: business_portal/views.py:29 templates/includes/catalog/grid.html:28
 msgid "All"
 msgstr "Toutes"
 
@@ -864,15 +864,15 @@ msgid_plural "%(count)s cases"
 msgstr[0] "%(count)s caisse"
 msgstr[1] "%(count)s caisses"
 
-#: products/models.py:627 templates/includes/catalog/grid.html:25
+#: products/models.py:627 templates/includes/catalog/grid.html:29
 msgid "Candy"
 msgstr "Bonbons"
 
-#: products/models.py:628 templates/includes/catalog/grid.html:26
+#: products/models.py:628 templates/includes/catalog/grid.html:30
 msgid "Chips"
 msgstr "Chips"
 
-#: products/models.py:629 templates/includes/catalog/grid.html:27
+#: products/models.py:629 templates/includes/catalog/grid.html:31
 msgid "Dip mix"
 msgstr "Préparations pour dip"
 
@@ -1428,7 +1428,7 @@ msgid "Save changes"
 msgstr "Enregistrer les modifications"
 
 #: templates/business_portal/store_edit.html:51
-#: templates/includes/catalog/tile.html:77
+#: templates/includes/catalog/tile.html:82
 #: templates/ops_portal/accounts/account_form.html:36
 #: templates/ops_portal/customers/customer_form.html:48
 #: templates/ops_portal/inventory/batch_form.html:30
@@ -1454,12 +1454,6 @@ msgstr "Enregistrer et commencer à commander"
 
 #: templates/business_portal/store_onboarding.html:51
 #: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
-msgid "The two of us in our stockroom, among stacked boxes of sweets."
-msgstr "Nous deux dans notre réserve, entre des piles de boîtes de bonbons."
-
-msgid "A row of our pick & mix bins: fruity jellies, sour sweets, red raspberries and striped peppermints."
-msgstr "Une rangée de nos bacs de bonbons en vrac : gommes aux fruits, bonbons acidulés, framboises rouges et pastilles de menthe rayées."
-
 msgid "Log out"
 msgstr "Se déconnecter"
 
@@ -1610,39 +1604,39 @@ msgstr ""
 "Si vous n’avez pas demandé cette réinitialisation, vous pouvez ignorer cet e-"
 "mail."
 
-#: templates/includes/catalog/grid.html:15
+#: templates/includes/catalog/grid.html:16
 msgid "Added"
 msgstr "Ajouté"
 
 # | msgid "%(count)s product"
 # | msgid_plural "%(count)s products"
-#: templates/includes/catalog/grid.html:16
+#: templates/includes/catalog/grid.html:17
 #: templates/includes/catalog/product.html:61
 msgid "Could not add product."
 msgstr "Impossible d’ajouter le produit."
 
-#: templates/includes/catalog/grid.html:23
+#: templates/includes/catalog/grid.html:27
 msgid "Product categories"
 msgstr "Catégories de produits"
 
 # | msgid "Order products"
-#: templates/includes/catalog/grid.html:32
-#: templates/includes/catalog/grid.html:37
+#: templates/includes/catalog/grid.html:36
+#: templates/includes/catalog/grid.html:41
 msgid "Search products"
 msgstr "Rechercher des produits"
 
-#: templates/includes/catalog/grid.html:48
+#: templates/includes/catalog/grid.html:52
 msgid "No products match your search."
 msgstr "Aucun produit ne correspond à votre recherche."
 
 # | msgid "Product"
-#: templates/includes/catalog/grid.html:52
+#: templates/includes/catalog/grid.html:56
 #: templates/ops_portal/orders/order_form.html:37
 #: templates/ops_portal/orders/order_form.html:46
 msgid "Products"
 msgstr "Produits"
 
-#: templates/includes/catalog/grid.html:58
+#: templates/includes/catalog/grid.html:62
 msgid "No products are currently available."
 msgstr "Aucun produit n’est disponible actuellement."
 
@@ -1663,7 +1657,7 @@ msgstr "Informations sur le produit"
 msgid "Back to catalog"
 msgstr "Retour au catalogue"
 
-#: templates/includes/catalog/tile.html:73
+#: templates/includes/catalog/tile.html:78
 msgid "Add"
 msgstr "Ajouter"
 
@@ -1914,7 +1908,11 @@ msgstr ""
 "Nous sommes Marco Sandelgård et Milo Sandelgård Bascoulergue, deux cousins "
 "qui ont grandi à Chamonix, un pied en France et l'autre en Suède."
 
-#: templates/storefront/about.html:20
+#: templates/storefront/about.html:27
+msgid "The two of us in our stockroom, among stacked boxes of sweets."
+msgstr "Nous deux dans notre réserve, entre des piles de boîtes de bonbons."
+
+#: templates/storefront/about.html:36
 msgid ""
 "In Sweden, sweets mean lösgodis: a wall of loose candy, a paper bag, and the "
 "serious business of choosing exactly what goes in it. Sour strips, salty "
@@ -1925,7 +1923,15 @@ msgstr ""
 "met. Lanières acidulées, réglisse salée, gommes aux fruits, chocolat. Chacun "
 "a son propre mélange."
 
-#: templates/storefront/about.html:21
+#: templates/storefront/about.html:43
+msgid ""
+"A row of our pick & mix bins: fruity jellies, sour sweets, red raspberries "
+"and striped peppermints."
+msgstr ""
+"Une rangée de nos bacs de bonbons en vrac : gommes aux fruits, bonbons "
+"acidulés, framboises rouges et pastilles de menthe rayées."
+
+#: templates/storefront/about.html:50
 msgid ""
 "We missed it in France. So we started SwedeSweets to bring the real thing "
 "here: the Swedish pick & mix we grew up with, straight from Sweden."
@@ -1934,17 +1940,17 @@ msgstr ""
 "ici le vrai : les bonbons suédois en vrac de notre enfance, directement de "
 "Suède."
 
-#: templates/storefront/about.html:24
-msgid "Come and make your own bag."
-msgstr "Venez composer votre propre sachet."
-
-#: templates/storefront/about.html:30
+#: templates/storefront/about.html:59
 msgid ""
 "A handful of our sweets held up in the snow, high above the clouds in the "
 "mountains."
 msgstr ""
 "Une poignée de nos bonbons tenue dans la neige, bien au-dessus des nuages, "
 "en montagne."
+
+#: templates/storefront/about.html:65
+msgid "Come and make your own bag."
+msgstr "Venez composer votre propre sachet."
 
 #: templates/storefront/cart.html:21
 msgid ""
@@ -2104,25 +2110,24 @@ msgstr "Annuler le paiement et modifier la commande"
 msgid "Edit details"
 msgstr "Modifier les informations"
 
-#: templates/storefront/faq.html:18
-msgid "Q & A"
-msgstr "Q & R"
-
 #: templates/storefront/faq.html:44
 msgid "Still have questions? Contact us"
 msgstr "Encore des questions ? Contactez-nous"
 
-#: templates/storefront/find_sweets.html:20
+#: templates/storefront/find_sweets.html:17
 msgid "Shops"
 msgstr "Boutiques"
 
-#: templates/storefront/find_sweets.html:26
+#: templates/storefront/find_sweets.html:23
 msgid "No shops are listed yet."
 msgstr "Aucune boutique n'est encore listée."
 
 #: templates/storefront/landing.html:20 templates/storefront/landing.html:64
 msgid "Sweden’s sweetest tradition"
 msgstr "La plus douce tradition suédoise"
+
+#~ msgid "FAQ"
+#~ msgstr "FAQ"
 
 #~ msgid "Who we are"
 #~ msgstr "Qui sommes-nous"
