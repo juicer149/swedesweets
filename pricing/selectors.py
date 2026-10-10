@@ -221,10 +221,15 @@ def list_orderable_batches_for_offer(
         .values("batch_id")
     )
 
+    # A standard offer is for one variant: its pool is that variant's
+    # stock (the whole product's while it has one variant).
     return (
         list_orderable_batches_for_product(
             product=offer.product,
             today=today,
+        )
+        .filter(
+            variant_id=offer.variant_id,
         )
         .exclude(
             pk__in=excluded_batch_ids,

@@ -1,6 +1,6 @@
 # Product variants
 
-Status: agreed; steps 1–2 done, step 3 (pricing) in progress.
+Status: agreed; steps 1–3 done, step 4 (orders) in progress.
 
 A product can come in variants: a hoodie in XS–XL, a chocolate bar in 60, 100
 and 120 g. Variants are modelled the way Shopify does it: **every product has
@@ -138,8 +138,12 @@ variants into view.
    rule stays until the code that looks offers up by product reads them by
    variant. Catalog offers per variant and ops pricing for all variants at
    once come with steps 5–6.
-4. **Orders** — order lines by variant; allocation by variant; packing list,
-   mails, exports, "Order again".
+4. **Orders** — every order line is for its offer's variant
+   (`orders/0016–0017`); a line takes stock only from batches of its
+   variant, however wide the pool (the reservation service narrows it, and
+   a standard offer's pool is its variant's). Names with the variant's
+   label on packing lists, mails, exports and "Order again" come with
+   step 6, when a variant can have one.
 5. **Ops products** — the Variants tabs, the lock, create a product with
    variants.
 6. **Catalogs and carts** — retail and business: chips, sold-out sizes,

@@ -38,7 +38,9 @@ def reserve_order_line_from_pool(
 ) -> None:
     """Reserve an order line from an explicitly selected batch pool.
 
-    The caller owns eligibility policy.
+    The caller owns eligibility policy. Whatever the pool, only batches of
+    the order line's variant are taken (a size is never filled from
+    another size's stock; docs/product-variants.md, rule 8).
 
     This service owns:
     - locking the supplied pool
@@ -50,6 +52,7 @@ def reserve_order_line_from_pool(
 
     locked_batches = list(
         batches
+        .filter(variant_id=order_line.variant_id)
         .select_for_update()
         .order_by(
             "best_before",

@@ -29,7 +29,10 @@ from customers.models import (
     MAX_CUSTOMER_NAME_LENGTH,
     MAX_CUSTOMER_PHONE_LENGTH,
 )
-from orders.errors import InvalidOrderStatusTransition
+from orders.errors import (
+    InvalidOrderOperation,
+    InvalidOrderStatusTransition,
+)
 
 if TYPE_CHECKING:
     from orders.datatypes import BuyerInput
@@ -476,6 +479,16 @@ class OrderLine(models.Model):
         related_name="order_lines",
     )
 
+    # The variant ordered (a size, a weight): always its offer's variant,
+    # filled in from the offer on save (hence blank=True). `product` stays
+    # beside it as a plain historical fact, equal to `variant.product`.
+    variant = models.ForeignKey(
+        "products.ProductVariant",
+        on_delete=models.PROTECT,
+        related_name="order_lines",
+        blank=True,
+    )
+
     # How many of the product's stock unit (boxes, pieces) the line holds.
     quantity_in_units = models.PositiveIntegerField()
 
@@ -518,6 +531,46 @@ class OrderLine(models.Model):
                 name="orderline_unit_price_positive_or_null",
             ),
         ]
+
+    def save(self, *args, **kwargs) -> None:
+        update_fields = kwargs.get("update_fields")
+
+        if update_fields is None or {
+            "product",
+            "variant",
+            "commercial_offer",
+        } & set(update_fields):
+            self._resolve_variant()
+
+            if update_fields is not None:
+                kwargs["update_fields"] = {
+                    *update_fields,
+                    "variant",
+                }
+
+        super().save(*args, **kwargs)
+
+    def _resolve_variant(self) -> None:
+        """The line's variant is its offer's (docs/product-variants.md,
+        rule 8), and the offer's product is the line's."""
+
+        if self.commercial_offer_id is None:
+            # No offer: the database refuses the line anyway.
+            return
+
+        offer = self.commercial_offer
+
+        if self.variant_id is None:
+            self.variant_id = offer.variant_id
+        elif self.variant_id != offer.variant_id:
+            raise InvalidOrderOperation(
+                "an order line's variant is its offer's"
+            )
+
+        if offer.product_id != self.product_id:
+            raise InvalidOrderOperation(
+                "an order line's offer is for another product"
+            )
 
     @property
     def line_total(self) -> Decimal | None:

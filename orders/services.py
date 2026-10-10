@@ -423,6 +423,8 @@ def _create_order_lines(
                 quantity_in_units=line.quantity_in_units,
                 unit_price_snapshot=line.unit_price_snapshot,
                 commercial_offer=line.commercial_offer,
+                # bulk_create skips save(): the offer's variant by hand.
+                variant_id=line.commercial_offer.variant_id,
             )
             for line in resolved_lines
         ]
