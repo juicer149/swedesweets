@@ -103,5 +103,10 @@ def test_a_weight_line_stops_the_migration(historical_apps):
     line.refresh_from_db()
     assert line.unit == "kg"
 
-    # Let the fixture bring the database back to the latest state.
-    line.delete()
+    # Let the fixture bring the database back to the latest state. Plain
+    # SQL: the historical model would cascade into tables that are gone.
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "DELETE FROM orders_orderline WHERE id = %s",
+            [line.pk],
+        )

@@ -497,7 +497,7 @@ def test_order_string_uses_primary_key(customer):
 
 
 @pytest.mark.django_db
-def test_order_line_string_uses_product_sku_quantity_and_unit(customer, apple):
+def test_order_line_string_uses_product_sku_and_quantity(customer, apple):
     order = Order.objects.create(customer=customer)
     line = order_line_factory(
         order=order,
@@ -505,7 +505,7 @@ def test_order_line_string_uses_product_sku_quantity_and_unit(customer, apple):
         quantity=10,
     )
 
-    assert str(line) == "SS-001: 10 stock_unit"
+    assert str(line) == "SS-001: 10"
 
 
 @pytest.mark.django_db

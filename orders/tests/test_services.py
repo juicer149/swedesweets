@@ -189,11 +189,9 @@ def test_place_order_rolls_back_preparation_when_transition_fails(
         order: Order,
     ) -> None:
         line = order.lines.get()
-        line.quantity = 2
         line.quantity_in_units = 2
         line.save(
             update_fields=[
-                "quantity",
                 "quantity_in_units",
             ]
         )
@@ -403,7 +401,6 @@ def test_update_placed_order_preserves_line_when_quantity_changes(
     )
 
     assert updated_line.pk == original_line.pk
-    assert updated_line.quantity == 20
     assert updated_line.quantity_in_units == 20
     assert (
         updated_line.unit_price_snapshot
@@ -901,11 +898,9 @@ def test_pack_order_rolls_back_preparation_when_transition_fails(
         order: Order,
     ) -> None:
         line = order.lines.get()
-        line.quantity = 2
         line.quantity_in_units = 2
         line.save(
             update_fields=[
-                "quantity",
                 "quantity_in_units",
             ]
         )
@@ -1028,11 +1023,9 @@ def test_cancel_order_rolls_back_preparation_when_transition_fails(
         order: Order,
     ) -> None:
         line = order.lines.get()
-        line.quantity = 2
         line.quantity_in_units = 2
         line.save(
             update_fields=[
-                "quantity",
                 "quantity_in_units",
             ]
         )
@@ -1139,7 +1132,6 @@ def test_create_draft_order_persists_resolved_order_data(
     assert order.buyer_name == "Resolved Buyer"
 
     assert line.product == apple
-    assert line.quantity == 3
     assert line.quantity_in_units == 3
     assert line.commercial_offer == offer
     assert (
