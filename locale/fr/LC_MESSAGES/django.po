@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 03:21+0200\n"
+"POT-Creation-Date: 2026-10-10 12:33+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: accounts/account_menus.py:46
+#: accounts/account_menus.py:46 accounts/account_menus.py:50
 #: templates/business_portal/includes/account_section_nav.html:3
 #: templates/business_portal/index.html:4
 #: templates/business_portal/index.html:11
@@ -26,15 +26,15 @@ msgstr ""
 msgid "My account"
 msgstr "Mon compte"
 
-#: accounts/account_menus.py:52
+#: accounts/account_menus.py:54
 msgid "Ops dashboard"
 msgstr "Tableau de bord des opérations"
 
-#: accounts/account_menus.py:55
+#: accounts/account_menus.py:57
 msgid "Ops"
 msgstr "Ops"
 
-#: accounts/account_menus.py:59 accounts/account_menus.py:62
+#: accounts/account_menus.py:61 accounts/account_menus.py:64
 msgid "Public site"
 msgstr "Site public"
 
