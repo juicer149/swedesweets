@@ -349,10 +349,10 @@
    Places with their own burst (--feedback-burst-style / -mark above)
    ============================================================================= */
 
-/* The catalog's "Add", on a tile and on a product's page: three dots,
-   then the cart, green like the tick that was pressed. On a tile of the
-   candy wall: the scoop spins, and our paper bag pops up over the green
-   halo instead of the cart. */
+/* The catalog's "Add", on a tile and on a product's page: the scoop
+   spins, then our paper bag pops up over a green burst (green like the
+   tick that was pressed). The base below is the dots and the cart, for a
+   place that leaves the scoop out. */
 .tile__status,
 .product__status {
   --feedback-burst-style: dots;
@@ -369,7 +369,8 @@
   --feedback-mark-hold: 650ms;
 }
 
-.tile__status {
+.tile__status,
+.product__status {
   --feedback-burst-style: scoop;
   --feedback-burst-mark: bag;
   --feedback-burst-rest: 260ms;
