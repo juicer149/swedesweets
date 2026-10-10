@@ -354,7 +354,8 @@
    tick that was pressed). The base below is the dots and the cart, for a
    place that leaves the scoop out. */
 .tile__status,
-.product__status {
+.product__status,
+.recent-order__status {
   --feedback-burst-style: dots;
   --feedback-burst-mark: cart;
   --status-burst-success: var(--color-action-deliver);
@@ -370,7 +371,8 @@
 }
 
 .tile__status,
-.product__status {
+.product__status,
+.recent-order__status {
   --feedback-burst-style: scoop;
   --feedback-burst-mark: bag;
   --feedback-burst-rest: 260ms;

@@ -965,7 +965,9 @@ span.icon-rows__link .icon-rows__icon {
   transition: transform 200ms ease;
 }
 
-.faq__item[open] .faq__chevron {
+/* Its own chevron only: an open item may hold folded items of its own
+   (a shop's previous orders). */
+.faq__item[open] > .faq__question .faq__chevron {
   transform: rotate(180deg);
 }
 

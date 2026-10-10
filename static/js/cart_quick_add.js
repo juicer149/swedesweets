@@ -7,7 +7,8 @@
  *     is already there) with a short green glow;
  *   - a previous order's "+" on one of its products does the same, and
  *     its "Order again" puts all the lines it added in place (and says
- *     beside the order which products were left out, and why);
+ *     beside the order which products were left out, and why), both with
+ *     the catalog's burst while they run (scoop, then bag);
  *   - the trash: after its question (confirm_action.js) the line is
  *     removed in place.
  *
@@ -198,58 +199,125 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* A previous order's "+" and "Order again" */
+  /* A previous order's "+" and "Order again": while the post runs the
+     button gives way to the catalog's burst (the scoop spins, then the
+     bag pops up, or a cross); the lines go in as the bag appears. What
+     was left out, or went wrong, is said beside the order. */
+
+  function setNote(form, notes) {
+    const order = form.closest("[data-recent-order]");
+    const note = order && order.querySelector("[data-recent-order-note]");
+
+    if (!note) {
+      return;
+    }
+
+    const text = notes.filter(Boolean).join(" ");
+    note.textContent = text;
+    note.hidden = text === "";
+  }
+
+  async function runWithBurst(form, request, onAdded) {
+    const button = form.querySelector("[data-cart-burst-button]");
+    const status = form.querySelector("[data-cart-burst]");
+    let added = null;
+
+    const tracked = async () => {
+      added = await request();
+      return added;
+    };
+
+    if (!window.statusBurst || !button || !status) {
+      try {
+        await tracked();
+        onAdded(added);
+        return true;
+      } catch (error) {
+        setNote(form, [error instanceof Error ? error.message : ""]);
+        return false;
+      }
+    }
+
+    button.hidden = true;
+    status.hidden = false;
+
+    const { ok, error } = await window.statusBurst.run(
+      status,
+      "default",
+      tracked,
+      {
+        onMark: (worked) => {
+          if (worked) {
+            onAdded(added);
+          }
+        },
+      }
+    );
+
+    status.hidden = true;
+    button.hidden = false;
+
+    if (!ok) {
+      setNote(form, [error instanceof Error ? error.message : ""]);
+    }
+
+    return ok;
+  }
 
   root.addEventListener("submit", async (event) => {
     const form = event.target.closest(
       "[data-cart-add-offer], [data-cart-repeat]"
     );
 
-    if (!form || form.classList.contains("is-adding")) {
-      if (form) {
-        event.preventDefault();
-      }
+    if (!form) {
       return;
     }
 
     event.preventDefault();
-    form.classList.add("is-adding");
+
+    if (form.dataset.adding === "true") {
+      return;
+    }
+
+    form.dataset.adding = "true";
+    setNote(form, []);
 
     if (form.matches("[data-cart-add-offer]")) {
-      if (!(await addOffer(form))) {
-        HTMLFormElement.prototype.submit.call(form);
-        return;
-      }
+      await runWithBurst(
+        form,
+        async () => {
+          const { response, payload } = await postForm(form);
 
-      form.classList.remove("is-adding");
-      return;
+          if (!response.ok || !payload.ok || !payload.line_html) {
+            throw new Error(payload.message || "");
+          }
+
+          return payload;
+        },
+        (payload) => showAddedLines([payload])
+      );
+    } else {
+      await runWithBurst(
+        form,
+        async () => {
+          const { payload } = await postForm(form);
+          const lines = Array.isArray(payload.lines) ? payload.lines : [];
+          const notes = Array.isArray(payload.notes) ? payload.notes : [];
+
+          if (!lines.length) {
+            throw new Error(notes.join(" "));
+          }
+
+          return { lines, notes };
+        },
+        ({ lines, notes }) => {
+          showAddedLines(lines);
+          setNote(form, notes);
+        }
+      );
     }
 
-    const order = form.closest("[data-recent-order]");
-    const note = order && order.querySelector("[data-recent-order-note]");
-
-    try {
-      const { response, payload } = await postForm(form);
-
-      if (Array.isArray(payload.lines) && payload.lines.length) {
-        showAddedLines(payload.lines);
-      }
-
-      if (note) {
-        const notes = Array.isArray(payload.notes) ? payload.notes : [];
-        note.textContent = notes.join(" ");
-        note.hidden = notes.length === 0;
-      }
-
-      if (!response.ok && !(payload.notes && payload.notes.length)) {
-        throw new Error("");
-      }
-    } catch {
-      HTMLFormElement.prototype.submit.call(form);
-      return;
-    }
-
-    form.classList.remove("is-adding");
+    delete form.dataset.adding;
   });
 
   /* Trash: remove the line in place (after confirm_action.js's yes). */
