@@ -63,13 +63,25 @@
 }
 
 .line-flash--removed::before {
-  animation: line-flash-in 450ms ease-out forwards;
+  animation: line-flash-in 250ms ease-out forwards;
 }
 
-/* The trash that was pressed turns red with it. */
+/* The trash that was pressed turns red with it, and spins while the
+   removal is under way. */
 .line-flash--removed .line__remove-button,
 .line-flash--removed .site-nav-cart-line__remove-button {
   color: rgb(var(--color-status-danger));
+}
+
+.line-flash--waiting .line__remove-button .ui-icon-block,
+.line-flash--waiting .site-nav-cart-line__remove-button .ui-icon-block {
+  animation: line-flash-spin 600ms linear infinite;
+}
+
+@keyframes line-flash-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .line-flash--folding {
@@ -120,6 +132,11 @@
   .line-flash--removed::before {
     animation: none;
     opacity: 1;
+  }
+
+  .line-flash--waiting .line__remove-button .ui-icon-block,
+  .line-flash--waiting .site-nav-cart-line__remove-button .ui-icon-block {
+    animation: none;
   }
 
   .line-flash--folding {

@@ -31,7 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function findOrderLineByOfferId(offerId) {
     return orderLinesList.querySelector(
-      `[data-order-line][data-commercial-offer-id="${offerId}"]`
+      // not a line on its way out (line_flash.js folds it away first)
+      `[data-order-line][data-commercial-offer-id="${offerId}"]:not(.line-flash--removed)`
     );
   }
 
@@ -405,10 +406,23 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    orderLine.remove();
+    if (orderLine.classList.contains("line-flash--removed")) {
+      return;
+    }
 
-    syncFormsetIndexes();
-    updateEmptyState();
+    // Red a moment, then it fades and folds away (line_flash.js); nothing
+    // to wait for here, the line only leaves the form.
+    const done = () => {
+      orderLine.remove();
+      syncFormsetIndexes();
+      updateEmptyState();
+    };
+
+    if (window.lineFlash) {
+      window.lineFlash.remove(orderLine).then(done);
+    } else {
+      done();
+    }
   });
 
   updateEmptyState();

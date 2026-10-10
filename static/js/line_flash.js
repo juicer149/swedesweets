@@ -8,17 +8,18 @@
         the green glow on a line just added (or one that got more)
 
     const value = await window.lineFlash.remove(line, request)
-        the red burst while request() runs (at least REMOVE_BURST_MS);
-        if it resolves, the line fades and folds to nothing (the caller
-        then takes it out); if it throws, the line is as it was and the
-        error goes on to the caller
+        the red flash, and the trash spinning while request() runs (at
+        least REMOVE_WAIT_MS); if it resolves, the line fades and folds
+        to nothing (the caller then takes it out); if it throws, the line
+        is as it was and the error goes on to the caller. Without a
+        request (the ops order form) it goes red a moment, then folds.
 
   With reduced motion the waits are skipped; the colours still show.
 */
 (() => {
   "use strict";
 
-  const REMOVE_BURST_MS = 450;
+  const REMOVE_WAIT_MS = 250;
   const FOLD_MS = 280;
 
   const reducedMotion = window.matchMedia(
@@ -61,18 +62,27 @@
     await pause(FOLD_MS);
   }
 
-  async function remove(line, request) {
-    line.classList.add("line-flash", "line-flash--removed");
-
-    const burst = pause(REMOVE_BURST_MS);
+  async function remove(line, request = async () => undefined) {
+    line.classList.add(
+      "line-flash",
+      "line-flash--removed",
+      "line-flash--waiting"
+    );
 
     try {
-      const value = await request();
-      await burst;
+      const [value] = await Promise.all([
+        request(),
+        pause(REMOVE_WAIT_MS),
+      ]);
+      line.classList.remove("line-flash--waiting");
       await foldAway(line);
       return value;
     } catch (error) {
-      line.classList.remove("line-flash--removed", "line-flash--folding");
+      line.classList.remove(
+        "line-flash--removed",
+        "line-flash--waiting",
+        "line-flash--folding"
+      );
       line.style.height = "";
       throw error;
     }
