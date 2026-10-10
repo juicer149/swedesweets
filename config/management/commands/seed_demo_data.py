@@ -66,7 +66,7 @@ from pricing.services import (
     set_price_amount,
 )
 from products.image_services import change_product_image
-from products.models import Product, ProductProfile
+from products.models import Product, ProductProfile, ProductVariant
 from products.services import create_product
 from reservations.models import Allocation
 
@@ -203,11 +203,19 @@ class Command(BaseCommand):
             CommercialPrice,
             InventoryBatch,
             Customer,
+            ProductVariant,
             Product,
         ):
             model.objects.all().delete()
 
-        _reset_sequences(Order, OrderLine, InventoryBatch, Customer, Product)
+        _reset_sequences(
+            Order,
+            OrderLine,
+            InventoryBatch,
+            Customer,
+            ProductVariant,
+            Product,
+        )
 
     # ------------------------------------------------------------------
     # accounts
