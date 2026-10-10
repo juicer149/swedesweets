@@ -350,7 +350,9 @@
    ============================================================================= */
 
 /* The catalog's "Add", on a tile and on a product's page: three dots,
-   then the cart, green like the tick that was pressed. */
+   then the cart, green like the tick that was pressed. On a tile of the
+   candy wall: the scoop spins, and our paper bag pops up over the green
+   halo instead of the cart. */
 .tile__status,
 .product__status {
   --feedback-burst-style: dots;
@@ -365,6 +367,15 @@
   --feedback-min-loading: 600ms;
   --feedback-burst-rest: 100ms;
   --feedback-mark-hold: 650ms;
+}
+
+.tile__status {
+  --feedback-burst-style: scoop;
+  --feedback-burst-mark: bag;
+  --feedback-burst-rest: 260ms;
+  /* a clearer green burst behind the bag than the cart's halo */
+  --status-burst-halo: color-mix(in srgb, var(--color-action-deliver) 38%, transparent);
+  --status-burst-halo-size: 80%;
 }
 
 /* Login: three dots, then a tick (a cross if it did not work), yellow:

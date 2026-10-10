@@ -177,8 +177,13 @@
    is the mark. */
 .status-burst__crown,
 .status-burst__beats,
+.status-burst__scoop,
 .status-burst__mark--success {
   display: none;
+}
+
+.status-burst[data-style="scoop"] .status-burst__scoop {
+  display: grid;
 }
 
 .status-burst[data-style="wave"] .status-burst__crown {
@@ -198,8 +203,76 @@
   [data-mark="crown"]
 ) .status-burst__mark--success[data-mark="crown"],
 .status-burst:not([data-style="wave"])[data-mark="cart"] .status-burst__mark--success[data-mark="cart"],
-.status-burst:not([data-style="wave"])[data-mark="check"] .status-burst__mark--success[data-mark="check"] {
+.status-burst:not([data-style="wave"])[data-mark="check"] .status-burst__mark--success[data-mark="check"],
+.status-burst:not([data-style="wave"])[data-mark="bag"] .status-burst__mark--success[data-mark="bag"] {
   display: grid;
+}
+
+/* scoop: the scoop spins round while it waits; when the answer comes it
+   slows back to where it started (status_burst.js holds its pose and
+   lets it go), as if someone had spun it on the table. Then it goes and
+   the mark comes. */
+.status-burst__scoop {
+  position: absolute;
+  inset: 0;
+  place-items: center;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.status-burst__scoop .scoop {
+  width: 70%;
+  height: 70%;
+  transition: transform var(--feedback-burst-rest) cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.status-burst[data-style="scoop"][data-state="loading"] .status-burst__scoop .scoop {
+  animation: status-burst-spin 0.55s linear infinite;
+}
+
+@keyframes status-burst-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.status-burst[data-state="success"] .status-burst__scoop,
+.status-burst[data-state="error"] .status-burst__scoop {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+/* bag: our white paper bag grows in a little big and tilted, over the
+   halo, like the cart it stands for. */
+.status-burst__mark--bag .bag {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 2px 2px rgb(60 40 20 / 0.2));
+}
+
+.status-burst[data-state="success"] .status-burst__mark--bag {
+  transform: scale(1.3) rotate(-10deg);
+}
+
+/* With the scoop, a problem also gives a little shake: the cross says
+   no, the shake says "try again". */
+.status-burst[data-style="scoop"][data-state="error"] {
+  animation: status-burst-shake 0.4s ease-in-out;
+}
+
+@keyframes status-burst-shake {
+  0%, 100% { translate: 0; }
+  20% { translate: -4px; }
+  40% { translate: 4px; }
+  60% { translate: -3px; }
+  80% { translate: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-burst__scoop .scoop,
+  .status-burst[data-style="scoop"][data-state="error"] {
+    animation: none !important;
+  }
 }
 
 /* dots: three in a row, growing one after the other; then they draw in

@@ -80,7 +80,9 @@
 
     // Wherever the wave is, the dots ease back from there rather than
     // jump: hold each one's pose, stop the wave, then let it go.
-    const dots = burst.querySelectorAll(".status-burst__beat, .status-burst__crown-dot");
+    const dots = burst.querySelectorAll(
+      ".status-burst__beat, .status-burst__crown-dot, .status-burst__scoop .scoop"
+    );
     for (const dot of dots) {
       dot.style.transform = getComputedStyle(dot).transform;
     }
