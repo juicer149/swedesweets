@@ -327,8 +327,6 @@ def test_order_line_requires_commercial_offer(customer, apple):
         OrderLine.objects.create(
             order=order,
             product=apple,
-            quantity=1,
-            unit=OrderLine.Unit.STOCK_UNIT,
             quantity_in_units=1,
         )
 

@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from decimal import Decimal
-
 import pytest
 
 from orders.datatypes import BuyerInput, OrderLineInput
 from orders.errors import InvalidOrderOperation
-from products.units import OrderUnit
 
 
 @pytest.mark.django_db
@@ -63,49 +60,30 @@ def test_order_line_input_rejects_missing_product_reference():
         line.resolve_product_id()
 
 
-@pytest.mark.django_db
-def test_order_line_input_normalizes_quantity_and_unit(apple):
-    line = OrderLineInput(
-        product=apple,
-        quantity=25.0,
-        unit=" KG ",
-    )
-
-    assert line.quantity == Decimal("25.0")
-    assert line.unit == OrderUnit.KG 
-    assert line.resolve_product_id() == apple.id
-
-
-@pytest.mark.django_db
-def test_order_line_input_factories_normalize_quantity_and_unit(apple):
-    units = OrderLineInput.units(
-        product=apple,
+def test_order_line_input_counts_whole_stock_units():
+    line = OrderLineInput.units(
+        product_id=1,
         quantity=10,
     )
-    stock_units = OrderLineInput.stock_units(
-        product=apple,
-        quantity=11,
-    )
-    kg = OrderLineInput.kg(
-        product=apple,
-        kg=25.0,
-    )
-    grams = OrderLineInput.grams(
-        product=apple,
-        grams=25000,
-    )
 
-    assert units.quantity == Decimal("10")
-    assert units.unit == OrderUnit.STOCK
+    assert line.quantity == 10
 
-    assert stock_units.quantity == Decimal("11")
-    assert stock_units.unit == OrderUnit.STOCK
 
-    assert kg.quantity == Decimal("25.0")
-    assert kg.unit == OrderUnit.KG
-
-    assert grams.quantity == Decimal("25000")
-    assert grams.unit == OrderUnit.GRAMS
+@pytest.mark.parametrize(
+    "quantity",
+    [2.5, "3", True],
+)
+def test_order_line_input_rejects_a_quantity_that_is_not_a_whole_number(
+    quantity,
+):
+    with pytest.raises(
+        InvalidOrderOperation,
+        match="must be a whole number",
+    ):
+        OrderLineInput.units(
+            product_id=1,
+            quantity=quantity,
+        )
 
 
 def test_buyer_input_represents_buyer_without_customer_model():

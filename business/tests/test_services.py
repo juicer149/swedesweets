@@ -84,9 +84,9 @@ def test_create_order_places_business_order_and_reserves_fefo(
                 product=apple,
                 quantity=120,
             ),
-            OrderLineInput.kg(
+            OrderLineInput.units(
                 product=banana,
-                kg="25.0",
+                quantity=5,
             ),
         ],
     )
@@ -300,9 +300,9 @@ def test_create_draft_order_merges_duplicate_business_product_lines(
                 product=apple,
                 quantity=10,
             ),
-            OrderLineInput.kg(
+            OrderLineInput.units(
                 product=apple,
-                kg="25.0",
+                quantity=5,
             ),
         ],
     )
@@ -311,8 +311,6 @@ def test_create_draft_order_merges_duplicate_business_product_lines(
 
     assert line.product == apple
     assert line.quantity_in_units == 15
-    assert line.quantity == 15
-    assert line.unit == OrderLine.Unit.STOCK_UNIT
 
 
 @pytest.mark.django_db

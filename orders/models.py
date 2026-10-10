@@ -465,11 +465,6 @@ class Order(models.Model):
 
 
 class OrderLine(models.Model):
-    class Unit(models.TextChoices):
-        STOCK_UNIT = "stock_unit", _("Stock unit")
-        KG = "kg", _("Kg")
-        GRAMS = "grams", _("Grams")
-
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
@@ -481,14 +476,7 @@ class OrderLine(models.Model):
         related_name="order_lines",
     )
 
-    quantity = models.DecimalField(
-        max_digits=12,
-        decimal_places=3,
-    )
-    unit = models.CharField(
-        max_length=20,
-        choices=Unit.choices,
-    )
+    # How many of the product's stock unit (boxes, pieces) the line holds.
     quantity_in_units = models.PositiveIntegerField()
 
     unit_price_snapshot = models.DecimalField(
@@ -519,10 +507,6 @@ class OrderLine(models.Model):
         ]
         constraints = [
             models.CheckConstraint(
-                condition=models.Q(quantity__gt=0),
-                name="orderline_quantity_gt_0",
-            ),
-            models.CheckConstraint(
                 condition=models.Q(quantity_in_units__gt=0),
                 name="orderline_quantity_in_units_gt_0",
             ),
@@ -545,4 +529,4 @@ class OrderLine(models.Model):
         return self.unit_price_snapshot * self.quantity_in_units
 
     def __str__(self) -> str:
-        return f"{self.product.sku}: {self.quantity} {self.unit}"
+        return f"{self.product.sku}: {self.quantity_in_units}"

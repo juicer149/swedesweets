@@ -289,12 +289,6 @@ def update_placed_order(
             )
             continue
 
-        existing_line.quantity = (
-            resolved_line.quantity_in_units
-        )
-        existing_line.unit = (
-            OrderLine.Unit.STOCK_UNIT
-        )
         existing_line.quantity_in_units = (
             resolved_line.quantity_in_units
         )
@@ -307,8 +301,6 @@ def update_placed_order(
         OrderLine.objects.bulk_update(
             retained_lines,
             [
-                "quantity",
-                "unit",
                 "quantity_in_units",
             ],
             batch_size=500,
@@ -428,8 +420,6 @@ def _create_order_lines(
             OrderLine(
                 order=order,
                 product=line.product,
-                quantity=line.quantity_in_units,
-                unit=OrderLine.Unit.STOCK_UNIT,
                 quantity_in_units=line.quantity_in_units,
                 unit_price_snapshot=line.unit_price_snapshot,
                 commercial_offer=line.commercial_offer,

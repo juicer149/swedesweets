@@ -27,7 +27,6 @@ from pricing.models import (
 )
 from pricing.tests.factories import commercial_price_factory
 from products.tests.factories import product_factory
-from products.units import OrderUnit
 from reservations.models import Allocation
 
 TODAY = timezone.localdate()
@@ -59,7 +58,6 @@ def _standard_business_offer_line_input(
     return BusinessOfferLineInput(
         commercial_offer_id=offer.pk,
         quantity=quantity,
-        unit=OrderUnit.STOCK,
     )
 
 

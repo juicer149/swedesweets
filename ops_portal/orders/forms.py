@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
-from decimal import Decimal
 from functools import cached_property
 from typing import Any
 
@@ -17,7 +16,7 @@ from ops_portal.products.presentation import (
     translated_product_catalog_label,
     translated_product_name,
 )
-from orders.models import Order, OrderLine
+from orders.models import Order
 from orders.order_limits import (
     MAX_QUANTITY_PER_PRODUCT_PER_ORDER,
     is_unusually_large_order_line,
@@ -25,49 +24,12 @@ from orders.order_limits import (
 from pricing.models import CommercialPrice
 from products.images import product_image_url
 from products.models import Product
-from products.units import quantity_to_units
 
 # extra=0 below - lines are never pre-rendered blank; they only ever appear
 # via order_lines.js in response to a selection in AddOrderLineProductForm.
 DEFAULT_ORDER_LINE_COUNT = 0
 
-# Kept at the original fractional precision - kg/gram remain valid domain
-# input (unit is just never exposed as a frontend choice), so the field
-# itself must still accept e.g. 12.5 kg. Only the rendered widget is forced
-# to whole-number stepper behavior in OrderLineForm.__init__ below, since
-# that is the only path the current UI actually drives.
-MIN_ORDER_QUANTITY = Decimal("0.001")
-
 MAX_UNITS_PER_PRODUCT_PER_ORDER = MAX_QUANTITY_PER_PRODUCT_PER_ORDER
-
-
-def _order_line_stock_unit_value() -> str:
-    gram_based_values = {
-        OrderLine.Unit.KG,
-        OrderLine.Unit.GRAMS,
-    }
-
-    for value, _label in OrderLine.Unit.choices:
-        if value not in gram_based_values:
-            return value
-
-    return OrderLine.Unit.KG
-
-
-def _order_line_unit_choices() -> tuple[tuple[str, str], ...]:
-    stock_unit_value = _order_line_stock_unit_value()
-
-    return tuple(
-        (
-            value,
-            "Quantity" if value == stock_unit_value else label,
-        )
-        for value, label in OrderLine.Unit.choices
-    )
-
-
-ORDER_LINE_STOCK_UNIT_VALUE = _order_line_stock_unit_value()
-ORDER_LINE_UNIT_CHOICES = _order_line_unit_choices()
 
 
 class CustomerChoiceField(forms.ModelChoiceField):
@@ -348,26 +310,13 @@ class OrderLineForm(forms.Form):
         ),
     )
 
-    unit = forms.ChoiceField(
+    # How many of the product's stock unit (boxes, pieces).
+    quantity = forms.IntegerField(
         required=False,
-        choices=ORDER_LINE_UNIT_CHOICES,
-        initial=ORDER_LINE_STOCK_UNIT_VALUE,
+        min_value=1,
         error_messages={
-            "invalid_choice": "Choose quantity, kg, or grams.",
-        },
-        widget=forms.HiddenInput(),
-    )
-
-    quantity = forms.DecimalField(
-        required=False,
-        min_value=MIN_ORDER_QUANTITY,
-        max_digits=12,
-        decimal_places=3,
-        error_messages={
-            "invalid": "Enter quantity using numbers only, e.g. 12 or 2.5.",
+            "invalid": "Enter a whole number.",
             "min_value": "Quantity must be greater than 0.",
-            "max_digits": "Quantity is too large.",
-            "max_decimal_places": "Use at most 3 decimal places.",
         },
         widget=forms.NumberInput(
             attrs={
@@ -408,7 +357,6 @@ class OrderLineForm(forms.Form):
             )
 
         self.fields["quantity"].widget.attrs["step"] = "1"
-        self.fields["quantity"].widget.attrs["min"] = "1"
 
     @cached_property
     def offer_view(self) -> OrderLineOfferView | None:
@@ -447,9 +395,6 @@ class OrderLineForm(forms.Form):
         quantity = cleaned_data.get(
             "quantity"
         )
-        unit = cleaned_data.get(
-            "unit"
-        )
 
         if offer is None and quantity is None:
             return cleaned_data
@@ -466,24 +411,10 @@ class OrderLineForm(forms.Form):
                 "Enter a quantity for this line.",
             )
 
-        if not unit:
-            unit = ORDER_LINE_STOCK_UNIT_VALUE
-            cleaned_data["unit"] = unit
-
         if offer is None or quantity is None:
             return cleaned_data
 
         product = offer.product
-
-        quantity_in_units = _quantity_to_units_for_form(
-            product=product,
-            quantity=quantity,
-            unit=unit,
-        )
-
-        cleaned_data[
-            "quantity_in_units"
-        ] = quantity_in_units
 
         available_units = (
             self.available_units_by_offer_id.get(
@@ -492,9 +423,9 @@ class OrderLineForm(forms.Form):
         )
 
         if is_unusually_large_order_line(
-            quantity=quantity_in_units
+            quantity=quantity
         ) and not _is_stock_shortage(
-            requested_quantity=quantity_in_units,
+            requested_quantity=quantity,
             available_quantity=available_units,
         ):
             maximum = product.stock_quantity_label(
@@ -538,9 +469,6 @@ class OrderLineForm(forms.Form):
             commercial_offer_id=offer.pk,
             quantity=self.cleaned_data[
                 "quantity"
-            ],
-            unit=self.cleaned_data[
-                "unit"
             ],
         )
 
@@ -621,7 +549,7 @@ class BaseOrderLineFormSet(BaseFormSet):
                 "commercial_offer"
             ]
             quantity = form.cleaned_data[
-                "quantity_in_units"
+                "quantity"
             ]
             product = offer.product
 
@@ -770,7 +698,6 @@ def build_order_line_initial_data(
             "commercial_offer": (
                 line.commercial_offer_id
             ),
-            "unit": line.unit,
             "quantity": line.quantity_in_units,
         }
         for line in (
@@ -823,22 +750,6 @@ def build_order_line_offer_view(
         offer_detail=_offer_detail(offer),
         image_url=product_image_url(product),
     )
-
-
-def _quantity_to_units_for_form(
-    *,
-    product: Product,
-    quantity: Decimal,
-    unit: str,
-) -> int:
-    try:
-        return quantity_to_units(
-            product=product,
-            quantity=quantity,
-            unit=unit,
-        )
-    except ValueError as error:
-        raise forms.ValidationError(str(error)) from error
 
 
 def _is_stock_shortage(

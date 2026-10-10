@@ -35,8 +35,6 @@ def order_line_factory(
     return OrderLine.objects.create(
         order=order,
         product=product,
-        quantity=quantity,
-        unit=OrderLine.Unit.STOCK_UNIT,
         quantity_in_units=quantity,
         unit_price_snapshot=unit_price_snapshot,
         commercial_offer=commercial_offer,

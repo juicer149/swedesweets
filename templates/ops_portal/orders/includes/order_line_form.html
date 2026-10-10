@@ -7,7 +7,6 @@
   data-commercial-offer-id="{{ line_form.commercial_offer.value|default_if_none:'' }}"
 >
   {{ line_form.commercial_offer }}
-  {{ line_form.unit }}
 
   {% comment %}
     Drawn like the lines of a cart or an order: the picture circle, the
@@ -24,7 +23,7 @@
         <span class="line__meta" data-order-line-meta>{{ view.meta }}</span>
         <span class="line__meta line__meta--offer" data-order-line-offer{% if not view.offer_detail %} hidden{% endif %}>{{ view.offer_detail }}</span>
 
-        {% if line_form.non_field_errors or line_form.commercial_offer.errors or line_form.unit.errors or line_form.quantity.errors %}
+        {% if line_form.non_field_errors or line_form.commercial_offer.errors or line_form.quantity.errors %}
           <div
             class="form-errors"
             role="alert"
@@ -33,9 +32,6 @@
               <p>{{ error }}</p>
             {% endfor %}
             {% for error in line_form.commercial_offer.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-            {% for error in line_form.unit.errors %}
               <p>{{ error }}</p>
             {% endfor %}
             {% for error in line_form.quantity.errors %}

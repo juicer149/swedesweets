@@ -24,7 +24,6 @@ product identity.
 from __future__ import annotations
 
 from collections.abc import Iterable
-from decimal import ROUND_CEILING, Decimal
 
 from django.conf import settings
 from django.db import models
@@ -535,80 +534,6 @@ class Product(models.Model):
         return labels[self.stock_unit] % {
             "count": quantity,
         }
-
-    def grams_to_units(
-        self,
-        *,
-        grams: int,
-    ) -> int:
-        """Convert grams into whole stock units for this product."""
-
-        if grams <= 0:
-            raise InvalidProductData(
-                "grams must be positive"
-            )
-
-        return (
-            grams
-            + self.weight_per_unit
-            - 1
-        ) // self.weight_per_unit
-
-    def kg_to_units(
-        self,
-        *,
-        kg: Decimal,
-    ) -> int:
-        """Convert kilograms into whole stock units for this product."""
-
-        if kg <= 0:
-            raise InvalidProductData(
-                "kg must be positive"
-            )
-
-        grams = (
-            kg
-            * Decimal("1000")
-        ).to_integral_value(
-            rounding=ROUND_CEILING
-        )
-
-        return self.grams_to_units(
-            grams=int(grams)
-        )
-
-    def units_to_grams(
-        self,
-        *,
-        units: int,
-    ) -> int:
-        """Convert whole stock units into grams."""
-
-        if units <= 0:
-            raise InvalidProductData(
-                "units must be positive"
-            )
-
-        return (
-            units
-            * self.weight_per_unit
-        )
-
-    def units_to_kg(
-        self,
-        *,
-        units: int,
-    ) -> Decimal:
-        """Convert whole stock units into kilograms."""
-
-        grams = self.units_to_grams(
-            units=units
-        )
-
-        return (
-            Decimal(grams)
-            / Decimal("1000")
-        )
 
     def __str__(self) -> str:
         return self.display_name

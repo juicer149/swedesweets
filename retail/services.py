@@ -367,8 +367,6 @@ def create_pending_retail_order(
         OrderLine.objects.create(
             order=order,
             product=resolved_line.product,
-            quantity=resolved_line.quantity,
-            unit=OrderLine.Unit.STOCK_UNIT,
             quantity_in_units=resolved_line.quantity,
             unit_price_snapshot=resolved_line.unit_price,
             commercial_offer=resolved_line.commercial_price,

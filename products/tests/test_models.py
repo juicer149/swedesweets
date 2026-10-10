@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from decimal import Decimal
-
 import pytest
 
 from products.errors import InvalidProductData
@@ -131,55 +129,6 @@ def test_product_formats_stock_quantity_label_for_pieces():
 
     assert product.stock_quantity_label(1) == "1 piece"
     assert product.stock_quantity_label(2) == "2 pieces"
-
-
-@pytest.mark.django_db
-def test_product_converts_grams_to_units_rounding_up():
-    product = product_factory(weight_per_unit=5000)
-
-    assert product.grams_to_units(grams=1) == 1
-    assert product.grams_to_units(grams=5000) == 1
-    assert product.grams_to_units(grams=5001) == 2
-
-
-@pytest.mark.django_db
-def test_product_rejects_non_positive_grams():
-    product = product_factory(weight_per_unit=5000)
-
-    with pytest.raises(InvalidProductData, match="grams must be positive"):
-        product.grams_to_units(grams=0)
-
-
-@pytest.mark.django_db
-def test_product_converts_kg_to_units_rounding_up_to_whole_units():
-    product = product_factory(weight_per_unit=5000)
-
-    assert product.kg_to_units(kg=Decimal("5.0")) == 1
-    assert product.kg_to_units(kg=Decimal("5.001")) == 2
-
-
-@pytest.mark.django_db
-def test_product_rejects_non_positive_kg():
-    product = product_factory(weight_per_unit=5000)
-
-    with pytest.raises(InvalidProductData, match="kg must be positive"):
-        product.kg_to_units(kg=Decimal("0"))
-
-
-@pytest.mark.django_db
-def test_product_converts_units_to_grams_and_kg():
-    product = product_factory(weight_per_unit=5000)
-
-    assert product.units_to_grams(units=3) == 15000
-    assert product.units_to_kg(units=3) == Decimal("15")
-
-
-@pytest.mark.django_db
-def test_product_rejects_non_positive_units():
-    product = product_factory(weight_per_unit=5000)
-
-    with pytest.raises(InvalidProductData, match="units must be positive"):
-        product.units_to_grams(units=0)
 
 
 @pytest.mark.django_db

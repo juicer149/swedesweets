@@ -49,7 +49,6 @@ def test_order_line_view_says_when_a_product_left_the_catalog():
         product=None,
         quantity=2,
         quantity_label="2 units",
-        unit="unit",
         catalog_label="Apple",
         offer_label=None,
         price_label=None,

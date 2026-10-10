@@ -25,10 +25,6 @@ from pricing.models import (
     PriceAmount,
 )
 from products.models import Product
-from products.units import (
-    normalize_order_unit,
-    quantity_to_units,
-)
 
 
 def buyer_from_customer(
@@ -167,8 +163,8 @@ def resolve_business_offer_lines(
     Product identity is derived from the selected CommercialPrice rather than
     supplied independently by the caller.
 
-    Duplicate selections of the same offer are merged after quantity
-    conversion. Different offers for the same product remain distinct lines.
+    Duplicate selections of the same offer are merged. Different offers
+    for the same product remain distinct lines.
     """
 
     line_inputs = tuple(lines)
@@ -261,11 +257,7 @@ def resolve_business_offer_lines(
             line_input.commercial_offer_id
         ]
 
-        quantity_in_units = quantity_to_units(
-            product=offer.product,
-            quantity=line_input.quantity,
-            unit=line_input.unit,
-        )
+        quantity_in_units = line_input.quantity
 
         if quantity_in_units <= 0:
             raise InvalidOrderOperation(
@@ -294,9 +286,9 @@ def resolve_business_order_lines(
     *,
     lines: Iterable[OrderLineInput],
 ) -> tuple[ResolvedOrderLine, ...]:
-    """Resolve business quantities to physical stock units.
+    """Resolve business product lines (quantities in stock units).
 
-    Duplicate product lines are merged after quantity conversion.
+    Duplicate product lines are merged.
 
     Each resolved line carries the product's persistent standard BUSINESS offer
     as its commercial selection. Ordinary product ordering is therefore an
@@ -324,24 +316,12 @@ def resolve_business_order_lines(
     quantity_by_product_id: dict[int, int] = defaultdict(int)
 
     for line_input, product_id in resolved_inputs:
-        try:
-            product = products_by_id[
-                product_id
-            ]
-        except KeyError as exc:
+        if product_id not in products_by_id:
             raise InvalidOrderOperation(
                 f"Product {product_id} does not exist"
-            ) from exc
+            )
 
-        unit = normalize_order_unit(
-            str(line_input.unit),
-        )
-
-        quantity_in_units = quantity_to_units(
-            product=product,
-            quantity=line_input.quantity,
-            unit=unit,
-        )
+        quantity_in_units = line_input.quantity
 
         if quantity_in_units <= 0:
             raise InvalidOrderOperation(

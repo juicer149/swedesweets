@@ -22,7 +22,6 @@ from pricing.models import (
     CommercialPrice,
     PriceAmount,
 )
-from products.units import OrderUnit
 
 
 def _priced_batch_offer(
@@ -61,7 +60,6 @@ def test_resolve_business_offer_lines_resolves_unpriced_standard_offer(
             BusinessOfferLineInput(
                 commercial_offer_id=offer.pk,
                 quantity=2,
-                unit=OrderUnit.STOCK,
             ),
         ],
     )
@@ -99,7 +97,6 @@ def test_resolve_business_offer_lines_snapshots_batch_offer_price(
             BusinessOfferLineInput(
                 commercial_offer_id=offer.pk,
                 quantity=3,
-                unit=OrderUnit.STOCK,
             ),
         ],
     )
@@ -137,12 +134,10 @@ def test_resolve_business_offer_lines_keeps_distinct_offers_for_same_product(
             BusinessOfferLineInput(
                 commercial_offer_id=standard_offer.pk,
                 quantity=5,
-                unit=OrderUnit.STOCK,
             ),
             BusinessOfferLineInput(
                 commercial_offer_id=batch_offer.pk,
                 quantity=3,
-                unit=OrderUnit.STOCK,
             ),
         ],
     )
@@ -178,12 +173,10 @@ def test_resolve_business_offer_lines_merges_duplicate_offer_inputs(
             BusinessOfferLineInput(
                 commercial_offer_id=offer.pk,
                 quantity=2,
-                unit=OrderUnit.STOCK,
             ),
             BusinessOfferLineInput(
                 commercial_offer_id=offer.pk,
                 quantity=3,
-                unit=OrderUnit.STOCK,
             ),
         ],
     )
@@ -212,7 +205,6 @@ def test_resolve_business_offer_lines_rejects_non_business_offer(
                 BusinessOfferLineInput(
                     commercial_offer_id=offer.pk,
                     quantity=1,
-                    unit=OrderUnit.STOCK,
                 ),
             ],
         )
@@ -237,7 +229,6 @@ def test_resolve_business_offer_lines_rejects_disabled_offer(
                 BusinessOfferLineInput(
                     commercial_offer_id=offer.pk,
                     quantity=1,
-                    unit=OrderUnit.STOCK,
                 ),
             ],
         )
@@ -272,7 +263,6 @@ def test_resolve_business_offer_lines_rejects_unpriced_batch_offer(
                 BusinessOfferLineInput(
                     commercial_offer_id=offer.pk,
                     quantity=1,
-                    unit=OrderUnit.STOCK,
                 ),
             ],
         )
@@ -289,7 +279,6 @@ def test_resolve_business_offer_lines_rejects_missing_offer():
                 BusinessOfferLineInput(
                     commercial_offer_id=999_999,
                     quantity=1,
-                    unit=OrderUnit.STOCK,
                 ),
             ],
         )

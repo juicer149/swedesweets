@@ -521,8 +521,6 @@ def test_create_pending_retail_order_from_product_price():
     line = order.lines.get()
 
     assert line.product == product
-    assert line.quantity == Decimal("2.000")
-    assert line.unit == OrderLine.Unit.STOCK_UNIT
     assert line.quantity_in_units == 2
     assert line.unit_price_snapshot == Decimal("12.50")
     assert line.line_total == Decimal("25.00")

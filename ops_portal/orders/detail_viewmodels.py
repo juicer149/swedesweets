@@ -43,7 +43,6 @@ class OrderContentLine:
     product_detail_href: str
     quantity: int
     quantity_label: str
-    unit: str
     catalog_label: str
     image_url: str | None
 
@@ -403,7 +402,6 @@ def _build_content_lines(lines: list[OrderLine]) -> list[OrderContentLine]:
                 product_detail_href=line_product_detail_href,
                 quantity=line.quantity_in_units,
                 quantity_label=quantity_text,
-                unit=line.get_unit_display(),
                 catalog_label=line.product.catalog_label,
                 image_url=product_image_url(line.product),
             )

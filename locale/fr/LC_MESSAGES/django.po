@@ -788,18 +788,6 @@ msgstr "Commande en double"
 msgid "Out of stock"
 msgstr "Rupture de stock"
 
-#: orders/models.py:469
-msgid "Stock unit"
-msgstr "Unité de stock"
-
-#: orders/models.py:470
-msgid "Kg"
-msgstr "kg"
-
-#: orders/models.py:471
-msgid "Grams"
-msgstr "Grammes"
-
 #: orders/notifications.py:141
 #, python-format
 msgid "Order #%(number)s received – SwedeSweets"

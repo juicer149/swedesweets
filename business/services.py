@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from decimal import Decimal
 
 from django.db import transaction
 
@@ -41,7 +40,6 @@ from orders.services import (
 from orders.services import (
     update_placed_order as update_shared_placed_order,
 )
-from products.units import OrderUnit
 from reservations.policies import (
     clear_order_reservations_before_line_replacement,
     require_order_without_reservations_before_discard,
@@ -137,8 +135,7 @@ def place_customer_cart(
         lines=(
             BusinessOfferLineInput(
                 commercial_offer_id=commercial_price_id,
-                quantity=Decimal(quantity),
-                unit=OrderUnit.STOCK,
+                quantity=quantity,
             )
             for commercial_price_id, quantity in cart_lines
         ),

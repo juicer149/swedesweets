@@ -40,7 +40,9 @@ from orders.models import Order, OrderLine
 from products.models import Product
 
 EXPORT_FORMAT = "swedesweets-order-history"
-EXPORT_FORMAT_VERSION = 2
+# 3: lines count stock units only (quantity_in_units); the old weight
+# ordering's "quantity" and "unit" are gone.
+EXPORT_FORMAT_VERSION = 3
 EXPORT_FILENAME = "orders.json"
 
 _ACTOR_FIELDS = (
@@ -210,8 +212,6 @@ def _line_record(line: OrderLine) -> dict[str, Any]:
     return {
         "source_line_id": line.id,
         "product": _product_ref(line.product),
-        "quantity": _decimal(line.quantity),
-        "unit": line.unit,
         "quantity_in_units": line.quantity_in_units,
         "unit_price_snapshot": _decimal(line.unit_price_snapshot),
         "line_total": _decimal(line.line_total),

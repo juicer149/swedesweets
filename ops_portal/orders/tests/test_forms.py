@@ -23,7 +23,6 @@ from orders.models import Order
 from orders.tests.factories import order_line_factory
 from pricing.models import CommercialPrice, PriceAmount
 from products.tests.factories import product_factory
-from products.units import OrderUnit
 
 TODAY = timezone.localdate()
 
@@ -196,7 +195,6 @@ def test_order_line_keeps_its_product_when_the_form_comes_back():
     form = OrderLineForm(
         data={
             "commercial_offer": str(offer.pk),
-            "unit": OrderUnit.STOCK,
             "quantity": "",
         },
         offer_queryset=CommercialPrice.objects.filter(
@@ -242,7 +240,6 @@ def test_order_line_form_accepts_valid_line():
             "commercial_offer": str(
                 offer.pk
             ),
-            "unit": OrderUnit.STOCK,
             "quantity": "10",
         },
         offer_queryset=CommercialPrice.objects.filter(
@@ -259,20 +256,7 @@ def test_order_line_form_accepts_valid_line():
         form.cleaned_data["commercial_offer"]
         == offer
     )
-    assert (
-        form.cleaned_data["quantity"]
-        == Decimal("10")
-    )
-    assert (
-        form.cleaned_data["unit"]
-        == OrderUnit.STOCK
-    )
-    assert (
-        form.cleaned_data[
-            "quantity_in_units"
-        ]
-        == 10
-    )
+    assert form.cleaned_data["quantity"] == 10
     assert form.has_line_data is True
 
 
@@ -292,7 +276,6 @@ def test_order_line_form_allows_empty_line():
     form = OrderLineForm(
         data={
             "commercial_offer": "",
-            "unit": "",
             "quantity": "",
         },
         offer_queryset=CommercialPrice.objects.filter(
@@ -320,7 +303,6 @@ def test_order_line_form_requires_offer_when_quantity_is_present():
     form = OrderLineForm(
         data={
             "commercial_offer": "",
-            "unit": OrderUnit.STOCK,
             "quantity": "10",
         },
         offer_queryset=CommercialPrice.objects.filter(
@@ -350,7 +332,6 @@ def test_order_line_form_requires_quantity_when_product_is_present():
             "commercial_offer": str(
                 offer.pk
             ),
-            "unit": OrderUnit.STOCK,
             "quantity": "",
         },
         offer_queryset=CommercialPrice.objects.filter(
@@ -363,7 +344,13 @@ def test_order_line_form_requires_quantity_when_product_is_present():
 
 
 @pytest.mark.django_db
-def test_order_line_form_defaults_missing_unit_to_stock_unit():
+@pytest.mark.parametrize(
+    "quantity",
+    ["12.5", "0"],
+)
+def test_order_line_form_takes_whole_stock_units_only(
+    quantity,
+):
     apple = product_factory(
         brand="Generic",
         name="Apple",
@@ -380,8 +367,7 @@ def test_order_line_form_defaults_missing_unit_to_stock_unit():
             "commercial_offer": str(
                 offer.pk
             ),
-            "unit": "",
-            "quantity": "5",
+            "quantity": quantity,
         },
         offer_queryset=CommercialPrice.objects.filter(
             pk=offer.pk,
@@ -391,106 +377,8 @@ def test_order_line_form_defaults_missing_unit_to_stock_unit():
         },
     )
 
-    assert form.is_valid(), form.errors
-
-    assert (
-        form.cleaned_data["unit"]
-        == OrderUnit.STOCK
-    )
-
-
-@pytest.mark.django_db
-def test_order_line_form_accepts_kg_quantity():
-    apple = product_factory(
-        brand="Generic",
-        name="Apple",
-        weight_per_unit=5000,
-        internal_number=1,
-    )
-
-    offer = _standard_business_offer(
-        apple,
-    )
-
-    form = OrderLineForm(
-        data={
-            "commercial_offer": str(
-                offer.pk
-            ),
-            "unit": OrderUnit.KG,
-            "quantity": "12.5",
-        },
-        offer_queryset=CommercialPrice.objects.filter(
-            pk=offer.pk,
-        ),
-        available_units_by_offer_id={
-            offer.id: 100,
-        },
-    )
-
-    assert form.is_valid(), form.errors
-
-    assert (
-        form.cleaned_data["quantity"]
-        == Decimal("12.5")
-    )
-    assert (
-        form.cleaned_data["unit"]
-        == OrderUnit.KG
-    )
-    assert (
-        form.cleaned_data[
-            "quantity_in_units"
-        ]
-        == 3
-    )
-
-
-@pytest.mark.django_db
-def test_order_line_form_accepts_grams_quantity():
-    apple = product_factory(
-        brand="Generic",
-        name="Apple",
-        weight_per_unit=5000,
-        internal_number=1,
-    )
-
-    offer = _standard_business_offer(
-        apple,
-    )
-
-    form = OrderLineForm(
-        data={
-            "commercial_offer": str(
-                offer.pk
-            ),
-            "unit": OrderUnit.GRAMS,
-            "quantity": "12000",
-        },
-        offer_queryset=CommercialPrice.objects.filter(
-            pk=offer.pk,
-        ),
-        available_units_by_offer_id={
-            offer.id: 100,
-        },
-    )
-
-    assert form.is_valid(), form.errors
-
-    assert (
-        form.cleaned_data["quantity"]
-        == Decimal("12000")
-    )
-    assert (
-        form.cleaned_data["unit"]
-        == OrderUnit.GRAMS
-    )
-    assert (
-        form.cleaned_data[
-            "quantity_in_units"
-        ]
-        == 3
-    )
+    assert not form.is_valid()
+    assert "quantity" in form.errors
 
 
 @pytest.mark.django_db
@@ -511,7 +399,6 @@ def test_order_line_form_accepts_line_before_formset_stock_validation():
             "commercial_offer": str(
                 offer.pk
             ),
-            "unit": OrderUnit.STOCK,
             "quantity": "11",
         },
         offer_queryset=CommercialPrice.objects.filter(
@@ -524,12 +411,7 @@ def test_order_line_form_accepts_line_before_formset_stock_validation():
 
     assert form.is_valid(), form.errors
 
-    assert (
-        form.cleaned_data[
-            "quantity_in_units"
-        ]
-        == 11
-    )
+    assert form.cleaned_data["quantity"] == 11
 
 
 @pytest.mark.django_db
@@ -550,7 +432,6 @@ def test_order_line_form_rejects_unusually_large_line():
             "commercial_offer": str(
                 offer.pk
             ),
-            "unit": OrderUnit.STOCK,
             "quantity": str(
                 MAX_UNITS_PER_PRODUCT_PER_ORDER
                 + 1
@@ -580,7 +461,6 @@ def test_order_line_formset_requires_at_least_one_line():
             "form-MIN_NUM_FORMS": "0",
             "form-MAX_NUM_FORMS": "1000",
             "form-0-commercial_offer": "",
-            "form-0-unit": "",
             "form-0-quantity": "",
         },
     )
@@ -617,9 +497,6 @@ def test_order_line_formset_rejects_more_than_available_stock():
             "form-MAX_NUM_FORMS": "1000",
             "form-0-commercial_offer": str(
                 offer.pk
-            ),
-            "form-0-unit": (
-                OrderUnit.STOCK
             ),
             "form-0-quantity": "151",
         },
@@ -658,9 +535,6 @@ def test_order_line_formset_accepts_available_stock():
             "form-0-commercial_offer": str(
                 offer.pk
             ),
-            "form-0-unit": (
-                OrderUnit.STOCK
-            ),
             "form-0-quantity": "150",
         },
     )
@@ -678,14 +552,7 @@ def test_order_line_formset_accepts_available_stock():
         inputs[0].commercial_offer_id
         == offer.pk
     )
-    assert (
-        inputs[0].quantity
-        == Decimal("150")
-    )
-    assert (
-        inputs[0].unit
-        == OrderUnit.STOCK
-    )
+    assert inputs[0].quantity == 150
 
 
 @pytest.mark.django_db
@@ -731,12 +598,10 @@ def test_order_line_formset_validates_availability_per_offer():
             "form-0-commercial_offer": str(
                 standard_offer.pk
             ),
-            "form-0-unit": OrderUnit.STOCK,
             "form-0-quantity": "6",
             "form-1-commercial_offer": str(
                 special_offer.pk
             ),
-            "form-1-unit": OrderUnit.STOCK,
             "form-1-quantity": "1",
         },
     )
@@ -792,14 +657,12 @@ def test_order_line_formset_applies_order_limit_across_offers_for_same_product()
             "form-0-commercial_offer": str(
                 standard_offer.pk
             ),
-            "form-0-unit": OrderUnit.STOCK,
             "form-0-quantity": str(
                 MAX_UNITS_PER_PRODUCT_PER_ORDER
             ),
             "form-1-commercial_offer": str(
                 special_offer.pk
             ),
-            "form-1-unit": OrderUnit.STOCK,
             "form-1-quantity": "1",
         },
     )
@@ -846,7 +709,6 @@ def test_build_order_line_initial_data():
         == [
             {
                 "commercial_offer": offer.id,
-                "unit": OrderUnit.STOCK,
                 "quantity": 10,
             }
         ]

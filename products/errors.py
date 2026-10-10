@@ -7,7 +7,3 @@ class ProductError(ValueError):
 
 class InvalidProductData(ProductError):
     """Raised when product data violates product rules."""
-
-
-class UnsupportedOrderUnit(ProductError):
-    """Raised when an order quantity uses an unsupported unit."""

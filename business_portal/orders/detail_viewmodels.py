@@ -34,7 +34,6 @@ class PortalOrderContentLine:
     product: Product
     quantity: int
     quantity_label: str
-    unit: str
     catalog_label: str
     offer_label: str | None
     price_label: str | None
@@ -214,7 +213,6 @@ def _build_content_line(
         quantity_label=quantity_label(
             line.quantity_in_units
         ),
-        unit=line.get_unit_display(),
         catalog_label=presentation.catalog_label,
         offer_label=presentation.offer_label,
         price_label=presentation.price_label,

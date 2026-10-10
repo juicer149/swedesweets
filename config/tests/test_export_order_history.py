@@ -128,7 +128,7 @@ def test_export_covers_business_retail_and_cancelled_orders(
     by_id = {order["source_order_id"]: order for order in data["orders"]}
 
     assert data["format"] == "swedesweets-order-history"
-    assert data["format_version"] == 2
+    assert data["format_version"] == 3
     assert data["counts"]["orders"] == 4
     assert data["counts"]["order_lines"] == 4
     assert data["counts"]["orders_by_status"] == {
