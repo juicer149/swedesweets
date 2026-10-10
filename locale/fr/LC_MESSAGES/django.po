@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 15:01+0200\n"
+"POT-Creation-Date: 2026-10-10 20:16+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -484,7 +484,7 @@ msgstr "Passer une commande"
 
 #: business_portal/orders/review_viewmodels.py:107
 #: templates/ops_portal/accounts/customer_account_status.html:24
-#: templates/ops_portal/orders/order_form.html:87
+#: templates/ops_portal/orders/order_form.html:88
 #: templates/registration/password_change_done.html:16
 #: templates/registration/password_change_form.html:34
 msgid "Back"
@@ -1647,7 +1647,7 @@ msgstr "Ajouté"
 # | msgid "%(count)s product"
 # | msgid_plural "%(count)s products"
 #: templates/includes/catalog/grid.html:17
-#: templates/includes/catalog/product.html:61
+#: templates/includes/catalog/product.html:54
 msgid "Could not add product."
 msgstr "Impossible d’ajouter le produit."
 
@@ -1667,8 +1667,8 @@ msgstr "Aucun produit ne correspond à votre recherche."
 
 # | msgid "Product"
 #: templates/includes/catalog/grid.html:56
-#: templates/ops_portal/orders/order_form.html:37
-#: templates/ops_portal/orders/order_form.html:56
+#: templates/ops_portal/orders/order_form.html:48
+#: templates/ops_portal/orders/order_form.html:57
 msgid "Products"
 msgstr "Produits"
 
@@ -1680,16 +1680,16 @@ msgstr "Aucun produit n’est disponible actuellement."
 msgid "Vegan"
 msgstr "Végane"
 
-#: templates/includes/catalog/product.html:67
+#: templates/includes/catalog/product.html:60
 msgid "Offer"
 msgstr "Offre"
 
-#: templates/includes/catalog/product.html:111
+#: templates/includes/catalog/product.html:114
 msgid "Product information"
 msgstr "Informations sur le produit"
 
 # | msgid "Back to login"
-#: templates/includes/catalog/product.html:119
+#: templates/includes/catalog/product.html:122
 msgid "Back to catalog"
 msgstr "Retour au catalogue"
 
@@ -1794,9 +1794,9 @@ msgstr[1] ""
 # | msgid "Choose product"
 #: templates/includes/navbar_cart.html:74
 #: templates/includes/navbar_cart.html:79
-#: templates/includes/ui/line_remove.html:16
-#: templates/includes/ui/line_remove.html:26
-#: templates/includes/ui/line_remove.html:41
+#: templates/includes/ui/line_remove.html:21
+#: templates/includes/ui/line_remove.html:37
+#: templates/includes/ui/line_remove.html:54
 msgid "Remove product"
 msgstr "Retirer le produit"
 
@@ -1812,23 +1812,23 @@ msgstr "Commandes précédentes"
 msgid "Phone"
 msgstr "Téléphone"
 
-#: templates/includes/ui/line_remove.html
+#: templates/includes/ui/line_remove.html:23
+#: templates/includes/ui/line_remove.html:53
 #, python-format
 msgid "Remove %(name)s from the order?"
 msgstr "Retirer %(name)s de la commande ?"
 
 #: templates/includes/ui/line_remove.html:25
-#: templates/includes/ui/line_remove.html:40
 msgid "Remove this product from the order?"
 msgstr "Retirer ce produit de la commande ?"
 
-#: templates/includes/ui/line_remove.html:27
-#: templates/includes/ui/line_remove.html:42
+#: templates/includes/ui/line_remove.html:38
+#: templates/includes/ui/line_remove.html:55
 msgid "Remove"
 msgstr "Retirer"
 
-#: templates/includes/ui/line_remove.html:28
-#: templates/includes/ui/line_remove.html:43
+#: templates/includes/ui/line_remove.html:39
+#: templates/includes/ui/line_remove.html:56
 msgid "Keep it"
 msgstr "Le garder"
 
@@ -1848,13 +1848,13 @@ msgstr "Modifier le compte"
 msgid "Remove offer"
 msgstr "Retirer l’offre"
 
-#: templates/ops_portal/orders/order_form.html:64
+#: templates/ops_portal/orders/order_form.html:65
 msgid "No offers added yet. Use the selector above to add one."
 msgstr ""
 "Aucune offre ajoutée pour le moment. Utilisez le sélecteur ci-dessus pour en "
 "ajouter une."
 
-#: templates/ops_portal/orders/order_form.html:81
+#: templates/ops_portal/orders/order_form.html:82
 msgid "Cancel order"
 msgstr "Annuler la commande"
 
