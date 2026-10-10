@@ -1,6 +1,6 @@
 # Product variants
 
-Status: proposal, for review before any code.
+Status: agreed; step 1 (the model) in progress.
 
 A product can come in variants: a hoodie in XS–XL, a chocolate bar in 60, 100
 and 120 g. Variants are modelled the way Shopify does it: **every product has
@@ -102,12 +102,15 @@ and `reservations` own rule 8.
 
 ## Migration
 
-One data migration, written to run on production data:
+Data migrations written to run on production data, one per step:
 
 1. For every product, create one variant: label `""`, position 1, the
-   product's `sku` and `weight_per_unit`, active as the product.
+   product's `sku` and `weight_per_unit`, active (`products/0008`, step 1).
+   Active even for an inactive product: the product's own switch decides
+   whether it is sold, and a paused only variant would leave nothing to
+   sell when the product is switched back on.
 2. Point every batch, commercial price and order line at its product's
-   variant.
+   variant (steps 2–4, each in its own app).
 3. Make the new `variant` fields required.
 
 It is tried on a copy of the production database before it runs on Railway.

@@ -891,6 +891,11 @@ Product identity and physical stock are separate concepts.
 Product
     stable SKU/product identity
 
+ProductVariant
+    one size, weight or kind of a product; every product has at least one
+    (docs/product-variants.md); batches, prices and order lines move to it
+    step by step
+
 InventoryBatch
     physical stock
     quantity

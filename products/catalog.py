@@ -4,6 +4,10 @@ from products.errors import InvalidProductData
 
 MAX_NAME_LENGTH = 160
 MAX_SKU_LENGTH = 180
+MAX_VARIANT_LABEL_LENGTH = 40
+
+# Between a product's name and its variant's label: "Hoodie — M".
+VARIANT_NAME_SEPARATOR = " — "
 
 MIN_WEIGHT_PER_UNIT = 1
 MAX_WEIGHT_PER_UNIT = 50_000
@@ -45,6 +49,31 @@ def normalize_optional_text(
         )
 
     return value
+
+
+def normalize_variant_label(label: str) -> str:
+    """A variant's label ("M", "60 g") with spaces tidied; "" for a
+    product's only variant."""
+
+    return normalize_optional_text(
+        label,
+        field_name="label",
+        max_length=MAX_VARIANT_LABEL_LENGTH,
+    )
+
+
+def variant_display_name(
+    product_name: str,
+    label: str,
+) -> str:
+    """The name of one variant: "Hoodie — M", or just "Hoodie" for a
+    product's only variant (no label). The product name may be any of its
+    names (internal, translated)."""
+
+    if not label:
+        return product_name
+
+    return f"{product_name}{VARIANT_NAME_SEPARATOR}{label}"
 
 
 def slugify_sku_part(value: str) -> str:

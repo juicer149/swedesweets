@@ -17,6 +17,10 @@ Editable catalog data:
     active
     vegan
 
+ProductVariant is what is stocked, priced, sold and packed: every product
+has at least one (docs/product-variants.md). A product with one variant
+shows no choice.
+
 ProductProfile stores optional catalog data without touching the operational
 product identity.
 """
@@ -27,6 +31,7 @@ from collections.abc import Iterable
 
 from django.conf import settings
 from django.db import models
+from django.db.models.functions import Lower
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
@@ -34,13 +39,16 @@ from django.utils.translation import ngettext
 from products.catalog import (
     MAX_NAME_LENGTH,
     MAX_SKU_LENGTH,
+    MAX_VARIANT_LABEL_LENGTH,
     MAX_WEIGHT_PER_UNIT,
     MIN_WEIGHT_PER_UNIT,
     make_sku,
     normalize_optional_text,
     normalize_required_text,
+    normalize_variant_label,
     validate_internal_number,
     validate_weight_per_unit,
+    variant_display_name,
 )
 from products.errors import InvalidProductData
 
@@ -537,6 +545,132 @@ class Product(models.Model):
 
     def __str__(self) -> str:
         return self.display_name
+
+
+class ProductVariant(models.Model):
+    """One size, weight or kind of a product: what is stocked, priced, sold
+    and packed (docs/product-variants.md).
+
+    A product's only variant has no label; with more than one, each has its
+    own ("XS", "M", "60 g"), unique within the product whatever the case.
+    The SKU is set when the variant is created and then kept stable.
+    """
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        related_name="variants",
+    )
+
+    label = models.CharField(
+        max_length=MAX_VARIANT_LABEL_LENGTH,
+        blank=True,
+        help_text='"M", "60 g"; empty for a product\'s only variant.',
+    )
+
+    position = models.PositiveSmallIntegerField(
+        default=1,
+        help_text="Order shown everywhere (1, 2, 3 …).",
+    )
+
+    sku = models.CharField(
+        max_length=MAX_SKU_LENGTH,
+        unique=True,
+        editable=False,
+    )
+
+    weight_per_unit = models.PositiveIntegerField(
+        help_text="Weight in grams for one physical stock unit.",
+    )
+
+    # False: paused. Left out of catalogs, new batches and new orders; its
+    # history stays.
+    active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = [
+            "product_id",
+            "position",
+            "id",
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                models.F("product"),
+                Lower("label"),
+                name="unique_variant_label_per_product",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(position__gte=1),
+                name="variant_position_at_least_1",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    weight_per_unit__gte=MIN_WEIGHT_PER_UNIT
+                ),
+                name="variant_weight_per_unit_at_least_min",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(
+                    weight_per_unit__lte=MAX_WEIGHT_PER_UNIT
+                ),
+                name="variant_weight_per_unit_at_most_max",
+            ),
+        ]
+
+    def save(self, *args, **kwargs) -> None:
+        """Tidy the label, check the weight and keep the SKU stable."""
+
+        update_fields = _normalize_update_fields(
+            kwargs.get("update_fields")
+        )
+
+        if _should_handle(update_fields, "label"):
+            self.label = normalize_variant_label(
+                self.label
+            )
+
+        if _should_handle(update_fields, "weight_per_unit"):
+            validate_weight_per_unit(
+                self.weight_per_unit
+            )
+
+        if not self.sku:
+            raise InvalidProductData(
+                "a variant needs a sku"
+            )
+
+        if self.pk is not None and _should_handle(
+            update_fields,
+            "sku",
+        ):
+            persisted_sku = (
+                type(self)
+                .objects.values_list("sku", flat=True)
+                .get(pk=self.pk)
+            )
+
+            if self.sku != persisted_sku:
+                raise InvalidProductData(
+                    "sku cannot be changed after variant creation"
+                )
+
+        super().save(*args, **kwargs)
+
+    @property
+    def display_name(self) -> str:
+        """The variant's name, "Hoodie — M"; just the product's name for
+        its only variant."""
+
+        return variant_display_name(
+            self.product.display_name,
+            self.label,
+        )
+
+    def __str__(self) -> str:
+        return self.sku
 
 
 class ProductProfile(models.Model):
