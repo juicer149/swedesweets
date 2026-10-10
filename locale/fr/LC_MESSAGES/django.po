@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 13:07+0200\n"
+"POT-Creation-Date: 2026-10-10 13:36+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -277,7 +277,7 @@ msgstr "Offre spéciale"
 
 # | msgid "%(count)s unit"
 # | msgid_plural "%(count)s units"
-#: business_portal/catalog/viewmodels.py:318
+#: business_portal/catalog/viewmodels.py:327
 #: storefront/catalog/viewmodels.py:248
 #, python-format
 msgid "Only %(count)s left"
@@ -286,13 +286,14 @@ msgstr[0] "Plus que %(count)s disponible"
 msgstr[1] "Plus que %(count)s disponibles"
 
 # | msgid "Out of stock"
-#: business_portal/catalog/viewmodels.py:326
+#: business_portal/catalog/viewmodels.py:339
 #: storefront/catalog/viewmodels.py:255
 msgid "In stock"
 msgstr "En stock"
 
 # | msgid "Choose products and quantities for your next order."
-#: business_portal/catalog/views.py:170 storefront/catalog/views.py:326
+#: business_portal/catalog/views.py:170 business_portal/orders/views.py:429
+#: storefront/catalog/views.py:326
 #, python-format
 msgid "%(product)s added to your cart."
 msgstr "%(product)s a été ajouté à votre panier."
@@ -327,8 +328,8 @@ msgstr "À propos"
 #: business_portal/orders/cart_viewmodels.py:82
 #: business_portal/orders/navbar_viewmodels.py:56
 #: business_portal/orders/navbar_viewmodels.py:57
-#: business_portal/orders/navbar_viewmodels.py:81
-#: business_portal/orders/navbar_viewmodels.py:82
+#: business_portal/orders/navbar_viewmodels.py:83
+#: business_portal/orders/navbar_viewmodels.py:84
 #: templates/storefront/cart.html:4 templates/storefront/cart.html:15
 msgid "Cart"
 msgstr "Panier"
@@ -388,22 +389,21 @@ msgstr "Créée"
 
 # | msgid "View order →"
 #: business_portal/orders/navbar_viewmodels.py:63
-#: business_portal/orders/navbar_viewmodels.py:88
+#: business_portal/orders/navbar_viewmodels.py:90
 msgid "View order"
 msgstr "Voir la commande"
 
 # | msgid "No orders yet"
 #: business_portal/orders/navbar_viewmodels.py:68
-#: business_portal/orders/navbar_viewmodels.py:93
-#: templates/business_portal/orders/cart.html:91
+#: business_portal/orders/navbar_viewmodels.py:95
+#: templates/business_portal/orders/cart.html:115
 msgid "Your order is empty."
 msgstr "Votre commande est vide."
 
-# | msgid "Customer catalog"
-#: business_portal/orders/navbar_viewmodels.py:71
-#: business_portal/orders/navbar_viewmodels.py:96
-msgid "Browse catalog"
-msgstr "Parcourir le catalogue"
+#: business_portal/orders/navbar_viewmodels.py:73
+#: business_portal/orders/navbar_viewmodels.py:100
+msgid "Start an order"
+msgstr "Commencer une commande"
 
 #: business_portal/orders/presentation.py:43 orders/models.py:50
 msgid "Draft"
@@ -484,38 +484,42 @@ msgid "Back"
 msgstr "Retour"
 
 # | msgid "Quantity must be at least 1."
-#: business_portal/orders/views.py:125
+#: business_portal/orders/views.py:133
 msgid "Quantity must be a whole number."
 msgstr "La quantité doit être un nombre entier."
 
 # | msgid "Quantity"
-#: business_portal/orders/views.py:170 storefront/cart_views.py:330
+#: business_portal/orders/views.py:178 storefront/cart_views.py:330
 msgid "Quantity updated."
 msgstr "Quantité mise à jour."
 
-#: business_portal/orders/views.py:234 storefront/cart_views.py:398
+#: business_portal/orders/views.py:242 storefront/cart_views.py:398
 msgid "Product removed from your cart."
 msgstr "Produit retiré de votre panier."
 
-#: business_portal/orders/views.py:297 business_portal/orders/views.py:340
-#: business_portal/orders/views.py:393 business_portal/orders/views.py:453
+#: business_portal/orders/views.py:305 business_portal/orders/views.py:348
+#: business_portal/orders/views.py:498 business_portal/orders/views.py:558
 msgid "Unknown order action."
 msgstr "Action non reconnue pour cette commande."
 
-#: business_portal/orders/views.py:312 business_portal/orders/views.py:408
+#: business_portal/orders/views.py:320 business_portal/orders/views.py:513
 #: storefront/cart_views.py:236
 msgid "Cart cleared."
 msgstr "Panier vidé."
 
-#: business_portal/orders/views.py:326
+#: business_portal/orders/views.py:334
 msgid "Add at least one product."
 msgstr "Ajoutez au moins un produit."
 
-#: business_portal/orders/views.py:375
+#: business_portal/orders/views.py:402
+msgid "Choose a product to add."
+msgstr "Choisissez un produit à ajouter."
+
+#: business_portal/orders/views.py:480
 msgid "No cart to review."
 msgstr "Aucun panier à vérifier."
 
-#: business_portal/orders/views.py:434
+#: business_portal/orders/views.py:539
 #, python-format
 msgid "Order #%(order_id)s placed."
 msgstr "Commande n° %(order_id)s passée."
@@ -1385,7 +1389,20 @@ msgstr "Aucune commande trouvée."
 msgid "Could not update quantity."
 msgstr "Impossible de mettre à jour la quantité."
 
-#: templates/business_portal/orders/cart.html:19
+#: templates/business_portal/orders/cart.html:25
+msgid "Search for a product to add"
+msgstr "Rechercher un produit à ajouter"
+
+#: templates/business_portal/orders/cart.html:34
+msgid "Add a product"
+msgstr "Ajouter un produit"
+
+#: templates/business_portal/orders/cart.html:59
+#: templates/includes/catalog/tile.html:78
+msgid "Add"
+msgstr "Ajouter"
+
+#: templates/business_portal/orders/cart.html:70
 #: templates/business_portal/orders/detail.html:19
 #: templates/business_portal/orders/review.html:22
 #: templates/storefront/cart.html:25
@@ -1393,11 +1410,10 @@ msgstr "Impossible de mettre à jour la quantité."
 msgid "Items"
 msgstr "Articles"
 
-# | msgid "Quantity"
-#: templates/business_portal/orders/cart.html:44
-#: templates/storefront/cart.html:53
-msgid "Update quantity"
-msgstr "Mettre à jour la quantité"
+# | msgid "Customer catalog"
+#: templates/business_portal/orders/cart.html:122
+msgid "Browse catalog"
+msgstr "Parcourir le catalogue"
 
 #: templates/business_portal/orders/detail.html:26
 msgid "No order items found."
@@ -1411,6 +1427,12 @@ msgstr "Commander à nouveau"
 #: templates/business_portal/orders/detail.html:56
 msgid "Back to order history"
 msgstr "Retour à l’historique des commandes"
+
+# | msgid "Quantity"
+#: templates/business_portal/orders/includes/cart_line.html:34
+#: templates/storefront/cart.html:53
+msgid "Update quantity"
+msgstr "Mettre à jour la quantité"
 
 # | msgid "Edit order"
 #: templates/business_portal/store_edit.html:4
@@ -1456,22 +1478,6 @@ msgstr ""
 #: templates/business_portal/store_onboarding.html:46
 msgid "Save and start ordering"
 msgstr "Enregistrer et commencer à commander"
-
-#: templates/business_portal/orders/cart.html
-msgid "Search for a product to add"
-msgstr "Rechercher un produit à ajouter"
-
-#: templates/business_portal/orders/cart.html
-msgid "Add a product"
-msgstr "Ajouter un produit"
-
-#: business_portal/orders/navbar_viewmodels.py
-msgid "Start an order"
-msgstr "Commencer une commande"
-
-#: business_portal/orders/views.py
-msgid "Choose a product to add."
-msgstr "Choisissez un produit à ajouter."
 
 #: templates/business_portal/store_onboarding.html:51
 #: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
@@ -1678,10 +1684,6 @@ msgstr "Informations sur le produit"
 msgid "Back to catalog"
 msgstr "Retour au catalogue"
 
-#: templates/includes/catalog/tile.html:78
-msgid "Add"
-msgstr "Ajouter"
-
 #: templates/includes/footer.html:9
 msgid "Site footer"
 msgstr "Pied de page"
@@ -1783,9 +1785,9 @@ msgstr[1] ""
 # | msgid "Choose product"
 #: templates/includes/navbar_cart.html:74
 #: templates/includes/navbar_cart.html:79
-#: templates/includes/ui/line_remove.html:14
-#: templates/includes/ui/line_remove.html:24
-#: templates/includes/ui/line_remove.html:39
+#: templates/includes/ui/line_remove.html:16
+#: templates/includes/ui/line_remove.html:26
+#: templates/includes/ui/line_remove.html:41
 msgid "Remove product"
 msgstr "Retirer le produit"
 
@@ -1797,18 +1799,18 @@ msgstr "Compte"
 msgid "Phone"
 msgstr "Téléphone"
 
-#: templates/includes/ui/line_remove.html:23
-#: templates/includes/ui/line_remove.html:38
+#: templates/includes/ui/line_remove.html:25
+#: templates/includes/ui/line_remove.html:40
 msgid "Remove this product from the order?"
 msgstr "Retirer ce produit de la commande ?"
 
-#: templates/includes/ui/line_remove.html:25
-#: templates/includes/ui/line_remove.html:40
+#: templates/includes/ui/line_remove.html:27
+#: templates/includes/ui/line_remove.html:42
 msgid "Remove"
 msgstr "Retirer"
 
-#: templates/includes/ui/line_remove.html:26
-#: templates/includes/ui/line_remove.html:41
+#: templates/includes/ui/line_remove.html:28
+#: templates/includes/ui/line_remove.html:43
 msgid "Keep it"
 msgstr "Le garder"
 
