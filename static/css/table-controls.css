@@ -88,8 +88,12 @@ select.sort-select.ts-hidden-accessible {
    blue arrow up on the page's cream. Descending: a soft yellow square and
    the arrow turned down (data-direction; the click turns it at once,
    before the list comes back: async_list.js). */
+.sort-control,
 .sort-direction-button {
   --sort-size: clamp(2.75rem, 12vw, 3.25rem);
+}
+
+.sort-direction-button {
 
   display: inline-flex;
   align-items: stretch;
@@ -269,8 +273,12 @@ select.sort-select.ts-hidden-accessible {
     padding-block: var(--space-2);
   }
 
+  /* Over the field's own middle, where the chosen sort is written (the
+     toggle to its right is left out). */
   .sort-control .filter-label {
-    justify-self: center;
+    justify-self: start;
+    width: calc(100% - var(--sort-size) - var(--space-2));
+    text-align: center;
   }
 
   .filter-chip {

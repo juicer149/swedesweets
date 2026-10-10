@@ -827,6 +827,24 @@ span.icon-rows__link .icon-rows__icon {
   margin: 0;
 }
 
+/* The two of us, between the first lines of the story: the same soft
+   edges as the mountain photo, a little narrower fades. */
+.about__founders {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-block: var(--space-2);
+
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 10%, #000 90%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 10%, #000 90%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-composite: intersect;
+}
+
 /* The photo, with the last line written in its sky like a cloud and the
    hand with the sweets under it. Its edges dissolve into the page, a
    little dreamy, so it reads as part of the page, not a framed picture. */

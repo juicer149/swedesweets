@@ -1454,6 +1454,9 @@ msgstr "Enregistrer et commencer à commander"
 
 #: templates/business_portal/store_onboarding.html:51
 #: templates/includes/footer.html:71 templates/includes/ops_footer.html:29
+msgid "The two of us in our stockroom, among stacked boxes of sweets."
+msgstr "Nous deux dans notre réserve, entre des piles de boîtes de bonbons."
+
 msgid "Log out"
 msgstr "Se déconnecter"
 
