@@ -12,6 +12,13 @@ public API:
     update_product_active(...)
         -> Compatibility wrapper for status-only updates.
 
+    add_variant(...)
+        -> Add a variant (a size, a weight) to a product; the first one gets
+           its label at the same time.
+
+    rename_variant(...)
+        -> Change a variant's label (its SKU stays).
+
 Product image storage is intentionally handled separately by
 products.image_services.
 """
@@ -22,12 +29,15 @@ from django.db import (
     IntegrityError,
     transaction,
 )
+from django.db.models import Max
 
 from common.results import ServiceResult
 from products.catalog import (
     make_sku,
     normalize_optional_text,
     normalize_required_text,
+    normalize_variant_label,
+    slugify_sku_part,
     validate_internal_number,
     validate_weight_per_unit,
 )
@@ -38,6 +48,7 @@ from products.models import (
     Product,
     ProductProfile,
     ProductTranslation,
+    ProductVariant,
 )
 
 CUSTOMER_FACING_LANGUAGE_CODE = "fr"
@@ -375,6 +386,102 @@ def update_product_active(
     )
 
     return product
+
+
+@transaction.atomic
+def add_variant(
+    *,
+    product: Product,
+    label: str,
+    first_label: str = "",
+    weight_per_unit: int | None = None,
+) -> ProductVariant:
+    """Add a variant to a product, last in order.
+
+    A product with only an unlabelled variant must name that one too
+    (`first_label`, e.g. "M" when adding "L"): with more than one variant
+    every one has a label (docs/product-variants.md, rule 2). Its SKU stays
+    the product's; the new variant's is the product's SKU plus the label.
+    The weight defaults to the product's.
+    """
+
+    product = Product.objects.select_for_update().get(pk=product.pk)
+    variants = list(product.variants.order_by("position", "pk"))
+
+    label = normalize_variant_label(label)
+
+    if not label:
+        raise InvalidProductData(
+            "a new variant needs a label"
+        )
+
+    if len(variants) == 1 and not variants[0].label:
+        rename_variant(
+            variant=variants[0],
+            label=first_label,
+            required=True,
+        )
+
+    sku = f"{product.sku}-{slugify_sku_part(label)}"
+
+    if ProductVariant.objects.filter(sku=sku).exists():
+        raise InvalidProductData(
+            f"a variant with SKU {sku} already exists"
+        )
+
+    next_position = (
+        product.variants.aggregate(last=Max("position"))["last"] or 0
+    ) + 1
+
+    try:
+        with transaction.atomic():
+            return ProductVariant.objects.create(
+                product=product,
+                label=label,
+                position=next_position,
+                sku=sku,
+                weight_per_unit=(
+                    weight_per_unit
+                    if weight_per_unit is not None
+                    else product.weight_per_unit
+                ),
+            )
+    except IntegrityError as exc:
+        raise InvalidProductData(
+            f"{product.display_name} already has a variant {label}"
+        ) from exc
+
+
+@transaction.atomic
+def rename_variant(
+    *,
+    variant: ProductVariant,
+    label: str,
+    required: bool = False,
+) -> ProductVariant:
+    """Change a variant's label; its SKU stays. A product with several
+    variants keeps a label on each (rule 2), so the label may be empty only
+    for a product's only variant."""
+
+    label = normalize_variant_label(label)
+
+    if required and not label:
+        raise InvalidProductData(
+            "name the product's current variant too "
+            "(first_label) before adding another"
+        )
+
+    variant.label = label
+
+    try:
+        with transaction.atomic():
+            variant.save(update_fields=["label", "updated_at"])
+    except IntegrityError as exc:
+        raise InvalidProductData(
+            f"{variant.product.display_name} already has a variant {label}"
+        ) from exc
+
+    return variant
 
 
 def set_product_translation(

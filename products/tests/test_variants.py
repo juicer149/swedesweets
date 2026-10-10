@@ -7,7 +7,7 @@ from django.db.models import ProtectedError
 from products.catalog import variant_display_name
 from products.errors import InvalidProductData
 from products.models import Product, ProductVariant
-from products.services import create_product
+from products.services import add_variant, create_product, rename_variant
 from products.tests.factories import product_factory, variant_factory
 
 
@@ -99,7 +99,7 @@ def test_variants_are_listed_by_position():
     )
 
     assert list(product.variants.all()) == [
-        product.variants.get(label=""),
+        product.variants.get(label="Original"),
         small,
         large,
     ]
@@ -209,3 +209,85 @@ def test_only_variant_is_there_while_a_product_has_one():
     variant_factory(product=product, label="M")
 
     assert product.only_variant() is None
+
+
+@pytest.mark.django_db
+def test_adding_a_second_variant_labels_the_first():
+    product = product_factory(name="Hoodie")
+
+    large = add_variant(product=product, label="L", first_label="M")
+
+    assert [
+        (variant.label, variant.position, variant.sku)
+        for variant in product.variants.all()
+    ] == [
+        ("M", 1, product.sku),
+        ("L", 2, f"{product.sku}-L"),
+    ]
+    assert large.weight_per_unit == product.weight_per_unit
+
+
+@pytest.mark.django_db
+def test_a_second_variant_needs_the_first_named():
+    product = product_factory(name="Hoodie")
+
+    with pytest.raises(InvalidProductData, match="first_label"):
+        add_variant(product=product, label="L")
+
+    assert product.variants.get().label == ""
+
+
+@pytest.mark.django_db
+def test_a_new_variant_needs_a_label():
+    product = product_factory(name="Hoodie")
+
+    with pytest.raises(InvalidProductData, match="needs a label"):
+        add_variant(product=product, label="  ", first_label="M")
+
+
+@pytest.mark.django_db
+def test_a_label_already_used_is_refused_and_nothing_changes():
+    product = product_factory(name="Hoodie")
+
+    with pytest.raises(InvalidProductData, match="already has a variant"):
+        add_variant(product=product, label="m", first_label="M")
+
+    assert product.variants.get().label == ""
+
+
+@pytest.mark.django_db
+def test_an_unlabelled_variant_cannot_stand_beside_others():
+    product = product_factory(name="Hoodie")
+    add_variant(product=product, label="L", first_label="M")
+
+    medium = product.variants.get(label="M")
+
+    with pytest.raises(InvalidProductData, match="label on each"):
+        rename_variant(variant=medium, label="")
+
+
+@pytest.mark.django_db
+def test_a_variant_cannot_be_added_beside_an_unlabelled_one():
+    product = product_factory(name="Hoodie")
+
+    with pytest.raises(InvalidProductData, match="only variant a label"):
+        ProductVariant.objects.create(
+            product=product,
+            label="L",
+            position=2,
+            sku=f"{product.sku}-L",
+            weight_per_unit=product.weight_per_unit,
+        )
+
+
+@pytest.mark.django_db
+def test_renaming_keeps_the_sku():
+    product = product_factory(name="Hoodie")
+    add_variant(product=product, label="L", first_label="M")
+    large = product.variants.get(label="L")
+
+    rename_variant(variant=large, label="Large")
+
+    large.refresh_from_db()
+    assert large.label == "Large"
+    assert large.sku == f"{product.sku}-L"

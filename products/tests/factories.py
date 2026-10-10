@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from products.models import Product, ProductVariant
-from products.services import create_product
+from products.services import add_variant, create_product
 
 
 def product_factory(
@@ -30,26 +30,33 @@ def variant_factory(
     *,
     product: Product,
     label: str,
+    first_label: str = "Original",
     position: int | None = None,
     weight_per_unit: int | None = None,
     active: bool = True,
 ) -> ProductVariant:
-    """Another variant of a product (product_factory gives each product its
-    only variant). The SKU follows the rule for labelled variants: the
-    product's SKU plus the label."""
+    """Another variant of a product, through add_variant (product_factory
+    gives each product its only, unlabelled variant; adding one labels that
+    one `first_label`)."""
 
-    if position is None:
-        position = product.variants.count() + 1
-
-    return ProductVariant.objects.create(
+    variant = add_variant(
         product=product,
         label=label,
-        position=position,
-        sku=f"{product.sku}-{label.upper().replace(' ', '')}",
-        weight_per_unit=(
-            weight_per_unit
-            if weight_per_unit is not None
-            else product.weight_per_unit
-        ),
-        active=active,
+        first_label=first_label,
+        weight_per_unit=weight_per_unit,
     )
+
+    changed = []
+
+    if position is not None:
+        variant.position = position
+        changed.append("position")
+
+    if not active:
+        variant.active = False
+        changed.append("active")
+
+    if changed:
+        variant.save(update_fields=changed)
+
+    return variant

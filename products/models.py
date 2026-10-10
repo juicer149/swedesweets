@@ -647,7 +647,8 @@ class ProductVariant(models.Model):
         ]
 
     def save(self, *args, **kwargs) -> None:
-        """Tidy the label, check the weight and keep the SKU stable."""
+        """Tidy the label, check the weight, keep the SKU stable, and keep
+        an empty label for a product's only variant (rule 2)."""
 
         update_fields = _normalize_update_fields(
             kwargs.get("update_fields")
@@ -683,7 +684,31 @@ class ProductVariant(models.Model):
                     "sku cannot be changed after variant creation"
                 )
 
+        if _should_handle(update_fields, "label"):
+            self._keep_empty_label_for_only_variant()
+
         super().save(*args, **kwargs)
+
+    def _keep_empty_label_for_only_variant(self) -> None:
+        """An empty label means "the product's only variant": with more
+        than one variant, every one has a label (docs/product-variants.md,
+        rule 2). Adding a second variant therefore labels the first one
+        before (products.services.add_variant)."""
+
+        others = type(self).objects.filter(
+            product_id=self.product_id,
+        ).exclude(pk=self.pk)
+
+        if not self.label and others.exists():
+            raise InvalidProductData(
+                "a product with several variants needs a label on each"
+            )
+
+        if self.label and others.filter(label="").exists():
+            raise InvalidProductData(
+                "give the product's only variant a label before adding "
+                "another"
+            )
 
     @property
     def display_name(self) -> str:

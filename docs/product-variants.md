@@ -1,6 +1,6 @@
 # Product variants
 
-Status: agreed; steps 1–3 done, step 4 (orders) in progress.
+Status: agreed; steps 1–4 done (the model, inventory, pricing, orders).
 
 A product can come in variants: a hoodie in XS–XL, a chocolate bar in 60, 100
 and 120 g. Variants are modelled the way Shopify does it: **every product has
@@ -72,6 +72,24 @@ Everything else follows from those:
 
 The services in `products` own rules 1–7; `inventory`, `pricing`, `orders`
 and `reservations` own rule 8.
+
+Where each rule is kept today:
+
+- Rule 1: `Product.save` creates a new product's only variant.
+- Rule 2: `ProductVariant.save` refuses an empty label beside other
+  variants, and a labelled one beside an unlabelled one;
+  `products.services.add_variant` labels the first variant
+  (`first_label`) as it adds the second.
+- Rule 3: a database constraint (`unique_variant_label_per_product`).
+- Rule 4: `add_variant` builds the SKU; `ProductVariant.save` refuses a
+  changed one. `QuerySet.update()` skips `save()`, so nothing in the code
+  updates variants that way.
+- Rules 5–7: with the ops Variants tab (step 5).
+- Rule 8: `InventoryBatch.save`, `CommercialPrice.save`, `OrderLine.save`
+  and the reservation service.
+
+`position` is a sort order, not unique: two variants on the same position
+fall back to the order they were added in.
 
 ## What shows where
 

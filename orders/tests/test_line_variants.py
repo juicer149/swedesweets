@@ -53,7 +53,7 @@ def test_a_line_cannot_be_for_another_variant_than_its_offer():
         commercial_offer=offer,
     )
 
-    line.variant = product.variants.get(label="")
+    line.variant = product.variants.get(label="Original")
 
     with pytest.raises(InvalidOrderOperation, match="offer's"):
         line.save()
