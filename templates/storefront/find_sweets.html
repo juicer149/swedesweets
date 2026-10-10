@@ -1,13 +1,14 @@
 {% extends "storefront/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% trans "Find Sweets" %} | SwedeSweets{% endblock %}
 
 {% block content %}
 {% comment %}
   The shops that sell SwedeSweets and chose to be listed (StoreListing
-  is_listed), by town; each opens its address on the map. The navbar
-  says where you are; the h1 is there for screen readers.
+  is_listed), by town; each opens its address on the map. Under them,
+  our shelf in a shop: what to look for. The navbar says where you are;
+  the h1 is there for screen readers.
 {% endcomment %}
 <section class="page-section" aria-labelledby="find-sweets-title">
   <div class="page page--centered page--wide">
@@ -22,6 +23,19 @@
     {% else %}
       <p class="page__text page__message">{% trans "No shops are listed yet." %}</p>
     {% endif %}
+
+    {# What to look for once there: our shelf in a shop (people cropped out). #}
+    <figure class="find-sweets__shelf">
+      <img
+        src="{% static 'images/find-sweets-shelf.webp' %}"
+        alt="{% trans 'Our pick & mix shelf in a shop, under its yellow SwedeSweets sign.' %}"
+        width="868"
+        height="980"
+        loading="lazy"
+        decoding="async"
+      >
+      <figcaption class="page__note">{% trans "Look for the yellow SwedeSweets sign." %}</figcaption>
+    </figure>
   </div>
 </section>
 {% endblock %}

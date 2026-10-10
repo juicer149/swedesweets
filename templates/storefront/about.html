@@ -5,9 +5,10 @@
 
 {% block content %}
 {% comment %}
-  Who we are: a short story in the founders' voice, and under it a
-  picture from the mountains (static/images, its Instagram tag painted
-  out of the sky).
+  Who we are: a short story in the founders' voice, each part with its
+  picture, and at the end the mountain photo with the last line in its
+  sky (static/images; the pictures come from their Instagram, cropped
+  or painted clear of its stickers).
 {% endcomment %}
 <section class="page-section" aria-labelledby="about-title">
   <article class="page page--centered about">
@@ -17,18 +18,41 @@
     <div class="about__text">
       <p>{% trans "We're Marco Sandelgård and Milo Sandelgård Bascoulergue, two cousins who grew up in Chamonix with one foot in France and one in Sweden." %}</p>
 
-      {# The two of them, right after they are named; edges fading as below. #}
+      {# Each part of the story with its picture under it, edges fading #}
+      {# into the page like the mountain photo at the end. #}
       <img
-        class="about__founders"
+        class="about__picture"
         src="{% static 'images/about-founders.webp' %}"
         alt="{% trans 'The two of us in our stockroom, among stacked boxes of sweets.' %}"
-        width="923"
-        height="518"
+        width="1080"
+        height="647"
         loading="lazy"
         decoding="async"
       >
+
       <p>{% trans "In Sweden, sweets mean lösgodis: a wall of loose candy, a paper bag, and the serious business of choosing exactly what goes in it. Sour strips, salty liquorice, fruity jellies, chocolate. Everyone has their own mix." %}</p>
-      <p>{% trans "We missed it in France. So we started SwedeSweets to bring the real thing here: the Swedish pick & mix we grew up with, straight from Sweden." %}</p>
+
+      <img
+        class="about__picture"
+        src="{% static 'images/about-candy-wall.webp' %}"
+        alt="{% trans 'A row of our pick & mix bins: fruity jellies, sour sweets, red raspberries and striped peppermints.' %}"
+        width="1080"
+        height="358"
+        loading="lazy"
+        decoding="async"
+      >
+
+      <p>{% trans "We missed it in France, so we brought it here ourselves: the Swedish pick & mix we grew up with, straight from Sweden, and we drive it to the shops of the valley." %}</p>
+
+      <img
+        class="about__picture"
+        src="{% static 'images/about-delivery-van.webp' %}"
+        alt="{% trans 'Our van at dawn in the valley, packed with boxes of sweets and skis.' %}"
+        width="1080"
+        height="1598"
+        loading="lazy"
+        decoding="async"
+      >
     </div>
 
     {# The last line written in the sky of the photo, like a cloud, the #}

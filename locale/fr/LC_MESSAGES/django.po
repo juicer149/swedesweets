@@ -1457,6 +1457,27 @@ msgstr "Enregistrer et commencer à commander"
 msgid "The two of us in our stockroom, among stacked boxes of sweets."
 msgstr "Nous deux dans notre réserve, entre des piles de boîtes de bonbons."
 
+msgid "A row of our pick & mix bins: fruity jellies, sour sweets, red raspberries and striped peppermints."
+msgstr "Une rangée de nos bacs de bonbons en vrac : gommes aux fruits, bonbons acidulés, framboises rouges et pastilles de menthe rayées."
+
+msgid ""
+"We missed it in France, so we brought it here ourselves: the Swedish pick & "
+"mix we grew up with, straight from Sweden, and we drive it to the shops of "
+"the valley."
+msgstr ""
+"Ça nous manquait en France, alors nous l’avons apporté nous-mêmes : les "
+"bonbons suédois en vrac de notre enfance, directement de Suède, que nous "
+"livrons nous-mêmes aux magasins de la vallée."
+
+msgid "Our van at dawn in the valley, packed with boxes of sweets and skis."
+msgstr "Notre camionnette à l’aube dans la vallée, chargée de cartons de bonbons et de skis."
+
+msgid "Our pick & mix shelf in a shop, under its yellow SwedeSweets sign."
+msgstr "Notre présentoir de bonbons en vrac dans un magasin, sous son enseigne jaune SwedeSweets."
+
+msgid "Look for the yellow SwedeSweets sign."
+msgstr "Cherchez l’enseigne jaune SwedeSweets."
+
 msgid "Log out"
 msgstr "Se déconnecter"
 
