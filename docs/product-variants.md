@@ -23,7 +23,7 @@ ProductVariant                 what is stocked, priced, sold and packed
   label                        "M", "60 g"; "" for a product's only variant
   position                     order shown everywhere (1, 2, 3 …)
   sku                          unique; generated, stable
-  weight_per_unit              grams for one stock unit (unit conversions,
+  weight_per_unit              grams for one stock unit (shown on labels,
                                parcels); immutable once used
   active                       False: paused (see Rules)
 ```
