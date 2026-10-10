@@ -1,6 +1,6 @@
 # Product variants
 
-Status: agreed; steps 1 (the model) and 2 (inventory) done or in progress.
+Status: agreed; steps 1–2 done, step 3 (pricing) in progress.
 
 A product can come in variants: a hoodie in XS–XL, a chocolate bar in 60, 100
 and 120 g. Variants are modelled the way Shopify does it: **every product has
@@ -33,7 +33,7 @@ The three relations that point at `Product` today move to the variant:
 | Model | Today | After |
 | --- | --- | --- |
 | `inventory.InventoryBatch` | `product` | `variant` (required), `product` kept |
-| `pricing.CommercialPrice` | `product` (+ optional `batch`) | `variant` (+ optional `batch`) |
+| `pricing.CommercialPrice` | `product` (+ optional `batch`) | `variant` (+ optional `batch`), `product` kept |
 | `orders.OrderLine` | `product` | `variant` (required), `product` kept |
 
 Everything else follows from those:
@@ -132,8 +132,12 @@ variants into view.
    a product with one variant fills it in on its own. Stock and low stock
    per variant come with the pages that show them (steps 5–6): with one
    variant per product they equal the product's.
-3. **Pricing** — prices by variant; catalog offers per variant; ops pricing
-   (all variants at once).
+3. **Pricing** — every offer is for one variant (`pricing/0003–0004`): a
+   batch offer's is its batch's, a product with one variant fills it in.
+   One standard offer per variant and channel; the old one-per-product
+   rule stays until the code that looks offers up by product reads them by
+   variant. Catalog offers per variant and ops pricing for all variants at
+   once come with steps 5–6.
 4. **Orders** — order lines by variant; allocation by variant; packing list,
    mails, exports, "Order again".
 5. **Ops products** — the Variants tabs, the lock, create a product with

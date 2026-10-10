@@ -6,6 +6,9 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, Q
 
+from pricing.errors import InvalidCommercialPrice
+from products.models import ProductVariant
+
 
 class CommercialPrice(models.Model):
     """Current commercial pricing policy for one product scope and sales channel.
@@ -17,6 +20,11 @@ class CommercialPrice(models.Model):
 
     `reason` describes why the current selling price differs from the ordinary
     price. A blank reason represents ordinary pricing.
+
+    Every offer is for one variant of its product (docs/product-variants.md):
+    a batch offer's is its batch's, and a product with only one variant fills
+    it in on its own (hence blank=True: it is never left empty when saved).
+    `product` stays beside it and always equals `variant.product`.
     """
 
     class Channel(models.TextChoices):
@@ -33,6 +41,13 @@ class CommercialPrice(models.Model):
         "products.Product",
         on_delete=models.PROTECT,
         related_name="commercial_prices",
+    )
+
+    variant = models.ForeignKey(
+        "products.ProductVariant",
+        on_delete=models.PROTECT,
+        related_name="commercial_prices",
+        blank=True,
     )
 
     batch = models.ForeignKey(
@@ -66,10 +81,17 @@ class CommercialPrice(models.Model):
             models.Index(fields=["batch", "channel"]),
         ]
         constraints = [
+            # One standard offer per product and channel, until the code
+            # that looks it up by product reads it by variant (steps 5-6).
             models.UniqueConstraint(
                 fields=["product", "channel"],
                 condition=Q(batch__isnull=True),
                 name="unique_product_price_per_channel",
+            ),
+            models.UniqueConstraint(
+                fields=["variant", "channel"],
+                condition=Q(batch__isnull=True),
+                name="unique_variant_price_per_channel",
             ),
             models.UniqueConstraint(
                 fields=["batch", "channel"],
@@ -98,6 +120,72 @@ class CommercialPrice(models.Model):
                         "commercial price."
                     )
                 }
+            )
+
+    def save(self, *args, **kwargs) -> None:
+        update_fields = kwargs.get("update_fields")
+
+        if update_fields is None or {
+            "product",
+            "variant",
+            "batch",
+        } & set(update_fields):
+            self._resolve_variant()
+
+            if update_fields is not None:
+                kwargs["update_fields"] = {
+                    *update_fields,
+                    "product",
+                    "variant",
+                }
+
+        super().save(*args, **kwargs)
+
+    def _resolve_variant(self) -> None:
+        """Fill in the variant (the batch's, or the only one of the
+        product) and the product of a given variant, and keep the three in
+        step."""
+
+        if self.variant_id is None:
+            if self.batch_id is not None:
+                self.variant_id = self.batch.variant_id
+            elif self.product_id is not None:
+                variant = self.product.only_variant()
+
+                if variant is None:
+                    raise InvalidCommercialPrice(
+                        "choose which variant of the product this price is for"
+                    )
+
+                self.variant = variant
+            else:
+                raise InvalidCommercialPrice(
+                    "a commercial price needs a product or a variant"
+                )
+
+        if type(self).variant.is_cached(self):
+            variant_product_id = self.variant.product_id
+        else:
+            variant_product_id = (
+                ProductVariant.objects
+                .values_list("product_id", flat=True)
+                .get(pk=self.variant_id)
+            )
+
+        if self.product_id is None:
+            self.product_id = variant_product_id
+
+        if variant_product_id != self.product_id:
+            raise InvalidCommercialPrice(
+                "the variant belongs to another product"
+            )
+
+        if (
+            self.batch_id is not None
+            and self.batch.variant_id != self.variant_id
+        ):
+            raise InvalidCommercialPrice(
+                "a batch price is for the batch's own variant"
             )
 
     def __str__(self) -> str:

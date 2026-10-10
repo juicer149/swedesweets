@@ -3,13 +3,16 @@ from __future__ import annotations
 import importlib
 from decimal import Decimal
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import pytest
 from django.apps import apps
+from django.db.models import QuerySet
 from django.utils import timezone
 
 from inventory.tests.factories import batch_factory
 from pricing.models import CommercialPrice, PriceAmount
+from products.models import Product
 from products.tests.factories import product_factory
 
 TODAY = timezone.localdate()
@@ -22,7 +25,26 @@ SCHEMA_EDITOR = SimpleNamespace(connection=SimpleNamespace(alias="default"))
 
 
 def _run():
-    migration.create_business_standard_offers(apps, SCHEMA_EDITOR)
+    """Run the migration's function on the live models. It was written
+    before offers had a variant (pricing/0003 fills that in), and its
+    bulk_create skips save(), so the variant is filled in here as 0003
+    would."""
+
+    bulk_create = QuerySet.bulk_create
+
+    def bulk_create_with_variants(queryset, objs, *args, **kwargs):
+        objs = list(objs)
+
+        if queryset.model is CommercialPrice:
+            for offer in objs:
+                offer.variant = Product.objects.get(
+                    pk=offer.product_id,
+                ).only_variant()
+
+        return bulk_create(queryset, objs, *args, **kwargs)
+
+    with patch.object(QuerySet, "bulk_create", bulk_create_with_variants):
+        migration.create_business_standard_offers(apps, SCHEMA_EDITOR)
 
 
 def _standard_offers(product):

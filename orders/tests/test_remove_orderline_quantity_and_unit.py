@@ -8,6 +8,7 @@ from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 
 from customers.tests.factories import customer_factory
+from pricing.models import CommercialPrice
 from products.tests.factories import product_factory
 
 BEFORE = [("orders", "0014_order_buyer_language_snapshot")]
@@ -40,12 +41,12 @@ def _line(apps, *, quantity, unit, quantity_in_units):
 
     Order = apps.get_model("orders", "Order")
     OrderLine = apps.get_model("orders", "OrderLine")
-    CommercialPrice = apps.get_model("pricing", "CommercialPrice")
 
     order = Order.objects.create(customer_id=customer.pk)
+    # The live model: pricing stays migrated (its offers have a variant).
     offer = CommercialPrice.objects.create(
-        product_id=product.pk,
-        channel="business",
+        product=product,
+        channel=CommercialPrice.Channel.BUSINESS,
         enabled=True,
     )
 
