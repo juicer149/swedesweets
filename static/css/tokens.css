@@ -373,9 +373,9 @@
   --feedback-burst-style: scoop;
   --feedback-burst-mark: bag;
   --feedback-burst-rest: 260ms;
-  /* a clearer green burst behind the bag than the cart's halo */
-  --status-burst-halo: color-mix(in srgb, var(--color-action-deliver) 38%, transparent);
-  --status-burst-halo-size: 80%;
+  /* a clearer, wider green burst behind the bag than the cart's halo */
+  --status-burst-halo: color-mix(in srgb, var(--color-action-deliver) 40%, transparent);
+  --status-burst-halo-size: 125%;
 }
 
 /* Login: three dots, then a tick (a cross if it did not work), yellow:

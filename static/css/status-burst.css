@@ -243,15 +243,28 @@
 
 /* bag: our white paper bag grows in a little big and tilted, over the
    halo, like the cart it stands for. */
+/* The bag drawn in the middle of its viewBox (bag.html), so it grows and
+   tilts around the burst's own middle. */
 .status-burst__mark--bag .bag {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
   filter: drop-shadow(0 2px 2px rgb(60 40 20 / 0.2));
 }
 
+/* It starts upright in the middle and turns as it grows, a little
+   slower than the other marks so the turn is seen. */
+.status-burst__mark--bag {
+  transform: scale(0) rotate(0deg);
+  transition:
+    transform 0.38s cubic-bezier(0.3, 1.45, 0.55, 1) 0.12s,
+    opacity 0.1s 0.12s;
+}
+
 .status-burst[data-state="success"] .status-burst__mark--bag {
-  transform: scale(1.3) rotate(-10deg);
+  transform: scale(1.3) rotate(-12deg);
 }
 
 /* With the scoop, a problem also gives a little shake: the cross says
