@@ -1,7 +1,8 @@
 {% load i18n %}
 {% comment %}
   The catalog in the calm design, shared by the shop and the business
-  portal: category tabs and a search on one row, then the products as
+  portal: our pick & mix shelf drawn at the top, category tabs and a
+  search on one row, then the products as
   tiles on the page (includes/catalog/tile.html). catalog.js filters the
   tiles and lets each tile's "+" ask for a quantity before it adds.
 
@@ -17,6 +18,9 @@
 >
   <div class="page catalog__page">
     <h1 id="catalog-title" class="visually-hidden">{{ title }}</h1>
+
+    {# The top shelf of our stand, drawn: bags and scoops, as in the shops. #}
+    {% include "includes/ui/pick_and_mix_shelf.html" %}
 
     {% if product_cards %}
       <div class="catalog__tools">

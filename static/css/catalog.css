@@ -467,3 +467,57 @@
 .product__status .status-burst {
   --status-burst-size: 2.75rem;
 }
+
+
+/* =============================================================================
+   The pick & mix shelf over the catalog (includes/ui/pick_and_mix_shelf.html)
+   ============================================================================= */
+
+.pick-shelf {
+  display: flex;
+  justify-content: center;
+  margin: clamp(var(--space-2), 2dvh, var(--space-4)) auto clamp(var(--space-4), 3dvh, var(--space-6));
+}
+
+.pick-shelf__art {
+  width: clamp(15rem, 70vw, 22rem);
+  height: auto;
+  overflow: visible;
+}
+
+.pick-shelf__brand {
+  fill: var(--color-primary-600);
+  font-family: var(--font-heading);
+  font-size: 21px;
+  font-weight: 700;
+}
+
+/* The scoops sway in their tub; the bags breathe. */
+.pick-shelf__scoops {
+  transform-box: view-box;
+  transform-origin: 236px 160px;
+  animation: pick-shelf-sway 4.5s ease-in-out infinite;
+}
+
+.pick-shelf__bags {
+  transform-box: view-box;
+  transform-origin: 106px 150px;
+  animation: pick-shelf-breathe 5s ease-in-out infinite;
+}
+
+@keyframes pick-shelf-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4deg); }
+}
+
+@keyframes pick-shelf-breathe {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-2px) rotate(-1.2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pick-shelf__scoops,
+  .pick-shelf__bags {
+    animation: none;
+  }
+}
