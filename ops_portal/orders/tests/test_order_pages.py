@@ -135,8 +135,9 @@ def test_order_list_shows_table_and_phone_rows(staff_client, placed_order):
         if row.order.pk == placed_order.pk
     )
     assert row.title == f"#{placed_order.pk} · {placed_order.customer_name}"
-    # A placed order opens straight on its pack page, from both views.
-    assert content.count(f'"{_url("ops_orders:pack", placed_order)}"') == 2
+    # A placed order opens straight on its pack page, from both views and
+    # from the search.
+    assert content.count(f'"{_url("ops_orders:pack", placed_order)}"') == 3
 
 
 @pytest.mark.django_db

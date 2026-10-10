@@ -126,6 +126,18 @@ select.ts-hidden-accessible {
   color: var(--color-neutral-600);
 }
 
+/*
+  With nothing chosen, a search field's hint lives in the input itself,
+  which otherwise keeps the browser's ~20-character default width and
+  cuts the hint off mid-word. Let it fill the field, and end with an
+  ellipsis only when the field really is too narrow.
+*/
+.enhanced-select--searchable.single:not(.has-items) .ts-control > input {
+  flex: 1 1 auto;
+  width: 100%;
+  text-overflow: ellipsis;
+}
+
 /* =============================================================================
    Searchable vs static single selects
    ============================================================================= */
