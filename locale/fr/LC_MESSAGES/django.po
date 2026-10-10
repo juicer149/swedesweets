@@ -1923,14 +1923,6 @@ msgstr ""
 "met. Lanières acidulées, réglisse salée, gommes aux fruits, chocolat. Chacun "
 "a son propre mélange."
 
-#: templates/storefront/about.html:43
-msgid ""
-"A row of our pick & mix bins: fruity jellies, sour sweets, red raspberries "
-"and striped peppermints."
-msgstr ""
-"Une rangée de nos bacs de bonbons en vrac : gommes aux fruits, bonbons "
-"acidulés, framboises rouges et pastilles de menthe rayées."
-
 #: templates/storefront/about.html:50
 msgid ""
 "We missed it in France. So we started SwedeSweets to bring the real thing "

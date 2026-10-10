@@ -709,6 +709,33 @@
     width: 1rem;
     height: 1rem;
   }
+
+  /* A worded link carries the crown as on wide screens: tilted on the
+     word's last letter, to the right, not on the icon. */
+  .site-nav__auth .site-nav__account-link--worded[aria-current="page"] .site-nav__icon::after {
+    content: none;
+  }
+
+  .site-nav__auth .site-nav__account-link--worded[aria-current="page"] {
+    margin-right: 0.6rem;
+  }
+
+  .site-nav__account-link--worded > .site-nav__account-label--short {
+    position: relative;
+  }
+
+  .site-nav__account-link--worded[aria-current="page"] > .site-nav__account-label--short::before {
+    content: "";
+    position: absolute;
+    top: -1.35em;
+    right: -1.55em;
+    width: 1.5em;
+    height: 1.5em;
+
+    background: url("../images/favicon.svg") center / contain no-repeat;
+    filter: drop-shadow(0 2px 2px rgb(var(--color-row-shadow) / 0.35));
+    pointer-events: none;
+  }
 }
 
 /* Wide screens: the full label; the phone's word is not needed. */

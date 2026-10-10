@@ -13,8 +13,10 @@
     </span>
   {% endif %}
 
-  <span class="site-nav__account-label">{{ item.label }}</span>
+  {% comment %}The phone's word first: the full label is last, where the
+  crown and the underline sit on wide screens.{% endcomment %}
   {% if item.short_label %}
     <span class="site-nav__account-label site-nav__account-label--short" aria-hidden="true">{{ item.short_label }}</span>
   {% endif %}
+  <span class="site-nav__account-label">{{ item.label }}</span>
 </a>

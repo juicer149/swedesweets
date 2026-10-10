@@ -6,7 +6,7 @@
 {% block content %}
 {% comment %}
   Who we are: a short story in the founders' voice, the two of us as a
-  polaroid, a row of the candy wall, and at the end the mountain photo with the last line in its
+  polaroid, and at the end the mountain photo with the last line in its
   sky (static/images; the pictures come from their Instagram, cropped
   or painted clear of its stickers).
 {% endcomment %}
@@ -34,18 +34,6 @@
       </figure>
 
       <p>{% trans "In Sweden, sweets mean lösgodis: a wall of loose candy, a paper bag, and the serious business of choosing exactly what goes in it. Sour strips, salty liquorice, fruity jellies, chocolate. Everyone has their own mix." %}</p>
-
-      {# The wall of candy the paragraph is about: out to the screen's #}
-      {# edges, fading only above and below. #}
-      <img
-        class="about__candy-wall"
-        src="{% static 'images/about-candy-wall.webp' %}"
-        alt="{% trans 'A row of our pick & mix bins: fruity jellies, sour sweets, red raspberries and striped peppermints.' %}"
-        width="1080"
-        height="358"
-        loading="lazy"
-        decoding="async"
-      >
 
       <p>{% trans "We missed it in France. So we started SwedeSweets to bring the real thing here: the Swedish pick & mix we grew up with, straight from Sweden." %}</p>
     </div>
