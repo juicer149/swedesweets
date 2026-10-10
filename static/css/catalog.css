@@ -5,8 +5,10 @@
    (includes/catalog/grid.html, tile.html, product.html):
 
      .catalog__tools   category tabs on the left, the search on the right
-     .tiles > .tile    products on the page itself, no cards: a rounded
-                       picture, name, package, a deal hint, price, "+ Add"
+     .tiles > .tile    the candy wall: each product's picture as its bin,
+                       a gift-tag label on its foot (name on a yellow
+                       band, package · price, a deal hint) with a round
+                       "+ scoop" button, a striped shelf under each row
      .tile__quantity   what "+ Add" opens: stepper, green tick, ×
      .tile__status     while adding: only the status burst (catalog.js)
      .product          a product's page: picture beside what to buy, then
@@ -73,20 +75,45 @@
    ----------------------------------------------------------------------------- */
 
 .tiles {
+  --tile-row-gap: clamp(var(--space-12), 7vw, 4rem);
+  --tile-column-gap: clamp(var(--space-4), 2.5vw, var(--space-6));
+
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(clamp(9.5rem, 40vw, 13.5rem), 1fr));
-  gap:
-    clamp(var(--space-6), 3vw, var(--space-8))
-    clamp(var(--space-4), 2.5vw, var(--space-6));
+  gap: var(--tile-row-gap) var(--tile-column-gap);
+  padding-bottom: calc(var(--tile-row-gap) / 2);
 }
 
-/* A column whose buy row sits at the foot, so the prices and "+" of one
-   row of tiles line up whatever the names and hints above them. */
+/* A bin on the candy wall: the picture, the label stuck on its foot, and
+   under the row a striped shelf: every tile draws its own piece, from the
+   middle of the gap on its left to the middle of the gap on its right,
+   and the tiles of a row are as tall as each other, so the pieces meet
+   in one line. */
 .tile {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  align-items: center;
   min-width: 0;
+}
+
+.tile::after {
+  content: "";
+  position: absolute;
+  right: calc(var(--tile-column-gap) / -2);
+  bottom: calc(var(--tile-row-gap) / -2 - 3px);
+  left: calc(var(--tile-column-gap) / -2);
+  height: 6px;
+
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-accent-500) 0 18px,
+    var(--color-accent-200) 18px 36px
+  );
+  /* The stripes counted from the window, not from each piece, so the
+     pieces of a row meet without a seam (the stripes are vertical, so
+     scrolling up and down does not move them). */
+  background-attachment: fixed;
 }
 
 .tile[hidden] {
@@ -95,6 +122,7 @@
 
 .tile__media {
   display: block;
+  width: 100%;
 }
 
 .tile__image {
@@ -103,30 +131,63 @@
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: var(--radius-md);
+  box-shadow: 0 0 0 1px var(--color-neutral-200);
 }
 
 .tile__image--empty {
   background: var(--color-neutral-100);
 }
 
-.tile__body {
+/* The label, stuck on the bin's foot like a gift tag: white with a
+   yellow edge, the name on a yellow band, a little crooked (each a
+   different way); straight again while its quantity is chosen. */
+.tile__label {
+  position: relative;
+  z-index: 1;
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
+  align-items: center;
   gap: 2px;
+  width: 90%;
   min-width: 0;
+  margin-top: -1.4rem;
+  padding: 0 var(--space-2) 1.6rem;
+
+  text-align: center;
+  background: var(--color-white);
+  border: 1.5px solid var(--color-accent-600);
+  border-radius: 9px;
+  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15);
+
+  transform: rotate(var(--tile-tilt, 0deg));
+  transition: transform var(--motion-fast);
+}
+
+.tile:nth-child(3n + 1) { --tile-tilt: -2deg; }
+.tile:nth-child(3n + 2) { --tile-tilt: 1.5deg; }
+.tile:nth-child(3n) { --tile-tilt: -0.8deg; }
+
+.tile__label:has(.tile__quantity:not([hidden]), .tile__status:not([hidden])) {
+  padding-bottom: var(--space-2);
+  transform: none;
 }
 
 .tile__name {
-  margin: 0;
+  width: calc(100% + 2 * var(--space-2));
+  margin: 0 calc(-1 * var(--space-2)) var(--space-1);
+  padding: 0.35rem var(--space-2) 0.3rem;
+
+  background: var(--color-accent-500);
+  border-radius: 7px 7px 0 0;
+
   font-family: var(--font-body);
-  font-size: var(--font-size-16);
-  font-weight: 700;
-  line-height: 1.3;
+  font-size: var(--font-size-14);
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .tile__name a {
-  color: var(--color-neutral-900);
+  color: var(--color-accent-950);
   text-decoration: none;
 }
 
@@ -138,15 +199,22 @@
 .tile__meta {
   margin: 0;
   color: var(--color-neutral-600);
+  font-size: var(--font-size-12);
+  font-weight: 600;
+}
+
+.tile__price {
+  color: var(--color-neutral-900);
   font-size: var(--font-size-14);
+  font-weight: 800;
 }
 
 /* A special offer (best before soon…): amber, like the warning it is. */
 .tile__deal {
-  margin: 2px 0 0;
+  margin: 0;
   color: var(--color-status-warning-text);
   font-size: var(--font-size-12);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .tile__deal a {
@@ -158,18 +226,11 @@
   text-decoration: underline;
 }
 
-.tile__price {
-  margin: var(--space-2) 0 0;
-  color: var(--color-neutral-800);
-  font-weight: 700;
-}
-
 .tile__order {
-  margin-top: auto;
-  padding-top: var(--space-3);
+  width: 100%;
+  margin-top: var(--space-1);
 }
 
-.tile__buy,
 .tile__quantity,
 .tile__status {
   display: flex;
@@ -189,33 +250,52 @@
   justify-content: center;
 }
 
-/* "+ Add": as wide as the tile, edged in the action yellow, not filled
-   (the filled yellow is the one action of a page; a catalog has one per
-   product). */
+/* The add button: round, half off the label's foot; "+" and a scoop
+   (candy) or "+" alone. Edged in the action yellow, not filled (the
+   filled yellow is the one action of a page; a catalog has one each). */
+.tile__buy {
+  position: absolute;
+  bottom: -1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .tile__add {
   display: inline-flex;
-  flex: 1 1 auto;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  min-height: 2.5rem;
-  padding: 0 var(--space-4);
+  gap: 1px;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.6rem 0 0.5rem;
 
-  color: var(--color-accent-900);
-  background: transparent;
+  color: var(--color-accent-950);
+  background: var(--color-white);
   border: 1.5px solid var(--color-accent-600);
   border-radius: var(--radius-pill);
-
-  font: inherit;
-  font-size: var(--font-size-14);
-  font-weight: 700;
+  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.14);
 
   cursor: pointer;
-  transition: background var(--motion-fast);
+  transition: background var(--motion-fast), transform var(--motion-fast);
+}
+
+.tile__add .tile__add-plus {
+  width: 0.95rem;
+  height: 0.95rem;
+  --icon-stroke-width: 2.6;
+}
+
+.tile__add .scoop {
+  width: 1.55rem;
+  height: 1.55rem;
 }
 
 .tile__add:hover {
   background: var(--color-accent-100);
+}
+
+.tile__add:active {
+  transform: scale(0.95);
 }
 
 .tile__add:focus-visible {
@@ -476,11 +556,13 @@
 .pick-shelf {
   display: flex;
   justify-content: center;
-  margin: clamp(var(--space-2), 2dvh, var(--space-4)) auto clamp(var(--space-4), 3dvh, var(--space-6));
+  margin: 0 auto clamp(var(--space-3), 2.5dvh, var(--space-6));
 }
 
+/* Smaller on a phone, so the first row of the wall shows without
+   scrolling. */
 .pick-shelf__art {
-  width: clamp(15rem, 70vw, 22rem);
+  width: clamp(12.5rem, 56vw, 22rem);
   height: auto;
   overflow: visible;
 }

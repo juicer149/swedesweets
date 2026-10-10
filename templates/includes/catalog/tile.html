@@ -1,10 +1,14 @@
 {% load i18n %}
 {% comment %}
-  One product in the catalog: its picture and name (both lead to the
-  product page), the package, a hint when it has a special offer, then
-  the price and a round "+". The "+" asks for a quantity (catalog.js) and
-  the round green tick puts that many of the tile's offer in the cart; other offers are
-  chosen on the product page. Without JavaScript the "+" adds one.
+  One product on the candy wall: its picture is the bin, and a label is
+  stuck on its foot like a gift tag: the name on a yellow band (it and
+  the picture lead to the product page), the package and price, a hint
+  when it has a special offer. A round button half off the label's foot
+  adds it: "+" and a scoop for candy, "+" alone for the rest. It asks for
+  a quantity (catalog.js) and the round green tick puts that many of the
+  tile's offer in the cart; other offers are chosen on the product page.
+  Without JavaScript it adds one. A striped shelf runs under each row
+  (css/catalog.css).
 
   card        ProductCardVM
   csrf_token  the page's token
@@ -25,9 +29,11 @@
       {% endif %}
     </a>
 
-    <div class="tile__body">
+    <div class="tile__body tile__label">
       <h2 class="tile__name"><a href="{{ detail_href }}">{{ card.name }}</a></h2>
-      <p class="tile__meta">{{ card.package_label }}</p>
+      <p class="tile__meta">
+        {{ card.package_label }}{% if offer.price_label %} · <strong class="tile__price">{{ offer.price_label }}</strong>{% endif %}
+      </p>
 
       {% if offer.badge_label %}
         <p class="tile__deal">{{ offer.badge_label }}</p>
@@ -35,10 +41,6 @@
         <p class="tile__deal">
           <a href="{{ detail_href }}">{{ deal.badge_label }}{% if deal.price_label %} · {{ deal.price_label }}{% endif %}</a>
         </p>
-      {% endif %}
-
-      {% if offer.price_label %}
-        <p class="tile__price">{{ offer.price_label }}</p>
       {% endif %}
 
       {% if offer %}
@@ -59,8 +61,11 @@
               aria-label="{{ card.primary_action.aria_label }}"
               data-catalog-add-button
             >
-              {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
-              <span>{{ card.primary_action.text }}</span>
+              {% include "includes/ui/icon_block.html" with name="plus" size="sm" class_name="tile__add-plus" only %}
+              {% if card.category_key == "candy" %}
+                {% include "includes/ui/scoop.html" %}
+              {% endif %}
+              <span class="visually-hidden">{{ card.primary_action.text }}</span>
             </button>
           </div>
 
