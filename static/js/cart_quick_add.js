@@ -50,11 +50,17 @@ document.addEventListener("DOMContentLoaded", () => {
     line.classList.remove("line--added");
     void line.offsetWidth; // restart the animation
     line.classList.add("line--added");
-    line.addEventListener(
-      "animationend",
-      () => line.classList.remove("line--added"),
-      { once: true }
-    );
+    // Only the glow's own end (the stepper's bump ends inside it too).
+    const done = (event) => {
+      if (event.animationName !== "line-added") {
+        return;
+      }
+
+      line.classList.remove("line--added");
+      line.removeEventListener("animationend", done);
+    };
+
+    line.addEventListener("animationend", done);
   }
 
   function placeLine(html, cartLineId) {

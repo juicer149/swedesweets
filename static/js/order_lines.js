@@ -100,11 +100,17 @@ document.addEventListener("DOMContentLoaded", () => {
     orderLine.classList.remove("line--added");
     void orderLine.offsetWidth; // restart the animation
     orderLine.classList.add("line--added");
-    orderLine.addEventListener(
-      "animationend",
-      () => orderLine.classList.remove("line--added"),
-      { once: true }
-    );
+    // Only the glow's own end (the stepper's bump ends inside it too).
+    const done = (event) => {
+      if (event.animationName !== "line-added") {
+        return;
+      }
+
+      orderLine.classList.remove("line--added");
+      orderLine.removeEventListener("animationend", done);
+    };
+
+    orderLine.addEventListener("animationend", done);
   }
 
   function scrollOrderLineIntoView(orderLine) {

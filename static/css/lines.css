@@ -27,20 +27,37 @@
   display: none;
 }
 
-/* A line just added: a green glow that fades out, inside the row only
-   (between its hairlines, which stay drawn over it). */
+/* A line just added: a green glow that fades out. A layer of its own
+   behind the row: a little wider than the row, so it has room around the
+   picture and the trash, rounded, and a little inside the hairlines above
+   and below. */
 .line--added {
-  animation: line-added 1.6s ease-out;
+  position: relative;
+  isolation: isolate;
+}
+
+.line--added::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset-block: var(--space-1);
+  inset-inline: calc(-1 * var(--space-3));
+
+  background: rgb(var(--color-status-success) / 0.18);
+  border-radius: var(--radius-card-inner);
+  pointer-events: none;
+
+  animation: line-added 1.6s ease-out forwards;
 }
 
 @keyframes line-added {
   0%,
   25% {
-    background: rgb(var(--color-status-success) / 0.18);
+    opacity: 1;
   }
 
   100% {
-    background: transparent;
+    opacity: 0;
   }
 }
 
@@ -51,7 +68,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .line--added {
+  .line--added::before {
     animation-duration: 0.01ms;
   }
 }
