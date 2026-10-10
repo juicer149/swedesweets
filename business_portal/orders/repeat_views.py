@@ -29,6 +29,7 @@ from business_portal.orders.selectors import (
 from business_portal.selectors import (
     get_portal_customer_for_user,
 )
+from common.http import wants_json
 from products.localization import translated_product_name
 
 
@@ -52,7 +53,7 @@ def repeat_order(
         source_order=source_order,
     )
 
-    if _wants_json(request):
+    if wants_json(request):
         return _repeat_json_response(
             request,
             result=result,
@@ -96,16 +97,12 @@ def repeat_order(
     )
 
 
-def _wants_json(request) -> bool:
-    return "application/json" in request.headers.get("Accept", "")
-
-
 def _repeat_json_response(
     request,
     *,
     result: RepeatOrderResult,
 ) -> JsonResponse:
-    """The cart page's "Order again" (cart_quick_add.js): the lines it
+    """The cart page's "Order again" (business_cart.js): the lines it
     added or raised, drawn, for the page to put in place; and why any
     product was left out, to say beside the order."""
 

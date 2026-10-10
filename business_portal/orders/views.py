@@ -53,6 +53,7 @@ from business_portal.selectors import (
 )
 from carts.models import CartLine
 from common.channels import SalesChannel
+from common.http import wants_json
 from customers.models import Customer
 from inventory.errors import InvalidStockOperation
 from orders.errors import InvalidOrderOperation
@@ -70,18 +71,6 @@ ORDER_OPERATION_ERRORS = (
     InvalidOrderOperation,
     InvalidStockOperation,
 )
-
-
-def _wants_json(
-    request,
-) -> bool:
-    return (
-        "application/json"
-        in request.headers.get(
-            "Accept",
-            "",
-        )
-    )
 
 
 def _get_portal_cart_line(
@@ -116,7 +105,7 @@ def set_cart_line_quantity(
         cart_line_id=cart_line_id,
     )
 
-    wants_json = _wants_json(
+    as_json = wants_json(
         request
     )
 
@@ -134,7 +123,7 @@ def set_cart_line_quantity(
             "Quantity must be a whole number."
         )
 
-        if wants_json:
+        if as_json:
             return JsonResponse(
                 {
                     "ok": False,
@@ -161,7 +150,7 @@ def set_cart_line_quantity(
     except InvalidBusinessCart as error:
         message = str(error)
 
-        if wants_json:
+        if as_json:
             return JsonResponse(
                 {
                     "ok": False,
@@ -179,7 +168,7 @@ def set_cart_line_quantity(
             "Quantity updated."
         )
 
-        if wants_json:
+        if as_json:
             return JsonResponse(
                 {
                     "ok": True,
@@ -213,7 +202,7 @@ def remove_cart_line(
         cart_line_id=cart_line_id,
     )
 
-    wants_json = _wants_json(
+    as_json = wants_json(
         request
     )
 
@@ -225,7 +214,7 @@ def remove_cart_line(
     except InvalidBusinessCart as error:
         message = str(error)
 
-        if wants_json:
+        if as_json:
             return JsonResponse(
                 {
                     "ok": False,
@@ -243,7 +232,7 @@ def remove_cart_line(
             "Product removed from your cart."
         )
 
-        if wants_json:
+        if as_json:
             return JsonResponse(
                 {
                     "ok": True,
@@ -381,14 +370,14 @@ def cart(request):
 @require_POST
 def add_cart_offer(request):
     """The cart's quick add: one of the catalog's offers, one unit (again
-    adds one more). Asked for JSON (cart_quick_add.js) it answers with the
+    adds one more). Asked for JSON (business_cart.js) it answers with the
     line drawn, for the page to put in place; otherwise back to the cart.
     """
 
     customer = get_portal_customer_for_user(
         user=request.user,
     )
-    wants_json = _wants_json(request)
+    as_json = wants_json(request)
 
     try:
         commercial_price_id = int(
@@ -421,7 +410,7 @@ def add_cart_offer(request):
     except InvalidBusinessCart as error:
         message = str(error)
 
-        if wants_json:
+        if as_json:
             return JsonResponse(
                 {
                     "ok": False,
@@ -443,7 +432,7 @@ def add_cart_offer(request):
         ),
     }
 
-    if not wants_json:
+    if not as_json:
         messages.success(
             request,
             message,

@@ -20,6 +20,7 @@ from accounts.roles import AccountRole
 from carts.models import Cart
 from carts.services import create_cart
 from common.channels import SalesChannel
+from common.http import wants_json
 from products.models import Product
 from retail.catalog_selectors import (
     get_retail_catalog_product,
@@ -58,13 +59,6 @@ def _is_business_customer(
             None,
         )
         == AccountRole.BUSINESS_CUSTOMER
-    )
-
-
-def _wants_json(request: HttpRequest) -> bool:
-    return (
-        "application/json"
-        in request.headers.get("Accept", "")
     )
 
 
@@ -246,7 +240,7 @@ def add_to_cart(
             "for business customers."
         )
 
-        if _wants_json(request):
+        if wants_json(request):
             return JsonResponse(
                 {
                     "ok": False,
@@ -293,7 +287,7 @@ def add_to_cart(
     ) as error:
         message = str(error)
 
-        if _wants_json(request):
+        if wants_json(request):
             return JsonResponse(
                 {
                     "ok": False,
@@ -328,7 +322,7 @@ def add_to_cart(
             "product": product.display_name,
         }
 
-        if _wants_json(request):
+        if wants_json(request):
             return JsonResponse(
                 {
                     "ok": True,

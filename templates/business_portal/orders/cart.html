@@ -15,12 +15,13 @@
       {% trans "Order" %}
     </h1>
 
-    {% include "business_portal/orders/includes/recent_orders.html" with recent_orders=recent_orders csrf_token=csrf_token only %}
+    {% url "business_portal:add_cart_offer" as add_url %}
+    {% include "includes/orders/recent_orders.html" with recent_orders=recent_orders mode="cart" add_url=add_url csrf_token=csrf_token only %}
 
     {% comment %}
       Quick add: any product of the catalog straight into the order. The
       chosen offer is posted at once and its line put in the page
-      (cart_quick_add.js); without the script the button posts it.
+      (business_cart.js); without the script the button posts it.
     {% endcomment %}
     {% if quick_add_options %}
       {% trans "Search for a product to add" as quick_add_hint %}
@@ -139,7 +140,8 @@
 
   <script src="{% static 'js/quantity-stepper.js' %}" defer></script>
   <script src="{% static 'js/cart.js' %}" defer></script>
-  <script src="{% static 'js/cart_quick_add.js' %}" defer></script>
+  <script src="{% static 'js/line_glow.js' %}" defer></script>
+  <script src="{% static 'js/business_cart.js' %}" defer></script>
   <script src="{% static 'js/smooth-details.js' %}" defer></script>
   <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script src="{% static 'js/confirm_action.js' %}" defer></script>

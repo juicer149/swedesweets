@@ -20,6 +20,7 @@ from django.views.decorators.http import (
 )
 
 from carts.models import Cart, CartLine
+from common.http import wants_json
 from retail.cart_selectors import (
     get_retail_cart,
     get_retail_cart_line,
@@ -56,18 +57,6 @@ CLEAR_CART_INTENT = "clear_cart"
 
 class InvalidCartInput(ValueError):
     """Raised when cart input cannot be parsed from the HTTP request."""
-
-
-def _wants_json(
-    request: HttpRequest,
-) -> bool:
-    return (
-        "application/json"
-        in request.headers.get(
-            "Accept",
-            "",
-        )
-    )
 
 
 def _get_request_cart(
@@ -144,7 +133,7 @@ def _cart_error_response(
 ) -> HttpResponse:
     message = str(error)
 
-    if _wants_json(request):
+    if wants_json(request):
         return JsonResponse(
             {
                 "ok": False,
@@ -330,7 +319,7 @@ def set_cart_line_quantity(
         "Quantity updated."
     )
 
-    if _wants_json(request):
+    if wants_json(request):
         cart_context = build_retail_cart_context(
             cart=cart,
         )
@@ -398,7 +387,7 @@ def remove_cart_line(
         "Product removed from your cart."
     )
 
-    if _wants_json(request):
+    if wants_json(request):
         return JsonResponse(
             {
                 "ok": True,

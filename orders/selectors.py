@@ -213,6 +213,43 @@ def list_customer_orders(
     )
 
 
+def list_recent_business_orders(
+    *,
+    customer: Customer,
+    limit: int = 3,
+    exclude_order_id: int | None = None,
+) -> list[Order]:
+    """A customer's latest business orders that went through (not drafts,
+    not cancelled), newest first, their lines and products loaded: a
+    shop's cart and the ops order form offer them to order again."""
+
+    orders = (
+        Order.objects
+        .filter(
+            customer=customer,
+            channel=Order.Channel.BUSINESS,
+        )
+        .exclude(
+            status__in=(
+                Order.Status.DRAFT,
+                Order.Status.CANCELLED,
+            )
+        )
+        .prefetch_related(
+            "lines__product__profile",
+            "lines__product__translations",
+            "lines__commercial_offer__batch",
+            "lines__commercial_offer__product__profile",
+        )
+        .order_by("-created_at", "-id")
+    )
+
+    if exclude_order_id is not None:
+        orders = orders.exclude(pk=exclude_order_id)
+
+    return list(orders[:limit])
+
+
 def get_customer_order_summary(
     *,
     customer: Customer,

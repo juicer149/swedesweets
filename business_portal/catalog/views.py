@@ -31,21 +31,12 @@ from business_portal.catalog.viewmodels import (
 from business_portal.selectors import (
     get_portal_customer_for_user,
 )
+from common.http import wants_json
 from products.models import Product
 
 
 class InvalidCatalogInput(ValueError):
     """Raised when business catalog HTTP input cannot be parsed."""
-
-
-def _wants_json(request) -> bool:
-    return (
-        "application/json"
-        in request.headers.get(
-            "Accept",
-            "",
-        )
-    )
 
 
 def _parse_commercial_price_id(
@@ -152,7 +143,7 @@ def add_product(
     ) as error:
         message = str(error)
 
-        if _wants_json(request):
+        if wants_json(request):
             return JsonResponse(
                 {
                     "ok": False,
@@ -172,7 +163,7 @@ def add_product(
             "product": product.display_name,
         }
 
-        if _wants_json(request):
+        if wants_json(request):
             return JsonResponse(
                 {
                     "ok": True,

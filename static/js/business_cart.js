@@ -50,22 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  function glow(line) {
-    line.classList.remove("line--added");
-    void line.offsetWidth; // restart the animation
-    line.classList.add("line--added");
-    // Only the glow's own end (the stepper's bump ends inside it too).
-    const done = (event) => {
-      if (event.animationName !== "line-added") {
-        return;
-      }
-
-      line.classList.remove("line--added");
-      line.removeEventListener("animationend", done);
-    };
-
-    line.addEventListener("animationend", done);
-  }
+  const glow = (line) => window.glowLine?.(line);
 
   function placeLine(html, cartLineId) {
     const template = document.createElement("template");

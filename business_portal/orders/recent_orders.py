@@ -18,7 +18,8 @@ from business_portal.orders.product_presentation import (
 )
 from common.lines import META_OFFER, LineView, meta, metas
 from customers.models import Customer
-from orders.models import Order, OrderLine
+from orders.models import OrderLine
+from orders.selectors import list_recent_business_orders
 from products.images import product_image_url
 
 RECENT_ORDER_COUNT = 3
@@ -79,27 +80,12 @@ def build_recent_orders(
     orderable_offer_ids: Collection[int],
     limit: int = RECENT_ORDER_COUNT,
 ) -> tuple[RecentOrder, ...]:
-    """The customer's latest business orders that went through (not
-    drafts, not cancelled), newest first."""
+    """The customer's latest business orders (list_recent_business_orders)
+    with what each line can do now."""
 
-    orders = (
-        Order.objects
-        .filter(
-            customer=customer,
-            channel=Order.Channel.BUSINESS,
-        )
-        .exclude(
-            status__in=(
-                Order.Status.DRAFT,
-                Order.Status.CANCELLED,
-            )
-        )
-        .prefetch_related(
-            "lines__product__profile",
-            "lines__product__translations",
-            "lines__commercial_offer",
-        )
-        .order_by("-created_at", "-id")[:limit]
+    orders = list_recent_business_orders(
+        customer=customer,
+        limit=limit,
     )
 
     return tuple(
