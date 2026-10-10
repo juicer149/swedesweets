@@ -9,7 +9,8 @@
                        a gift-tag label on its foot (name on a yellow
                        band, package · price, a deal hint) with a round
                        "+ scoop" button, a striped shelf under each row
-     .tile__quantity   what "+ Add" opens: stepper, green tick, ×
+     .tile__quantity   what the round button opens, folding down over the
+                       row under it: stepper, then green tick and ×
      .tile__status     while adding: only the status burst (catalog.js)
      .product          a product's page: picture beside what to buy, then
                        Description and Ingredients as tabs
@@ -167,8 +168,13 @@
 .tile:nth-child(3n + 2) { --tile-tilt: 1.5deg; }
 .tile:nth-child(3n) { --tile-tilt: -0.8deg; }
 
-.tile__label:has(.tile__quantity:not([hidden]), .tile__status:not([hidden])) {
-  padding-bottom: var(--space-2);
+/* Straight while its quantity is chosen, and over the row under it (the
+   quantity folds down over it rather than pushing the wall down). */
+.tile:has(.tile__quantity:not([hidden])) {
+  z-index: 5;
+}
+
+.tile__label:has(.tile__quantity:not([hidden])) {
   transform: none;
 }
 
@@ -249,9 +255,14 @@
   display: none;
 }
 
-/* While the product is added: only the status burst, centred. */
+/* While the product is added: only the status burst, where the round
+   button was. */
 .tile__status {
+  position: absolute;
+  bottom: -1.25rem;
+  left: 50%;
   justify-content: center;
+  transform: translateX(-50%);
 }
 
 /* The add button: round, half off the label's foot; "+" and a scoop
@@ -307,20 +318,30 @@
   outline-offset: 2px;
 }
 
-/* One row in the place of "+ Add": the stepper on the left, growing with
-   the room the tile has, the tick and × on the right. Only a very narrow
-   tile wraps the tick and × under it. */
+/* What the round button opens: the label folds down, over whatever is
+   under it (nothing moves): the stepper across the label's width, the
+   tick and × centred under it. */
 .tile__quantity {
-  flex-wrap: wrap;
-  justify-content: space-between;
+  position: absolute;
+  top: calc(100% - 1.6rem - 1.5px);
+  right: -1.5px;
+  left: -1.5px;
+
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2) var(--space-3);
+
+  background: var(--color-white);
+  border: 1.5px solid var(--color-accent-600);
+  border-top: 0;
+  border-radius: 0 0 9px 9px;
+  box-shadow: 0 8px 14px rgb(var(--color-row-shadow) / 0.18);
 }
 
 .tile__quantity .quantity-stepper {
-  flex: 1 1 0;
-  grid-template-columns: 2rem minmax(1.5rem, var(--stepper-number)) 2rem;
-  width: auto;
-  min-width: 5.5rem;
-  max-width: calc(4rem + var(--stepper-number) + 2px);
+  grid-template-columns: 2.25rem minmax(1.5rem, 1fr) 2.25rem;
+  width: 100%;
+  max-width: none;
 }
 
 .tile__quantity .quantity-stepper__button {
@@ -330,10 +351,9 @@
 
 .tile__quantity-actions {
   display: flex;
-  flex: 0 0 auto;
   align-items: center;
-  gap: var(--space-1);
-  margin-left: auto;
+  justify-content: center;
+  gap: var(--space-3);
 }
 
 /* The tick that adds: round, in the deliver green (light inside, dark
