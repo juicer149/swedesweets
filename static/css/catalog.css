@@ -485,13 +485,6 @@
   overflow: visible;
 }
 
-.pick-shelf__brand {
-  fill: var(--color-primary-600);
-  font-family: var(--font-heading);
-  font-size: 21px;
-  font-weight: 700;
-}
-
 /* The scoops sway in their tub; the bags breathe. */
 .pick-shelf__scoops {
   transform-box: view-box;

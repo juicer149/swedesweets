@@ -1,7 +1,7 @@
-{% load i18n %}
+{% load static %}
 {% comment %}
 The top shelf of our pick & mix stand, drawn: on a wooden board, a clear
-tub of SwedeSweets paper bags (left) and one of red scoops (right). The
+tub of SwedeSweets paper bags with our logo (the navbar's) (left) and one of red scoops (right). The
 scoops sway a little and the bags breathe (css/catalog.css; still when
 the visitor asks for less motion). Decorative: the catalog's title is
 the page's heading.
@@ -34,9 +34,7 @@ the page's heading.
         <path d="M60 34 l7 -5 7 5 7 -5 7 5 7 -5 7 5 7 -5 7 5 7 -5 7 5 7 -5 7 5 7 -5 7 5 V150 H60 Z" fill="#fbf9f4" stroke="#3b2a1a" stroke-width="2.2" stroke-linejoin="round"/>
       </g>
       <path d="M57 30 l7 -5 7 5 7 -5 7 5 7 -5 7 5 7 -5 7 5 7 -5 7 5 7 -5 7 5 7 -5 7 5 V150 H57 Z" fill="#ffffff" stroke="#3b2a1a" stroke-width="2.2" stroke-linejoin="round"/>
-      <text class="pick-shelf__brand" x="106" y="72" text-anchor="middle">Swede</text>
-      <text class="pick-shelf__brand" x="106" y="94" text-anchor="middle">Sweets</text>
-      <path d="M128 50 l3 6 4 -6 2 7 5 -4 -2 9 h-11 Z" fill="#f6b51e" stroke="#a2720b" stroke-width="1.2" stroke-linejoin="round"/>
+      <image href="{% static 'images/swedesweets-logo.png' %}" x="67" y="44" width="78" height="51" preserveAspectRatio="xMidYMid meet"/>
     </g>
     <path d="M46 112 h120 l-6 52 h-108 Z" fill="url(#pick-shelf-tub)" stroke="#8aa0b8" stroke-width="2.5" stroke-linejoin="round"/>
     <path d="M44 110 h124" stroke="#8aa0b8" stroke-width="4" stroke-linecap="round"/>
