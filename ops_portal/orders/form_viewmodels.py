@@ -21,6 +21,10 @@ from ops_portal.orders.forms import (
     build_add_order_line_product_form,
 )
 from ops_portal.orders.presentation import order_status_icon
+from ops_portal.orders.recent_orders import (
+    OpsRecentOrder,
+    build_ops_recent_orders,
+)
 from orders.models import Order
 
 
@@ -37,9 +41,16 @@ class OrderFormContext:
     status_icon: str = ""
     is_edit: bool = False
     cancel_order_url: str = ""
+    # The customer's last orders above the product search: drawn here on
+    # an edit; on a new order fetched (recent_orders_url) once a customer
+    # is chosen.
+    recent_orders: tuple[OpsRecentOrder, ...] = ()
+    recent_orders_url: str = ""
 
     def as_dict(self) -> dict[str, Any]:
         return {
+            "recent_orders": self.recent_orders,
+            "recent_orders_url": self.recent_orders_url,
             "form": self.form,
             "line_formset": self.line_formset,
             "add_product_form": self.add_product_form,
@@ -93,6 +104,7 @@ def build_create_order_form_context(
         submit_label="Place order",
         cancel_url=reverse("ops_orders:index"),
         is_edit=False,
+        recent_orders_url=reverse("ops_orders:customer_recent_orders"),
     )
 
 
@@ -117,6 +129,13 @@ def build_edit_order_form_context(
         submit_label="Update order",
         cancel_url=order_detail_href(order),
         is_edit=True,
+        recent_orders=build_ops_recent_orders(
+            customer=order.customer,
+            selectable_offer_ids=set(
+                line_formset.offer_choice_context.available_units_by_offer_id
+            ),
+            exclude_order_id=order.pk,
+        ),
         cancel_order_url=(
             order_cancel_href(order)
             if can_cancel_order(

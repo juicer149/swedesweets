@@ -36,6 +36,15 @@
       <section class="page-part order-form__products" aria-labelledby="order-lines-title">
         <h2 id="order-lines-title" class="page-part__title">{% trans "Products" %}</h2>
 
+        {% comment %}
+          The customer's last orders, to order again or take a product
+          from: drawn here on an edit; on a new order fetched once a
+          customer is chosen (order_lines.js).
+        {% endcomment %}
+        <div data-recent-orders-slot{% if recent_orders_url %} data-recent-orders-url="{{ recent_orders_url }}"{% endif %}>
+          {% include "includes/orders/recent_orders.html" with recent_orders=recent_orders mode="form" only %}
+        </div>
+
         <div class="form-grid">
           {% include "includes/ui/form_field.html" with field=add_product_form.commercial_offer only %}
         </div>
@@ -89,5 +98,7 @@
   <script src="{% static 'js/confirm_action.js' %}" defer></script>
   <script src="{% static 'js/dirty_form.js' %}" defer></script>
   <script src="{% static 'js/quantity-stepper.js' %}" defer></script>
+  <script src="{% static 'js/smooth-details.js' %}" defer></script>
+  <script src="{% static 'js/line_glow.js' %}" defer></script>
   <script src="{% static 'js/order_lines.js' %}" defer></script>
 {% endblock %}

@@ -3,6 +3,7 @@
 // <details data-smooth> and mark the part that slides with
 // data-smooth-content. Details that share data-smooth-group="name" form an
 // accordion: opening one closes the others (they slide shut too).
+// Details added later: window.enhanceSmoothDetails(container).
 // Without JavaScript, or with reduced motion, details open and close as
 // usual.
 (() => {
@@ -55,7 +56,12 @@
     };
   }
 
-  document.querySelectorAll("details[data-smooth]").forEach((details) => {
+  function enhance(root = document) {
+  root.querySelectorAll("details[data-smooth]").forEach((details) => {
+    if (items.has(details)) {
+      return;
+    }
+
     const summary = details.querySelector(":scope > summary");
     const content = details.querySelector(":scope > [data-smooth-content]");
 
@@ -88,4 +94,11 @@
       slide(item, expand);
     });
   });
+  }
+
+  enhance();
+
+  // Details put in the page later (the ops order form's previous
+  // orders) ask for the same: window.enhanceSmoothDetails(container).
+  window.enhanceSmoothDetails = enhance;
 })();

@@ -2,16 +2,19 @@ from __future__ import annotations
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_GET
 
+from business.offer_choices import build_business_offer_choice_context
 from common.table_controls import (
     TableControls,
     TableControlsTemplate,
     TableFilter,
     TableSortField,
 )
+from customers.models import Customer
 from fulfillment.selectors import get_packaging_list
 from fulfillment.services import cancel_order
 from inventory.errors import InvalidStockOperation
@@ -54,6 +57,7 @@ from ops_portal.orders.list_viewmodels import (
     build_order_quick_jump_search,
     build_orders_page_header,
 )
+from ops_portal.orders.recent_orders import build_ops_recent_orders
 from ops_portal.orders.services import (
     create_order,
     pack_order_and_clear_checklist,
@@ -208,6 +212,46 @@ def create(request):
         "ops_portal/orders/order_form.html",
         context,
     )
+
+
+@login_required
+@require_GET
+def customer_recent_orders(request):
+    """The chosen customer's last orders, for a new order's form to show
+    above its product search (order_lines.js fetches it on the customer's
+    change)."""
+
+    customer = get_object_or_404(
+        Customer,
+        pk=_positive_int(request.GET.get("customer")),
+    )
+
+    return render(
+        request,
+        "includes/orders/recent_orders.html",
+        {
+            "recent_orders": build_ops_recent_orders(
+                customer=customer,
+                selectable_offer_ids=set(
+                    build_business_offer_choice_context()
+                    .available_units_by_offer_id
+                ),
+            ),
+            "mode": "form",
+        },
+    )
+
+
+def _positive_int(value: str | None) -> int:
+    try:
+        number = int(value or "")
+    except ValueError:
+        raise Http404 from None
+
+    if number <= 0:
+        raise Http404
+
+    return number
 
 
 @login_required

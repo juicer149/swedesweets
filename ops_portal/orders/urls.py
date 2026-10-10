@@ -9,6 +9,11 @@ app_name = "ops_orders"
 urlpatterns = [
     path("", views.index, name="index"),
     path("create/", views.create, name="create"),
+    path(
+        "create/recent-orders/",
+        views.customer_recent_orders,
+        name="customer_recent_orders",
+    ),
     path("<int:order_id>/", views.detail, name="detail"),
     path("<int:order_id>/edit/", views.edit, name="edit"),
     path("<int:order_id>/cancel/", views.cancel, name="cancel"),

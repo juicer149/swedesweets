@@ -19,6 +19,7 @@ VIEW_CAPABILITIES = {
     "ops_orders:index": Capability.VIEW_ORDERS,
     "ops_orders:detail": Capability.VIEW_ORDERS,
     "ops_orders:create": Capability.CREATE_ORDERS,
+    "ops_orders:customer_recent_orders": Capability.CREATE_ORDERS,
     "ops_orders:edit": Capability.EDIT_ORDERS,
     "ops_orders:cancel": Capability.CANCEL_ORDERS,
     "ops_orders:pack": Capability.PACK_ORDERS,

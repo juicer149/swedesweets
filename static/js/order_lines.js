@@ -95,22 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // A short green glow on the line just added, or the one that got one
-  // more (lines.css, as on a shop's cart).
+  // more (line_glow.js).
   function glowOrderLine(orderLine) {
-    orderLine.classList.remove("line--added");
-    void orderLine.offsetWidth; // restart the animation
-    orderLine.classList.add("line--added");
-    // Only the glow's own end (the stepper's bump ends inside it too).
-    const done = (event) => {
-      if (event.animationName !== "line-added") {
-        return;
-      }
-
-      orderLine.classList.remove("line--added");
-      orderLine.removeEventListener("animationend", done);
-    };
-
-    orderLine.addEventListener("animationend", done);
+    window.glowLine?.(orderLine);
   }
 
   function scrollOrderLineIntoView(orderLine) {
@@ -120,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function incrementQuantity(orderLine) {
+  function incrementQuantity(orderLine, by = 1) {
     const input = orderLine.querySelector("[data-quantity-input]");
 
     if (!input) {
@@ -128,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const current = Number(input.value);
-    const next = Number.isFinite(current) ? current + 1 : 1;
+    const next = Number.isFinite(current) ? current + by : by;
 
     input.value = String(next);
 
@@ -213,18 +200,24 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  function addOrIncrementLine(offer) {
+  // A new line for the offer, or more on its line. quantity: how many
+  // (a previous order's own amount with "Order again"); scroll: whether
+  // to bring it into view (only the first of several).
+  function addOrIncrementLine(offer, { quantity = 1, scroll = true } = {}) {
     if (!offer || !offer.value) {
-      return;
+      return null;
     }
 
     const existingLine = findOrderLineByOfferId(offer.value);
 
     if (existingLine) {
-      incrementQuantity(existingLine);
+      incrementQuantity(existingLine, quantity);
       clearAddOfferSelect();
+      if (scroll) {
+        scrollOrderLineIntoView(existingLine);
+      }
       glowOrderLine(existingLine);
-      return;
+      return existingLine;
     }
 
     const index = getOrderLines().length;
@@ -268,7 +261,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setLineImage(orderLine, offer.image);
 
     if (quantityInput) {
-      quantityInput.value = "1";
+      quantityInput.value = String(quantity);
+      quantityInput.dispatchEvent(new Event("input", { bubbles: true }));
     }
 
     orderLinesList.appendChild(orderLine);
@@ -276,8 +270,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     clearAddOfferSelect();
     updateEmptyState();
-    scrollOrderLineIntoView(orderLine);
+    if (scroll) {
+      scrollOrderLineIntoView(orderLine);
+    }
     glowOrderLine(orderLine);
+    return orderLine;
   }
 
   function handleOfferSelected(value) {
@@ -304,6 +301,91 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       }
     );
+  }
+
+  /* The customer's previous orders (includes/orders/recent_orders.html,
+     mode "form"): drawn on an edit; on a new order fetched when a
+     customer is chosen. A product's "+" adds one; "Order again" adds each
+     product it can, as many as that order had. */
+
+  const recentOrdersSlot = document.querySelector(
+    "[data-recent-orders-slot]"
+  );
+
+  function offerFromButton(button) {
+    return {
+      value: button.dataset.offerId,
+      name: button.dataset.name || "",
+      meta: button.dataset.meta || "",
+      offerDetail: button.dataset.offerDetail || "",
+      image: button.dataset.image || "",
+    };
+  }
+
+  if (recentOrdersSlot) {
+    recentOrdersSlot.addEventListener("click", (event) => {
+      const add = event.target.closest("[data-recent-order-add]");
+
+      if (add) {
+        addOrIncrementLine(offerFromButton(add));
+        return;
+      }
+
+      const repeat = event.target.closest("[data-recent-order-repeat]");
+      const order = repeat && repeat.closest("[data-recent-order]");
+
+      if (!order) {
+        return;
+      }
+
+      order
+        .querySelectorAll("[data-recent-order-add]")
+        .forEach((button, index) => {
+          addOrIncrementLine(offerFromButton(button), {
+            quantity: Math.max(1, Number(button.dataset.quantity) || 1),
+            scroll: index === 0,
+          });
+        });
+    });
+
+    const url = recentOrdersSlot.dataset.recentOrdersUrl;
+    const customerSelect = document.querySelector('select[name="customer"]');
+    let requested = 0;
+
+    async function showCustomerOrders() {
+      const customerId = customerSelect.value;
+      const request = ++requested;
+
+      if (!customerId) {
+        recentOrdersSlot.replaceChildren();
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${url}?customer=${encodeURIComponent(customerId)}`,
+          { credentials: "same-origin" }
+        );
+
+        if (!response.ok || request !== requested) {
+          return;
+        }
+
+        recentOrdersSlot.innerHTML = await response.text();
+        window.enhanceSmoothDetails?.(recentOrdersSlot);
+      } catch {
+        // Without them the form works as before.
+      }
+    }
+
+    if (url && customerSelect) {
+      customerSelect.addEventListener("change", showCustomerOrders);
+
+      // Back with an error, the customer still chosen.
+      if (customerSelect.value) {
+        void showCustomerOrders();
+      }
+    }
   }
 
   orderLinesList.addEventListener("click", (event) => {
