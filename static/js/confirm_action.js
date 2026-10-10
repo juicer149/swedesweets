@@ -11,6 +11,8 @@
  *   data-confirm-title    dialog title
  *   data-confirm-label    the red button ("Remove")
  *   data-confirm-cancel   the quiet way back ("Keep")
+ *   data-confirm-image    a picture of what it is about, struck through
+ *                         (the product a trash removes)
  *
  * Without JavaScript, or without the dialog script, the click just
  * happens as before.
@@ -40,6 +42,7 @@
         title: button.dataset.confirmTitle,
         confirmLabel: button.dataset.confirmLabel,
         cancelLabel: button.dataset.confirmCancel,
+        image: button.dataset.confirmImage,
       });
 
       if (confirmed) {

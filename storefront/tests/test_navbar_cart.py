@@ -221,6 +221,8 @@ def test_navbar_cart_removes_owned_line(
     assert response.json() == {
         "ok": True,
         "message": "Product removed from your cart.",
+        # The cart is empty now: no subtotal to show.
+        "subtotal_label": None,
     }
 
     assert not CartLine.objects.filter(

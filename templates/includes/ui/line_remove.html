@@ -11,6 +11,8 @@
               leaves it out, and the post is then refused)
   label  aria-label (default "Remove product")
   inline  with url: removed in the page, without reloading it (cart.js)
+  image   the product's picture, shown struck through in the question
+          (optional)
   name    the product's name, for the question ("Remove Rambo — Twist
           from the order?"); without it "this product". A line the
           ops form adds later gets its name from order_lines.js
@@ -30,7 +32,8 @@
       class="line__remove-button"
       type="submit"
       aria-label="{{ label|default:default_label }}"
-      data-confirm="{{ question }}"
+      data-confirm="{{ question }}"{% if image %}
+      data-confirm-image="{{ image }}"{% endif %}
       data-confirm-title="{% trans 'Remove product' %}"
       data-confirm-label="{% trans 'Remove' %}"
       data-confirm-cancel="{% trans 'Keep it' %}"
@@ -45,7 +48,8 @@
       type="button"
       aria-label="{{ label|default:default_label }}"
       data-remove-order-line
-      data-confirm="{{ question }}"
+      data-confirm="{{ question }}"{% if image %}
+      data-confirm-image="{{ image }}"{% endif %}
       data-confirm-named="{% blocktrans with name='%(name)s' %}Remove {{ name }} from the order?{% endblocktrans %}"
       data-confirm-title="{% trans 'Remove product' %}"
       data-confirm-label="{% trans 'Remove' %}"

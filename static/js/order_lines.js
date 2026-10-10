@@ -271,6 +271,10 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
+    if (removeButton && offer.image) {
+      removeButton.dataset.confirmImage = offer.image;
+    }
+
     if (quantityInput) {
       quantityInput.value = String(quantity);
       quantityInput.dispatchEvent(new Event("input", { bubbles: true }));

@@ -8,6 +8,7 @@
  *   title: "Leave page",
  *   confirmLabel: "Leave without saving",
  *   cancelLabel: "Stay on this page",
+ *   image: "/media/…/thumb.webp",  // optional: the product, struck through
  * });
  */
 
@@ -17,6 +18,8 @@
   }
 
   let dialogElement = null;
+  let pictureElement = null;
+  let imageElement = null;
   let titleElement = null;
   let messageElement = null;
   let confirmButton = null;
@@ -39,6 +42,9 @@
 
     dialog.innerHTML = `
       <div class="confirm-dialog__card">
+        <span class="confirm-dialog__picture" data-confirm-dialog-picture hidden>
+          <img class="confirm-dialog__image" alt="" data-confirm-dialog-image>
+        </span>
         <h2 class="confirm-dialog__title" data-confirm-dialog-title></h2>
         <p class="confirm-dialog__message" data-confirm-dialog-message></p>
         <div class="confirm-dialog__actions">
@@ -87,6 +93,12 @@
     }
 
     dialogElement = buildDialog();
+    pictureElement = dialogElement.querySelector(
+      "[data-confirm-dialog-picture]"
+    );
+    imageElement = dialogElement.querySelector(
+      "[data-confirm-dialog-image]"
+    );
     titleElement = dialogElement.querySelector(
       "[data-confirm-dialog-title]"
     );
@@ -115,6 +127,15 @@
 
   window.confirmDialog = function confirmDialog(message, options = {}) {
     const dialog = ensureDialog();
+
+    // The thing in question (a product being removed), struck through.
+    if (options.image) {
+      imageElement.src = options.image;
+      pictureElement.hidden = false;
+    } else {
+      imageElement.removeAttribute("src");
+      pictureElement.hidden = true;
+    }
 
     titleElement.textContent = options.title || "Unsaved changes";
     messageElement.textContent = message;
