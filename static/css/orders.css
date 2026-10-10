@@ -154,12 +154,15 @@
 .order-status--closed { --order-status-color: var(--color-status-muted-text); }
 
 /* Order form: the products right under the heading on edit, with room
-   above them when the customer field comes first (new order). */
+   above them when the customer field comes first (new order), whether or
+   not the customer's previous orders sit between (empty until a customer
+   is chosen). */
 .order-form__products {
   margin-top: 0;
 }
 
-.form-grid + .order-form__products {
+.form-grid + .order-form__products,
+.form-grid + .order-form__recent + .order-form__products {
   margin-top: var(--space-8);
 }
 

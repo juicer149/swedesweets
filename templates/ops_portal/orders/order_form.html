@@ -39,7 +39,7 @@
         edit; on a new order fetched once a customer is chosen
         (order_lines.js). No burst here: in ops a line goes in at once.
       {% endcomment %}
-      <div data-recent-orders-slot{% if recent_orders_url %} data-recent-orders-url="{{ recent_orders_url }}"{% endif %}>
+      <div class="order-form__recent" data-recent-orders-slot{% if recent_orders_url %} data-recent-orders-url="{{ recent_orders_url }}"{% endif %}>
         {% include "includes/orders/recent_orders.html" with recent_orders=recent_orders mode="form" only %}
       </div>
 
