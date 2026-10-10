@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 12:33+0200\n"
+"POT-Creation-Date: 2026-10-10 13:00+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -1923,7 +1923,7 @@ msgstr ""
 "met. Lanières acidulées, réglisse salée, gommes aux fruits, chocolat. Chacun "
 "a son propre mélange."
 
-#: templates/storefront/about.html:50
+#: templates/storefront/about.html:38
 msgid ""
 "We missed it in France. So we started SwedeSweets to bring the real thing "
 "here: the Swedish pick & mix we grew up with, straight from Sweden."
@@ -1932,7 +1932,7 @@ msgstr ""
 "ici le vrai : les bonbons suédois en vrac de notre enfance, directement de "
 "Suède."
 
-#: templates/storefront/about.html:59
+#: templates/storefront/about.html:47
 msgid ""
 "A handful of our sweets held up in the snow, high above the clouds in the "
 "mountains."
@@ -1940,7 +1940,7 @@ msgstr ""
 "Une poignée de nos bonbons tenue dans la neige, bien au-dessus des nuages, "
 "en montagne."
 
-#: templates/storefront/about.html:65
+#: templates/storefront/about.html:53
 msgid "Come and make your own bag."
 msgstr "Venez composer votre propre sachet."
 
