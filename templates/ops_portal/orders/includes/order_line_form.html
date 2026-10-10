@@ -9,29 +9,43 @@
   {{ line_form.commercial_offer }}
   {{ line_form.unit }}
 
-  <div class="line__product line__product--plain">
-    <span class="line__name" data-order-line-offer-label>{{ line_form.initial.offer_label }}</span>
+  {% comment %}
+    Drawn like the lines of a cart or an order: the picture circle, the
+    name, and the grey lines under it (code and weight, then the offer
+    when it is not the standard one). order_lines.js fills a new line in
+    from the chosen option.
+  {% endcomment %}
+  {% with view=line_form.offer_view %}
+    <div class="line__product">
+      {% include "includes/ui/line_image.html" with url=view.image_url only %}
 
-    {% if line_form.non_field_errors or line_form.commercial_offer.errors or line_form.unit.errors or line_form.quantity.errors %}
-      <div
-        class="form-errors"
-        role="alert"
-      >
-        {% for error in line_form.non_field_errors %}
-          <p>{{ error }}</p>
-        {% endfor %}
-        {% for error in line_form.commercial_offer.errors %}
-          <p>{{ error }}</p>
-        {% endfor %}
-        {% for error in line_form.unit.errors %}
-          <p>{{ error }}</p>
-        {% endfor %}
-        {% for error in line_form.quantity.errors %}
-          <p>{{ error }}</p>
-        {% endfor %}
+      <div class="line__text">
+        <span class="line__name" data-order-line-name>{{ view.name }}</span>
+        <span class="line__meta" data-order-line-meta>{{ view.meta }}</span>
+        <span class="line__meta line__meta--offer" data-order-line-offer{% if not view.offer_detail %} hidden{% endif %}>{{ view.offer_detail }}</span>
+
+        {% if line_form.non_field_errors or line_form.commercial_offer.errors or line_form.unit.errors or line_form.quantity.errors %}
+          <div
+            class="form-errors"
+            role="alert"
+          >
+            {% for error in line_form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+            {% for error in line_form.commercial_offer.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+            {% for error in line_form.unit.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+            {% for error in line_form.quantity.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
-    {% endif %}
-  </div>
+    </div>
+  {% endwith %}
 
   <div class="line__quantity">
     {% include "includes/ui/quantity_stepper.html" with field=line_form.quantity only %}

@@ -714,6 +714,11 @@ msgstr ""
 "Empêcher ce compte client de se connecter. Les données client existantes et "
 "les historiques sont conservés."
 
+#: ops_portal/orders/forms.py
+#, python-format
+msgid "%(available_quantity)s left"
+msgstr "%(available_quantity)s en stock"
+
 #: ops_portal/orders/forms.py:116
 #, python-format
 msgid "%(offer_label)s · %(available_quantity)s left"

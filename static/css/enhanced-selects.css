@@ -306,25 +306,43 @@ select.ts-hidden-accessible {
   }
 }
 
-.ts-dropdown .option:has(.enhanced-product-option) {
-  display: block;
-
-  width: 100%;
-  min-height: 0;
-  padding: 0;
-
-  overflow: hidden;
-}
-
+/* Picture circle | name over weight, stock and offer: like a cart line.
+   Tom Select makes the rendered element the option itself, so the rule
+   names both classes to win over the plain option's padding. */
+.ts-dropdown .option.enhanced-product-option,
 .enhanced-product-option {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-1);
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
 
   width: 100%;
   min-width: 0;
   max-width: 100%;
   padding: 0.75rem 0.95rem;
+}
+
+.enhanced-product-option__image {
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
+
+  object-fit: cover;
+  object-position: center;
+
+  background: var(--color-white);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 50%;
+}
+
+.enhanced-product-option__image--empty {
+  background: var(--color-neutral-100);
+}
+
+.enhanced-product-option__text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
 }
 
 .enhanced-product-option__main {
@@ -350,9 +368,15 @@ select.ts-hidden-accessible {
   text-overflow: ellipsis;
 
   font-size: var(--font-size-14);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.3;
-  color: var(--color-neutral-700);
+  color: var(--color-neutral-600);
+}
+
+/* Not the standard offer (short date, campaign): a little darker. */
+.enhanced-product-option__offer {
+  color: var(--color-neutral-800);
+  font-weight: 750;
 }
 
 /* =============================================================================
@@ -403,21 +427,12 @@ select.ts-hidden-accessible {
     min-height: 3.5rem;
   }
 
-  .enhanced-product-option {
-    padding: 0.85rem 1rem;
+  .ts-dropdown .option.enhanced-product-option {
+    padding: 0.7rem 1rem;
   }
 
   .enhanced-product-option__main {
     font-size: var(--font-size-18);
     line-height: 1.25;
-  }
-
-  /*
-    On phones the product select should identify the product only.
-    Weight and other operational metadata belong on product/inventory detail,
-    not inside the order picker.
-  */
-  .enhanced-product-option__meta {
-    display: none;
   }
 }

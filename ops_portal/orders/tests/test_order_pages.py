@@ -105,6 +105,16 @@ def test_edit_page_keeps_line_hooks_without_cancel_dialog(
     assert 'id="order-line-empty-form-template"' in content
     assert f'href="{_url("ops_orders:cancel", placed_order)}"' in content
     assert "data-confirm-message" not in content
+    # The order's line is drawn like a cart line: picture circle, name,
+    # code and weight under it.
+    assert 'class="line__image' in content
+    assert "data-order-line-name>OLW — Apple<" in content
+    assert "#401 · " in content
+    # The dropdown's options carry the product's data for the picture,
+    # name, weight and stock.
+    assert 'data-name="OLW — Apple"' in content
+    assert "data-stock=" in content
+    assert "data-image=" in content
 
 
 @pytest.mark.django_db

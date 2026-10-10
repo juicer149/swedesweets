@@ -145,6 +145,86 @@ def test_business_offer_choice_field_label_includes_product_offer_and_stock():
 
 
 @pytest.mark.django_db
+def test_business_offer_option_carries_picture_and_stock_for_the_dropdown():
+    apple = product_factory(
+        brand="Generic",
+        name="Apple",
+        weight_per_unit=5000,
+        internal_number=1,
+    )
+    offer = _standard_business_offer(
+        apple,
+    )
+
+    field = BusinessOfferChoiceField(
+        queryset=CommercialPrice.objects.filter(
+            pk=offer.pk,
+        ),
+        available_units_by_offer_id={
+            offer.id: 12,
+        },
+    )
+    option = next(
+        option
+        for _group, options, _index in field.widget.optgroups(
+            "offer",
+            [],
+        )
+        for option in options
+        if option["value"]
+    )
+
+    assert option["attrs"]["data-name"] == "Generic — Apple"
+    assert option["attrs"]["data-weight"] == "5000 g / Box"
+    assert option["attrs"]["data-stock"] == "12 left"
+    # No picture yet: an empty circle in the dropdown.
+    assert option["attrs"]["data-image"] == ""
+
+
+@pytest.mark.django_db
+def test_order_line_keeps_its_product_when_the_form_comes_back():
+    apple = product_factory(
+        brand="Generic",
+        name="Apple",
+        weight_per_unit=5000,
+        internal_number=1,
+    )
+    offer = _standard_business_offer(
+        apple,
+    )
+
+    form = OrderLineForm(
+        data={
+            "commercial_offer": str(offer.pk),
+            "unit": OrderUnit.STOCK,
+            "quantity": "",
+        },
+        offer_queryset=CommercialPrice.objects.filter(
+            pk=offer.pk,
+        ),
+    )
+
+    assert not form.is_valid()
+
+    view = form.offer_view
+    assert view.name == "Generic — Apple"
+    assert view.meta == "#1 · 5000 g / Box"
+    assert view.offer_detail == ""
+    assert view.image_url is None
+
+
+@pytest.mark.django_db
+def test_empty_order_line_has_no_product_to_show():
+    assert OrderLineForm().offer_view is None
+    assert (
+        OrderLineForm(
+            data={"commercial_offer": "not-a-number"},
+        ).offer_view
+        is None
+    )
+
+
+@pytest.mark.django_db
 def test_order_line_form_accepts_valid_line():
     apple = product_factory(
         brand="Generic",
@@ -768,9 +848,6 @@ def test_build_order_line_initial_data():
                 "commercial_offer": offer.id,
                 "unit": OrderUnit.STOCK,
                 "quantity": 10,
-                "offer_label": (
-                    "#1 · Generic — Apple · 5000 g / Box"
-                ),
             }
         ]
     )

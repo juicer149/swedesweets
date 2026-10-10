@@ -128,15 +128,35 @@ document.addEventListener("DOMContentLoaded", () => {
     addOfferSelect.value = "";
   }
 
-  function buildOfferLabel(data) {
-    const parts = [
-      data.code,
-      data.name,
-      data.weight,
-      data.offerDetail,
-    ].filter(Boolean);
+  // What a new line shows, drawn like the lines of a cart or an order:
+  // the name, then the code and weight, then the offer when it is not
+  // the standard one (order_line_form.html).
+  function buildOfferView(data) {
+    return {
+      name: data.name || data.text || "",
+      meta: [data.code, data.weight].filter(Boolean).join(" · "),
+      offerDetail: data.offerDetail || "",
+      image: data.image || "",
+    };
+  }
 
-    return parts.length ? parts.join(" · ") : data.text;
+  // The line's empty picture circle becomes the product's picture.
+  function setLineImage(orderLine, url) {
+    const circle = orderLine.querySelector(".line__image");
+
+    if (!circle || !url) {
+      return;
+    }
+
+    const image = document.createElement("img");
+    image.className = "line__image";
+    image.src = url;
+    image.alt = "";
+    image.width = 48;
+    image.height = 48;
+    image.decoding = "async";
+
+    circle.replaceWith(image);
   }
 
   function readSelectedOffer(value) {
@@ -151,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       return {
         value,
-        label: buildOfferLabel(data),
+        ...buildOfferView(data),
       };
     }
 
@@ -163,11 +183,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return {
       value: option.value,
-      label: buildOfferLabel({
+      ...buildOfferView({
         code: option.dataset.code || "",
         name: option.dataset.name || "",
         weight: option.dataset.weight || "",
         offerDetail: option.dataset.offerDetail || "",
+        image: option.dataset.image || "",
         text: option.textContent.trim(),
       }),
     };
@@ -194,8 +215,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const offerInput = orderLine.querySelector(
       "[data-order-line-offer-input]"
     );
-    const labelElement = orderLine.querySelector(
-      "[data-order-line-offer-label]"
+    const nameElement = orderLine.querySelector(
+      "[data-order-line-name]"
+    );
+    const metaElement = orderLine.querySelector(
+      "[data-order-line-meta]"
+    );
+    const offerElement = orderLine.querySelector(
+      "[data-order-line-offer]"
     );
     const quantityInput = orderLine.querySelector(
       "[data-quantity-input]"
@@ -205,9 +232,20 @@ document.addEventListener("DOMContentLoaded", () => {
       offerInput.value = offer.value;
     }
 
-    if (labelElement) {
-      labelElement.textContent = offer.label;
+    if (nameElement) {
+      nameElement.textContent = offer.name;
     }
+
+    if (metaElement) {
+      metaElement.textContent = offer.meta;
+    }
+
+    if (offerElement) {
+      offerElement.textContent = offer.offerDetail;
+      offerElement.hidden = !offer.offerDetail;
+    }
+
+    setLineImage(orderLine, offer.image);
 
     if (quantityInput) {
       quantityInput.value = "1";

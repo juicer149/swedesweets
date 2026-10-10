@@ -26,6 +26,8 @@
       name: option.dataset.name || "",
       weight: option.dataset.weight || "",
       offerDetail: option.dataset.offerDetail || "",
+      image: option.dataset.image || "",
+      stock: option.dataset.stock || "",
       search: optionSearchText(option),
     };
   }
@@ -58,6 +60,10 @@
     return escape(code || name);
   }
 
+  // A product option reads like a line of a cart: the picture circle
+  // (an empty one when there is none, so the names line up), the name,
+  // and under it the weight and how many are left, then the offer when it
+  // is not the standard one. The code stays searchable but is not shown.
   function renderOption(data, escape) {
     if (!hasProductData(data)) {
       return `
@@ -67,28 +73,41 @@
       `;
     }
 
+    const picture = data.image
+      ? `<img class="enhanced-product-option__image" src="${escape(data.image)}" alt="" width="40" height="40" loading="lazy" decoding="async">`
+      : `<span class="enhanced-product-option__image enhanced-product-option__image--empty" aria-hidden="true"></span>`;
+
     const meta = [
       data.weight,
-      data.offerDetail,
+      data.stock,
     ]
       .filter(Boolean)
+      .map(escape)
       .join(" · ");
+
+    const offer = data.offerDetail
+      ? `<span class="enhanced-product-option__offer">${escape(data.offerDetail)}</span>`
+      : "";
 
     return `
       <div class="enhanced-product-option">
-        <div class="enhanced-product-option__main">
-          ${productTitle(data, escape)}
-        </div>
+        ${picture}
 
-        ${
-          meta
-            ? `
-              <div class="enhanced-product-option__meta">
-                ${escape(meta)}
-              </div>
-            `
-            : ""
-        }
+        <div class="enhanced-product-option__text">
+          <div class="enhanced-product-option__main">
+            ${escape(data.name || data.text)}
+          </div>
+
+          ${
+            meta || offer
+              ? `
+                <div class="enhanced-product-option__meta">
+                  ${meta}${meta && offer ? " · " : ""}${offer}
+                </div>
+              `
+              : ""
+          }
+        </div>
       </div>
     `;
   }

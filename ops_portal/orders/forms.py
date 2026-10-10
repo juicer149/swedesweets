@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import dataclass
 from decimal import Decimal
+from functools import cached_property
 from typing import Any
 
 from django import forms
@@ -21,6 +23,7 @@ from orders.order_limits import (
     is_unusually_large_order_line,
 )
 from pricing.models import CommercialPrice
+from products.images import product_image_url
 from products.models import Product
 from products.units import quantity_to_units
 
@@ -77,7 +80,47 @@ class CustomerChoiceField(forms.ModelChoiceField):
         return customer.name
 
 
+class BusinessOfferSelect(forms.Select):
+    """A select whose options carry the product's picture, name, weight,
+    stock and offer, for the enhanced dropdown (enhanced_selects.js) to
+    draw. The field fills the data (BusinessOfferChoiceField.option_data):
+    Django asks the widget, not the field, for each option."""
+
+    option_field: BusinessOfferChoiceField | None = None
+
+    def create_option(
+        self,
+        name,
+        value,
+        label,
+        selected,
+        index,
+        subindex=None,
+        attrs=None,
+    ):
+        option = super().create_option(
+            name,
+            value,
+            label,
+            selected,
+            index,
+            subindex=subindex,
+            attrs=attrs,
+        )
+
+        if value and self.option_field is not None:
+            option["attrs"].update(
+                self.option_field.option_data(
+                    value.instance
+                )
+            )
+
+        return option
+
+
 class BusinessOfferChoiceField(forms.ModelChoiceField):
+    widget = BusinessOfferSelect
+
     def __init__(
         self,
         *args,
@@ -92,6 +135,14 @@ class BusinessOfferChoiceField(forms.ModelChoiceField):
         self.language_code = language_code
         self.show_available_units = show_available_units
         super().__init__(*args, **kwargs)
+        self.widget.option_field = self
+
+    def __deepcopy__(self, memo):
+        # Each form gets its own copy of the field and its widget: point
+        # the copied widget at the copied field (its stock numbers).
+        result = super().__deepcopy__(memo)
+        result.widget.option_field = result
+        return result
 
     def label_from_instance(
         self,
@@ -119,70 +170,68 @@ class BusinessOfferChoiceField(forms.ModelChoiceField):
             "available_quantity": available_units,
         }
 
-    def create_option(
+    def option_data(
         self,
-        name,
-        value,
-        label,
-        selected,
-        index,
-        subindex=None,
-        attrs=None,
-    ):
-        option = super().create_option(
-            name=name,
-            value=value,
-            label=label,
-            selected=selected,
-            index=index,
-            subindex=subindex,
-            attrs=attrs,
-        )
-
-        if not value:
-            return option
-
-        offer = value.instance
+        offer: CommercialPrice,
+    ) -> dict[str, str]:
         product = offer.product
 
-        option["attrs"].update(
-            {
-                "data-code": product.code_label,
-                "data-brand": product.brand,
-                "data-name": self._product_name(
-                    product
-                ),
-                "data-weight": product.unit_weight_label,
-                "data-offer-detail": _offer_detail(
-                    offer
-                ),
-                "data-available-units": str(
-                    self.available_units_by_offer_id.get(
-                        offer.id,
-                        0,
-                    )
-                ),
-                "data-available-quantity": str(
-                    self.available_units_by_offer_id.get(
-                        offer.id,
-                        0,
-                    )
-                ),
-                "search": (
-                    f"{product.code_label} "
-                    f"{product.internal_number or ''} "
-                    f"{product.brand} "
-                    f"{product.name} "
-                    f"{product.display_name} "
-                    f"{self._product_name(product)} "
-                    f"{self._product_label(product)} "
-                    f"{product.sku} "
-                    f"{_offer_detail(offer)}"
-                ),
-            }
+        return {
+            "data-code": product.code_label,
+            "data-brand": product.brand,
+            "data-name": self._product_name(
+                product
+            ),
+            "data-weight": product.unit_weight_label,
+            "data-offer-detail": _offer_detail(
+                offer
+            ),
+            "data-image": product_image_url(product) or "",
+            "data-stock": self._stock_label(offer),
+            "data-available-units": str(
+                self.available_units_by_offer_id.get(
+                    offer.id,
+                    0,
+                )
+            ),
+            "data-available-quantity": str(
+                self.available_units_by_offer_id.get(
+                    offer.id,
+                    0,
+                )
+            ),
+            "search": (
+                f"{product.code_label} "
+                f"{product.internal_number or ''} "
+                f"{product.brand} "
+                f"{product.name} "
+                f"{product.display_name} "
+                f"{self._product_name(product)} "
+                f"{self._product_label(product)} "
+                f"{product.sku} "
+                f"{_offer_detail(offer)}"
+            ),
+        }
+
+    def _stock_label(
+        self,
+        offer: CommercialPrice,
+    ) -> str:
+        available_units = (
+            self.available_units_by_offer_id.get(
+                offer.id
+            )
         )
 
-        return option
+        if (
+            available_units is None
+            or not self.show_available_units
+        ):
+            return ""
+
+        return _("%(available_quantity)s left") % {
+            "available_quantity": available_units,
+        }
 
     def _offer_label(
         self,
@@ -266,8 +315,9 @@ class AddOrderLineProductForm(forms.Form):
         error_messages={
             "invalid_choice": "Choose a valid available offer.",
         },
-        widget=forms.Select(
+        widget=BusinessOfferSelect(
             attrs={
+                "placeholder": "Search by product name or number",
                 "data-add-order-line-select": "true",
                 "data-enhanced-select": "true",
                 "data-enhanced-select-search": "true",
@@ -285,8 +335,10 @@ class AddOrderLineProductForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         offer_field = self.fields["commercial_offer"]
+        # Each option shows the product's picture: load the profiles
+        # with the offers, not one query per option.
         offer_field.queryset = (
-            offer_queryset
+            offer_queryset.select_related("product__profile")
             if offer_queryset is not None
             else CommercialPrice.objects.none()
         )
@@ -370,6 +422,34 @@ class OrderLineForm(forms.Form):
 
         self.fields["quantity"].widget.attrs["step"] = "1"
         self.fields["quantity"].widget.attrs["min"] = "1"
+
+    @cached_property
+    def offer_view(self) -> OrderLineOfferView | None:
+        """The line's offer as the line shows it, from the submitted or
+        initial value, so a line keeps its picture and name when the form
+        comes back with an error. None for the empty template line."""
+
+        try:
+            offer_id = int(
+                self["commercial_offer"].value()
+            )
+        except (TypeError, ValueError):
+            return None
+
+        offer = (
+            CommercialPrice.objects
+            .select_related(
+                "product__profile",
+                "batch",
+            )
+            .filter(pk=offer_id)
+            .first()
+        )
+
+        if offer is None:
+            return None
+
+        return build_order_line_offer_view(offer)
 
     def clean(self) -> dict:
         cleaned_data = super().clean()
@@ -705,18 +785,9 @@ def build_order_line_initial_data(
             ),
             "unit": line.unit,
             "quantity": line.quantity_in_units,
-            "offer_label": _order_line_offer_label(
-                product=line.product,
-                offer=line.commercial_offer,
-            ),
         }
         for line in (
             order.lines
-            .select_related(
-                "product",
-                "commercial_offer",
-                "commercial_offer__batch",
-            )
             .order_by("id")
         )
     ]
@@ -740,26 +811,30 @@ def _offer_detail(
     return f"Batch {offer.batch.batch_id}"
 
 
-def _order_line_offer_label(
-    *,
-    product: Product,
+@dataclass(frozen=True, slots=True)
+class OrderLineOfferView:
+    """A line of the order form, drawn like the lines of a cart or an
+    order: the picture circle, the name, and the grey lines under it."""
+
+    name: str
+    meta: str
+    offer_detail: str
+    image_url: str | None
+
+
+def build_order_line_offer_view(
     offer: CommercialPrice,
-) -> str:
-    product_label = (
-        f"{product.code_label} · "
-        f"{product.display_name} · "
-        f"{product.unit_weight_label}"
-    )
-    offer_detail = _offer_detail(
-        offer
-    )
+) -> OrderLineOfferView:
+    product = offer.product
 
-    if not offer_detail:
-        return product_label
-
-    return (
-        f"{product_label} · "
-        f"{offer_detail}"
+    return OrderLineOfferView(
+        name=product.display_name,
+        meta=(
+            f"{product.code_label} · "
+            f"{product.unit_weight_label}"
+        ),
+        offer_detail=_offer_detail(offer),
+        image_url=product_image_url(product),
     )
 
 
