@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 20:16+0200\n"
+"POT-Creation-Date: 2026-10-10 23:28+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -111,7 +111,7 @@ msgid "Deactivated customer"
 msgstr "Client désactivé"
 
 #: accounts/activity_viewmodels.py:132
-#: business_portal/orders/detail_viewmodels.py:140
+#: business_portal/orders/detail_viewmodels.py:139
 #: business_portal/orders/list_viewmodels.py:29
 #: business_portal/orders/recent_orders.py:65
 #, python-format
@@ -363,27 +363,27 @@ msgstr "Continuer les achats"
 msgid "Not currently available in the catalog"
 msgstr "Actuellement indisponible dans le catalogue"
 
-#: business_portal/orders/detail_viewmodels.py:172 orders/models.py:51
+#: business_portal/orders/detail_viewmodels.py:171 orders/models.py:51
 msgid "Placed"
 msgstr "Passée"
 
-#: business_portal/orders/detail_viewmodels.py:173
+#: business_portal/orders/detail_viewmodels.py:172
 #: business_portal/orders/presentation.py:45
 msgid "Prepared"
 msgstr "Préparée"
 
-#: business_portal/orders/detail_viewmodels.py:174
+#: business_portal/orders/detail_viewmodels.py:173
 #: business_portal/orders/presentation.py:46 orders/models.py:53
 msgid "Delivered"
 msgstr "Livrée"
 
-#: business_portal/orders/detail_viewmodels.py:175
+#: business_portal/orders/detail_viewmodels.py:174
 #: business_portal/orders/presentation.py:47 orders/models.py:54
 #: reservations/models.py:43
 msgid "Cancelled"
 msgstr "Annulée"
 
-#: business_portal/orders/detail_viewmodels.py:190
+#: business_portal/orders/detail_viewmodels.py:189
 #: templates/business_portal/includes/orders_panel.html:71
 #: templates/business_portal/includes/orders_panel.html:134
 msgid "Created"
@@ -725,12 +725,12 @@ msgstr ""
 "Empêcher ce compte client de se connecter. Les données client existantes et "
 "les historiques sont conservés."
 
-#: ops_portal/orders/forms.py:167
+#: ops_portal/orders/forms.py:129
 #, python-format
 msgid "%(offer_label)s · %(available_quantity)s left"
 msgstr "%(offer_label)s · stock restant : %(available_quantity)s"
 
-#: ops_portal/orders/forms.py:232
+#: ops_portal/orders/forms.py:181
 #, python-format
 msgid "%(available_quantity)s left"
 msgstr "%(available_quantity)s en stock"
@@ -798,89 +798,89 @@ msgstr "Commande n° %(number)s reçue – SwedeSweets"
 msgid "Thank you for your order #%(number)s – SwedeSweets"
 msgstr "Merci pour votre commande n° %(number)s – SwedeSweets"
 
-#: products/models.py:68
+#: products/models.py:67
 msgid "Box"
 msgstr "Boîte"
 
-#: products/models.py:69
+#: products/models.py:68
 msgid "Piece"
 msgstr "Pièce"
 
-#: products/models.py:70
+#: products/models.py:69
 msgid "Bag"
 msgstr "Sachet"
 
-#: products/models.py:71
+#: products/models.py:70
 msgid "Case"
 msgstr "Caisse"
 
-#: products/models.py:454
+#: products/models.py:453
 msgid "boxes"
 msgstr "boîtes"
 
-#: products/models.py:455
+#: products/models.py:454
 msgid "pieces"
 msgstr "pièces"
 
-#: products/models.py:456
+#: products/models.py:455
 msgid "bags"
 msgstr "sacs"
 
-#: products/models.py:457
+#: products/models.py:456
 msgid "cases"
 msgstr "caisses"
 
-#: products/models.py:464
+#: products/models.py:463
 #, python-format
 msgid "%(weight)s g"
 msgstr "%(weight)s g"
 
-#: products/models.py:470
+#: products/models.py:469
 #, python-format
 msgid "%(weight)s g / %(unit)s"
 msgstr "%(weight)s g / %(unit)s"
 
-#: products/models.py:514
+#: products/models.py:513
 #, python-format
 msgid "%(count)s box"
 msgid_plural "%(count)s boxes"
 msgstr[0] "%(count)s boîte"
 msgstr[1] "%(count)s boîtes"
 
-#: products/models.py:519
+#: products/models.py:518
 #, python-format
 msgid "%(count)s piece"
 msgid_plural "%(count)s pieces"
 msgstr[0] "%(count)s pièce"
 msgstr[1] "%(count)s pièces"
 
-#: products/models.py:524
+#: products/models.py:523
 #, python-format
 msgid "%(count)s bag"
 msgid_plural "%(count)s bags"
 msgstr[0] "%(count)s sachet"
 msgstr[1] "%(count)s sachets"
 
-#: products/models.py:529
+#: products/models.py:528
 #, python-format
 msgid "%(count)s case"
 msgid_plural "%(count)s cases"
 msgstr[0] "%(count)s caisse"
 msgstr[1] "%(count)s caisses"
 
-#: products/models.py:627 templates/includes/catalog/grid.html:29
+#: products/models.py:552 templates/includes/catalog/grid.html:29
 msgid "Candy"
 msgstr "Bonbons"
 
-#: products/models.py:628 templates/includes/catalog/grid.html:30
+#: products/models.py:553 templates/includes/catalog/grid.html:30
 msgid "Chips"
 msgstr "Chips"
 
-#: products/models.py:629 templates/includes/catalog/grid.html:31
+#: products/models.py:554 templates/includes/catalog/grid.html:31
 msgid "Dip mix"
 msgstr "Préparations pour dip"
 
-#: products/models.py:630
+#: products/models.py:555
 msgid "Merchandise"
 msgstr "Marchandise"
 
@@ -1832,7 +1832,7 @@ msgstr "Augmenter la quantité"
 msgid "Edit account"
 msgstr "Modifier le compte"
 
-#: templates/ops_portal/orders/includes/order_line_form.html:55
+#: templates/ops_portal/orders/includes/order_line_form.html:51
 msgid "Remove offer"
 msgstr "Retirer l’offre"
 
