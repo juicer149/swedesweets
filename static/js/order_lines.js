@@ -94,6 +94,19 @@ document.addEventListener("DOMContentLoaded", () => {
     return wrapper.firstElementChild;
   }
 
+  // A short green glow on the line just added, or the one that got one
+  // more (lines.css, as on a shop's cart).
+  function glowOrderLine(orderLine) {
+    orderLine.classList.remove("line--added");
+    void orderLine.offsetWidth; // restart the animation
+    orderLine.classList.add("line--added");
+    orderLine.addEventListener(
+      "animationend",
+      () => orderLine.classList.remove("line--added"),
+      { once: true }
+    );
+  }
+
   function scrollOrderLineIntoView(orderLine) {
     orderLine.scrollIntoView({
       behavior: "smooth",
@@ -204,6 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (existingLine) {
       incrementQuantity(existingLine);
       clearAddOfferSelect();
+      glowOrderLine(existingLine);
       return;
     }
 
@@ -257,6 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearAddOfferSelect();
     updateEmptyState();
     scrollOrderLineIntoView(orderLine);
+    glowOrderLine(orderLine);
   }
 
   function handleOfferSelected(value) {
