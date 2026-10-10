@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SwedeSweets MVP\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 13:00+0200\n"
+"POT-Creation-Date: 2026-10-10 13:07+0200\n"
 "PO-Revision-Date: 2026-09-29 15:55+0200\n"
 "Last-Translator: SwedeSweets <no-reply@swedesweets.local>\n"
 "Language-Team: French\n"
@@ -714,15 +714,15 @@ msgstr ""
 "Empêcher ce compte client de se connecter. Les données client existantes et "
 "les historiques sont conservés."
 
-#: ops_portal/orders/forms.py
-#, python-format
-msgid "%(available_quantity)s left"
-msgstr "%(available_quantity)s en stock"
-
-#: ops_portal/orders/forms.py:116
+#: ops_portal/orders/forms.py:167
 #, python-format
 msgid "%(offer_label)s · %(available_quantity)s left"
 msgstr "%(offer_label)s · stock restant : %(available_quantity)s"
+
+#: ops_portal/orders/forms.py:232
+#, python-format
+msgid "%(available_quantity)s left"
+msgstr "%(available_quantity)s en stock"
 
 #: ops_portal/orders/presentation.py:106
 #, python-format
@@ -1808,7 +1808,7 @@ msgstr "Augmenter la quantité"
 msgid "Edit account"
 msgstr "Modifier le compte"
 
-#: templates/ops_portal/orders/includes/order_line_form.html:40
+#: templates/ops_portal/orders/includes/order_line_form.html:55
 msgid "Remove offer"
 msgstr "Retirer l’offre"
 
