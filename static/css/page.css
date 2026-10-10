@@ -106,32 +106,6 @@
   color: var(--color-neutral-800);
 }
 
-/* Find Sweets: our shelf in a shop under the list, smaller than the page,
-   its edges fading into it; a line under it says what to look for. */
-.find-sweets__shelf {
-  width: min(100%, 22rem);
-  margin: clamp(var(--space-8), 6dvh, var(--space-12)) auto 0;
-}
-
-.find-sweets__shelf img {
-  display: block;
-  width: 100%;
-  height: auto;
-
-  -webkit-mask-image:
-    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
-    linear-gradient(to bottom, transparent, #000 8%, #000 86%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent, #000 12%, #000 88%, transparent),
-    linear-gradient(to bottom, transparent, #000 8%, #000 86%, transparent);
-  mask-composite: intersect;
-}
-
-.find-sweets__shelf figcaption {
-  margin-top: var(--space-2);
-}
-
 /* Small grey centred line: a count, a status, a description. */
 .page__note {
   margin: 0;
