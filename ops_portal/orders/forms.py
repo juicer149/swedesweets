@@ -178,7 +178,6 @@ class BusinessOfferChoiceField(forms.ModelChoiceField):
 
         return {
             "data-code": product.code_label,
-            "data-brand": product.brand,
             "data-name": self._product_name(
                 product
             ),
@@ -188,18 +187,6 @@ class BusinessOfferChoiceField(forms.ModelChoiceField):
             ),
             "data-image": product_image_url(product) or "",
             "data-stock": self._stock_label(offer),
-            "data-available-units": str(
-                self.available_units_by_offer_id.get(
-                    offer.id,
-                    0,
-                )
-            ),
-            "data-available-quantity": str(
-                self.available_units_by_offer_id.get(
-                    offer.id,
-                    0,
-                )
-            ),
             "search": (
                 f"{product.code_label} "
                 f"{product.internal_number or ''} "
