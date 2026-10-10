@@ -184,6 +184,10 @@
   font-size: var(--font-size-14);
   font-weight: 800;
   line-height: 1.2;
+  /* A long name wraps on the band (it grows); a very long word breaks
+     rather than leave the label. */
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .tile__name a {
@@ -562,7 +566,7 @@
 /* Smaller on a phone, so the first row of the wall shows without
    scrolling. */
 .pick-shelf__art {
-  width: clamp(12.5rem, 56vw, 22rem);
+  width: clamp(11rem, 48vw, 18rem);
   height: auto;
   overflow: visible;
 }
