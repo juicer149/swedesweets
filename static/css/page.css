@@ -827,22 +827,63 @@ span.icon-rows__link .icon-rows__icon {
   margin: 0;
 }
 
-/* A picture under each part of the story: the same soft edges as the
-   mountain photo at the end, so they float in the page. */
-.about__picture {
+/* The two of us: a polaroid taped to the page, a little tilted, with
+   our names in the display font under the photo. */
+.about__polaroid {
+  position: relative;
+  width: min(88%, 26rem);
+  margin: var(--space-4) auto var(--space-3);
+  padding: 0.6rem 0.6rem 0;
+
+  background: var(--color-white);
+  box-shadow:
+    0 12px 26px rgb(var(--color-row-shadow) / 0.2),
+    0 1px 2px rgb(var(--color-row-shadow) / 0.12);
+  transform: rotate(1.8deg);
+}
+
+.about__polaroid img {
   display: block;
   width: 100%;
   height: auto;
-  margin-block: var(--space-2);
+}
 
-  -webkit-mask-image:
-    linear-gradient(to right, transparent, #000 10%, #000 90%, transparent),
-    linear-gradient(to bottom, transparent, #000 8%, #000 90%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent, #000 10%, #000 90%, transparent),
-    linear-gradient(to bottom, transparent, #000 8%, #000 90%, transparent);
-  mask-composite: intersect;
+/* A strip of soft yellow tape over the top edge. */
+.about__polaroid-tape {
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  width: 5.25rem;
+  height: 1.5rem;
+
+  background: color-mix(in srgb, var(--color-accent-200) 85%, transparent);
+  box-shadow: 0 1px 2px rgb(var(--color-row-shadow) / 0.12);
+  transform: translateX(-50%) rotate(-4deg);
+}
+
+.about__polaroid-names {
+  padding: 0.55rem 0 0.75rem;
+
+  color: var(--color-neutral-700);
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 5.5vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+}
+
+/* The candy wall: out to the screen's edges (on wide screens a little
+   wider than the story), fading only above and below. */
+.about__candy-wall {
+  display: block;
+  width: min(100vw, 760px);
+  max-width: none;
+  height: auto;
+  margin-block: var(--space-2);
+  margin-inline: calc(50% - min(50vw, 380px));
+
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
 }
 
 /* The photo, with the last line written in its sky like a cloud and the

@@ -5,8 +5,8 @@
 
 {% block content %}
 {% comment %}
-  Who we are: a short story in the founders' voice, the first two parts
-  with a picture, and at the end the mountain photo with the last line in its
+  Who we are: a short story in the founders' voice, the two of us as a
+  polaroid, a row of the candy wall, and at the end the mountain photo with the last line in its
   sky (static/images; the pictures come from their Instagram, cropped
   or painted clear of its stickers).
 {% endcomment %}
@@ -18,22 +18,27 @@
     <div class="about__text">
       <p>{% trans "We're Marco Sandelgård and Milo Sandelgård Bascoulergue, two cousins who grew up in Chamonix with one foot in France and one in Sweden." %}</p>
 
-      {# Each part of the story with its picture under it, edges fading #}
-      {# into the page like the mountain photo at the end. #}
-      <img
-        class="about__picture"
-        src="{% static 'images/about-founders.webp' %}"
-        alt="{% trans 'The two of us in our stockroom, among stacked boxes of sweets.' %}"
-        width="1080"
-        height="647"
-        loading="lazy"
-        decoding="async"
-      >
+      {# The two of us as a polaroid taped to the page, names under it #}
+      {# in the order we stand (Milo left, Marco right). #}
+      <figure class="about__polaroid">
+        <span class="about__polaroid-tape" aria-hidden="true"></span>
+        <img
+          src="{% static 'images/about-founders.webp' %}"
+          alt="{% trans 'The two of us in our stockroom, among stacked boxes of sweets.' %}"
+          width="1080"
+          height="647"
+          loading="lazy"
+          decoding="async"
+        >
+        <figcaption class="about__polaroid-names">Milo &amp; Marco</figcaption>
+      </figure>
 
       <p>{% trans "In Sweden, sweets mean lösgodis: a wall of loose candy, a paper bag, and the serious business of choosing exactly what goes in it. Sour strips, salty liquorice, fruity jellies, chocolate. Everyone has their own mix." %}</p>
 
+      {# The wall of candy the paragraph is about: out to the screen's #}
+      {# edges, fading only above and below. #}
       <img
-        class="about__picture"
+        class="about__candy-wall"
         src="{% static 'images/about-candy-wall.webp' %}"
         alt="{% trans 'A row of our pick & mix bins: fruity jellies, sour sweets, red raspberries and striped peppermints.' %}"
         width="1080"
