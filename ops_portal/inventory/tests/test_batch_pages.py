@@ -104,3 +104,21 @@ def test_inventory_lists_show_tables_and_coloured_phone_rows(staff_client, batch
         assert response.context[row_key]
         # Phone rows carry the stock colour of the table cells.
         assert "line__aside quantity-text" in content
+
+
+@pytest.mark.django_db
+def test_stock_by_product_shows_the_unit_but_does_not_sort_by_it(
+    staff_client,
+    batch,
+):
+    response = staff_client.get(
+        reverse("ops_inventory:index") + "?view=products"
+    )
+
+    headers = {sort.field: sort for sort in response.context["table_sorts"]}
+
+    assert headers["unit"].sortable is False
+    assert headers["product"].sortable is True
+    assert "unit" not in [
+        sort.field for sort in response.context["mobile_sort_fields"]
+    ]

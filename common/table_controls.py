@@ -41,6 +41,9 @@ class TableFilter:
 class TableSortField:
     field: str
     label: str
+    # False: a column heading only, not a way to sort (left out of the
+    # phone's Order by).
+    sortable: bool = True
 
 
 @dataclass(frozen=True)
@@ -58,6 +61,7 @@ class TableSortLink:
     url: str
     is_active: bool
     direction: str
+    sortable: bool = True
 
 
 @dataclass(frozen=True)
@@ -186,6 +190,7 @@ class TableControls:
                     if active_field == sort.field
                     else ""
                 ),
+                sortable=sort.sortable,
             )
             for sort in sort_fields
         ]
@@ -215,6 +220,7 @@ class TableControls:
                 direction=active_direction if active_field == sort.field else "",
             )
             for sort in sort_fields
+            if sort.sortable
         ]
 
     def build_mobile_sort_direction(self) -> MobileSortDirection | None:

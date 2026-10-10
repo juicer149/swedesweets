@@ -9,6 +9,7 @@ Expected context:
       url
       is_active
       direction
+      sortable  (False: the heading alone, no link)
 
   numeric_table_fields:
     list of field names that should be right-aligned.
@@ -26,6 +27,9 @@ Usage:
     {% if sort.field in numeric_table_fields %}class="numeric-cell"{% endif %}
     scope="col"
   >
+    {% if not sort.sortable %}
+      {{ sort.label }}
+    {% else %}
     <a
       class="text-link text-link--table-sort {% if sort.is_active %}text-link--active{% endif %}"
       href="{{ sort.url }}"
@@ -39,5 +43,6 @@ Usage:
         {% endif %}
       </span>
     </a>
+    {% endif %}
   </th>
 {% endfor %}

@@ -45,13 +45,6 @@
           {{ initial_offer.price_label|default:"" }}
         </p>
 
-        <p class="product__stock">
-          <span
-            class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %} facts__status"
-            data-product-stock
-          >{{ initial_offer.availability_label }}</span>
-        </p>
-
         <form
           class="product__form"
           method="post"
@@ -91,7 +84,17 @@
           {% endif %}
 
           <div class="product__add" data-product-add>
-            {% include "includes/ui/quantity_stepper.html" with id_prefix="product-quantity" only %}
+            {# How many are left, centred over the stepper that picks how many. #}
+            <div class="product__quantity">
+              <p class="product__stock">
+                <span
+                  class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %} facts__status"
+                  data-product-stock
+                >{{ initial_offer.availability_label }}</span>
+              </p>
+
+              {% include "includes/ui/quantity_stepper.html" with id_prefix="product-quantity" only %}
+            </div>
 
             <button class="button button--md button--solid button--tone-place page__submit product__submit" type="submit">
               {{ add_label }}

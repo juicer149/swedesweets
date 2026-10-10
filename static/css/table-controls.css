@@ -260,7 +260,7 @@ select.sort-select.ts-hidden-accessible {
    ============================================================================= */
 
 /* Phones: the chips centred, wrapping onto a second row rather than
-   scrolling sideways; the "Order by" label centred over its select. */
+   scrolling sideways; the "Order by" label at the left over its select. */
 @media (max-width: 767px) {
   .filter-group {
     overflow-x: visible;
@@ -274,12 +274,10 @@ select.sort-select.ts-hidden-accessible {
     padding-block: var(--space-2);
   }
 
-  /* Over the field's own middle, where the chosen sort is written (the
-     toggle to its right is left out). */
+  /* At the left, over the field, like a field's label. */
   .sort-control .filter-label {
     justify-self: start;
-    width: calc(100% - var(--sort-size) - var(--space-2));
-    text-align: center;
+    text-align: left;
   }
 
   .filter-chip {

@@ -470,9 +470,18 @@
   font-weight: 700;
 }
 
+/* How many are left: centred over the stepper, beside the button. */
+.product__quantity {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+}
+
 .product__stock {
-  margin: var(--space-2) 0 0;
+  margin: 0;
   font-size: var(--font-size-14);
+  text-align: center;
+  white-space: nowrap;
 }
 
 .product__form {
@@ -487,7 +496,7 @@
 
 .product__add {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: var(--space-4);
 }
 

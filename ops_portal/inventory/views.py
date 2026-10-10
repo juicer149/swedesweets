@@ -119,7 +119,8 @@ BATCH_TABLE_SORTS = [
 PRODUCT_STOCK_TABLE_SORTS = [
     TableSortField("product", "Product"),
     TableSortField("batches", "Batches"),
-    TableSortField("unit", "Unit"),
+    # The unit is shown, but sorting by it tells nothing.
+    TableSortField("unit", "Unit", sortable=False),
     TableSortField(
         "physical",
         "In stock",
