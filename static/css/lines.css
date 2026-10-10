@@ -27,9 +27,9 @@
   display: none;
 }
 
-/* A line just added: a green glow that fades out. */
+/* A line just added: a green glow that fades out, inside the row only
+   (between its hairlines, which stay drawn over it). */
 .line--added {
-  border-radius: var(--radius-card-inner);
   animation: line-added 1.6s ease-out;
 }
 
@@ -37,12 +37,10 @@
   0%,
   25% {
     background: rgb(var(--color-status-success) / 0.18);
-    box-shadow: 0 0 0 var(--space-2) rgb(var(--color-status-success) / 0.18);
   }
 
   100% {
     background: transparent;
-    box-shadow: 0 0 0 var(--space-2) transparent;
   }
 }
 
