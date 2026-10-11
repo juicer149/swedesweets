@@ -556,6 +556,7 @@ def build_variant_lines(
             name=variant.label or ONLY_VARIANT_NAME,
             image_url=image_url,
             metas=metas(
+                meta(variant.name),
                 meta(_variant_identity_label(variant)),
                 meta(
                     None if variant.active else PAUSED_LABEL,

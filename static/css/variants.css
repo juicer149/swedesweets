@@ -2,22 +2,119 @@
    Product variants (ops)
 
    The Variants tab of the product page lists the variants as read-only
-   lines (lines.css). The edit form's tab is a list of rows: a drag handle,
-   label and weight, the on-sale and delete toggles (chips.css), the SKU
-   and up/down arrows; behind a lock until "Change variants".
+   lines (lines.css). The edit form's tab is a quiet list of rows between
+   hairlines, like the lines of an order: a drag handle, label, full name
+   and weight, the on-sale toggle (chips.css), the trash (lines.css, with
+   its red flash) and up/down arrows; the SKU under the label. A round
+   lock beside the note opens it (green, open), and holds it again.
    ============================================================================= */
 
 .product-variants {
   margin-top: var(--space-2);
 }
 
-.variant-editor__note {
+/* -----------------------------------------------------------------------------
+   The note and the lock
+   ----------------------------------------------------------------------------- */
+
+.variant-editor__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
   margin-bottom: var(--space-4);
 }
 
-.variant-editor__unlock {
-  margin-bottom: var(--space-4);
+.variant-editor__note {
+  flex: 1 1 auto;
+  margin: 0;
+  text-align: left;
 }
+
+.variant-editor__pending {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--color-status-success-text);
+  font-size: var(--font-size-14);
+  font-weight: 700;
+}
+
+.variant-editor__pending[hidden] {
+  display: none;
+}
+
+.variant-editor__lock {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+
+  color: var(--color-neutral-600);
+  background: var(--color-white);
+  border: var(--border-subtle);
+  border-radius: 50%;
+  cursor: pointer;
+
+  transition:
+    color var(--motion-fast),
+    background var(--motion-fast),
+    border-color var(--motion-fast),
+    box-shadow var(--motion-fast);
+}
+
+.variant-editor__lock:hover {
+  color: var(--color-primary-800);
+  box-shadow: var(--shadow-accent-glow);
+}
+
+.variant-editor__lock:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
+}
+
+/* The two icons share the circle; one shows at a time. */
+.variant-editor__lock-closed,
+.variant-editor__lock-open {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  transition:
+    opacity 160ms ease-out,
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.variant-editor__lock-open {
+  opacity: 0;
+  transform: translateY(2px) rotate(-12deg) scale(0.85);
+}
+
+.variant-editor--open .variant-editor__lock {
+  color: var(--color-status-success-text);
+  background: rgb(var(--color-status-success) / 0.11);
+  border-color: rgb(var(--color-status-success) / 0.32);
+  box-shadow: var(--shadow-success-glow);
+}
+
+.variant-editor--open .variant-editor__lock-closed {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+.variant-editor--open .variant-editor__lock-open {
+  opacity: 1;
+  transform: none;
+}
+
+/* Held again with changes waiting for "Update product": closed, but a
+   green edge says something is on its way. */
+.variant-editor--held .variant-editor__lock {
+  border-color: rgb(var(--color-status-success) / 0.45);
+}
+
+/* -----------------------------------------------------------------------------
+   The rows
+   ----------------------------------------------------------------------------- */
 
 .variant-editor__fields {
   min-width: 0;
@@ -26,83 +123,159 @@
   border: 0;
 }
 
-/* Locked: shown, quiet, not to be touched. */
-.variant-editor__fields:disabled .variant-rows {
-  opacity: 0.6;
+/* handle | label | full name | weight | on sale | trash | arrows */
+.variant-rows__head,
+.variant-row {
+  display: grid;
+  grid-template-columns:
+    1.25rem
+    minmax(4.5rem, 0.7fr)
+    minmax(0, 1.3fr)
+    minmax(5rem, 0.6fr)
+    6.25rem
+    2.5rem
+    1.75rem;
+  column-gap: var(--space-3);
+  align-items: center;
 }
 
-.variant-editor__fields:disabled .variant-editor__add,
-.variant-editor__fields:disabled .variant-row__move,
-.variant-editor__fields:disabled .variant-row__handle {
-  display: none;
+.variant-rows__head {
+  padding: 0 0 var(--space-2);
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  font-weight: 700;
 }
 
 .variant-rows {
-  display: grid;
-  gap: var(--space-3);
   margin: 0 0 var(--space-4);
   padding: 0;
   list-style: none;
+  border-top: 1px solid var(--color-neutral-200);
 }
 
 .variant-row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1.4fr) minmax(0, 1fr) auto auto;
-  grid-template-areas: "handle label weight toggles move";
-  gap: var(--space-3);
-  align-items: end;
+  --line-flash-room: calc(-1 * var(--space-2));
 
-  padding: var(--space-3) var(--space-4);
-
-  background: var(--color-white);
-  border: var(--border-subtle);
-  border-radius: var(--radius-card-inner);
+  row-gap: var(--space-1);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-neutral-200);
 }
 
-.variant-row--error {
-  border-color: rgb(var(--color-status-danger) / 0.4);
+/* Deleted, waiting for Save: gone from the list (still sent). */
+.variant-row[hidden] {
+  display: none;
 }
 
 .variant-row--dragging {
-  opacity: 0.5;
+  opacity: 0.45;
 }
 
 .variant-row__handle {
-  grid-area: handle;
-  align-self: center;
-  padding: var(--space-2) var(--space-1);
   color: var(--color-neutral-600);
   cursor: grab;
   user-select: none;
   letter-spacing: -0.2em;
 }
 
-.variant-row__label {
-  grid-area: label;
+/* Each field keeps its label for screen readers and phones; the heading
+   row names the columns on wider screens. */
+.variant-row__field {
+  margin: 0;
 }
 
-.variant-row__weight {
-  grid-area: weight;
+.variant-row__field-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-.variant-row__weight input[readonly] {
-  color: var(--color-neutral-600);
-  background: var(--color-neutral-100);
-}
-
-.variant-row__toggles {
-  grid-area: toggles;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  padding-bottom: 0.4rem;
-}
-
-.variant-row__note {
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-14);
+/* Quieter than the page's big fields: smaller, lighter, the same family. */
+.variant-row .form-field input {
+  min-height: 2.5rem;
+  padding: 0.45rem 0.7rem;
+  font-size: var(--font-size-16);
   font-weight: 600;
+  border-color: var(--color-neutral-200);
+}
+
+.variant-row .form-field input:focus {
+  border-color: var(--color-primary-500);
+}
+
+.variant-row input::placeholder {
+  font-weight: 500;
+}
+
+/* Grams are typed, never stepped: no spinner arrows. */
+.variant-row input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.variant-row input[type="number"]::-webkit-inner-spin-button,
+.variant-row input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+/* A weight that can no longer change (stock or orders): plainly grey,
+   not the page's cream, so it reads as fixed rather than a slip. */
+.variant-row input[readonly] {
+  color: var(--color-neutral-600);
+  background: rgb(var(--color-status-muted) / 0.08);
+  border-color: rgb(var(--color-status-muted) / 0.22);
+  cursor: default;
+}
+
+.variant-row input[readonly]:focus {
+  border-color: rgb(var(--color-status-muted) / 0.22);
+  box-shadow: none;
+}
+
+.variant-row__sale {
+  justify-self: start;
+}
+
+.variant-row__remove {
+  display: flex;
+  justify-content: center;
+}
+
+.variant-row__remove .line__remove-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.variant-row__move {
+  display: flex;
+  flex-direction: column;
+}
+
+.variant-row__move-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.4rem;
+  padding: 0;
+
+  color: var(--color-neutral-600);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.variant-row__move-button:hover {
+  color: var(--color-primary-800);
+  background: var(--color-primary-50);
+}
+
+.variant-row__up {
+  transform: rotate(180deg);
 }
 
 .variant-row__sku {
@@ -112,70 +285,107 @@
   font-weight: 600;
 }
 
-.variant-row__move {
-  grid-area: move;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  align-self: center;
+.variant-row__errors {
+  grid-column: 2 / -1;
 }
 
-.variant-row__move-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 1.6rem;
-  padding: 0;
+/* -----------------------------------------------------------------------------
+   Locked (never opened) and held (closed again, changes waiting)
+   ----------------------------------------------------------------------------- */
 
-  color: var(--color-primary-800);
-  background: transparent;
-  border: 0;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
+.variant-editor__fields:disabled .variant-rows,
+.variant-editor--held .variant-rows {
+  opacity: 0.7;
 }
 
-.variant-row__move-button:hover {
-  background: var(--color-primary-50);
+.variant-editor__fields:disabled .variant-editor__add,
+.variant-editor__fields:disabled .variant-row__handle,
+.variant-editor__fields:disabled .variant-row__move,
+.variant-editor__fields:disabled .variant-row__remove,
+.variant-editor--held .variant-editor__add,
+.variant-editor--held .variant-row__handle,
+.variant-editor--held .variant-row__move,
+.variant-editor--held .variant-row__remove {
+  visibility: hidden;
 }
 
-.variant-row__up {
-  transform: rotate(180deg);
-}
+/* -----------------------------------------------------------------------------
+   Phones: label and weight side by side, the full name under them, the
+   toggle, trash and arrows on their own line; the field labels show.
+   ----------------------------------------------------------------------------- */
 
-.variant-row__drop {
-  font-size: var(--font-size-14);
-}
-
-/* Delete ticked: red, so it is not missed before Save. */
-.product-tag-toggle--danger
-  .product-tag-toggle__input:checked
-  + .product-tag-toggle__surface {
-  color: var(--color-status-danger-text);
-  background: rgb(var(--color-status-danger) / 0.1);
-  border-color: rgb(var(--color-status-danger) / 0.32);
-  box-shadow: var(--shadow-focus-danger);
-}
-
-/* Phones: label and weight side by side, the toggles and arrows under. */
 @media (max-width: 640px) {
+  .variant-rows__head {
+    display: none;
+  }
+
   .variant-row {
-    grid-template-columns: auto minmax(0, 1fr) minmax(0, 0.8fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas:
-      "handle label weight"
-      "toggles toggles move";
+      "label weight"
+      "name name"
+      "sale actions"
+      "sku sku";
+    row-gap: var(--space-2);
   }
 
   .variant-row__handle {
     display: none;
   }
 
-  .variant-row__label {
-    grid-column: 1 / 3;
+  .variant-row__label { grid-area: label; }
+  .variant-row__weight { grid-area: weight; }
+  .variant-row__name { grid-area: name; }
+  .variant-row__sale { grid-area: sale; }
+  .variant-row__sku { grid-area: sku; }
+
+  .variant-row__remove,
+  .variant-row__move {
+    grid-area: actions;
+    justify-self: end;
+  }
+
+  .variant-row__remove {
+    margin-right: 4rem;
   }
 
   .variant-row__move {
     flex-direction: row;
-    justify-self: end;
+  }
+
+  .variant-row__field-label {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Add batch: the chosen product's variants as chips under it; the other
+   fields wait, muted, until one is chosen (batch_variant.js).
+   ----------------------------------------------------------------------------- */
+
+.batch-variant[hidden],
+.batch-variant__choices[hidden] {
+  display: none;
+}
+
+.batch-variant__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.batch-form__waiting {
+  opacity: 0.45;
+  transition: opacity var(--motion-fast);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .variant-editor__lock-closed,
+  .variant-editor__lock-open {
+    transition: none;
   }
 }

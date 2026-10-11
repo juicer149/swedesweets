@@ -409,6 +409,7 @@ def add_variant(
     label: str,
     first_label: str = "",
     weight_per_unit: int | None = None,
+    name: str = "",
 ) -> ProductVariant:
     """Add a variant to a product, last in order.
 
@@ -452,6 +453,7 @@ def add_variant(
             return ProductVariant.objects.create(
                 product=product,
                 label=label,
+                name=name,
                 position=next_position,
                 sku=sku,
                 weight_per_unit=(
@@ -657,6 +659,7 @@ class VariantChange:
     weight_per_unit: int
     active: bool = True
     delete: bool = False
+    name: str = ""
 
 
 @transaction.atomic
@@ -686,6 +689,7 @@ def save_variants(
             weight_per_unit=change.weight_per_unit,
             active=change.active,
             delete=change.delete,
+            name=change.name,
         )
         for change in changes
     ]
@@ -749,6 +753,7 @@ def save_variants(
                 product=product,
                 label=change.label,
                 weight_per_unit=change.weight_per_unit,
+                name=change.name,
             )
             existing[variant.pk] = variant
             order.append(variant.pk)
@@ -765,6 +770,10 @@ def save_variants(
         if variant.label != change.label:
             variant.label = change.label
             variant.save(update_fields=["label", "updated_at"])
+
+        if variant.name != change.name:
+            variant.name = change.name
+            variant.save(update_fields=["name", "updated_at"])
 
         set_variant_weight(
             variant=variant,

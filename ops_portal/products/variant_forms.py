@@ -15,6 +15,7 @@ from django.forms import BaseFormSet, formset_factory
 
 from products.catalog import (
     MAX_VARIANT_LABEL_LENGTH,
+    MAX_VARIANT_NAME_LENGTH,
     MAX_WEIGHT_PER_UNIT,
     MIN_WEIGHT_PER_UNIT,
 )
@@ -73,6 +74,18 @@ class VariantForm(forms.Form):
         ),
     )
 
+    name = forms.CharField(
+        required=False,
+        max_length=MAX_VARIANT_NAME_LENGTH,
+        label="Full name",
+        widget=forms.TextInput(
+            attrs={
+                "autocomplete": "off",
+                "placeholder": "Optional, e.g. Medium",
+            }
+        ),
+    )
+
     weight_per_unit = forms.IntegerField(
         min_value=MIN_WEIGHT_PER_UNIT,
         max_value=MAX_WEIGHT_PER_UNIT,
@@ -92,15 +105,11 @@ class VariantForm(forms.Form):
         ),
     )
 
+    # Set by the row's trash (variant_editor.js), after the question.
     delete = forms.BooleanField(
         required=False,
         label="Delete",
-        widget=forms.CheckboxInput(
-            attrs={
-                "class": "product-tag-toggle__input",
-                "data-variant-delete": "true",
-            }
-        ),
+        widget=forms.HiddenInput(attrs={"data-variant-delete": "true"}),
     )
 
     def __init__(
@@ -277,6 +286,7 @@ class BaseVariantFormSet(BaseFormSet):
             VariantChange(
                 variant_id=form.cleaned_data.get("variant_id"),
                 label=form.cleaned_data["label"],
+                name=form.cleaned_data.get("name", ""),
                 weight_per_unit=form.cleaned_data["weight_per_unit"],
                 active=form.cleaned_data.get("active", False),
                 delete=form.cleaned_data.get("delete", False),
@@ -304,6 +314,7 @@ def build_variant_formset(
             "variant_id": variant.pk,
             "position": index,
             "label": variant.label,
+            "name": variant.name,
             "weight_per_unit": variant.weight_per_unit,
             "active": variant.active,
             "delete": False,

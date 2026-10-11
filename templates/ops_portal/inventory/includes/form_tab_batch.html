@@ -1,7 +1,56 @@
-{% comment %}The Batch tab of the batch form: product (new batch only), quantity, best before, location.{% endcomment %}
-<div class="form-grid">
+{% comment %}
+  The Batch tab of the batch form: product (new batch only), its variant
+  when it has several, quantity, best before, location.
+
+  A product with several variants (sizes, weights) shows them as chips
+  under the product (batch_variant.js); the other fields wait, muted,
+  until one is chosen. The chosen product's chips are drawn open by the
+  server too, so a form that comes back with an error keeps them.
+{% endcomment %}
+<div class="form-grid" data-batch-form>
   {% if not batch %}
     {% include "includes/ui/form_field.html" with field=form.product only %}
+
+    {% with groups=form.variant_groups %}
+      {% if groups %}
+        <div
+          class="form-field form-field--full batch-variant{% if form.variant.errors %} form-field--error{% endif %}"
+          data-batch-variant
+          {% if not form.shows_variant_choice %}hidden{% endif %}
+        >
+          <span class="form-label" id="batch-variant-label">Variant</span>
+
+          {% for group in groups %}
+            <div
+              class="batch-variant__choices"
+              role="radiogroup"
+              aria-labelledby="batch-variant-label"
+              data-batch-variant-for="{{ group.product_id }}"
+              {% if not group.shown %}hidden{% endif %}
+            >
+              {% for choice in group.choices %}
+                <label class="product-tag-toggle">
+                  <input
+                    class="product-tag-toggle__input"
+                    type="radio"
+                    name="{{ form.variant.html_name }}"
+                    value="{{ choice.pk }}"
+                    {% if choice.checked %}checked{% endif %}
+                  >
+                  <span class="product-tag-toggle__surface">{{ choice.text }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          {% endfor %}
+
+          {% if form.variant.errors %}
+            <div class="form-field__errors" role="alert">
+              {% for error in form.variant.errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endwith %}
   {% endif %}
 
   {% include "includes/ui/form_field.html" with field=form.quantity only %}

@@ -5,6 +5,7 @@ from products.errors import InvalidProductData
 MAX_NAME_LENGTH = 160
 MAX_SKU_LENGTH = 180
 MAX_VARIANT_LABEL_LENGTH = 40
+MAX_VARIANT_NAME_LENGTH = 80
 
 # Between a product's name and its variant's label: "Hoodie — M".
 VARIANT_NAME_SEPARATOR = " — "

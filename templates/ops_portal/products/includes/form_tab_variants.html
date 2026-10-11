@@ -1,30 +1,39 @@
 {% comment %}
   The Variants tab of the product edit form (variant_editor.js).
 
-  The variants are what is stocked, priced and sold. Changing them is
-  behind a lock: until it is opened the fieldset is disabled, so nothing
-  of it is sent and the save leaves the variants as they are. Opened, the
-  rows can be renamed, weighed (until used), paused, deleted (until used),
-  reordered (drag, or the arrows) and added to; Save applies it all.
+  The variants are what is stocked, priced and sold, so changing them is
+  behind the lock at the top. Never opened, the fieldset is disabled and
+  nothing of it is sent: the save leaves the variants as they are. Opened
+  (the lock turns green, open), rows can be renamed, weighed (until used),
+  paused, deleted with the trash (until used; it asks first), reordered
+  (drag the handle, or the arrows) and added to. Locking again only keeps
+  hands off: what was changed is still saved with "Update product".
 {% endcomment %}
 {% with formset=variant_formset %}
-  <div class="variant-editor" data-variant-editor>
+  <div class="variant-editor{% if variants_unlocked %} variant-editor--open{% endif %}" data-variant-editor>
     {{ formset.management_form }}
+    {# Sent once the lock has been opened (enabled by the script, or here after an error). #}
+    <input type="hidden" name="{{ variants_unlocked_field }}" value="1" data-variant-unlocked{% if not variants_unlocked %} disabled{% endif %}>
 
-    <p class="page__note variant-editor__note">
-      Sizes or weights of this product, in the order customers see them. A
-      product with one variant shows no choice.
-    </p>
+    <div class="variant-editor__head">
+      <p class="page__note variant-editor__note">
+        Sizes or weights of this product, in the order customers see them.
+        A product with one variant shows no choice.
+        <span class="variant-editor__pending" data-variant-pending hidden>Locked with changes: they are saved with Update product.</span>
+      </p>
 
-    <button
-      class="button button--sm button--soft variant-editor__unlock"
-      type="button"
-      data-variant-unlock
-      {% if variants_unlocked %}hidden{% endif %}
-    >
-      {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
-      Change variants
-    </button>
+      <button
+        class="variant-editor__lock"
+        type="button"
+        data-variant-lock
+        aria-pressed="{% if variants_unlocked %}true{% else %}false{% endif %}"
+        aria-label="{% if variants_unlocked %}Lock variants{% else %}Unlock to change variants{% endif %}"
+        title="{% if variants_unlocked %}Lock variants{% else %}Unlock to change variants{% endif %}"
+      >
+        <span class="variant-editor__lock-closed">{% include "includes/ui/icon_block.html" with name="lock" size="md" only %}</span>
+        <span class="variant-editor__lock-open">{% include "includes/ui/icon_block.html" with name="lock-open" size="md" only %}</span>
+      </button>
+    </div>
 
     {% if formset.non_form_errors %}
       <div class="form-errors" role="alert">
@@ -34,7 +43,14 @@
 
     <fieldset class="variant-editor__fields" data-variant-fields{% if not variants_unlocked %} disabled{% endif %}>
       <legend class="visually-hidden">Variants</legend>
-      <input type="hidden" name="{{ variants_unlocked_field }}" value="1">
+
+      <div class="variant-rows__head" aria-hidden="true">
+        <span></span>
+        <span>Label</span>
+        <span>Full name</span>
+        <span>Weight (g)</span>
+        <span></span>
+      </div>
 
       <ol class="variant-rows" data-variant-rows>
         {% for row in formset %}
