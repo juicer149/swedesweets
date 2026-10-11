@@ -18,6 +18,7 @@ from common.table_controls import (
 )
 from inventory.selectors import (
     list_available_batches_for_product,
+    physical_quantity_by_variant,
 )
 from ops_portal.products.detail_viewmodels import (
     build_product_detail_context,
@@ -39,6 +40,10 @@ from ops_portal.products.list_viewmodels import (
 from ops_portal.products.pricing_forms import (
     ProductPricingForm,
     build_product_pricing_initial_data,
+)
+from ops_portal.products.variant_forms import (
+    VARIANTS_UNLOCKED_FIELD,
+    build_variant_formset,
 )
 from pricing.errors import (
     InvalidCommercialPrice,
@@ -68,6 +73,7 @@ from products.selectors import (
 )
 from products.services import (
     create_product,
+    save_variants,
     update_product,
 )
 from reservations.availability import (
@@ -298,6 +304,9 @@ def detail(
             cancel_url=reverse(
                 "ops_products:index"
             ),
+            stock_by_variant=physical_quantity_by_variant(
+                product=product,
+            ),
         )
         .as_dict()
     )
@@ -356,16 +365,30 @@ def edit(
             )
         )
 
+        # The Variants tab is sent only when its lock was opened.
+        variants_unlocked = (
+            request.POST.get(VARIANTS_UNLOCKED_FIELD) == "1"
+        )
+        variant_formset = build_variant_formset(
+            product=product,
+            data=request.POST if variants_unlocked else None,
+        )
+
         product_form_is_valid = (
             form.is_valid()
         )
         pricing_form_is_valid = (
             pricing_form.is_valid()
         )
+        variants_are_valid = (
+            not variants_unlocked
+            or variant_formset.is_valid()
+        )
 
         if (
             product_form_is_valid
             and pricing_form_is_valid
+            and variants_are_valid
         ):
             image_change = (
                 ProductImageChange
@@ -441,6 +464,12 @@ def edit(
                         )
                     )
 
+                    if variants_unlocked:
+                        save_variants(
+                            product=updated_product,
+                            changes=variant_formset.changes(),
+                        )
+
                     image_change = (
                         change_product_image(
                             product=(
@@ -499,6 +528,11 @@ def edit(
                 )
 
     else:
+        variants_unlocked = False
+        variant_formset = build_variant_formset(
+            product=product,
+        )
+
         form = ProductEditForm(
             initial=(
                 build_product_edit_initial_data(
@@ -528,6 +562,8 @@ def edit(
             form=form,
             pricing_form=pricing_form,
             product=product,
+            variant_formset=variant_formset,
+            variants_unlocked=variants_unlocked,
         )
         .as_dict()
     )

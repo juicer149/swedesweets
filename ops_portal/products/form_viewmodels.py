@@ -13,6 +13,12 @@ from ops_portal.products.presentation import product_status_icon
 from ops_portal.products.pricing_forms import (
     ProductPricingForm,
 )
+from ops_portal.products.variant_forms import (
+    LABEL_SUGGESTIONS_ID,
+    SUGGESTED_VARIANT_LABELS,
+    VARIANTS_UNLOCKED_FIELD,
+    BaseVariantFormSet,
+)
 from products.images import product_display_url
 from products.models import Product
 
@@ -37,6 +43,18 @@ PRODUCT_FORM_TABS = (
     ),
 )
 
+# Editing a product adds its Variants (a new product starts with one).
+PRODUCT_EDIT_FORM_TABS = (
+    PRODUCT_FORM_TABS[0],
+    PageTab(
+        key="variants",
+        label="Variants",
+        icon="variants",
+        template="ops_portal/products/includes/form_tab_variants.html",
+    ),
+    *PRODUCT_FORM_TABS[1:],
+)
+
 
 @dataclass(frozen=True, slots=True)
 class ProductFormContext:
@@ -51,6 +69,8 @@ class ProductFormContext:
     cancel_url: str
     product: Product | None = None
     current_image_url: str = ""
+    variant_formset: BaseVariantFormSet | None = None
+    variants_unlocked: bool = False
 
     def as_dict(
         self,
@@ -61,7 +81,16 @@ class ProductFormContext:
                 self.pricing_form
             ),
             "product": self.product,
-            "page_tabs": PRODUCT_FORM_TABS,
+            "page_tabs": (
+                PRODUCT_EDIT_FORM_TABS
+                if self.variant_formset is not None
+                else PRODUCT_FORM_TABS
+            ),
+            "variant_formset": self.variant_formset,
+            "variants_unlocked": self.variants_unlocked,
+            "variants_unlocked_field": VARIANTS_UNLOCKED_FIELD,
+            "variant_label_suggestions": SUGGESTED_VARIANT_LABELS,
+            "variant_label_suggestions_id": LABEL_SUGGESTIONS_ID,
             "tabs_label": "Product form sections",
             "status_key": (
                 "active" if self.product and self.product.active else "inactive"
@@ -110,11 +139,15 @@ def build_edit_product_form_context(
     form: ProductEditForm,
     pricing_form: ProductPricingForm,
     product: Product,
+    variant_formset: BaseVariantFormSet | None = None,
+    variants_unlocked: bool = False,
 ) -> ProductFormContext:
     return ProductFormContext(
         form=form,
         pricing_form=pricing_form,
         product=product,
+        variant_formset=variant_formset,
+        variants_unlocked=variants_unlocked,
         current_image_url=(
             _current_product_image_url(
                 product

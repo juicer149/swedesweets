@@ -1,0 +1,61 @@
+{% comment %}
+  One variant in the Variants tab: drag handle, label, weight, on sale,
+  delete (or why it cannot be), and up/down for phones.
+
+  row      a VariantForm (ops_portal/products/variant_forms.py)
+  is_new   the template row "Add variant" copies
+{% endcomment %}
+<li class="variant-row{% if row.errors %} variant-row--error{% endif %}" data-variant-row>
+  {{ row.variant_id }}
+  {{ row.position }}
+
+  <span class="variant-row__handle" aria-hidden="true" title="Drag to reorder" data-variant-handle>⋮⋮</span>
+
+  <div class="form-field variant-row__label{% if row.label.errors %} form-field--error{% endif %}">
+    <label class="form-label" for="{{ row.label.id_for_label }}">{{ row.label.label }}</label>
+    {{ row.label }}
+    {% for error in row.label.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
+  </div>
+
+  <div class="form-field variant-row__weight{% if row.weight_per_unit.errors %} form-field--error{% endif %}">
+    <label class="form-label" for="{{ row.weight_per_unit.id_for_label }}">{{ row.weight_per_unit.label }}</label>
+    {{ row.weight_per_unit }}
+    {% for error in row.weight_per_unit.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
+  </div>
+
+  <div class="variant-row__toggles">
+    <label class="product-tag-toggle" for="{{ row.active.id_for_label }}">
+      {{ row.active }}
+      <span class="product-tag-toggle__surface">{{ row.active.label }}</span>
+    </label>
+
+    {% if is_new %}
+      <button class="quiet-link variant-row__drop" type="button" data-variant-drop>
+        {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
+        Remove
+      </button>
+    {% elif row.can_delete %}
+      <label class="product-tag-toggle product-tag-toggle--danger" for="{{ row.delete.id_for_label }}">
+        {{ row.delete }}
+        <span class="product-tag-toggle__surface">{{ row.delete.label }}</span>
+      </label>
+    {% else %}
+      <span class="variant-row__note">Used: pause instead of deleting</span>
+    {% endif %}
+
+    {% for error in row.delete.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
+  </div>
+
+  {% if row.state %}
+    <span class="variant-row__sku">{{ row.state.variant.sku }}</span>
+  {% endif %}
+
+  <div class="variant-row__move">
+    <button class="variant-row__move-button" type="button" data-variant-up aria-label="Move up">
+      {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="variant-row__up" only %}
+    </button>
+    <button class="variant-row__move-button" type="button" data-variant-down aria-label="Move down">
+      {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" only %}
+    </button>
+  </div>
+</li>

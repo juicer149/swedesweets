@@ -19,11 +19,25 @@ public API:
     rename_variant(...)
         -> Change a variant's label (its SKU stays).
 
+    set_variant_weight(...), set_variant_active(...), delete_variant(...),
+    reorder_variants(...)
+        -> The rest of a variant's life, under rules 1 and 5-7
+           (docs/product-variants.md).
+
+    variant_has_history(variant) -> bool
+        -> Whether a batch, a price or an order line ever used it.
+
+    save_variants(product=..., changes=[VariantChange, ...])
+        -> Apply a whole Variants tab at once: labels, weights, on sale or
+           paused, new and deleted variants, and their order.
+
 Product image storage is intentionally handled separately by
 products.image_services.
 """
 
 from __future__ import annotations
+
+from dataclasses import dataclass
 
 from django.db import (
     IntegrityError,
@@ -482,6 +496,289 @@ def rename_variant(
         ) from exc
 
     return variant
+
+
+def variant_has_history(
+    variant: ProductVariant,
+) -> bool:
+    """A batch, a price (and so maybe a cart line) or an order line ever
+    used this variant: its weight is fixed and it can only be paused, not
+    deleted (rules 5 and 6)."""
+
+    return (
+        variant.batches.exists()
+        or variant.commercial_prices.exists()
+        or variant.order_lines.exists()
+    )
+
+
+def _variant_is_stocked_or_ordered(
+    variant: ProductVariant,
+) -> bool:
+    return (
+        variant.batches.exists()
+        or variant.order_lines.exists()
+    )
+
+
+@transaction.atomic
+def set_variant_weight(
+    *,
+    variant: ProductVariant,
+    weight_per_unit: int,
+) -> ProductVariant:
+    """Change a variant's weight, only while no batch or order line uses
+    it (rule 5): stock already counted and orders already placed are in
+    the old weight."""
+
+    if weight_per_unit == variant.weight_per_unit:
+        return variant
+
+    if _variant_is_stocked_or_ordered(variant):
+        raise InvalidProductData(
+            f"{variant.display_name} has stock or orders: its weight "
+            "can no longer change"
+        )
+
+    variant.weight_per_unit = weight_per_unit
+    variant.save(update_fields=["weight_per_unit", "updated_at"])
+
+    return variant
+
+
+@transaction.atomic
+def set_variant_active(
+    *,
+    variant: ProductVariant,
+    active: bool,
+) -> ProductVariant:
+    """Pause a variant (left out of catalogs, new batches and new orders)
+    or bring it back. An active product keeps at least one active variant
+    (rule 7): to stop selling it all, pause the product."""
+
+    if variant.active == active:
+        return variant
+
+    product = Product.objects.select_for_update().get(pk=variant.product_id)
+
+    if (
+        not active
+        and product.active
+        and not product.variants.filter(active=True)
+        .exclude(pk=variant.pk)
+        .exists()
+    ):
+        raise InvalidProductData(
+            f"{variant.display_name} is the last variant on sale: pause "
+            "the product instead"
+        )
+
+    variant.active = active
+    variant.save(update_fields=["active", "updated_at"])
+
+    return variant
+
+
+@transaction.atomic
+def delete_variant(
+    *,
+    variant: ProductVariant,
+) -> None:
+    """Delete a variant nothing has used yet (rule 6; one with history can
+    only be paused). A product keeps at least one variant (rule 1)."""
+
+    product = Product.objects.select_for_update().get(pk=variant.product_id)
+
+    if variant_has_history(variant):
+        raise InvalidProductData(
+            f"{variant.display_name} has been used: pause it instead"
+        )
+
+    if not product.variants.exclude(pk=variant.pk).exists():
+        raise InvalidProductData(
+            "a product keeps at least one variant"
+        )
+
+    if (
+        product.active
+        and variant.active
+        and not product.variants.filter(active=True)
+        .exclude(pk=variant.pk)
+        .exists()
+    ):
+        raise InvalidProductData(
+            f"{variant.display_name} is the last variant on sale: pause "
+            "the product instead"
+        )
+
+    variant.delete()
+
+
+@transaction.atomic
+def reorder_variants(
+    *,
+    product: Product,
+    variant_ids: list[int],
+) -> None:
+    """Put a product's variants in this order (positions 1, 2, 3 …). The
+    list names each of its variants once."""
+
+    current_ids = set(
+        product.variants.values_list("pk", flat=True)
+    )
+
+    if len(variant_ids) != len(set(variant_ids)) or set(
+        variant_ids
+    ) != current_ids:
+        raise InvalidProductData(
+            "the new order must name each of the product's variants once"
+        )
+
+    variants = {
+        variant.pk: variant
+        for variant in product.variants.select_for_update()
+    }
+
+    for position, variant_id in enumerate(variant_ids, start=1):
+        variant = variants[variant_id]
+
+        if variant.position != position:
+            variant.position = position
+            variant.save(update_fields=["position", "updated_at"])
+
+
+@dataclass(frozen=True, slots=True)
+class VariantChange:
+    """One row of the Variants tab, in the order wanted. variant_id None:
+    a new variant."""
+
+    variant_id: int | None
+    label: str
+    weight_per_unit: int
+    active: bool = True
+    delete: bool = False
+
+
+@transaction.atomic
+def save_variants(
+    *,
+    product: Product,
+    changes: list[VariantChange],
+) -> None:
+    """Apply a product's Variants tab: every existing variant once, plus
+    any new ones, in the order wanted.
+
+    Labels are moved aside first (so two variants can swap names), new
+    variants added, deleted ones removed, then the final labels, weights,
+    pauses and order set, each through the rules above.
+    """
+
+    product = Product.objects.select_for_update().get(pk=product.pk)
+    existing = {
+        variant.pk: variant
+        for variant in product.variants.select_for_update()
+    }
+
+    changes = [
+        VariantChange(
+            variant_id=change.variant_id,
+            label=normalize_variant_label(change.label),
+            weight_per_unit=change.weight_per_unit,
+            active=change.active,
+            delete=change.delete,
+        )
+        for change in changes
+    ]
+
+    named_ids = [
+        change.variant_id
+        for change in changes
+        if change.variant_id is not None
+    ]
+
+    if sorted(named_ids) != sorted(existing):
+        raise InvalidProductData(
+            "the variants changed meanwhile: reload the page"
+        )
+
+    kept = [change for change in changes if not change.delete]
+
+    if not kept:
+        raise InvalidProductData(
+            "a product keeps at least one variant"
+        )
+
+    if len(kept) > 1 and any(not change.label for change in kept):
+        raise InvalidProductData(
+            "with more than one variant, each needs a label"
+        )
+
+    labels = [change.label.casefold() for change in kept]
+
+    if len(labels) != len(set(labels)):
+        raise InvalidProductData(
+            "two variants have the same label"
+        )
+
+    # Resume first, so a pause or a delete below never meets "the last
+    # one on sale" while another is about to come back.
+    for change in kept:
+        variant = existing.get(change.variant_id)
+
+        if variant is not None and change.active and not variant.active:
+            set_variant_active(variant=variant, active=True)
+
+    # Move changed and leaving labels aside: unique, never empty.
+    for change in changes:
+        variant = existing.get(change.variant_id)
+
+        if variant is not None and (
+            change.delete or variant.label != change.label
+        ):
+            variant.label = f"~{variant.pk}"
+            variant.save(update_fields=["label", "updated_at"])
+
+    order: list[int] = []
+
+    for change in changes:
+        if change.delete:
+            continue
+
+        if change.variant_id is None:
+            variant = add_variant(
+                product=product,
+                label=change.label,
+                weight_per_unit=change.weight_per_unit,
+            )
+            existing[variant.pk] = variant
+            order.append(variant.pk)
+        else:
+            order.append(change.variant_id)
+
+    for change in changes:
+        if change.delete:
+            delete_variant(variant=existing.pop(change.variant_id))
+
+    for change, variant_id in zip(kept, order, strict=True):
+        variant = existing[variant_id]
+
+        if variant.label != change.label:
+            variant.label = change.label
+            variant.save(update_fields=["label", "updated_at"])
+
+        set_variant_weight(
+            variant=variant,
+            weight_per_unit=change.weight_per_unit,
+        )
+
+    for change, variant_id in zip(kept, order, strict=True):
+        if not change.active:
+            set_variant_active(
+                variant=existing[variant_id],
+                active=False,
+            )
+
+    reorder_variants(product=product, variant_ids=order)
 
 
 def set_product_translation(

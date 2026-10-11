@@ -1,0 +1,17 @@
+{% comment %}
+  The Variants tab: a product's variants (sizes, weights) in the order
+  they are shown everywhere, each with its SKU and weight, whether it is
+  paused, and how many are on the shelf. A product with one variant shows
+  it as "One variant": nothing to choose.
+{% endcomment %}
+<ul class="lines product-variants" aria-label="Variants">
+  {% for line in variant_lines %}
+    {% include "includes/ui/line.html" with line=line only %}
+  {% endfor %}
+</ul>
+
+{% if edit_action %}
+  <div class="form-actions page__actions">
+    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_action.href }}#variants">Edit variants</a>
+  </div>
+{% endif %}

@@ -230,6 +230,30 @@ def physical_quantity_by_product() -> list[PhysicalStockRow]:
     )
 
 
+def physical_quantity_by_variant(
+    *,
+    product: Product,
+) -> dict[int, int]:
+    """Stock on the shelf (active batches) of each of a product's variants,
+    by variant id; a variant with none is left out."""
+
+    rows = (
+        InventoryBatch.objects
+        .filter(
+            product=product,
+            status=InventoryBatch.Status.ACTIVE,
+            quantity__gt=0,
+        )
+        .values("variant_id")
+        .annotate(total_quantity=Sum("quantity"))
+    )
+
+    return {
+        row["variant_id"]: row["total_quantity"] or 0
+        for row in rows
+    }
+
+
 def list_available_batches_for_product(
     *,
     product: Product,

@@ -1,6 +1,6 @@
 # Product variants
 
-Status: agreed; steps 1–4 done (the model, inventory, pricing, orders).
+Status: agreed; steps 1–4 done (the model, inventory, pricing, orders), step 5 (ops Variants tabs) in progress.
 
 A product can come in variants: a hoodie in XS–XL, a chocolate bar in 60, 100
 and 120 g. Variants are modelled the way Shopify does it: **every product has
@@ -84,7 +84,9 @@ Where each rule is kept today:
 - Rule 4: `add_variant` builds the SKU; `ProductVariant.save` refuses a
   changed one. `QuerySet.update()` skips `save()`, so nothing in the code
   updates variants that way.
-- Rules 5–7: with the ops Variants tab (step 5).
+- Rules 5–7: `set_variant_weight`, `delete_variant` and
+  `set_variant_active` in `products.services`; the ops Variants tab saves
+  through `save_variants`, which applies a whole tab with them.
 - Rule 8: `InventoryBatch.save`, `CommercialPrice.save`, `OrderLine.save`
   and the reservation service.
 

@@ -1,0 +1,59 @@
+{% comment %}
+  The Variants tab of the product edit form (variant_editor.js).
+
+  The variants are what is stocked, priced and sold. Changing them is
+  behind a lock: until it is opened the fieldset is disabled, so nothing
+  of it is sent and the save leaves the variants as they are. Opened, the
+  rows can be renamed, weighed (until used), paused, deleted (until used),
+  reordered (drag, or the arrows) and added to; Save applies it all.
+{% endcomment %}
+{% with formset=variant_formset %}
+  <div class="variant-editor" data-variant-editor>
+    {{ formset.management_form }}
+
+    <p class="page__note variant-editor__note">
+      Sizes or weights of this product, in the order customers see them. A
+      product with one variant shows no choice.
+    </p>
+
+    <button
+      class="button button--sm button--soft variant-editor__unlock"
+      type="button"
+      data-variant-unlock
+      {% if variants_unlocked %}hidden{% endif %}
+    >
+      {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
+      Change variants
+    </button>
+
+    {% if formset.non_form_errors %}
+      <div class="form-errors" role="alert">
+        {% for error in formset.non_form_errors %}<p>{{ error }}</p>{% endfor %}
+      </div>
+    {% endif %}
+
+    <fieldset class="variant-editor__fields" data-variant-fields{% if not variants_unlocked %} disabled{% endif %}>
+      <legend class="visually-hidden">Variants</legend>
+      <input type="hidden" name="{{ variants_unlocked_field }}" value="1">
+
+      <ol class="variant-rows" data-variant-rows>
+        {% for row in formset %}
+          {% include "ops_portal/products/includes/variant_row.html" with row=row only %}
+        {% endfor %}
+      </ol>
+
+      <template data-variant-template>
+        {% include "ops_portal/products/includes/variant_row.html" with row=formset.empty_form is_new=True only %}
+      </template>
+
+      <button class="button button--sm button--soft button--tone-positive variant-editor__add" type="button" data-variant-add>
+        {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
+        Add variant
+      </button>
+
+      <datalist id="{{ variant_label_suggestions_id }}">
+        {% for label in variant_label_suggestions %}<option value="{{ label }}"></option>{% endfor %}
+      </datalist>
+    </fieldset>
+  </div>
+{% endwith %}

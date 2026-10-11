@@ -9,6 +9,7 @@ from common.detail_cards import (
     DetailAction,
     build_secondary_get_action,
 )
+from common.lines import META_OFFER, LineView, meta, metas
 from common.page_tabs import PageTab
 from common.ui import QuantityInfo, build_quantity_info
 from inventory.low_stock import LOW_STOCK_THRESHOLD, RUNNING_LOW_THRESHOLD
@@ -23,10 +24,11 @@ from ops_portal.products.presentation import (
     product_status_icon,
 )
 from pricing.models import CommercialPrice
-from products.images import product_display_url
+from products.images import product_display_url, product_image_url
 from products.models import (
     Product,
     ProductProfile,
+    ProductVariant,
 )
 from reservations.availability import AvailableStockRow
 
@@ -36,6 +38,12 @@ PRODUCT_DETAIL_TABS = (
         label="Product",
         icon="lollipop",
         template="ops_portal/products/includes/detail_tab_product.html",
+    ),
+    PageTab(
+        key="variants",
+        label="Variants",
+        icon="variants",
+        template="ops_portal/products/includes/detail_tab_variants.html",
     ),
     PageTab(
         key="pricing",
@@ -394,6 +402,7 @@ class ProductDetailContext:
     ]
     stock: ProductStockSummary
     batch_rows: list[ProductBatchRow]
+    variant_lines: tuple[LineView, ...]
     status_key: str
     status_label: str
     status_icon: str
@@ -419,6 +428,7 @@ class ProductDetailContext:
             "batch_rows": (
                 self.batch_rows
             ),
+            "variant_lines": self.variant_lines,
             "status_key": self.status_key,
             "status_label": self.status_label,
             "status_icon": self.status_icon,
@@ -453,6 +463,7 @@ def build_product_detail_context(
     ),
     role_spec: RoleSpec,
     cancel_url: str,
+    stock_by_variant: dict[int, int] | None = None,
 ) -> ProductDetailContext:
     stock = (
         ProductStockSummary
@@ -495,6 +506,10 @@ def build_product_detail_context(
                 active_batches
             )
         ),
+        variant_lines=build_variant_lines(
+            product=product,
+            stock_by_variant=stock_by_variant or {},
+        ),
         status_key=(
             "active" if product.active else "inactive"
         ),
@@ -520,6 +535,45 @@ def build_product_detail_context(
         description="",
         cancel_url=cancel_url,
     )
+
+
+ONLY_VARIANT_NAME = "One variant"
+PAUSED_LABEL = "Paused"
+
+
+def build_variant_lines(
+    *,
+    product: Product,
+    stock_by_variant: dict[int, int],
+) -> tuple[LineView, ...]:
+    """The Variants tab: each variant in order, its SKU and weight, paused
+    or not, and how many are on the shelf."""
+
+    image_url = product_image_url(product)
+
+    return tuple(
+        LineView(
+            name=variant.label or ONLY_VARIANT_NAME,
+            image_url=image_url,
+            metas=metas(
+                meta(_variant_identity_label(variant)),
+                meta(
+                    None if variant.active else PAUSED_LABEL,
+                    META_OFFER,
+                ),
+            ),
+            aside=product.stock_quantity_label(
+                stock_by_variant.get(variant.pk, 0)
+            ),
+        )
+        for variant in product.variants.all()
+    )
+
+
+def _variant_identity_label(
+    variant: ProductVariant,
+) -> str:
+    return f"{variant.sku} · {variant.weight_per_unit} g"
 
 
 def build_product_secondary_actions(

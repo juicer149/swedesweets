@@ -79,6 +79,7 @@ def test_product_edit_form_has_the_same_tabs_as_the_links(client):
     assert response.status_code == 200
     assert [tab.key for tab in response.context["page_tabs"]] == [
         "product",
+        "variants",
         "catalog",
         "pricing",
     ]
