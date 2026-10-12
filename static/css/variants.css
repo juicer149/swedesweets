@@ -193,16 +193,38 @@
   position: relative;
 }
 
-/* Moving (an arrow) or dragged: over the others, lifted. */
+/* Moving (an arrow) or dragged: over the others, lifted a little (a touch
+   bigger, a deeper shadow). A neighbour making way glides under it with a
+   light shadow of its own. */
 .variant-row--moving,
 .variant-row--dragging {
   z-index: 2;
 }
 
+.variant-row--gliding {
+  z-index: 1;
+}
+
 .variant-row--moving .variant-row__card,
 .variant-row--dragging .variant-row__card {
   background: color-mix(in srgb, var(--color-white) 45%, var(--color-neutral-50));
-  box-shadow: 0 10px 28px rgb(var(--color-row-shadow) / 0.18);
+  box-shadow: 0 14px 34px rgb(var(--color-row-shadow) / 0.22);
+  transform: scale(1.025);
+}
+
+.variant-row--gliding .variant-row__card {
+  box-shadow: 0 4px 12px rgb(var(--color-row-shadow) / 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .variant-row__card {
+    transition: none;
+  }
+
+  .variant-row--moving .variant-row__card,
+  .variant-row--dragging .variant-row__card {
+    transform: none;
+  }
 }
 
 .variant-row--dragging {
@@ -222,7 +244,9 @@
   border-radius: var(--variant-radius);
   transition:
     background var(--motion-fast),
-    border-color var(--motion-fast);
+    border-color var(--motion-fast),
+    box-shadow 160ms ease-out,
+    transform 160ms ease-out;
 }
 
 .variant-row__label { grid-row: 1; grid-column: 2; }

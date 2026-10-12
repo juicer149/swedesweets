@@ -246,10 +246,22 @@
       before.forEach((top, row) => {
         const dy = top - row.getBoundingClientRect().top;
 
-        if (row !== skip && Math.abs(dy) > 0.5) {
-          row.animate(
-            [{ transform: `translateY(${dy}px)` }, { transform: "none" }],
-            GLIDE
+        if (row === skip || Math.abs(dy) <= 0.5) {
+          return;
+        }
+
+        row.animate(
+          [{ transform: `translateY(${dy}px)` }, { transform: "none" }],
+          GLIDE
+        );
+
+        // A neighbour making way casts a light shadow of its own; the row
+        // that moves (variant-row--moving) is lifted over it.
+        if (!row.classList.contains("variant-row--moving")) {
+          row.classList.add("variant-row--gliding");
+          window.setTimeout(
+            () => row.classList.remove("variant-row--gliding"),
+            GLIDE.duration
           );
         }
       });
@@ -368,11 +380,9 @@
 
       // Layout places (offsetTop), not what shows: a neighbour still
       // gliding would otherwise look unpassed and swap straight back.
-      // They change places once the row's leading edge (its bottom going
-      // down, its top going up) passes the neighbour's middle.
+      // They change places once the row's middle passes the neighbour's.
       const { row } = drag;
-      const top = row.offsetTop + dragOffset(event);
-      const bottom = top + row.offsetHeight;
+      const middle = row.offsetTop + dragOffset(event) + row.offsetHeight / 2;
 
       for (const step of [-1, 1]) {
         const other = neighbour(row, step);
@@ -382,7 +392,7 @@
         }
 
         const otherMiddle = other.offsetTop + other.offsetHeight / 2;
-        const passed = step < 0 ? top < otherMiddle : bottom > otherMiddle;
+        const passed = step < 0 ? middle < otherMiddle : middle > otherMiddle;
 
         if (passed) {
           // Keep the row under the pointer as its place in the list moves.
