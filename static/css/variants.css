@@ -376,13 +376,6 @@
   width: 6rem;
 }
 
-.variant-row__prices-hint {
-  margin: 0 0 0 auto;
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-12);
-  font-weight: 600;
-}
-
 .variant-row__prices-box input:not([type="checkbox"], [type="hidden"]) {
   min-height: 2.25rem;
   padding-block: 0.35rem;
@@ -568,10 +561,6 @@
 
   .variant-row__prices {
     margin-inline: var(--space-4);
-  }
-
-  .variant-row__prices-hint {
-    margin-left: 0;
   }
 
   .variant-row__field-label {
