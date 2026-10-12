@@ -10,9 +10,6 @@ from pricing.models import CommercialPrice, PriceAmount
 PRICE_DECIMAL_PLACES = 2
 PRICE_MAX_DIGITS = 10
 
-PRICING_STATUS_ACTIVE = "active"
-PRICING_STATUS_INACTIVE = "inactive"
-
 BUSINESS_STATUS_HELP_TEXT = (
     "Active means the product can be ordered in the B2B portal. "
     "A price is optional; inactive hides the product from B2B ordering."
@@ -51,59 +48,52 @@ def _price_field(
     )
 
 
-def _pricing_status_field(
+def _active_toggle(
     *,
-    help_text: str = "",
-    initial: str = PRICING_STATUS_INACTIVE,
-) -> forms.ChoiceField:
-    return forms.ChoiceField(
-        choices=(
-            (
-                PRICING_STATUS_ACTIVE,
-                "Active",
-            ),
-            (
-                PRICING_STATUS_INACTIVE,
-                "Inactive",
-            ),
-        ),
-        initial=initial,
+    help_text: str,
+) -> forms.BooleanField:
+    """A channel's status as one switch (green on, muted off), like the
+    product's own."""
+
+    field = forms.BooleanField(
+        required=False,
         label="Status",
         help_text=help_text,
-        error_messages={
-            "required": "Choose pricing status.",
-            "invalid_choice": (
-                "Choose a valid pricing status."
-            ),
-        },
-        widget=forms.RadioSelect(
-            attrs={
-                "class": "radio-chip-group",
-            }
+        widget=forms.CheckboxInput(
+            attrs={"class": "product-tag-toggle__input"},
         ),
     )
+    field.tag_toggle = True
+    field.tag_toggle_label = "Active"
+    field.tag_toggle_icon = "check"
+    field.tag_toggle_class = (
+        "product-tag-toggle "
+        "product-tag-toggle--status"
+    )
+
+    return field
 
 
 class ProductPricingForm(forms.Form):
+    # Each channel's switch first, then its prices.
+    business_active = _active_toggle(
+        help_text=BUSINESS_STATUS_HELP_TEXT,
+    )
     business_eur = _price_field(
         label="EUR",
     )
     business_sek = _price_field(
         label="SEK",
     )
-    business_status = _pricing_status_field(
-        help_text=BUSINESS_STATUS_HELP_TEXT,
-        initial=PRICING_STATUS_INACTIVE,
-    )
 
+    retail_active = _active_toggle(
+        help_text=RETAIL_STATUS_HELP_TEXT,
+    )
     retail_eur = _price_field(
         label="EUR",
     )
     retail_sek = _price_field(
         label="SEK",
-    )
-    retail_status = _pricing_status_field(
-        help_text=RETAIL_STATUS_HELP_TEXT,
     )
 
     def __init__(
@@ -116,8 +106,8 @@ class ProductPricingForm(forms.Form):
         set_form_field_layout(
             self,
             full=(
-                "business_status",
-                "retail_status",
+                "business_active",
+                "retail_active",
             ),
             half=(
                 "business_eur",
@@ -136,7 +126,7 @@ class ProductPricingForm(forms.Form):
         # still needs at least one amount.
         self._validate_active_channel_has_amount(
             channel=CommercialPrice.Channel.RETAIL,
-            status_field="retail_status",
+            status_field="retail_active",
             amount_fields=(
                 "retail_eur",
                 "retail_sek",
@@ -147,17 +137,11 @@ class ProductPricingForm(forms.Form):
 
     @property
     def business_enabled(self) -> bool:
-        return (
-            self.cleaned_data["business_status"]
-            == PRICING_STATUS_ACTIVE
-        )
+        return bool(self.cleaned_data["business_active"])
 
     @property
     def retail_enabled(self) -> bool:
-        return (
-            self.cleaned_data["retail_status"]
-            == PRICING_STATUS_ACTIVE
-        )
+        return bool(self.cleaned_data["retail_active"])
 
     def pricing_values(self) -> dict[str, object]:
         """Translate presentation values into the pricing service contract."""
@@ -190,11 +174,7 @@ class ProductPricingForm(forms.Form):
         status_field: str,
         amount_fields: tuple[str, str],
     ) -> None:
-        status = self.cleaned_data.get(
-            status_field
-        )
-
-        if status != PRICING_STATUS_ACTIVE:
+        if not self.cleaned_data.get(status_field):
             return
 
         has_amount = any(
@@ -233,7 +213,7 @@ def build_product_pricing_initial_data(
             business_price,
             currency=PriceAmount.Currency.SEK,
         ),
-        "business_status": _pricing_status(
+        "business_active": _is_active(
             business_price,
         ),
         "retail_eur": _amount_value(
@@ -244,22 +224,19 @@ def build_product_pricing_initial_data(
             retail_price,
             currency=PriceAmount.Currency.SEK,
         ),
-        "retail_status": _pricing_status(
+        "retail_active": _is_active(
             retail_price,
         ),
     }
 
 
-def _pricing_status(
+def _is_active(
     commercial_price: CommercialPrice | None,
-) -> str:
-    if (
+) -> bool:
+    return (
         commercial_price is not None
         and commercial_price.enabled
-    ):
-        return PRICING_STATUS_ACTIVE
-
-    return PRICING_STATUS_INACTIVE
+    )
 
 
 def _amount_value(

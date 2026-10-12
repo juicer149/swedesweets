@@ -93,7 +93,17 @@ def test_product_edit_form_is_one_page_of_sections(client):
     ]
     # The product page's buttons link to the sections by id.
     assert 'id="product"' in content
-    assert 'name="description"' not in content
+    # The catalog has its own page.
+    assert 'name="fr-description"' not in content
+    assert 'name="category"' not in content
+    # The status switch and the catalog ID come first.
+    assert content.index('name="active"') < content.index('name="internal_number"')
+    assert content.index('name="internal_number"') < content.index('name="brand"')
+    # Each pricing channel: its switch, then its prices.
+    assert 'type="checkbox" name="business_active"' in content
+    assert content.index('name="business_active"') < content.index(
+        'name="business_eur"'
+    )
     assert "data-tabs" not in content
     assert "data-dirty-form" in content
     assert 'name="business_eur"' in content

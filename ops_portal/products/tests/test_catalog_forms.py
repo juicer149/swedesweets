@@ -11,7 +11,7 @@ from ops_portal.products.catalog_forms import (
     build_catalog_initial_data,
     build_catalog_languages,
 )
-from products.models import ProductProfile
+from products.models import Product, ProductProfile
 from products.services import CatalogTextChange, update_product_catalog
 from products.tests.factories import product_factory
 
@@ -117,6 +117,8 @@ def test_each_language_has_its_own_form_french_first():
     assert english.form.initial["description"] == ""
     assert "French text" in english.form.fields["description"].help_text
     assert product.display_name in english.form.fields["name"].help_text
+    # The page reads the product afresh, with its saved profile.
+    product = Product.objects.get(pk=product.pk)
     assert build_catalog_initial_data(product) == {
         "category": ProductProfile.Category.CANDY,
     }

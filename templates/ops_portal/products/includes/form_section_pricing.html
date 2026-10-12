@@ -1,4 +1,4 @@
-{% comment %}The Pricing section of the product form: standard business and retail prices.{% endcomment %}
+{% comment %}The Pricing section of the product form: per channel (business, retail) its switch first, then its EUR and SEK prices.{% endcomment %}
 <p class="page__note form-tab__note">Product-wide prices for ordinary business and retail sales.</p>
 
 {% if pricing_form.non_field_errors %}
@@ -24,9 +24,9 @@
   </h3>
 
   <div class="form-grid">
+    {% include "includes/ui/form_field.html" with field=pricing_form.business_active only %}
     {% include "includes/ui/form_field.html" with field=pricing_form.business_eur only %}
     {% include "includes/ui/form_field.html" with field=pricing_form.business_sek only %}
-    {% include "includes/ui/form_field.html" with field=pricing_form.business_status only %}
   </div>
 </section>
 
@@ -42,8 +42,8 @@
   </h3>
 
   <div class="form-grid">
+    {% include "includes/ui/form_field.html" with field=pricing_form.retail_active only %}
     {% include "includes/ui/form_field.html" with field=pricing_form.retail_eur only %}
     {% include "includes/ui/form_field.html" with field=pricing_form.retail_sek only %}
-    {% include "includes/ui/form_field.html" with field=pricing_form.retail_status only %}
   </div>
 </section>

@@ -112,10 +112,9 @@ def test_a_new_product_goes_on_to_its_catalog_page(client):
             "weight_per_unit": "3000",
             "business_eur": "",
             "business_sek": "",
-            "business_status": "active",
+            "business_active": "on",
             "retail_eur": "",
             "retail_sek": "",
-            "retail_status": "inactive",
         },
     )
 

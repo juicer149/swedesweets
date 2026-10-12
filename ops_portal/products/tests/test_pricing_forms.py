@@ -5,8 +5,6 @@ from decimal import Decimal
 import pytest
 
 from ops_portal.products.pricing_forms import (
-    PRICING_STATUS_ACTIVE,
-    PRICING_STATUS_INACTIVE,
     ProductPricingForm,
     build_product_pricing_initial_data,
 )
@@ -17,6 +15,10 @@ from pricing.tests.factories import (
     pricing_product_factory,
 )
 
+# A switch that is on is sent as "on"; one that is off is not sent.
+ON = "on"
+OFF = None
+
 
 def valid_pricing_form_data(
     **overrides,
@@ -24,14 +26,16 @@ def valid_pricing_form_data(
     data = {
         "business_eur": "",
         "business_sek": "",
-        "business_status": PRICING_STATUS_INACTIVE,
         "retail_eur": "",
         "retail_sek": "",
-        "retail_status": PRICING_STATUS_INACTIVE,
     }
     data.update(overrides)
 
-    return data
+    return {
+        key: value
+        for key, value in data.items()
+        if value is not None
+    }
 
 
 def test_product_pricing_form_accepts_empty_pricing():
@@ -43,18 +47,12 @@ def test_product_pricing_form_accepts_empty_pricing():
 
     assert form.cleaned_data["business_eur"] is None
     assert form.cleaned_data["business_sek"] is None
-    assert (
-        form.cleaned_data["business_status"]
-        == PRICING_STATUS_INACTIVE
-    )
+    assert form.cleaned_data["business_active"] is False
     assert form.business_enabled is False
 
     assert form.cleaned_data["retail_eur"] is None
     assert form.cleaned_data["retail_sek"] is None
-    assert (
-        form.cleaned_data["retail_status"]
-        == PRICING_STATUS_INACTIVE
-    )
+    assert form.cleaned_data["retail_active"] is False
     assert form.retail_enabled is False
 
 
@@ -62,7 +60,7 @@ def test_product_pricing_form_accepts_disabled_configured_pricing():
     form = ProductPricingForm(
         data=valid_pricing_form_data(
             business_eur="7.50",
-            business_status=PRICING_STATUS_INACTIVE,
+            business_active=OFF,
         )
     )
 
@@ -79,7 +77,7 @@ def test_product_pricing_form_accepts_enabled_business_pricing():
     form = ProductPricingForm(
         data=valid_pricing_form_data(
             business_eur="7.50",
-            business_status=PRICING_STATUS_ACTIVE,
+            business_active=ON,
         )
     )
 
@@ -89,10 +87,7 @@ def test_product_pricing_form_accepts_enabled_business_pricing():
         form.cleaned_data["business_eur"]
         == Decimal("7.50")
     )
-    assert (
-        form.cleaned_data["business_status"]
-        == PRICING_STATUS_ACTIVE
-    )
+    assert form.cleaned_data["business_active"] is True
     assert form.business_enabled is True
 
 
@@ -100,7 +95,7 @@ def test_product_pricing_form_accepts_enabled_retail_pricing():
     form = ProductPricingForm(
         data=valid_pricing_form_data(
             retail_sek="99.00",
-            retail_status=PRICING_STATUS_ACTIVE,
+            retail_active=ON,
         )
     )
 
@@ -110,10 +105,7 @@ def test_product_pricing_form_accepts_enabled_retail_pricing():
         form.cleaned_data["retail_sek"]
         == Decimal("99.00")
     )
-    assert (
-        form.cleaned_data["retail_status"]
-        == PRICING_STATUS_ACTIVE
-    )
+    assert form.cleaned_data["retail_active"] is True
     assert form.retail_enabled is True
 
 
@@ -122,10 +114,10 @@ def test_product_pricing_form_accepts_multiple_currencies():
         data=valid_pricing_form_data(
             business_eur="7.00",
             business_sek="79.00",
-            business_status=PRICING_STATUS_ACTIVE,
+            business_active=ON,
             retail_eur="9.00",
             retail_sek="99.00",
-            retail_status=PRICING_STATUS_ACTIVE,
+            retail_active=ON,
         )
     )
 
@@ -157,7 +149,7 @@ def test_product_pricing_form_accepts_active_business_without_amount():
 
     form = ProductPricingForm(
         data=valid_pricing_form_data(
-            business_status=PRICING_STATUS_ACTIVE,
+            business_active=ON,
         )
     )
 
@@ -169,41 +161,19 @@ def test_product_pricing_form_accepts_active_business_without_amount():
 def test_product_pricing_form_defaults_both_channels_inactive():
     form = ProductPricingForm()
 
-    assert form["business_status"].value() == PRICING_STATUS_INACTIVE
-    assert form["retail_status"].value() == PRICING_STATUS_INACTIVE
+    assert not form["business_active"].value()
+    assert not form["retail_active"].value()
 
 
 def test_product_pricing_form_rejects_active_retail_without_amount():
     form = ProductPricingForm(
         data=valid_pricing_form_data(
-            retail_status=PRICING_STATUS_ACTIVE,
+            retail_active=ON,
         )
     )
 
     assert not form.is_valid()
-    assert "retail_status" in form.errors
-
-
-def test_product_pricing_form_rejects_invalid_business_status():
-    form = ProductPricingForm(
-        data=valid_pricing_form_data(
-            business_status="archived",
-        )
-    )
-
-    assert not form.is_valid()
-    assert "business_status" in form.errors
-
-
-def test_product_pricing_form_rejects_invalid_retail_status():
-    form = ProductPricingForm(
-        data=valid_pricing_form_data(
-            retail_status="archived",
-        )
-    )
-
-    assert not form.is_valid()
-    assert "retail_status" in form.errors
+    assert "retail_active" in form.errors
 
 
 def test_product_pricing_form_exposes_service_values():
@@ -211,9 +181,9 @@ def test_product_pricing_form_exposes_service_values():
         data=valid_pricing_form_data(
             business_eur="7.00",
             business_sek="79.00",
-            business_status=PRICING_STATUS_ACTIVE,
+            business_active=ON,
             retail_eur="9.00",
-            retail_status=PRICING_STATUS_INACTIVE,
+            retail_active=OFF,
         )
     )
 
@@ -277,28 +247,20 @@ def test_product_pricing_form_rejects_more_than_two_decimal_places(
     assert field_name in form.errors
 
 
-def test_product_pricing_form_uses_radio_chip_status_widgets():
+def test_product_pricing_form_status_is_one_switch_per_channel():
     form = ProductPricingForm()
 
-    business_widget = form.fields[
-        "business_status"
-    ].widget
-    retail_widget = form.fields[
-        "retail_status"
-    ].widget
+    for field_name in ("business_active", "retail_active"):
+        field = form.fields[field_name]
 
-    assert isinstance(
-        business_widget,
-        type(retail_widget),
-    )
-    assert (
-        business_widget.attrs["class"]
-        == "radio-chip-group"
-    )
-    assert (
-        retail_widget.attrs["class"]
-        == "radio-chip-group"
-    )
+        assert field.tag_toggle is True
+        assert field.tag_toggle_label == "Active"
+        assert field.widget.input_type == "checkbox"
+
+    # The switch comes before the channel's prices.
+    names = list(form.fields)
+    assert names.index("business_active") < names.index("business_eur")
+    assert names.index("retail_active") < names.index("retail_eur")
 
 
 @pytest.mark.django_db
@@ -311,10 +273,10 @@ def test_build_product_pricing_initial_data_without_pricing():
     assert initial == {
         "business_eur": None,
         "business_sek": None,
-        "business_status": PRICING_STATUS_INACTIVE,
+        "business_active": False,
         "retail_eur": None,
         "retail_sek": None,
-        "retail_status": PRICING_STATUS_INACTIVE,
+        "retail_active": False,
     }
 
 
@@ -357,8 +319,8 @@ def test_build_product_pricing_initial_data_from_existing_prices():
     assert initial == {
         "business_eur": Decimal("7.00"),
         "business_sek": Decimal("79.00"),
-        "business_status": PRICING_STATUS_ACTIVE,
+        "business_active": True,
         "retail_eur": Decimal("9.00"),
         "retail_sek": None,
-        "retail_status": PRICING_STATUS_INACTIVE,
+        "retail_active": False,
     }

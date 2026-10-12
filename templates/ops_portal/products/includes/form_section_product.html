@@ -1,21 +1,29 @@
 {% comment %}
-  The Product section of the product form: catalog ID, maker, brand and
-  name; for a new product its unit and weight, for one being edited its
-  status (one switch); vegan.
+  The Product section of the product form. Editing: the status (one
+  switch) and the catalog ID side by side at the top, brand and name, then
+  maker and vegan. Adding: catalog ID and maker, brand and name, unit and
+  weight, vegan.
 {% endcomment %}
 <div class="form-grid">
-  {% include "includes/ui/form_field.html" with field=form.internal_number only %}
-  {% include "includes/ui/form_field.html" with field=form.manufacturer only %}
-
-  {% include "includes/ui/form_field.html" with field=form.brand only %}
-  {% include "includes/ui/form_field.html" with field=form.name only %}
-
   {% if product %}
     {% include "includes/ui/form_field.html" with field=form.active only %}
+    {% include "includes/ui/form_field.html" with field=form.internal_number only %}
+
+    {% include "includes/ui/form_field.html" with field=form.brand only %}
+    {% include "includes/ui/form_field.html" with field=form.name only %}
+
+    {% include "includes/ui/form_field.html" with field=form.manufacturer only %}
+    {% include "includes/ui/form_field.html" with field=form.vegan only %}
   {% else %}
+    {% include "includes/ui/form_field.html" with field=form.internal_number only %}
+    {% include "includes/ui/form_field.html" with field=form.manufacturer only %}
+
+    {% include "includes/ui/form_field.html" with field=form.brand only %}
+    {% include "includes/ui/form_field.html" with field=form.name only %}
+
     {% include "includes/ui/form_field.html" with field=form.stock_unit only %}
     {% include "includes/ui/form_field.html" with field=form.weight_per_unit only %}
-  {% endif %}
 
-  {% include "includes/ui/form_field.html" with field=form.vegan only %}
+    {% include "includes/ui/form_field.html" with field=form.vegan only %}
+  {% endif %}
 </div>

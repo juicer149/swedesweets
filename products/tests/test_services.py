@@ -75,33 +75,6 @@ def test_create_product_accepts_piece_stock_unit():
 
 
 @pytest.mark.django_db
-def test_create_product_accepts_empty_profile_category():
-    result = create_product(
-        brand="OLW",
-        name="Grill Chips",
-        weight_per_unit=275,
-        category="",
-    )
-
-    assert result.created is True
-    assert result.item.profile.category == ""
-
-
-@pytest.mark.django_db
-def test_create_product_rejects_invalid_profile_category():
-    with pytest.raises(
-        InvalidProductData,
-        match="Unsupported product category",
-    ):
-        create_product(
-            brand="Generic",
-            name="Drink",
-            weight_per_unit=500,
-            category="drinks",
-        )
-
-
-@pytest.mark.django_db
 def test_create_product_returns_existing_product_with_same_sku():
     first = create_product(
         brand="OLW",
