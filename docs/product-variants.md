@@ -65,7 +65,8 @@ Everything else follows from those:
    they are deleted with it. A paused variant is left out of catalogs, new
    batches and new orders; its history stays.
 7. The last active variant of an active product cannot be paused (pause the
-   product instead).
+   product instead). On the ops edit page a variant is paused by switching
+   off both its sales channels.
 8. Consistency, enforced in the services and tested:
    - a batch offer's `variant` is its batch's variant;
    - an order line's `variant` is its offer's variant;
@@ -114,11 +115,13 @@ fall back to the order they were added in.
 - **Product page** gets a **Variants** tab: the variants in order with the
   stock of each.
 - **Edit** has **Variants and prices**:
-  - EUR / SEK chips, the channel switches as the price columns' heads, and
-    "All variants" (a price typed there becomes every variant's);
+  - EUR / SEK chips and "Price per variant": off, one price for the
+    product (every variant's); on, each variant's own, with "All variants"
+    to set them all at once;
   - reorder by dragging (and up/down buttons for phones), add a variant;
-  - each saved row behind its own lock: rename, set a weight, prices,
-    pause, delete (only without history, rule 6);
+  - each saved row behind its own lock: rename, set a weight, its sales
+    channels (Retail, Business; in neither it is paused), its prices,
+    delete (only without history, rule 6);
   - saved with "Update product".
   Suggested labels (XS, S, M, L, XL, XXL, One size) come as a datalist; any
   text is allowed.

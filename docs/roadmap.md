@@ -20,9 +20,10 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   the cross or the icon, back to the page before. Plain navigation where
   the browser has no View Transitions. The cart is already on the server;
   half-filled contact details are kept in the session.
-- **Prices per variant**: one price typed for all variants is saved as each
-  variant's own price; one variant's price can be changed on its own. The
-  channel switches (retail, business) are the product's.
+- **Prices per variant**: "Price per variant" off, the product has one
+  price, saved as every variant's; on, each variant has its own, and a
+  price typed in "All variants" overwrites them all. Each variant has its
+  own sales channels (retail, business); in neither, it is paused.
 - **Edit pages**: sections open one under the other (no folding), the
   important parts behind a lock in the page (the product's data, each
   saved variant); saving comes back to the same page.
@@ -92,6 +93,10 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    small tilted label, attribute icons; colours per category, sketched in
    Figma first, together with the size chips (step 2).
 
+Later, not planned yet: **prices in SEK from EUR** at the day's rate (an
+exchange-rate API), EUR staying the price that is set; the SEK fields would
+then show the converted price instead of being typed.
+
 Small things to fit in anywhere: on `/ops/orders/<id>/deliver/` the contact
 details follow the page's left edge instead of sitting centred (check
 mobile).
@@ -111,9 +116,10 @@ mobile).
 ingredients under one tab per language.
 
 **Edit page**: Product behind a lock, then **Variants and prices**: EUR /
-SEK chips, the channel switches as the price columns' heads, "All
-variants" (never filled in; a price typed there becomes every variant's),
-then a row per variant behind its own lock.
+SEK chips and "Price per variant"; the product's price (or "All
+variants"); then a row per variant behind its own lock: label, weight,
+sales channels (Retail, Business), and its own prices on a second line
+when they differ.
 
 ## Done
 

@@ -120,7 +120,8 @@ class ProductForm(forms.Form):
         max_length=MAX_NAME_LENGTH,
         label="Product name",
         help_text=(
-            "Swedish/internal MVP product name."
+            "The product's own (Swedish) name. What the shop calls it "
+            "in each language is on the catalog page."
         ),
         error_messages={
             "required": (
@@ -316,7 +317,8 @@ class ProductEditForm(forms.Form):
         max_length=MAX_NAME_LENGTH,
         label="Product name",
         help_text=(
-            "Swedish/internal MVP product name."
+            "The product's own (Swedish) name. What the shop calls it "
+            "in each language is on the catalog page."
         ),
         error_messages={
             "required": (

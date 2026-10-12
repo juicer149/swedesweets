@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import replace
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -45,9 +43,9 @@ from ops_portal.products.list_viewmodels import (
     build_products_page_header,
 )
 from ops_portal.products.pricing_forms import (
-    ProductChannelsForm,
+    ProductPricesForm,
     ProductPricingForm,
-    build_product_channels_initial_data,
+    build_product_prices_initial_data,
 )
 from ops_portal.products.variant_forms import (
     build_variant_formset,
@@ -57,9 +55,9 @@ from pricing.errors import (
 )
 from pricing.models import CommercialPrice
 from pricing.product_configuration import (
-    VariantPrices,
-    update_product_pricing,
+    VariantPricing,
     update_product_standard_pricing,
+    update_variants_pricing,
 )
 from pricing.selectors import (
     standard_prices_by_variant_id,
@@ -307,7 +305,8 @@ def edit(
     product_pk: int,
 ):
     """The product's own data (behind a lock in the page) and its variants
-    with their prices, saved together; the page comes back after a save."""
+    with their sales channels and prices, saved together; the page comes
+    back after a save."""
 
     product = _get_product_or_404(
         product_pk
@@ -320,20 +319,24 @@ def edit(
             request.POST,
             product=product,
         )
-        channels_form = ProductChannelsForm(
+        prices_form = ProductPricesForm(
             request.POST,
         )
         variant_formset = build_variant_formset(
             product=product,
             data=request.POST,
+            prices_by_channel=prices_by_channel,
         )
 
         forms_are_valid = all(
             [
                 form.is_valid(),
-                channels_form.is_valid(),
+                prices_form.is_valid(),
                 variant_formset.is_valid(),
             ]
+        ) and _prices_are_complete(
+            prices_form=prices_form,
+            variant_formset=variant_formset,
         )
 
         if forms_are_valid:
@@ -355,18 +358,12 @@ def edit(
                         changes=variant_formset.changes(),
                     )
 
-                    update_product_pricing(
+                    update_variants_pricing(
                         product=updated_product,
-                        business_enabled=channels_form.cleaned_data[
-                            "business_active"
-                        ],
-                        retail_enabled=channels_form.cleaned_data[
-                            "retail_active"
-                        ],
-                        prices=_prices_by_variant_id(
+                        pricing=_pricing_by_variant_id(
                             product=updated_product,
+                            prices_form=prices_form,
                             variant_formset=variant_formset,
-                            all_variants=channels_form.all_variants_prices(),
                         ),
                     )
 
@@ -377,7 +374,7 @@ def edit(
                 )
 
             except InvalidCommercialPrice as error:
-                channels_form.add_error(
+                prices_form.add_error(
                     None,
                     str(error),
                 )
@@ -399,14 +396,10 @@ def edit(
             initial=build_product_edit_initial_data(product),
             product=product,
         )
-        channels_form = ProductChannelsForm(
-            initial=build_product_channels_initial_data(
-                business_prices=prices_by_channel[
-                    CommercialPrice.Channel.BUSINESS
-                ],
-                retail_prices=prices_by_channel[
-                    CommercialPrice.Channel.RETAIL
-                ],
+        prices_form = ProductPricesForm(
+            initial=build_product_prices_initial_data(
+                prices_by_channel=prices_by_channel,
+                variant_ids=[variant.pk for variant in product.variants.all()],
             ),
         )
         variant_formset = build_variant_formset(
@@ -417,7 +410,7 @@ def edit(
     context = (
         build_edit_product_form_context(
             form=form,
-            channels_form=channels_form,
+            prices_form=prices_form,
             product=product,
             variant_formset=variant_formset,
         )
@@ -443,27 +436,63 @@ def _standard_prices_by_channel(
     }
 
 
-def _prices_by_variant_id(
+def _kept_rows(variant_formset) -> list:
+    return [
+        row
+        for row in variant_formset.ordered_forms_by_position
+        if not row.cleaned_data.get("delete")
+    ]
+
+
+def _prices_are_complete(
+    *,
+    prices_form: ProductPricesForm,
+    variant_formset,
+) -> bool:
+    """A variant sold in retail needs a retail price (EUR or SEK): said on
+    its row, or on the shared row when the product has one price."""
+
+    complete = True
+
+    for row in _kept_rows(variant_formset):
+        if not row.cleaned_data.get("retail"):
+            continue
+
+        prices = prices_form.prices_for(row.prices())
+
+        if prices.retail_eur is not None or prices.retail_sek is not None:
+            continue
+
+        complete = False
+
+        if prices_form.individual:
+            row.add_error("retail_eur", "Sold in retail: give it a price.")
+        elif "all_retail_eur" not in prices_form.errors:
+            prices_form.add_error(
+                "all_retail_eur",
+                "A variant is sold in retail: give the retail price.",
+            )
+
+    return complete
+
+
+def _pricing_by_variant_id(
     *,
     product: Product,
+    prices_form: ProductPricesForm,
     variant_formset,
-    all_variants: dict,
-) -> dict[int, VariantPrices]:
-    """Each kept row's prices, by its variant (a new row's by its label,
-    now saved), with the "All variants" amounts over them."""
+) -> dict[int, VariantPricing]:
+    """Each kept row's channels and prices, by its variant (a new row's by
+    its label, now saved)."""
 
     variant_id_by_label = {
         variant.label.casefold(): variant.pk
         for variant in product.variants.all()
     }
-    prices: dict[int, VariantPrices] = {}
+    pricing: dict[int, VariantPricing] = {}
 
-    for row in variant_formset.ordered_forms_by_position:
+    for row in _kept_rows(variant_formset):
         data = row.cleaned_data
-
-        if data.get("delete"):
-            continue
-
         variant_id = data.get("variant_id") or variant_id_by_label.get(
             " ".join(data["label"].split()).casefold()
         )
@@ -471,9 +500,13 @@ def _prices_by_variant_id(
         if variant_id is None:
             continue
 
-        prices[variant_id] = replace(row.prices(), **all_variants)
+        pricing[variant_id] = VariantPricing(
+            retail_enabled=bool(data.get("retail")),
+            business_enabled=bool(data.get("business")),
+            prices=prices_form.prices_for(row.prices()),
+        )
 
-    return prices
+    return pricing
 
 
 @login_required

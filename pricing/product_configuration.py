@@ -1,11 +1,10 @@
 """Standard prices from the ops product form, per variant.
 
-A product's variants each have their own standard offer per channel. The
-channel switches (business, retail) are the product's: one switch turns
-the channel on or off for every variant. The amounts are each variant's
-own; `update_product_pricing` sets them all at once, and
-`update_product_standard_pricing` gives every variant the same ones (a new
-product, which has one variant).
+A product's variants each have their own standard offer per channel: its
+switch (sold in that channel or not) and its amounts.
+`update_variants_pricing` sets each variant's; `update_product_pricing`
+gives every variant the same switches, and `update_product_standard_pricing`
+the same switches and amounts (a new product, which has one variant).
 """
 
 from __future__ import annotations
@@ -37,6 +36,82 @@ class VariantPrices:
     business_sek: Decimal | None = None
     retail_eur: Decimal | None = None
     retail_sek: Decimal | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class VariantPricing:
+    """One variant's standard pricing: in which channels it is sold, and its
+    amounts (None: leave them as they are)."""
+
+    retail_enabled: bool
+    business_enabled: bool
+    prices: VariantPrices | None = None
+
+
+@transaction.atomic
+def update_variants_pricing(
+    *,
+    product: Product,
+    pricing: Mapping[int, VariantPricing],
+) -> None:
+    """Apply each variant's pricing (`pricing`, by variant id; a variant
+    left out is not changed).
+
+    BUSINESS: the variant keeps a standard offer (it may be unpriced); its
+    switch is whether it is sold to business customers.
+
+    RETAIL: a variant sold in retail needs an amount.
+    """
+
+    variants = {variant.pk: variant for variant in product.variants.all()}
+    unknown = set(pricing) - set(variants)
+
+    if unknown:
+        raise InvalidCommercialPrice(
+            "prices given for a variant of another product"
+        )
+
+    for variant_id, variant_pricing in pricing.items():
+        variant = variants[variant_id]
+
+        if variant_pricing.retail_enabled and not _retail_amount_after(
+            variant=variant,
+            prices=variant_pricing.prices,
+        ):
+            raise InvalidCommercialPrice(
+                f"{variant.display_name} is sold in retail: give it a "
+                "retail price."
+            )
+
+        prices = variant_pricing.prices
+
+        _update_channel_pricing(
+            variant=variant,
+            channel=CommercialPrice.Channel.BUSINESS,
+            enabled=variant_pricing.business_enabled,
+            amounts=(
+                None
+                if prices is None
+                else {
+                    PriceAmount.Currency.EUR: prices.business_eur,
+                    PriceAmount.Currency.SEK: prices.business_sek,
+                }
+            ),
+        )
+
+        _update_channel_pricing(
+            variant=variant,
+            channel=CommercialPrice.Channel.RETAIL,
+            enabled=variant_pricing.retail_enabled,
+            amounts=(
+                None
+                if prices is None
+                else {
+                    PriceAmount.Currency.EUR: prices.retail_eur,
+                    PriceAmount.Currency.SEK: prices.retail_sek,
+                }
+            ),
+        )
 
 
 @transaction.atomic

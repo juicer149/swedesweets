@@ -2,8 +2,9 @@
   Variants and prices on the product edit form
   (templates/ops_portal/products/includes/form_section_variants.html).
 
-  - The EUR / SEK chips: the table shows that currency's prices (the
-    editor's data-currency; css/variants.css hides the other, still sent).
+  - The EUR / SEK chips: the editor shows that currency's prices (its
+    data-currency; css/variants.css hides the other, still sent).
+  - "Price per variant": shows the rows' price lines (data-individual).
   - Each saved row's lock is form_lock.js's; a row's trash sits behind it.
   - The trash asks, then the row flashes red and folds away (line_flash.js)
     and is marked for deletion on save; a row not saved yet just goes.
@@ -26,6 +27,40 @@
     }
 
     let dragged = null;
+
+    // Price per variant: on, each row's price line shows and the shared
+    // line becomes "All variants", empty (what it held waits, and comes
+    // back if switched off again); off, the shared line is the product's
+    // price again.
+    const individual = editor.querySelector("[data-individual-prices]");
+    const shared = Array.from(
+      editor.querySelectorAll(".variant-shared input[name]")
+    );
+
+    if (individual) {
+      individual.addEventListener("change", () => {
+        editor.dataset.individual = String(individual.checked);
+
+        // Off with nothing waiting (the page came with prices per
+        // variant): the first variant's prices become the product's, so
+        // a save does not empty them all.
+        const firstRow = visibleRows()[0];
+
+        shared.forEach((input) => {
+          if (individual.checked) {
+            input.dataset.productPrice = input.value;
+            input.value = "";
+          } else if ("productPrice" in input.dataset) {
+            input.value = input.dataset.productPrice;
+          } else if (firstRow) {
+            const key = input.name.replace(/^all_/, "");
+            const own = firstRow.querySelector(`input[name$="-${key}"]`);
+
+            input.value = own ? own.value : "";
+          }
+        });
+      });
+    }
 
     currencyChips.forEach((chip) => {
       chip.addEventListener("click", () => {

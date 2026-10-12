@@ -279,3 +279,59 @@ def test_a_variant_in_a_cart_is_history():
     CartLine.objects.create(cart=cart, commercial_price=offer, quantity=1)
 
     assert variant_has_history(medium) is True
+
+
+@pytest.mark.django_db
+def test_each_variant_has_its_own_sales_channels():
+    from pricing.product_configuration import (
+        VariantPricing,
+        update_variants_pricing,
+    )
+
+    product, small, medium = _hoodie()
+
+    update_variants_pricing(
+        product=product,
+        pricing={
+            small.pk: VariantPricing(
+                retail_enabled=True,
+                business_enabled=False,
+                prices=VariantPrices(retail_eur=Decimal("2.50")),
+            ),
+            medium.pk: VariantPricing(
+                retail_enabled=False,
+                business_enabled=True,
+                prices=VariantPrices(business_eur=Decimal("3.40")),
+            ),
+        },
+    )
+
+    retail = standard_prices_by_variant_id(product=product, channel=RETAIL)
+    business = standard_prices_by_variant_id(product=product, channel=BUSINESS)
+
+    assert retail[small.pk].enabled is True
+    assert medium.pk not in retail
+    assert business[small.pk].enabled is False
+    assert business[medium.pk].enabled is True
+
+
+@pytest.mark.django_db
+def test_a_variant_sold_in_retail_needs_a_price():
+    from pricing.product_configuration import (
+        VariantPricing,
+        update_variants_pricing,
+    )
+
+    product, small, _medium = _hoodie()
+
+    with pytest.raises(InvalidCommercialPrice, match="give it a retail price"):
+        update_variants_pricing(
+            product=product,
+            pricing={
+                small.pk: VariantPricing(
+                    retail_enabled=True,
+                    business_enabled=True,
+                    prices=VariantPrices(),
+                ),
+            },
+        )

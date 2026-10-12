@@ -1,8 +1,9 @@
 {% comment %}
-  One variant in the variants table: drag handle; behind the row's lock
-  (form_lock.js) its label, weight, retail and business prices (the
-  table's currency shows), on sale and the trash; the lock; up/down for
-  phones; the SKU under it.
+  One variant in the variants editor. Its first line: drag handle; behind
+  the row's lock (form_lock.js) its label, weight, sales channels (Retail,
+  Business; neither: paused) and the trash; the lock; up/down for phones.
+  Under it the SKU, and with price per variant its own prices (the
+  editor's currency shows).
 
   row      a VariantForm (ops_portal/products/variant_forms.py)
   is_new   the template row "Add variant" copies (open, no lock)
@@ -35,18 +36,16 @@
       {% for error in row.weight_per_unit.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
     </div>
 
-    <div class="variant-row__retail">
-      {% include "ops_portal/products/includes/variant_price.html" with eur=row.retail_eur sek=row.retail_sek only %}
+    <div class="variant-row__channels" role="group" aria-label="Sales channels">
+      <label class="product-tag-toggle product-tag-toggle--status" for="{{ row.retail.id_for_label }}">
+        {{ row.retail }}
+        <span class="product-tag-toggle__surface">{{ row.retail.label }}</span>
+      </label>
+      <label class="product-tag-toggle product-tag-toggle--status" for="{{ row.business.id_for_label }}">
+        {{ row.business }}
+        <span class="product-tag-toggle__surface">{{ row.business.label }}</span>
+      </label>
     </div>
-
-    <div class="variant-row__business">
-      {% include "ops_portal/products/includes/variant_price.html" with eur=row.business_eur sek=row.business_sek only %}
-    </div>
-
-    <label class="product-tag-toggle variant-row__sale" for="{{ row.active.id_for_label }}">
-      {{ row.active }}
-      <span class="product-tag-toggle__surface">{{ row.active.label }}</span>
-    </label>
 
     <div class="variant-row__remove">
       {% if is_new or row.can_delete %}
@@ -54,11 +53,16 @@
           {% include "includes/ui/icon_block.html" with name="trash" size="md" only %}
         </button>
       {% else %}
-        {# Used before (stock, carts or orders): it stays, and is paused instead. #}
-        <button class="line__remove-button" type="button" disabled aria-label="Used before: pause it instead" title="Used before: pause it instead">
+        {# Used before (stock, carts or orders): it stays; both channels off pause it. #}
+        <button class="line__remove-button" type="button" disabled aria-label="Used before: switch its channels off instead" title="Used before: switch its channels off instead">
           {% include "includes/ui/icon_block.html" with name="trash" size="md" only %}
         </button>
       {% endif %}
+    </div>
+
+    <div class="variant-row__prices">
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=row.retail_eur sek=row.retail_sek only %}
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=row.business_eur sek=row.business_sek only %}
     </div>
   </div>
 
@@ -78,7 +82,10 @@
   </div>
 
   {% if row.state %}
-    <span class="variant-row__sku">{{ row.state.variant.sku }}</span>
+    <span class="variant-row__sku">
+      {{ row.state.variant.sku }}
+      {% if row.state.is_stocked_or_ordered %}<span class="variant-row__fixed">· weight fixed: has stock or orders</span>{% endif %}
+    </span>
   {% endif %}
 
   {% for error in row.delete.errors %}<div class="form-field__errors variant-row__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}

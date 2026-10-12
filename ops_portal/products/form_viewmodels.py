@@ -14,7 +14,7 @@ from ops_portal.products.forms import (
 )
 from ops_portal.products.presentation import product_status_icon
 from ops_portal.products.pricing_forms import (
-    ProductChannelsForm,
+    ProductPricesForm,
     ProductPricingForm,
 )
 from ops_portal.products.variant_forms import (
@@ -82,7 +82,7 @@ class ProductFormContext:
     submit_label: str
     cancel_url: str
     pricing_form: ProductPricingForm | None = None
-    channels_form: ProductChannelsForm | None = None
+    prices_form: ProductPricesForm | None = None
     product: Product | None = None
     variant_formset: BaseVariantFormSet | None = None
 
@@ -94,7 +94,7 @@ class ProductFormContext:
             "pricing_form": (
                 self.pricing_form
             ),
-            "channels_form": self.channels_form,
+            "prices_form": self.prices_form,
             "product": self.product,
             "form_sections": (
                 PRODUCT_EDIT_FORM_SECTIONS
@@ -148,13 +148,13 @@ def build_create_product_form_context(
 def build_edit_product_form_context(
     *,
     form: ProductEditForm,
-    channels_form: ProductChannelsForm,
+    prices_form: ProductPricesForm,
     product: Product,
     variant_formset: BaseVariantFormSet,
 ) -> ProductFormContext:
     return ProductFormContext(
         form=form,
-        channels_form=channels_form,
+        prices_form=prices_form,
         product=product,
         variant_formset=variant_formset,
         title=f"Edit {product.display_name}",

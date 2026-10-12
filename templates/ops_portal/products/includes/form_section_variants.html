@@ -2,18 +2,25 @@
   Variants and prices, on the product edit form (variant_editor.js,
   form_lock.js).
 
-  Over the table, EUR / SEK chips choose which currency's prices the table
-  shows (both are kept and sent). The column heads Retail and Business are
-  the channels' switches: on, the product is sold in that channel, every
-  variant at its own price. Under them, "All variants": never filled in;
-  a price typed there becomes every variant's price in that channel and
-  currency when saved. Then a row per variant: label, weight, its retail
-  and business prices, on sale, the trash; each saved row behind its own
-  lock (open after an error), new rows open. Rows move by dragging the
-  handle, or the arrows on phones.
+  Over the list: EUR / SEK chips (which currency's prices show; both are
+  kept and sent) and the "Price per variant" switch. Then the shared price
+  line: off, it is the product's price, saved as every variant's; on, it
+  is "All variants", never filled in (a price typed there becomes every
+  variant's) and each variant shows its own price line.
+
+  Then a row per variant: label, weight, its sales channels (Retail,
+  Business: where it is sold; neither, it is paused), the trash; with
+  price per variant, its prices on a second line. Each saved row behind
+  its own lock (open after an error), new rows open. Rows move by dragging
+  the handle, or the arrows on phones.
 {% endcomment %}
-{% with formset=variant_formset channels=channels_form %}
-  <div class="variant-editor" data-variant-editor data-currency="eur">
+{% with formset=variant_formset prices=prices_form %}
+  <div
+    class="variant-editor"
+    data-variant-editor
+    data-currency="eur"
+    data-individual="{% if prices.individual_prices.value %}true{% else %}false{% endif %}"
+  >
     {{ formset.management_form }}
 
     <div class="variant-editor__bar">
@@ -22,43 +29,43 @@
         <button class="chip filter-chip" type="button" aria-pressed="false" data-currency-choice="sek">SEK</button>
       </div>
 
-      <p class="page__note variant-editor__note">Open a variant's lock to change it.</p>
+      <label class="product-tag-toggle product-tag-toggle--status variant-editor__individual" for="{{ prices.individual_prices.id_for_label }}">
+        {{ prices.individual_prices }}
+        <span class="product-tag-toggle__surface">{{ prices.individual_prices.label }}</span>
+      </label>
     </div>
 
-    {% if formset.non_form_errors or channels.errors %}
+    {% if formset.non_form_errors or prices.non_field_errors %}
       <div class="form-errors" role="alert">
         {% for error in formset.non_form_errors %}<p>{{ error }}</p>{% endfor %}
-        {% for error in channels.non_field_errors %}<p>{{ error }}</p>{% endfor %}
-        {% for field in channels %}{% for error in field.errors %}<p>{{ field.label }}: {{ error }}</p>{% endfor %}{% endfor %}
+        {% for error in prices.non_field_errors %}<p>{{ error }}</p>{% endfor %}
       </div>
     {% endif %}
 
-    <div class="variant-table">
-      <div class="variant-rows__head">
-        <span></span>
-        <span class="variant-rows__name">Label</span>
-        <span class="variant-rows__name">Weight (g)</span>
-        {% include "ops_portal/products/includes/channel_switch.html" with field=channels.retail_active only %}
-        {% include "ops_portal/products/includes/channel_switch.html" with field=channels.business_active only %}
-        <span class="variant-rows__name">On sale</span>
-        <span></span>
-        <span></span>
-      </div>
-
-      <div class="variant-row variant-row--all">
-        <span></span>
-        <span class="variant-row__all-name">All variants</span>
-        <span class="variant-row__all-note">Typed here: every variant's price</span>
-        {% include "ops_portal/products/includes/variant_price.html" with eur=channels.all_retail_eur sek=channels.all_retail_sek only %}
-        {% include "ops_portal/products/includes/variant_price.html" with eur=channels.all_business_eur sek=channels.all_business_sek only %}
-      </div>
-
-      <ol class="variant-rows" data-variant-rows>
-        {% for row in formset %}
-          {% include "ops_portal/products/includes/variant_row.html" with row=row only %}
-        {% endfor %}
-      </ol>
+    <div class="variant-shared">
+      <p class="variant-shared__name">
+        <span class="variant-shared__when-one">Price</span>
+        <span class="variant-shared__when-each">
+          All variants
+          <span class="info-dot" tabindex="0" title="A price typed here becomes every variant's price when you save. It stays empty.">?</span>
+        </span>
+      </p>
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=prices.all_retail_eur sek=prices.all_retail_sek only %}
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=prices.all_business_eur sek=prices.all_business_sek only %}
     </div>
+
+    <div class="variant-rows__head" aria-hidden="true">
+      <span></span>
+      <span>Label</span>
+      <span>Weight (g)</span>
+      <span>Sales channels</span>
+    </div>
+
+    <ol class="variant-rows" data-variant-rows>
+      {% for row in formset %}
+        {% include "ops_portal/products/includes/variant_row.html" with row=row only %}
+      {% endfor %}
+    </ol>
 
     <template data-variant-template>
       {% include "ops_portal/products/includes/variant_row.html" with row=formset.empty_form is_new=True only %}

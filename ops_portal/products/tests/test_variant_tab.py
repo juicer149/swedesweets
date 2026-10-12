@@ -28,6 +28,13 @@ def _price(variant, channel):
     )
 
 
+def _enabled(variant, channel):
+    return variant.commercial_prices.get(
+        batch__isnull=True,
+        channel=channel,
+    ).enabled
+
+
 def _detail_url(product):
     return reverse("ops_products:detail", kwargs={"product_pk": product.pk})
 
@@ -64,7 +71,7 @@ def _page_post_data(response) -> dict[str, str]:
 
     data = {
         **_form_values(context["form"]),
-        **_form_values(context["channels_form"]),
+        **_form_values(context["prices_form"]),
         **_form_values(formset.management_form),
     }
 
@@ -137,8 +144,10 @@ def test_saving_the_page_as_it_came_changes_nothing(client):
     assert response.url == _edit_url(product)
     variant = product.variants.get()
     assert variant.label == ""
+    assert variant.active is True
     assert _price(variant, RETAIL) == Decimal("2.50")
     assert _price(variant, BUSINESS) == Decimal("1.90")
+    assert _enabled(variant, RETAIL) and _enabled(variant, BUSINESS)
 
 
 @pytest.mark.django_db
@@ -153,10 +162,11 @@ def test_the_page_opens_with_saved_rows_and_the_product_locked(client):
     # The product's data and each saved variant behind a lock.
     assert content.count("data-lock-button") == 3
     assert content.count("data-lockable inert") == 3
-    # Channel switches head the price columns; "All variants" under them.
-    assert 'name="retail_active"' in content
+    # Each row's sales channels; the shared price line; the switch.
+    assert 'name="variants-1-retail"' in content
     assert 'name="all_retail_eur"' in content
     assert 'data-currency-choice="sek"' in content
+    assert 'data-individual="false"' in content
     assert [section.key for section in response.context["form_sections"]] == [
         "product",
         "variants",
@@ -164,7 +174,137 @@ def test_the_page_opens_with_saved_rows_and_the_product_locked(client):
 
 
 @pytest.mark.django_db
-def test_adding_a_variant_names_the_first_and_prices_both(client):
+def test_one_price_for_the_product_is_every_variants(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Hoodie", internal_number=608)
+    variant_factory(product=product, label="M", first_label="S")
+
+    page = client.get(_edit_url(product))
+    data = _page_post_data(page) | {
+        "all_retail_eur": "4.50",
+        "all_business_eur": "3.40",
+        "variants-0-retail": "on",
+        "variants-1-retail": "on",
+    }
+
+    response = client.post(_edit_url(product), data)
+
+    assert response.status_code == 302
+    for variant in product.variants.all():
+        assert _price(variant, RETAIL) == Decimal("4.50")
+        assert _price(variant, BUSINESS) == Decimal("3.40")
+
+    page = client.get(_edit_url(product))
+    assert page.context["prices_form"]["all_retail_eur"].value() == (
+        Decimal("4.50")
+    )
+    assert page.context["prices_form"]["individual_prices"].value() is False
+
+
+@pytest.mark.django_db
+def test_prices_per_variant_and_all_variants_over_them(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Hoodie", internal_number=609)
+    variant_factory(product=product, label="M", first_label="S")
+
+    page = client.get(_edit_url(product))
+    data = _page_post_data(page) | {
+        "individual_prices": "on",
+        "variants-0-retail": "on",
+        "variants-0-retail_eur": "2.50",
+        "variants-1-retail": "on",
+        "variants-1-retail_eur": "4.50",
+        "variants-0-business_eur": "1.00",
+        "variants-1-business_eur": "2.00",
+        "all_business_eur": "3.40",
+        "all_retail_eur": "",
+    }
+
+    response = client.post(_edit_url(product), data)
+
+    assert response.status_code == 302
+    small, medium = product.variants.all()
+    assert _price(small, RETAIL) == Decimal("2.50")
+    assert _price(medium, RETAIL) == Decimal("4.50")
+    assert _price(small, BUSINESS) == Decimal("3.40")
+    assert _price(medium, BUSINESS) == Decimal("3.40")
+
+    # Different prices: the page opens with price per variant, "All
+    # variants" empty.
+    page = client.get(_edit_url(product))
+    assert page.context["prices_form"]["individual_prices"].value() is True
+    assert page.context["prices_form"]["all_retail_eur"].value() is None
+
+
+@pytest.mark.django_db
+def test_sales_channels_are_each_variants_and_neither_pauses_it(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Hoodie", internal_number=610)
+    variant_factory(product=product, label="M", first_label="S")
+
+    page = client.get(_edit_url(product))
+    data = _page_post_data(page) | {
+        "all_retail_eur": "4.50",
+        "variants-0-retail": "on",
+        "variants-0-business": "on",
+    }
+    data.pop("variants-1-retail", None)
+    data.pop("variants-1-business", None)
+
+    response = client.post(_edit_url(product), data)
+
+    assert response.status_code == 302
+    small, medium = product.variants.all()
+    assert small.active is True
+    assert _enabled(small, RETAIL) and _enabled(small, BUSINESS)
+    assert medium.active is False
+    assert not _enabled(medium, BUSINESS)
+
+
+@pytest.mark.django_db
+def test_an_active_product_needs_a_variant_in_a_channel(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Apple", internal_number=611)
+
+    page = client.get(_edit_url(product))
+    data = _page_post_data(page)
+    data.pop("variants-0-retail", None)
+    data.pop("variants-0-business", None)
+
+    response = client.post(_edit_url(product), data)
+
+    assert response.status_code == 200
+    assert "needs a variant in a sales channel" in str(
+        response.context["variant_formset"].non_form_errors()
+    )
+
+
+@pytest.mark.django_db
+def test_sold_in_retail_needs_a_price(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Hoodie", internal_number=612)
+    variant_factory(product=product, label="M", first_label="S")
+
+    # One price for the product: said on the shared line.
+    page = client.get(_edit_url(product))
+    data = _page_post_data(page) | {"variants-0-retail": "on"}
+    response = client.post(_edit_url(product), data)
+
+    assert response.status_code == 200
+    assert "all_retail_eur" in response.context["prices_form"].errors
+
+    # Prices per variant: said on the variant's own line.
+    data |= {"individual_prices": "on", "variants-1-retail_eur": "4.50"}
+    response = client.post(_edit_url(product), data)
+
+    assert response.status_code == 200
+    first, _second = response.context["variant_formset"].forms
+    assert "retail_eur" in first.errors
+    assert first.starts_locked is False
+
+
+@pytest.mark.django_db
+def test_adding_a_variant_names_the_first(client):
     client.force_login(full_staff_user_factory())
     product = product_factory(name="Hoodie", internal_number=604)
 
@@ -174,13 +314,10 @@ def test_adding_a_variant_names_the_first_and_prices_both(client):
         "variants-TOTAL_FORMS": "2",
         "variants-0-label": "M",
         "variants-0-position": "2",
-        "variants-0-retail_eur": "4.50",
         "variants-1-label": "S",
         "variants-1-position": "1",
         "variants-1-weight_per_unit": "300",
-        "variants-1-active": "on",
-        "variants-1-retail_eur": "2.50",
-        "retail_active": "on",
+        "variants-1-business": "on",
     }
 
     response = client.post(_edit_url(product), data)
@@ -193,52 +330,7 @@ def test_adding_a_variant_names_the_first_and_prices_both(client):
         ("S", 1, 300),
         ("M", 2, product.weight_per_unit),
     ]
-    small, medium = product.variants.all()
-    assert _price(small, RETAIL) == Decimal("2.50")
-    assert _price(medium, RETAIL) == Decimal("4.50")
-
-
-@pytest.mark.django_db
-def test_all_variants_overwrites_every_variants_price(client):
-    client.force_login(full_staff_user_factory())
-    product = product_factory(name="Hoodie", internal_number=608)
-    variant_factory(product=product, label="M", first_label="S")
-
-    page = client.get(_edit_url(product))
-    data = _page_post_data(page)
-    data |= {
-        "variants-0-business_eur": "1.00",
-        "variants-1-business_eur": "2.00",
-        "all_business_eur": "3.40",
-        "business_active": "on",
-    }
-
-    response = client.post(_edit_url(product), data)
-
-    assert response.status_code == 302
-    assert [
-        _price(variant, BUSINESS) for variant in product.variants.all()
-    ] == [Decimal("3.40"), Decimal("3.40")]
-
-    # Never filled in: the next page starts with it empty.
-    page = client.get(_edit_url(product))
-    assert page.context["channels_form"]["all_business_eur"].value() is None
-
-
-@pytest.mark.django_db
-def test_retail_on_without_any_price_is_refused(client):
-    client.force_login(full_staff_user_factory())
-    product = product_factory(name="Apple", internal_number=609)
-
-    page = client.get(_edit_url(product))
-    data = _page_post_data(page) | {"retail_active": "on"}
-
-    response = client.post(_edit_url(product), data)
-
-    assert response.status_code == 200
-    assert "at least one variant" in str(
-        response.context["channels_form"].non_field_errors()
-    )
+    assert _enabled(product.variants.get(label="S"), BUSINESS)
 
 
 @pytest.mark.django_db
@@ -252,7 +344,7 @@ def test_two_variants_need_a_label_each(client):
         "variants-TOTAL_FORMS": "2",
         "variants-1-label": "L",
         "variants-1-weight_per_unit": "300",
-        "variants-1-active": "on",
+        "variants-1-business": "on",
     }
 
     response = client.post(_edit_url(product), data)
@@ -286,7 +378,7 @@ def test_a_used_variant_cannot_be_deleted(client):
     response = client.post(_edit_url(product), data)
 
     assert response.status_code == 200
-    assert "pause it instead" in str(
+    assert "switch its channels off instead" in str(
         response.context["variant_formset"].forms[0].errors
     )
     assert product.variants.count() == 2
@@ -295,14 +387,16 @@ def test_a_used_variant_cannot_be_deleted(client):
 @pytest.mark.django_db
 def test_the_product_page_shows_each_variants_prices(client):
     client.force_login(full_staff_user_factory())
-    product = product_factory(name="Hoodie", internal_number=610)
+    product = product_factory(name="Hoodie", internal_number=613)
     variant_factory(product=product, label="M", first_label="S")
 
     page = client.get(_edit_url(product))
     data = _page_post_data(page) | {
+        "individual_prices": "on",
+        "variants-0-retail": "on",
         "variants-0-retail_eur": "2.50",
+        "variants-1-retail": "on",
         "variants-1-retail_eur": "4.50",
-        "retail_active": "on",
     }
     client.post(_edit_url(product), data)
 

@@ -1,23 +1,27 @@
 """Variants and prices on the product edit form (docs/product-variants.md).
 
-Each existing variant is a row (label, weight, its retail and business
-prices in EUR and SEK, on sale, delete), in the order shown everywhere; new
-rows are added in the page (variant_editor.js) and everything is saved with
-"Update product". Each saved row sits behind its own lock: a hands-off
-guard in the page (its fields are inert, still sent as they were), not a
-rule the server enforces.
+Each existing variant is a row (label, weight, its sales channels, its own
+retail and business prices in EUR and SEK, delete), in the order shown
+everywhere; new rows are added in the page (variant_editor.js) and
+everything is saved with "Update product". The sales channels say where
+the variant is sold: with neither, it is paused. Each saved row sits behind
+its own lock: a hands-off guard in the page (its fields are inert, still
+sent as they were), not a rule the server enforces.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from decimal import Decimal
 
 from django import forms
 from django.forms import BaseFormSet, formset_factory
 
-from ops_portal.products.pricing_forms import price_field
-from pricing.models import CommercialPrice, PriceAmount
+from ops_portal.products.pricing_forms import (
+    PRICE_FIELDS,
+    offer_amount,
+    price_field,
+)
+from pricing.models import CommercialPrice
 from pricing.product_configuration import VariantPrices
 from products.catalog import (
     MAX_VARIANT_LABEL_LENGTH,
@@ -29,13 +33,6 @@ from products.services import VariantChange, variant_has_history
 
 VARIANT_FORMSET_PREFIX = "variants"
 
-# A row's prices: (field, channel, currency).
-PRICE_FIELDS = (
-    ("retail_eur", CommercialPrice.Channel.RETAIL, PriceAmount.Currency.EUR),
-    ("retail_sek", CommercialPrice.Channel.RETAIL, PriceAmount.Currency.SEK),
-    ("business_eur", CommercialPrice.Channel.BUSINESS, PriceAmount.Currency.EUR),
-    ("business_sek", CommercialPrice.Channel.BUSINESS, PriceAmount.Currency.SEK),
-)
 
 SUGGESTED_VARIANT_LABELS = (
     "XS",
@@ -95,9 +92,19 @@ class VariantForm(forms.Form):
         widget=forms.NumberInput(attrs={"inputmode": "numeric"}),
     )
 
-    active = forms.BooleanField(
+    # Its sales channels: sold in the shop, sold to business customers.
+    # Neither: the variant is paused (rule 6, docs/product-variants.md).
+    retail = forms.BooleanField(
         required=False,
-        label="On sale",
+        label="Retail",
+        widget=forms.CheckboxInput(
+            attrs={"class": "product-tag-toggle__input"}
+        ),
+    )
+
+    business = forms.BooleanField(
+        required=False,
+        label="Business",
         widget=forms.CheckboxInput(
             attrs={"class": "product-tag-toggle__input"}
         ),
@@ -125,14 +132,8 @@ class VariantForm(forms.Form):
 
         self.states_by_id = states_by_id or {}
 
-        # Named, since the column heads are not beside them on phones.
-        for field_name, placeholder in (
-            ("retail_eur", "Retail €"),
-            ("retail_sek", "Retail kr"),
-            ("business_eur", "Business €"),
-            ("business_sek", "Business kr"),
-        ):
-            self.fields[field_name].widget.attrs["placeholder"] = placeholder
+        for field_name, _channel, _currency in PRICE_FIELDS:
+            self.fields[field_name].widget.attrs["placeholder"] = "0.00"
 
         state = self.state
 
@@ -161,6 +162,13 @@ class VariantForm(forms.Form):
 
         return self.state is not None and not self.errors
 
+    @property
+    def is_sold(self) -> bool:
+        return bool(
+            self.cleaned_data.get("retail")
+            or self.cleaned_data.get("business")
+        )
+
     def prices(self) -> VariantPrices:
         return VariantPrices(
             **{
@@ -175,9 +183,14 @@ class BaseVariantFormSet(BaseFormSet):
         self,
         *args,
         product: Product,
+        new_row_channels: dict[str, bool] | None = None,
         **kwargs,
     ) -> None:
         self.product = product
+        self.new_row_channels = new_row_channels or {
+            "retail": False,
+            "business": True,
+        }
         self.states_by_id = {
             variant.pk: VariantState(
                 variant=variant,
@@ -197,11 +210,12 @@ class BaseVariantFormSet(BaseFormSet):
         kwargs["states_by_id"] = self.states_by_id
 
         if index is None:
-            # The template row the page copies for "Add variant": on sale,
-            # the product's weight to start from.
+            # The template row the page copies for "Add variant": the
+            # product's weight and the first variant's channels to start
+            # from.
             kwargs["initial"] = {
                 "weight_per_unit": self.product.weight_per_unit,
-                "active": True,
+                **self.new_row_channels,
             }
 
         return kwargs
@@ -248,7 +262,7 @@ class BaseVariantFormSet(BaseFormSet):
                 if state is not None and state.has_history:
                     form.add_error(
                         "delete",
-                        "Used before: pause it instead.",
+                        "Used before: switch its channels off instead.",
                     )
                 continue
 
@@ -297,11 +311,10 @@ class BaseVariantFormSet(BaseFormSet):
 
             seen_labels.add(label.casefold())
 
-        if self.product.active and not any(
-            form.cleaned_data.get("active") for form in kept
-        ):
+        if self.product.active and not any(form.is_sold for form in kept):
             raise forms.ValidationError(
-                "Keep one variant on sale, or pause the product instead."
+                "An active product needs a variant in a sales channel: "
+                "switch one on, or set the product inactive."
             )
 
     def changes(self) -> list[VariantChange]:
@@ -313,7 +326,8 @@ class BaseVariantFormSet(BaseFormSet):
                 variant_id=form.cleaned_data.get("variant_id"),
                 label=form.cleaned_data["label"],
                 weight_per_unit=form.cleaned_data["weight_per_unit"],
-                active=form.cleaned_data.get("active", False),
+                # Sold in no channel: paused.
+                active=form.is_sold,
                 delete=form.cleaned_data.get("delete", False),
             )
             for form in self.ordered_forms_by_position
@@ -345,10 +359,17 @@ def build_variant_formset(
             "position": index,
             "label": variant.label,
             "weight_per_unit": variant.weight_per_unit,
-            "active": variant.active,
+            "retail": variant.active and _enabled(
+                prices_by_channel.get(CommercialPrice.Channel.RETAIL, {}),
+                variant,
+            ),
+            "business": variant.active and _enabled(
+                prices_by_channel.get(CommercialPrice.Channel.BUSINESS, {}),
+                variant,
+            ),
             "delete": False,
             **{
-                field_name: _amount(
+                field_name: offer_amount(
                     prices_by_channel.get(channel, {}).get(variant.pk),
                     currency=currency,
                 )
@@ -363,22 +384,22 @@ def build_variant_formset(
         initial=None if data is not None else initial,
         prefix=VARIANT_FORMSET_PREFIX,
         product=product,
-    )
-
-
-def _amount(
-    offer: CommercialPrice | None,
-    *,
-    currency: str,
-) -> Decimal | None:
-    if offer is None:
-        return None
-
-    return next(
-        (
-            amount.price
-            for amount in offer.amounts.all()
-            if amount.currency == currency
+        # A new variant starts in the first one's channels.
+        new_row_channels=(
+            {
+                "retail": initial[0]["retail"],
+                "business": initial[0]["business"],
+            }
+            if initial
+            else None
         ),
-        None,
     )
+
+
+def _enabled(
+    offers: dict[int, CommercialPrice],
+    variant: ProductVariant,
+) -> bool:
+    offer = offers.get(variant.pk)
+
+    return offer is not None and offer.enabled
