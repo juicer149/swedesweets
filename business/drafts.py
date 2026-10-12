@@ -48,29 +48,52 @@ def resolve_standard_business_offer(
     *,
     product: Product,
 ) -> CommercialPrice:
-    """Return the product's persistent standard BUSINESS offer.
+    """Return the product's standard BUSINESS offer: its first variant's
+    that is sold (enabled, the variant not paused), in the variants' order.
+    Choosing among several variants by product comes with the order form by
+    variant (docs/product-variants.md, step 7).
 
     A missing or disabled standard offer means the product is not sold in the
     business channel at the standard price (it may be retail-only); ordering
     it is rejected as an invalid order, not treated as a server error.
     """
 
-    offer = (
-        CommercialPrice.objects
-        .filter(
+    offer = first_sellable_standard_offer(
+        CommercialPrice.objects.filter(
             product=product,
             channel=CommercialPrice.Channel.BUSINESS,
             batch__isnull=True,
         )
-        .first()
     )
 
-    if offer is None or not offer.enabled:
+    if offer is None or not _is_sellable(offer):
         raise InvalidOrderOperation(
             "product is not available for business ordering"
         )
 
     return offer
+
+
+def first_sellable_standard_offer(
+    offers,
+) -> CommercialPrice | None:
+    """Of one product's standard offers, the first sold one in the
+    variants' order, else the first (which then is not sold)."""
+
+    ordered = list(
+        offers
+        .select_related("variant")
+        .order_by("variant__position", "variant_id")
+    )
+
+    return next(
+        (offer for offer in ordered if _is_sellable(offer)),
+        ordered[0] if ordered else None,
+    )
+
+
+def _is_sellable(offer: CommercialPrice) -> bool:
+    return offer.enabled and offer.variant.active
 
 
 def build_business_order_draft(
@@ -181,6 +204,7 @@ def resolve_business_offer_lines(
         CommercialPrice.objects
         .select_related(
             "product",
+            "variant",
         )
         .prefetch_related(
             "amounts",
@@ -218,7 +242,11 @@ def resolve_business_offer_lines(
                 "to the business channel"
             )
 
-        if not offer.product.active or not offer.enabled:
+        if (
+            not offer.product.active
+            or not offer.enabled
+            or not offer.variant.active
+        ):
             raise InvalidOrderOperation(
                 "selected business offer "
                 "is not currently available"
@@ -374,24 +402,33 @@ def _standard_business_offers_by_product_id(
     if not products_by_id:
         return {}
 
-    offers_by_product_id = {
-        offer.product_id: offer
-        for offer in (
-            CommercialPrice.objects
-            .filter(
-                product_id__in=products_by_id,
-                channel=CommercialPrice.Channel.BUSINESS,
-                batch__isnull=True,
-            )
+    # Each product's first sold variant's offer (see
+    # resolve_standard_business_offer).
+    offers_by_product_id: dict[int, CommercialPrice] = {}
+
+    for offer in (
+        CommercialPrice.objects
+        .filter(
+            product_id__in=products_by_id,
+            channel=CommercialPrice.Channel.BUSINESS,
+            batch__isnull=True,
         )
-    }
+        .select_related("variant")
+        .order_by("product_id", "variant__position", "variant_id")
+    ):
+        current = offers_by_product_id.get(offer.product_id)
+
+        if current is None or (
+            not _is_sellable(current) and _is_sellable(offer)
+        ):
+            offers_by_product_id[offer.product_id] = offer
 
     unavailable_product_ids = (
         products_by_id.keys() - offers_by_product_id.keys()
     ) | {
         product_id
         for product_id, offer in offers_by_product_id.items()
-        if not offer.enabled
+        if not _is_sellable(offer)
     }
 
     unavailable_product_names = sorted(

@@ -2689,3 +2689,7 @@ msgstr "La plus douce tradition suédoise"
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
+
+#: templates/includes/catalog/tile.html
+msgid "Choose a size"
+msgstr "Choisir une taille"

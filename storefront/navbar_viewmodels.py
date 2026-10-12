@@ -22,6 +22,7 @@ def build_retail_navbar_cart(
         cart.lines
         .select_related(
             "commercial_price__product",
+            "commercial_price__variant",
             # the line's picture
             "commercial_price__product__profile",
         )
@@ -107,7 +108,8 @@ def _build_retail_navbar_cart_line(
 
     return NavbarCartLine(
         line_id=line.id,
-        label=product.display_name,
+        # "Hoodie — M": the size when the product has several.
+        label=line.commercial_price.variant.display_name,
         product_url=reverse(
             "storefront:product_detail",
             kwargs={

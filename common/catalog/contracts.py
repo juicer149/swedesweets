@@ -25,6 +25,9 @@ class CatalogOffer:
 
     `batch_id` is present only when the commercial choice is tied to one
     exact physical batch.
+
+    Every offer sells one variant (docs/product-variants.md); a product with
+    several has a standard offer per variant.
     """
 
     kind: CatalogOfferKind
@@ -34,6 +37,10 @@ class CatalogOffer:
     price: Decimal | None
     currency: str
     available_units: int
+    # The variant it sells: its label ("M") names the choice when the
+    # product has several; "" for a product's only variant.
+    variant_id: int | None = None
+    variant_label: str = ""
 
     @property
     def is_standard(self) -> bool:

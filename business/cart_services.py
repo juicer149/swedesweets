@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.db import transaction
 
+from business.drafts import first_sellable_standard_offer
 from business.models import BusinessCart
 from carts.models import Cart, CartLine
 from carts.services import (
@@ -248,6 +249,7 @@ def _get_business_cart_offer(
         CommercialPrice.objects
         .select_related(
             "product",
+            "variant",
         )
         .prefetch_related(
             "amounts",
@@ -255,14 +257,13 @@ def _get_business_cart_offer(
     )
 
     if commercial_price_id is None:
-        commercial_price = (
-            queryset
-            .filter(
+        # By product alone: its first sold variant's standard offer.
+        commercial_price = first_sellable_standard_offer(
+            queryset.filter(
                 product_id=product.pk,
                 channel=CommercialPrice.Channel.BUSINESS,
                 batch__isnull=True,
             )
-            .first()
         )
 
         if commercial_price is None:
@@ -290,6 +291,7 @@ def _get_business_cart_offer(
         != CommercialPrice.Channel.BUSINESS
         or not commercial_price.enabled
         or not commercial_price.product.active
+        or not commercial_price.variant.active
     ):
         raise InvalidBusinessCart(
             "business offer is not currently available"

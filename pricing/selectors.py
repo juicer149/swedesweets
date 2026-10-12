@@ -333,6 +333,7 @@ def list_commercial_prices(
         CommercialPrice.objects
         .select_related(
             "product",
+            "variant",
             "batch",
         )
         .prefetch_related(

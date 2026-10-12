@@ -157,6 +157,7 @@ def _build_portal_cart_lines(
         .select_related(
             "commercial_price",
             "commercial_price__product",
+            "commercial_price__variant",
             "commercial_price__product__profile",
         )
         .prefetch_related(

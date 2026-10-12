@@ -141,7 +141,7 @@ def available_quantity_by_product() -> list[AvailableStockRow]:
     physical_rows = physical_quantity_by_product()
 
     reserved_by_product_id = (
-        _reserved_quantities_by_product_for_batches(
+        _reserved_quantities_by_key_for_batches(
             batches=list(
                 list_available_batches()
                 .values_list(
@@ -281,7 +281,7 @@ def orderable_quantity_by_product_id(
     }
 
     reserved_quantity_by_product_id = (
-        _reserved_quantities_by_product_for_batches(
+        _reserved_quantities_by_key_for_batches(
             batches=list(
                 batches
                 .order_by()
@@ -304,6 +304,58 @@ def orderable_quantity_by_product_id(
         )
         for product_id, physical_quantity
         in physical_quantity_by_product_id.items()
+    }
+
+
+def orderable_quantity_by_variant_id(
+    *,
+    today: date | None = None,
+) -> dict[int, int]:
+    """Orderable units per variant: its orderable batches, less what is
+    reserved on them (as orderable_quantity_by_product_id, per variant)."""
+
+    batches = list_orderable_batches(
+        today=today,
+    )
+
+    physical_quantity_by_variant_id = {
+        row["variant_id"]: (
+            row["total_quantity"] or 0
+        )
+        for row in (
+            batches
+            .order_by()
+            .values("variant_id")
+            .annotate(
+                total_quantity=Sum("quantity"),
+            )
+        )
+    }
+
+    reserved_quantity_by_variant_id = (
+        _reserved_quantities_by_key_for_batches(
+            batches=list(
+                batches
+                .order_by()
+                .values_list(
+                    "id",
+                    "variant_id",
+                )
+            )
+        )
+    )
+
+    return {
+        variant_id: max(
+            physical_quantity
+            - reserved_quantity_by_variant_id.get(
+                variant_id,
+                0,
+            ),
+            0,
+        )
+        for variant_id, physical_quantity
+        in physical_quantity_by_variant_id.items()
     }
 
 
@@ -363,10 +415,12 @@ def orderable_quantity_by_batch_pk(
     }
 
 
-def _reserved_quantities_by_product_for_batches(
+def _reserved_quantities_by_key_for_batches(
     *,
     batches: list[tuple[int, int]],
 ) -> dict[int, int]:
+    """Reserved units summed per key: (batch pk, key) pairs, the key a
+    product id or a variant id."""
     if not batches:
         return {}
 
@@ -381,8 +435,8 @@ def _reserved_quantities_by_product_for_batches(
 
     totals: dict[int, int] = defaultdict(int)
 
-    for batch_pk, product_id in batches:
-        totals[product_id] += (
+    for batch_pk, key in batches:
+        totals[key] += (
             reserved_by_batch_pk.get(
                 batch_pk,
                 0,

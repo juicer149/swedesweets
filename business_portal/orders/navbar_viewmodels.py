@@ -27,6 +27,7 @@ def build_business_navbar_cart(
         .select_related(
             "commercial_price",
             "commercial_price__product",
+            "commercial_price__variant",
             # the line's picture
             "commercial_price__product__profile",
         )

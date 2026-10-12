@@ -7,7 +7,9 @@
   adds it: "+" and a scoop for candy, "+" alone for the rest. It asks for
   a quantity (catalog.js) and the round green tick puts that many of the
   tile's offer in the cart; other offers are chosen on the product page.
-  Without JavaScript it adds one. A striped shelf runs under each row
+  Without JavaScript it adds one. A product with several sizes on sale
+  (card.has_variant_choice) has the same round "+" as a link to its page,
+  where the size is chosen. A striped shelf runs under each row
   (css/catalog.css).
 
   card        ProductCardVM
@@ -43,7 +45,20 @@
         </p>
       {% endif %}
 
-      {% if offer %}
+      {% if offer and card.has_variant_choice %}
+        <div class="tile__order">
+          <div class="tile__buy">
+            {% trans "Choose a size" as choose_label %}
+            <a class="tile__add" href="{{ detail_href }}" aria-label="{{ choose_label }}: {{ card.name }}">
+              {% include "includes/ui/icon_block.html" with name="plus" size="sm" class_name="tile__add-plus" only %}
+              {% if card.category_key == "candy" %}
+                {% include "includes/ui/scoop.html" %}
+              {% endif %}
+              <span class="visually-hidden">{{ choose_label }}</span>
+            </a>
+          </div>
+        </div>
+      {% elif offer %}
         <form
           id="catalog-add-form-{{ card.product_id }}"
           class="tile__order"

@@ -11,8 +11,9 @@ from pricing.models import (
     CommercialPrice,
     PriceAmount,
 )
+from products.catalog import variant_display_name
 from products.localization import translated_product_name
-from products.models import Product
+from products.models import Product, ProductVariant
 
 _REASON_LABELS = {
     CommercialPrice.Reason.SHORT_DATED: _("Short dated"),
@@ -29,18 +30,28 @@ class BusinessOrderLinePresentation:
     price_label: str | None
 
 
-def business_product_catalog_label(
-    product: Product,
+def business_variant_catalog_label(
+    variant: ProductVariant,
     *,
+    product: Product,
     language_code: str,
 ) -> str:
-    """What a customer reads: the name and the weight ("Rambo — Twist ·
-    2000 g"). The internal number and the stock unit are for ops (their
-    pages use Product.catalog_label)."""
+    """One variant as a customer reads it in a cart or an order: the name
+    with its label and its own weight ("Hoodie — M · 400 g"); a product's
+    only variant reads as the product ("Rambo — Twist · 2000 g"). The
+    internal number and the stock unit are for ops (their pages use
+    Product.catalog_label)."""
+
+    # The product given (not variant.product): its translations are the
+    # ones the caller prefetched.
+    name = translated_product_name(
+        product,
+        language_code=language_code,
+    )
 
     return (
-        f"{translated_product_name(product, language_code=language_code)} · "
-        f"{product.weight_label}"
+        f"{variant_display_name(name, variant.label)} · "
+        + _("%(weight)s g") % {"weight": variant.weight_per_unit}
     )
 
 
@@ -51,8 +62,9 @@ def business_order_line_presentation(
     currency: str,
 ) -> BusinessOrderLinePresentation:
     return BusinessOrderLinePresentation(
-        catalog_label=business_product_catalog_label(
-            line.product,
+        catalog_label=business_variant_catalog_label(
+            line.variant,
+            product=line.product,
             language_code=language_code,
         ),
         offer_label=_business_order_offer_label(
@@ -80,8 +92,9 @@ def business_cart_line_presentation(
     )
 
     return BusinessOrderLinePresentation(
-        catalog_label=business_product_catalog_label(
-            commercial_price.product,
+        catalog_label=business_variant_catalog_label(
+            commercial_price.variant,
+            product=commercial_price.product,
             language_code=language_code,
         ),
         offer_label=_commercial_price_offer_label(

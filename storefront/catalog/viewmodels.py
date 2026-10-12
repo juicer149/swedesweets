@@ -18,6 +18,7 @@ from common.catalog.contracts import (
 from common.catalog.viewmodels import (
     CatalogOfferVM,
     ProductCardVM,
+    offer_choice_label,
 )
 from common.ui import UiText
 from pricing.models import CommercialPrice
@@ -128,7 +129,9 @@ def build_retail_offer_viewmodel(
             ),
             batch_id=None,
             kind=offer.kind.value,
-            label=str(_("Standard")),
+            label=offer_choice_label(
+                variant_label=offer.variant_label,
+            ),
             badge_label=(
                 _reason_label(offer.reason)
                 if offer.reason
@@ -155,7 +158,10 @@ def build_retail_offer_viewmodel(
         ),
         batch_id=offer.batch_id,
         kind=offer.kind.value,
-        label=reason_label,
+        label=offer_choice_label(
+            variant_label=offer.variant_label,
+            offer_label=reason_label,
+        ),
         badge_label=reason_label,
         price_label=_price_label(offer),
         availability_label=(

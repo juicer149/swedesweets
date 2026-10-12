@@ -76,6 +76,7 @@ def build_checkout_review_context(
         order.lines
         .select_related(
             "product",
+            "variant",
             "product__profile",
         )
         .order_by("id")
@@ -96,7 +97,7 @@ def build_checkout_review_context(
 
         lines.append(
             CheckoutReviewLine(
-                product_label=line.product.display_name,
+                product_label=line.variant.display_name,
                 image_url=product_image_url(
                     line.product,
                 ),

@@ -238,6 +238,7 @@ def list_recent_business_orders(
         .prefetch_related(
             "lines__product__profile",
             "lines__product__translations",
+            "lines__variant",
             "lines__commercial_offer__batch",
             "lines__commercial_offer__product__profile",
         )

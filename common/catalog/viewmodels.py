@@ -56,6 +56,13 @@ class ProductCardVM:
         return self.offers[0] if self.offers else None
 
     @property
+    def has_variant_choice(self) -> bool:
+        """Several variants on sale (a standard offer each): the "+" leads
+        to the product page, where the size is chosen."""
+
+        return sum(offer.kind == "standard" for offer in self.offers) > 1
+
+    @property
     def other_deal(self) -> CatalogOfferVM | None:
         """A special offer besides the one the tile adds: a hint on the
         tile that the product page has another choice."""
@@ -64,6 +71,24 @@ class ProductCardVM:
             (offer for offer in self.offers[1:] if offer.badge_label),
             None,
         )
+
+
+def offer_choice_label(
+    *,
+    variant_label: str,
+    offer_label: str | None = None,
+) -> str:
+    """What an offer's choice says: the variant's label ("M"), then a batch
+    offer's reason ("M · Short dated"); a product's only variant has no
+    label, so its standard offer is "Standard"."""
+
+    if offer_label is None:
+        return variant_label or str(_("Standard"))
+
+    if variant_label:
+        return f"{variant_label} · {offer_label}"
+
+    return offer_label
 
 
 def build_product_tabs(

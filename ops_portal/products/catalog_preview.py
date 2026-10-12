@@ -24,7 +24,11 @@ from common.catalog.contracts import (
     CatalogOfferKind,
     CatalogProduct,
 )
-from common.catalog.viewmodels import CatalogOfferVM, build_product_tabs
+from common.catalog.viewmodels import (
+    CatalogOfferVM,
+    build_product_tabs,
+    offer_choice_label,
+)
 from common.page_tabs import PageTab
 from pricing.models import CommercialPrice
 from products.images import product_display_url
@@ -117,7 +121,10 @@ def _offer(offer: CatalogOffer) -> CatalogOfferVM:
         commercial_price_id=offer.commercial_price_id,
         batch_id=offer.batch_id,
         kind=offer.kind.value,
-        label=gettext("Standard") if is_standard else reason_label,
+        label=offer_choice_label(
+            variant_label=offer.variant_label,
+            offer_label=None if is_standard else reason_label,
+        ),
         badge_label=(
             (reason_label if offer.reason else None)
             if is_standard

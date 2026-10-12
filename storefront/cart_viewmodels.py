@@ -156,6 +156,7 @@ def _load_cart_lines(
         cart.lines
         .select_related(
             "commercial_price__product",
+            "commercial_price__variant",
             "commercial_price__product__profile",
         )
         .prefetch_related(
@@ -176,7 +177,8 @@ def _build_line(
 
     return RetailCartLine(
         cart_line_id=line.id,
-        product_label=product.display_name,
+        # "Hoodie — M": the size when the product has several.
+        product_label=commercial_price.variant.display_name,
         product_url=reverse(
             "storefront:product_detail",
             kwargs={

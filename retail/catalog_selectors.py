@@ -44,6 +44,7 @@ def list_retail_catalog_products() -> tuple[CatalogProduct, ...]:
         return ()
 
     offers_by_product_id: dict[int, list[CatalogOffer]] = defaultdict(list)
+    offer_order: dict[int, tuple] = {}
     total_available_units_by_product_id: dict[int, int] = defaultdict(int)
 
     for commercial_price in commercial_prices:
@@ -78,6 +79,16 @@ def list_retail_catalog_products() -> tuple[CatalogProduct, ...]:
             price=amount.price,
             currency=amount.currency,
             available_units=available_units,
+            variant_id=commercial_price.variant_id,
+            variant_label=commercial_price.variant.label,
+        )
+        offer_order[offer.commercial_price_id] = (
+            # Each variant's standard offer in the variants' order, then
+            # the batch offers.
+            commercial_price.batch_id is not None,
+            commercial_price.variant.position,
+            commercial_price.variant_id,
+            commercial_price.pk,
         )
 
         offers_by_product_id[
@@ -105,9 +116,12 @@ def list_retail_catalog_products() -> tuple[CatalogProduct, ...]:
                 )
             ),
             offers=tuple(
-                offers_by_product_id.get(
-                    product.id,
-                    (),
+                sorted(
+                    offers_by_product_id.get(
+                        product.id,
+                        (),
+                    ),
+                    key=lambda offer: offer_order[offer.commercial_price_id],
                 )
             ),
         )

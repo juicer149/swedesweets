@@ -24,6 +24,7 @@ from products.models import (
 from reservations.availability import (
     orderable_quantity_by_batch_pk,
     orderable_quantity_by_product_id,
+    orderable_quantity_by_variant_id,
 )
 
 
@@ -52,10 +53,12 @@ def list_business_catalog_products(
                                   batch offer: EUR price required
 
     A product is sold in the business channel through a persistent
-    product-level BUSINESS CommercialPrice (its standard offer) and/or
-    batch-specific BUSINESS offers. A product without a standard offer is not
-    sold here at the standard price, exactly as if the offer were disabled;
-    products sold only to retail customers have none.
+    BUSINESS CommercialPrice per variant (its standard offers) and/or
+    batch-specific BUSINESS offers. Each variant's standard offer sells that
+    variant's stock; a paused variant sells nothing. A product without a
+    standard offer is not sold here at the standard price, exactly as if
+    the offer were disabled; products sold only to retail customers have
+    none.
 
     An enabled standard offer may be unpriced. Missing price therefore does
     not remove the standard offer; only its displayed price is absent.
@@ -106,20 +109,23 @@ def list_business_catalog_products(
         )
     )
 
-    standard_offer_by_product_id: dict[
+    standard_offers_by_product_id: dict[
         int,
-        CommercialPrice,
-    ] = {}
+        list[CommercialPrice],
+    ] = defaultdict(list)
 
     batch_price_candidates: list[
         tuple[CommercialPrice, PriceAmount]
     ] = []
 
     for commercial_price in commercial_prices:
+        if not commercial_price.variant.active:
+            continue
+
         if commercial_price.batch_id is None:
-            standard_offer_by_product_id[
+            standard_offers_by_product_id[
                 commercial_price.product_id
-            ] = commercial_price
+            ].append(commercial_price)
             continue
 
         if not commercial_price.enabled:
@@ -156,7 +162,7 @@ def list_business_catalog_products(
         list[CatalogOffer],
     ] = defaultdict(list)
 
-    batch_offer_units_by_product_id: dict[
+    batch_offer_units_by_variant_id: dict[
         int,
         int,
     ] = defaultdict(int)
@@ -188,6 +194,8 @@ def list_business_catalog_products(
             price=amount.price,
             currency=amount.currency,
             available_units=available_units,
+            variant_id=commercial_price.variant_id,
+            variant_label=commercial_price.variant.label,
         )
 
         batch_offers_by_product_id[
@@ -196,9 +204,13 @@ def list_business_catalog_products(
             offer
         )
 
-        batch_offer_units_by_product_id[
-            commercial_price.product_id
+        batch_offer_units_by_variant_id[
+            commercial_price.variant_id
         ] += available_units
+
+    available_units_by_variant_id = (
+        orderable_quantity_by_variant_id()
+    )
 
     catalog_products: list[CatalogProduct] = []
 
@@ -217,40 +229,38 @@ def list_business_catalog_products(
             )
         )
 
-        batch_offer_units = (
-            batch_offer_units_by_product_id.get(
-                product.id,
-                0,
-            )
-        )
-
-        standard_available_units = max(
-            total_available_units
-            - batch_offer_units,
-            0,
-        )
-
-        standard_offer = (
-            standard_offer_by_product_id.get(
-                product.id,
-            )
-        )
-
         offers: list[CatalogOffer] = []
 
-        if (
-            standard_available_units > 0
-            and standard_offer is not None
-            and standard_offer.enabled
+        # Each variant's standard offer, in the variants' order, with that
+        # variant's stock less what its batch offers sell.
+        for standard_offer in sorted(
+            standard_offers_by_product_id.get(product.id, ()),
+            key=lambda offer: (offer.variant.position, offer.variant_id),
         ):
-            offers.append(
-                _build_standard_offer(
-                    available_units=(
-                        standard_available_units
-                    ),
-                    standard_offer=standard_offer,
+            standard_available_units = max(
+                available_units_by_variant_id.get(
+                    standard_offer.variant_id,
+                    0,
                 )
+                - batch_offer_units_by_variant_id.get(
+                    standard_offer.variant_id,
+                    0,
+                ),
+                0,
             )
+
+            if (
+                standard_available_units > 0
+                and standard_offer.enabled
+            ):
+                offers.append(
+                    _build_standard_offer(
+                        available_units=(
+                            standard_available_units
+                        ),
+                        standard_offer=standard_offer,
+                    )
+                )
 
         offers.extend(
             batch_offers
@@ -424,6 +434,8 @@ def _build_standard_offer(
         ),
         currency=PriceAmount.Currency.EUR,
         available_units=available_units,
+        variant_id=standard_offer.variant_id,
+        variant_label=standard_offer.variant.label,
     )
 
 
