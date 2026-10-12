@@ -35,6 +35,9 @@ class FormSection:
     key: str
     title: str
     template: str
+    # A "?" beside the title opening this template's explanations
+    # (includes/ui/help.html).
+    help: str = ""
 
 
 PRODUCT_SECTION = FormSection(
@@ -60,6 +63,7 @@ PRODUCT_EDIT_FORM_SECTIONS = (
         key="variants",
         title="Variants and offers",
         template="ops_portal/products/includes/form_section_variants.html",
+        help="ops_portal/products/help/variants.html",
     ),
 )
 

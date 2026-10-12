@@ -123,3 +123,83 @@
 .password-again__password {
   margin-bottom: var(--space-5);
 }
+
+
+/* =============================================================================
+   Help (includes/ui/help.html): a round "?" beside a title, and the dialog
+   it opens: the confirm dialog, wider, left-aligned, its explanations
+   under small headings, scrolling when long.
+   ============================================================================= */
+
+.help-button {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+
+  color: var(--color-neutral-600);
+  background: transparent;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+
+  transition:
+    color var(--motion-fast),
+    background var(--motion-fast);
+}
+
+.help-button:hover,
+.help-button:focus-visible {
+  color: var(--color-primary-800);
+  background: var(--color-primary-50);
+}
+
+.help-button:focus-visible {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: 2px;
+}
+
+.help-dialog {
+  width: min(100% - 2rem, 34rem);
+}
+
+.help-dialog__card {
+  text-align: left;
+}
+
+.help-dialog__body {
+  max-height: 60dvh;
+  margin-bottom: var(--space-5);
+  overflow-y: auto;
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-14);
+  line-height: 1.55;
+}
+
+.help-dialog__body h3 {
+  margin: var(--space-4) 0 var(--space-1);
+  color: var(--color-neutral-800);
+  font-family: var(--font-body);
+  font-size: var(--font-size-16);
+  font-weight: 800;
+}
+
+.help-dialog__body h3:first-child {
+  margin-top: 0;
+}
+
+.help-dialog__body p,
+.help-dialog__body ul {
+  margin: 0 0 var(--space-2);
+}
+
+.help-dialog__body ul {
+  padding-left: var(--space-5);
+}

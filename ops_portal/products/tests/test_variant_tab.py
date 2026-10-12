@@ -183,6 +183,10 @@ def test_the_page_opens_with_its_sections_open(client):
     assert 'role="tab" aria-selected="false" data-currency-choice="sek"' in content
     assert "individual_prices" not in content
     assert "data-variant-up" in content
+    # A "?" beside the title opens what it all means.
+    assert 'data-help-open="variants-help"' in content
+    assert 'id="variants-help"' in content
+    assert "The order here is the order the sizes are offered in" in content
     # The grip to drag a row by; order and deletion count as changes.
     assert "data-variant-grip" in content
     assert 'data-variant-position="true" data-dirty-track="true"' in content

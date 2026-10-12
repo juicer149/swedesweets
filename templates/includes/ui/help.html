@@ -1,0 +1,21 @@
+{% comment %}
+  Help for a part of a page: a round "?" beside its title, and the dialog
+  it opens with what everything there means (js/help_dialog.js, loaded by
+  layouts/detail.html). Closes with "Got it", Escape or a click outside.
+
+  id      the dialog's id, unique on the page ("variants-help")
+  title   what the help is about (the part's title)
+  body    the template with the explanations
+{% endcomment %}
+<button class="help-button" type="button" data-help-open="{{ id }}" aria-haspopup="dialog" aria-label="Help: {{ title }}" title="What this means">?</button>
+<dialog class="confirm-dialog help-dialog" id="{{ id }}" aria-labelledby="{{ id }}-title">
+  <div class="confirm-dialog__card help-dialog__card">
+    <h2 class="confirm-dialog__title" id="{{ id }}-title">{{ title }}</h2>
+    <div class="help-dialog__body">
+      {% include body %}
+    </div>
+    <div class="confirm-dialog__actions">
+      <button class="button button--md button--solid button--tone-place" type="button" data-help-close>Got it</button>
+    </div>
+  </div>
+</dialog>

@@ -30,6 +30,9 @@
       >
         <div class="form-section__head">
           <h2 class="form-section__title" id="{{ section.key }}-title">{{ section.title }}</h2>
+          {% if section.help %}
+            {% include "includes/ui/help.html" with id=section.key|add:"-help" title=section.title body=section.help only %}
+          {% endif %}
         </div>
 
         {% if section.key == "product" %}

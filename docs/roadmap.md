@@ -39,6 +39,10 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   locks: having opened the edit page is the intent; what needs a second
   look asks for it, like price changes); saving comes back to the same
   page.
+- **Help on a page**: a round "?" beside a title opens a dialog with what
+  everything there means (`includes/ui/help.html`, its text a template of
+  its own; a form section takes it as `help`). First on Variants and
+  offers; add it where other pages need explaining.
 - **Swedish as a site language**: later, not now.
 - **Catalog text per language**: each language (`settings.LANGUAGES`, French
   first) has its own name, description and ingredients. The texts written

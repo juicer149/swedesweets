@@ -1,0 +1,30 @@
+{% comment %}
+  What "Variants and offers" on the product edit page means (in its help
+  dialog, includes/ui/help.html). Keep it in step with
+  docs/product-variants.md.
+{% endcomment %}
+<h3>Product price</h3>
+<p>Every variant sells at this price, unless its price tag is on. The EUR and SEK tabs only change which currency you see; both are saved.</p>
+
+<h3>A variant</h3>
+<p><strong>Label</strong>: what tells it apart from the others (S, M, 450 g). <strong>Weight</strong>: grams per unit. The weight is fixed once the variant has stock or orders.</p>
+
+<h3>Order</h3>
+<p>The order here is the order the sizes are offered in: in the shop and in the business catalog, S before M before L if that is how they stand here. When an order only names the product, the first variant that is sold is the one taken.</p>
+<p>Move a variant with its arrows, or drag it by the dots between them.</p>
+
+<h3>Sales channels</h3>
+<ul>
+  <li><strong>Retail</strong>: sold in the shop. It then needs a retail price.</li>
+  <li><strong>Business</strong>: sold to business customers.</li>
+  <li><strong>Neither</strong>: paused. The variant is kept, but not sold anywhere.</li>
+</ul>
+
+<h3>Own price (the tag)</h3>
+<p>Green: the variant has prices of its own, in the yellow tab under it, one field per channel it is sold in. A field left empty is the product price (shown faintly in it).</p>
+
+<h3>Deleting</h3>
+<p>The bin deletes a variant that has never been used. Once it has had stock, carts or orders it stays: switch both its channels off to pause it.</p>
+
+<h3>Saving</h3>
+<p>Nothing changes until <strong>Update product</strong>. Changing a price that is already set asks for your password; a first price does not. <strong>Back</strong> turns into <strong>Cancel</strong> once something has changed: Cancel leaves without saving.</p>
