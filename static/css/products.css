@@ -55,42 +55,10 @@
 
 
 /* =============================================================================
-   Ops product detail (calm design)
-
-   The batches as link rows under the stock facts; description and
-   ingredients as short paragraphs.
-   ============================================================================= */
-
-.product-batches {
-  margin-top: var(--space-4);
-}
-
-.product-details__text {
-  margin-top: var(--space-4);
-}
-
-.product-details__label {
-  margin: 0 0 var(--space-1);
-  color: var(--color-neutral-600);
-  font-family: var(--font-body);
-  font-size: var(--font-size-14);
-  font-weight: 600;
-}
-
-.product-details__text p {
-  margin: 0;
-  color: var(--color-neutral-800);
-  line-height: 1.55;
-}
-
-
-/* =============================================================================
    A form of sections (the ops product and catalog forms)
 
    Its sections open one under the other, each under a title with a
-   hairline; a section behind a lock has it at the right of its title
-   (lock_button.html, form_lock.js), its fields muted while locked. The
-   detail page's buttons link to a section by its id.
+   hairline. The detail page's buttons link to a section by its id.
    ============================================================================= */
 
 .form-section {
@@ -119,11 +87,6 @@
   font-size: var(--font-size-20);
   font-weight: 800;
   line-height: 1.25;
-}
-
-/* Locked: the fields shown as they are, quieter, out of reach. */
-.form-section--locked:not(.is-unlocked) .form-section__body {
-  opacity: 0.72;
 }
 
 .product-section__title {

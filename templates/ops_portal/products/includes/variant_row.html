@@ -59,9 +59,9 @@
     </div>
 
     {# Its own price: on (green), the yellow tab under the card. #}
-    <label class="variant-price-toggle" for="{{ row.own_price.id_for_label }}" title="Own price: on, prices of its own (an empty one is the product's); off, the product's price">
+    <label class="product-tag-toggle product-tag-toggle--status product-tag-toggle--icon variant-row__own" for="{{ row.own_price.id_for_label }}" title="Own price: on, prices of its own (an empty one is the product's); off, the product's price">
       {{ row.own_price }}
-      <span class="variant-price-toggle__surface">
+      <span class="product-tag-toggle__surface">
         {% include "includes/ui/icon_block.html" with name="tag" size="sm" only %}
         <span class="visually-hidden">Own price{% if row.state %} for {{ row.state.variant.display_name }}{% endif %}</span>
       </span>

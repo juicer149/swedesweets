@@ -3,11 +3,10 @@
 {% comment %}
   Add or edit a product: one page, its sections open one under the other
   (form_sections). Adding: Product, then Offers. Editing: Product, then
-  Variants and offers (variant_editor.js), each behind a lock
-  (form_lock.js; open when it holds an error). Each section has an id the
+  Variants and offers (variant_editor.js). Each section has an id the
   product page's buttons link to (#product, #variants). The actions at the
   foot; saving comes back to this page. Price changes come back in a
-  dialog asking for the password (price_check_dialog.html). What the shop
+  dialog asking for the password (password_again_dialog.html). What the shop
   shows (catalog_form.html) has its own page.
 {% endcomment %}
 
@@ -24,36 +23,27 @@
     {% csrf_token %}
 
     {% for section in form_sections %}
-      {# A locked section opens when it holds an error. #}
       <section
-        class="form-section{% if section.locked %} form-section--locked{% if section.key in open_sections %} is-unlocked{% endif %}{% endif %}"
+        class="form-section"
         id="{{ section.key }}"
         aria-labelledby="{{ section.key }}-title"
-        {% if section.locked %}data-lock-scope{% endif %}
       >
         <div class="form-section__head">
           <h2 class="form-section__title" id="{{ section.key }}-title">{{ section.title }}</h2>
-          {% if section.locked %}
-            {% if section.key in open_sections %}
-              {% include "includes/ui/lock_button.html" with what=section.title|lower open=True only %}
-            {% else %}
-              {% include "includes/ui/lock_button.html" with what=section.title|lower open=False only %}
-            {% endif %}
-          {% endif %}
         </div>
 
         {% if section.key == "product" %}
           {% include "registration/includes/form_errors.html" with form=form only %}
         {% endif %}
 
-        <div class="form-section__body"{% if section.locked %} data-lockable{% if section.key not in open_sections %} inert{% endif %}{% endif %}>
+        <div class="form-section__body">
           {% include section.template %}
         </div>
       </section>
     {% endfor %}
 
     {% if price_check %}
-      {% include "ops_portal/products/includes/price_check_dialog.html" with check=price_check only %}
+      {% include "includes/ui/password_again_dialog.html" with form=price_check.form changes=price_check.changes title="Price changes" message="Saving changes these prices. Check them, then give your password to save." confirm_label="Save the new prices" back_label="Go back to the prices" body="ops_portal/products/includes/price_changes.html" only %}
     {% endif %}
 
     <div class="form-actions page__actions page-actions">
@@ -76,9 +66,8 @@
 {% block page_scripts %}
   <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script src="{% static 'js/dirty_form.js' %}" defer></script>
-  <script src="{% static 'js/form_lock.js' %}" defer></script>
   <script src="{% static 'js/variant_editor.js' %}" defer></script>
-  <script src="{% static 'js/price_check.js' %}" defer></script>
+  <script src="{% static 'js/password_again.js' %}" defer></script>
   <script src="{% static 'js/price_currency.js' %}" defer></script>
   <script src="{% static 'js/form_sections.js' %}" defer></script>
 {% endblock %}

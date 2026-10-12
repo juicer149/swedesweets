@@ -1,6 +1,6 @@
 """Variants and prices of an ops product: listed on the product page,
-changed on the edit form (the section behind a lock in the page); each
-variant at the product's price or, with its price tag on, its own."""
+changed on the edit form; each variant at the product's price or, with
+its price tag on, its own."""
 
 from __future__ import annotations
 
@@ -128,8 +128,8 @@ def test_a_product_with_one_variant_shows_it_as_one(client):
 
 @pytest.mark.django_db
 def test_saving_the_page_as_it_came_changes_nothing(client):
-    """The locks keep hands off in the page; the fields are still sent as
-    they were, so a save without changes leaves everything as it is."""
+    """A save without changes leaves everything as it is (and asks for no
+    password)."""
 
     client.force_login(full_staff_user_factory())
     product = product_factory(name="Apple", internal_number=603)
@@ -157,7 +157,7 @@ def test_saving_the_page_as_it_came_changes_nothing(client):
 
 
 @pytest.mark.django_db
-def test_the_page_opens_with_both_sections_locked(client):
+def test_the_page_opens_with_its_sections_open(client):
     client.force_login(full_staff_user_factory())
     product = product_factory(name="Hoodie", internal_number=607)
     variant_factory(product=product, label="M", first_label="S")
@@ -165,9 +165,9 @@ def test_the_page_opens_with_both_sections_locked(client):
     response = client.get(_edit_url(product))
     content = response.content.decode()
 
-    # One lock over the product's data, one over its variants and offers.
-    assert content.count("data-lock-button") == 2
-    assert content.count("data-lockable inert") == 2
+    # No locks: the sections open as they are.
+    assert "data-lock" not in content
+    assert " inert" not in content
     assert "Variants and offers" in content
     # Each row's sales channels, price and arrows; the product's price; the
     # EUR / SEK tabs.
@@ -409,7 +409,6 @@ def test_two_variants_need_a_label_each(client):
     assert response.status_code == 200
     (first, _second) = response.context["variant_formset"].forms
     assert "each needs a label" in str(first.errors)
-    # The row with the error opens unlocked.
     assert product.variants.count() == 1
 
 
@@ -532,13 +531,13 @@ def test_changing_a_price_asks_for_the_password_first(client):
         Decimal("2.60"),
         "+4 %",
     )
-    assert "data-price-check" in response.content.decode()
+    assert "data-password-again" in response.content.decode()
     assert _price(product.variants.get(), RETAIL) == Decimal("2.50")
 
     # A wrong password: asked again.
     response = client.post(
         _edit_url(product),
-        data | {"price_check_password": "wrong"},
+        data | {"password_again": "wrong"},
     )
 
     assert response.status_code == 200
@@ -550,7 +549,7 @@ def test_changing_a_price_asks_for_the_password_first(client):
     # The right one: saved.
     response = client.post(
         _edit_url(product),
-        data | {"price_check_password": "password"},
+        data | {"password_again": "password"},
     )
 
     assert response.status_code == 302

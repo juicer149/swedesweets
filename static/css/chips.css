@@ -254,6 +254,14 @@
   opacity: 0.78;
 }
 
+/* Only an icon (the variant's price tag): a round switch. */
+.product-tag-toggle--icon .product-tag-toggle__surface {
+  width: 2.25rem;
+  height: 2.25rem;
+  min-height: 0;
+  padding: 0;
+}
+
 
 /* =============================================================================
    Filter chips

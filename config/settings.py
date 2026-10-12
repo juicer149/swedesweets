@@ -327,6 +327,12 @@ LOGOUT_REDIRECT_URL = (
     "login"
 )
 
+# The password once more before something that matters
+# (accounts/password_again.py): this many wrong ones lock it for this many
+# minutes.
+PASSWORD_AGAIN_MAX_ATTEMPTS = 5
+PASSWORD_AGAIN_LOCK_MINUTES = 15
+
 
 # =============================================================================
 # Email

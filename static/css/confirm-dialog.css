@@ -101,3 +101,25 @@
   width: 100%;
   justify-content: center;
 }
+
+
+/* =============================================================================
+   The password once more (includes/ui/password_again_dialog.html): the
+   confirm dialog, a little wider, left-aligned, with a password field.
+   ============================================================================= */
+
+.password-again {
+  width: min(100% - 2rem, 30rem);
+}
+
+.password-again__card {
+  text-align: left;
+}
+
+.password-again__message {
+  margin-bottom: var(--space-4);
+}
+
+.password-again__password {
+  margin-bottom: var(--space-5);
+}

@@ -2,9 +2,9 @@
 
 A product's variants each have their own standard offer per channel: its
 switch (sold in that channel or not) and its amounts.
-`update_variants_pricing` sets each variant's; `update_product_pricing`
-gives every variant the same switches, and `update_product_standard_pricing`
-the same switches and amounts (a new product, which has one variant).
+`update_variants_pricing` sets each variant's;
+`update_product_standard_pricing` gives every variant the same (a new
+product, which has one variant).
 """
 
 from __future__ import annotations
@@ -115,73 +115,6 @@ def update_variants_pricing(
 
 
 @transaction.atomic
-def update_product_pricing(
-    *,
-    product: Product,
-    business_enabled: bool,
-    retail_enabled: bool,
-    prices: Mapping[int, VariantPrices],
-) -> None:
-    """Apply the ops form's pricing: the channel switches to every variant,
-    and each variant's amounts (`prices`, by variant id; a variant left out
-    keeps its amounts).
-
-    BUSINESS: every variant keeps a standard offer (it may be unpriced);
-    the switch is whether the product is sold to business customers.
-
-    RETAIL: a variant needs an amount to be sold, so the switch on needs at
-    least one variant with one.
-    """
-
-    variants = list(product.variants.all())
-    unknown = set(prices) - {variant.pk for variant in variants}
-
-    if unknown:
-        raise InvalidCommercialPrice(
-            "prices given for a variant of another product"
-        )
-
-    if retail_enabled and not any(
-        _retail_amount_after(variant=variant, prices=prices.get(variant.pk))
-        for variant in variants
-    ):
-        raise InvalidCommercialPrice(
-            "Retail pricing needs at least one variant with a price."
-        )
-
-    for variant in variants:
-        variant_prices = prices.get(variant.pk)
-
-        _update_channel_pricing(
-            variant=variant,
-            channel=CommercialPrice.Channel.BUSINESS,
-            enabled=business_enabled,
-            amounts=(
-                None
-                if variant_prices is None
-                else {
-                    PriceAmount.Currency.EUR: variant_prices.business_eur,
-                    PriceAmount.Currency.SEK: variant_prices.business_sek,
-                }
-            ),
-        )
-
-        _update_channel_pricing(
-            variant=variant,
-            channel=CommercialPrice.Channel.RETAIL,
-            enabled=retail_enabled,
-            amounts=(
-                None
-                if variant_prices is None
-                else {
-                    PriceAmount.Currency.EUR: variant_prices.retail_eur,
-                    PriceAmount.Currency.SEK: variant_prices.retail_sek,
-                }
-            ),
-        )
-
-
-@transaction.atomic
 def update_product_standard_pricing(
     *,
     product: Product,
@@ -202,18 +135,20 @@ def update_product_standard_pricing(
     least one amount (validated by the form).
     """
 
-    same = VariantPrices(
-        business_eur=business_eur,
-        business_sek=business_sek,
-        retail_eur=retail_eur,
-        retail_sek=retail_sek,
+    same = VariantPricing(
+        retail_enabled=retail_enabled,
+        business_enabled=business_enabled,
+        prices=VariantPrices(
+            business_eur=business_eur,
+            business_sek=business_sek,
+            retail_eur=retail_eur,
+            retail_sek=retail_sek,
+        ),
     )
 
-    update_product_pricing(
+    update_variants_pricing(
         product=product,
-        business_enabled=business_enabled,
-        retail_enabled=retail_enabled,
-        prices={variant.pk: same for variant in product.variants.all()},
+        pricing={variant.pk: same for variant in product.variants.all()},
     )
 
 

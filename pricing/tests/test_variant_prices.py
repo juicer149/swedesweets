@@ -1,5 +1,5 @@
 """Prices per variant: a standard offer per variant and channel, set from
-the ops form for every variant at once (update_product_pricing)."""
+the ops form for every variant at once (update_variants_pricing)."""
 
 from __future__ import annotations
 
@@ -13,7 +13,9 @@ from pricing.errors import InvalidCommercialPrice
 from pricing.models import CommercialPrice, PriceAmount
 from pricing.product_configuration import (
     VariantPrices,
-    update_product_pricing,
+    VariantPricing,
+    update_product_standard_pricing,
+    update_variants_pricing,
 )
 from pricing.selectors import (
     get_variant_commercial_price,
@@ -86,20 +88,26 @@ def test_a_product_wide_call_on_several_variants_must_choose_one():
         ensure_standard_offer(product=product, channel=BUSINESS)
 
 
+def _both_channels(**amounts) -> VariantPricing:
+    return VariantPricing(
+        retail_enabled=True,
+        business_enabled=True,
+        prices=VariantPrices(**amounts),
+    )
+
+
 @pytest.mark.django_db
-def test_update_product_pricing_sets_each_variant_and_both_switches():
+def test_update_variants_pricing_sets_each_variants_amounts():
     product, small, medium = _hoodie()
 
-    update_product_pricing(
+    update_variants_pricing(
         product=product,
-        business_enabled=True,
-        retail_enabled=True,
-        prices={
-            small.pk: VariantPrices(
+        pricing={
+            small.pk: _both_channels(
                 business_eur=Decimal("1.90"),
                 retail_eur=Decimal("2.50"),
             ),
-            medium.pk: VariantPrices(
+            medium.pk: _both_channels(
                 business_eur=Decimal("3.40"),
                 retail_eur=Decimal("4.50"),
                 retail_sek=Decimal("49.00"),
@@ -119,51 +127,30 @@ def test_update_product_pricing_sets_each_variant_and_both_switches():
 
 
 @pytest.mark.django_db
-def test_a_switch_turns_the_channel_off_for_every_variant():
-    product, small, medium = _hoodie()
-    prices = {
-        variant.pk: VariantPrices(retail_eur=Decimal("2.50"))
-        for variant in (small, medium)
-    }
-    update_product_pricing(
-        product=product,
-        business_enabled=True,
-        retail_enabled=True,
-        prices=prices,
-    )
-
-    update_product_pricing(
-        product=product,
-        business_enabled=False,
-        retail_enabled=False,
-        prices=prices,
-    )
-
-    assert not CommercialPrice.objects.filter(
-        product=product,
-        batch__isnull=True,
-        enabled=True,
-    ).exists()
-
-
-@pytest.mark.django_db
 def test_a_variant_left_out_keeps_its_amounts():
     product, small, medium = _hoodie()
-    update_product_pricing(
+    update_variants_pricing(
         product=product,
-        business_enabled=True,
-        retail_enabled=False,
-        prices={
-            small.pk: VariantPrices(business_eur=Decimal("1.90")),
-            medium.pk: VariantPrices(business_eur=Decimal("3.40")),
+        pricing={
+            small.pk: _both_channels(
+                business_eur=Decimal("1.90"),
+                retail_eur=Decimal("2.50"),
+            ),
+            medium.pk: _both_channels(
+                business_eur=Decimal("3.40"),
+                retail_eur=Decimal("4.50"),
+            ),
         },
     )
 
-    update_product_pricing(
+    update_variants_pricing(
         product=product,
-        business_enabled=True,
-        retail_enabled=False,
-        prices={small.pk: VariantPrices(business_eur=Decimal("2.00"))},
+        pricing={
+            small.pk: _both_channels(
+                business_eur=Decimal("2.00"),
+                retail_eur=Decimal("2.50"),
+            ),
+        },
     )
 
     business = standard_prices_by_variant_id(product=product, channel=BUSINESS)
@@ -172,16 +159,26 @@ def test_a_variant_left_out_keeps_its_amounts():
 
 
 @pytest.mark.django_db
-def test_retail_on_needs_a_variant_with_a_price():
+def test_standard_pricing_gives_every_variant_the_same():
     product, small, medium = _hoodie()
 
-    with pytest.raises(InvalidCommercialPrice, match="at least one variant"):
-        update_product_pricing(
-            product=product,
-            business_enabled=True,
-            retail_enabled=True,
-            prices={small.pk: VariantPrices(), medium.pk: VariantPrices()},
-        )
+    update_product_standard_pricing(
+        product=product,
+        business_eur=Decimal("1.90"),
+        business_sek=None,
+        business_enabled=True,
+        retail_eur=Decimal("2.50"),
+        retail_sek=None,
+        retail_enabled=False,
+    )
+
+    business = standard_prices_by_variant_id(product=product, channel=BUSINESS)
+    retail = standard_prices_by_variant_id(product=product, channel=RETAIL)
+
+    assert {_amount(business[pk]) for pk in (small.pk, medium.pk)} == {
+        Decimal("1.90"),
+    }
+    assert not any(offer.enabled for offer in retail.values())
 
 
 @pytest.mark.django_db
@@ -190,11 +187,9 @@ def test_prices_for_another_products_variant_are_refused():
     other = pricing_product_factory(name="Cap")
 
     with pytest.raises(InvalidCommercialPrice, match="another product"):
-        update_product_pricing(
+        update_variants_pricing(
             product=product,
-            business_enabled=True,
-            retail_enabled=False,
-            prices={other.variants.get().pk: VariantPrices()},
+            pricing={other.variants.get().pk: _both_channels()},
         )
 
 
@@ -283,11 +278,6 @@ def test_a_variant_in_a_cart_is_history():
 
 @pytest.mark.django_db
 def test_each_variant_has_its_own_sales_channels():
-    from pricing.product_configuration import (
-        VariantPricing,
-        update_variants_pricing,
-    )
-
     product, small, medium = _hoodie()
 
     update_variants_pricing(
@@ -317,11 +307,6 @@ def test_each_variant_has_its_own_sales_channels():
 
 @pytest.mark.django_db
 def test_a_variant_sold_in_retail_needs_a_price():
-    from pricing.product_configuration import (
-        VariantPricing,
-        update_variants_pricing,
-    )
-
     product, small, _medium = _hoodie()
 
     with pytest.raises(InvalidCommercialPrice, match="give it a retail price"):

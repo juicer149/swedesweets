@@ -30,10 +30,15 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   already set (raised, lowered, removed) lists the changes and asks for
   the password again; a first price never asks. `PRICE_CHANGE_CHECK`
   (environment, on by default) switches it off while prices are typed in.
-  Done on the product edit page; batch offers to follow.
-- **Edit pages**: sections open one under the other (no folding), the
-  important parts behind a lock in the page (the product's data, its
-  variants and offers); saving comes back to the same page.
+  Done on the product edit page; batch offers to follow. The password
+  once more is its own piece (`accounts/password_again.py`, its dialog
+  `includes/ui/password_again_dialog.html`) for other places to use: five
+  wrong ones lock it for 15 minutes. Login has no such limit yet: worth
+  the same.
+- **Edit pages**: sections open one under the other (no folding, no
+  locks: having opened the edit page is the intent; what needs a second
+  look asks for it, like price changes); saving comes back to the same
+  page.
 - **Swedish as a site language**: later, not now.
 - **Catalog text per language**: each language (`settings.LANGUAGES`, French
   first) has its own name, description and ingredients. The texts written
@@ -122,8 +127,8 @@ mobile).
 **Catalog page**: category and picture, then name, description and
 ingredients under one tab per language.
 
-**Edit page**: Product behind a lock, then **Variants and offers** behind
-one: EUR / SEK as tabs; the product's price; then a card per variant:
+**Edit page**: Product, then **Variants and offers**: the product's price
+with the EUR / SEK tabs in it; then a card per variant:
 arrows (up at the top, down at the bottom), label, weight, sales channels
 (Retail, Business), the price tag, and under the channels what it sells
 at; the tag on, a yellow tab with its own prices slides out under the

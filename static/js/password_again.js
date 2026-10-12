@@ -1,14 +1,13 @@
 /*
-  Price changes on the product edit form
-  (templates/ops_portal/products/includes/price_check_dialog.html): the
-  server sent the page back with the dialog; it opens at once. "Go back"
-  (or Escape) closes it and clears the password, so the next Save asks
-  again.
+  The password once more (templates/includes/ui/password_again_dialog.html,
+  accounts/password_again.py): the server sent the page back with the
+  dialog; it opens at once. "Go back" (or Escape) closes it and clears the
+  password, so the next try asks again.
 */
 (function () {
   "use strict";
 
-  const dialog = document.querySelector("[data-price-check]");
+  const dialog = document.querySelector("[data-password-again]");
 
   if (!dialog || typeof dialog.showModal !== "function") {
     return;
@@ -26,7 +25,7 @@
     }
   }
 
-  dialog.querySelector("[data-price-check-back]")?.addEventListener("click", back);
+  dialog.querySelector("[data-password-again-back]")?.addEventListener("click", back);
   dialog.addEventListener("cancel", (event) => {
     event.preventDefault();
     back();

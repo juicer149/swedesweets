@@ -6,13 +6,6 @@ import pytest
 
 from ops_portal.products.pricing_forms import (
     ProductPricingForm,
-    build_product_pricing_initial_data,
-)
-from pricing.models import CommercialPrice, PriceAmount
-from pricing.tests.factories import (
-    commercial_price_factory,
-    price_amount_factory,
-    pricing_product_factory,
 )
 
 # A switch that is on is sent as "on"; one that is off is not sent.
@@ -261,66 +254,3 @@ def test_product_pricing_form_status_is_one_switch_per_channel():
     names = list(form.fields)
     assert names.index("business_active") < names.index("business_eur")
     assert names.index("retail_active") < names.index("retail_eur")
-
-
-@pytest.mark.django_db
-def test_build_product_pricing_initial_data_without_pricing():
-    initial = build_product_pricing_initial_data(
-        business_price=None,
-        retail_price=None,
-    )
-
-    assert initial == {
-        "business_eur": None,
-        "business_sek": None,
-        "business_active": False,
-        "retail_eur": None,
-        "retail_sek": None,
-        "retail_active": False,
-    }
-
-
-@pytest.mark.django_db
-def test_build_product_pricing_initial_data_from_existing_prices():
-    product = pricing_product_factory()
-
-    business_price = commercial_price_factory(
-        product=product,
-        channel=CommercialPrice.Channel.BUSINESS,
-        enabled=True,
-    )
-    price_amount_factory(
-        commercial_price=business_price,
-        currency=PriceAmount.Currency.EUR,
-        price=Decimal("7.00"),
-    )
-    price_amount_factory(
-        commercial_price=business_price,
-        currency=PriceAmount.Currency.SEK,
-        price=Decimal("79.00"),
-    )
-
-    retail_price = commercial_price_factory(
-        product=product,
-        channel=CommercialPrice.Channel.RETAIL,
-        enabled=False,
-    )
-    price_amount_factory(
-        commercial_price=retail_price,
-        currency=PriceAmount.Currency.EUR,
-        price=Decimal("9.00"),
-    )
-
-    initial = build_product_pricing_initial_data(
-        business_price=business_price,
-        retail_price=retail_price,
-    )
-
-    assert initial == {
-        "business_eur": Decimal("7.00"),
-        "business_sek": Decimal("79.00"),
-        "business_active": True,
-        "retail_eur": Decimal("9.00"),
-        "retail_sek": None,
-        "retail_active": False,
-    }

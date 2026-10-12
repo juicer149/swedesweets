@@ -5,9 +5,7 @@ price tag: its own retail and business prices in EUR and SEK, or the
 product's; delete), in the order shown everywhere; new rows are added
 in the page (variant_editor.js) and everything is saved with "Update
 product". The sales channels say where the variant is sold: with
-neither, it is paused. The section sits behind a lock: a hands-off guard
-in the page (its fields are inert, still sent as they were), not a rule
-the server enforces.
+neither, it is paused.
 """
 
 from __future__ import annotations
@@ -120,7 +118,7 @@ class VariantForm(forms.Form):
         label="Own price",
         widget=forms.CheckboxInput(
             attrs={
-                "class": "variant-price-toggle__input",
+                "class": "product-tag-toggle__input",
                 "data-variant-own-price": "true",
             }
         ),

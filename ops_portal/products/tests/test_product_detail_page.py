@@ -128,8 +128,7 @@ def test_product_create_form_has_product_and_pricing(client):
         "product",
         "pricing",
     ]
-    # No lock on a new product; its price with the EUR / SEK chips.
-    assert "data-lock-button" not in content
+    # Its price with the EUR / SEK chips.
     assert content.count("data-price-field") == 2
 
 

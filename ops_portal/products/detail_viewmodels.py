@@ -189,29 +189,6 @@ class ProductPricingSummary:
 
         return (self.business, self.retail)
 
-    @property
-    def configured_count(
-        self,
-    ) -> int:
-        return sum(
-            (
-                self.business.configured,
-                self.retail.configured,
-            )
-        )
-
-    @property
-    def summary_label(
-        self,
-    ) -> str:
-        if self.configured_count == 0:
-            return "Not configured"
-
-        if self.configured_count == 1:
-            return "1 channel configured"
-
-        return "2 channels configured"
-
     @classmethod
     def from_prices_by_channel(
         cls,
@@ -242,38 +219,6 @@ class ProductPricingSummary:
         return cls(
             business=channel("Business", CommercialPrice.Channel.BUSINESS),
             retail=channel("Retail", CommercialPrice.Channel.RETAIL),
-        )
-
-    @classmethod
-    def from_commercial_prices(
-        cls,
-        *,
-        business_price: (
-            CommercialPrice | None
-        ),
-        retail_price: (
-            CommercialPrice | None
-        ),
-    ) -> ProductPricingSummary:
-        return cls(
-            business=(
-                ProductChannelPricingSummary
-                .from_commercial_price(
-                    label="Business",
-                    commercial_price=(
-                        business_price
-                    ),
-                )
-            ),
-            retail=(
-                ProductChannelPricingSummary
-                .from_commercial_price(
-                    label="Retail",
-                    commercial_price=(
-                        retail_price
-                    ),
-                )
-            ),
         )
 
 

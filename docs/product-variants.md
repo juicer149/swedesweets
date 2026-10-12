@@ -114,9 +114,10 @@ fall back to the order they were added in.
 
 - **Product page** gets a **Variants** tab: the variants in order with the
   stock of each.
-- **Edit** has **Variants and offers**, behind one lock like Product:
-  - EUR / SEK as two small tabs (which currency's prices show);
-  - the product's price: every variant's without a price of its own;
+- **Edit** has **Variants and offers**:
+  - **Product price**: every variant's without a price of its own; in its
+    box EUR / SEK as two small tabs (which currency's prices show, there
+    and in the variants' tabs);
   - a card per variant (rounded, edged in the accent): arrows to move it
     (up at its top, down at its bottom), label, weight, its sales
     channels (Retail, Business; in neither it is paused), its price tag,

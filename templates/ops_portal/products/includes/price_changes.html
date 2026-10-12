@@ -1,0 +1,19 @@
+{% comment %}
+  The price changes waiting for the password (ops_portal/products/
+  price_check.py), in the password dialog (includes/ui/
+  password_again_dialog.html): each variant's old price struck through,
+  the new one and the change in percent.
+
+  changes   PriceChange list
+{% endcomment %}
+<ul class="price-changes">
+  {% for change in changes %}
+    <li class="price-changes__item">
+      <span class="price-changes__what">{{ change.variant_name }} · {{ change.channel_label }} {{ change.currency }}</span>
+      <span class="price-changes__prices">
+        <s>{{ change.old }}</s>{% if change.new is not None %} → <strong>{{ change.new }}</strong>{% endif %}
+        <span class="price-changes__percent{% if change.new is None or change.percent < 0 %} price-changes__percent--down{% endif %}">{{ change.percent_label }}</span>
+      </span>
+    </li>
+  {% endfor %}
+</ul>

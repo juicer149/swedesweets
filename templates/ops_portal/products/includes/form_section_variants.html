@@ -1,10 +1,9 @@
 {% comment %}
-  Variants and offers, on the product edit form (variant_editor.js); the
-  whole section behind one lock (product_form.html, form_lock.js).
+  Variants and offers, on the product edit form (variant_editor.js).
 
-  At the top, EUR and SEK as two small tabs: which currency's prices show
-  (both are kept and sent). Then the product's price: every variant's,
-  unless the variant has its own.
+  At the top the product's price: every variant's, unless the variant has
+  its own. In its box EUR and SEK as two small tabs: which currency's
+  prices show, here and in the variants' tabs (both are kept and sent).
 
   Then a card per variant (variant_row.html): the arrows that move it,
   label, weight, its sales channels (Retail, Business: where it is sold;
@@ -17,11 +16,6 @@
   <div class="variant-editor" data-variant-editor data-currency="eur">
     {{ formset.management_form }}
 
-    <nav class="section-nav variant-editor__currencies" role="tablist" aria-label="Currency of the prices">
-      <button class="section-nav__link section-nav__link--active" type="button" role="tab" aria-selected="true" data-currency-choice="eur">EUR</button>
-      <button class="section-nav__link" type="button" role="tab" aria-selected="false" data-currency-choice="sek">SEK</button>
-    </nav>
-
     {% if formset.non_form_errors or prices.non_field_errors %}
       <div class="form-errors" role="alert">
         {% for error in formset.non_form_errors %}<p>{{ error }}</p>{% endfor %}
@@ -30,12 +24,21 @@
     {% endif %}
 
     <div class="variant-shared">
-      <p class="variant-shared__name">
-        Price
-        <span class="info-dot" tabindex="0" title="Every variant is sold at this price, unless its price tag gives it its own: a price it leaves empty is still this one.">?</span>
-      </p>
-      {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=prices.product_retail_eur sek=prices.product_retail_sek only %}
-      {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=prices.product_business_eur sek=prices.product_business_sek only %}
+      <div class="variant-shared__head">
+        <p class="variant-shared__name">
+          Product price
+          <span class="info-dot" tabindex="0" title="Every variant is sold at this price, unless its price tag gives it its own: a price it leaves empty is still this one.">?</span>
+        </p>
+        {# Which currency's prices show, here and in the variants' tabs. #}
+        <nav class="section-nav variant-editor__currencies" role="tablist" aria-label="Currency of the prices">
+          <button class="section-nav__link section-nav__link--active" type="button" role="tab" aria-selected="true" data-currency-choice="eur">EUR</button>
+          <button class="section-nav__link" type="button" role="tab" aria-selected="false" data-currency-choice="sek">SEK</button>
+        </nav>
+      </div>
+      <div class="variant-shared__prices">
+        {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=prices.product_retail_eur sek=prices.product_retail_sek only %}
+        {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=prices.product_business_eur sek=prices.product_business_sek only %}
+      </div>
     </div>
 
     <div class="variant-rows__head" aria-hidden="true">

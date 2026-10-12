@@ -10,6 +10,7 @@ from django.shortcuts import (
 )
 from django.urls import reverse
 
+from accounts.password_again import PasswordAgainForm
 from common.table_controls import (
     TableControls,
     TableControlsTemplate,
@@ -44,7 +45,6 @@ from ops_portal.products.list_viewmodels import (
 )
 from ops_portal.products.price_check import (
     PriceCheck,
-    PriceCheckForm,
     check_is_on,
     price_changes,
 )
@@ -310,7 +310,7 @@ def edit(
     request,
     product_pk: int,
 ):
-    """The product's own data (behind a lock in the page) and its variants
+    """The product's own data and its variants
     with their sales channels and prices, saved together; the page comes
     back after a save. Big price changes wait for the user's password
     (price_check.py)."""
@@ -353,7 +353,7 @@ def edit(
                 prices_form=prices_form,
                 variant_formset=variant_formset,
             )
-            check_form = PriceCheckForm(request.POST, user=request.user)
+            check_form = PasswordAgainForm(request.POST, user=request.user)
 
             if changes and not check_form.is_confirmed():
                 price_check = PriceCheck(changes=changes, form=check_form)

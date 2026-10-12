@@ -2,7 +2,8 @@
 
 Saving changes to a price a variant already has (raised, lowered or
 removed) asks first: the page comes back with the changes listed and asks
-for the user's password again, and saves only once it is given. A first
+for the user's password again (accounts/password_again.py: a few wrong
+tries lock it for a while), and saves only once it is given. A first
 price (none before) is never asked about, so setting prices up the first
 time stays quick.
 
@@ -16,13 +17,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 
-from django import forms
 from django.conf import settings
 
+from accounts.password_again import PasswordAgainForm
 from ops_portal.products.pricing_forms import PRICE_FIELDS, variant_amounts
 from pricing.models import CommercialPrice
-
-PASSWORD_FIELD = "price_check_password"
 
 
 @dataclass(frozen=True, slots=True)
@@ -99,41 +98,8 @@ def price_changes(
 
 @dataclass(frozen=True, slots=True)
 class PriceCheck:
-    """What the page asks about: the changes, and the password."""
+    """What the page asks about: the changes, and the password
+    (accounts/password_again.py)."""
 
     changes: list[PriceChange]
-    form: PriceCheckForm
-
-
-class PriceCheckForm(forms.Form):
-    """The user's password, once more, for the price changes."""
-
-    price_check_password = forms.CharField(
-        required=False,
-        strip=False,
-        label="Your password",
-        widget=forms.PasswordInput(
-            attrs={"autocomplete": "current-password"},
-        ),
-    )
-
-    def __init__(self, *args, user, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.user = user
-
-    def is_confirmed(self) -> bool:
-        """Given and right; a wrong one is said on the field."""
-
-        if not self.is_valid():
-            return False
-
-        password = self.cleaned_data[PASSWORD_FIELD]
-
-        if not password:
-            return False
-
-        if not self.user.check_password(password):
-            self.add_error(PASSWORD_FIELD, "That is not your password.")
-            return False
-
-        return True
+    form: PasswordAgainForm
