@@ -199,3 +199,14 @@ def test_build_product_edit_initial_data():
         "active": True,
         "vegan": True,
     }
+
+
+def test_status_and_attributes_have_rows_of_their_own():
+    from common.form_layout import FORM_FIELD_FULL, FORM_FIELD_HALF
+
+    edit_form = ProductEditForm()
+
+    assert edit_form.fields["active"].layout_class == FORM_FIELD_FULL
+    assert edit_form.fields["vegan"].layout_class == FORM_FIELD_FULL
+    assert edit_form.fields["internal_number"].layout_class == FORM_FIELD_HALF
+    assert ProductForm().fields["vegan"].layout_class == FORM_FIELD_FULL

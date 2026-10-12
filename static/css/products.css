@@ -169,3 +169,22 @@
   margin-bottom: var(--space-2);
   text-align: center;
 }
+
+/* A price with EUR / SEK chips over its one field (price_field.html). */
+.price-field__currencies {
+  margin-bottom: var(--space-2);
+}
+
+.price-field__input[hidden] {
+  display: none;
+}
+
+/* A currency that has a price, while another is shown: a small dot. */
+.price-field__currencies label.price-field__currency--priced:not(:has(input:checked))::after {
+  content: "";
+  inline-size: 6px;
+  block-size: 6px;
+  margin-inline-start: var(--space-2);
+  border-radius: 50%;
+  background: currentColor;
+}

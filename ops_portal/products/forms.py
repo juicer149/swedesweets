@@ -228,8 +228,12 @@ class ProductForm(forms.Form):
             self
         )
 
+        # The attributes have the last row to themselves (more may come).
         set_form_field_layout(
             self,
+            full=(
+                "vegan",
+            ),
             half=(
                 "internal_number",
                 "manufacturer",
@@ -237,7 +241,6 @@ class ProductForm(forms.Form):
                 "name",
                 "stock_unit",
                 "weight_per_unit",
-                "vegan",
             ),
         )
 
@@ -379,15 +382,19 @@ class ProductEditForm(forms.Form):
             self
         )
 
+        # The status on the first row and the attributes on the last, each
+        # on its own.
         set_form_field_layout(
             self,
+            full=(
+                "active",
+                "vegan",
+            ),
             half=(
                 "internal_number",
                 "manufacturer",
                 "brand",
                 "name",
-                "active",
-                "vegan",
             ),
         )
 

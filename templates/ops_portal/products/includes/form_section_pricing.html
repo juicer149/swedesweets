@@ -1,4 +1,4 @@
-{% comment %}The Pricing section of the product form: per channel (business, retail) its switch first, then its EUR and SEK prices.{% endcomment %}
+{% comment %}The Pricing section of the product form: per channel (business, retail) its switch first, then its price, in EUR or SEK as the chips choose (price_field.html).{% endcomment %}
 <p class="page__note form-tab__note">Product-wide prices for ordinary business and retail sales.</p>
 
 {% if pricing_form.non_field_errors %}
@@ -25,8 +25,7 @@
 
   <div class="form-grid">
     {% include "includes/ui/form_field.html" with field=pricing_form.business_active only %}
-    {% include "includes/ui/form_field.html" with field=pricing_form.business_eur only %}
-    {% include "includes/ui/form_field.html" with field=pricing_form.business_sek only %}
+    {% include "ops_portal/products/includes/price_field.html" with channel="business" channel_label="Business" eur=pricing_form.business_eur sek=pricing_form.business_sek only %}
   </div>
 </section>
 
@@ -43,7 +42,6 @@
 
   <div class="form-grid">
     {% include "includes/ui/form_field.html" with field=pricing_form.retail_active only %}
-    {% include "includes/ui/form_field.html" with field=pricing_form.retail_eur only %}
-    {% include "includes/ui/form_field.html" with field=pricing_form.retail_sek only %}
+    {% include "ops_portal/products/includes/price_field.html" with channel="retail" channel_label="Retail" eur=pricing_form.retail_eur sek=pricing_form.retail_sek only %}
   </div>
 </section>
