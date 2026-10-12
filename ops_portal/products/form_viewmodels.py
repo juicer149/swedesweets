@@ -44,6 +44,7 @@ PRODUCT_SECTION = FormSection(
     key="product",
     title="Product",
     template="ops_portal/products/includes/form_section_product.html",
+    help="ops_portal/products/help/product.html",
 )
 
 # A new product: its data, then its prices (it has one variant).

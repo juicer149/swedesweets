@@ -39,6 +39,9 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   locks: having opened the edit page is the intent; what needs a second
   look asks for it, like price changes); saving comes back to the same
   page.
+- **Product page and edit page alike**: the product page shows the same
+  cards as the edit page, to read (product card, product price, a card per
+  variant with stock); Edit leads to the same places.
 - **Help on a page**: a round "?" beside a title opens a dialog with what
   everything there means (`includes/ui/help.html`, its text a template of
   its own; a form section takes it as `help`). First on Variants and
@@ -131,7 +134,8 @@ mobile).
 **Catalog page**: category and picture, then name, description and
 ingredients under one tab per language.
 
-**Edit page**: Product, then **Variants and offers**: the product's price
+**Edit page**: Product as a card (catalog ID and status at its top, brand
+and name large), then **Variants and offers**: the product's price
 with the EUR / SEK tabs in it; then a card per variant:
 arrows (up at the top, down at the bottom), label, weight, sales channels
 (Retail, Business), the price tag, and under the channels what it sells

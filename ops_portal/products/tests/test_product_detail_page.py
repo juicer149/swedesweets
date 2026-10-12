@@ -36,13 +36,17 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
         "product",
         "catalog",
     ]
-    (line,) = response.context["variant_lines"]
-    assert line.aside == product.stock_quantity_label(12)
+    (card,) = response.context["variant_cards"]
+    assert card.stock_label == product.stock_quantity_label(12)
+    assert card.in_stock is True
     # The heading says no stock (the variants do).
     assert "available" not in content.split("</header>")[0]
-    # Business and Retail as tags under Offers.
-    assert 'id="product-pricing-title">Offers</h2>' in content
-    assert 'class="product-tag pricing-tag pricing-tag--' in content
+    # The product's card, then Variants and offers with the product price
+    # and a card per variant (its channels as chips), with its help.
+    assert 'class="product-card"' in content
+    assert 'id="product-variants-title">Variants and offers</h2>' in content
+    assert "variant-view__chip" in content
+    assert 'data-help-open="variants-help"' in content
     assert "demand" not in response.context
 
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
@@ -96,9 +100,12 @@ def test_product_edit_form_is_one_page_of_sections(client):
     # The catalog has its own page.
     assert 'name="fr-description"' not in content
     assert 'name="category"' not in content
-    # The status switch and the catalog ID come first.
-    assert content.index('name="active"') < content.index('name="internal_number"')
-    assert content.index('name="internal_number"') < content.index('name="brand"')
+    # The product as a card: catalog ID and the status switch at its top,
+    # then brand and name; the section has its help.
+    assert 'class="product-card product-card--form"' in content
+    assert content.index('name="internal_number"') < content.index('name="active"')
+    assert content.index('name="active"') < content.index('name="brand"')
+    assert 'data-help-open="product-help"' in content
     assert content.index('name="name"') < content.index('name="vegan"')
     # Each variant's sales channels and price tag; its own prices (shown
     # with the tag on) and the product's price.

@@ -112,8 +112,12 @@ fall back to the order they were added in.
 
 ## Ops
 
-- **Product page** gets a **Variants** tab: the variants in order with the
-  stock of each.
+- **Product page** reads like the edit page: the product's card (brand
+  over name, catalog ID, SKU, manufacturer, attributes, a pencil to edit),
+  then **Variants and offers**: the product price, and a card per variant
+  in order (weight, its sales channels as chips, the price tag and its
+  own prices in a yellow tab when it has them, stock; why its weight is
+  fixed).
 - **Edit** has **Variants and offers**:
   - **Product price**: every variant's without a price of its own; in its
     box EUR / SEK as two small tabs (which currency's prices show, there

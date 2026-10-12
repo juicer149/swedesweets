@@ -89,19 +89,6 @@
   line-height: 1.25;
 }
 
-.product-section__title {
-  margin: 0 0 var(--space-4);
-  padding-bottom: var(--space-2);
-
-  color: var(--color-primary-900);
-  border-bottom: 1px solid var(--color-neutral-200);
-
-  font-family: var(--font-body);
-  font-size: var(--font-size-20);
-  font-weight: 800;
-  line-height: 1.25;
-}
-
 /* The pricing channels sit under the section's own title. */
 .form-section .pricing-channel__title {
   font-size: var(--font-size-16);
@@ -114,29 +101,6 @@
 
 .product-section {
   margin-top: var(--space-6);
-}
-
-.product-section__links {
-  margin-top: var(--space-3);
-}
-
-/* Pricing: Business and Retail as tags, green when the channel is active
-   (like the status switch when on), grey when not or not set up. */
-.pricing-channels {
-  margin: 0 0 var(--space-3);
-}
-
-.pricing-tag--on {
-  color: var(--color-status-success-text);
-  background: rgb(var(--color-status-success) / 0.11);
-  border: 1px solid rgb(var(--color-status-success) / 0.32);
-}
-
-.pricing-tag--off,
-.pricing-tag--none {
-  color: var(--color-status-muted-text);
-  background: rgb(var(--color-status-muted) / 0.06);
-  border: 1px solid rgb(var(--color-status-muted) / 0.22);
 }
 
 /* The shop's tile as customers see it: its own width, not a grid's, and
@@ -217,3 +181,215 @@
   border-radius: 50%;
   background: currentColor;
 }
+
+
+/* =============================================================================
+   The product card (the product form's Product section, the product
+   page's product): like a variant's card (variants.css), rounded and
+   edged in the accent. At its top the catalog ID as a pill, the SKU and
+   the status; then brand and name, large; then the rest in a row.
+   ============================================================================= */
+
+.product-card {
+  padding: var(--space-4) var(--space-5);
+  background: rgb(255 255 255 / 0.45);
+  border: 1px solid color-mix(in srgb, var(--color-accent-600) 38%, transparent);
+  border-radius: 16px;
+}
+
+.product-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.product-card--form .product-card__top {
+  margin-bottom: var(--space-4);
+}
+
+.product-card__identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.product-card__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px 5px 4px 12px;
+  color: var(--color-neutral-800);
+  background: color-mix(in srgb, var(--color-accent-600) 12%, var(--color-neutral-50));
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-14);
+  font-weight: 800;
+}
+
+.product-card__pill input {
+  width: 4.5rem;
+  min-height: 2rem;
+  padding: 2px 10px;
+  color: var(--color-primary-900);
+  background: var(--color-white);
+  border: var(--border-subtle);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: 800;
+}
+
+.product-card__pill input:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: var(--shadow-focus-info);
+}
+
+.product-card__pill--error {
+  box-shadow: 0 0 0 2px rgb(var(--color-status-danger) / 0.45);
+}
+
+.product-card__muted {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  font-weight: 600;
+}
+
+.product-card__names {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--space-3);
+}
+
+.product-card .product-card__field {
+  margin: 0;
+}
+
+.product-card__label {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-12);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.product-card .form-field input,
+.product-card .form-field select {
+  min-height: 2.5rem;
+  padding: 0.45rem 0.75rem;
+}
+
+.product-card__name input {
+  min-height: 2.875rem;
+  font-size: var(--font-size-18);
+  font-weight: 700;
+}
+
+.product-card__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3) var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.product-card__row .product-card__field {
+  flex: 1 1 11rem;
+}
+
+/* A switch (Vegan) keeps its own width. */
+.product-card__row .product-card__field:has(.product-tag-toggle) {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  .product-card {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .product-card__names {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+/* =============================================================================
+   The product page's product card (detail_tab_product.html): brand over
+   name, a pencil to edit, its facts in a row.
+   ============================================================================= */
+
+.product-card__title {
+  margin: 0;
+  color: var(--color-neutral-800);
+  font-family: var(--font-body);
+  font-size: var(--font-size-20);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.product-card__brand {
+  display: block;
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  font-weight: 700;
+}
+
+.product-card__edit {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--color-neutral-700);
+  background: var(--color-white);
+  border: var(--border-subtle);
+  border-radius: 50%;
+  transition:
+    color var(--motion-fast),
+    box-shadow var(--motion-fast);
+}
+
+.product-card__edit:hover,
+.product-card__edit:focus-visible {
+  color: var(--color-primary-800);
+  box-shadow: var(--shadow-accent-glow);
+}
+
+.product-card__facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-5);
+  margin: var(--space-3) 0 0;
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  font-weight: 600;
+}
+
+.product-card__facts b {
+  color: var(--color-neutral-800);
+}
+
+.product-card__facts .product-tag {
+  margin: 0;
+}
+
+/* Edit product and Add batch, side by side at the foot. */
+.page__actions.product-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.page__actions.product-actions .button {
+  width: auto;
+  min-width: 10rem;
+}
+

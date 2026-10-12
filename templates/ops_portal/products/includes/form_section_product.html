@@ -1,24 +1,46 @@
 {% comment %}
-  The Product section of the product form. Editing: the status (one
-  switch) on its own row, catalog ID and maker, brand and name. Adding:
-  catalog ID and maker, brand and name, unit and weight. Last, on its own
-  row, the attributes (vegan; more may come).
+  The Product section of the product form, as a card like the variants'
+  (help: help/product.html). At the top the catalog ID, the SKU and (when
+  editing) the status as one switch; then brand and name, large; then the
+  manufacturer, (when adding) unit and weight, and the attributes (vegan;
+  more may come).
 {% endcomment %}
-<div class="form-grid">
-  {% if product %}
-    {% include "includes/ui/form_field.html" with field=form.active only %}
-  {% endif %}
+<div class="product-card product-card--form">
+  <div class="product-card__top">
+    <div class="product-card__identity">
+      <label class="product-card__pill{% if form.internal_number.errors %} product-card__pill--error{% endif %}" for="{{ form.internal_number.id_for_label }}">
+        {{ form.internal_number.label }}
+        {{ form.internal_number }}
+      </label>
+      {% if product %}<span class="product-card__muted">SKU {{ product.sku }}</span>{% endif %}
+    </div>
 
-  {% include "includes/ui/form_field.html" with field=form.internal_number only %}
-  {% include "includes/ui/form_field.html" with field=form.manufacturer only %}
+    {% if product %}
+      <label class="{{ form.active.field.tag_toggle_class }}" for="{{ form.active.id_for_label }}" title="{{ form.active.label }}">
+        {{ form.active }}
+        <span class="product-tag-toggle__surface">
+          {% include "includes/ui/icon_block.html" with name=form.active.field.tag_toggle_icon size="sm" class_name="product-tag-toggle__icon" only %}
+          <span>{{ form.active.field.tag_toggle_label }}</span>
+        </span>
+      </label>
+    {% endif %}
+  </div>
+  {% for error in form.internal_number.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
+  {% if product %}{% for error in form.active.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}{% endif %}
 
-  {% include "includes/ui/form_field.html" with field=form.brand only %}
-  {% include "includes/ui/form_field.html" with field=form.name only %}
+  <div class="product-card__names">
+    {% include "ops_portal/products/includes/product_card_field.html" with field=form.brand class="product-card__name" only %}
+    {% include "ops_portal/products/includes/product_card_field.html" with field=form.name class="product-card__name" only %}
+  </div>
 
-  {% if not product %}
-    {% include "includes/ui/form_field.html" with field=form.stock_unit only %}
-    {% include "includes/ui/form_field.html" with field=form.weight_per_unit only %}
-  {% endif %}
+  <div class="product-card__row">
+    {% include "ops_portal/products/includes/product_card_field.html" with field=form.manufacturer only %}
 
-  {% include "includes/ui/form_field.html" with field=form.vegan only %}
+    {% if not product %}
+      {% include "ops_portal/products/includes/product_card_field.html" with field=form.stock_unit only %}
+      {% include "ops_portal/products/includes/product_card_field.html" with field=form.weight_per_unit only %}
+    {% endif %}
+
+    {% include "ops_portal/products/includes/product_card_field.html" with field=form.vegan only %}
+  </div>
 </div>

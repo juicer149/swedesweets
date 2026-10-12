@@ -1,64 +1,103 @@
 {% comment %}
-  The Product tab: the product's data; its variants (one line each, or the
-  one) with SKU, weight, their prices when there are several, and what is
-  on the shelf, and Add batch; its pricing, Business and Retail as tags
-  (green active, grey not) over the prices of its only variant; Edit
-  product.
+  The Product tab, as the edit page in reading: the product's card (brand
+  over name, its facts, a pencil to edit it); then Variants and offers:
+  the product price, and a card per variant in order (weight, sales
+  channels, the price tag when it has its own prices, in a yellow tab
+  under it, stock; why its weight is fixed); Edit product and Add batch.
 {% endcomment %}
-{% include "ops_portal/products/includes/product_details.html" %}
+<section class="product-section" aria-labelledby="product-card-title">
+  <div class="product-card">
+    <div class="product-card__top">
+      <h2 class="product-card__title" id="product-card-title">
+        {% if product.brand %}<span class="product-card__brand">{{ product.brand }}</span>{% endif %}
+        {{ product.name }}
+      </h2>
+      {% if edit_action %}
+        <a class="product-card__edit" href="{{ edit_action.href }}#product" aria-label="Edit product" title="Edit product">
+          {% include "includes/ui/icon_block.html" with name="pencil" size="sm" only %}
+        </a>
+      {% endif %}
+    </div>
+
+    <p class="product-card__facts">
+      <span>Catalog ID <b>{{ product.internal_number|default:"—" }}</b></span>
+      <span>SKU <b>{{ product.sku }}</b></span>
+      {% if product.manufacturer %}<span>Manufacturer <b>{{ product.manufacturer }}</b></span>{% endif %}
+      {% for tag in attribute_tags %}
+        <span class="{{ tag.css_class }}">
+          {% include "includes/ui/icon_block.html" with name=tag.icon size="sm" class_name=tag.icon_class only %}
+          <span>{{ tag.label }}</span>
+        </span>
+      {% endfor %}
+    </p>
+  </div>
+</section>
 
 <section class="product-section" aria-labelledby="product-variants-title">
-  <h2 class="product-section__title" id="product-variants-title">Variants</h2>
+  <div class="form-section__head">
+    <h2 class="form-section__title" id="product-variants-title">Variants and offers</h2>
+    {% include "includes/ui/help.html" with id="variants-help" title="Variants and offers" body="ops_portal/products/help/variants.html" only %}
+  </div>
 
-  <ul class="lines product-variants" aria-label="Variants">
-    {% for line in variant_lines %}
-      {% include "includes/ui/line.html" with line=line only %}
+  <div class="variant-shared variant-shared--read">
+    <p class="variant-shared__name">Product price</p>
+    <p class="variant-shared__values">
+      {% for price in product_price %}
+        <span class="variant-shared__value"><span class="variant-shared__caption">{{ price.label }}</span> {{ price.amounts }}</span>
+      {% endfor %}
+    </p>
+  </div>
+
+  <ul class="variant-views" aria-label="Variants">
+    {% for variant in variant_cards %}
+      <li class="variant-view">
+        <div class="variant-view__card">
+          <span class="variant-view__label">{{ variant.label }}</span>
+          <span class="variant-view__weight">{{ variant.weight_label }}</span>
+          <span class="variant-view__channels">
+            <span class="variant-view__chip{% if variant.retail %} variant-view__chip--on{% endif %}">Retail<span class="visually-hidden">: {% if variant.retail %}sold{% else %}not sold{% endif %}</span></span>
+            <span class="variant-view__chip{% if variant.business %} variant-view__chip--on{% endif %}">Business<span class="visually-hidden">: {% if variant.business %}sold{% else %}not sold{% endif %}</span></span>
+            {% if variant.own_prices %}
+              <span class="variant-view__own" title="Its own price">
+                {% include "includes/ui/icon_block.html" with name="tag" size="sm" only %}
+                <span class="visually-hidden">Its own price</span>
+              </span>
+            {% endif %}
+            {% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}
+          </span>
+          <span class="variant-view__stock{% if not variant.in_stock %} variant-view__stock--none{% endif %}">
+            {{ variant.stock_label }}
+            <small>{% if variant.in_stock %}on the shelf{% else %}none in stock{% endif %}</small>
+          </span>
+        </div>
+
+        {% if variant.own_prices %}
+          <p class="variant-view__tab">
+            {% for price in variant.own_prices %}
+              <span><span class="variant-shared__caption">{{ price.label }}</span> {{ price.amounts }}</span>
+            {% endfor %}
+          </p>
+        {% endif %}
+
+        {% if variant.weight_fixed %}
+          <p class="variant-row__note">
+            {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
+            Weight fixed: it has stock or orders.
+          </p>
+        {% endif %}
+      </li>
     {% endfor %}
   </ul>
+</section>
 
+<div class="form-actions page__actions product-actions">
+  {% if edit_action %}
+    <a class="button button--md button--solid button--tone-place" href="{{ edit_action.href }}#product">Edit product</a>
+  {% endif %}
   {% if add_batch_href %}
-    <div class="page-actions__links product-section__links">
-      <a class="quiet-link" href="{{ add_batch_href }}">
-        {% include "includes/ui/icon_block.html" with name="inventory" size="sm" only %}
-        Add batch
-      </a>
-    </div>
+    <a class="button button--md button--soft button--tone-neutral" href="{{ add_batch_href }}">
+      {% include "includes/ui/icon_block.html" with name="inventory" size="sm" only %}
+      Add batch
+    </a>
   {% endif %}
-</section>
-
-<section class="product-section" aria-labelledby="product-pricing-title">
-  <h2 class="product-section__title" id="product-pricing-title">Offers</h2>
-
-  <p class="product-tag-list pricing-channels">
-    {% for channel in pricing.channels %}
-      <span class="product-tag pricing-tag pricing-tag--{{ channel.state }}" title="{{ channel.label }}: {{ channel.status_label }}">
-        {% if channel.state == "on" %}
-          {% include "includes/ui/icon_block.html" with name="check" size="sm" class_name="product-tag__icon" only %}
-        {% endif %}
-        <span>{{ channel.label }}</span>
-        <span class="visually-hidden">{{ channel.status_label }}</span>
-      </span>
-    {% endfor %}
-  </p>
-
-  {% if has_several_variants %}
-    <p class="page__note pricing-channels__note">Each variant's prices are on its line above.</p>
-  {% else %}
-    <dl class="facts">
-      {% for channel in pricing.channels %}
-        <div class="facts__row">
-          <dt>{{ channel.label }}</dt>
-          <dd>
-            {% for amount in channel.amounts %}{% if not forloop.first %} · {% endif %}{{ amount.label }}{% empty %}—{% endfor %}
-          </dd>
-        </div>
-      {% endfor %}
-    </dl>
-  {% endif %}
-</section>
-
-{% if edit_action %}
-  <div class="form-actions page__actions">
-    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_action.href }}#product">Edit product</a>
-  </div>
-{% endif %}
+</div>

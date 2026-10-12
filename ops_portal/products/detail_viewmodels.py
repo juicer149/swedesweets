@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from decimal import Decimal
 
 from django.urls import reverse
 
@@ -10,7 +11,6 @@ from common.detail_cards import (
     DetailAction,
     build_secondary_get_action,
 )
-from common.lines import META_OFFER, LineView, meta, metas
 from common.page_tabs import PageTab
 from ops_portal.inventory.access import can_create_batch
 from ops_portal.products.access import (
@@ -24,6 +24,10 @@ from ops_portal.products.presentation import (
     ProductTagPresentation,
     product_attribute_tags,
     product_status_icon,
+)
+from ops_portal.products.pricing_forms import (
+    product_amounts,
+    variant_amounts,
 )
 from pricing.models import CommercialPrice
 from products.images import product_display_url, product_image_url
@@ -94,146 +98,69 @@ class ProductProfileSummary:
 
 
 @dataclass(frozen=True, slots=True)
-class ProductPriceAmountSummary:
-    currency: str
+class ChannelPrice:
+    """A channel's price as the product page shows it: "55.00 € · 549.00
+    kr", or "—"."""
+
     label: str
+    amounts: str
 
 
 @dataclass(frozen=True, slots=True)
-class ProductChannelPricingSummary:
+class VariantCard:
+    """A variant on the product page, as its card on the edit page: label,
+    weight, sales channels, its own prices (when it has some), stock."""
+
     label: str
-    configured: bool
-    enabled: bool
-    amounts: tuple[
-        ProductPriceAmountSummary,
-        ...,
+    weight_label: str
+    retail: bool
+    business: bool
+    paused: bool
+    # Its prices in the channels it is sold in, when unlike the
+    # product's; empty: it sells at the product's price.
+    own_prices: tuple[ChannelPrice, ...]
+    stock_label: str
+    in_stock: bool
+    # Stock or orders: its weight can no longer change.
+    weight_fixed: bool
+
+
+CHANNELS = (
+    (CommercialPrice.Channel.RETAIL, "retail", "Retail"),
+    (CommercialPrice.Channel.BUSINESS, "business", "Business"),
+)
+
+CURRENCY_SIGNS = (
+    ("eur", "€"),
+    ("sek", "kr"),
+)
+
+
+def _channel_price(
+    amounts: dict[str, Decimal | None],
+    *,
+    key: str,
+    label: str,
+) -> ChannelPrice:
+    parts = [
+        f"{amounts[f'{key}_{currency}']:.2f} {sign}"
+        for currency, sign in CURRENCY_SIGNS
+        if amounts.get(f"{key}_{currency}") is not None
     ]
 
-    @property
-    def state(self) -> str:
-        """For the colour of the status: on (green), off (red), none."""
-
-        if not self.configured:
-            return "none"
-
-        return "on" if self.enabled else "off"
-
-    @property
-    def status_label(
-        self,
-    ) -> str:
-        if not self.configured:
-            return "Not configured"
-
-        return (
-            "Active"
-            if self.enabled
-            else "Inactive"
-        )
-
-    @classmethod
-    def from_commercial_price(
-        cls,
-        *,
-        label: str,
-        commercial_price: (
-            CommercialPrice | None
-        ),
-    ) -> (
-        ProductChannelPricingSummary
-    ):
-        if commercial_price is None:
-            return cls(
-                label=label,
-                configured=False,
-                enabled=False,
-                amounts=(),
-            )
-
-        amounts = tuple(
-            ProductPriceAmountSummary(
-                currency=(
-                    amount.currency
-                ),
-                label=(
-                    f"{amount.price:.2f} "
-                    f"{amount.currency}"
-                ),
-            )
-            for amount
-            in commercial_price.amounts.all()
-        )
-
-        return cls(
-            label=label,
-            configured=True,
-            enabled=(
-                commercial_price.enabled
-            ),
-            amounts=amounts,
-        )
-
-
-@dataclass(frozen=True, slots=True)
-class ProductPricingSummary:
-    business: (
-        ProductChannelPricingSummary
-    )
-    retail: (
-        ProductChannelPricingSummary
-    )
-
-    @property
-    def channels(self) -> tuple[ProductChannelPricingSummary, ...]:
-        """Business, then retail: one row each on the product page."""
-
-        return (self.business, self.retail)
-
-    @classmethod
-    def from_prices_by_channel(
-        cls,
-        *,
-        prices_by_channel: dict[str, dict[int, CommercialPrice]],
-        only_variant_id: int | None,
-    ) -> ProductPricingSummary:
-        """Per product: a channel is set up when a variant has an offer in
-        it, active when one of them is; its amounts are shown when the
-        product has one variant (several: each variant's line has them)."""
-
-        def channel(label: str, channel_key: str):
-            offers = prices_by_channel.get(channel_key, {})
-
-            if only_variant_id is not None:
-                return ProductChannelPricingSummary.from_commercial_price(
-                    label=label,
-                    commercial_price=offers.get(only_variant_id),
-                )
-
-            return ProductChannelPricingSummary(
-                label=label,
-                configured=bool(offers),
-                enabled=any(offer.enabled for offer in offers.values()),
-                amounts=(),
-            )
-
-        return cls(
-            business=channel("Business", CommercialPrice.Channel.BUSINESS),
-            retail=channel("Retail", CommercialPrice.Channel.RETAIL),
-        )
+    return ChannelPrice(label=label, amounts=" · ".join(parts) or "—")
 
 
 @dataclass(frozen=True, slots=True)
 class ProductDetailContext:
     product: Product
     profile: ProductProfileSummary
-    pricing: ProductPricingSummary
     attribute_tags: tuple[
         ProductTagPresentation,
         ...,
     ]
-    variant_lines: tuple[LineView, ...]
-    variant_labels: str
-    has_several_variants: bool
+    product_price: tuple[ChannelPrice, ...]
+    variant_cards: tuple[VariantCard, ...]
     catalog_previews: tuple[CatalogPagePreview, ...]
     in_shop: bool
     status_key: str
@@ -253,13 +180,11 @@ class ProductDetailContext:
         return {
             "product": self.product,
             "profile": self.profile,
-            "pricing": self.pricing,
             "attribute_tags": (
                 self.attribute_tags
             ),
-            "variant_lines": self.variant_lines,
-            "variant_labels": self.variant_labels,
-            "has_several_variants": self.has_several_variants,
+            "product_price": self.product_price,
+            "variant_cards": self.variant_cards,
             "catalog_previews": self.catalog_previews,
             "in_shop": self.in_shop,
             "edit_catalog_href": reverse(
@@ -297,10 +222,9 @@ def build_product_detail_context(
     shop_product: CatalogProduct | None = None,
 ) -> ProductDetailContext:
     variants = list(product.variants.all())
-
-    pricing = ProductPricingSummary.from_prices_by_channel(
+    shared = product_amounts(
         prices_by_channel=prices_by_channel,
-        only_variant_id=variants[0].pk if len(variants) == 1 else None,
+        variant_ids=[variant.pk for variant in variants],
     )
 
     return ProductDetailContext(
@@ -311,21 +235,22 @@ def build_product_detail_context(
                 product
             )
         ),
-        pricing=pricing,
         attribute_tags=(
             product_attribute_tags(
                 product
             )
         ),
-        variant_lines=build_variant_lines(
-            product=product,
-            stock_by_variant=stock_by_variant or {},
-            prices_by_channel=(
-                prices_by_channel if len(variants) > 1 else {}
-            ),
+        product_price=tuple(
+            _channel_price(shared, key=key, label=label)
+            for _channel, key, label in CHANNELS
         ),
-        variant_labels=_variant_labels(variants),
-        has_several_variants=len(variants) > 1,
+        variant_cards=build_variant_cards(
+            product=product,
+            variants=variants,
+            prices_by_channel=prices_by_channel,
+            shared=shared,
+            stock_by_variant=stock_by_variant or {},
+        ),
         catalog_previews=build_catalog_page_previews(
             product=product,
             shop_product=shop_product,
@@ -358,88 +283,75 @@ def build_product_detail_context(
     )
 
 
+# A product with one variant (no label): what its card is called.
 ONLY_VARIANT_NAME = "One variant"
 
 
-def _variant_labels(
-    variants: list[ProductVariant],
-) -> str:
-    """The Product tab's line of variants: "S · M · L", or "One variant"."""
-
-    if len(variants) <= 1:
-        return ONLY_VARIANT_NAME
-
-    return " · ".join(variant.label for variant in variants)
-
-
-PAUSED_LABEL = "Paused"
-
-
-def build_variant_lines(
+def build_variant_cards(
     *,
     product: Product,
-    stock_by_variant: dict[int, int],
-    prices_by_channel: dict[str, dict[int, CommercialPrice]] | None = None,
-) -> tuple[LineView, ...]:
-    """The product's variants: each in order, its SKU and weight, its
-    prices (`prices_by_channel`, when given: a product with several
-    variants), paused or not, and how many are on the shelf."""
-
-    image_url = product_image_url(product)
-    prices_by_channel = prices_by_channel or {}
-
-    return tuple(
-        LineView(
-            name=variant.label or ONLY_VARIANT_NAME,
-            image_url=image_url,
-            metas=metas(
-                meta(_variant_identity_label(variant)),
-                meta(_variant_prices_label(variant, prices_by_channel)),
-                meta(
-                    None if variant.active else PAUSED_LABEL,
-                    META_OFFER,
-                ),
-            ),
-            aside=product.stock_quantity_label(
-                stock_by_variant.get(variant.pk, 0)
-            ),
-        )
-        for variant in product.variants.all()
-    )
-
-
-def _variant_identity_label(
-    variant: ProductVariant,
-) -> str:
-    return f"{variant.sku} · {variant.weight_per_unit} g"
-
-
-def _variant_prices_label(
-    variant: ProductVariant,
+    variants: list[ProductVariant],
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
-) -> str | None:
-    """"Retail 2.50 EUR · Business 1.90 EUR": the variant's own prices in
-    each channel that has one."""
+    shared: dict[str, Decimal | None],
+    stock_by_variant: dict[int, int],
+) -> tuple[VariantCard, ...]:
+    """The product's variants in order, as on the edit page: a variant has
+    its own prices when one of them is unlike the product's (the same rule
+    as the edit form's price tag, variant_forms.build_variant_formset)."""
 
-    parts = []
+    cards = []
 
-    for channel, label in (
-        (CommercialPrice.Channel.RETAIL, "Retail"),
-        (CommercialPrice.Channel.BUSINESS, "Business"),
-    ):
-        offer = prices_by_channel.get(channel, {}).get(variant.pk)
-        amounts = list(offer.amounts.all()) if offer is not None else []
+    for variant in variants:
+        amounts = variant_amounts(
+            prices_by_channel=prices_by_channel,
+            variant_id=variant.pk,
+        )
+        sold = {
+            key: variant.active
+            and _enabled(prices_by_channel.get(channel, {}), variant)
+            for channel, key, _label in CHANNELS
+        }
+        own = any(
+            value is not None and value != shared[field_name]
+            for field_name, value in amounts.items()
+        )
+        stock = stock_by_variant.get(variant.pk, 0)
 
-        if amounts:
-            parts.append(
-                f"{label} "
-                + " / ".join(
-                    f"{amount.price:.2f} {amount.currency}"
-                    for amount in amounts
-                )
+        cards.append(
+            VariantCard(
+                label=variant.label or ONLY_VARIANT_NAME,
+                weight_label=f"{variant.weight_per_unit} g",
+                retail=sold["retail"],
+                business=sold["business"],
+                paused=not any(sold.values()),
+                own_prices=(
+                    tuple(
+                        _channel_price(amounts, key=key, label=label)
+                        for _channel, key, label in CHANNELS
+                        if sold[key]
+                    )
+                    if own
+                    else ()
+                ),
+                stock_label=product.stock_quantity_label(stock),
+                in_stock=stock > 0,
+                weight_fixed=(
+                    variant.batches.exists()
+                    or variant.order_lines.exists()
+                ),
             )
+        )
 
-    return " · ".join(parts) or None
+    return tuple(cards)
+
+
+def _enabled(
+    offers: dict[int, CommercialPrice],
+    variant: ProductVariant,
+) -> bool:
+    offer = offers.get(variant.pk)
+
+    return offer is not None and offer.enabled
 
 
 def build_product_secondary_actions(

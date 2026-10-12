@@ -1,0 +1,24 @@
+{% comment %}
+  One field in the product card (form_section_product.html): its small
+  label over it, its errors under it. A switch (field.field.tag_toggle) is
+  drawn as its chip (Active, Vegan).
+
+  field   a bound field
+  class   extra classes for the wrapper (e.g. product-card__name)
+{% endcomment %}
+<div class="form-field product-card__field{% if class %} {{ class }}{% endif %}{% if field.errors %} form-field--error{% endif %}">
+  {% if field.field.tag_toggle %}
+    <span class="product-card__label" aria-hidden="true">{{ field.label }}</span>
+    <label class="{{ field.field.tag_toggle_class }}" for="{{ field.id_for_label }}">
+      {{ field }}
+      <span class="product-tag-toggle__surface">
+        {% include "includes/ui/icon_block.html" with name=field.field.tag_toggle_icon size="sm" class_name="product-tag-toggle__icon" only %}
+        <span>{{ field.field.tag_toggle_label }}</span>
+      </span>
+    </label>
+  {% else %}
+    <label class="product-card__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+  {% endif %}
+  {% for error in field.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
+</div>

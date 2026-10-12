@@ -103,14 +103,14 @@ def test_the_product_page_lists_its_variants_with_their_stock(client):
     medium.save(update_fields=["active"])
 
     response = client.get(_detail_url(product))
-    lines = response.context["variant_lines"]
+    small, medium = response.context["variant_cards"]
 
-    assert [line.name for line in lines] == ["S", "M"]
-    # S has the batch; M has none.
-    assert [line.aside for line in lines] == ["4 boxes", "0 boxes"]
-    assert "Paused" in [meta.text for meta in lines[1].metas]
-    assert response.context["variant_labels"] == "S · M"
-    assert response.context["has_several_variants"] is True
+    assert (small.label, medium.label) == ("S", "M")
+    # S has the batch (so its weight is fixed); M has none.
+    assert (small.stock_label, medium.stock_label) == ("4 boxes", "0 boxes")
+    assert (small.weight_fixed, medium.weight_fixed) == (True, False)
+    assert (small.paused, medium.paused) == (False, True)
+    assert "Weight fixed: it has stock or orders." in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -120,10 +120,10 @@ def test_a_product_with_one_variant_shows_it_as_one(client):
 
     response = client.get(_detail_url(product))
 
-    assert [line.name for line in response.context["variant_lines"]] == [
+    assert [card.label for card in response.context["variant_cards"]] == [
         "One variant",
     ]
-    assert "product-variants" in response.content.decode()
+    assert "variant-view__card" in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -466,12 +466,16 @@ def test_the_product_page_shows_each_variants_prices(client):
     client.post(_edit_url(product), data)
 
     response = client.get(_detail_url(product))
-    small, medium = response.context["variant_lines"]
-    meta_texts = [[meta.text for meta in line.metas] for line in (small, medium)]
+    small, medium = response.context["variant_cards"]
+    retail_price, _business_price = response.context["product_price"]
 
-    assert "Retail 2.50 EUR" in meta_texts[0]
-    assert "Retail 4.50 EUR" in meta_texts[1]
-    assert response.context["pricing"].retail.enabled is True
+    # The product price is the one most variants share (a tie: the first
+    # variant's); M, unlike it, has its own, shown in its tab.
+    assert retail_price.amounts == "2.50 €"
+    assert small.own_prices == ()
+    assert medium.own_prices[0].label == "Retail"
+    assert medium.own_prices[0].amounts == "4.50 €"
+    assert small.retail and medium.retail
 
 
 @pytest.mark.django_db
