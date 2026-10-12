@@ -30,6 +30,10 @@
       <button class="variant-row__move-button" type="button" data-variant-up aria-label="Move up">
         {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="variant-row__up" only %}
       </button>
+      {# Drag the row by this to its place (the arrows do the same, a step at a time). #}
+      <span class="variant-row__grip" data-variant-grip aria-hidden="true" title="Drag to move">
+        <svg viewBox="0 0 12 8" fill="currentColor" focusable="false"><circle cx="2" cy="2" r="1.1"/><circle cx="6" cy="2" r="1.1"/><circle cx="10" cy="2" r="1.1"/><circle cx="2" cy="6" r="1.1"/><circle cx="6" cy="6" r="1.1"/><circle cx="10" cy="6" r="1.1"/></svg>
+      </span>
       <button class="variant-row__move-button" type="button" data-variant-down aria-label="Move down">
         {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" only %}
       </button>

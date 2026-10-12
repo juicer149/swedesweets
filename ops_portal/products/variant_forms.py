@@ -65,7 +65,9 @@ class VariantForm(forms.Form):
     # The row's place in the list; variant_editor.js numbers the rows.
     position = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(attrs={"data-variant-position": "true"}),
+        widget=forms.HiddenInput(
+            attrs={"data-variant-position": "true", "data-dirty-track": "true"}
+        ),
     )
 
     label = forms.CharField(
@@ -133,7 +135,9 @@ class VariantForm(forms.Form):
     delete = forms.BooleanField(
         required=False,
         label="Delete",
-        widget=forms.HiddenInput(attrs={"data-variant-delete": "true"}),
+        widget=forms.HiddenInput(
+            attrs={"data-variant-delete": "true", "data-dirty-track": "true"}
+        ),
     )
 
     def __init__(

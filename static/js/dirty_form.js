@@ -30,9 +30,14 @@
       return false;
     }
 
+    /*
+     * Hidden fields are not the user's, except those marked
+     * data-dirty-track: state a page keeps for them (a variant's place
+     * in the list, a variant marked for deletion).
+     */
     if (
       element.matches(
-        '[type="hidden"], [name="csrfmiddlewaretoken"]'
+        '[type="hidden"]:not([data-dirty-track]), [name="csrfmiddlewaretoken"]'
       )
     ) {
       return false;

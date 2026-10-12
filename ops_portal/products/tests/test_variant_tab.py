@@ -183,6 +183,9 @@ def test_the_page_opens_with_its_sections_open(client):
     assert 'role="tab" aria-selected="false" data-currency-choice="sek"' in content
     assert "individual_prices" not in content
     assert "data-variant-up" in content
+    # The grip to drag a row by; order and deletion count as changes.
+    assert "data-variant-grip" in content
+    assert 'data-variant-position="true" data-dirty-track="true"' in content
     assert "data-variant-handle" not in content
     assert "data-variant-add" in content
     assert [section.key for section in response.context["form_sections"]] == [
