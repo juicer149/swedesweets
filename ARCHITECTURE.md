@@ -1,5 +1,8 @@
 # Architecture
 
+How the code is organised. How it is worked on (setup, commands, branches,
+migrations, translations, deploys) is in [CONTRIBUTING.md](CONTRIBUTING.md).
+
 SwedeSweets uses explicit boundaries between actor-facing interfaces,
 sales-channel application policy, shared domain/application capabilities, and
 application-wide composition.

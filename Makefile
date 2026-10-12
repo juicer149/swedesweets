@@ -6,7 +6,7 @@ PYTHON := .venv/bin/python
 PIP := .venv/bin/pip
 MANAGE := $(PYTHON) manage.py
 
-.PHONY: help venv install setup run check lint migrate makemigrations superuser seed reset-demo shell django-shell collectstatic messages compilemessages i18n test test-v clean css-unused
+.PHONY: help venv install setup run check lint migrate makemigrations check-migrations superuser seed reset-demo shell django-shell collectstatic messages compilemessages i18n test test-v clean css-unused
 
 help:
 	@echo "SwedeSweets Ops commands"
@@ -20,6 +20,7 @@ help:
 	@echo "  make check           Run Django system checks"
 	@echo "  make migrate         Apply migrations"
 	@echo "  make makemigrations  Create new migrations"
+	@echo "  make check-migrations Check that models and migrations agree"
 	@echo "  make superuser       Create Django superuser"
 	@echo "  make seed            Seed demo data"
 	@echo "  make reset-demo      Reset and seed demo data"
@@ -61,6 +62,10 @@ migrate:
 
 makemigrations:
 	$(MANAGE) makemigrations
+
+# "No changes detected" when every model change has its migration.
+check-migrations:
+	$(MANAGE) makemigrations --check --dry-run
 
 superuser:
 	$(MANAGE) createsuperuser
