@@ -3,7 +3,7 @@
 
    The Variants tab of the product page lists the variants as read-only
    lines (lines.css). The edit form's tab is a quiet list of rows between
-   hairlines, like the lines of an order: a drag handle, label, full name
+   hairlines, like the lines of an order: a drag handle, label
    and weight, the on-sale toggle (chips.css), the trash (lines.css, with
    its red flash) and up/down arrows; the SKU under the label. A round
    lock beside the note opens it (green, open), and holds it again.
@@ -123,15 +123,14 @@
   border: 0;
 }
 
-/* handle | label | full name | weight | on sale | trash | arrows */
+/* handle | label | weight | on sale | trash | arrows */
 .variant-rows__head,
 .variant-row {
   display: grid;
   grid-template-columns:
     1.25rem
-    minmax(4.5rem, 0.7fr)
-    minmax(0, 1.3fr)
-    minmax(5rem, 0.6fr)
+    minmax(0, 1.4fr)
+    minmax(5rem, 0.8fr)
     6.25rem
     2.5rem
     1.75rem;
@@ -310,7 +309,7 @@
 }
 
 /* -----------------------------------------------------------------------------
-   Phones: label and weight side by side, the full name under them, the
+   Phones: label and weight side by side, the
    toggle, trash and arrows on their own line; the field labels show.
    ----------------------------------------------------------------------------- */
 
@@ -323,7 +322,6 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas:
       "label weight"
-      "name name"
       "sale actions"
       "sku sku";
     row-gap: var(--space-2);
@@ -335,7 +333,6 @@
 
   .variant-row__label { grid-area: label; }
   .variant-row__weight { grid-area: weight; }
-  .variant-row__name { grid-area: name; }
   .variant-row__sale { grid-area: sale; }
   .variant-row__sku { grid-area: sku; }
 

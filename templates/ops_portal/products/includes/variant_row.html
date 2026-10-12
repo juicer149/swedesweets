@@ -1,5 +1,5 @@
 {% comment %}
-  One variant in the Variants tab: drag handle, label, full name, weight,
+  One variant in the Variants tab: drag handle, label, weight,
   on sale, the trash, and up/down for phones; the SKU under it.
 
   row      a VariantForm (ops_portal/products/variant_forms.py)
@@ -19,12 +19,6 @@
     <label class="form-label variant-row__field-label" for="{{ row.label.id_for_label }}">{{ row.label.label }}</label>
     {{ row.label }}
     {% for error in row.label.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
-  </div>
-
-  <div class="form-field variant-row__field variant-row__name{% if row.name.errors %} form-field--error{% endif %}">
-    <label class="form-label variant-row__field-label" for="{{ row.name.id_for_label }}">{{ row.name.label }}</label>
-    {{ row.name }}
-    {% for error in row.name.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
   </div>
 
   <div class="form-field variant-row__field variant-row__weight{% if row.weight_per_unit.errors %} form-field--error{% endif %}">

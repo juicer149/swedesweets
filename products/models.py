@@ -40,7 +40,6 @@ from products.catalog import (
     MAX_NAME_LENGTH,
     MAX_SKU_LENGTH,
     MAX_VARIANT_LABEL_LENGTH,
-    MAX_VARIANT_NAME_LENGTH,
     MAX_WEIGHT_PER_UNIT,
     MIN_WEIGHT_PER_UNIT,
     make_sku,
@@ -595,14 +594,6 @@ class ProductVariant(models.Model):
         help_text='"M", "60 g"; empty for a product\'s only variant.',
     )
 
-    # Optional longer name for where there is room ("Small" beside "S");
-    # the label stands in when it is empty.
-    name = models.CharField(
-        max_length=MAX_VARIANT_NAME_LENGTH,
-        blank=True,
-        help_text='"Small", "Large bar"; optional, the label is used without it.',
-    )
-
     position = models.PositiveSmallIntegerField(
         default=1,
         help_text="Order shown everywhere (1, 2, 3 …).",
@@ -668,13 +659,6 @@ class ProductVariant(models.Model):
                 self.label
             )
 
-        if _should_handle(update_fields, "name"):
-            self.name = normalize_optional_text(
-                self.name,
-                field_name="name",
-                max_length=MAX_VARIANT_NAME_LENGTH,
-            )
-
         if _should_handle(update_fields, "weight_per_unit"):
             validate_weight_per_unit(
                 self.weight_per_unit
@@ -728,20 +712,13 @@ class ProductVariant(models.Model):
 
     @property
     def display_name(self) -> str:
-        """The variant's name, "Hoodie — Small" (or "— S" without a full
-        name); just the product's name for its only variant."""
+        """The variant's name, "Hoodie — M"; just the product's name for
+        its only variant."""
 
         return variant_display_name(
             self.product.display_name,
-            # An unlabelled variant is the product's only one: no suffix.
-            self.full_label if self.label else "",
+            self.label,
         )
-
-    @property
-    def full_label(self) -> str:
-        """The longer name when there is one, else the label."""
-
-        return self.name or self.label
 
     def __str__(self) -> str:
         return self.sku

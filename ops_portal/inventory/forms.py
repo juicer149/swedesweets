@@ -31,13 +31,6 @@ class VariantGroup:
     shown: bool
 
 
-def _variant_choice_text(variant: ProductVariant) -> str:
-    if variant.name:
-        return f"{variant.label} · {variant.name}"
-
-    return variant.label
-
-
 class BatchForm(forms.Form):
     product = ProductChoiceField(
         queryset=Product.objects.filter(active=True).order_by(
@@ -150,7 +143,7 @@ class BatchForm(forms.Form):
                 choices=tuple(
                     VariantChoice(
                         pk=variant.pk,
-                        text=_variant_choice_text(variant),
+                        text=variant.label,
                         checked=str(variant.pk) == chosen_variant,
                     )
                     for variant in variants

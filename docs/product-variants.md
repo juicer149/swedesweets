@@ -21,8 +21,6 @@ Product                        what a customer sees as one thing
 ProductVariant                 what is stocked, priced, sold and packed
   product                      FK, PROTECT
   label                        "M", "60 g"; "" for a product's only variant
-  name                         optional longer name, "Small", "Large bar";
-                               used where there is room, the label without
   position                     order shown everywhere (1, 2, 3 …)
   sku                          unique; generated, stable
   weight_per_unit              grams for one stock unit (shown on labels,

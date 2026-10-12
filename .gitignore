@@ -37,3 +37,8 @@ scripts/
 
 # Fake payment provider state (local development)
 .fake_payments/
+
+# Personal notes and scratch files, never committed: name them
+# <name>.local.<ext> (docs/todos.local.md), or keep them in a local/ folder.
+*.local.*
+local/

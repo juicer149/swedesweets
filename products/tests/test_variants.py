@@ -291,18 +291,3 @@ def test_renaming_keeps_the_sku():
     large.refresh_from_db()
     assert large.label == "Large"
     assert large.sku == f"{product.sku}-L"
-
-
-@pytest.mark.django_db
-def test_a_full_name_is_used_where_there_is_room():
-    product = product_factory(brand="SwedeSweets", name="Hoodie")
-    large = add_variant(product=product, label="L", first_label="S")
-    large.name = "  Large  "
-    large.save()
-    small = product.variants.get(label="S")
-
-    assert large.name == "Large"
-    assert large.full_label == "Large"
-    assert large.display_name == "SwedeSweets — Hoodie — Large"
-    assert small.full_label == "S"
-    assert small.display_name == "SwedeSweets — Hoodie — S"

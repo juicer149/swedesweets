@@ -15,7 +15,6 @@ from django.forms import BaseFormSet, formset_factory
 
 from products.catalog import (
     MAX_VARIANT_LABEL_LENGTH,
-    MAX_VARIANT_NAME_LENGTH,
     MAX_WEIGHT_PER_UNIT,
     MIN_WEIGHT_PER_UNIT,
 )
@@ -70,18 +69,6 @@ class VariantForm(forms.Form):
                 "list": LABEL_SUGGESTIONS_ID,
                 "autocomplete": "off",
                 "placeholder": "e.g. M, 60 g",
-            }
-        ),
-    )
-
-    name = forms.CharField(
-        required=False,
-        max_length=MAX_VARIANT_NAME_LENGTH,
-        label="Full name",
-        widget=forms.TextInput(
-            attrs={
-                "autocomplete": "off",
-                "placeholder": "Optional, e.g. Medium",
             }
         ),
     )
@@ -286,7 +273,6 @@ class BaseVariantFormSet(BaseFormSet):
             VariantChange(
                 variant_id=form.cleaned_data.get("variant_id"),
                 label=form.cleaned_data["label"],
-                name=form.cleaned_data.get("name", ""),
                 weight_per_unit=form.cleaned_data["weight_per_unit"],
                 active=form.cleaned_data.get("active", False),
                 delete=form.cleaned_data.get("delete", False),
@@ -314,7 +300,6 @@ def build_variant_formset(
             "variant_id": variant.pk,
             "position": index,
             "label": variant.label,
-            "name": variant.name,
             "weight_per_unit": variant.weight_per_unit,
             "active": variant.active,
             "delete": False,
