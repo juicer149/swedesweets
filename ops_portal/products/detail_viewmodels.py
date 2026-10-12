@@ -5,13 +5,14 @@ from dataclasses import dataclass
 from django.urls import reverse
 
 from accounts.roles import RoleSpec
+from common.catalog.viewmodels import CatalogOfferVM, ProductCardVM
 from common.detail_cards import (
     DetailAction,
     build_secondary_get_action,
 )
 from common.lines import META_OFFER, LineView, meta, metas
 from common.page_tabs import PageTab
-from common.ui import QuantityInfo, build_quantity_info
+from common.ui import QuantityInfo, UiText, build_quantity_info
 from inventory.low_stock import LOW_STOCK_THRESHOLD, RUNNING_LOW_THRESHOLD
 from inventory.models import InventoryBatch
 from ops_portal.inventory.access import can_create_batch
@@ -22,8 +23,9 @@ from ops_portal.products.presentation import (
     ProductTagPresentation,
     product_attribute_tags,
     product_status_icon,
+    translated_product_name,
 )
-from pricing.models import CommercialPrice
+from pricing.models import CommercialPrice, PriceAmount
 from products.images import product_display_url, product_image_url
 from products.models import (
     Product,
@@ -40,16 +42,10 @@ PRODUCT_DETAIL_TABS = (
         template="ops_portal/products/includes/detail_tab_product.html",
     ),
     PageTab(
-        key="variants",
-        label="Variants",
-        icon="variants",
-        template="ops_portal/products/includes/detail_tab_variants.html",
-    ),
-    PageTab(
-        key="pricing",
-        label="Pricing",
-        icon="tag",
-        template="ops_portal/products/includes/detail_tab_pricing.html",
+        key="catalog",
+        label="Catalog",
+        icon="image",
+        template="ops_portal/products/includes/detail_tab_catalog.html",
     ),
     PageTab(
         key="inventory",
@@ -58,6 +54,9 @@ PRODUCT_DETAIL_TABS = (
         template="ops_portal/products/includes/detail_tab_inventory.html",
     ),
 )
+
+# The catalog the Catalog tab previews: the shop, in French.
+CATALOG_PREVIEW_LANGUAGE = "fr"
 
 
 @dataclass(frozen=True, slots=True)
@@ -403,6 +402,10 @@ class ProductDetailContext:
     stock: ProductStockSummary
     batch_rows: list[ProductBatchRow]
     variant_lines: tuple[LineView, ...]
+    variant_labels: str
+    has_several_variants: bool
+    catalog_preview: ProductCardVM
+    catalog_name: str
     status_key: str
     status_label: str
     status_icon: str
@@ -429,6 +432,10 @@ class ProductDetailContext:
                 self.batch_rows
             ),
             "variant_lines": self.variant_lines,
+            "variant_labels": self.variant_labels,
+            "has_several_variants": self.has_several_variants,
+            "catalog_preview": self.catalog_preview,
+            "catalog_name": self.catalog_name,
             "status_key": self.status_key,
             "status_label": self.status_label,
             "status_icon": self.status_icon,
@@ -472,6 +479,7 @@ def build_product_detail_context(
             row=stock_row,
         )
     )
+    variants = list(product.variants.all())
 
 
     pricing = (
@@ -510,6 +518,16 @@ def build_product_detail_context(
             product=product,
             stock_by_variant=stock_by_variant or {},
         ),
+        variant_labels=_variant_labels(variants),
+        has_several_variants=len(variants) > 1,
+        catalog_preview=build_catalog_preview(
+            product=product,
+            retail_price=retail_price,
+        ),
+        catalog_name=translated_product_name(
+            product,
+            language_code=CATALOG_PREVIEW_LANGUAGE,
+        ),
         status_key=(
             "active" if product.active else "inactive"
         ),
@@ -538,6 +556,92 @@ def build_product_detail_context(
 
 
 ONLY_VARIANT_NAME = "One variant"
+
+
+def _variant_labels(
+    variants: list[ProductVariant],
+) -> str:
+    """The Product tab's line of variants: "S · M · L", or "One variant"."""
+
+    if len(variants) <= 1:
+        return ONLY_VARIANT_NAME
+
+    return " · ".join(variant.label for variant in variants)
+
+
+def build_catalog_preview(
+    *,
+    product: Product,
+    retail_price: CommercialPrice | None,
+) -> ProductCardVM:
+    """The product as the shop's catalog draws it (includes/catalog/
+    tile.html), in French, with the retail price when it has one. Shown,
+    not used: the Catalog tab makes it inert."""
+
+    name = translated_product_name(
+        product,
+        language_code=CATALOG_PREVIEW_LANGUAGE,
+    )
+    price = _retail_eur_price(retail_price)
+
+    return ProductCardVM(
+        product_id=product.pk,
+        name=name,
+        package_label=product.unit_weight_label,
+        badge_label=None,
+        primary_action=UiText(text="Add to cart", href="#"),
+        secondary_action=UiText(text="Details", href="#"),
+        image_url=product_image_url(product),
+        offers=(
+            (
+                CatalogOfferVM(
+                    commercial_price_id=retail_price.pk,
+                    batch_id=None,
+                    kind="standard",
+                    label="Standard",
+                    badge_label=None,
+                    price_label=f"€{price:.2f}",
+                    availability_label="",
+                    available_units=0,
+                ),
+            )
+            if retail_price is not None and price is not None
+            else ()
+        ),
+        category_key=_catalog_category_key(product),
+    )
+
+
+def _retail_eur_price(
+    retail_price: CommercialPrice | None,
+):
+    if retail_price is None:
+        return None
+
+    return next(
+        (
+            amount.price
+            for amount in retail_price.amounts.all()
+            if amount.currency == PriceAmount.Currency.EUR
+        ),
+        None,
+    )
+
+
+CATALOG_CATEGORY_KEYS = {
+    ProductProfile.Category.CANDY: "candy",
+    ProductProfile.Category.CHIPS: "chips",
+    ProductProfile.Category.DIP_MIX: "dip_mix",
+}
+
+
+def _catalog_category_key(product: Product) -> str:
+    try:
+        category = product.profile.category
+    except ProductProfile.DoesNotExist:
+        return "other"
+
+    return CATALOG_CATEGORY_KEYS.get(category, "other")
 PAUSED_LABEL = "Paused"
 
 

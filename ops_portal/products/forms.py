@@ -21,9 +21,6 @@ from products.models import (
     ProductProfile,
 )
 
-PRODUCT_STATUS_ACTIVE = "active"
-PRODUCT_STATUS_INACTIVE = "inactive"
-
 CUSTOMER_FACING_LANGUAGE_CODE = "fr"
 
 MAX_PRODUCT_IMAGE_BYTES = (
@@ -49,6 +46,20 @@ def _configure_vegan_toggle(
     field.tag_toggle_class = (
         "product-tag-toggle "
         "product-tag-toggle--vegan"
+    )
+
+
+def _configure_status_toggle(
+    form: forms.BaseForm,
+) -> None:
+    field = form.fields["active"]
+
+    field.tag_toggle = True
+    field.tag_toggle_label = "Active"
+    field.tag_toggle_icon = "check"
+    field.tag_toggle_class = (
+        "product-tag-toggle "
+        "product-tag-toggle--status"
     )
 
 
@@ -200,7 +211,7 @@ class ProductForm(forms.Form):
     internal_number = forms.IntegerField(
         required=False,
         min_value=1,
-        label="Internal number",
+        label="Catalog ID",
         help_text=(
             "Optional product number used "
             "in the customer catalog."
@@ -210,15 +221,15 @@ class ProductForm(forms.Form):
                 "Enter a whole number."
             ),
             "min_value": (
-                "Internal number must be positive."
+                "Catalog ID must be positive."
             ),
         },
-        widget=forms.NumberInput(
+        # Typed, never stepped: a text field that takes digits.
+        widget=forms.TextInput(
             attrs={
                 "placeholder": "e.g. 23",
                 "inputmode": "numeric",
-                "step": "1",
-                "min": "1",
+                "pattern": "[0-9]*",
                 "autocomplete": "off",
             }
         ),
@@ -423,7 +434,7 @@ class ProductEditForm(forms.Form):
     internal_number = forms.IntegerField(
         required=False,
         min_value=1,
-        label="Internal number",
+        label="Catalog ID",
         help_text=(
             "Optional product number used "
             "in the customer catalog."
@@ -431,15 +442,15 @@ class ProductEditForm(forms.Form):
         error_messages={
             "invalid": "Enter a whole number.",
             "min_value": (
-                "Internal number must be positive."
+                "Catalog ID must be positive."
             ),
         },
-        widget=forms.NumberInput(
+        # Typed, never stepped: a text field that takes digits.
+        widget=forms.TextInput(
             attrs={
                 "placeholder": "e.g. 23",
                 "inputmode": "numeric",
-                "step": "1",
-                "min": "1",
+                "pattern": "[0-9]*",
                 "autocomplete": "off",
             }
         ),
@@ -515,30 +526,14 @@ class ProductEditForm(forms.Form):
         _customer_facing_name_fr_field()
     )
 
-    active = forms.ChoiceField(
-        choices=(
-            (
-                PRODUCT_STATUS_ACTIVE,
-                "Active",
-            ),
-            (
-                PRODUCT_STATUS_INACTIVE,
-                "Inactive",
-            ),
-        ),
+    # One switch: on (green) is active, off (muted) is inactive.
+    active = forms.BooleanField(
+        required=False,
         label="Product status",
-        error_messages={
-            "required": (
-                "Choose product status."
-            ),
-            "invalid_choice": (
-                "Choose a valid product status."
-            ),
-        },
-        widget=forms.RadioSelect(
+        widget=forms.CheckboxInput(
             attrs={
                 "class": (
-                    "radio-chip-group"
+                    "product-tag-toggle__input"
                 ),
             }
         ),
@@ -585,6 +580,9 @@ class ProductEditForm(forms.Form):
         )
 
         _configure_vegan_toggle(
+            self
+        )
+        _configure_status_toggle(
             self
         )
 
@@ -640,9 +638,8 @@ class ProductEditForm(forms.Form):
 
     @property
     def active_value(self) -> bool:
-        return (
+        return bool(
             self.cleaned_data["active"]
-            == PRODUCT_STATUS_ACTIVE
         )
 
 
@@ -672,11 +669,7 @@ def build_product_edit_initial_data(
                 ),
             )
         ),
-        "active": (
-            PRODUCT_STATUS_ACTIVE
-            if product.active
-            else PRODUCT_STATUS_INACTIVE
-        ),
+        "active": product.active,
         "category": (
             profile.category
             if profile is not None

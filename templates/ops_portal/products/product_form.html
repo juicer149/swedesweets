@@ -1,5 +1,12 @@
 {% extends "layouts/detail.html" %}
 {% load i18n static %}
+{% comment %}
+  Add or edit a product: one page, no tabs. Its sections one under the
+  other (form_sections: Product, Catalog, Pricing, and when editing
+  Variants last), each under a heading with an id the product page's
+  buttons link to (#product, #catalog, #pricing, #variants); the actions at
+  the foot.
+{% endcomment %}
 
 {% block page_heading %}
   {% if product %}
@@ -10,12 +17,17 @@
 {% endblock %}
 
 {% block page_body %}
-  <form method="post" enctype="multipart/form-data" novalidate data-dirty-form>
+  <form class="product-form" method="post" enctype="multipart/form-data" novalidate data-dirty-form>
     {% csrf_token %}
 
     {% include "registration/includes/form_errors.html" with form=form only %}
 
-    {% include "includes/ui/page_tabs.html" %}
+    {% for section in form_sections %}
+      <section class="form-section" id="{{ section.key }}" aria-labelledby="{{ section.key }}-title">
+        <h2 class="form-section__title" id="{{ section.key }}-title">{{ section.title }}</h2>
+        {% include section.template %}
+      </section>
+    {% endfor %}
 
     <div class="form-actions page__actions page-actions">
       <button class="button button--md button--solid button--tone-place page__submit" type="submit">
@@ -39,4 +51,5 @@
   <script src="{% static 'js/dirty_form.js' %}" defer></script>
   <script src="{% static 'js/product-image-upload.js' %}" defer></script>
   <script src="{% static 'js/variant_editor.js' %}" defer></script>
+  <script src="{% static 'js/form_sections.js' %}" defer></script>
 {% endblock %}

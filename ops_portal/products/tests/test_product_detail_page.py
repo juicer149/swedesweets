@@ -40,12 +40,16 @@ def test_product_detail_shows_stock_batches_and_edit(client):
     assert f'href="{batch_url}"' in content
     assert "data-tabs" in content
     assert "demand" not in response.context
-    assert "Edit catalog" not in content
 
-    # Each tab's button opens the same tab of the edit form.
+    # Each tab's button opens its section of the (one-page) edit form.
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
     assert f'href="{edit_url}#product"' in content
-    assert f'href="{edit_url}#pricing"' in content
+    assert f'href="{edit_url}#catalog"' in content
+    assert [tab.key for tab in response.context["page_tabs"]] == [
+        "product",
+        "catalog",
+        "inventory",
+    ]
 
     add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert f'href="{add_batch_url}"' in content
@@ -67,7 +71,7 @@ def test_add_batch_link_preselects_the_product(client):
 
 
 @pytest.mark.django_db
-def test_product_edit_form_has_the_same_tabs_as_the_links(client):
+def test_product_edit_form_is_one_page_of_sections(client):
     client.force_login(full_staff_user_factory())
     product = product_factory(name="Apple", internal_number=503)
 
@@ -77,17 +81,23 @@ def test_product_edit_form_has_the_same_tabs_as_the_links(client):
     content = response.content.decode()
 
     assert response.status_code == 200
-    assert [tab.key for tab in response.context["page_tabs"]] == [
+    assert "page_tabs" not in response.context
+    assert [section.key for section in response.context["form_sections"]] == [
         "product",
-        "variants",
         "catalog",
         "pricing",
+        "variants",
     ]
-    # The detail page links to #product and #pricing; tabs.js opens them.
-    assert 'data-tab="product"' in content
-    assert 'data-tab="pricing"' in content
+    # The product page's buttons link to the sections by id.
+    assert 'id="product"' in content
+    assert 'id="catalog"' in content
+    assert "data-tabs" not in content
     assert "data-dirty-form" in content
     assert 'name="business_eur"' in content
+    # Catalog ID is typed, not stepped; status is one switch.
+    assert "Catalog ID" in content
+    assert 'type="number" name="internal_number"' not in content
+    assert 'type="checkbox" name="active"' in content
 
 
 @pytest.mark.django_db
@@ -163,3 +173,21 @@ def test_product_list_table_has_picture_circle_and_no_unit(client):
     assert 'class="table-product"' in content
     assert "line__image--empty" in content
     assert "Unit" not in [sort.label for sort in response.context["table_sorts"]]
+
+
+@pytest.mark.django_db
+def test_catalog_tab_previews_the_shop_tile(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Apple", internal_number=504)
+
+    response = client.get(
+        reverse("ops_products:detail", kwargs={"product_pk": product.pk}),
+    )
+    content = response.content.decode()
+
+    preview = response.context["catalog_preview"]
+    assert preview.name == response.context["catalog_name"]
+    assert preview.package_label == product.unit_weight_label
+    # No retail price yet: the tile shows no price and no "+".
+    assert preview.offers == ()
+    assert 'class="catalog-preview" inert' in content

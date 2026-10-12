@@ -1,0 +1,51 @@
+{% comment %}
+  The Catalog tab: the product as the shop shows it (the catalog tile, in
+  French, with the retail price), shown and not used (inert), then the
+  catalog data behind it: shop name, category, picture, description and
+  ingredients, and Edit catalog.
+{% endcomment %}
+<div class="catalog-preview" inert aria-label="As the shop shows it">
+  {% include "includes/catalog/tile.html" with card=catalog_preview csrf_token="NOTPROVIDED" only %}
+</div>
+<p class="page__note catalog-preview__note">As the shop shows it.</p>
+
+<dl class="facts">
+  <div class="facts__row">
+    <dt>Shop name (FR)</dt>
+    <dd>{{ catalog_name }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>Category</dt>
+    <dd>{{ profile.category_label|default:"—" }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>Picture</dt>
+    <dd>
+      {% if profile.image_url %}
+        <a class="text-link" href="{{ profile.image_url }}" target="_blank" rel="noopener noreferrer">Open picture →</a>
+      {% else %}
+        —
+      {% endif %}
+    </dd>
+  </div>
+</dl>
+
+{% if profile.description %}
+  <div class="product-details__text">
+    <h3 class="product-details__label">Description</h3>
+    <p>{{ profile.description }}</p>
+  </div>
+{% endif %}
+
+{% if profile.ingredients %}
+  <div class="product-details__text">
+    <h3 class="product-details__label">Ingredients</h3>
+    <p>{{ profile.ingredients }}</p>
+  </div>
+{% endif %}
+
+{% if edit_action %}
+  <div class="form-actions page__actions">
+    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_action.href }}#catalog">Edit catalog</a>
+  </div>
+{% endif %}

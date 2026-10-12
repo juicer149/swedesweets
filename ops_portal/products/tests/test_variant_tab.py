@@ -82,7 +82,8 @@ def test_the_product_page_lists_its_variants_with_their_stock(client):
     # S has the batch; M has none.
     assert [line.aside for line in lines] == ["4 boxes", "0 boxes"]
     assert "Paused" in [meta.text for meta in lines[1].metas]
-    assert f'href="{_edit_url(product)}#variants"' in response.content.decode()
+    assert response.context["variant_labels"] == "S · M"
+    assert response.context["has_several_variants"] is True
 
 
 @pytest.mark.django_db

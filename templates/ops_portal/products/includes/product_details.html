@@ -1,10 +1,11 @@
 {% comment %}
-  The product's own data and its catalog text (the Product tab).
-  Context: product, profile, attribute_tags
+  The product's own data (the Product tab): catalog ID, SKU, names,
+  status, unit and weight, its variants' labels, attributes.
+  Context: product, attribute_tags, variant_labels, status_label
 {% endcomment %}
 <dl class="facts">
   <div class="facts__row">
-    <dt>Internal number</dt>
+    <dt>Catalog ID</dt>
     <dd>{{ product.internal_number|default:"—" }}</dd>
   </div>
   <div class="facts__row">
@@ -24,12 +25,16 @@
     <dd>{{ product.manufacturer|default:"—" }}</dd>
   </div>
   <div class="facts__row">
-    <dt>Category</dt>
-    <dd>{{ profile.category_label|default:"—" }}</dd>
+    <dt>Status</dt>
+    <dd><span class="state state--{% if product.active %}on{% else %}off{% endif %}">{{ status_label }}</span></dd>
   </div>
   <div class="facts__row">
     <dt>Unit weight</dt>
     <dd>{{ product.unit_weight_label }}</dd>
+  </div>
+  <div class="facts__row">
+    <dt>Variants</dt>
+    <dd>{{ variant_labels }}</dd>
   </div>
   <div class="facts__row">
     <dt>Attributes</dt>
@@ -48,26 +53,4 @@
       {% endif %}
     </dd>
   </div>
-  {% if profile.image_url %}
-    <div class="facts__row">
-      <dt>Image</dt>
-      <dd>
-        <a class="text-link" href="{{ profile.image_url }}" target="_blank" rel="noopener noreferrer">Open image →</a>
-      </dd>
-    </div>
-  {% endif %}
 </dl>
-
-{% if profile.description %}
-  <div class="product-details__text">
-    <h3 class="product-details__label">Description</h3>
-    <p>{{ profile.description }}</p>
-  </div>
-{% endif %}
-
-{% if profile.ingredients %}
-  <div class="product-details__text">
-    <h3 class="product-details__label">Ingredients</h3>
-    <p>{{ profile.ingredients }}</p>
-  </div>
-{% endif %}

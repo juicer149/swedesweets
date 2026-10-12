@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from django.urls import reverse
 
-from common.page_tabs import PageTab
 from ops_portal.products.forms import (
     ProductEditForm,
     ProductForm,
@@ -22,37 +21,44 @@ from ops_portal.products.variant_forms import (
 from products.images import product_display_url
 from products.models import Product
 
-PRODUCT_FORM_TABS = (
-    PageTab(
+
+@dataclass(frozen=True, slots=True)
+class FormSection:
+    """One section of the product form, one under the other on one page
+    (no tabs: what belongs together stays in sight)."""
+
+    key: str
+    title: str
+    template: str
+
+
+PRODUCT_FORM_SECTIONS = (
+    FormSection(
         key="product",
-        label="Product",
-        icon="lollipop",
-        template="ops_portal/products/includes/form_tab_product.html",
+        title="Product",
+        template="ops_portal/products/includes/form_section_product.html",
     ),
-    PageTab(
+    FormSection(
         key="catalog",
-        label="Catalog",
-        icon="image",
-        template="ops_portal/products/includes/form_tab_catalog.html",
+        title="Catalog",
+        template="ops_portal/products/includes/form_section_catalog.html",
     ),
-    PageTab(
+    FormSection(
         key="pricing",
-        label="Pricing",
-        icon="tag",
-        template="ops_portal/products/includes/form_tab_pricing.html",
+        title="Pricing",
+        template="ops_portal/products/includes/form_section_pricing.html",
     ),
 )
 
-# Editing a product adds its Variants (a new product starts with one).
-PRODUCT_EDIT_FORM_TABS = (
-    PRODUCT_FORM_TABS[0],
-    PageTab(
+# Editing a product adds its Variants last, before the actions (a new
+# product starts with one).
+PRODUCT_EDIT_FORM_SECTIONS = (
+    *PRODUCT_FORM_SECTIONS,
+    FormSection(
         key="variants",
-        label="Variants",
-        icon="variants",
-        template="ops_portal/products/includes/form_tab_variants.html",
+        title="Variants",
+        template="ops_portal/products/includes/form_section_variants.html",
     ),
-    *PRODUCT_FORM_TABS[1:],
 )
 
 
@@ -81,17 +87,16 @@ class ProductFormContext:
                 self.pricing_form
             ),
             "product": self.product,
-            "page_tabs": (
-                PRODUCT_EDIT_FORM_TABS
+            "form_sections": (
+                PRODUCT_EDIT_FORM_SECTIONS
                 if self.variant_formset is not None
-                else PRODUCT_FORM_TABS
+                else PRODUCT_FORM_SECTIONS
             ),
             "variant_formset": self.variant_formset,
             "variants_unlocked": self.variants_unlocked,
             "variants_unlocked_field": VARIANTS_UNLOCKED_FIELD,
             "variant_label_suggestions": SUGGESTED_VARIANT_LABELS,
             "variant_label_suggestions_id": LABEL_SUGGESTIONS_ID,
-            "tabs_label": "Product form sections",
             "status_key": (
                 "active" if self.product and self.product.active else "inactive"
             ),

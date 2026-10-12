@@ -9,8 +9,6 @@ from django.core.files.uploadedfile import (
 from PIL import Image
 
 from ops_portal.products.forms import (
-    PRODUCT_STATUS_ACTIVE,
-    PRODUCT_STATUS_INACTIVE,
     ProductEditForm,
     ProductForm,
     build_product_edit_initial_data,
@@ -61,7 +59,7 @@ def valid_product_edit_form_data(
         "brand": "Fazer",
         "name": "Tyrkisk Peber",
         "customer_facing_name_fr": "",
-        "active": PRODUCT_STATUS_ACTIVE,
+        "active": "on",
         "category": (
             ProductProfile.Category.CANDY
         ),
@@ -439,32 +437,21 @@ def test_product_edit_form_accepts_customer_facing_french_name():
     )
 
 
-def test_product_edit_form_maps_inactive_choice_to_false():
-    form = ProductEditForm(
-        data=(
-            valid_product_edit_form_data(
-                active=(
-                    PRODUCT_STATUS_INACTIVE
-                ),
-            )
-        )
-    )
+def test_product_edit_form_switch_off_is_inactive():
+    data = valid_product_edit_form_data()
+    del data["active"]
+
+    form = ProductEditForm(data=data)
 
     assert form.is_valid(), form.errors
     assert form.active_value is False
 
 
-def test_product_edit_form_rejects_invalid_status_choice():
-    form = ProductEditForm(
-        data=(
-            valid_product_edit_form_data(
-                active="archived",
-            )
-        )
-    )
+def test_product_edit_form_switch_on_is_active():
+    form = ProductEditForm(data=valid_product_edit_form_data())
 
-    assert not form.is_valid()
-    assert "active" in form.errors
+    assert form.is_valid(), form.errors
+    assert form.active_value is True
 
 
 def test_product_edit_form_rejects_invalid_category():
@@ -510,7 +497,7 @@ def test_build_product_edit_initial_data_without_profile():
         "brand": "Fazer",
         "name": "Tyrkisk Peber",
         "customer_facing_name_fr": "",
-        "active": PRODUCT_STATUS_ACTIVE,
+        "active": True,
         "category": "",
         "vegan": True,
         "description": "",

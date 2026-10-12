@@ -1,4 +1,8 @@
-{% comment %}The Product tab of the product form: identity, brand, unit.{% endcomment %}
+{% comment %}
+  The Product section of the product form: catalog ID, maker, brand and
+  name; for a new product its unit and weight, for one being edited its
+  status (one switch); vegan.
+{% endcomment %}
 <div class="form-grid">
   {% include "includes/ui/form_field.html" with field=form.internal_number only %}
   {% include "includes/ui/form_field.html" with field=form.manufacturer only %}
@@ -12,4 +16,6 @@
     {% include "includes/ui/form_field.html" with field=form.stock_unit only %}
     {% include "includes/ui/form_field.html" with field=form.weight_per_unit only %}
   {% endif %}
+
+  {% include "includes/ui/form_field.html" with field=form.vegan only %}
 </div>

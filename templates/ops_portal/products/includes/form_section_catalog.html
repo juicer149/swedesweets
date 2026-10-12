@@ -1,9 +1,8 @@
-{% comment %}The Catalog tab of the product form: shop name, category, text, image.{% endcomment %}
+{% comment %}The Catalog section of the product form: shop name, category, text, picture.{% endcomment %}
 <div class="form-grid">
   {% include "includes/ui/form_field.html" with field=form.customer_facing_name_fr only %}
 
   {% include "includes/ui/form_field.html" with field=form.category only %}
-  {% include "includes/ui/form_field.html" with field=form.vegan only %}
 
   {% include "includes/ui/form_field.html" with field=form.description only %}
   {% include "includes/ui/form_field.html" with field=form.ingredients only %}
