@@ -105,6 +105,8 @@ class ProductFormContext:
                 product_status_icon(self.product) if self.product else ""
             ),
             "title": self.title,
+            "heading_kicker": "Edit" if self.product else "",
+            "heading": self.product.display_name if self.product else "",
             "description": (
                 self.description
             ),
@@ -183,6 +185,8 @@ class CatalogFormContext:
             "status_icon": product_status_icon(product),
             "current_image_url": _current_product_image_url(product),
             "title": f"Edit catalog: {product.display_name}",
+            "heading_kicker": "Edit catalog",
+            "heading": product.display_name,
             "description": "",
             "submit_label": "Update catalog",
             "cancel_url": (

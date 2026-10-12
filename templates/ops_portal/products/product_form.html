@@ -1,16 +1,18 @@
 {% extends "layouts/detail.html" %}
 {% load i18n static %}
 {% comment %}
-  Add or edit a product: one page, no tabs. Its sections one under the
-  other (form_sections: Product, Pricing, and when editing Variants last),
-  each under a heading with an id the product page's buttons link to
-  (#product, #pricing, #variants); the actions at the foot. What the shop
-  shows (catalog_form.html) has its own page.
+  Add or edit a product: one page, no tabs. Its sections (form_sections:
+  Product, Pricing, and when editing Variants last) are rows that slide
+  open one at a time, like the dashboard's queues; a section with a change
+  gets a dot, one with an error a red one (form_sections.js). Each has an
+  id the product page's buttons link to (#product, #pricing, #variants),
+  which opens it. The actions at the foot. What the shop shows
+  (catalog_form.html) has its own page.
 {% endcomment %}
 
 {% block page_heading %}
   {% if product %}
-    {% include "includes/ui/status_heading.html" with title_id="page-title" title=title status=status_key icon=status_icon label=status_label who=product.code_label only %}
+    {% include "includes/ui/status_heading.html" with title_id="page-title" kicker=heading_kicker title=heading|default:title status=status_key icon=status_icon label=status_label who=product.code_label only %}
   {% else %}
     <h1 id="page-title" class="visually-hidden">{{ title }}</h1>
   {% endif %}
@@ -22,12 +24,17 @@
 
     {% include "registration/includes/form_errors.html" with form=form only %}
 
-    {% for section in form_sections %}
-      <section class="form-section" id="{{ section.key }}" aria-labelledby="{{ section.key }}-title">
-        <h2 class="form-section__title" id="{{ section.key }}-title">{{ section.title }}</h2>
-        {% include section.template %}
-      </section>
-    {% endfor %}
+    <div class="form-disclosures">
+      {% for section in form_sections %}
+        <details class="disclosure form-disclosure" id="{{ section.key }}" data-form-section data-smooth data-smooth-group="form-sections"{% if forloop.first %} open{% endif %}>
+          {% include "includes/ui/form_disclosure_summary.html" with title=section.title only %}
+
+          <div class="disclosure__content form-disclosure__content" data-smooth-content>
+            {% include section.template %}
+          </div>
+        </details>
+      {% endfor %}
+    </div>
 
     <div class="form-actions page__actions page-actions">
       <button class="button button--md button--solid button--tone-place page__submit" type="submit">
@@ -50,6 +57,8 @@
   <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script src="{% static 'js/dirty_form.js' %}" defer></script>
   <script src="{% static 'js/variant_editor.js' %}" defer></script>
-  <script src="{% static 'js/form_sections.js' %}" defer></script>
   <script src="{% static 'js/price_currency.js' %}" defer></script>
+  {# Before smooth-details.js: it chooses which section opens first. #}
+  <script src="{% static 'js/form_sections.js' %}" defer></script>
+  <script src="{% static 'js/smooth-details.js' %}" defer></script>
 {% endblock %}

@@ -101,15 +101,19 @@ def test_product_edit_form_is_one_page_of_sections(client):
     assert content.index('name="internal_number"') < content.index('name="brand"')
     assert content.index('name="name"') < content.index('name="vegan"')
     # Each pricing channel: its switch, then one price field with EUR / SEK
-    # chips (not sent with the form) over the two prices.
+    # chips (buttons, not sent with the form) beside the two prices.
     assert 'type="checkbox" name="business_active"' in content
     assert content.index('name="business_active"') < content.index(
         'name="business_eur"'
     )
     assert content.count("data-price-field") == 2
     assert 'name="business_sek"' in content
-    assert 'form="business-currency-chips"' in content
-    assert 'id="business-currency-chips"' not in content
+    assert 'type="button" aria-pressed="true" data-price-currency="eur"' in content
+    # The sections are rows that open one at a time, the first open.
+    assert content.count("data-form-section") == 3
+    assert 'data-smooth-group="form-sections" open' in content
+    # "Edit" over the name.
+    assert '<span class="page__kicker">Edit</span>' in content
     assert "data-tabs" not in content
     assert "data-dirty-form" in content
     assert 'name="business_eur"' in content

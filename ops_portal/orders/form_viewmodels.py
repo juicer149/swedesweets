@@ -46,9 +46,14 @@ class OrderFormContext:
     # is chosen.
     recent_orders: tuple[OpsRecentOrder, ...] = ()
     recent_orders_url: str = ""
+    # The heading of an edit page: "Edit" on its own line over the name.
+    heading_kicker: str = ""
+    heading: str = ""
 
     def as_dict(self) -> dict[str, Any]:
         return {
+            "heading_kicker": self.heading_kicker,
+            "heading": self.heading,
             "recent_orders": self.recent_orders,
             "recent_orders_url": self.recent_orders_url,
             "form": self.form,
@@ -122,6 +127,8 @@ def build_edit_order_form_context(
             line_formset=line_formset,
         ),
         title=f"Edit order #{order.pk}",
+        heading_kicker="Edit",
+        heading=f"Order #{order.pk}",
         description=(
             "Update this placed order before it is packed. "
             "Reservations will be rebuilt."

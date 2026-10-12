@@ -29,11 +29,16 @@ class AccountFormContext:
     )
     staff_account: StaffAccount | None = None
     intro: str = ""
+    # The heading of an edit page: "Edit" on its own line over the name.
+    heading_kicker: str = ""
+    heading: str = ""
 
     def as_dict(self) -> dict[str, Any]:
         context: dict[str, Any] = {
             "intro": self.intro,
             "title": self.title,
+            "heading_kicker": self.heading_kicker,
+            "heading": self.heading,
             "submit_label": self.submit_label,
             "cancel_url": self.cancel_url,
             "form": self.form,
@@ -75,6 +80,8 @@ def build_edit_internal_account_form_context(
         form=form,
         staff_account=staff_account,
         title=f"Edit {staff_account.user.email}",
+        heading_kicker="Edit",
+        heading=staff_account.user.email,
         submit_label="Save account",
         cancel_url=reverse(
             "ops_accounts:detail",

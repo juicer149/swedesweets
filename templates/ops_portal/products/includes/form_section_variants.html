@@ -14,7 +14,7 @@
   <div class="variant-editor{% if variants_unlocked %} variant-editor--open{% endif %}" data-variant-editor>
     {{ formset.management_form }}
     {# Sent once the lock has been opened (enabled by the script, or here after an error). #}
-    <input type="hidden" name="{{ variants_unlocked_field }}" value="1" data-variant-unlocked{% if not variants_unlocked %} disabled{% endif %}>
+    <input type="hidden" name="{{ variants_unlocked_field }}" value="1" data-variant-unlocked data-section-ignore{% if not variants_unlocked %} disabled{% endif %}>
 
     <div class="variant-editor__head">
       <p class="page__note variant-editor__note">

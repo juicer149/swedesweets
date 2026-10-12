@@ -52,16 +52,6 @@
       return false;
     }
 
-    /*
-     * Controls that only change what the page shows, not what it saves
-     * (the EUR / SEK chips over a price field), opt out.
-     */
-    if (
-      element.closest("[data-dirty-ignore='true']")
-    ) {
-      return false;
-    }
-
     return true;
   }
 

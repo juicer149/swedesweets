@@ -40,6 +40,13 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 
 ## Next, in order
 
+0. **Edit pages in one design**, before the steps below. The product and
+   catalog pages set it: "Edit" over the name in the heading; sections as
+   rows that open one at a time (dashboard queues), with a dot for a
+   change and a red one for an error; statuses as one switch, first in
+   their part; EUR / SEK as filter chips beside one price field. Then the
+   other edit pages, one by one: batches (its pricing too), customers,
+   orders, accounts.
 1. **Ops product pages** — see below. Catalog page and per-language text
    first (branch `catalog-translations`), then the edit page with locks
    and variant prices together with step 6.

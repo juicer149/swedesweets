@@ -22,6 +22,9 @@ class CustomerFormContext:
     cancel_url: str
     customer: Customer | None = None
     intro: str = ""
+    # The heading of an edit page: "Edit" on its own line over the name.
+    heading_kicker: str = ""
+    heading: str = ""
 
     def as_dict(self) -> dict[str, object]:
         context: dict[str, object] = {
@@ -29,6 +32,8 @@ class CustomerFormContext:
             "form": self.form,
             "customer": self.customer,
             "title": self.title,
+            "heading_kicker": self.heading_kicker,
+            "heading": self.heading,
             "submit_label": self.submit_label,
             "cancel_url": self.cancel_url,
         }
@@ -65,6 +70,8 @@ def build_edit_customer_form_context(
         form=form,
         customer=customer,
         title=f"Edit {customer.name}",
+        heading_kicker="Edit",
+        heading=customer.name,
         submit_label="Save customer",
         cancel_url=reverse("ops_customers:detail", kwargs={"customer_pk": customer.pk}),
     )

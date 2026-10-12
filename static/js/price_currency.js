@@ -1,16 +1,19 @@
 /*
  * A price field with EUR / SEK chips (ops_portal/products/includes/
- * price_field.html): the chosen chip's field shows, the other hides. It
- * opens on a currency whose price has an error, else on EUR. A chip whose
- * currency has a price gets a dot, so a hidden price is not forgotten.
+ * price_field.html): the pressed chip's field shows, the other hides. It
+ * opens on a currency whose price has an error, else on the first (EUR). A
+ * chip whose currency has a price gets a dot, so a hidden price is not
+ * forgotten.
  */
 (() => {
   for (const field of document.querySelectorAll("[data-price-field]")) {
     const chips = [...field.querySelectorAll("[data-price-currency]")];
     const boxes = [...field.querySelectorAll("[data-price-input]")];
 
-    const boxFor = (currency) => (
-      boxes.find((box) => box.dataset.priceInput === currency)
+    const inputFor = (currency) => (
+      boxes
+        .find((box) => box.dataset.priceInput === currency)
+        ?.querySelector("input")
     );
 
     function show(currency) {
@@ -19,25 +22,26 @@
       }
 
       for (const chip of chips) {
-        chip.checked = chip.dataset.priceCurrency === currency;
+        chip.setAttribute(
+          "aria-pressed",
+          String(chip.dataset.priceCurrency === currency)
+        );
       }
     }
 
     function markPricedChips() {
       for (const chip of chips) {
-        const input = boxFor(chip.dataset.priceCurrency)?.querySelector("input");
-
-        chip.closest("label").classList.toggle(
+        chip.classList.toggle(
           "price-field__currency--priced",
-          Boolean(input?.value.trim())
+          Boolean(inputFor(chip.dataset.priceCurrency)?.value.trim())
         );
       }
     }
 
     for (const chip of chips) {
-      chip.addEventListener("change", () => {
+      chip.addEventListener("click", () => {
         show(chip.dataset.priceCurrency);
-        boxFor(chip.dataset.priceCurrency)?.querySelector("input")?.focus();
+        inputFor(chip.dataset.priceCurrency)?.focus();
       });
     }
 

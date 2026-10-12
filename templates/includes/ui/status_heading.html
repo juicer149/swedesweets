@@ -6,6 +6,7 @@
     ✓ Packed · 2026-10-06 · Café Blanc · 3 products · 12 units
 
   title_id  id the page's section points to (aria-labelledby)
+  kicker    optional, a smaller line over the title ("Edit" on an edit page)
   title     the title
   status    status key, for the colour (placed, packed, delivered, cancelled)
   icon      status icon name
@@ -15,7 +16,10 @@
   what      e.g. the contents (optional)
 {% endcomment %}
 <header class="page__heading">
-  <h1 id="{{ title_id }}" class="page__lead">{{ title }}</h1>
+  <h1 id="{{ title_id }}" class="page__lead">
+    {% if kicker %}<span class="page__kicker">{{ kicker }}</span>{% endif %}
+    {{ title }}
+  </h1>
 
   <p class="page__note order-status order-status--{{ status }}">
     <span class="order-status__state">

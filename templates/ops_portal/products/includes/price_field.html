@@ -1,12 +1,11 @@
 {% comment %}
-  One price field with EUR / SEK chips over it: the chip chooses which
-  currency's price the field shows and edits (price_currency.js). Both
-  prices are kept and saved; a chip whose currency has a price gets a dot.
-  The chips are not part of the form (form="…" names no form) and the
-  leave-page warning ignores them: they change what is shown, not what is
-  saved. Without JavaScript both fields show.
+  One price field with EUR / SEK chips beside it (the filter chips' look):
+  the pressed chip chooses which currency's price the field shows and
+  edits (price_currency.js). Both prices are kept and saved; a chip whose
+  currency has a price gets a dot. The chips are buttons, so they are not
+  sent and do not count as a change. Without JavaScript both fields show.
 
-  channel        "business" or "retail" (ids and the chips' group)
+  channel        "business" or "retail" (ids)
   channel_label  "Business" or "Retail" (the fields' hidden labels)
   eur, sek       the form's two price fields
 {% endcomment %}
@@ -16,30 +15,21 @@
 >
   <span class="form-label" id="{{ channel }}-price-label">Price</span>
 
-  <div
-    class="radio-chip-group price-field__currencies"
-    role="radiogroup"
-    aria-labelledby="{{ channel }}-price-label"
-    data-dirty-ignore="true"
-  >
-    <label>
-      <input type="radio" name="{{ channel }}-currency" value="eur" form="{{ channel }}-currency-chips" data-price-currency="eur" checked>
-      EUR
-    </label>
-    <label>
-      <input type="radio" name="{{ channel }}-currency" value="sek" form="{{ channel }}-currency-chips" data-price-currency="sek">
-      SEK
-    </label>
-  </div>
+  <div class="price-field__row">
+    <div class="filter-chips price-field__currencies" role="group" aria-labelledby="{{ channel }}-price-label">
+      <button class="chip filter-chip" type="button" aria-pressed="true" data-price-currency="eur">EUR</button>
+      <button class="chip filter-chip" type="button" aria-pressed="false" data-price-currency="sek">SEK</button>
+    </div>
 
-  <div class="price-field__input" data-price-input="eur"{% if eur.errors %} data-has-error{% endif %}>
-    <label class="visually-hidden" for="{{ eur.id_for_label }}">{{ channel_label }} price in EUR</label>
-    {{ eur }}
-  </div>
+    <div class="price-field__input" data-price-input="eur"{% if eur.errors %} data-has-error{% endif %}>
+      <label class="visually-hidden" for="{{ eur.id_for_label }}">{{ channel_label }} price in EUR</label>
+      {{ eur }}
+    </div>
 
-  <div class="price-field__input" data-price-input="sek"{% if sek.errors %} data-has-error{% endif %}>
-    <label class="visually-hidden" for="{{ sek.id_for_label }}">{{ channel_label }} price in SEK</label>
-    {{ sek }}
+    <div class="price-field__input" data-price-input="sek"{% if sek.errors %} data-has-error{% endif %}>
+      <label class="visually-hidden" for="{{ sek.id_for_label }}">{{ channel_label }} price in SEK</label>
+      {{ sek }}
+    </div>
   </div>
 
   {% if eur.errors or sek.errors %}

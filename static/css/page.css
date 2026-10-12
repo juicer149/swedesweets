@@ -106,6 +106,18 @@
   color: var(--color-neutral-800);
 }
 
+/* "Edit" on its own line over the name on an edit page (status_heading):
+   smaller and quieter than the name, centred like it. */
+.page__kicker {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--color-neutral-600);
+  font-family: var(--font-body);
+  font-size: var(--font-size-14);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
 /* Small grey centred line: a count, a status, a description. */
 .page__note {
   margin: 0;
@@ -948,6 +960,15 @@ span.icon-rows__link .icon-rows__icon {
 
 .faq__question::-webkit-details-marker {
   display: none;
+}
+
+/* A closed question lights up under the pointer like a dashboard queue
+   (.disclosure__summary); an open one keeps its yellow. */
+@media (hover: hover) and (pointer: fine) {
+  .faq__item:not([open]) > .faq__question:hover {
+    color: var(--color-neutral-800);
+    background: var(--color-neutral-100);
+  }
 }
 
 .faq__question:focus-visible {

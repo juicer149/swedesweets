@@ -38,11 +38,16 @@ class BatchFormContext:
     submit_label: str
     cancel_url: str
     batch: InventoryBatch | None = None
+    # The heading of an edit page: "Edit" on its own line over the name.
+    heading_kicker: str = ""
+    heading: str = ""
 
     def as_dict(self) -> dict[str, object]:
         return {
             "form": self.form,
             "pricing_form": self.pricing_form,
+            "heading_kicker": self.heading_kicker,
+            "heading": self.heading,
             "batch": self.batch,
             "status_icon": (
                 batch_status_icon(self.batch) if self.batch else ""
@@ -106,6 +111,8 @@ def build_edit_batch_form_context(
         pricing_form=pricing_form,
         batch=batch,
         title=f"Edit batch {batch.batch_id}",
+        heading_kicker="Edit",
+        heading=f"Batch {batch.batch_id}",
         description=(
             "Correct physical stock, location or best-before date. "
             "Product and batch ID are kept fixed for traceability."

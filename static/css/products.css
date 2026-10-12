@@ -85,23 +85,64 @@
 
 
 /* =============================================================================
-   Ops product form: one page of sections
+   A form of sections (the ops product and catalog forms)
 
-   Product, Catalog, Pricing and (editing) Variants one under the other,
-   each under a heading with a hairline, the actions at the foot. The
-   detail page's buttons link to a section by its id.
+   Each section is a row that slides open to its fields, one at a time,
+   like the dashboard's queues (.disclosure, page.css; smooth-details.js).
+   A dot beside the title says something in it changed; a red one, that it
+   holds an error (form_sections.js). The detail page's buttons link to a
+   section by its id, which opens it.
    ============================================================================= */
 
-.form-section {
-  margin-top: var(--space-8);
+.form-disclosures {
+  margin-top: var(--space-2);
+}
+
+.form-disclosure {
   scroll-margin-top: var(--space-6);
 }
 
-.form-section:first-of-type {
-  margin-top: var(--space-4);
+/* The section titles carry a little more than a plain disclosure, like
+   the dashboard's queues. */
+.form-disclosure > .disclosure__summary {
+  color: var(--color-neutral-700);
 }
 
-.form-section__title,
+.form-disclosure__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+
+  color: inherit;
+  font-family: var(--font-body);
+  font-size: var(--font-size-18);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.form-disclosure__dot {
+  display: none;
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  background: var(--color-accent-600);
+}
+
+.form-disclosure--changed .form-disclosure__dot {
+  display: inline-block;
+}
+
+.form-disclosure:has(.form-field--error, .form-errors, .variant-row--error) .form-disclosure__dot {
+  display: inline-block;
+  background: var(--color-status-danger-text);
+}
+
+/* Room under the open fields before the next row. */
+.form-disclosure__content {
+  padding: var(--space-4) 0 var(--space-6);
+}
+
 .product-section__title {
   margin: 0 0 var(--space-4);
   padding-bottom: var(--space-2);
@@ -115,8 +156,8 @@
   line-height: 1.25;
 }
 
-/* The pricing channels sit under the section's own heading. */
-.form-section .pricing-channel__title {
+/* The pricing channels sit under the section's own title. */
+.form-disclosure .pricing-channel__title {
   font-size: var(--font-size-16);
 }
 
@@ -170,9 +211,28 @@
   text-align: center;
 }
 
-/* A price with EUR / SEK chips over its one field (price_field.html). */
-.price-field__currencies {
-  margin-bottom: var(--space-2);
+/* A price: EUR / SEK chips (the filter chips' look) and its one field, on
+   one row (price_field.html). */
+.price-field__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Not the list filters' phone layout (a whole centred row of its own). */
+.price-field__currencies.filter-chips {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  width: auto;
+  gap: var(--space-2);
+  padding: 0;
+}
+
+.price-field__input {
+  flex: 1 1 8rem;
+  min-width: 0;
 }
 
 .price-field__input[hidden] {
@@ -180,7 +240,7 @@
 }
 
 /* A currency that has a price, while another is shown: a small dot. */
-.price-field__currencies label.price-field__currency--priced:not(:has(input:checked))::after {
+.price-field__currencies .price-field__currency--priced[aria-pressed="false"]::after {
   content: "";
   inline-size: 6px;
   block-size: 6px;
