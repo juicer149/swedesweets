@@ -138,8 +138,9 @@ def test_a_paused_variant_is_left_out_of_both_catalogs():
 @pytest.mark.django_db
 def test_the_retail_catalog_lists_the_variants_in_order():
     product, small, medium, small_offer, medium_offer = _hoodie(RETAIL)
-    medium.position = 0
-    medium.save(update_fields=["position"])
+    # M before S (positions start at 1).
+    small.position = 3
+    small.save(update_fields=["position"])
 
     (catalog_product,) = list_retail_catalog_products()
 

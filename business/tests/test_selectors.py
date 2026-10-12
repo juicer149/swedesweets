@@ -21,7 +21,32 @@ from pricing.models import (
     CommercialPrice,
     PriceAmount,
 )
-from products.models import Product
+from products.models import Product, ProductVariant
+
+
+@pytest.fixture(autouse=True)
+def _variant_stock_follows_product_stock(monkeypatch):
+    """These tests set the orderable stock per product (each product has
+    one variant); the catalog reads it per variant, so it follows the
+    product's figure, faked or not."""
+
+    import business.selectors as selectors
+
+    def by_variant(**kwargs):
+        by_product = selectors.orderable_quantity_by_product_id()
+
+        return {
+            variant_id: by_product[product_id]
+            for variant_id, product_id in ProductVariant.objects.filter(
+                product_id__in=by_product,
+            ).values_list("pk", "product_id")
+        }
+
+    monkeypatch.setattr(
+        selectors,
+        "orderable_quantity_by_variant_id",
+        by_variant,
+    )
 
 
 def _product(
