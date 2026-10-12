@@ -23,7 +23,7 @@ from ops_portal.products.variant_forms import (
     SUGGESTED_VARIANT_LABELS,
     BaseVariantFormSet,
 )
-from products.images import product_display_url
+from products.images import product_display_url, product_image_url
 from products.models import Product
 
 
@@ -112,6 +112,10 @@ class ProductFormContext:
             "title": self.title,
             "heading_kicker": "Edit" if self.product else "",
             "heading": self.product.display_name if self.product else "",
+            # Its picture beside the name (status_heading.html).
+            "heading_image_url": (
+                product_image_url(self.product) or "" if self.product else ""
+            ),
             "description": (
                 self.description
             ),
@@ -192,6 +196,7 @@ class CatalogFormContext:
             "title": f"Edit catalog: {product.display_name}",
             "heading_kicker": "Edit catalog",
             "heading": product.display_name,
+            "heading_image_url": product_image_url(product) or "",
             "description": "",
             "submit_label": "Update catalog",
             "cancel_url": (

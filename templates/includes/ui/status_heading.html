@@ -14,8 +14,14 @@
   at        the day the status was reached (optional)
   who       e.g. the customer (optional)
   what      e.g. the contents (optional)
+  image     a picture's URL (optional): a circle at the left of the title
+            and the line, both then left-aligned beside it (a product)
 {% endcomment %}
-<header class="page__heading">
+<header class="page__heading{% if image %} page__heading--picture{% endif %}">
+  {% if image %}
+    <img class="page__heading-picture" src="{{ image }}" alt="" width="64" height="64">
+  {% endif %}
+
   <h1 id="{{ title_id }}" class="page__lead">
     {% if kicker %}<span class="page__kicker">{{ kicker }}</span>{% endif %}
     {{ title }}

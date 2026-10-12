@@ -109,6 +109,11 @@ def test_product_edit_form_is_one_page_of_sections(client):
     assert "Swedish/internal MVP" not in content
     # "Edit" over the name.
     assert '<span class="page__kicker">Edit</span>' in content
+    # No picture yet: no circle by the name.
+    assert "page__heading-picture" not in content
+    # Back while nothing is changed; Cancel once something is (CSS).
+    assert "back-or-cancel__back" in content
+    assert "back-or-cancel__cancel" in content
     assert "data-tabs" not in content
     assert "data-dirty-form" in content
     # Catalog ID is typed, not stepped; status is one switch.

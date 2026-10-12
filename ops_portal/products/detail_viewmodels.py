@@ -269,6 +269,8 @@ class ProductDetailContext:
             "status_key": self.status_key,
             "status_label": self.status_label,
             "status_icon": self.status_icon,
+            # Its picture beside the name (status_heading.html).
+            "heading_image_url": product_image_url(self.product) or "",
             "edit_action": self.edit_action,
             "add_batch_href": self.add_batch_href,
             "page_tabs": self.page_tabs,

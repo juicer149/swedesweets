@@ -10,7 +10,7 @@
 {% endcomment %}
 
 {% block page_heading %}
-  {% include "includes/ui/status_heading.html" with title_id="page-title" kicker=heading_kicker title=heading|default:title status=status_key icon=status_icon label=status_label who=product.code_label only %}
+  {% include "includes/ui/status_heading.html" with title_id="page-title" kicker=heading_kicker title=heading|default:title status=status_key icon=status_icon label=status_label who=product.code_label image=heading_image_url only %}
 {% endblock %}
 
 {% block page_body %}
@@ -70,10 +70,7 @@
       </button>
 
       <div class="page-actions__links">
-        <a class="quiet-link" href="{{ cancel_url }}" data-dirty-ignore="true">
-          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
-          {% trans "Cancel" %}
-        </a>
+        {% include "includes/ui/back_or_cancel.html" with href=cancel_url only %}
       </div>
     </div>
   </form>

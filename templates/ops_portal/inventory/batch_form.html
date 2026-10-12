@@ -25,10 +25,7 @@
 
       {% if cancel_url %}
         <div class="page-actions__links">
-          <a class="quiet-link" href="{{ cancel_url }}" data-dirty-ignore="true">
-            {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
-            {% trans "Cancel" %}
-          </a>
+          {% include "includes/ui/back_or_cancel.html" with href=cancel_url only %}
         </div>
       {% endif %}
     </div>

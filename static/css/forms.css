@@ -531,3 +531,14 @@
 .password-field__toggle[aria-pressed="true"] .password-field__icon--show {
   display: none;
 }
+
+
+/* =============================================================================
+   Back or Cancel (includes/ui/back_or_cancel.html): "Back" while the form
+   is as it came, "Cancel" once something changed (dirty_form.js).
+   ============================================================================= */
+
+form:not([data-dirty]) .back-or-cancel__cancel,
+form[data-dirty] .back-or-cancel__back {
+  display: none;
+}
