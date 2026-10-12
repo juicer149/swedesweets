@@ -12,11 +12,27 @@ from django.db.migrations.executor import MigrationExecutor
 BEFORE = [("pricing", "0002_create_business_standard_offers")]
 AFTER = [("pricing", "0004_alter_commercialprice_variant_and_more")]
 
+
+def _latest(app_label: str) -> tuple[str, str]:
+    """An app's newest migration: products stays migrated in these tests,
+    so its tables have every column (a later field such as the variant's
+    name must be in the models the test writes with)."""
+
+    from django.db.migrations.loader import MigrationLoader
+
+    return max(
+        node
+        for node in MigrationLoader(None, ignore_no_migrations=True)
+        .graph.leaf_nodes()
+        if node[0] == app_label
+    )
+
+
 # What the test writes with: pricing before, products and inventory with
 # their variants.
 DATA_STATE = [
     *BEFORE,
-    ("products", "0008_productvariant"),
+    _latest("products"),
     ("inventory", "0004_alter_inventorybatch_variant"),
 ]
 
