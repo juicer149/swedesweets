@@ -4,8 +4,12 @@
 
   - The EUR / SEK tabs: the editor shows that currency's prices (its
     data-currency; css/variants.css hides the other, still sent).
-  - A row's coin: on, its own prices show (css/variants.css); switched on
-    with none typed yet, they start from the product's price.
+  - A row's price tag: on, the row turns yellow and its own prices slide
+    open (css/variants.css shows them; the slide is js/smooth-details.js's,
+    same time and easing); switched on with none typed yet, they start
+    from the product's price. Off, they slide shut.
+  - Each row says what it sells at in the editor's currency: its own
+    prices, or the product's; a channel it is not sold in dims.
   - The trash asks, then the row flashes red and folds away (line_flash.js)
     and is marked for deletion on save; a row not saved yet just goes.
   - "+ Add variant" copies the template row as a new formset form at the
@@ -33,31 +37,116 @@
       editor.querySelectorAll(".variant-shared input[name]")
     );
 
-    // A coin switched on: the row's own prices start from the product's,
-    // unless it already has some.
-    rows.addEventListener("change", (event) => {
-      const coin = event.target.closest("[data-variant-own-price]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const signs = { eur: "€", sek: "kr" };
+    // The slides running now, by panel.
+    const slides = new Map();
 
-      if (!coin || !coin.checked) {
-        return;
-      }
+    function ownPriceOn(row) {
+      const toggle = row.querySelector("[data-variant-own-price]");
 
-      const row = coin.closest("[data-variant-row]");
-      const own = Array.from(row.querySelectorAll(".variant-row__prices input[name]"));
+      return Boolean(toggle && toggle.checked);
+    }
 
-      if (own.some((input) => input.value.trim())) {
-        return;
-      }
+    // What a row sells at, per channel, in the editor's currency.
+    function summarize(row) {
+      const currency = editor.dataset.currency || "eur";
+      const own = ownPriceOn(row);
 
-      productPrices.forEach((input) => {
-        const key = input.name.replace(/^product_/, "");
-        const field = row.querySelector(`input[name$="-${key}"]`);
+      row.querySelectorAll("[data-summary-channel]").forEach((line) => {
+        const channel = line.dataset.summaryChannel;
+        const key = `${channel}_${currency}`;
+        const input = own
+          ? row.querySelector(`input[name$="-${key}"]`)
+          : editor.querySelector(`input[name="product_${key}"]`);
+        const value = input ? input.value.trim() : "";
+        const sold = row.querySelector(`input[name$="-${channel}"][type="checkbox"]`);
 
-        if (field) {
-          field.value = input.value;
-        }
+        line.querySelector("[data-summary-value]").textContent = value
+          ? `${value} ${signs[currency]}`
+          : "—";
+        line.classList.toggle("is-off", Boolean(sold && !sold.checked));
       });
+    }
+
+    function summarizeAll() {
+      rows.querySelectorAll("[data-variant-row]").forEach(summarize);
+    }
+
+    // The row's own prices slide open or shut (as js/smooth-details.js).
+    function slide(row, open) {
+      const panel = row.querySelector("[data-variant-prices]");
+
+      if (!panel || reducedMotion.matches) {
+        return;
+      }
+
+      // Turned back mid-slide: on from where it got to.
+      const running = slides.get(panel);
+      const from = running ? panel.getBoundingClientRect().height : null;
+
+      if (running) {
+        slides.delete(panel);
+        running.cancel();
+      }
+
+      // Shutting: kept shown until the slide ends (the CSS hides it at once).
+      panel.classList.toggle("is-closing", !open);
+
+      const full = panel.scrollHeight;
+      const start = from ?? (open ? 0 : full);
+      const animation = panel.animate(
+        [
+          { height: `${start}px`, opacity: open ? 0 : 1 },
+          { height: `${open ? full : 0}px`, opacity: open ? 1 : 0 },
+        ],
+        { duration: 280, easing: "cubic-bezier(0.2, 0, 0, 1)" },
+      );
+
+      slides.set(panel, animation);
+      panel.style.overflow = "hidden";
+      animation.onfinish = () => {
+        if (slides.get(panel) !== animation) {
+          return;
+        }
+
+        slides.delete(panel);
+        panel.style.overflow = "";
+        panel.classList.remove("is-closing");
+      };
+    }
+
+    // The price tag: on, the row's own prices start from the product's
+    // (unless it has some already) and slide open; off, they slide shut.
+    rows.addEventListener("change", (event) => {
+      const toggle = event.target.closest("[data-variant-own-price]");
+
+      if (!toggle) {
+        return;
+      }
+
+      const row = toggle.closest("[data-variant-row]");
+
+      if (toggle.checked) {
+        const own = Array.from(row.querySelectorAll("[data-variant-prices] input[name]"));
+
+        if (!own.some((input) => input.value.trim())) {
+          productPrices.forEach((input) => {
+            const key = input.name.replace(/^product_/, "");
+            const field = row.querySelector(`input[name$="-${key}"]`);
+
+            if (field) {
+              field.value = input.value;
+            }
+          });
+        }
+      }
+
+      slide(row, toggle.checked);
     });
+
+    editor.addEventListener("input", summarizeAll);
+    editor.addEventListener("change", summarizeAll);
 
     currencyChips.forEach((chip) => {
       chip.addEventListener("click", () => {
@@ -69,6 +158,8 @@
           other.setAttribute("aria-selected", String(chosen));
           other.classList.toggle("section-nav__link--active", chosen);
         });
+
+        summarizeAll();
       });
     });
 
@@ -209,6 +300,7 @@
         rows.appendChild(row);
         totalForms.value = String(index + 1);
         changed();
+        summarize(row);
 
         if (window.lineFlash) {
           window.lineFlash.added(row);
@@ -239,6 +331,7 @@
     });
 
     renumber();
+    summarizeAll();
   }
 
   document.querySelectorAll("[data-variant-editor]").forEach(setUp);

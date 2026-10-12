@@ -1,10 +1,10 @@
 {% comment %}
   One variant in the variants editor. Its first line: its label, weight,
-  sales channels (Retail, Business; neither: paused), its coin and the
-  trash; the arrows beside it all, up at the top, down at the bottom.
-  Under them the SKU ("New" until saved), and with the coin on the
-  variant's own prices (the editor's currency shows); off, it is sold at
-  the product's price.
+  sales channels (Retail, Business; neither: paused), its price and the
+  trash; the arrows beside the first two lines, up at the top, down at the
+  bottom. Under them the SKU ("New" until saved), and with its own price
+  on the variant's prices (the editor's currency shows); off, it is sold
+  at the product's price.
 
   row      a VariantForm (ops_portal/products/variant_forms.py)
   is_new   the template row "Add variant" copies
@@ -53,24 +53,25 @@
     </label>
   </div>
 
-  {# The coin: dim with a cross, the product's price; lit, its own. #}
-  <label class="variant-coin" for="{{ row.own_price.id_for_label }}" title="Own price: on, this variant has prices of its own; off, the product's price">
-    {{ row.own_price }}
-    <span class="visually-hidden">Own price{% if row.state %} for {{ row.state.variant.display_name }}{% endif %}</span>
-    <svg class="variant-coin__icon" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
-      <g class="variant-coin__rays">
-        <path d="M16 2.5v4" />
-        <path d="m7.2 5.6 2.5 3.1" />
-        <path d="m24.8 5.6-2.5 3.1" />
-      </g>
-      <circle class="variant-coin__face" cx="16" cy="19.5" r="9.5" />
-      <circle class="variant-coin__rim" cx="16" cy="19.5" r="6" />
-      <g class="variant-coin__cross">
-        <path d="m13 16.5 6 6" />
-        <path d="m19 16.5-6 6" />
-      </g>
-    </svg>
-  </label>
+  {#
+    Its price: the tag switches its own price on (green, the row turns
+    yellow and its prices slide open under it) or off (the product's). Beside
+    it what the variant sells at, in the editor's currency
+    (variant_editor.js fills it in).
+  #}
+  <div class="variant-row__price">
+    <label class="variant-price-toggle" for="{{ row.own_price.id_for_label }}" title="Own price: on, this variant has prices of its own; off, the product's price">
+      {{ row.own_price }}
+      <span class="variant-price-toggle__surface">
+        {% include "includes/ui/icon_block.html" with name="tag" size="sm" only %}
+        <span class="visually-hidden">Own price{% if row.state %} for {{ row.state.variant.display_name }}{% endif %}</span>
+      </span>
+    </label>
+    <span class="variant-row__price-summary" data-variant-price-summary aria-hidden="true">
+      <span class="variant-row__price-line" data-summary-channel="retail"><span class="variant-row__price-caption">Retail</span> <span data-summary-value>—</span></span>
+      <span class="variant-row__price-line" data-summary-channel="business"><span class="variant-row__price-caption">Business</span> <span data-summary-value>—</span></span>
+    </span>
+  </div>
 
   <div class="variant-row__remove">
     {% if is_new or row.can_delete %}
@@ -94,9 +95,11 @@
     {% endif %}
   </span>
 
-  <div class="variant-row__prices">
-    {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=row.retail_eur sek=row.retail_sek only %}
-    {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=row.business_eur sek=row.business_sek only %}
+  <div class="variant-row__prices" data-variant-prices>
+    <div class="variant-row__prices-box">
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=row.retail_eur sek=row.retail_sek only %}
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=row.business_eur sek=row.business_sek only %}
+    </div>
   </div>
 
   {% for error in row.delete.errors %}<div class="form-field__errors variant-row__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}

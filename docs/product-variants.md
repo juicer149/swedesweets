@@ -119,9 +119,10 @@ fall back to the order they were added in.
   - the product's price: every variant's without a price of its own;
   - a row per variant: arrows to move it (up at its top, down at its
     bottom), label, weight, its sales channels (Retail, Business; in
-    neither it is paused), its coin (off: the product's price, dim with a
-    cross; on: lit, with its own prices under the row), delete (only
-    without history, rule 6);
+    neither it is paused), its price (what it sells at, in the shown
+    currency) with a tag: off, the product's price; on (green), its own:
+    the row turns yellow and its prices slide open in a box under it;
+    delete (only without history, rule 6);
   - a faint "+ Add variant" row under the last one;
   - saved with "Update product".
   Suggested labels (XS, S, M, L, XL, XXL, One size) come as a datalist; any

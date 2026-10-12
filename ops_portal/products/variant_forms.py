@@ -1,13 +1,13 @@
 """Variants and prices on the product edit form (docs/product-variants.md).
 
-Each existing variant is a row (label, weight, its sales channels, its coin:
-its own retail and business prices in EUR and SEK, or the product's;
-delete), in the order shown
-everywhere; new rows are added in the page (variant_editor.js) and
-everything is saved with "Update product". The sales channels say where
-the variant is sold: with neither, it is paused. The section sits behind a
-lock: a hands-off guard in the page (its fields are inert, still sent as
-they were), not a rule the server enforces.
+Each existing variant is a row (label, weight, its sales channels, its
+price tag: its own retail and business prices in EUR and SEK, or the
+product's; delete), in the order shown everywhere; new rows are added
+in the page (variant_editor.js) and everything is saved with "Update
+product". The sales channels say where the variant is sold: with
+neither, it is paused. The section sits behind a lock: a hands-off guard
+in the page (its fields are inert, still sent as they were), not a rule
+the server enforces.
 """
 
 from __future__ import annotations
@@ -112,14 +112,14 @@ class VariantForm(forms.Form):
         ),
     )
 
-    # The row's coin: on, the variant has its own prices (the fields under
-    # it); off, it is sold at the product's price (ProductPricesForm).
+    # The row's price tag: on, the variant has its own prices (the fields
+    # under it); off, it is sold at the product's price (ProductPricesForm).
     own_price = forms.BooleanField(
         required=False,
         label="Own price",
         widget=forms.CheckboxInput(
             attrs={
-                "class": "variant-coin__input",
+                "class": "variant-price-toggle__input",
                 "data-variant-own-price": "true",
             }
         ),

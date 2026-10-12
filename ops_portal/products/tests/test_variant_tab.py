@@ -1,6 +1,6 @@
 """Variants and prices of an ops product: listed on the product page,
 changed on the edit form (the section behind a lock in the page); each
-variant at the product's price or, with its coin on, its own."""
+variant at the product's price or, with its price tag on, its own."""
 
 from __future__ import annotations
 
@@ -169,10 +169,11 @@ def test_the_page_opens_with_both_sections_locked(client):
     assert content.count("data-lock-button") == 2
     assert content.count("data-lockable inert") == 2
     assert "Variants and offers" in content
-    # Each row's sales channels, coin and arrows; the product's price; the
+    # Each row's sales channels, price and arrows; the product's price; the
     # EUR / SEK tabs.
     assert 'name="variants-1-retail"' in content
     assert 'name="variants-1-own_price"' in content
+    assert content.count("data-variant-price-summary") == 3  # + the template
     assert 'name="product_retail_eur"' in content
     assert 'role="tab" aria-selected="false" data-currency-choice="sek"' in content
     assert "individual_prices" not in content
@@ -216,7 +217,7 @@ def test_one_price_for_the_product_is_every_variants(client):
 
 
 @pytest.mark.django_db
-def test_a_variant_with_its_coin_on_keeps_its_own_price(client):
+def test_a_variant_with_its_price_tag_on_keeps_its_own_price(client):
     client.force_login(full_staff_user_factory())
     product = product_factory(name="Hoodie", internal_number=609)
     variant_factory(product=product, label="M", first_label="S")
@@ -230,7 +231,7 @@ def test_a_variant_with_its_coin_on_keeps_its_own_price(client):
         "variants-1-own_price": "on",
         "variants-1-retail_eur": "4.50",
         "variants-1-business_eur": "2.00",
-        # Typed while its coin was on, then switched off: not used.
+        # Typed while its tag was on, then switched off: not used.
         "variants-0-retail_eur": "9.99",
     }
 

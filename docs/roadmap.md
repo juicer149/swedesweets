@@ -21,7 +21,7 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   the browser has no View Transitions. The cart is already on the server;
   half-filled contact details are kept in the session.
 - **Prices per variant**: the product has one price, every variant's
-  unless the variant's coin is on: then it has its own. Nothing stores the
+  unless the variant's price tag is on: then it has its own. Nothing stores the
   product's price apart: the page shows the prices most variants share.
   Each variant has its own sales channels (retail, business); in neither,
   it is paused.
@@ -119,8 +119,9 @@ ingredients under one tab per language.
 **Edit page**: Product behind a lock, then **Variants and offers** behind
 one: EUR / SEK as tabs; the product's price; then a row per variant:
 arrows (up at the top, down at the bottom), label, weight, sales channels
-(Retail, Business), its coin (own price on or off) and, with the coin on,
-its own prices on a second line; "+ Add variant" as a faint last row.
+(Retail, Business), its price with the tag for its own (on: the row
+turns yellow and its prices slide open under it); "+ Add variant" as a
+faint last row.
 
 ## Done
 

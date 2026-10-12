@@ -87,7 +87,7 @@ PRICE_FIELDS = (
 
 class ProductPricesForm(forms.Form):
     """The product's price over the variants on the edit form: saved as the
-    price of every variant without its own (a row's coin switched off;
+    price of every variant without its own (a row's price tag switched off;
     variant_forms.VariantForm.own_price). An empty field removes that
     price from them."""
 
