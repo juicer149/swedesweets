@@ -119,11 +119,14 @@ fall back to the order they were added in.
   - the product's price: every variant's without a price of its own;
   - a card per variant (rounded, edged in the accent): arrows to move it
     (up at its top, down at its bottom), label, weight, its sales
-    channels (Retail, Business; in neither it is paused), delete (only
-    without history, rule 6); under the channels its price (what it sells
-    at in the shown currency; a channel that is off shows none) with a
-    tag: off, the product's price; on (green), its own: the card turns
-    yellow and a tab with its prices slides out under it;
+    channels (Retail, Business; in neither it is paused), its price tag,
+    delete (only without history, rule 6); under the channels what it
+    sells at in the shown currency (a channel that is off shows none). The
+    tag on (green): a yellow tab slides out under the card with a price
+    field per channel it is sold in; a field left empty is the product's
+    price (shown as its placeholder);
+  - changes to prices already set ask for the password before saving
+    (`PRICE_CHANGE_CHECK`, on by default; a first price never asks);
   - a faint "+ Add variant" row under the last one;
   - saved with "Update product".
   Suggested labels (XS, S, M, L, XL, XXL, One size) come as a datalist; any

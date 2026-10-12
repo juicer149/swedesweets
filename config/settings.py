@@ -453,6 +453,20 @@ ORDER_NOTIFICATION_EMAILS = [
 
 
 # =============================================================================
+# Prices
+# =============================================================================
+
+# Before saving changes to prices a product already has, ops lists them and
+# asks for the password again (ops_portal/products/price_check.py). A first
+# price is never asked about. Switch it off (PRICE_CHANGE_CHECK=false) while
+# prices are typed in.
+PRICE_CHANGE_CHECK = env_bool(
+    "PRICE_CHANGE_CHECK",
+    default=True,
+)
+
+
+# =============================================================================
 # Payments
 # =============================================================================
 

@@ -42,6 +42,12 @@ from ops_portal.products.list_viewmodels import (
     build_product_quick_jump_search,
     build_products_page_header,
 )
+from ops_portal.products.price_check import (
+    PriceCheck,
+    PriceCheckForm,
+    check_is_on,
+    price_changes,
+)
 from ops_portal.products.pricing_forms import (
     ProductPricesForm,
     ProductPricingForm,
@@ -306,13 +312,15 @@ def edit(
 ):
     """The product's own data (behind a lock in the page) and its variants
     with their sales channels and prices, saved together; the page comes
-    back after a save."""
+    back after a save. Big price changes wait for the user's password
+    (price_check.py)."""
 
     product = _get_product_or_404(
         product_pk
     )
 
     prices_by_channel = _standard_prices_by_channel(product)
+    price_check = None
 
     if request.method == "POST":
         form = ProductEditForm(
@@ -339,7 +347,18 @@ def edit(
             variant_formset=variant_formset,
         )
 
-        if forms_are_valid:
+        if forms_are_valid and check_is_on():
+            changes = price_changes(
+                prices_by_channel=prices_by_channel,
+                prices_form=prices_form,
+                variant_formset=variant_formset,
+            )
+            check_form = PriceCheckForm(request.POST, user=request.user)
+
+            if changes and not check_form.is_confirmed():
+                price_check = PriceCheck(changes=changes, form=check_form)
+
+        if forms_are_valid and price_check is None:
             try:
                 with transaction.atomic():
                     updated_product = update_product(
@@ -413,6 +432,7 @@ def edit(
             prices_form=prices_form,
             product=product,
             variant_formset=variant_formset,
+            price_check=price_check,
         )
         .as_dict()
     )

@@ -21,10 +21,16 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   the browser has no View Transitions. The cart is already on the server;
   half-filled contact details are kept in the session.
 - **Prices per variant**: the product has one price, every variant's
-  unless the variant's price tag is on: then it has its own. Nothing stores the
+  unless the variant's price tag is on: then it has its own (per channel
+  and currency; left empty, the product's). Nothing stores the
   product's price apart: the page shows the prices most variants share.
   Each variant has its own sales channels (retail, business); in neither,
   it is paused.
+- **Price changes ask for the password**: saving a change to a price
+  already set (raised, lowered, removed) lists the changes and asks for
+  the password again; a first price never asks. `PRICE_CHANGE_CHECK`
+  (environment, on by default) switches it off while prices are typed in.
+  Done on the product edit page; batch offers to follow.
 - **Edit pages**: sections open one under the other (no folding), the
   important parts behind a lock in the page (the product's data, its
   variants and offers); saving comes back to the same page.
@@ -117,11 +123,12 @@ mobile).
 ingredients under one tab per language.
 
 **Edit page**: Product behind a lock, then **Variants and offers** behind
-one: EUR / SEK as tabs; the product's price; then a row per variant:
+one: EUR / SEK as tabs; the product's price; then a card per variant:
 arrows (up at the top, down at the bottom), label, weight, sales channels
-(Retail, Business), and under them its price with the tag for its own
-(on: the card turns yellow and a tab with its prices slides out under it); "+ Add variant" as a
-faint last row.
+(Retail, Business), the price tag, and under the channels what it sells
+at; the tag on, a yellow tab with its own prices slides out under the
+card; "+ Add variant" as a faint last row. Price changes ask for the
+password.
 
 ## Done
 

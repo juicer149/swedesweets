@@ -13,6 +13,7 @@ from ops_portal.products.forms import (
     ProductForm,
 )
 from ops_portal.products.presentation import product_status_icon
+from ops_portal.products.price_check import PriceCheck
 from ops_portal.products.pricing_forms import (
     ProductPricesForm,
     ProductPricingForm,
@@ -86,6 +87,8 @@ class ProductFormContext:
     prices_form: ProductPricesForm | None = None
     product: Product | None = None
     variant_formset: BaseVariantFormSet | None = None
+    # Price changes waiting for the password (price_check.py).
+    price_check: PriceCheck | None = None
 
     @property
     def open_sections(self) -> tuple[str, ...]:
@@ -97,6 +100,7 @@ class ProductFormContext:
         if self.variant_formset is not None and (
             self.variant_formset.total_error_count()
             or (self.prices_form is not None and self.prices_form.errors)
+            or self.price_check is not None
         ):
             keys.append("variants")
 
@@ -111,6 +115,7 @@ class ProductFormContext:
                 self.pricing_form
             ),
             "prices_form": self.prices_form,
+            "price_check": self.price_check,
             "product": self.product,
             "form_sections": (
                 PRODUCT_EDIT_FORM_SECTIONS
@@ -169,12 +174,14 @@ def build_edit_product_form_context(
     prices_form: ProductPricesForm,
     product: Product,
     variant_formset: BaseVariantFormSet,
+    price_check: PriceCheck | None = None,
 ) -> ProductFormContext:
     return ProductFormContext(
         form=form,
         prices_form=prices_form,
         product=product,
         variant_formset=variant_formset,
+        price_check=price_check,
         title=f"Edit {product.display_name}",
         description="",
         submit_label="Update product",

@@ -113,7 +113,8 @@ class VariantForm(forms.Form):
     )
 
     # The row's price tag: on, the variant has its own prices (the fields
-    # under it); off, it is sold at the product's price (ProductPricesForm).
+    # in the tab under it; one left empty is the product's); off, it is
+    # sold at the product's price (ProductPricesForm).
     own_price = forms.BooleanField(
         required=False,
         label="Own price",
@@ -374,6 +375,12 @@ def build_variant_formset(
             prices_by_channel=prices_by_channel,
             variant_id=variant.pk,
         )
+        # Its own: the prices unlike the product's; the rest it takes from
+        # the product (empty fields).
+        own = {
+            field_name: value if value != shared[field_name] else None
+            for field_name, value in amounts.items()
+        }
         initial.append(
             {
                 "variant_id": variant.pk,
@@ -388,10 +395,11 @@ def build_variant_formset(
                     prices_by_channel.get(CommercialPrice.Channel.BUSINESS, {}),
                     variant,
                 ),
-                # Prices unlike the product's are the variant's own.
-                "own_price": amounts != shared,
+                "own_price": any(
+                    value is not None for value in own.values()
+                ),
                 "delete": False,
-                **amounts,
+                **own,
             }
         )
 

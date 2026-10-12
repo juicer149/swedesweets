@@ -3,15 +3,15 @@
   whole section behind one lock (product_form.html, form_lock.js).
 
   At the top, EUR and SEK as two small tabs: which currency's prices show
-  (both are kept and sent). Then the product's price: every variant's
-  without its own (a row's tag switched off).
+  (both are kept and sent). Then the product's price: every variant's,
+  unless the variant has its own.
 
   Then a card per variant (variant_row.html): the arrows that move it,
   label, weight, its sales channels (Retail, Business: where it is sold;
-  neither, it is paused), the trash; under them the SKU and its price with
-  the tag that gives it its own: then the card turns yellow and a tab
-  with its prices slides out under it. Last, a faint row "+ Add variant":
-  it becomes a new card, and moves down under it.
+  neither, it is paused), the price tag, the trash; under them the SKU and
+  what it sells at. The tag on: a yellow tab with its own prices slides
+  out under the card. Last, a faint row "+ Add variant": it becomes a new
+  card, and moves down under it.
 {% endcomment %}
 {% with formset=variant_formset prices=prices_form %}
   <div class="variant-editor" data-variant-editor data-currency="eur">
@@ -32,7 +32,7 @@
     <div class="variant-shared">
       <p class="variant-shared__name">
         Price
-        <span class="info-dot" tabindex="0" title="Every variant is sold at this price unless its tag gives it its own.">?</span>
+        <span class="info-dot" tabindex="0" title="Every variant is sold at this price, unless its price tag gives it its own: a price it leaves empty is still this one.">?</span>
       </p>
       {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=prices.product_retail_eur sek=prices.product_retail_sek only %}
       {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=prices.product_business_eur sek=prices.product_business_sek only %}

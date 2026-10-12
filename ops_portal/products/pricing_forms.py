@@ -88,8 +88,9 @@ PRICE_FIELDS = (
 class ProductPricesForm(forms.Form):
     """The product's price over the variants on the edit form: saved as the
     price of every variant without its own (a row's price tag switched off;
-    variant_forms.VariantForm.own_price). An empty field removes that
-    price from them."""
+    variant_forms.VariantForm.own_price), and of every field a variant with
+    its own leaves empty. An empty field here removes that price from
+    them."""
 
     product_retail_eur = price_field(label="Retail price in EUR")
     product_retail_sek = price_field(label="Retail price in SEK")
@@ -97,14 +98,18 @@ class ProductPricesForm(forms.Form):
     product_business_sek = price_field(label="Business price in SEK")
 
     def prices_for(self, row) -> VariantPrices:
-        """A variant's prices once saved: its own, or the product's."""
+        """A variant's prices once saved: with its own price on, each price
+        it was given, the product's for the fields it left empty; off, the
+        product's."""
 
-        if row.cleaned_data.get("own_price"):
-            return row.prices()
+        own = row.cleaned_data.get("own_price")
 
         return VariantPrices(
             **{
-                field_name: self.cleaned_data.get(f"product_{field_name}")
+                field_name: (
+                    row.cleaned_data.get(field_name) if own else None
+                )
+                or self.cleaned_data.get(f"product_{field_name}")
                 for field_name, _channel, _currency in PRICE_FIELDS
             }
         )
@@ -131,26 +136,25 @@ def product_amounts(
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
     variant_ids: list[int],
 ) -> dict[str, Decimal | None]:
-    """The product's price as the page shows it: the prices most variants
-    share (on a tie, the first variant's). Nothing stores it apart: a
-    variant whose prices differ has its own."""
+    """The product's price as the page shows it: per price, the one most
+    variants share (on a tie, the first variant's). Nothing stores it
+    apart: a variant with a price unlike it has its own."""
 
-    best: dict[str, Decimal | None] = {
-        field_name: None for field_name, _channel, _currency in PRICE_FIELDS
-    }
-    best_count = 0
     per_variant = [
         variant_amounts(prices_by_channel=prices_by_channel, variant_id=pk)
         for pk in variant_ids
     ]
+    product: dict[str, Decimal | None] = {}
 
-    for amounts in per_variant:
-        count = per_variant.count(amounts)
+    for field_name, _channel, _currency in PRICE_FIELDS:
+        values = [amounts[field_name] for amounts in per_variant]
+        product[field_name] = max(
+            values,
+            key=values.count,
+            default=None,
+        )
 
-        if count > best_count:
-            best, best_count = amounts, count
-
-    return best
+    return product
 
 
 def build_product_prices_initial_data(

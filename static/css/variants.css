@@ -128,10 +128,11 @@
 }
 
 /* -----------------------------------------------------------------------------
-   The variants: a card each (arrows, label, weight, sales channels, trash;
-   under them the SKU and, under the channels, its price), and with its own
-   price a tab under the card with the variant's prices. Label and weight
-   are short (S, M, 450), so their columns are narrow.
+   The variants: a card each (arrows, label, weight, sales channels, price
+   tag, trash; under them the SKU and, under the channels, what it sells
+   at), and with its own price a yellow tab under the card with its
+   prices, nearly as wide as the card. Label and weight are short (S, M,
+   450), so their columns are narrow.
    ----------------------------------------------------------------------------- */
 
 .variant-editor {
@@ -141,15 +142,10 @@
   --variant-col-label: 7rem;
   --variant-col-weight: 5rem;
   --variant-radius: 16px;
-  /* Where the sales channels start in a card: the tab starts there too. */
-  --variant-tab-inset: calc(
-    var(--variant-pad) + 1px + var(--variant-col-move)
-    + var(--variant-col-label) + var(--variant-col-weight)
-    + 3 * var(--variant-gap)
-  );
 }
 
-/* arrows | label | weight | channels | trash */
+/* arrows | label | weight | channels | tag | trash (the heads: the first
+   four) */
 .variant-rows__head,
 .variant-row__card {
   display: grid;
@@ -158,6 +154,7 @@
     var(--variant-col-label)
     var(--variant-col-weight)
     minmax(0, 1fr)
+    2.25rem
     2.25rem;
   column-gap: var(--variant-gap);
   align-items: center;
@@ -183,8 +180,7 @@
   --line-flash-room: 0px;
 }
 
-/* The card, edged in the accent; with its own price the edge is the full
-   accent and the card yellow like the product's price over the list. */
+/* The card, edged in the accent. */
 .variant-row__card {
   /* Over the tab's top edge, so the card's own edge runs on. */
   position: relative;
@@ -199,10 +195,10 @@
     border-color var(--motion-fast);
 }
 
-.variant-row:has([data-variant-own-price]:checked) .variant-row__card {
-  background: color-mix(in srgb, var(--color-accent-600) 12%, var(--color-neutral-50));
-  border-color: var(--color-accent-600);
-}
+.variant-row__label { grid-row: 1; grid-column: 2; }
+.variant-row__weight { grid-row: 1; grid-column: 3; }
+.variant-row__card > .variant-price-toggle { grid-row: 1; grid-column: 5; }
+.variant-row__remove { grid-row: 1; grid-column: 6; }
 
 /* Deleted, waiting for Save: gone from the list (still sent). */
 .variant-row[hidden] {
@@ -293,13 +289,15 @@
   font-weight: 600;
 }
 
-/* The tab under the card: the variant's own prices, from under the sales
-   channels, left-aligned. It shows with its own price on (or an error in
-   it); variant_editor.js slides it out and back (as js/smooth-details.js
-   does), keeping it shown while it goes back (is-closing). */
+/* The tab under the card, yellow like the product's price: the variant's
+   own prices, left-aligned, a field per channel it is sold in; empty, the
+   product's (its placeholder). It shows with its own price on (or an
+   error in it); variant_editor.js slides it out and back (as
+   js/smooth-details.js does), keeping it shown while it goes back
+   (is-closing). */
 .variant-row__prices {
   display: none;
-  margin: -1px var(--variant-radius) 0 var(--variant-tab-inset);
+  margin: -1px var(--variant-radius) 0;
 }
 
 .variant-row:has([data-variant-own-price]:checked) .variant-row__prices,
@@ -313,15 +311,23 @@
   flex-wrap: wrap;
   justify-content: flex-start;
   gap: var(--space-2) var(--space-4);
-  padding: calc(var(--space-3) + 1px) var(--space-3) var(--space-3);
-  background: rgb(255 255 255 / 0.7);
+  align-items: center;
+  padding: calc(var(--space-3) + 1px) var(--space-4) var(--space-3);
+  background: color-mix(in srgb, var(--color-accent-600) 12%, var(--color-neutral-50));
   border: 1px solid var(--color-accent-600);
   border-top: 0;
   border-radius: 0 0 var(--radius-card-inner) var(--radius-card-inner);
 }
 
 .variant-row__prices-box .variant-price__input {
-  width: 5.5rem;
+  width: 6rem;
+}
+
+.variant-row__prices-hint {
+  margin: 0 0 0 auto;
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-12);
+  font-weight: 600;
 }
 
 .variant-row__prices-box input:not([type="checkbox"], [type="hidden"]) {
@@ -380,9 +386,9 @@
 }
 
 /* -----------------------------------------------------------------------------
-   The variant's price, under its sales channels: the tag that gives it its
-   own (a round switch, green when on, like the sales channels), and beside
-   it what it sells at in the editor's currency.
+   The price tag that gives the variant its own (a round switch, green when
+   on, like the sales channels), and under the sales channels what it
+   sells at in the editor's currency.
    ----------------------------------------------------------------------------- */
 
 /* Under the sales channels. */
@@ -390,9 +396,13 @@
   grid-row: 2;
   grid-column: 4 / -1;
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
+  flex-wrap: wrap;
+  gap: 0 var(--space-4);
   min-width: 0;
+  font-size: var(--font-size-14);
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
 }
 
 .variant-price-toggle {
@@ -447,17 +457,6 @@
   border-color: rgb(var(--color-status-success) / 0.32);
   box-shadow: var(--shadow-success-glow);
   opacity: 1;
-}
-
-.variant-row__price-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-4);
-  min-width: 0;
-  font-size: var(--font-size-14);
-  font-weight: 700;
-  line-height: 1.3;
-  white-space: nowrap;
 }
 
 .variant-row__price-caption {
@@ -558,7 +557,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
     grid-template-areas:
       "label label weight weight"
-      "channels channels channels channels"
+      "channels channels channels own"
       "price price price price"
       "sku sku move remove";
   }
@@ -576,9 +575,14 @@
   }
 
   .variant-row__remove { grid-area: remove; }
+  .variant-row__card > .variant-price-toggle { grid-area: own; justify-self: end; }
 
   .variant-row__prices {
     margin-inline: var(--space-4);
+  }
+
+  .variant-row__prices-hint {
+    margin-left: 0;
   }
 
   .variant-row__field-label {
@@ -592,6 +596,66 @@
   .variant-price__input {
     width: 6.5rem;
   }
+}
+
+/* -----------------------------------------------------------------------------
+   Price changes waiting for the password (price_check_dialog.html): the
+   confirm dialog (confirm-dialog.css), wider, with the changes listed.
+   ----------------------------------------------------------------------------- */
+
+.price-check {
+  width: min(100% - 2rem, 30rem);
+}
+
+.price-check__card {
+  text-align: left;
+}
+
+.price-check__message {
+  margin-bottom: var(--space-4);
+}
+
+.price-check__changes {
+  display: grid;
+  gap: var(--space-2);
+  max-height: 14rem;
+  margin: 0 0 var(--space-5);
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.price-check__change {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: color-mix(in srgb, var(--color-accent-600) 9%, transparent);
+  border-radius: var(--radius-control);
+  font-size: var(--font-size-14);
+}
+
+.price-check__what {
+  font-weight: 700;
+}
+
+.price-check__prices s {
+  color: var(--color-neutral-600);
+}
+
+.price-check__percent {
+  margin-left: var(--space-2);
+  color: var(--color-status-success-text);
+  font-weight: 700;
+}
+
+.price-check__percent--down {
+  color: rgb(var(--color-status-danger));
+}
+
+.price-check__password {
+  margin-bottom: var(--space-5);
 }
 
 /* -----------------------------------------------------------------------------

@@ -5,9 +5,10 @@
   (form_sections). Adding: Product, then Offers. Editing: Product, then
   Variants and offers (variant_editor.js), each behind a lock
   (form_lock.js; open when it holds an error). Each section has an id the
-  product page's buttons link to (#product, #variants). The actions at the foot; saving
-  comes back to this page. What the shop shows (catalog_form.html) has its
-  own page.
+  product page's buttons link to (#product, #variants). The actions at the
+  foot; saving comes back to this page. Price changes come back in a
+  dialog asking for the password (price_check_dialog.html). What the shop
+  shows (catalog_form.html) has its own page.
 {% endcomment %}
 
 {% block page_heading %}
@@ -51,6 +52,10 @@
       </section>
     {% endfor %}
 
+    {% if price_check %}
+      {% include "ops_portal/products/includes/price_check_dialog.html" with check=price_check only %}
+    {% endif %}
+
     <div class="form-actions page__actions page-actions">
       <button class="button button--md button--solid button--tone-place page__submit" type="submit">
         {{ submit_label }}
@@ -73,6 +78,7 @@
   <script src="{% static 'js/dirty_form.js' %}" defer></script>
   <script src="{% static 'js/form_lock.js' %}" defer></script>
   <script src="{% static 'js/variant_editor.js' %}" defer></script>
+  <script src="{% static 'js/price_check.js' %}" defer></script>
   <script src="{% static 'js/price_currency.js' %}" defer></script>
   <script src="{% static 'js/form_sections.js' %}" defer></script>
 {% endblock %}

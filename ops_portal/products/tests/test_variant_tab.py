@@ -349,8 +349,9 @@ def test_sold_in_retail_needs_a_price(client):
     assert response.status_code == 200
     assert "product_retail_eur" in response.context["prices_form"].errors
 
-    # With its own price: said on the variant's own line.
-    data |= {"variants-0-own_price": "on", "product_retail_eur": "4.50"}
+    # With its own price (and none for the product to fall back on): said
+    # on the variant's own line.
+    data |= {"variants-0-own_price": "on"}
     response = client.post(_edit_url(product), data)
 
     assert response.status_code == 200
@@ -462,3 +463,108 @@ def test_the_product_page_shows_each_variants_prices(client):
     assert "Retail 2.50 EUR" in meta_texts[0]
     assert "Retail 4.50 EUR" in meta_texts[1]
     assert response.context["pricing"].retail.enabled is True
+
+
+@pytest.mark.django_db
+def test_an_empty_own_price_is_the_products(client):
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Hoodie", internal_number=615)
+    variant_factory(product=product, label="M", first_label="S")
+
+    page = client.get(_edit_url(product))
+    data = _page_post_data(page) | {
+        "product_retail_eur": "2.50",
+        "product_business_eur": "3.40",
+        "variants-1-retail": "on",
+        # M: its own retail price; business left empty, so the product's.
+        "variants-1-own_price": "on",
+        "variants-1-retail_eur": "4.50",
+        "variants-1-business_eur": "",
+    }
+
+    response = client.post(_edit_url(product), data)
+
+    assert response.status_code == 302
+    medium = product.variants.get(label="M")
+    assert _price(medium, RETAIL) == Decimal("4.50")
+    assert _price(medium, BUSINESS) == Decimal("3.40")
+
+    # It opens with only what is its own filled in.
+    page = client.get(_edit_url(product))
+    _small_row, medium_row = page.context["variant_formset"]
+    assert medium_row["own_price"].value() is True
+    assert medium_row["retail_eur"].value() == Decimal("4.50")
+    assert medium_row["business_eur"].value() is None
+
+
+def _priced_apple():
+    product = product_factory(name="Apple", internal_number=616)
+    update_product_standard_pricing(
+        product=product,
+        business_eur=Decimal("1.90"),
+        business_sek=None,
+        business_enabled=True,
+        retail_eur=Decimal("2.50"),
+        retail_sek=None,
+        retail_enabled=True,
+    )
+
+    return product
+
+
+@pytest.mark.django_db
+def test_changing_a_price_asks_for_the_password_first(client):
+    client.force_login(full_staff_user_factory())
+    product = _priced_apple()
+    page = client.get(_edit_url(product))
+    data = _page_post_data(page) | {"product_retail_eur": "2.60"}
+
+    # Asked, not saved.
+    response = client.post(_edit_url(product), data)
+
+    assert response.status_code == 200
+    (change,) = response.context["price_check"].changes
+    assert (change.old, change.new, change.percent_label) == (
+        Decimal("2.50"),
+        Decimal("2.60"),
+        "+4 %",
+    )
+    assert "data-price-check" in response.content.decode()
+    assert _price(product.variants.get(), RETAIL) == Decimal("2.50")
+
+    # A wrong password: asked again.
+    response = client.post(
+        _edit_url(product),
+        data | {"price_check_password": "wrong"},
+    )
+
+    assert response.status_code == 200
+    assert "not your password" in str(
+        response.context["price_check"].form.errors
+    )
+    assert _price(product.variants.get(), RETAIL) == Decimal("2.50")
+
+    # The right one: saved.
+    response = client.post(
+        _edit_url(product),
+        data | {"price_check_password": "password"},
+    )
+
+    assert response.status_code == 302
+    assert _price(product.variants.get(), RETAIL) == Decimal("2.60")
+
+
+@pytest.mark.django_db
+def test_without_the_check_a_price_changes_at_once(client, settings):
+    settings.PRICE_CHANGE_CHECK = False
+    client.force_login(full_staff_user_factory())
+    product = _priced_apple()
+    page = client.get(_edit_url(product))
+
+    response = client.post(
+        _edit_url(product),
+        _page_post_data(page) | {"product_retail_eur": "3.00"},
+    )
+
+    assert response.status_code == 302
+    assert _price(product.variants.get(), RETAIL) == Decimal("3.00")

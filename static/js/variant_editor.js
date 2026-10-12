@@ -4,10 +4,11 @@
 
   - The EUR / SEK tabs: the editor shows that currency's prices (its
     data-currency; css/variants.css hides the other, still sent).
-  - A row's price tag: on, the row turns yellow and its own prices slide
-    open (css/variants.css shows them; the slide is js/smooth-details.js's,
-    same time and easing); switched on with none typed yet, they start
-    from the product's price. Off, they slide shut.
+  - A row's price tag: on, the yellow tab with its own prices slides out
+    under the card (css/variants.css shows it; the slide is
+    js/smooth-details.js's, same time and easing); off, it slides back.
+    Each own price field shows the product's price as its placeholder: left
+    empty, that is the price.
   - Each row says what it sells at in the editor's currency: its own
     prices, or the product's (a channel it is not sold in is hidden by
     css/variants.css).
@@ -57,10 +58,10 @@
       row.querySelectorAll("[data-summary-channel]").forEach((line) => {
         const channel = line.dataset.summaryChannel;
         const key = `${channel}_${currency}`;
-        const input = own
-          ? row.querySelector(`input[name$="-${key}"]`)
-          : editor.querySelector(`input[name="product_${key}"]`);
-        const value = input ? input.value.trim() : "";
+        const ownInput = row.querySelector(`input[name$="-${key}"]`);
+        const productInput = editor.querySelector(`input[name="product_${key}"]`);
+        const ownValue = own && ownInput ? ownInput.value.trim() : "";
+        const value = ownValue || (productInput ? productInput.value.trim() : "");
 
         line.querySelector("[data-summary-value]").textContent = value
           ? `${value} ${signs[currency]}`
@@ -68,8 +69,23 @@
       });
     }
 
+    // Each own price field shows the product's price: empty, that is it.
+    function placeholders(row) {
+      productPrices.forEach((input) => {
+        const key = input.name.replace(/^product_/, "");
+        const field = row.querySelector(`[data-variant-prices] input[name$="-${key}"]`);
+
+        if (field) {
+          field.placeholder = input.value.trim() || "0.00";
+        }
+      });
+    }
+
     function summarizeAll() {
-      rows.querySelectorAll("[data-variant-row]").forEach(summarize);
+      rows.querySelectorAll("[data-variant-row]").forEach((row) => {
+        placeholders(row);
+        summarize(row);
+      });
     }
 
     // The row's own prices slide open or shut (as js/smooth-details.js).
@@ -115,33 +131,13 @@
       };
     }
 
-    // The price tag: on, the row's own prices start from the product's
-    // (unless it has some already) and slide open; off, they slide shut.
+    // The price tag: the tab slides out (on) or back (off).
     rows.addEventListener("change", (event) => {
       const toggle = event.target.closest("[data-variant-own-price]");
 
-      if (!toggle) {
-        return;
+      if (toggle) {
+        slide(toggle.closest("[data-variant-row]"), toggle.checked);
       }
-
-      const row = toggle.closest("[data-variant-row]");
-
-      if (toggle.checked) {
-        const own = Array.from(row.querySelectorAll("[data-variant-prices] input[name]"));
-
-        if (!own.some((input) => input.value.trim())) {
-          productPrices.forEach((input) => {
-            const key = input.name.replace(/^product_/, "");
-            const field = row.querySelector(`input[name$="-${key}"]`);
-
-            if (field) {
-              field.value = input.value;
-            }
-          });
-        }
-      }
-
-      slide(row, toggle.checked);
     });
 
     editor.addEventListener("input", summarizeAll);
@@ -299,6 +295,7 @@
         rows.appendChild(row);
         totalForms.value = String(index + 1);
         changed();
+        placeholders(row);
         summarize(row);
 
         if (window.lineFlash) {
