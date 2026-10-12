@@ -17,6 +17,7 @@ VIEW_CAPABILITIES = {
     "ops_products:detail": Capability.VIEW_OPS_PRODUCTS,
     "ops_products:create": Capability.CREATE_PRODUCTS,
     "ops_products:edit": Capability.EDIT_PRODUCTS,
+    "ops_products:edit_catalog": Capability.EDIT_PRODUCTS,
 }
 
 

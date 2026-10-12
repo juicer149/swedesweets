@@ -3,11 +3,13 @@ from __future__ import annotations
 import pytest
 
 from products.errors import InvalidProductData
-from products.models import Product, ProductProfile
+from products.models import Product, ProductProfile, ProductTranslation
 from products.services import (
+    CatalogTextChange,
     create_product,
     update_product,
     update_product_active,
+    update_product_catalog,
 )
 from products.tests.factories import product_factory
 
@@ -22,9 +24,6 @@ def test_create_product_creates_product_and_profile():
         weight_per_unit=3000,
         stock_unit=Product.StockUnit.BOX,
         vegan=True,
-        category=ProductProfile.Category.CANDY,
-        description="  Classic candy.  ",
-        ingredients="  Sugar.  ",
     )
 
     product = result.item
@@ -47,16 +46,12 @@ def test_create_product_creates_product_and_profile():
     assert product.vegan is True
     assert product.sku == "SS-023"
 
+    # An empty profile: the catalog is filled in on its own page.
     profile = ProductProfile.objects.get(
         product=product,
     )
 
-    assert (
-        profile.category
-        == ProductProfile.Category.CANDY
-    )
-    assert profile.description == "Classic candy."
-    assert profile.ingredients == "Sugar."
+    assert profile.category == ""
     assert not profile.image
     assert not profile.thumbnail
 
@@ -185,7 +180,7 @@ def test_create_product_rejects_invalid_data():
 
 
 @pytest.mark.django_db
-def test_update_product_updates_editable_product_and_profile_fields():
+def test_update_product_updates_editable_product_fields():
     product = product_factory(
         internal_number=1,
         brand="Old Brand",
@@ -201,13 +196,9 @@ def test_update_product_updates_editable_product_and_profile_fields():
         name="  New   Name ",
         active=False,
         vegan=True,
-        category=ProductProfile.Category.CHIPS,
-        description="  Nice chips.  ",
-        ingredients="  Potatoes, salt.  ",
     )
 
     updated.refresh_from_db()
-    updated.profile.refresh_from_db()
 
     assert updated.internal_number == 2
     assert updated.manufacturer == "Fazer"
@@ -216,77 +207,20 @@ def test_update_product_updates_editable_product_and_profile_fields():
     assert updated.active is False
     assert updated.vegan is True
 
-    assert (
-        updated.profile.category
-        == ProductProfile.Category.CHIPS
-    )
-    assert (
-        updated.profile.description
-        == "Nice chips."
-    )
-    assert (
-        updated.profile.ingredients
-        == "Potatoes, salt."
-    )
-
 
 @pytest.mark.django_db
-def test_update_product_can_clear_profile_fields():
+def test_update_product_does_not_change_the_catalog():
     product = product_factory()
-
-    profile = product.profile
-    profile.category = (
-        ProductProfile.Category.CANDY
-    )
-    profile.description = "Description"
-    profile.ingredients = "Ingredients"
-    profile.save(
-        update_fields=[
-            "category",
-            "description",
-            "ingredients",
-        ]
-    )
-
-    updated = update_product(
+    update_product_catalog(
         product=product,
-        internal_number=product.internal_number,
-        manufacturer=product.manufacturer,
-        brand=product.brand,
-        name=product.name,
-        active=product.active,
-        vegan=product.vegan,
-        category="",
-        description="",
-        ingredients="",
+        category=ProductProfile.Category.CANDY,
+        texts={"fr": CatalogTextChange(description="Bonbons.")},
     )
-
-    updated.profile.refresh_from_db()
-
-    assert updated.profile.category == ""
-    assert updated.profile.description == ""
-    assert updated.profile.ingredients == ""
-
-
-@pytest.mark.django_db
-def test_update_product_does_not_change_existing_image_fields():
-    product = product_factory()
-
     profile = product.profile
-    profile.image.name = (
-        "products/originals/example.png"
-    )
-    profile.thumbnail.name = (
-        "products/thumbnails/example.webp"
-    )
-    profile.save(
-        update_fields=[
-            "image",
-            "thumbnail",
-        ]
-    )
+    profile.image.name = "products/originals/example.png"
+    profile.save(update_fields=["image"])
 
-    updated = update_product(
+    update_product(
         product=product,
         internal_number=product.internal_number,
         manufacturer=product.manufacturer,
@@ -294,40 +228,107 @@ def test_update_product_does_not_change_existing_image_fields():
         name="Updated name",
         active=product.active,
         vegan=product.vegan,
-        category=profile.category,
-        description=profile.description,
-        ingredients=profile.ingredients,
     )
 
-    updated.profile.refresh_from_db()
+    profile.refresh_from_db()
+    assert profile.category == ProductProfile.Category.CANDY
+    assert profile.image.name == "products/originals/example.png"
+    assert product.translations.get().description == "Bonbons."
 
-    assert (
-        updated.profile.image.name
-        == "products/originals/example.png"
+
+@pytest.mark.django_db
+def test_update_product_catalog_saves_category_and_text_per_language():
+    product = product_factory()
+
+    update_product_catalog(
+        product=product,
+        category=ProductProfile.Category.CHIPS,
+        texts={
+            "fr": CatalogTextChange(
+                name="  Chips   Grill ",
+                description="  Croustillantes.  ",
+                ingredients="  Pommes de terre.  ",
+            ),
+            "en": CatalogTextChange(description="Crispy."),
+        },
     )
-    assert (
-        updated.profile.thumbnail.name
-        == "products/thumbnails/example.webp"
+
+    product.profile.refresh_from_db()
+    assert product.profile.category == ProductProfile.Category.CHIPS
+
+    by_language = {
+        translation.language_code: translation
+        for translation in ProductTranslation.objects.filter(product=product)
+    }
+    assert by_language["fr"].name == "Chips Grill"
+    assert by_language["fr"].description == "Croustillantes."
+    assert by_language["fr"].ingredients == "Pommes de terre."
+    assert by_language["en"].name == ""
+    assert by_language["en"].description == "Crispy."
+
+
+@pytest.mark.django_db
+def test_an_empty_language_has_no_text_of_its_own():
+    product = product_factory()
+    update_product_catalog(
+        product=product,
+        category="",
+        texts={"en": CatalogTextChange(name="Grill crisps")},
+    )
+
+    update_product_catalog(
+        product=product,
+        category="",
+        texts={"en": CatalogTextChange()},
+    )
+
+    assert not product.translations.exists()
+
+
+@pytest.mark.django_db
+def test_a_language_left_out_is_not_changed():
+    product = product_factory()
+    update_product_catalog(
+        product=product,
+        category="",
+        texts={"fr": CatalogTextChange(description="Bonbons.")},
+    )
+
+    update_product_catalog(
+        product=product,
+        category="",
+        texts={"en": CatalogTextChange(description="Sweets.")},
+    )
+
+    assert product.translations.get(language_code="fr").description == (
+        "Bonbons."
     )
 
 
 @pytest.mark.django_db
-def test_update_product_rejects_invalid_profile_category():
+def test_update_product_catalog_rejects_an_unknown_language():
+    product = product_factory()
+
+    with pytest.raises(InvalidProductData, match="Unknown catalog language"):
+        update_product_catalog(
+            product=product,
+            category="",
+            texts={"de": CatalogTextChange(description="Süßigkeiten.")},
+        )
+
+
+@pytest.mark.django_db
+def test_update_product_catalog_rejects_invalid_profile_category():
     product = product_factory()
 
     with pytest.raises(
         InvalidProductData,
         match="Unsupported product category",
     ):
-        update_product(
+        update_product_catalog(
             product=product,
-            internal_number=product.internal_number,
-            manufacturer=product.manufacturer,
-            brand=product.brand,
-            name=product.name,
-            active=True,
-            vegan=False,
             category="drinks",
+            texts={},
         )
 
 

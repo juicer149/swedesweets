@@ -1,0 +1,82 @@
+{% extends "layouts/detail.html" %}
+{% load i18n static %}
+{% comment %}
+  What the shop shows of a product, apart from the product form: first
+  what is the same in every language (category, picture), then the words
+  under one tab per language (languages: name, description, ingredients).
+  A language with an error opens first (tabs.js); an empty field falls back
+  in the shop, and its help says to what.
+{% endcomment %}
+
+{% block page_heading %}
+  {% include "includes/ui/status_heading.html" with title_id="page-title" title=title status=status_key icon=status_icon label=status_label who=product.code_label only %}
+{% endblock %}
+
+{% block page_body %}
+  <form class="product-form catalog-form" method="post" enctype="multipart/form-data" novalidate data-dirty-form>
+    {% csrf_token %}
+
+    {% include "registration/includes/form_errors.html" with form=form only %}
+
+    <section class="form-section" id="shop" aria-labelledby="shop-title">
+      <h2 class="form-section__title" id="shop-title">In the shop</h2>
+
+      <div class="form-grid">
+        {% include "includes/ui/form_field.html" with field=form.category only %}
+        {% include "ops_portal/products/includes/catalog_picture_field.html" %}
+      </div>
+    </section>
+
+    <section class="form-section" id="text" aria-labelledby="text-title">
+      <h2 class="form-section__title" id="text-title">Text</h2>
+
+      <div class="page-tabs catalog-languages" data-tabs>
+        <nav class="section-nav" aria-label="Languages" role="tablist">
+          {% for language in languages %}
+            {% include "includes/ui/section_tab.html" with key=language.code label=language.name is_active=forloop.first tab_id="tab-language-"|add:language.code panel_id="panel-language-"|add:language.code only %}
+          {% endfor %}
+        </nav>
+
+        {% for language in languages %}
+          <section
+            id="panel-language-{{ language.code }}"
+            class="page-tabs__panel"
+            role="tabpanel"
+            aria-labelledby="tab-language-{{ language.code }}"
+            data-tab-panel="{{ language.code }}"
+            lang="{{ language.code }}"
+            {% if not forloop.first %}hidden{% endif %}
+          >
+            {% include "registration/includes/form_errors.html" with form=language.form only %}
+
+            <div class="form-grid">
+              {% include "includes/ui/form_field.html" with field=language.form.name only %}
+              {% include "includes/ui/form_field.html" with field=language.form.description only %}
+              {% include "includes/ui/form_field.html" with field=language.form.ingredients only %}
+            </div>
+          </section>
+        {% endfor %}
+      </div>
+    </section>
+
+    <div class="form-actions page__actions page-actions">
+      <button class="button button--md button--solid button--tone-place page__submit" type="submit">
+        {{ submit_label }}
+      </button>
+
+      <div class="page-actions__links">
+        <a class="quiet-link" href="{{ cancel_url }}" data-dirty-ignore="true">
+          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+          {% trans "Cancel" %}
+        </a>
+      </div>
+    </div>
+  </form>
+{% endblock %}
+
+{% block page_scripts %}
+  <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
+  <script src="{% static 'js/dirty_form.js' %}" defer></script>
+  <script src="{% static 'js/product-image-upload.js' %}" defer></script>
+  <script src="{% static 'js/form_sections.js' %}" defer></script>
+{% endblock %}

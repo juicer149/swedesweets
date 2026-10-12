@@ -23,6 +23,11 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 - **Prices per variant**: one price typed for all variants is saved as each
   variant's own price; one variant's price can be changed on its own.
 - **Swedish as a site language**: later, not now.
+- **Catalog text per language**: each language (`settings.LANGUAGES`, French
+  first) has its own name, description and ingredients. The texts written
+  so far are French. Where a language has none of its own, the shop shows
+  the product's own (Swedish) name, and the French description and
+  ingredients. Variant labels per language may come later.
 
 ## Open questions
 
@@ -35,7 +40,9 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 
 ## Next, in order
 
-1. **Ops product pages** — see below.
+1. **Ops product pages** — see below. Catalog page and per-language text
+   first (branch `catalog-translations`), then the edit page with locks
+   and variant prices together with step 6.
 2. **Order lines keep a copy** of what was bought, and brand + name unique
    (after the open questions).
 3. **Variants, step 6**: catalogs and carts (retail and business) with the
@@ -88,20 +95,21 @@ mobile).
 - **Product**: everything about the product under headings: details
   (catalog ID, brand, name, status, attributes, the variants' labels on one
   line), **Variants** (each with its weight, price and stock), **Pricing**.
-- **Catalog**: the product as customers see it (the catalog card and its
-  page), so the catalog data is checked by looking at it.
+- **Catalog**: the shop's product page, a little smaller, once per language
+  under language tabs, so the catalog is checked by looking at it; then
+  category, picture and "Edit catalog".
 - **Inventory**: stock and batches, as today.
 
-**Edit page**, one page without tabs, everything about the product in
-sections, actions at the bottom:
+**Catalog page** (its own edit page, no lock): category and picture, then
+the name, description and ingredients under one tab per language.
 
-1. Product: catalog ID (was "internal number"; typed, no spinner arrows),
-   manufacturer, brand, name, status as one switch (green on, muted off)
-   instead of two radio buttons, vegan.
-2. Catalog: picture, category, French name, description, ingredients.
-3. Pricing: one price for all variants (per variant in the next section).
-4. Variants: the current Variants editor, lock and all, last before the
-   actions.
+**Edit page**, one page without tabs, actions at the bottom:
+
+1. Product, behind a lock: catalog ID (typed, no spinner arrows),
+   manufacturer, brand, name, status as one switch, vegan.
+2. Variants: a price for all variants at the top; each row behind its own
+   lock: label, weight, retail EUR, business EUR, active. Needs step 6
+   (prices per variant in the shop and carts), so it comes with it.
 
 ## Done
 

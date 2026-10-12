@@ -131,17 +131,41 @@
 
 /* The shop's tile as customers see it: its own width, not a grid's, and
    not to be clicked (inert). */
+/* The Catalog tab: the shop's product page, a little smaller, in a frame
+   on the shop's own background, under its language tabs. */
 .catalog-preview {
-  /* What the shop's grid sets for its tiles (catalog.css): the shelf
-     under the tile reaches this far either side. */
-  --tile-row-gap: var(--space-8);
-  --tile-column-gap: var(--space-6);
+  margin-bottom: var(--space-6);
+}
 
-  width: min(100%, 15rem);
-  margin: var(--space-2) auto var(--space-6);
+/* Wider than the page's column where the screen allows, like a small
+   window onto the shop: its page is two columns up to 860px wide. */
+.catalog-preview__frame {
+  --frame-width: clamp(18rem, 100vw - 2 * var(--space-4), 52rem);
+
+  width: var(--frame-width);
+  margin: var(--space-3) calc((100% - var(--frame-width)) / 2) 0;
+  padding-inline: clamp(var(--space-3), 3vw, var(--space-8));
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-md);
+  background: var(--color-neutral-50);
+}
+
+/* The page's own padding and glow are the shop's, not the frame's. */
+.catalog-preview__frame .page-section {
+  padding-block: var(--space-4);
+}
+
+.catalog-preview__frame .page::before {
+  content: none;
+}
+
+@media (min-width: 768px) {
+  .catalog-preview__frame .page-section {
+    zoom: 0.85;
+  }
 }
 
 .catalog-preview__note {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
   text-align: center;
 }

@@ -1,12 +1,6 @@
 from __future__ import annotations
 
 from django import forms
-from django.core.exceptions import (
-    ValidationError,
-)
-from django.core.files.uploadedfile import (
-    UploadedFile,
-)
 
 from common.form_layout import (
     set_form_field_layout,
@@ -18,20 +12,6 @@ from products.catalog import (
 )
 from products.models import (
     Product,
-    ProductProfile,
-)
-
-CUSTOMER_FACING_LANGUAGE_CODE = "fr"
-
-MAX_PRODUCT_IMAGE_BYTES = (
-    10 * 1024 * 1024
-)
-
-ALLOWED_PRODUCT_IMAGE_FORMATS = frozenset(
-    {
-        "JPEG",
-        "PNG",
-    }
 )
 
 
@@ -61,150 +41,6 @@ def _configure_status_toggle(
         "product-tag-toggle "
         "product-tag-toggle--status"
     )
-
-
-def _customer_facing_name_fr_field(
-) -> forms.CharField:
-    return forms.CharField(
-        required=False,
-        max_length=MAX_NAME_LENGTH,
-        label=(
-            "Customer-facing French name"
-        ),
-        help_text=(
-            "Optional. Used in the customer portal "
-            "when French is selected."
-        ),
-        error_messages={
-            "max_length": (
-                "Customer-facing French name "
-                f"cannot exceed {MAX_NAME_LENGTH} characters."
-            ),
-        },
-        widget=forms.TextInput(
-            attrs={
-                "placeholder": (
-                    "e.g. Tutti Frutti Acidulé"
-                ),
-            }
-        ),
-    )
-
-
-def _category_field(
-) -> forms.ChoiceField:
-    return forms.ChoiceField(
-        required=False,
-        choices=(
-            (
-                "",
-                "Select category",
-            ),
-            *ProductProfile.Category.choices,
-        ),
-        label="Category",
-        help_text=(
-            "Primary category used in "
-            "the customer catalog."
-        ),
-    )
-
-
-def _description_field(
-) -> forms.CharField:
-    return forms.CharField(
-        required=False,
-        label="Description",
-        widget=forms.Textarea(
-            attrs={
-                "rows": 3,
-                "placeholder": (
-                    "Optional product description."
-                ),
-            }
-        ),
-    )
-
-
-def _ingredients_field(
-) -> forms.CharField:
-    return forms.CharField(
-        required=False,
-        label="Ingredients",
-        widget=forms.Textarea(
-            attrs={
-                "rows": 3,
-                "placeholder": (
-                    "Optional ingredients text."
-                ),
-            }
-        ),
-    )
-
-
-def _image_field(
-) -> forms.ImageField:
-    return forms.ImageField(
-        required=False,
-        label="Product image",
-        help_text=(
-            "Optional JPEG or PNG. "
-            "Maximum file size: 10 MB."
-        ),
-        widget=forms.ClearableFileInput(
-            attrs={
-                "accept": (
-                    "image/jpeg,image/png"
-                ),
-            }
-        ),
-    )
-
-
-def _clean_product_image(
-    image: UploadedFile | None,
-) -> UploadedFile | None:
-    if image is None:
-        return None
-
-    if (
-        image.size
-        > MAX_PRODUCT_IMAGE_BYTES
-    ):
-        raise ValidationError(
-            (
-                "Product image must be "
-                "10 MB or smaller."
-            )
-        )
-
-    pillow_image = getattr(
-        image,
-        "image",
-        None,
-    )
-
-    image_format = (
-        getattr(
-            pillow_image,
-            "format",
-            "",
-        )
-        or ""
-    ).upper()
-
-    if (
-        image_format
-        not in ALLOWED_PRODUCT_IMAGE_FORMATS
-    ):
-        raise ValidationError(
-            (
-                "Product image must be "
-                "a JPEG or PNG."
-            )
-        )
-
-    return image
 
 
 class ProductForm(forms.Form):
@@ -305,10 +141,6 @@ class ProductForm(forms.Form):
         ),
     )
 
-    customer_facing_name_fr = (
-        _customer_facing_name_fr_field()
-    )
-
     stock_unit = forms.ChoiceField(
         choices=Product.StockUnit.choices,
         initial=Product.StockUnit.BOX,
@@ -370,8 +202,6 @@ class ProductForm(forms.Form):
         ),
     )
 
-    category = _category_field()
-
     vegan = forms.BooleanField(
         required=False,
         label="Product attributes",
@@ -383,10 +213,6 @@ class ProductForm(forms.Form):
             }
         ),
     )
-
-    description = _description_field()
-    ingredients = _ingredients_field()
-    image = _image_field()
 
     def __init__(
         self,
@@ -404,12 +230,6 @@ class ProductForm(forms.Form):
 
         set_form_field_layout(
             self,
-            full=(
-                "customer_facing_name_fr",
-                "description",
-                "ingredients",
-                "image",
-            ),
             half=(
                 "internal_number",
                 "manufacturer",
@@ -417,16 +237,8 @@ class ProductForm(forms.Form):
                 "name",
                 "stock_unit",
                 "weight_per_unit",
-                "category",
                 "vegan",
             ),
-        )
-
-    def clean_image(
-        self,
-    ) -> UploadedFile | None:
-        return _clean_product_image(
-            self.cleaned_data["image"]
         )
 
 
@@ -522,10 +334,6 @@ class ProductEditForm(forms.Form):
         ),
     )
 
-    customer_facing_name_fr = (
-        _customer_facing_name_fr_field()
-    )
-
     # One switch: on (green) is active, off (muted) is inactive.
     active = forms.BooleanField(
         required=False,
@@ -539,8 +347,6 @@ class ProductEditForm(forms.Form):
         ),
     )
 
-    category = _category_field()
-
     vegan = forms.BooleanField(
         required=False,
         label="Product attributes",
@@ -550,19 +356,6 @@ class ProductEditForm(forms.Form):
                     "product-tag-toggle__input"
                 ),
             }
-        ),
-    )
-
-    description = _description_field()
-    ingredients = _ingredients_field()
-    image = _image_field()
-
-    remove_image = forms.BooleanField(
-        required=False,
-        label="Remove current image",
-        help_text=(
-            "Remove the current product image "
-            "without replacing it."
         ),
     )
 
@@ -588,53 +381,15 @@ class ProductEditForm(forms.Form):
 
         set_form_field_layout(
             self,
-            full=(
-                "customer_facing_name_fr",
-                "description",
-                "ingredients",
-                "image",
-                "remove_image",
-            ),
             half=(
                 "internal_number",
                 "manufacturer",
                 "brand",
                 "name",
                 "active",
-                "category",
                 "vegan",
             ),
         )
-
-    def clean_image(
-        self,
-    ) -> UploadedFile | None:
-        return _clean_product_image(
-            self.cleaned_data["image"]
-        )
-
-    def clean(
-        self,
-    ) -> dict[str, object]:
-        cleaned_data = (
-            super().clean()
-        )
-
-        if (
-            cleaned_data.get("image")
-            and cleaned_data.get(
-                "remove_image"
-            )
-        ):
-            self.add_error(
-                "remove_image",
-                (
-                    "Choose either a new image "
-                    "or remove the current image."
-                ),
-            )
-
-        return cleaned_data
 
     @property
     def active_value(self) -> bool:
@@ -646,12 +401,6 @@ class ProductEditForm(forms.Form):
 def build_product_edit_initial_data(
     product: Product,
 ) -> dict[str, object]:
-    profile = getattr(
-        product,
-        "profile",
-        None,
-    )
-
     return {
         "internal_number": (
             product.internal_number
@@ -661,48 +410,6 @@ def build_product_edit_initial_data(
         ),
         "brand": product.brand,
         "name": product.name,
-        "customer_facing_name_fr": (
-            _product_translation_name(
-                product,
-                language_code=(
-                    CUSTOMER_FACING_LANGUAGE_CODE
-                ),
-            )
-        ),
         "active": product.active,
-        "category": (
-            profile.category
-            if profile is not None
-            else ""
-        ),
         "vegan": product.vegan,
-        "description": (
-            profile.description
-            if profile is not None
-            else ""
-        ),
-        "ingredients": (
-            profile.ingredients
-            if profile is not None
-            else ""
-        ),
     }
-
-
-def _product_translation_name(
-    product: Product,
-    *,
-    language_code: str,
-) -> str:
-    translation = (
-        product.translations
-        .filter(
-            language_code=language_code
-        )
-        .first()
-    )
-
-    if translation is None:
-        return ""
-
-    return translation.name

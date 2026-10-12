@@ -1,19 +1,47 @@
+{% load i18n %}
 {% comment %}
-  The Catalog tab: the product as the shop shows it (the catalog tile, in
-  French, with the retail price), shown and not used (inert), then the
-  catalog data behind it: shop name, category, picture, description and
-  ingredients, and Edit catalog.
+  The Catalog tab: the shop's page for the product, once per language
+  (catalog_previews, ops_portal/products/catalog_preview.py) under language
+  tabs, each in its own language with the shop's fallbacks. Shown, not used:
+  its form is inert. Then what is the same in every language (category,
+  picture) and Edit catalog (its own page).
 {% endcomment %}
-<div class="catalog-preview" inert aria-label="As the shop shows it">
-  {% include "includes/catalog/tile.html" with card=catalog_preview csrf_token="NOTPROVIDED" only %}
+<p class="page__note catalog-preview__note">
+  As the shop shows it.
+  {% if not in_shop %}
+    Not in the shop now: it shows once the product is active, has a retail
+    price in EUR and is in stock.
+  {% endif %}
+</p>
+
+<div class="page-tabs catalog-preview" data-tabs>
+  <nav class="section-nav" aria-label="Languages" role="tablist">
+    {% for preview in catalog_previews %}
+      {% include "includes/ui/section_tab.html" with key=preview.language_code label=preview.language_name is_active=forloop.first tab_id="tab-preview-"|add:preview.language_code panel_id="panel-preview-"|add:preview.language_code only %}
+    {% endfor %}
+  </nav>
+
+  {% for preview in catalog_previews %}
+    <section
+      id="panel-preview-{{ preview.language_code }}"
+      class="page-tabs__panel catalog-preview__panel"
+      role="tabpanel"
+      aria-labelledby="tab-preview-{{ preview.language_code }}"
+      data-tab-panel="{{ preview.language_code }}"
+      lang="{{ preview.language_code }}"
+      {% if not forloop.first %}hidden{% endif %}
+    >
+      <div class="catalog-preview__frame">
+        {% language preview.language_code %}
+          {% trans "Add to cart" as add_label %}
+          {% include "includes/catalog/product.html" with preview=True id_prefix=preview.id_prefix product_name=preview.product_name category_label=preview.category_label image_url=preview.image_url offers=preview.offers initial_offer=preview.initial_offer page_tabs=preview.page_tabs description=preview.description ingredients=preview.ingredients add_url="#" add_label=add_label cancel_url="#" %}
+        {% endlanguage %}
+      </div>
+    </section>
+  {% endfor %}
 </div>
-<p class="page__note catalog-preview__note">As the shop shows it.</p>
 
 <dl class="facts">
-  <div class="facts__row">
-    <dt>Shop name (FR)</dt>
-    <dd>{{ catalog_name }}</dd>
-  </div>
   <div class="facts__row">
     <dt>Category</dt>
     <dd>{{ profile.category_label|default:"—" }}</dd>
@@ -30,22 +58,8 @@
   </div>
 </dl>
 
-{% if profile.description %}
-  <div class="product-details__text">
-    <h3 class="product-details__label">Description</h3>
-    <p>{{ profile.description }}</p>
-  </div>
-{% endif %}
-
-{% if profile.ingredients %}
-  <div class="product-details__text">
-    <h3 class="product-details__label">Ingredients</h3>
-    <p>{{ profile.ingredients }}</p>
-  </div>
-{% endif %}
-
 {% if edit_action %}
   <div class="form-actions page__actions">
-    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_action.href }}#catalog">Edit catalog</a>
+    <a class="button button--md button--solid button--tone-place page__submit" href="{{ edit_catalog_href }}">Edit catalog</a>
   </div>
 {% endif %}

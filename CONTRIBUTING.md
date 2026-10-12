@@ -82,6 +82,12 @@ git add locale/
 git commit -m "Compile translations"
 ```
 
+Product text (name, description, ingredients) is not in these files: it is
+typed per language on a product's catalog page in ops and stored in
+`ProductTranslation`. A new language in `settings.LANGUAGES` gets its own
+tab there; where it has no text, the shop falls back
+(`products/localization.py`).
+
 ## Personal files
 
 Notes and scratch files that are yours alone are never committed. Name them

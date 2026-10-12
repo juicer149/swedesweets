@@ -15,8 +15,8 @@ Product                        what a customer sees as one thing
   name, brand, manufacturer
   internal_number              "#1": the informal number used with customers
   stock_unit                   box, piece, bag, case (same for all variants)
-  active, vegan, profile       picture, description, category (ProductProfile)
-  translations
+  active, vegan, profile       picture, category (ProductProfile)
+  translations                 name, description, ingredients per language
 
 ProductVariant                 what is stocked, priced, sold and packed
   product                      FK, PROTECT

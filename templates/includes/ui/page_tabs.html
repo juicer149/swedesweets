@@ -5,20 +5,22 @@
   page_tabs   PageTab list (common/page_tabs.py); the first opens unless
               the URL hash names another or a panel holds form errors
   tabs_label  aria-label for the tab list
+  id_prefix   optional, before the tab and panel ids, when the same tabs
+              are on the page more than once (the catalog previews)
 {% endcomment %}
 <div class="page-tabs" data-tabs>
   <nav class="section-nav" aria-label="{{ tabs_label|default:'Sections' }}" role="tablist">
     {% for tab in page_tabs %}
-      {% include "includes/ui/section_tab.html" with key=tab.key label=tab.label icon=tab.icon is_active=forloop.first tab_id="tab-"|add:tab.key panel_id="panel-"|add:tab.key only %}
+      {% include "includes/ui/section_tab.html" with key=tab.key label=tab.label icon=tab.icon is_active=forloop.first tab_id=id_prefix|add:"tab-"|add:tab.key panel_id=id_prefix|add:"panel-"|add:tab.key only %}
     {% endfor %}
   </nav>
 
   {% for tab in page_tabs %}
     <section
-      id="panel-{{ tab.key }}"
+      id="{{ id_prefix }}panel-{{ tab.key }}"
       class="page-tabs__panel"
       role="tabpanel"
-      aria-labelledby="tab-{{ tab.key }}"
+      aria-labelledby="{{ id_prefix }}tab-{{ tab.key }}"
       data-tab-panel="{{ tab.key }}"
       {% if not forloop.first %}hidden{% endif %}
     >

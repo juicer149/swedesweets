@@ -17,7 +17,7 @@ from common.catalog.viewmodels import (
 from common.page_tabs import PageTab
 from products.images import product_display_url
 from products.localization import (
-    translated_product_name,
+    catalog_text,
 )
 from products.models import (
     ProductProfile,
@@ -88,14 +88,11 @@ def build_business_catalog_product_detail_context(
         catalog_product.product
     )
 
-    product_name = (
-        translated_product_name(
-            product,
-            language_code=(
-                language_code
-            ),
-        )
+    text = catalog_text(
+        product,
+        language_code=language_code,
     )
+    product_name = text.name
 
     profile = (
         _get_product_profile(
@@ -119,13 +116,8 @@ def build_business_catalog_product_detail_context(
             )
         )
 
-    description = _description(
-        profile=profile
-    )
-
-    ingredients = _ingredients(
-        profile=profile
-    )
+    description = text.description
+    ingredients = text.ingredients
 
     return (
         BusinessCatalogProductDetailContext(
@@ -193,22 +185,3 @@ def _image_url(
 ) -> str | None:
     return product_display_url(profile)
 
-
-def _description(
-    *,
-    profile: ProductProfile | None,
-) -> str:
-    if profile is None:
-        return ""
-
-    return profile.description
-
-
-def _ingredients(
-    *,
-    profile: ProductProfile | None,
-) -> str:
-    if profile is None:
-        return ""
-
-    return profile.ingredients

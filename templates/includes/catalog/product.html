@@ -12,8 +12,12 @@
   From the detail viewmodel: product, product_name, category_label,
   image_url, offers, initial_offer, page_tabs, cancel_url
   From the page: add_url (where the form posts), add_label (its button)
+
+  Ops previews the page (the product's Catalog tab), once per language:
+  preview (the form is shown, not used, and there is no way back) and
+  id_prefix (keeps each copy's ids, its tabs' too, apart).
 {% endcomment %}
-<section class="page-section" aria-labelledby="product-title">
+<section class="page-section" aria-labelledby="{{ id_prefix }}product-title">
   <article class="page product">
     <div class="product__main">
       <div class="product__media">
@@ -29,7 +33,7 @@
           <p class="product__kicker">{{ category_label }}</p>
         {% endif %}
 
-        <h1 id="product-title" class="product__name">{{ product_name }}</h1>
+        <h1 id="{{ id_prefix }}product-title" class="product__name">{{ product_name }}</h1>
         <p class="product__meta">{{ product.unit_weight_label }}</p>
 
         {% if product.vegan %}
@@ -52,19 +56,20 @@
           data-product-add-form
           data-done-url="{{ cancel_url }}"
           data-error-message="{% trans 'Could not add product.' %}"
+          {% if preview %}inert{% endif %}
         >
           {% csrf_token %}
 
           {% if offers|length > 1 %}
             <div class="form-field product__offers">
-              <span id="product-offers-label" class="form-label">{% trans "Offer" %}</span>
+              <span id="{{ id_prefix }}product-offers-label" class="form-label">{% trans "Offer" %}</span>
 
-              <div class="radio-chip-group" role="radiogroup" aria-labelledby="product-offers-label">
+              <div class="radio-chip-group" role="radiogroup" aria-labelledby="{{ id_prefix }}product-offers-label">
                 {% for offer in offers %}
                   <div>
-                    <label for="product-offer-{{ forloop.counter }}">
+                    <label for="{{ id_prefix }}product-offer-{{ forloop.counter }}">
                       <input
-                        id="product-offer-{{ forloop.counter }}"
+                        id="{{ id_prefix }}product-offer-{{ forloop.counter }}"
                         type="radio"
                         name="commercial_price_id"
                         value="{{ offer.commercial_price_id }}"
@@ -93,7 +98,7 @@
                 >{{ initial_offer.availability_label }}</span>
               </p>
 
-              {% include "includes/ui/quantity_stepper.html" with id_prefix="product-quantity" only %}
+              {% include "includes/ui/quantity_stepper.html" with id_prefix=id_prefix|add:"product-quantity" only %}
             </div>
 
             <button class="button button--md button--solid button--tone-place page__submit product__submit" type="submit">
@@ -116,11 +121,13 @@
       </div>
     {% endif %}
 
-    <div class="page-actions__links page__back">
-      <a class="quiet-link" href="{{ cancel_url }}">
-        {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
-        {% trans "Back to catalog" %}
-      </a>
-    </div>
+    {% if not preview %}
+      <div class="page-actions__links page__back">
+        <a class="quiet-link" href="{{ cancel_url }}">
+          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+          {% trans "Back to catalog" %}
+        </a>
+      </div>
+    {% endif %}
   </article>
 </section>

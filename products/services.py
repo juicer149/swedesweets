@@ -7,7 +7,12 @@ public API:
            number. A new product gets its only variant (Product.save).
 
     update_product(...)
-        -> Update editable product catalog fields and profile data.
+        -> Update a product's own data: number, maker, brand, name,
+           status, vegan.
+
+    update_product_catalog(product=..., category=..., texts={code: ...})
+        -> What the shop shows: the category, and per language the name,
+           description and ingredients (products/localization.py).
 
     update_product_active(...)
         -> Compatibility wrapper for status-only updates.
@@ -37,8 +42,10 @@ products.image_services.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 
+from django.conf import settings
 from django.db import (
     IntegrityError,
     transaction,
@@ -65,8 +72,6 @@ from products.models import (
     ProductVariant,
 )
 
-CUSTOMER_FACING_LANGUAGE_CODE = "fr"
-
 
 @transaction.atomic
 def create_product(
@@ -78,10 +83,6 @@ def create_product(
     internal_number: int | None = None,
     manufacturer: str = "",
     vegan: bool = False,
-    customer_facing_name_fr: str = "",
-    category: str = "",
-    description: str = "",
-    ingredients: str = "",
     user=None,
 ) -> ServiceResult[Product]:
     """Create product or return existing product."""
@@ -115,9 +116,6 @@ def create_product(
     )
     _validate_stock_unit(
         stock_unit
-    )
-    _validate_profile_category(
-        category
     )
 
     sku = make_sku(
@@ -208,19 +206,9 @@ def create_product(
         user=user
     )
 
-    _set_product_profile(
-        product=product,
-        category=category,
-        description=description,
-        ingredients=ingredients,
-    )
-
-    set_product_translation(
-        product=product,
-        language_code=(
-            CUSTOMER_FACING_LANGUAGE_CODE
-        ),
-        name=customer_facing_name_fr,
+    # Its catalog (category, picture) is filled in on its own page.
+    ProductProfile.objects.get_or_create(
+        product=product
     )
 
     return ServiceResult(
@@ -242,13 +230,9 @@ def update_product(
     name: str,
     active: bool,
     vegan: bool,
-    customer_facing_name_fr: str = "",
-    category: str = "",
-    description: str = "",
-    ingredients: str = "",
     user=None,
 ) -> Product:
-    """Update editable product catalog and profile data."""
+    """Update a product's own data (its catalog has update_product_catalog)."""
 
     product = (
         Product.objects
@@ -262,9 +246,6 @@ def update_product(
 
     validate_internal_number(
         internal_number
-    )
-    _validate_profile_category(
-        category
     )
 
     if internal_number is not None:
@@ -344,19 +325,51 @@ def update_product(
         user=user,
     )
 
+    return product
+
+
+@dataclass(frozen=True, slots=True)
+class CatalogTextChange:
+    """One language's catalog text as typed: empty fields fall back."""
+
+    name: str = ""
+    description: str = ""
+    ingredients: str = ""
+
+
+@transaction.atomic
+def update_product_catalog(
+    *,
+    product: Product,
+    category: str,
+    texts: Mapping[str, CatalogTextChange],
+    user=None,
+) -> Product:
+    """Save what the shop shows of a product: its category, and for each
+    language given its name, description and ingredients. A language left
+    out is not changed; one given with every field empty has no text of
+    its own (the shop falls back)."""
+
+    product = (
+        Product.objects
+        .select_for_update()
+        .get(pk=product.pk)
+    )
+
     _set_product_profile(
         product=product,
         category=category,
-        description=description,
-        ingredients=ingredients,
     )
 
-    set_product_translation(
-        product=product,
-        language_code=(
-            CUSTOMER_FACING_LANGUAGE_CODE
-        ),
-        name=customer_facing_name_fr,
+    for language_code, text in texts.items():
+        set_catalog_text(
+            product=product,
+            language_code=language_code,
+            text=text,
+        )
+
+    product.mark_as_edited(
+        user=user
     )
 
     return product
@@ -781,29 +794,33 @@ def save_variants(
     reorder_variants(product=product, variant_ids=order)
 
 
-def set_product_translation(
+def set_catalog_text(
     *,
     product: Product,
     language_code: str,
-    name: str,
+    text: CatalogTextChange,
 ) -> ProductTranslation | None:
-    normalized_name = (
-        normalize_optional_text(
-            name,
-            field_name=(
-                "customer-facing name"
-            ),
-        )
-    )
+    """One language's catalog text; with nothing in it, the language has
+    none of its own (its translation is removed)."""
 
-    if not normalized_name:
+    if language_code not in dict(settings.LANGUAGES):
+        raise InvalidProductData(
+            f"Unknown catalog language: {language_code}"
+        )
+
+    name = normalize_optional_text(
+        text.name,
+        field_name="customer-facing name",
+    )
+    description = text.description.strip()
+    ingredients = text.ingredients.strip()
+
+    if not (name or description or ingredients):
         (
             ProductTranslation.objects
             .filter(
                 product=product,
-                language_code=(
-                    language_code
-                ),
+                language_code=language_code,
             )
             .delete()
         )
@@ -814,11 +831,11 @@ def set_product_translation(
         ProductTranslation.objects
         .update_or_create(
             product=product,
-            language_code=(
-                language_code
-            ),
+            language_code=language_code,
             defaults={
-                "name": normalized_name,
+                "name": name,
+                "description": description,
+                "ingredients": ingredients,
             },
         )
     )
@@ -830,8 +847,6 @@ def _set_product_profile(
     *,
     product: Product,
     category: str,
-    description: str,
-    ingredients: str,
 ) -> ProductProfile:
     _validate_profile_category(
         category
@@ -846,18 +861,10 @@ def _set_product_profile(
     )
 
     profile.category = category
-    profile.description = (
-        description.strip()
-    )
-    profile.ingredients = (
-        ingredients.strip()
-    )
 
     profile.save(
         update_fields=[
             "category",
-            "description",
-            "ingredients",
         ]
     )
 

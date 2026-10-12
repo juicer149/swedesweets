@@ -725,7 +725,9 @@ class ProductVariant(models.Model):
 
 
 class ProductProfile(models.Model):
-    """Optional editable catalog information for a product.
+    """Optional editable catalog information for a product that is the same
+    in every language: its category and picture. The words (name,
+    description, ingredients) are per language, in ProductTranslation.
 
     The original image is the permanent source of truth, stored cleaned
     (no EXIF or other metadata; products/image_processing.py). The display
@@ -751,14 +753,6 @@ class ProductProfile(models.Model):
         blank=True,
         default="",
         help_text="Primary customer catalog category.",
-    )
-
-    description = models.TextField(
-        blank=True,
-    )
-
-    ingredients = models.TextField(
-        blank=True,
     )
 
     image = models.ImageField(
@@ -792,7 +786,13 @@ class ProductProfile(models.Model):
 
 
 class ProductTranslation(models.Model):
-    """Customer-facing translated product catalog text."""
+    """A product's catalog text in one language: the name customers see,
+    the description and the ingredients.
+
+    Every field may be empty. Where one is, the shop falls back
+    (products/localization.py): the name to the product's own name, the
+    description and ingredients to the catalog's first language (French).
+    """
 
     product = models.ForeignKey(
         Product,
@@ -808,11 +808,22 @@ class ProductTranslation(models.Model):
 
     name = models.CharField(
         max_length=MAX_NAME_LENGTH,
+        blank=True,
         verbose_name="Customer-facing name",
         help_text=(
             "Full product name shown to customers in this language. "
             "Example: Tutti Frutti Acidulé."
         ),
+    )
+
+    description = models.TextField(
+        blank=True,
+        default="",
+    )
+
+    ingredients = models.TextField(
+        blank=True,
+        default="",
     )
 
     class Meta:

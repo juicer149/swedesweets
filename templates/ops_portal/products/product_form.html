@@ -2,10 +2,10 @@
 {% load i18n static %}
 {% comment %}
   Add or edit a product: one page, no tabs. Its sections one under the
-  other (form_sections: Product, Catalog, Pricing, and when editing
-  Variants last), each under a heading with an id the product page's
-  buttons link to (#product, #catalog, #pricing, #variants); the actions at
-  the foot.
+  other (form_sections: Product, Pricing, and when editing Variants last),
+  each under a heading with an id the product page's buttons link to
+  (#product, #pricing, #variants); the actions at the foot. What the shop
+  shows (catalog_form.html) has its own page.
 {% endcomment %}
 
 {% block page_heading %}
@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block page_body %}
-  <form class="product-form" method="post" enctype="multipart/form-data" novalidate data-dirty-form>
+  <form class="product-form" method="post" novalidate data-dirty-form>
     {% csrf_token %}
 
     {% include "registration/includes/form_errors.html" with form=form only %}
@@ -49,7 +49,6 @@
 {% block page_scripts %}
   <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script src="{% static 'js/dirty_form.js' %}" defer></script>
-  <script src="{% static 'js/product-image-upload.js' %}" defer></script>
   <script src="{% static 'js/variant_editor.js' %}" defer></script>
   <script src="{% static 'js/form_sections.js' %}" defer></script>
 {% endblock %}

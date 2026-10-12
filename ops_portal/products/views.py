@@ -20,10 +20,16 @@ from inventory.selectors import (
     list_available_batches_for_product,
     physical_quantity_by_variant,
 )
+from ops_portal.products.catalog_forms import (
+    CatalogForm,
+    build_catalog_initial_data,
+    build_catalog_languages,
+)
 from ops_portal.products.detail_viewmodels import (
     build_product_detail_context,
 )
 from ops_portal.products.form_viewmodels import (
+    build_catalog_form_context,
     build_create_product_form_context,
     build_edit_product_form_context,
 )
@@ -75,9 +81,13 @@ from products.services import (
     create_product,
     save_variants,
     update_product,
+    update_product_catalog,
 )
 from reservations.availability import (
     available_quantity_by_product,
+)
+from retail.catalog_selectors import (
+    get_retail_catalog_product,
 )
 
 PRODUCT_FILTERS = [
@@ -307,6 +317,9 @@ def detail(
             stock_by_variant=physical_quantity_by_variant(
                 product=product,
             ),
+            shop_product=get_retail_catalog_product(
+                product_id=product.pk,
+            ),
         )
         .as_dict()
     )
@@ -355,7 +368,6 @@ def edit(
     if request.method == "POST":
         form = ProductEditForm(
             request.POST,
-            request.FILES,
             product=product,
         )
 
@@ -390,11 +402,6 @@ def edit(
             and pricing_form_is_valid
             and variants_are_valid
         ):
-            image_change = (
-                ProductImageChange
-                .empty()
-            )
-
             try:
                 with transaction.atomic():
                     updated_product = (
@@ -428,26 +435,6 @@ def edit(
                                     "vegan"
                                 ]
                             ),
-                            customer_facing_name_fr=(
-                                form.cleaned_data[
-                                    "customer_facing_name_fr"
-                                ]
-                            ),
-                            category=(
-                                form.cleaned_data[
-                                    "category"
-                                ]
-                            ),
-                            description=(
-                                form.cleaned_data[
-                                    "description"
-                                ]
-                            ),
-                            ingredients=(
-                                form.cleaned_data[
-                                    "ingredients"
-                                ]
-                            ),
                             user=request.user,
                         )
                     )
@@ -470,47 +457,19 @@ def edit(
                             changes=variant_formset.changes(),
                         )
 
-                    image_change = (
-                        change_product_image(
-                            product=(
-                                updated_product
-                            ),
-                            uploaded_image=(
-                                form.cleaned_data[
-                                    "image"
-                                ]
-                            ),
-                            remove_image=(
-                                form.cleaned_data[
-                                    "remove_image"
-                                ]
-                            ),
-                        )
-                    )
-
             except InvalidProductData as error:
-                image_change.rollback()
-
                 form.add_error(
                     None,
                     str(error),
                 )
 
             except InvalidCommercialPrice as error:
-                image_change.rollback()
-
                 pricing_form.add_error(
                     None,
                     str(error),
                 )
 
-            except Exception:
-                image_change.rollback()
-                raise
-
             else:
-                image_change.commit()
-
                 messages.success(
                     request,
                     (
@@ -583,7 +542,6 @@ def create(request):
     if request.method == "POST":
         form = ProductForm(
             request.POST,
-            request.FILES,
         )
 
         pricing_form = (
@@ -603,11 +561,6 @@ def create(request):
             product_form_is_valid
             and pricing_form_is_valid
         ):
-            image_change = (
-                ProductImageChange
-                .empty()
-            )
-
             try:
                 with transaction.atomic():
                     result = create_product(
@@ -646,26 +599,6 @@ def create(request):
                                 "vegan"
                             ]
                         ),
-                        customer_facing_name_fr=(
-                            form.cleaned_data[
-                                "customer_facing_name_fr"
-                            ]
-                        ),
-                        category=(
-                            form.cleaned_data[
-                                "category"
-                            ]
-                        ),
-                        description=(
-                            form.cleaned_data[
-                                "description"
-                            ]
-                        ),
-                        ingredients=(
-                            form.cleaned_data[
-                                "ingredients"
-                            ]
-                        ),
                         user=request.user,
                     )
 
@@ -682,55 +615,41 @@ def create(request):
                             )
                         )
 
-                        image_change = (
-                            change_product_image(
-                                product=(
-                                    result.item
-                                ),
-                                uploaded_image=(
-                                    form.cleaned_data[
-                                        "image"
-                                    ]
-                                ),
-                            )
-                        )
-
             except InvalidProductData as error:
-                image_change.rollback()
-
                 form.add_error(
                     None,
                     str(error),
                 )
 
             except InvalidCommercialPrice as error:
-                image_change.rollback()
-
                 pricing_form.add_error(
                     None,
                     str(error),
                 )
 
-            except Exception:
-                image_change.rollback()
-                raise
-
             else:
-                image_change.commit()
-
-                if result.created:
-                    messages.success(
-                        request,
-                        result.message,
-                    )
-                else:
+                if not result.created:
                     messages.info(
                         request,
                         result.message,
                     )
 
+                    return redirect(
+                        "ops_products:index"
+                    )
+
+                # A new product goes on to what the shop shows of it.
+                messages.success(
+                    request,
+                    (
+                        f"{result.message} "
+                        "Now add its picture and catalog text."
+                    ),
+                )
+
                 return redirect(
-                    "ops_products:index"
+                    "ops_products:edit_catalog",
+                    product_pk=result.item.pk,
                 )
 
     else:
@@ -753,6 +672,101 @@ def create(request):
             "ops_portal/products/"
             "product_form.html"
         ),
+        context,
+    )
+
+
+@login_required
+def edit_catalog(
+    request,
+    product_pk: int,
+):
+    """What the shop shows of a product: category and picture, and per
+    language its name, description and ingredients."""
+
+    product = _get_product_or_404(
+        product_pk
+    )
+
+    if request.method == "POST":
+        form = CatalogForm(
+            request.POST,
+            request.FILES,
+        )
+        languages = build_catalog_languages(
+            product=product,
+            data=request.POST,
+        )
+
+        forms_are_valid = all(
+            [
+                form.is_valid(),
+                *(language.form.is_valid() for language in languages),
+            ]
+        )
+
+        if forms_are_valid:
+            image_change = ProductImageChange.empty()
+
+            try:
+                with transaction.atomic():
+                    product = update_product_catalog(
+                        product=product,
+                        category=form.cleaned_data["category"],
+                        texts={
+                            language.code: language.form.change()
+                            for language in languages
+                        },
+                        user=request.user,
+                    )
+
+                    image_change = change_product_image(
+                        product=product,
+                        uploaded_image=form.cleaned_data["image"],
+                        remove_image=form.cleaned_data["remove_image"],
+                    )
+
+            except InvalidProductData as error:
+                image_change.rollback()
+                form.add_error(None, str(error))
+
+            except Exception:
+                image_change.rollback()
+                raise
+
+            else:
+                image_change.commit()
+
+                messages.success(
+                    request,
+                    f"Catalog of {product.sku} updated.",
+                )
+
+                return redirect(
+                    reverse(
+                        "ops_products:detail",
+                        kwargs={"product_pk": product.pk},
+                    )
+                    + "#catalog"
+                )
+
+    else:
+        form = CatalogForm(
+            initial=build_catalog_initial_data(product),
+        )
+        languages = build_catalog_languages(
+            product=product,
+        )
+
+    context = build_catalog_form_context(
+        form=form,
+        languages=languages,
+        product=product,
+    ).as_dict()
+
+    return render(
+        request,
+        "ops_portal/products/catalog_form.html",
         context,
     )
 

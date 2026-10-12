@@ -8,17 +8,23 @@
   }
 
   function initializeTabs(group) {
+    // A group's own tabs and panels, not those of a group inside one of
+    // its panels (the language tabs in the Catalog tab, say).
+    const ownedByGroup = (element) => (
+      element.closest("[data-tabs]") === group
+    );
+
     const tabs = [
       ...group.querySelectorAll(
         "[data-tab]"
       ),
-    ];
+    ].filter(ownedByGroup);
 
     const panels = [
       ...group.querySelectorAll(
         "[data-tab-panel]"
       ),
-    ];
+    ].filter(ownedByGroup);
 
     if (
       tabs.length === 0

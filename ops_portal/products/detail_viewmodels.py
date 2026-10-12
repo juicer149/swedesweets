@@ -5,27 +5,30 @@ from dataclasses import dataclass
 from django.urls import reverse
 
 from accounts.roles import RoleSpec
-from common.catalog.viewmodels import CatalogOfferVM, ProductCardVM
+from common.catalog.contracts import CatalogProduct
 from common.detail_cards import (
     DetailAction,
     build_secondary_get_action,
 )
 from common.lines import META_OFFER, LineView, meta, metas
 from common.page_tabs import PageTab
-from common.ui import QuantityInfo, UiText, build_quantity_info
+from common.ui import QuantityInfo, build_quantity_info
 from inventory.low_stock import LOW_STOCK_THRESHOLD, RUNNING_LOW_THRESHOLD
 from inventory.models import InventoryBatch
 from ops_portal.inventory.access import can_create_batch
 from ops_portal.products.access import (
     can_edit_product,
 )
+from ops_portal.products.catalog_preview import (
+    CatalogPagePreview,
+    build_catalog_page_previews,
+)
 from ops_portal.products.presentation import (
     ProductTagPresentation,
     product_attribute_tags,
     product_status_icon,
-    translated_product_name,
 )
-from pricing.models import CommercialPrice, PriceAmount
+from pricing.models import CommercialPrice
 from products.images import product_display_url, product_image_url
 from products.models import (
     Product,
@@ -54,9 +57,6 @@ PRODUCT_DETAIL_TABS = (
         template="ops_portal/products/includes/detail_tab_inventory.html",
     ),
 )
-
-# The catalog the Catalog tab previews: the shop, in French.
-CATALOG_PREVIEW_LANGUAGE = "fr"
 
 
 @dataclass(frozen=True, slots=True)
@@ -165,8 +165,6 @@ class ProductStockSummary:
 class ProductProfileSummary:
     category: str
     category_label: str
-    description: str
-    ingredients: str
     image_url: str
 
     @classmethod
@@ -189,12 +187,6 @@ class ProductProfileSummary:
                 if profile.category
                 else ""
             ),
-            description=(
-                profile.description
-            ),
-            ingredients=(
-                profile.ingredients
-            ),
             image_url=(
                 _profile_original_image_url(
                     profile
@@ -209,8 +201,6 @@ class ProductProfileSummary:
         return cls(
             category="",
             category_label="",
-            description="",
-            ingredients="",
             image_url="",
         )
 
@@ -404,8 +394,8 @@ class ProductDetailContext:
     variant_lines: tuple[LineView, ...]
     variant_labels: str
     has_several_variants: bool
-    catalog_preview: ProductCardVM
-    catalog_name: str
+    catalog_previews: tuple[CatalogPagePreview, ...]
+    in_shop: bool
     status_key: str
     status_label: str
     status_icon: str
@@ -434,8 +424,12 @@ class ProductDetailContext:
             "variant_lines": self.variant_lines,
             "variant_labels": self.variant_labels,
             "has_several_variants": self.has_several_variants,
-            "catalog_preview": self.catalog_preview,
-            "catalog_name": self.catalog_name,
+            "catalog_previews": self.catalog_previews,
+            "in_shop": self.in_shop,
+            "edit_catalog_href": reverse(
+                "ops_products:edit_catalog",
+                kwargs={"product_pk": self.product.pk},
+            ),
             "status_key": self.status_key,
             "status_label": self.status_label,
             "status_icon": self.status_icon,
@@ -471,6 +465,7 @@ def build_product_detail_context(
     role_spec: RoleSpec,
     cancel_url: str,
     stock_by_variant: dict[int, int] | None = None,
+    shop_product: CatalogProduct | None = None,
 ) -> ProductDetailContext:
     stock = (
         ProductStockSummary
@@ -520,14 +515,11 @@ def build_product_detail_context(
         ),
         variant_labels=_variant_labels(variants),
         has_several_variants=len(variants) > 1,
-        catalog_preview=build_catalog_preview(
+        catalog_previews=build_catalog_page_previews(
             product=product,
-            retail_price=retail_price,
+            shop_product=shop_product,
         ),
-        catalog_name=translated_product_name(
-            product,
-            language_code=CATALOG_PREVIEW_LANGUAGE,
-        ),
+        in_shop=shop_product is not None,
         status_key=(
             "active" if product.active else "inactive"
         ),
@@ -569,79 +561,6 @@ def _variant_labels(
     return " · ".join(variant.label for variant in variants)
 
 
-def build_catalog_preview(
-    *,
-    product: Product,
-    retail_price: CommercialPrice | None,
-) -> ProductCardVM:
-    """The product as the shop's catalog draws it (includes/catalog/
-    tile.html), in French, with the retail price when it has one. Shown,
-    not used: the Catalog tab makes it inert."""
-
-    name = translated_product_name(
-        product,
-        language_code=CATALOG_PREVIEW_LANGUAGE,
-    )
-    price = _retail_eur_price(retail_price)
-
-    return ProductCardVM(
-        product_id=product.pk,
-        name=name,
-        package_label=product.unit_weight_label,
-        badge_label=None,
-        primary_action=UiText(text="Add to cart", href="#"),
-        secondary_action=UiText(text="Details", href="#"),
-        image_url=product_image_url(product),
-        offers=(
-            (
-                CatalogOfferVM(
-                    commercial_price_id=retail_price.pk,
-                    batch_id=None,
-                    kind="standard",
-                    label="Standard",
-                    badge_label=None,
-                    price_label=f"€{price:.2f}",
-                    availability_label="",
-                    available_units=0,
-                ),
-            )
-            if retail_price is not None and price is not None
-            else ()
-        ),
-        category_key=_catalog_category_key(product),
-    )
-
-
-def _retail_eur_price(
-    retail_price: CommercialPrice | None,
-):
-    if retail_price is None:
-        return None
-
-    return next(
-        (
-            amount.price
-            for amount in retail_price.amounts.all()
-            if amount.currency == PriceAmount.Currency.EUR
-        ),
-        None,
-    )
-
-
-CATALOG_CATEGORY_KEYS = {
-    ProductProfile.Category.CANDY: "candy",
-    ProductProfile.Category.CHIPS: "chips",
-    ProductProfile.Category.DIP_MIX: "dip_mix",
-}
-
-
-def _catalog_category_key(product: Product) -> str:
-    try:
-        category = product.profile.category
-    except ProductProfile.DoesNotExist:
-        return "other"
-
-    return CATALOG_CATEGORY_KEYS.get(category, "other")
 PAUSED_LABEL = "Paused"
 
 

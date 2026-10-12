@@ -4,6 +4,10 @@ from dataclasses import dataclass
 
 from django.urls import reverse
 
+from ops_portal.products.catalog_forms import (
+    CatalogForm,
+    CatalogLanguage,
+)
 from ops_portal.products.forms import (
     ProductEditForm,
     ProductForm,
@@ -39,11 +43,6 @@ PRODUCT_FORM_SECTIONS = (
         template="ops_portal/products/includes/form_section_product.html",
     ),
     FormSection(
-        key="catalog",
-        title="Catalog",
-        template="ops_portal/products/includes/form_section_catalog.html",
-    ),
-    FormSection(
         key="pricing",
         title="Pricing",
         template="ops_portal/products/includes/form_section_pricing.html",
@@ -74,7 +73,6 @@ class ProductFormContext:
     submit_label: str
     cancel_url: str
     product: Product | None = None
-    current_image_url: str = ""
     variant_formset: BaseVariantFormSet | None = None
     variants_unlocked: bool = False
 
@@ -105,9 +103,6 @@ class ProductFormContext:
             ),
             "status_icon": (
                 product_status_icon(self.product) if self.product else ""
-            ),
-            "current_image_url": (
-                self.current_image_url
             ),
             "title": self.title,
             "description": (
@@ -153,11 +148,6 @@ def build_edit_product_form_context(
         product=product,
         variant_formset=variant_formset,
         variants_unlocked=variants_unlocked,
-        current_image_url=(
-            _current_product_image_url(
-                product
-            )
-        ),
         title=f"Edit {product.display_name}",
         description="",
         submit_label="Update product",
@@ -169,6 +159,52 @@ def build_edit_product_form_context(
                 ),
             },
         ),
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class CatalogFormContext:
+    """The catalog form: category and picture, then the words per
+    language under language tabs (catalog_form.html)."""
+
+    form: CatalogForm
+    languages: tuple[CatalogLanguage, ...]
+    product: Product
+
+    def as_dict(self) -> dict[str, object]:
+        product = self.product
+
+        return {
+            "form": self.form,
+            "languages": self.languages,
+            "product": product,
+            "status_key": "active" if product.active else "inactive",
+            "status_label": "Active" if product.active else "Inactive",
+            "status_icon": product_status_icon(product),
+            "current_image_url": _current_product_image_url(product),
+            "title": f"Edit catalog: {product.display_name}",
+            "description": "",
+            "submit_label": "Update catalog",
+            "cancel_url": (
+                reverse(
+                    "ops_products:detail",
+                    kwargs={"product_pk": product.pk},
+                )
+                + "#catalog"
+            ),
+        }
+
+
+def build_catalog_form_context(
+    *,
+    form: CatalogForm,
+    languages: tuple[CatalogLanguage, ...],
+    product: Product,
+) -> CatalogFormContext:
+    return CatalogFormContext(
+        form=form,
+        languages=languages,
+        product=product,
     )
 
 

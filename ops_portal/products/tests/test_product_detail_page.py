@@ -41,10 +41,14 @@ def test_product_detail_shows_stock_batches_and_edit(client):
     assert "data-tabs" in content
     assert "demand" not in response.context
 
-    # Each tab's button opens its section of the (one-page) edit form.
+    # Product opens its section of the edit form; Catalog has its own page.
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
+    catalog_url = reverse(
+        "ops_products:edit_catalog",
+        kwargs={"product_pk": product.pk},
+    )
     assert f'href="{edit_url}#product"' in content
-    assert f'href="{edit_url}#catalog"' in content
+    assert f'href="{catalog_url}"' in content
     assert [tab.key for tab in response.context["page_tabs"]] == [
         "product",
         "catalog",
@@ -84,13 +88,12 @@ def test_product_edit_form_is_one_page_of_sections(client):
     assert "page_tabs" not in response.context
     assert [section.key for section in response.context["form_sections"]] == [
         "product",
-        "catalog",
         "pricing",
         "variants",
     ]
     # The product page's buttons link to the sections by id.
     assert 'id="product"' in content
-    assert 'id="catalog"' in content
+    assert 'name="description"' not in content
     assert "data-tabs" not in content
     assert "data-dirty-form" in content
     assert 'name="business_eur"' in content
@@ -176,18 +179,48 @@ def test_product_list_table_has_picture_circle_and_no_unit(client):
 
 
 @pytest.mark.django_db
-def test_catalog_tab_previews_the_shop_tile(client):
+def test_catalog_tab_previews_the_shop_page_in_each_language(client):
+    from products.services import CatalogTextChange, update_product_catalog
+
     client.force_login(full_staff_user_factory())
-    product = product_factory(name="Apple", internal_number=504)
+    product = product_factory(brand="Fazer", name="Tyrkisk Peber")
+    update_product_catalog(
+        product=product,
+        category="candy",
+        texts={
+            "fr": CatalogTextChange(
+                name="Poivre turc",
+                description="Salé.",
+                ingredients="Sucre.",
+            ),
+        },
+    )
 
     response = client.get(
         reverse("ops_products:detail", kwargs={"product_pk": product.pk}),
     )
     content = response.content.decode()
 
-    preview = response.context["catalog_preview"]
-    assert preview.name == response.context["catalog_name"]
-    assert preview.package_label == product.unit_weight_label
-    # No retail price yet: the tile shows no price and no "+".
-    assert preview.offers == ()
-    assert 'class="catalog-preview" inert' in content
+    french, english = response.context["catalog_previews"]
+    assert (french.language_code, french.product_name) == ("fr", "Poivre turc")
+    # English has no text of its own: the shop's fallbacks.
+    assert english.product_name == product.display_name
+    assert english.description == "Salé."
+    assert [tab.key for tab in english.page_tabs] == [
+        "description",
+        "ingredients",
+    ]
+    # In each language's own words (the category, the shop's labels).
+    assert (french.category_label, english.category_label) == (
+        "Bonbons",
+        "Candy",
+    )
+    assert "Ajouter au panier" in content
+    assert "Ingrédients" in content
+    assert 'id="preview-fr-product-title"' in content
+    assert 'id="preview-en-product-title"' in content
+    # Not sold (no retail price): shown without a price, and said so.
+    assert response.context["in_shop"] is False
+    assert french.offers == ()
+    assert "Not in the shop now" in content
+    assert "data-product-add-form" in content and " inert" in content

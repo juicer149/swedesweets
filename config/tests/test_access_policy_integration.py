@@ -77,6 +77,7 @@ VIEW_KWARGS = {
     "ops_inventory:close": BATCH_KWARGS,
     "ops_products:detail": PRODUCT_KWARGS,
     "ops_products:edit": PRODUCT_KWARGS,
+    "ops_products:edit_catalog": PRODUCT_KWARGS,
     "ops_customers:detail": CUSTOMER_KWARGS,
     "ops_customers:edit": CUSTOMER_KWARGS,
     "ops_customers:invite_login": CUSTOMER_KWARGS,
