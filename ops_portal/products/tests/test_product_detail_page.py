@@ -10,14 +10,14 @@ from products.tests.factories import product_factory
 
 
 @pytest.mark.django_db
-def test_product_detail_shows_stock_batches_and_edit(client):
+def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     client.force_login(full_staff_user_factory())
 
     product = product_factory(
         name="Apple",
         internal_number=501,
     )
-    batch = batch_factory(
+    batch_factory(
         product=product,
         today=TODAY,
         batch_id="B-501",
@@ -31,17 +31,19 @@ def test_product_detail_shows_stock_batches_and_edit(client):
 
     assert response.status_code == 200
     assert response.context["status_key"] == "active"
-
-    (row,) = response.context["batch_rows"]
-    assert row.batch_id == "B-501"
-    assert "Shelf A1" in row.meta
-
-    batch_url = reverse("ops_inventory:detail", kwargs={"batch_pk": batch.pk})
-    assert f'href="{batch_url}"' in content
-    assert "data-tabs" in content
+    # Two tabs: the Product tab's variants show the stock.
+    assert [tab.key for tab in response.context["page_tabs"]] == [
+        "product",
+        "catalog",
+    ]
+    (line,) = response.context["variant_lines"]
+    assert line.aside == product.stock_quantity_label(12)
+    # The heading says no stock (the variants do).
+    assert "available" not in content.split("</header>")[0]
+    # Business and Retail as tags in Pricing.
+    assert 'class="product-tag pricing-tag pricing-tag--' in content
     assert "demand" not in response.context
 
-    # Product opens its section of the edit form; Catalog has its own page.
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
     catalog_url = reverse(
         "ops_products:edit_catalog",
@@ -49,11 +51,6 @@ def test_product_detail_shows_stock_batches_and_edit(client):
     )
     assert f'href="{edit_url}#product"' in content
     assert f'href="{catalog_url}"' in content
-    assert [tab.key for tab in response.context["page_tabs"]] == [
-        "product",
-        "catalog",
-        "inventory",
-    ]
 
     add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert f'href="{add_batch_url}"' in content
@@ -131,33 +128,6 @@ def test_product_create_form_renders(client):
 
     assert response.status_code == 200
     assert 'name="weight_per_unit"' in response.content.decode()
-
-
-@pytest.mark.parametrize(
-    ("available", "level"),
-    [
-        (20, "safe"),
-        (10, "safe"),
-        (9, "running_low"),
-        (7, "running_low"),
-        (6, "low"),
-        (1, "low"),
-        (0, "empty"),
-    ],
-)
-def test_available_uses_the_inventory_stock_scale(available, level):
-    from ops_portal.products.detail_viewmodels import ProductStockSummary
-    from products.models import Product
-
-    stock = ProductStockSummary(
-        product=Product(active=True),
-        batch_count=1,
-        physical_quantity=available,
-        reserved_quantity=0,
-        available_quantity=available,
-    )
-
-    assert stock.available_info.level == level
 
 
 @pytest.mark.django_db

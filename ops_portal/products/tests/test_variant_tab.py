@@ -96,6 +96,7 @@ def test_a_product_with_one_variant_shows_it_as_one(client):
     assert [line.name for line in response.context["variant_lines"]] == [
         "One variant",
     ]
+    assert "product-variants" in response.content.decode()
 
 
 @pytest.mark.django_db

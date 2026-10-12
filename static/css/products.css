@@ -102,10 +102,29 @@
   scroll-margin-top: var(--space-6);
 }
 
-/* The section titles carry a little more than a plain disclosure, like
-   the dashboard's queues. */
+/* The section rows are buttons, not fields: always a light tone, a
+   stronger one (the FAQ's open yellow) while open, so they read as their
+   own actions apart from the inputs. */
 .form-disclosure > .disclosure__summary {
+  margin-bottom: var(--space-2);
+  padding-inline: var(--space-4);
+
   color: var(--color-neutral-700);
+  background: var(--color-neutral-100);
+  border-bottom: 0;
+  border-radius: var(--radius-control);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .form-disclosure:not([open]) > .disclosure__summary:hover {
+    color: var(--color-neutral-800);
+    background: color-mix(in srgb, var(--color-accent-600) 10%, var(--color-neutral-100));
+  }
+}
+
+.form-disclosure[open] > .disclosure__summary {
+  color: var(--color-neutral-900);
+  background: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
 }
 
 .form-disclosure__title {
@@ -140,7 +159,7 @@
 
 /* Room under the open fields before the next row. */
 .form-disclosure__content {
-  padding: var(--space-4) 0 var(--space-6);
+  padding: var(--space-2) 0 var(--space-6);
 }
 
 .product-section__title {
@@ -168,6 +187,29 @@
 
 .product-section {
   margin-top: var(--space-6);
+}
+
+.product-section__links {
+  margin-top: var(--space-3);
+}
+
+/* Pricing: Business and Retail as tags, green when the channel is active
+   (like the status switch when on), grey when not or not set up. */
+.pricing-channels {
+  margin: 0 0 var(--space-3);
+}
+
+.pricing-tag--on {
+  color: var(--color-status-success-text);
+  background: rgb(var(--color-status-success) / 0.11);
+  border: 1px solid rgb(var(--color-status-success) / 0.32);
+}
+
+.pricing-tag--off,
+.pricing-tag--none {
+  color: var(--color-status-muted-text);
+  background: rgb(var(--color-status-muted) / 0.06);
+  border: 1px solid rgb(var(--color-status-muted) / 0.22);
 }
 
 /* The shop's tile as customers see it: its own width, not a grid's, and

@@ -9,7 +9,10 @@
   - gives a section the class form-disclosure--changed while something in
     it differs from how the page came (its dot, products.css). Hidden
     fields count (a variant's order or deletion); [data-section-ignore]
-    does not (the variants' lock).
+    does not (the variants' lock);
+  - keeps the open section across a save: the form posts to the page with
+    the section's #, and the browser keeps that # through the redirect
+    back to the page.
 */
 (function () {
   "use strict";
@@ -67,6 +70,14 @@
     form.addEventListener("input", markChanged);
     form.addEventListener("change", markChanged);
     form.addEventListener("dirty-form:refresh", markChanged);
+
+    form.addEventListener("submit", () => {
+      const open = sections.find((section) => section.open);
+
+      if (open) {
+        form.action = `${window.location.pathname}${window.location.search}#${open.id}`;
+      }
+    });
 
     // Rows added, removed or moved (the variants) send no input event.
     new MutationObserver(markChanged).observe(form, {

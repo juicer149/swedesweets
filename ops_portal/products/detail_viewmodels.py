@@ -12,9 +12,6 @@ from common.detail_cards import (
 )
 from common.lines import META_OFFER, LineView, meta, metas
 from common.page_tabs import PageTab
-from common.ui import QuantityInfo, build_quantity_info
-from inventory.low_stock import LOW_STOCK_THRESHOLD, RUNNING_LOW_THRESHOLD
-from inventory.models import InventoryBatch
 from ops_portal.inventory.access import can_create_batch
 from ops_portal.products.access import (
     can_edit_product,
@@ -35,7 +32,6 @@ from products.models import (
     ProductProfile,
     ProductVariant,
 )
-from reservations.availability import AvailableStockRow
 
 PRODUCT_DETAIL_TABS = (
     PageTab(
@@ -50,115 +46,7 @@ PRODUCT_DETAIL_TABS = (
         icon="image",
         template="ops_portal/products/includes/detail_tab_catalog.html",
     ),
-    PageTab(
-        key="inventory",
-        label="Inventory",
-        icon="inventory",
-        template="ops_portal/products/includes/detail_tab_inventory.html",
-    ),
 )
-
-
-@dataclass(frozen=True, slots=True)
-class ProductStockSummary:
-    product: Product
-    batch_count: int
-    physical_quantity: int
-    reserved_quantity: int
-    available_quantity: int
-
-    @property
-    def physical_quantity_label(
-        self,
-    ) -> str:
-        return (
-            self.product
-            .stock_quantity_label(
-                self.physical_quantity
-            )
-        )
-
-    @property
-    def reserved_quantity_label(
-        self,
-    ) -> str:
-        return (
-            self.product
-            .stock_quantity_label(
-                self.reserved_quantity
-            )
-        )
-
-    @property
-    def available_quantity_label(
-        self,
-    ) -> str:
-        return (
-            self.product
-            .stock_quantity_label(
-                self.available_quantity
-            )
-        )
-
-    @property
-    def is_orderable(self) -> bool:
-        return self.product.active and self.available_quantity > 0
-
-    @property
-    def available_info(self) -> QuantityInfo:
-        """Colour of Available, the same scale as the inventory lists."""
-
-        return build_quantity_info(
-            quantity=self.available_quantity,
-            low_threshold=LOW_STOCK_THRESHOLD,
-            running_low_threshold=RUNNING_LOW_THRESHOLD,
-        )
-
-    @property
-    def available_summary_label(self) -> str:
-        """For the heading: "12 boxes available"."""
-
-        return f"{self.available_quantity_label} available"
-
-    @classmethod
-    def empty(
-        cls,
-        *,
-        product: Product,
-    ) -> ProductStockSummary:
-        return cls(
-            product=product,
-            batch_count=0,
-            physical_quantity=0,
-            reserved_quantity=0,
-            available_quantity=0,
-        )
-
-    @classmethod
-    def from_available_stock_row(
-        cls,
-        *,
-        product: Product,
-        row: AvailableStockRow | None,
-    ) -> ProductStockSummary:
-        if row is None:
-            return cls.empty(
-                product=product,
-            )
-
-        return cls(
-            product=product,
-            batch_count=row.batch_count,
-            physical_quantity=(
-                row.physical_quantity
-            ),
-            reserved_quantity=(
-                row.reserved_quantity
-            ),
-            available_quantity=(
-                row.available_quantity
-            ),
-        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -358,29 +246,6 @@ class ProductPricingSummary:
 
 
 @dataclass(frozen=True, slots=True)
-class ProductBatchRow:
-    batch_id: str
-    batch_href: str
-    quantity: int
-    quantity_label: str
-    best_before: object
-    location: str
-    status: str
-
-    @property
-    def meta(self) -> str:
-        """The grey line under the batch id: best before · location."""
-
-        parts = [
-            f"Best before {self.best_before:%Y-%m-%d}"
-            if self.best_before
-            else "",
-            self.location,
-        ]
-        return " · ".join(part for part in parts if part)
-
-
-@dataclass(frozen=True, slots=True)
 class ProductDetailContext:
     product: Product
     profile: ProductProfileSummary
@@ -389,8 +254,6 @@ class ProductDetailContext:
         ProductTagPresentation,
         ...,
     ]
-    stock: ProductStockSummary
-    batch_rows: list[ProductBatchRow]
     variant_lines: tuple[LineView, ...]
     variant_labels: str
     has_several_variants: bool
@@ -416,10 +279,6 @@ class ProductDetailContext:
             "pricing": self.pricing,
             "attribute_tags": (
                 self.attribute_tags
-            ),
-            "stock": self.stock,
-            "batch_rows": (
-                self.batch_rows
             ),
             "variant_lines": self.variant_lines,
             "variant_labels": self.variant_labels,
@@ -452,10 +311,6 @@ class ProductDetailContext:
 def build_product_detail_context(
     *,
     product: Product,
-    stock_row: AvailableStockRow | None,
-    active_batches: list[
-        InventoryBatch
-    ],
     business_price: (
         CommercialPrice | None
     ),
@@ -467,15 +322,7 @@ def build_product_detail_context(
     stock_by_variant: dict[int, int] | None = None,
     shop_product: CatalogProduct | None = None,
 ) -> ProductDetailContext:
-    stock = (
-        ProductStockSummary
-        .from_available_stock_row(
-            product=product,
-            row=stock_row,
-        )
-    )
     variants = list(product.variants.all())
-
 
     pricing = (
         ProductPricingSummary
@@ -501,12 +348,6 @@ def build_product_detail_context(
         attribute_tags=(
             product_attribute_tags(
                 product
-            )
-        ),
-        stock=stock,
-        batch_rows=(
-            _build_batch_rows(
-                active_batches
             )
         ),
         variant_lines=build_variant_lines(
@@ -623,56 +464,6 @@ def build_product_secondary_actions(
             ),
         ),
     )
-
-
-def _build_batch_rows(
-    batches: list[InventoryBatch],
-) -> list[ProductBatchRow]:
-    rows: list[
-        ProductBatchRow
-    ] = []
-
-    for batch in batches:
-        batch_href = reverse(
-            "ops_inventory:detail",
-            kwargs={
-                "batch_pk": (
-                    batch.pk
-                ),
-            },
-        )
-
-        rows.append(
-            ProductBatchRow(
-                batch_id=(
-                    batch.batch_id
-                ),
-                batch_href=(
-                    batch_href
-                ),
-                quantity=(
-                    batch.quantity
-                ),
-                quantity_label=(
-                    batch.product
-                    .stock_quantity_label(
-                        batch.quantity
-                    )
-                ),
-                best_before=(
-                    batch.best_before
-                ),
-                location=(
-                    batch.location
-                ),
-                status=(
-                    batch
-                    .get_status_display()
-                ),
-            )
-        )
-
-    return rows
 
 
 def _profile_original_image_url(

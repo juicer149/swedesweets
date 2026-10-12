@@ -61,9 +61,9 @@ def test_saving_the_catalog_page(client):
         _post_data(**{"en-description": "Salty."}),
     )
 
-    detail_url = reverse("ops_products:detail", kwargs={"product_pk": product.pk})
+    # Saved, and back on the same page.
     assert response.status_code == 302
-    assert response.url == f"{detail_url}#catalog"
+    assert response.url == _catalog_url(product)
 
     product.profile.refresh_from_db()
     assert product.profile.category == ProductProfile.Category.CANDY

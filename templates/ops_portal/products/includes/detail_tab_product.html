@@ -1,31 +1,51 @@
 {% comment %}
-  The Product tab: the product's data, then (with several) its variants
-  with weight and stock, then its prices, and Edit product.
+  The Product tab: the product's data; its variants (one line each, or the
+  one) with SKU, weight and what is on the shelf, and Add batch; its
+  pricing, Business and Retail as tags (green active, grey not) over the
+  prices; Edit product.
 {% endcomment %}
 {% include "ops_portal/products/includes/product_details.html" %}
 
-{% if has_several_variants %}
-  <section class="product-section" aria-labelledby="product-variants-title">
-    <h2 class="product-section__title" id="product-variants-title">Variants</h2>
+<section class="product-section" aria-labelledby="product-variants-title">
+  <h2 class="product-section__title" id="product-variants-title">Variants</h2>
 
-    <ul class="lines product-variants" aria-label="Variants">
-      {% for line in variant_lines %}
-        {% include "includes/ui/line.html" with line=line only %}
-      {% endfor %}
-    </ul>
-  </section>
-{% endif %}
+  <ul class="lines product-variants" aria-label="Variants">
+    {% for line in variant_lines %}
+      {% include "includes/ui/line.html" with line=line only %}
+    {% endfor %}
+  </ul>
+
+  {% if add_batch_href %}
+    <div class="page-actions__links product-section__links">
+      <a class="quiet-link" href="{{ add_batch_href }}">
+        {% include "includes/ui/icon_block.html" with name="inventory" size="sm" only %}
+        Add batch
+      </a>
+    </div>
+  {% endif %}
+</section>
 
 <section class="product-section" aria-labelledby="product-pricing-title">
   <h2 class="product-section__title" id="product-pricing-title">Pricing</h2>
+
+  <p class="product-tag-list pricing-channels">
+    {% for channel in pricing.channels %}
+      <span class="product-tag pricing-tag pricing-tag--{{ channel.state }}" title="{{ channel.label }}: {{ channel.status_label }}">
+        {% if channel.state == "on" %}
+          {% include "includes/ui/icon_block.html" with name="check" size="sm" class_name="product-tag__icon" only %}
+        {% endif %}
+        <span>{{ channel.label }}</span>
+        <span class="visually-hidden">{{ channel.status_label }}</span>
+      </span>
+    {% endfor %}
+  </p>
 
   <dl class="facts">
     {% for channel in pricing.channels %}
       <div class="facts__row">
         <dt>{{ channel.label }}</dt>
         <dd>
-          {% for amount in channel.amounts %}{% if not forloop.first %} · {% endif %}{{ amount.label }}{% endfor %}
-          <span class="state state--{{ channel.state }}{% if channel.amounts %} facts__aside{% endif %}">{{ channel.status_label }}</span>
+          {% for amount in channel.amounts %}{% if not forloop.first %} · {% endif %}{{ amount.label }}{% empty %}—{% endfor %}
         </dd>
       </div>
     {% endfor %}

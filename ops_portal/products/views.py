@@ -17,7 +17,6 @@ from common.table_controls import (
     TableSortField,
 )
 from inventory.selectors import (
-    list_available_batches_for_product,
     physical_quantity_by_variant,
 )
 from ops_portal.products.catalog_forms import (
@@ -82,9 +81,6 @@ from products.services import (
     save_variants,
     update_product,
     update_product_catalog,
-)
-from reservations.availability import (
-    available_quantity_by_product,
 )
 from retail.catalog_selectors import (
     get_retail_catalog_product,
@@ -298,16 +294,6 @@ def detail(
     context = (
         build_product_detail_context(
             product=product,
-            stock_row=(
-                _get_stock_row_for_product(
-                    product
-                )
-            ),
-            active_batches=list(
-                list_available_batches_for_product(
-                    product=product,
-                )
-            ),
             business_price=business_price,
             retail_price=retail_price,
             role_spec=request.role_spec,
@@ -479,8 +465,10 @@ def edit(
                     ),
                 )
 
+                # Saved, and still here: the page comes back with the
+                # section that was open (form_sections.js keeps its #).
                 return redirect(
-                    "ops_products:detail",
+                    "ops_products:edit",
                     product_pk=(
                         updated_product.pk
                     ),
@@ -742,12 +730,10 @@ def edit_catalog(
                     f"Catalog of {product.sku} updated.",
                 )
 
+                # Saved, and still here, like the product form.
                 return redirect(
-                    reverse(
-                        "ops_products:detail",
-                        kwargs={"product_pk": product.pk},
-                    )
-                    + "#catalog"
+                    "ops_products:edit_catalog",
+                    product_pk=product.pk,
                 )
 
     else:
@@ -780,18 +766,3 @@ def _get_product_or_404(
         ),
         pk=product_pk,
     )
-
-
-def _get_stock_row_for_product(
-    product: Product,
-):
-    for row in (
-        available_quantity_by_product()
-    ):
-        if (
-            row.product_id
-            == product.pk
-        ):
-            return row
-
-    return None
