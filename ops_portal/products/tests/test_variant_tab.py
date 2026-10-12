@@ -174,6 +174,8 @@ def test_the_page_opens_with_both_sections_locked(client):
     assert 'name="variants-1-retail"' in content
     assert 'name="variants-1-own_price"' in content
     assert content.count("data-variant-price-summary") == 3  # + the template
+    # No template comment leaks into the page.
+    assert "{#" not in content
     assert 'name="product_retail_eur"' in content
     assert 'role="tab" aria-selected="false" data-currency-choice="sek"' in content
     assert "individual_prices" not in content

@@ -53,12 +53,12 @@
     </label>
   </div>
 
-  {#
+  {% comment %}
     Its price: the tag switches its own price on (green, the row turns
     yellow and its prices slide open under it) or off (the product's). Beside
     it what the variant sells at, in the editor's currency
     (variant_editor.js fills it in).
-  #}
+  {% endcomment %}
   <div class="variant-row__price">
     <label class="variant-price-toggle" for="{{ row.own_price.id_for_label }}" title="Own price: on, this variant has prices of its own; off, the product's price">
       {{ row.own_price }}
