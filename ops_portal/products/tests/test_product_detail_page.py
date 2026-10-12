@@ -40,7 +40,8 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     assert line.aside == product.stock_quantity_label(12)
     # The heading says no stock (the variants do).
     assert "available" not in content.split("</header>")[0]
-    # Business and Retail as tags in Pricing.
+    # Business and Retail as tags under Offers.
+    assert 'id="product-pricing-title">Offers</h2>' in content
     assert 'class="product-tag pricing-tag pricing-tag--' in content
     assert "demand" not in response.context
 

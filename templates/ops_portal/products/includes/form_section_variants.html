@@ -1,18 +1,19 @@
 {% comment %}
-  Variants and prices, on the product edit form (variant_editor.js,
-  form_lock.js).
+  Variants and offers, on the product edit form (variant_editor.js); the
+  whole section behind one lock (product_form.html, form_lock.js).
 
-  Over the list: EUR / SEK chips (which currency's prices show; both are
-  kept and sent) and the "Price per variant" switch. Then the shared price
-  line: off, it is the product's price, saved as every variant's; on, it
-  is "All variants", never filled in (a price typed there becomes every
-  variant's) and each variant shows its own price line.
+  At the top, EUR and SEK as two small tabs: which currency's prices show
+  (both are kept and sent). Then the product's price line: with one price
+  for the product it is "Price", saved as every variant's; with a price
+  per variant it is "All variants", never filled in (a price typed there
+  becomes every variant's), and each variant shows its own prices. The
+  button under it switches between the two.
 
-  Then a row per variant: label, weight, its sales channels (Retail,
-  Business: where it is sold; neither, it is paused), the trash; with
-  price per variant, its prices on a second line. Each saved row behind
-  its own lock (open after an error), new rows open. Rows move by dragging
-  the handle, or the arrows on phones.
+  Then a row per variant: the arrows that move it, label, weight, its
+  sales channels (Retail, Business: where it is sold; neither, it is
+  paused), the trash; under them the SKU and, with prices per variant, its
+  own. Last, a faint row "+ Add variant": it becomes a new row, and moves
+  down under it.
 {% endcomment %}
 {% with formset=variant_formset prices=prices_form %}
   <div
@@ -23,17 +24,10 @@
   >
     {{ formset.management_form }}
 
-    <div class="variant-editor__bar">
-      <div class="filter-chips variant-editor__currencies" role="group" aria-label="Currency of the prices">
-        <button class="chip filter-chip" type="button" aria-pressed="true" data-currency-choice="eur">EUR</button>
-        <button class="chip filter-chip" type="button" aria-pressed="false" data-currency-choice="sek">SEK</button>
-      </div>
-
-      <label class="product-tag-toggle product-tag-toggle--status variant-editor__individual" for="{{ prices.individual_prices.id_for_label }}">
-        {{ prices.individual_prices }}
-        <span class="product-tag-toggle__surface">{{ prices.individual_prices.label }}</span>
-      </label>
-    </div>
+    <nav class="section-nav variant-editor__currencies" role="tablist" aria-label="Currency of the prices">
+      <button class="section-nav__link section-nav__link--active" type="button" role="tab" aria-selected="true" data-currency-choice="eur">EUR</button>
+      <button class="section-nav__link" type="button" role="tab" aria-selected="false" data-currency-choice="sek">SEK</button>
+    </nav>
 
     {% if formset.non_form_errors or prices.non_field_errors %}
       <div class="form-errors" role="alert">
@@ -54,6 +48,12 @@
       {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=prices.all_business_eur sek=prices.all_business_sek only %}
     </div>
 
+    <label class="button button--sm button--soft button--tone-place variant-editor__individual" for="{{ prices.individual_prices.id_for_label }}">
+      {{ prices.individual_prices }}
+      <span class="variant-shared__when-one">Set a price per variant</span>
+      <span class="variant-shared__when-each">One price for all variants</span>
+    </label>
+
     <div class="variant-rows__head" aria-hidden="true">
       <span></span>
       <span>Label</span>
@@ -71,8 +71,8 @@
       {% include "ops_portal/products/includes/variant_row.html" with row=formset.empty_form is_new=True only %}
     </template>
 
-    <button class="button button--sm button--soft button--tone-positive variant-editor__add" type="button" data-variant-add>
-      {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
+    <button class="variant-add-row" type="button" data-variant-add>
+      {% include "includes/ui/icon_block.html" with name="plus" size="md" only %}
       Add variant
     </button>
 

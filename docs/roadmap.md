@@ -25,8 +25,8 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   price typed in "All variants" overwrites them all. Each variant has its
   own sales channels (retail, business); in neither, it is paused.
 - **Edit pages**: sections open one under the other (no folding), the
-  important parts behind a lock in the page (the product's data, each
-  saved variant); saving comes back to the same page.
+  important parts behind a lock in the page (the product's data, its
+  variants and offers); saving comes back to the same page.
 - **Swedish as a site language**: later, not now.
 - **Catalog text per language**: each language (`settings.LANGUAGES`, French
   first) has its own name, description and ingredients. The texts written
@@ -115,11 +115,11 @@ mobile).
 **Catalog page**: category and picture, then name, description and
 ingredients under one tab per language.
 
-**Edit page**: Product behind a lock, then **Variants and prices**: EUR /
-SEK chips and "Price per variant"; the product's price (or "All
-variants"); then a row per variant behind its own lock: label, weight,
-sales channels (Retail, Business), and its own prices on a second line
-when they differ.
+**Edit page**: Product behind a lock, then **Variants and offers** behind
+one: EUR / SEK as tabs; the product's price (or "All variants") with the
+price-per-variant button under it; then a row per variant: arrows, label,
+weight, sales channels (Retail, Business), and its own prices on a second
+line with a price per variant; "+ Add variant" as a faint last row.
 
 ## Done
 

@@ -2,10 +2,10 @@
 {% load i18n static %}
 {% comment %}
   Add or edit a product: one page, its sections open one under the other
-  (form_sections). Adding: Product, then Pricing. Editing: Product behind
-  a lock (form_lock.js; open when it has an error), then Variants and
-  prices (variant_editor.js). Each section has an id the product page's
-  buttons link to (#product, #variants). The actions at the foot; saving
+  (form_sections). Adding: Product, then Offers. Editing: Product, then
+  Variants and offers (variant_editor.js), each behind a lock
+  (form_lock.js; open when it holds an error). Each section has an id the
+  product page's buttons link to (#product, #variants). The actions at the foot; saving
   comes back to this page. What the shop shows (catalog_form.html) has its
   own page.
 {% endcomment %}
@@ -23,29 +23,32 @@
     {% csrf_token %}
 
     {% for section in form_sections %}
-      {% with open=form.errors %}
-        <section
-          class="form-section{% if section.locked %} form-section--locked{% if open %} is-unlocked{% endif %}{% endif %}"
-          id="{{ section.key }}"
-          aria-labelledby="{{ section.key }}-title"
-          {% if section.locked %}data-lock-scope{% endif %}
-        >
-          <div class="form-section__head">
-            <h2 class="form-section__title" id="{{ section.key }}-title">{{ section.title }}</h2>
-            {% if section.locked %}
-              {% include "includes/ui/lock_button.html" with what="product" open=open only %}
+      {# A locked section opens when it holds an error. #}
+      <section
+        class="form-section{% if section.locked %} form-section--locked{% if section.key in open_sections %} is-unlocked{% endif %}{% endif %}"
+        id="{{ section.key }}"
+        aria-labelledby="{{ section.key }}-title"
+        {% if section.locked %}data-lock-scope{% endif %}
+      >
+        <div class="form-section__head">
+          <h2 class="form-section__title" id="{{ section.key }}-title">{{ section.title }}</h2>
+          {% if section.locked %}
+            {% if section.key in open_sections %}
+              {% include "includes/ui/lock_button.html" with what=section.title|lower open=True only %}
+            {% else %}
+              {% include "includes/ui/lock_button.html" with what=section.title|lower open=False only %}
             {% endif %}
-          </div>
-
-          {% if section.key == "product" %}
-            {% include "registration/includes/form_errors.html" with form=form only %}
           {% endif %}
+        </div>
 
-          <div class="form-section__body"{% if section.locked %} data-lockable{% if not open %} inert{% endif %}{% endif %}>
-            {% include section.template %}
-          </div>
-        </section>
-      {% endwith %}
+        {% if section.key == "product" %}
+          {% include "registration/includes/form_errors.html" with form=form only %}
+        {% endif %}
+
+        <div class="form-section__body"{% if section.locked %} data-lockable{% if section.key not in open_sections %} inert{% endif %}{% endif %}>
+          {% include section.template %}
+        </div>
+      </section>
     {% endfor %}
 
     <div class="form-actions page__actions page-actions">

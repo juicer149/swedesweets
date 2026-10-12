@@ -2,12 +2,13 @@
    Product variants (ops)
 
    The product page lists the variants as read-only lines (lines.css). The
-   edit form's "Variants and prices": the currency chips and "Price per
-   variant" over it, the shared price line, then a row per variant between
-   hairlines, like the lines of an order: drag handle, label and weight,
-   its sales channels (chips.css), the trash (lines.css, with its red
-   flash) and the row's lock (forms.css); the SKU under the label, and the
-   variant's own prices under that when it has them.
+   edit form's "Variants and offers": EUR / SEK as two small tabs, the
+   product's price line with the "price per variant" button under it, then
+   a row per variant between hairlines, like the lines of an order: the
+   arrows that move it, label and weight, its sales channels (chips.css)
+   and the trash (lines.css, with its red flash); the SKU under the label,
+   and the variant's own prices under that when it has them. Last a faint
+   row "+ Add variant".
    ============================================================================= */
 
 .product-variants {
@@ -15,24 +16,22 @@
 }
 
 /* -----------------------------------------------------------------------------
-   Over the list: the currency chips and "Price per variant"; under them
-   the shared price line
+   Over the list: the currency tabs, the shared price line and the button
+   that gives each variant a price of its own
    ----------------------------------------------------------------------------- */
 
-.variant-editor__bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-3);
+.variant-editor__currencies.section-nav {
+  gap: var(--space-5);
+  width: fit-content;
+  margin: 0 auto var(--space-4);
+  padding: 0 var(--space-3) var(--space-1);
 }
 
-.variant-editor__currencies.filter-chips {
-  justify-content: flex-start;
-  width: auto;
-  gap: var(--space-2);
-  padding: 0;
+.variant-editor__currencies .section-nav__link {
+  min-height: 2rem;
+  padding: 0 var(--space-2);
+  font-size: var(--font-size-14);
+  letter-spacing: 0.04em;
 }
 
 /* The editor shows one currency's prices; the other's fields are still
@@ -47,7 +46,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3) var(--space-6);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
   padding: var(--space-3) var(--space-4);
   background: color-mix(in srgb, var(--color-accent-600) 9%, transparent);
   border-radius: var(--radius-control);
@@ -60,10 +59,23 @@
   font-weight: 700;
 }
 
-/* "Price" while the product has one; "All variants" with prices each. */
+/* "Price" while the product has one; "All variants" with prices each (and
+   the button says the other way). */
 .variant-editor[data-individual="true"] .variant-shared__when-one,
 .variant-editor:not([data-individual="true"]) .variant-shared__when-each {
   display: none;
+}
+
+.variant-editor__individual {
+  display: flex;
+  width: fit-content;
+  margin: 0 0 var(--space-5) auto;
+  cursor: pointer;
+}
+
+.variant-editor__individual:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: 3px;
 }
 
 /* A small round "?" whose title explains. */
@@ -135,21 +147,21 @@
 }
 
 /* -----------------------------------------------------------------------------
-   The rows: label, weight, sales channels, trash, lock; under them the
-   SKU and, with price per variant, the variant's prices
+   The rows: arrows, label, weight, sales channels, trash; under them the
+   SKU and, with price per variant, the variant's prices. Label and weight
+   are short (S, M, 450), so their columns are narrow.
    ----------------------------------------------------------------------------- */
 
-/* handle | label | weight | channels | trash | lock */
+/* arrows | label | weight | channels | trash */
 .variant-rows__head,
 .variant-row {
   display: grid;
   grid-template-columns:
-    1.25rem
-    minmax(5rem, 1fr)
-    6.5rem
-    auto
-    2.5rem
-    2.25rem;
+    3.5rem
+    7.5rem
+    5.5rem
+    1fr
+    2.5rem;
   column-gap: var(--space-3);
   align-items: center;
 }
@@ -161,13 +173,8 @@
   font-weight: 700;
 }
 
-/* The row's fields are the row's own cells (one lock covers them). */
-.variant-row__fields {
-  display: contents;
-}
-
 .variant-rows {
-  margin: 0 0 var(--space-4);
+  margin: 0;
   padding: 0;
   list-style: none;
   border-top: 1px solid var(--color-neutral-200);
@@ -184,17 +191,6 @@
 /* Deleted, waiting for Save: gone from the list (still sent). */
 .variant-row[hidden] {
   display: none;
-}
-
-.variant-row--dragging {
-  opacity: 0.45;
-}
-
-.variant-row__handle {
-  color: var(--color-neutral-600);
-  cursor: grab;
-  user-select: none;
-  letter-spacing: -0.2em;
 }
 
 /* Each field keeps its label for screen readers and phones; the heading
@@ -233,8 +229,7 @@
 }
 
 /* A weight that can no longer change (stock or orders): plainly grey with
-   a dashed edge, and said beside the SKU, unlike a row that is only
-   locked. */
+   a dashed edge, and said beside the SKU. */
 .variant-row input[readonly] {
   color: var(--color-neutral-600);
   background: rgb(var(--color-status-muted) / 0.08);
@@ -262,8 +257,7 @@
   padding: 4px 12px;
 }
 
-.variant-row__remove,
-.variant-row__lock {
+.variant-row__remove {
   display: flex;
   justify-content: center;
 }
@@ -294,10 +288,10 @@
   display: flex;
 }
 
-/* The arrows are for phones; on wider screens the handle drags. */
+/* Up and down, side by side in the first column. */
 .variant-row__move {
-  display: none;
-  flex-direction: row;
+  display: flex;
+  gap: 0;
 }
 
 .variant-row__move-button {
@@ -315,9 +309,17 @@
   cursor: pointer;
 }
 
-.variant-row__move-button:hover {
+.variant-row__move-button:hover,
+.variant-row__move-button:focus-visible {
   color: var(--color-primary-800);
   background: var(--color-primary-50);
+}
+
+/* The first row cannot go up, the last cannot go down. */
+.variant-row__move-button:disabled {
+  opacity: 0.25;
+  cursor: default;
+  background: transparent;
 }
 
 .variant-row__up {
@@ -328,21 +330,52 @@
   grid-column: 2 / -1;
 }
 
-/* Locked: the row as it is, quieter; its trash dims with it (it stays in
-   its place, so the lock does not move). */
-.variant-row:not(.is-unlocked) :is(
-  .variant-row__label,
-  .variant-row__weight,
-  .variant-row__channels,
-  .variant-row__prices,
-  .variant-row__remove
-) {
-  opacity: 0.6;
+/* -----------------------------------------------------------------------------
+   "+ Add variant": where the next row would be, a row of its own, faint
+   and darker than the page; it becomes the new row and moves down.
+   ----------------------------------------------------------------------------- */
+
+.variant-add-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 3.5rem;
+  margin: var(--space-2) 0 0;
+  padding: var(--space-3);
+
+  color: var(--color-neutral-600);
+  background: color-mix(in srgb, var(--color-neutral-900) 5%, transparent);
+  border: 1px dashed var(--color-neutral-300);
+  border-radius: var(--radius-control);
+
+  font-family: var(--font-body);
+  font-size: var(--font-size-18);
+  font-weight: 700;
+  cursor: pointer;
+
+  transition:
+    color var(--motion-fast),
+    background var(--motion-fast),
+    border-color var(--motion-fast);
+}
+
+.variant-add-row:hover,
+.variant-add-row:focus-visible {
+  color: var(--color-primary-800);
+  background: color-mix(in srgb, var(--color-neutral-900) 8%, transparent);
+  border-color: var(--color-primary-500);
+}
+
+.variant-add-row:focus-visible {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: 3px;
 }
 
 /* -----------------------------------------------------------------------------
    Phones: each row stacks: label and weight, the channels, the prices,
-   then the SKU with trash, lock and arrows; the field labels show.
+   then the SKU with arrows and trash; the field labels show.
    ----------------------------------------------------------------------------- */
 
 @media (max-width: 640px) {
@@ -351,16 +384,12 @@
   }
 
   .variant-row {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
     grid-template-areas:
-      "label weight"
-      "channels channels"
-      "prices prices"
-      "sku actions";
-  }
-
-  .variant-row__handle {
-    display: none;
+      "label label weight weight"
+      "channels channels channels channels"
+      "prices prices prices prices"
+      "sku sku move remove";
   }
 
   .variant-row__label { grid-area: label; }
@@ -368,25 +397,8 @@
   .variant-row__channels { grid-area: channels; }
   .variant-row__prices { grid-area: prices; }
   .variant-row__sku { grid-area: sku; }
-
-  .variant-row__remove,
-  .variant-row__lock,
-  .variant-row__move {
-    grid-area: actions;
-    justify-self: end;
-  }
-
-  .variant-row__move {
-    display: flex;
-  }
-
-  .variant-row__lock {
-    margin-right: 4rem;
-  }
-
-  .variant-row__remove {
-    margin-right: 6.75rem;
-  }
+  .variant-row__move { grid-area: move; }
+  .variant-row__remove { grid-area: remove; }
 
   .variant-row__field-label {
     position: static;
@@ -394,6 +406,10 @@
     height: auto;
     overflow: visible;
     clip-path: none;
+  }
+
+  .variant-editor__individual {
+    margin-left: 0;
   }
 
   .variant-price__input {

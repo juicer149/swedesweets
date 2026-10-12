@@ -151,7 +151,7 @@ def test_saving_the_page_as_it_came_changes_nothing(client):
 
 
 @pytest.mark.django_db
-def test_the_page_opens_with_saved_rows_and_the_product_locked(client):
+def test_the_page_opens_with_both_sections_locked(client):
     client.force_login(full_staff_user_factory())
     product = product_factory(name="Hoodie", internal_number=607)
     variant_factory(product=product, label="M", first_label="S")
@@ -159,14 +159,19 @@ def test_the_page_opens_with_saved_rows_and_the_product_locked(client):
     response = client.get(_edit_url(product))
     content = response.content.decode()
 
-    # The product's data and each saved variant behind a lock.
-    assert content.count("data-lock-button") == 3
-    assert content.count("data-lockable inert") == 3
-    # Each row's sales channels; the shared price line; the switch.
+    # One lock over the product's data, one over its variants and offers.
+    assert content.count("data-lock-button") == 2
+    assert content.count("data-lockable inert") == 2
+    assert "Variants and offers" in content
+    # Each row's sales channels and arrows; the shared price line; the
+    # EUR / SEK tabs; the button that gives each variant its own price.
     assert 'name="variants-1-retail"' in content
     assert 'name="all_retail_eur"' in content
-    assert 'data-currency-choice="sek"' in content
+    assert 'role="tab" aria-selected="false" data-currency-choice="sek"' in content
     assert 'data-individual="false"' in content
+    assert "data-variant-up" in content
+    assert "data-variant-handle" not in content
+    assert "data-variant-add" in content
     assert [section.key for section in response.context["form_sections"]] == [
         "product",
         "variants",
@@ -300,7 +305,6 @@ def test_sold_in_retail_needs_a_price(client):
     assert response.status_code == 200
     first, _second = response.context["variant_formset"].forms
     assert "retail_eur" in first.errors
-    assert first.starts_locked is False
 
 
 @pytest.mark.django_db
@@ -353,7 +357,6 @@ def test_two_variants_need_a_label_each(client):
     (first, _second) = response.context["variant_formset"].forms
     assert "each needs a label" in str(first.errors)
     # The row with the error opens unlocked.
-    assert first.starts_locked is False
     assert product.variants.count() == 1
 
 

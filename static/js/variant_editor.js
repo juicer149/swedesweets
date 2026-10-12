@@ -1,16 +1,18 @@
 /*
-  Variants and prices on the product edit form
+  Variants and offers on the product edit form
   (templates/ops_portal/products/includes/form_section_variants.html).
 
-  - The EUR / SEK chips: the editor shows that currency's prices (its
+  - The EUR / SEK tabs: the editor shows that currency's prices (its
     data-currency; css/variants.css hides the other, still sent).
-  - "Price per variant": shows the rows' price lines (data-individual).
-  - Each saved row's lock is form_lock.js's; a row's trash sits behind it.
+  - The price-per-variant button: shows the rows' price lines
+    (data-individual).
   - The trash asks, then the row flashes red and folds away (line_flash.js)
     and is marked for deletion on save; a row not saved yet just goes.
-  - "Add variant" copies the template row as a new formset form, open.
-  - Rows move by dragging the handle or with the arrows; the hidden
-    positions are numbered 1, 2, 3 … so the server keeps the order.
+  - "+ Add variant" copies the template row as a new formset form at the
+    end of the list, so the button moves down under it.
+  - The arrows move a row up or down; the hidden positions are numbered
+    1, 2, 3 … so the server keeps the order. The first row's up and the
+    last row's down are off.
 */
 (function () {
   "use strict";
@@ -25,8 +27,6 @@
     if (!rows || !template || !totalForms) {
       return;
     }
-
-    let dragged = null;
 
     // Price per variant: on, each row's price line shows and the shared
     // line becomes "All variants", empty (what it held waits, and comes
@@ -67,7 +67,10 @@
         editor.dataset.currency = chip.dataset.currencyChoice;
 
         currencyChips.forEach((other) => {
-          other.setAttribute("aria-pressed", String(other === chip));
+          const chosen = other === chip;
+
+          other.setAttribute("aria-selected", String(chosen));
+          other.classList.toggle("section-nav__link--active", chosen);
         });
       });
     });
@@ -79,11 +82,23 @@
     }
 
     function renumber() {
-      visibleRows().forEach((row, index) => {
+      const visible = visibleRows();
+
+      visible.forEach((row, index) => {
         const position = row.querySelector("[data-variant-position]");
+        const up = row.querySelector("[data-variant-up]");
+        const down = row.querySelector("[data-variant-down]");
 
         if (position) {
           position.value = String(index + 1);
+        }
+
+        if (up) {
+          up.disabled = index === 0;
+        }
+
+        if (down) {
+          down.disabled = index === visible.length - 1;
         }
       });
     }
@@ -171,6 +186,16 @@
       }
 
       changed();
+
+      // Moving the row drops the focus: back on the same arrow, or on the
+      // other one once this one is off (the row reached an end).
+      const same = row.querySelector(step < 0 ? "[data-variant-up]" : "[data-variant-down]");
+      const other = row.querySelector(step < 0 ? "[data-variant-down]" : "[data-variant-up]");
+      const focus = same && !same.disabled ? same : other;
+
+      if (focus) {
+        focus.focus();
+      }
     }
 
     if (add) {
@@ -213,64 +238,6 @@
         move(row, 1);
       } else if (event.target.closest("[data-variant-trash]")) {
         trash(row);
-      }
-    });
-
-    // Only the handle starts a drag, so text in the fields still selects.
-    rows.addEventListener("pointerdown", (event) => {
-      const handle = event.target.closest("[data-variant-handle]");
-
-      if (handle) {
-        handle.closest("[data-variant-row]").draggable = true;
-      }
-    });
-
-    document.addEventListener("pointerup", () => {
-      rows.querySelectorAll("[data-variant-row]").forEach((row) => {
-        if (row !== dragged) {
-          row.draggable = false;
-        }
-      });
-    });
-
-    rows.addEventListener("dragstart", (event) => {
-      const row = event.target.closest("[data-variant-row]");
-
-      if (!row) {
-        event.preventDefault();
-        return;
-      }
-
-      dragged = row;
-      row.classList.add("variant-row--dragging");
-      event.dataTransfer.effectAllowed = "move";
-    });
-
-    rows.addEventListener("dragover", (event) => {
-      if (!dragged) {
-        return;
-      }
-
-      event.preventDefault();
-
-      const over = event.target.closest("[data-variant-row]");
-
-      if (!over || over === dragged) {
-        return;
-      }
-
-      const box = over.getBoundingClientRect();
-      const after = event.clientY > box.top + box.height / 2;
-
-      rows.insertBefore(dragged, after ? over.nextElementSibling : over);
-    });
-
-    rows.addEventListener("dragend", () => {
-      if (dragged) {
-        dragged.classList.remove("variant-row--dragging");
-        dragged.draggable = false;
-        dragged = null;
-        changed();
       }
     });
 

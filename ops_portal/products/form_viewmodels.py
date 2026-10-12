@@ -49,13 +49,13 @@ PRODUCT_FORM_SECTIONS = (
     PRODUCT_SECTION,
     FormSection(
         key="pricing",
-        title="Pricing",
+        title="Offers",
         template="ops_portal/products/includes/form_section_pricing.html",
     ),
 )
 
-# Editing: the product's data behind a lock, then its variants with their
-# prices.
+# Editing: the product's data, then its variants with their offers, each
+# behind a lock.
 PRODUCT_EDIT_FORM_SECTIONS = (
     FormSection(
         key=PRODUCT_SECTION.key,
@@ -65,8 +65,9 @@ PRODUCT_EDIT_FORM_SECTIONS = (
     ),
     FormSection(
         key="variants",
-        title="Variants and prices",
+        title="Variants and offers",
         template="ops_portal/products/includes/form_section_variants.html",
+        locked=True,
     ),
 )
 
@@ -86,6 +87,21 @@ class ProductFormContext:
     product: Product | None = None
     variant_formset: BaseVariantFormSet | None = None
 
+    @property
+    def open_sections(self) -> tuple[str, ...]:
+        keys = []
+
+        if self.form.errors:
+            keys.append("product")
+
+        if self.variant_formset is not None and (
+            self.variant_formset.total_error_count()
+            or (self.prices_form is not None and self.prices_form.errors)
+        ):
+            keys.append("variants")
+
+        return tuple(keys)
+
     def as_dict(
         self,
     ) -> dict[str, object]:
@@ -102,6 +118,8 @@ class ProductFormContext:
                 else PRODUCT_FORM_SECTIONS
             ),
             "variant_formset": self.variant_formset,
+            # A locked section with an error opens (product_form.html).
+            "open_sections": self.open_sections,
             "variant_label_suggestions": SUGGESTED_VARIANT_LABELS,
             "variant_label_suggestions_id": LABEL_SUGGESTIONS_ID,
             "status_key": (

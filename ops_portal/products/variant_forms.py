@@ -4,9 +4,9 @@ Each existing variant is a row (label, weight, its sales channels, its own
 retail and business prices in EUR and SEK, delete), in the order shown
 everywhere; new rows are added in the page (variant_editor.js) and
 everything is saved with "Update product". The sales channels say where
-the variant is sold: with neither, it is paused. Each saved row sits behind
-its own lock: a hands-off guard in the page (its fields are inert, still
-sent as they were), not a rule the server enforces.
+the variant is sold: with neither, it is paused. The section sits behind a
+lock: a hands-off guard in the page (its fields are inert, still sent as
+they were), not a rule the server enforces.
 """
 
 from __future__ import annotations
@@ -155,12 +155,6 @@ class VariantForm(forms.Form):
         state = self.state
 
         return state is None or not state.has_history
-
-    @property
-    def starts_locked(self) -> bool:
-        """A saved row opens locked; a new one, or one with an error, open."""
-
-        return self.state is not None and not self.errors
 
     @property
     def is_sold(self) -> bool:

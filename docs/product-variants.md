@@ -114,14 +114,15 @@ fall back to the order they were added in.
 
 - **Product page** gets a **Variants** tab: the variants in order with the
   stock of each.
-- **Edit** has **Variants and prices**:
-  - EUR / SEK chips and "Price per variant": off, one price for the
-    product (every variant's); on, each variant's own, with "All variants"
-    to set them all at once;
-  - reorder by dragging (and up/down buttons for phones), add a variant;
-  - each saved row behind its own lock: rename, set a weight, its sales
-    channels (Retail, Business; in neither it is paused), its prices,
-    delete (only without history, rule 6);
+- **Edit** has **Variants and offers**, behind one lock like Product:
+  - EUR / SEK as two small tabs (which currency's prices show);
+  - the product's price; under it a button: one price for the product
+    (every variant's), or a price per variant, with "All variants" to set
+    them all at once;
+  - a row per variant: arrows to move it up or down, label, weight, its
+    sales channels (Retail, Business; in neither it is paused), its prices
+    (with a price per variant), delete (only without history, rule 6);
+  - a faint "+ Add variant" row under the last one;
   - saved with "Update product".
   Suggested labels (XS, S, M, L, XL, XXL, One size) come as a datalist; any
   text is allowed.
