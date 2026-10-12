@@ -1,18 +1,24 @@
-"""The Variants tab of the product edit form (docs/product-variants.md).
+"""Variants and prices on the product edit form (docs/product-variants.md).
 
-Each existing variant is a row (label, weight, on sale, delete), in the
-order shown everywhere; new rows are added in the page (variant_editor.js)
-and the whole tab is saved with the form's Save. The tab sits behind a
-lock: until it is opened, its fields are not sent and nothing changes.
+Each existing variant is a row (label, weight, its retail and business
+prices in EUR and SEK, on sale, delete), in the order shown everywhere; new
+rows are added in the page (variant_editor.js) and everything is saved with
+"Update product". Each saved row sits behind its own lock: a hands-off
+guard in the page (its fields are inert, still sent as they were), not a
+rule the server enforces.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from decimal import Decimal
 
 from django import forms
 from django.forms import BaseFormSet, formset_factory
 
+from ops_portal.products.pricing_forms import price_field
+from pricing.models import CommercialPrice, PriceAmount
+from pricing.product_configuration import VariantPrices
 from products.catalog import (
     MAX_VARIANT_LABEL_LENGTH,
     MAX_WEIGHT_PER_UNIT,
@@ -23,8 +29,13 @@ from products.services import VariantChange, variant_has_history
 
 VARIANT_FORMSET_PREFIX = "variants"
 
-# Sent only when the lock is open (it sits inside the disabled fieldset).
-VARIANTS_UNLOCKED_FIELD = "variants-unlocked"
+# A row's prices: (field, channel, currency).
+PRICE_FIELDS = (
+    ("retail_eur", CommercialPrice.Channel.RETAIL, PriceAmount.Currency.EUR),
+    ("retail_sek", CommercialPrice.Channel.RETAIL, PriceAmount.Currency.SEK),
+    ("business_eur", CommercialPrice.Channel.BUSINESS, PriceAmount.Currency.EUR),
+    ("business_sek", CommercialPrice.Channel.BUSINESS, PriceAmount.Currency.SEK),
+)
 
 SUGGESTED_VARIANT_LABELS = (
     "XS",
@@ -92,6 +103,11 @@ class VariantForm(forms.Form):
         ),
     )
 
+    retail_eur = price_field(label="Retail EUR")
+    retail_sek = price_field(label="Retail SEK")
+    business_eur = price_field(label="Business EUR")
+    business_sek = price_field(label="Business SEK")
+
     # Set by the row's trash (variant_editor.js), after the question.
     delete = forms.BooleanField(
         required=False,
@@ -108,6 +124,15 @@ class VariantForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.states_by_id = states_by_id or {}
+
+        # Named, since the column heads are not beside them on phones.
+        for field_name, placeholder in (
+            ("retail_eur", "Retail €"),
+            ("retail_sek", "Retail kr"),
+            ("business_eur", "Business €"),
+            ("business_sek", "Business kr"),
+        ):
+            self.fields[field_name].widget.attrs["placeholder"] = placeholder
 
         state = self.state
 
@@ -129,6 +154,20 @@ class VariantForm(forms.Form):
         state = self.state
 
         return state is None or not state.has_history
+
+    @property
+    def starts_locked(self) -> bool:
+        """A saved row opens locked; a new one, or one with an error, open."""
+
+        return self.state is not None and not self.errors
+
+    def prices(self) -> VariantPrices:
+        return VariantPrices(
+            **{
+                field_name: self.cleaned_data.get(field_name)
+                for field_name, _channel, _currency in PRICE_FIELDS
+            }
+        )
 
 
 class BaseVariantFormSet(BaseFormSet):
@@ -294,7 +333,12 @@ def build_variant_formset(
     *,
     product: Product,
     data=None,
+    prices_by_channel: dict[str, dict[int, CommercialPrice]] | None = None,
 ) -> BaseVariantFormSet:
+    """The rows, filled with each variant and its standard prices
+    (`prices_by_channel`: channel → variant id → offer)."""
+
+    prices_by_channel = prices_by_channel or {}
     initial = [
         {
             "variant_id": variant.pk,
@@ -303,6 +347,13 @@ def build_variant_formset(
             "weight_per_unit": variant.weight_per_unit,
             "active": variant.active,
             "delete": False,
+            **{
+                field_name: _amount(
+                    prices_by_channel.get(channel, {}).get(variant.pk),
+                    currency=currency,
+                )
+                for field_name, channel, currency in PRICE_FIELDS
+            },
         }
         for index, variant in enumerate(product.variants.all(), start=1)
     ]
@@ -312,4 +363,22 @@ def build_variant_formset(
         initial=None if data is not None else initial,
         prefix=VARIANT_FORMSET_PREFIX,
         product=product,
+    )
+
+
+def _amount(
+    offer: CommercialPrice | None,
+    *,
+    currency: str,
+) -> Decimal | None:
+    if offer is None:
+        return None
+
+    return next(
+        (
+            amount.price
+            for amount in offer.amounts.all()
+            if amount.currency == currency
+        ),
+        None,
     )

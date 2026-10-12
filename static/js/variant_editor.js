@@ -1,15 +1,13 @@
 /*
-  The Variants tab of the product edit form
-  (templates/ops_portal/products/includes/form_tab_variants.html).
+  Variants and prices on the product edit form
+  (templates/ops_portal/products/includes/form_section_variants.html).
 
-  - The lock at the top. Never opened, the rows are disabled and nothing
-    of them is sent. Opened, it turns green and the rows can be changed;
-    from then on the tab is sent with "Update product". Locked again, the
-    rows are only kept out of reach (what was changed is still saved);
-    with nothing changed it goes back to sending nothing.
+  - The EUR / SEK chips: the table shows that currency's prices (the
+    editor's data-currency; css/variants.css hides the other, still sent).
+  - Each saved row's lock is form_lock.js's; a row's trash sits behind it.
   - The trash asks, then the row flashes red and folds away (line_flash.js)
     and is marked for deletion on save; a row not saved yet just goes.
-  - "Add variant" copies the template row as a new formset form.
+  - "Add variant" copies the template row as a new formset form, open.
   - Rows move by dragging the handle or with the arrows; the hidden
     positions are numbered 1, 2, 3 … so the server keeps the order.
 */
@@ -17,22 +15,27 @@
   "use strict";
 
   function setUp(editor) {
-    const fields = editor.querySelector("[data-variant-fields]");
     const rows = editor.querySelector("[data-variant-rows]");
     const template = editor.querySelector("[data-variant-template]");
-    const lock = editor.querySelector("[data-variant-lock]");
-    const unlockedFlag = editor.querySelector("[data-variant-unlocked]");
     const add = editor.querySelector("[data-variant-add]");
-    const pending = editor.querySelector("[data-variant-pending]");
     const totalForms = editor.querySelector('input[name$="-TOTAL_FORMS"]');
+    const currencyChips = editor.querySelectorAll("[data-currency-choice]");
 
-    if (!fields || !rows || !template || !lock || !unlockedFlag || !totalForms) {
+    if (!rows || !template || !totalForms) {
       return;
     }
 
-    let open = !fields.disabled;
-    let changedSinceOpen = open;
     let dragged = null;
+
+    currencyChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        editor.dataset.currency = chip.dataset.currencyChoice;
+
+        currencyChips.forEach((other) => {
+          other.setAttribute("aria-pressed", String(other === chip));
+        });
+      });
+    });
 
     function visibleRows() {
       return Array.from(rows.querySelectorAll("[data-variant-row]")).filter(
@@ -51,53 +54,10 @@
     }
 
     function changed() {
-      changedSinceOpen = true;
       renumber();
       // dirty_form.js listens for input on the form.
-      fields.dispatchEvent(new Event("input", { bubbles: true }));
+      rows.dispatchEvent(new Event("input", { bubbles: true }));
     }
-
-    function showLock() {
-      const label = open ? "Lock variants" : "Unlock to change variants";
-
-      editor.classList.toggle("variant-editor--open", open);
-
-      if (pending) {
-        pending.hidden = !editor.classList.contains("variant-editor--held");
-      }
-      lock.setAttribute("aria-pressed", open ? "true" : "false");
-      lock.setAttribute("aria-label", label);
-      lock.title = label;
-    }
-
-    lock.addEventListener("click", () => {
-      if (!open) {
-        open = true;
-        fields.disabled = false;
-        fields.inert = false;
-        unlockedFlag.disabled = false;
-        editor.classList.remove("variant-editor--held");
-        renumber();
-      } else if (changedSinceOpen) {
-        // Out of reach, but still sent: the changes wait for Save.
-        open = false;
-        fields.inert = true;
-        editor.classList.add("variant-editor--held");
-      } else {
-        // Nothing changed: back to sending nothing at all.
-        open = false;
-        fields.disabled = true;
-        unlockedFlag.disabled = true;
-      }
-
-      showLock();
-    });
-
-    fields.addEventListener("input", (event) => {
-      if (event.isTrusted) {
-        changedSinceOpen = true;
-      }
-    });
 
     function isNewRow(row) {
       const id = row.querySelector("[data-variant-id]");
@@ -225,7 +185,7 @@
     rows.addEventListener("pointerdown", (event) => {
       const handle = event.target.closest("[data-variant-handle]");
 
-      if (handle && open) {
+      if (handle) {
         handle.closest("[data-variant-row]").draggable = true;
       }
     });
@@ -241,7 +201,7 @@
     rows.addEventListener("dragstart", (event) => {
       const row = event.target.closest("[data-variant-row]");
 
-      if (!row || !open) {
+      if (!row) {
         event.preventDefault();
         return;
       }
@@ -279,7 +239,6 @@
       }
     });
 
-    showLock();
     renumber();
   }
 

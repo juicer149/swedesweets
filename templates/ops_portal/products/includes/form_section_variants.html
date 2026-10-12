@@ -1,55 +1,56 @@
 {% comment %}
-  The Variants section of the product edit form (variant_editor.js),
-  last before the actions.
+  Variants and prices, on the product edit form (variant_editor.js,
+  form_lock.js).
 
-  The variants are what is stocked, priced and sold, so changing them is
-  behind the lock at the top. Never opened, the fieldset is disabled and
-  nothing of it is sent: the save leaves the variants as they are. Opened
-  (the lock turns green, open), rows can be renamed, weighed (until used),
-  paused, deleted with the trash (until used; it asks first), reordered
-  (drag the handle, or the arrows) and added to. Locking again only keeps
-  hands off: what was changed is still saved with "Update product".
+  Over the table, EUR / SEK chips choose which currency's prices the table
+  shows (both are kept and sent). The column heads Retail and Business are
+  the channels' switches: on, the product is sold in that channel, every
+  variant at its own price. Under them, "All variants": never filled in;
+  a price typed there becomes every variant's price in that channel and
+  currency when saved. Then a row per variant: label, weight, its retail
+  and business prices, on sale, the trash; each saved row behind its own
+  lock (open after an error), new rows open. Rows move by dragging the
+  handle, or the arrows on phones.
 {% endcomment %}
-{% with formset=variant_formset %}
-  <div class="variant-editor{% if variants_unlocked %} variant-editor--open{% endif %}" data-variant-editor>
+{% with formset=variant_formset channels=channels_form %}
+  <div class="variant-editor" data-variant-editor data-currency="eur">
     {{ formset.management_form }}
-    {# Sent once the lock has been opened (enabled by the script, or here after an error). #}
-    <input type="hidden" name="{{ variants_unlocked_field }}" value="1" data-variant-unlocked data-section-ignore{% if not variants_unlocked %} disabled{% endif %}>
 
-    <div class="variant-editor__head">
-      <p class="page__note variant-editor__note">
-        Sizes or weights of this product, in the order customers see them.
-        A product with one variant shows no choice.
-        <span class="variant-editor__pending" data-variant-pending hidden>Locked with changes: they are saved with Update product.</span>
-      </p>
+    <div class="variant-editor__bar">
+      <div class="filter-chips variant-editor__currencies" role="group" aria-label="Currency of the prices">
+        <button class="chip filter-chip" type="button" aria-pressed="true" data-currency-choice="eur">EUR</button>
+        <button class="chip filter-chip" type="button" aria-pressed="false" data-currency-choice="sek">SEK</button>
+      </div>
 
-      <button
-        class="variant-editor__lock"
-        type="button"
-        data-variant-lock
-        aria-pressed="{% if variants_unlocked %}true{% else %}false{% endif %}"
-        aria-label="{% if variants_unlocked %}Lock variants{% else %}Unlock to change variants{% endif %}"
-        title="{% if variants_unlocked %}Lock variants{% else %}Unlock to change variants{% endif %}"
-      >
-        <span class="variant-editor__lock-closed">{% include "includes/ui/icon_block.html" with name="lock" size="md" only %}</span>
-        <span class="variant-editor__lock-open">{% include "includes/ui/icon_block.html" with name="lock-open" size="md" only %}</span>
-      </button>
+      <p class="page__note variant-editor__note">Open a variant's lock to change it.</p>
     </div>
 
-    {% if formset.non_form_errors %}
+    {% if formset.non_form_errors or channels.errors %}
       <div class="form-errors" role="alert">
         {% for error in formset.non_form_errors %}<p>{{ error }}</p>{% endfor %}
+        {% for error in channels.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        {% for field in channels %}{% for error in field.errors %}<p>{{ field.label }}: {{ error }}</p>{% endfor %}{% endfor %}
       </div>
     {% endif %}
 
-    <fieldset class="variant-editor__fields" data-variant-fields{% if not variants_unlocked %} disabled{% endif %}>
-      <legend class="visually-hidden">Variants</legend>
+    <div class="variant-table">
+      <div class="variant-rows__head">
+        <span></span>
+        <span class="variant-rows__name">Label</span>
+        <span class="variant-rows__name">Weight (g)</span>
+        {% include "ops_portal/products/includes/channel_switch.html" with field=channels.retail_active only %}
+        {% include "ops_portal/products/includes/channel_switch.html" with field=channels.business_active only %}
+        <span class="variant-rows__name">On sale</span>
+        <span></span>
+        <span></span>
+      </div>
 
-      <div class="variant-rows__head" aria-hidden="true">
+      <div class="variant-row variant-row--all">
         <span></span>
-        <span>Label</span>
-        <span>Weight (g)</span>
-        <span></span>
+        <span class="variant-row__all-name">All variants</span>
+        <span class="variant-row__all-note">Typed here: every variant's price</span>
+        {% include "ops_portal/products/includes/variant_price.html" with eur=channels.all_retail_eur sek=channels.all_retail_sek only %}
+        {% include "ops_portal/products/includes/variant_price.html" with eur=channels.all_business_eur sek=channels.all_business_sek only %}
       </div>
 
       <ol class="variant-rows" data-variant-rows>
@@ -57,19 +58,19 @@
           {% include "ops_portal/products/includes/variant_row.html" with row=row only %}
         {% endfor %}
       </ol>
+    </div>
 
-      <template data-variant-template>
-        {% include "ops_portal/products/includes/variant_row.html" with row=formset.empty_form is_new=True only %}
-      </template>
+    <template data-variant-template>
+      {% include "ops_portal/products/includes/variant_row.html" with row=formset.empty_form is_new=True only %}
+    </template>
 
-      <button class="button button--sm button--soft button--tone-positive variant-editor__add" type="button" data-variant-add>
-        {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
-        Add variant
-      </button>
+    <button class="button button--sm button--soft button--tone-positive variant-editor__add" type="button" data-variant-add>
+      {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
+      Add variant
+    </button>
 
-      <datalist id="{{ variant_label_suggestions_id }}">
-        {% for label in variant_label_suggestions %}<option value="{{ label }}"></option>{% endfor %}
-      </datalist>
-    </fieldset>
+    <datalist id="{{ variant_label_suggestions_id }}">
+      {% for label in variant_label_suggestions %}<option value="{{ label }}"></option>{% endfor %}
+    </datalist>
   </div>
 {% endwith %}

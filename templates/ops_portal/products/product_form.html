@@ -1,13 +1,13 @@
 {% extends "layouts/detail.html" %}
 {% load i18n static %}
 {% comment %}
-  Add or edit a product: one page, no tabs. Its sections (form_sections:
-  Product, Pricing, and when editing Variants last) are rows that slide
-  open one at a time, like the dashboard's queues; a section with a change
-  gets a dot, one with an error a red one (form_sections.js). Each has an
-  id the product page's buttons link to (#product, #pricing, #variants),
-  which opens it. The actions at the foot. What the shop shows
-  (catalog_form.html) has its own page.
+  Add or edit a product: one page, its sections open one under the other
+  (form_sections). Adding: Product, then Pricing. Editing: Product behind
+  a lock (form_lock.js; open when it has an error), then Variants and
+  prices (variant_editor.js). Each section has an id the product page's
+  buttons link to (#product, #variants). The actions at the foot; saving
+  comes back to this page. What the shop shows (catalog_form.html) has its
+  own page.
 {% endcomment %}
 
 {% block page_heading %}
@@ -22,19 +22,31 @@
   <form class="product-form" method="post" novalidate data-dirty-form>
     {% csrf_token %}
 
-    {% include "registration/includes/form_errors.html" with form=form only %}
+    {% for section in form_sections %}
+      {% with open=form.errors %}
+        <section
+          class="form-section{% if section.locked %} form-section--locked{% if open %} is-unlocked{% endif %}{% endif %}"
+          id="{{ section.key }}"
+          aria-labelledby="{{ section.key }}-title"
+          {% if section.locked %}data-lock-scope{% endif %}
+        >
+          <div class="form-section__head">
+            <h2 class="form-section__title" id="{{ section.key }}-title">{{ section.title }}</h2>
+            {% if section.locked %}
+              {% include "includes/ui/lock_button.html" with what="product" open=open only %}
+            {% endif %}
+          </div>
 
-    <div class="form-disclosures">
-      {% for section in form_sections %}
-        <details class="disclosure form-disclosure" id="{{ section.key }}" data-form-section data-smooth data-smooth-group="form-sections"{% if forloop.first %} open{% endif %}>
-          {% include "includes/ui/form_disclosure_summary.html" with title=section.title only %}
+          {% if section.key == "product" %}
+            {% include "registration/includes/form_errors.html" with form=form only %}
+          {% endif %}
 
-          <div class="disclosure__content form-disclosure__content" data-smooth-content>
+          <div class="form-section__body"{% if section.locked %} data-lockable{% if not open %} inert{% endif %}{% endif %}>
             {% include section.template %}
           </div>
-        </details>
-      {% endfor %}
-    </div>
+        </section>
+      {% endwith %}
+    {% endfor %}
 
     <div class="form-actions page__actions page-actions">
       <button class="button button--md button--solid button--tone-place page__submit" type="submit">
@@ -56,9 +68,8 @@
 {% block page_scripts %}
   <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script src="{% static 'js/dirty_form.js' %}" defer></script>
+  <script src="{% static 'js/form_lock.js' %}" defer></script>
   <script src="{% static 'js/variant_editor.js' %}" defer></script>
   <script src="{% static 'js/price_currency.js' %}" defer></script>
-  {# Before smooth-details.js: it chooses which section opens first. #}
   <script src="{% static 'js/form_sections.js' %}" defer></script>
-  <script src="{% static 'js/smooth-details.js' %}" defer></script>
 {% endblock %}

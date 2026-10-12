@@ -10,6 +10,7 @@ from django.utils.translation import gettext
 from carts.models import Cart, CartLine
 from common.lines import META_OFFER, META_TOTAL, LineView, meta, metas
 from pricing.models import PriceAmount
+from products.catalog import variant_display_name
 from products.images import product_image_url
 
 
@@ -178,7 +179,10 @@ def _build_line(
     return RetailCartLine(
         cart_line_id=line.id,
         # "Hoodie — M": the size when the product has several.
-        product_label=commercial_price.variant.display_name,
+        product_label=variant_display_name(
+            product.display_name,
+            commercial_price.variant.label,
+        ),
         product_url=reverse(
             "storefront:product_detail",
             kwargs={

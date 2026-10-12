@@ -213,6 +213,38 @@ class ProductPricingSummary:
         return "2 channels configured"
 
     @classmethod
+    def from_prices_by_channel(
+        cls,
+        *,
+        prices_by_channel: dict[str, dict[int, CommercialPrice]],
+        only_variant_id: int | None,
+    ) -> ProductPricingSummary:
+        """Per product: a channel is set up when a variant has an offer in
+        it, active when one of them is; its amounts are shown when the
+        product has one variant (several: each variant's line has them)."""
+
+        def channel(label: str, channel_key: str):
+            offers = prices_by_channel.get(channel_key, {})
+
+            if only_variant_id is not None:
+                return ProductChannelPricingSummary.from_commercial_price(
+                    label=label,
+                    commercial_price=offers.get(only_variant_id),
+                )
+
+            return ProductChannelPricingSummary(
+                label=label,
+                configured=bool(offers),
+                enabled=any(offer.enabled for offer in offers.values()),
+                amounts=(),
+            )
+
+        return cls(
+            business=channel("Business", CommercialPrice.Channel.BUSINESS),
+            retail=channel("Retail", CommercialPrice.Channel.RETAIL),
+        )
+
+    @classmethod
     def from_commercial_prices(
         cls,
         *,
@@ -311,12 +343,7 @@ class ProductDetailContext:
 def build_product_detail_context(
     *,
     product: Product,
-    business_price: (
-        CommercialPrice | None
-    ),
-    retail_price: (
-        CommercialPrice | None
-    ),
+    prices_by_channel: dict[str, dict[int, CommercialPrice]],
     role_spec: RoleSpec,
     cancel_url: str,
     stock_by_variant: dict[int, int] | None = None,
@@ -324,16 +351,9 @@ def build_product_detail_context(
 ) -> ProductDetailContext:
     variants = list(product.variants.all())
 
-    pricing = (
-        ProductPricingSummary
-        .from_commercial_prices(
-            business_price=(
-                business_price
-            ),
-            retail_price=(
-                retail_price
-            ),
-        )
+    pricing = ProductPricingSummary.from_prices_by_channel(
+        prices_by_channel=prices_by_channel,
+        only_variant_id=variants[0].pk if len(variants) == 1 else None,
     )
 
     return ProductDetailContext(
@@ -353,6 +373,9 @@ def build_product_detail_context(
         variant_lines=build_variant_lines(
             product=product,
             stock_by_variant=stock_by_variant or {},
+            prices_by_channel=(
+                prices_by_channel if len(variants) > 1 else {}
+            ),
         ),
         variant_labels=_variant_labels(variants),
         has_several_variants=len(variants) > 1,
@@ -409,11 +432,14 @@ def build_variant_lines(
     *,
     product: Product,
     stock_by_variant: dict[int, int],
+    prices_by_channel: dict[str, dict[int, CommercialPrice]] | None = None,
 ) -> tuple[LineView, ...]:
-    """The Variants tab: each variant in order, its SKU and weight, paused
-    or not, and how many are on the shelf."""
+    """The product's variants: each in order, its SKU and weight, its
+    prices (`prices_by_channel`, when given: a product with several
+    variants), paused or not, and how many are on the shelf."""
 
     image_url = product_image_url(product)
+    prices_by_channel = prices_by_channel or {}
 
     return tuple(
         LineView(
@@ -421,6 +447,7 @@ def build_variant_lines(
             image_url=image_url,
             metas=metas(
                 meta(_variant_identity_label(variant)),
+                meta(_variant_prices_label(variant, prices_by_channel)),
                 meta(
                     None if variant.active else PAUSED_LABEL,
                     META_OFFER,
@@ -438,6 +465,34 @@ def _variant_identity_label(
     variant: ProductVariant,
 ) -> str:
     return f"{variant.sku} · {variant.weight_per_unit} g"
+
+
+def _variant_prices_label(
+    variant: ProductVariant,
+    prices_by_channel: dict[str, dict[int, CommercialPrice]],
+) -> str | None:
+    """"Retail 2.50 EUR · Business 1.90 EUR": the variant's own prices in
+    each channel that has one."""
+
+    parts = []
+
+    for channel, label in (
+        (CommercialPrice.Channel.RETAIL, "Retail"),
+        (CommercialPrice.Channel.BUSINESS, "Business"),
+    ):
+        offer = prices_by_channel.get(channel, {}).get(variant.pk)
+        amounts = list(offer.amounts.all()) if offer is not None else []
+
+        if amounts:
+            parts.append(
+                f"{label} "
+                + " / ".join(
+                    f"{amount.price:.2f} {amount.currency}"
+                    for amount in amounts
+                )
+            )
+
+    return " · ".join(parts) or None
 
 
 def build_product_secondary_actions(

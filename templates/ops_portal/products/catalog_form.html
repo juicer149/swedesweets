@@ -2,9 +2,9 @@
 {% load i18n static %}
 {% comment %}
   What the shop shows of a product, apart from the product form, in two
-  sections that slide open one at a time (like the product form's): what
-  is the same in every language (category, picture), then the words under
-  one tab per language (languages: name, description, ingredients).
+  open sections: what is the same in every language (category, picture),
+  then the words under one tab per language (languages: name, description,
+  ingredients).
   A language with an error opens first (tabs.js); an empty field falls back
   in the shop, and its help says to what.
 {% endcomment %}
@@ -19,22 +19,21 @@
 
     {% include "registration/includes/form_errors.html" with form=form only %}
 
-    <div class="form-disclosures">
-    <details class="disclosure form-disclosure" id="shop" data-form-section data-smooth data-smooth-group="form-sections" open>
-      {% include "includes/ui/form_disclosure_summary.html" with title="In the shop" only %}
-
-      <div class="disclosure__content form-disclosure__content" data-smooth-content>
-        <div class="form-grid">
-          {% include "includes/ui/form_field.html" with field=form.category only %}
-          {% include "ops_portal/products/includes/catalog_picture_field.html" %}
-        </div>
+    <section class="form-section" id="shop" aria-labelledby="shop-title">
+      <div class="form-section__head">
+        <h2 class="form-section__title" id="shop-title">In the shop</h2>
       </div>
-    </details>
 
-    <details class="disclosure form-disclosure" id="text" data-form-section data-smooth data-smooth-group="form-sections">
-      {% include "includes/ui/form_disclosure_summary.html" with title="Text" only %}
+      <div class="form-grid">
+        {% include "includes/ui/form_field.html" with field=form.category only %}
+        {% include "ops_portal/products/includes/catalog_picture_field.html" %}
+      </div>
+    </section>
 
-      <div class="disclosure__content form-disclosure__content" data-smooth-content>
+    <section class="form-section" id="text" aria-labelledby="text-title">
+      <div class="form-section__head">
+        <h2 class="form-section__title" id="text-title">Text</h2>
+      </div>
 
       <div class="page-tabs catalog-languages" data-tabs>
         <nav class="section-nav" aria-label="Languages" role="tablist">
@@ -63,9 +62,7 @@
           </section>
         {% endfor %}
       </div>
-      </div>
-    </details>
-    </div>
+    </section>
 
     <div class="form-actions page__actions page-actions">
       <button class="button button--md button--solid button--tone-place page__submit" type="submit">
@@ -86,7 +83,5 @@
   <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script src="{% static 'js/dirty_form.js' %}" defer></script>
   <script src="{% static 'js/product-image-upload.js' %}" defer></script>
-  {# Before smooth-details.js: it chooses which section opens first. #}
   <script src="{% static 'js/form_sections.js' %}" defer></script>
-  <script src="{% static 'js/smooth-details.js' %}" defer></script>
 {% endblock %}

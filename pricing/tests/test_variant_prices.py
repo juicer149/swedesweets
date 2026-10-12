@@ -249,3 +249,33 @@ def test_a_paused_variant_has_nothing_to_sell():
         currency=PriceAmount.Currency.EUR,
         today=TODAY,
     ).exists()
+
+
+@pytest.mark.django_db
+def test_a_variant_whose_prices_nothing_used_can_still_be_deleted():
+    from products.services import delete_variant, variant_has_history
+
+    product, _small, medium = _hoodie()
+    offer = ensure_standard_offer(variant=medium, channel=BUSINESS)
+    price_amount_factory(commercial_price=offer, price=Decimal("3.40"))
+
+    assert variant_has_history(medium) is False
+
+    delete_variant(variant=medium)
+
+    assert not CommercialPrice.objects.filter(pk=offer.pk).exists()
+    assert list(product.variants.values_list("label", flat=True)) == ["S"]
+
+
+@pytest.mark.django_db
+def test_a_variant_in_a_cart_is_history():
+    from carts.models import Cart, CartLine
+    from common.channels import SalesChannel
+    from products.services import variant_has_history
+
+    _product, _small, medium = _hoodie()
+    offer = ensure_standard_offer(variant=medium, channel=BUSINESS)
+    cart = Cart.objects.create(channel=SalesChannel.BUSINESS)
+    CartLine.objects.create(cart=cart, commercial_price=offer, quantity=1)
+
+    assert variant_has_history(medium) is True

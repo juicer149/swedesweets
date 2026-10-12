@@ -1,0 +1,11 @@
+{% comment %}
+  A channel's switch as the head of its price column (Retail, Business):
+  green on, muted off (no tick: the column is narrow). Its help is its
+  title.
+
+  field  the channel's BooleanField
+{% endcomment %}
+<label class="product-tag-toggle product-tag-toggle--status variant-channel" for="{{ field.id_for_label }}" title="{{ field.help_text }}">
+  {{ field }}
+  <span class="product-tag-toggle__surface">{{ field.label }}</span>
+</label>

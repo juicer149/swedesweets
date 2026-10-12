@@ -59,9 +59,11 @@ Everything else follows from those:
    label (e.g. `SWS-HOODIE-M`).
 5. `weight_per_unit` cannot change once the variant has a batch or an order
    line (as on `Product` today).
-6. A variant that has ever had a batch, a price, a cart line or an order line
-   cannot be deleted, only **paused** (`active=False`). A paused variant is
-   left out of catalogs, new batches and new orders; its history stays.
+6. A variant that has had a batch, a cart line or an order line cannot be
+   deleted, only **paused** (`active=False`). Its prices alone do not count
+   (every variant gets a standard offer when the product form saves it):
+   they are deleted with it. A paused variant is left out of catalogs, new
+   batches and new orders; its history stays.
 7. The last active variant of an active product cannot be paused (pause the
    product instead).
 8. Consistency, enforced in the services and tested:
@@ -111,11 +113,13 @@ fall back to the order they were added in.
 
 - **Product page** gets a **Variants** tab: the variants in order with the
   stock of each.
-- **Edit** gets a **Variants** tab:
-  - reorder by dragging (and up/down buttons for phones);
-  - behind a lock: add, rename, set a weight, pause, delete (only without
-    history, rule 6);
-  - saved with the form's Save, like the other tabs.
+- **Edit** has **Variants and prices**:
+  - EUR / SEK chips, the channel switches as the price columns' heads, and
+    "All variants" (a price typed there becomes every variant's);
+  - reorder by dragging (and up/down buttons for phones), add a variant;
+  - each saved row behind its own lock: rename, set a weight, prices,
+    pause, delete (only without history, rule 6);
+  - saved with "Update product".
   Suggested labels (XS, S, M, L, XL, XXL, One size) come as a datalist; any
   text is allowed.
 - **Add batch:** after the product, its variant (skipped for a product with
@@ -166,8 +170,12 @@ variants into view.
    step 6, when a variant can have one.
 5. **Ops products** — the Variants tabs, the lock, create a product with
    variants.
-6. **Catalogs and carts** — retail and business: chips, sold-out sizes,
-   the "+" flow, names in carts and the navbar cart.
+6. **Catalogs and carts** — retail and business: a standard offer per
+   variant with its own stock (`pricing/0005` drops the one-per-product
+   rule), the size on the offer choice, names with the size in carts, the
+   navbar cart, checkout and business orders; a card with several sizes
+   leads to its page. Still to come: the "+" opening the sizes as chips,
+   sold-out sizes, names on packing lists, mails and exports.
 7. **Ops orders** — the order form and Previous orders by variant.
 8. **Clean-up** — drop `Product.sku` and `Product.weight_per_unit` (read
    from the variant); demo data: hoodie and T-shirt in XS–XL.

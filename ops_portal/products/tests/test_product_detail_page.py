@@ -83,13 +83,15 @@ def test_product_edit_form_is_one_page_of_sections(client):
 
     assert response.status_code == 200
     assert "page_tabs" not in response.context
+    # Open sections: the product's data, then its variants with prices.
     assert [section.key for section in response.context["form_sections"]] == [
         "product",
-        "pricing",
         "variants",
     ]
+    assert "<details" not in content
     # The product page's buttons link to the sections by id.
     assert 'id="product"' in content
+    assert 'id="variants"' in content
     # The catalog has its own page.
     assert 'name="fr-description"' not in content
     assert 'name="category"' not in content
@@ -97,27 +99,34 @@ def test_product_edit_form_is_one_page_of_sections(client):
     assert content.index('name="active"') < content.index('name="internal_number"')
     assert content.index('name="internal_number"') < content.index('name="brand"')
     assert content.index('name="name"') < content.index('name="vegan"')
-    # Each pricing channel: its switch, then one price field with EUR / SEK
-    # chips (buttons, not sent with the form) beside the two prices.
+    # The channels' switches head the variants' price columns.
     assert 'type="checkbox" name="business_active"' in content
-    assert content.index('name="business_active"') < content.index(
-        'name="business_eur"'
-    )
-    assert content.count("data-price-field") == 2
-    assert 'name="business_sek"' in content
-    assert 'type="button" aria-pressed="true" data-price-currency="eur"' in content
-    # The sections are rows that open one at a time, the first open.
-    assert content.count("data-form-section") == 3
-    assert 'data-smooth-group="form-sections" open' in content
+    assert 'name="variants-0-business_eur"' in content
+    assert 'name="variants-0-business_sek"' in content
     # "Edit" over the name.
     assert '<span class="page__kicker">Edit</span>' in content
     assert "data-tabs" not in content
     assert "data-dirty-form" in content
-    assert 'name="business_eur"' in content
     # Catalog ID is typed, not stepped; status is one switch.
     assert "Catalog ID" in content
     assert 'type="number" name="internal_number"' not in content
     assert 'type="checkbox" name="active"' in content
+
+
+@pytest.mark.django_db
+def test_product_create_form_has_product_and_pricing(client):
+    client.force_login(full_staff_user_factory())
+
+    response = client.get(reverse("ops_products:create"))
+    content = response.content.decode()
+
+    assert [section.key for section in response.context["form_sections"]] == [
+        "product",
+        "pricing",
+    ]
+    # No lock on a new product; its price with the EUR / SEK chips.
+    assert "data-lock-button" not in content
+    assert content.count("data-price-field") == 2
 
 
 @pytest.mark.django_db

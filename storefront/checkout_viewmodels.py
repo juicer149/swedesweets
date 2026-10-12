@@ -7,6 +7,7 @@ from typing import Any
 from django.urls import reverse
 
 from common.lines import LineView, meta, metas
+from products.catalog import variant_display_name
 from products.images import product_image_url
 from retail.models import RetailCheckoutSession
 
@@ -97,7 +98,10 @@ def build_checkout_review_context(
 
         lines.append(
             CheckoutReviewLine(
-                product_label=line.variant.display_name,
+                product_label=variant_display_name(
+                    line.product.display_name,
+                    line.variant.label,
+                ),
                 image_url=product_image_url(
                     line.product,
                 ),

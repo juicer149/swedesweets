@@ -20,7 +20,7 @@ RETAIL_STATUS_HELP_TEXT = (
 )
 
 
-def _price_field(
+def price_field(
     *,
     label: str,
 ) -> forms.DecimalField:
@@ -74,25 +74,92 @@ def _active_toggle(
     return field
 
 
+class ProductChannelsForm(forms.Form):
+    """The edit form's pricing over the variants: the two channel switches
+    (for every variant) and the "All variants" row, a price for every
+    variant at once. That row is never filled in: a price typed in it is
+    each variant's price in that channel and currency once saved."""
+
+    retail_active = _active_toggle(
+        help_text="Sold in the shop. A variant needs a price to be sold.",
+    )
+    business_active = _active_toggle(
+        help_text="Sold to business customers; a price is optional.",
+    )
+
+    all_retail_eur = price_field(label="Retail EUR for all variants")
+    all_retail_sek = price_field(label="Retail SEK for all variants")
+    all_business_eur = price_field(label="Business EUR for all variants")
+    all_business_sek = price_field(label="Business SEK for all variants")
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+        for field_name in ("retail_active", "business_active"):
+            self.fields[field_name].label = (
+                "Retail" if field_name == "retail_active" else "Business"
+            )
+
+        for field_name in (
+            "all_retail_eur",
+            "all_retail_sek",
+            "all_business_eur",
+            "all_business_sek",
+        ):
+            self.fields[field_name].widget.attrs["placeholder"] = "All"
+
+    def all_variants_prices(self) -> dict[str, Decimal]:
+        """The amounts typed in the "All variants" row, by the variant
+        row's field name ("retail_eur")."""
+
+        return {
+            field_name.removeprefix("all_"): self.cleaned_data[field_name]
+            for field_name in (
+                "all_retail_eur",
+                "all_retail_sek",
+                "all_business_eur",
+                "all_business_sek",
+            )
+            if self.cleaned_data.get(field_name) is not None
+        }
+
+
+def build_product_channels_initial_data(
+    *,
+    business_prices: dict[int, CommercialPrice],
+    retail_prices: dict[int, CommercialPrice],
+) -> dict[str, object]:
+    """A channel is on when one of the variants' offers in it is."""
+
+    return {
+        "business_active": any(
+            offer.enabled for offer in business_prices.values()
+        ),
+        "retail_active": any(
+            offer.enabled for offer in retail_prices.values()
+        ),
+    }
+
+
 class ProductPricingForm(forms.Form):
     # Each channel's switch first, then its prices.
     business_active = _active_toggle(
         help_text=BUSINESS_STATUS_HELP_TEXT,
     )
-    business_eur = _price_field(
+    business_eur = price_field(
         label="EUR",
     )
-    business_sek = _price_field(
+    business_sek = price_field(
         label="SEK",
     )
 
     retail_active = _active_toggle(
         help_text=RETAIL_STATUS_HELP_TEXT,
     )
-    retail_eur = _price_field(
+    retail_eur = price_field(
         label="EUR",
     )
-    retail_sek = _price_field(
+    retail_sek = price_field(
         label="SEK",
     )
 

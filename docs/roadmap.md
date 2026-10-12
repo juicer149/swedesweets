@@ -21,7 +21,11 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   the browser has no View Transitions. The cart is already on the server;
   half-filled contact details are kept in the session.
 - **Prices per variant**: one price typed for all variants is saved as each
-  variant's own price; one variant's price can be changed on its own.
+  variant's own price; one variant's price can be changed on its own. The
+  channel switches (retail, business) are the product's.
+- **Edit pages**: sections open one under the other (no folding), the
+  important parts behind a lock in the page (the product's data, each
+  saved variant); saving comes back to the same page.
 - **Swedish as a site language**: later, not now.
 - **Catalog text per language**: each language (`settings.LANGUAGES`, French
   first) has its own name, description and ingredients. The texts written
@@ -41,24 +45,21 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 ## Next, in order
 
 0. **Edit pages in one design**, before the steps below. The product and
-   catalog pages set it: "Edit" over the name in the heading; sections as
-   rows that open one at a time (dashboard queues), with a dot for a
-   change and a red one for an error; statuses as one switch, first in
-   their part; EUR / SEK as filter chips beside one price field. Then the
-   other edit pages, one by one: batches (its pricing too), customers,
+   catalog pages set it: "Edit" over the name in the heading; open
+   sections, locks where data matters; statuses as one switch, first in
+   their part; EUR / SEK as filter chips; saving stays on the page. Then
+   the other edit pages, one by one: batches (its pricing too), customers,
    orders, accounts.
-1. **Ops product pages** — see below. Catalog page and per-language text
-   first (branch `catalog-translations`), then the edit page with locks
-   and variant prices together with step 6.
-2. **Order lines keep a copy** of what was bought, and brand + name unique
+1. **Order lines keep a copy** of what was bought, and brand + name unique
    (after the open questions).
-3. **Variants, step 6**: catalogs and carts (retail and business) with the
-   size chips, sold-out sizes, the variant in cart lines and the navbar
-   cart; merch shows its size, not a candy weight. Prices per variant in
-   ops. The one-standard-offer-per-product rule goes.
-4. **Variants, steps 7–8**: the ops order form by variant; clean-up
+2. **Variants, step 6, the rest**: the "+" on a card opens the sizes as
+   round chips (sold-out ones muted) instead of leading to the product
+   page; the variant's name on packing lists, mails and exports; merch
+   shows its size, not a candy weight. Sketched in Figma with the catalog
+   cards.
+3. **Variants, steps 7–8**: the ops order form by variant; clean-up
    (`Product.sku` and `Product.weight_per_unit` read from the variant).
-5. **Shared expandable row** (button with `aria-expanded`, the FAQ and
+4. **Shared expandable row** (button with `aria-expanded`, the FAQ and
    dashboard animation), then the ops lists that use it:
    - Products: picture and name first, brand, manufacturer and weight as
      quiet text under the name, vegan as an icon, active as a small dot,
@@ -69,7 +70,7 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    - Customers: contact details and active orders, "View details".
    - Accounts: last login, role, the three latest activities, "View
      details"; from the existing activity history, no new log.
-6. **Retail flow**, after a look at what exists (payment states, webhooks,
+5. **Retail flow**, after a look at what exists (payment states, webhooks,
    reconciliation and their tests are already there):
    1. Mini-cart on desktop: picture, name, variant, unit price, stepper
       (the minus becomes the trash at 1 in retail; B2B keeps a separate
@@ -78,7 +79,7 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    2. The mobile cart sheet.
    3. Cart and contact details on one page.
    4. Confirmation page and mail; SumUp keys set in Railway.
-7. **Order messages**, in three parts:
+6. **Order messages**, in three parts:
    1. A thread per order ("Have a question about this order?"), status,
       ops replies from the order, mail to info@ and to the customer (the
       app is the record; mail only notifies, with retry and no doubles),
@@ -87,9 +88,9 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    3. Questions that need the customer's decision (approve or decline),
       each acted on by a separate, checked order action.
    The model lives in `orders` to begin with.
-8. **Catalog cards**: weight or size under the name, the price on its own
+7. **Catalog cards**: weight or size under the name, the price on its own
    small tilted label, attribute icons; colours per category, sketched in
-   Figma first, together with the size chips from step 6.
+   Figma first, together with the size chips (step 2).
 
 Small things to fit in anywhere: on `/ops/orders/<id>/deliver/` the contact
 details follow the page's left edge instead of sitting centred (check
@@ -97,29 +98,30 @@ mobile).
 
 ## Ops product pages
 
-**Detail page**, three tabs:
+**Detail page**, two tabs:
 
-- **Product**: everything about the product under headings: details
-  (catalog ID, brand, name, status, attributes, the variants' labels on one
-  line), **Variants** (each with its weight, price and stock), **Pricing**.
-- **Catalog**: the shop's product page, a little smaller, once per language
-  under language tabs, so the catalog is checked by looking at it; then
-  category, picture and "Edit catalog".
-- **Inventory**: stock and batches, as today.
+- **Product**: the details (catalog ID, brand, name, status, attributes,
+  the variants' labels), the **Variants** (each with its SKU, weight,
+  prices when there are several, and stock; Add batch) and **Pricing**
+  (Business and Retail as tags; the only variant's prices).
+- **Catalog**: the shop's product page, a little smaller, once per
+  language; category, picture and "Edit catalog".
 
-**Catalog page** (its own edit page, no lock): category and picture, then
-the name, description and ingredients under one tab per language.
+**Catalog page**: category and picture, then name, description and
+ingredients under one tab per language.
 
-**Edit page**, one page without tabs, actions at the bottom:
-
-1. Product, behind a lock: catalog ID (typed, no spinner arrows),
-   manufacturer, brand, name, status as one switch, vegan.
-2. Variants: a price for all variants at the top; each row behind its own
-   lock: label, weight, retail EUR, business EUR, active. Needs step 6
-   (prices per variant in the shop and carts), so it comes with it.
+**Edit page**: Product behind a lock, then **Variants and prices**: EUR /
+SEK chips, the channel switches as the price columns' heads, "All
+variants" (never filled in; a price typed there becomes every variant's),
+then a row per variant behind its own lock.
 
 ## Done
 
 - Ordering by weight removed (order lines count stock units).
 - Product variants, steps 1–5: the model, batches, prices and order lines
   by variant, the ops Variants tab, the variant when adding a batch.
+- Catalog text per language, the catalog page and its preview; the edit
+  pages' heading.
+- Prices per variant (step 6): a standard offer per variant, set from the
+  edit page; catalogs and carts by variant (a card with several sizes
+  leads to its page), names with the size in carts and orders.

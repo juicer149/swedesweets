@@ -8,6 +8,7 @@ from common.navbar_cart import (
     NavbarCart,
     NavbarCartLine,
 )
+from products.catalog import variant_display_name
 from products.images import product_image_url
 
 
@@ -109,7 +110,10 @@ def _build_retail_navbar_cart_line(
     return NavbarCartLine(
         line_id=line.id,
         # "Hoodie — M": the size when the product has several.
-        label=line.commercial_price.variant.display_name,
+        label=variant_display_name(
+            product.display_name,
+            line.commercial_price.variant.label,
+        ),
         product_url=reverse(
             "storefront:product_detail",
             kwargs={

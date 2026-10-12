@@ -1,0 +1,18 @@
+{% comment %}
+  One price cell of the variants table: the EUR and the SEK field, of which
+  the table's currency chips show one (variant_editor.js); both are sent.
+
+  eur, sek  the two fields of one channel
+{% endcomment %}
+<div class="form-field variant-row__field variant-price{% if eur.errors or sek.errors %} form-field--error{% endif %}">
+  <span class="variant-price__input" data-currency-input="eur">
+    <label class="visually-hidden" for="{{ eur.id_for_label }}">{{ eur.label }}</label>
+    {{ eur }}
+  </span>
+  <span class="variant-price__input" data-currency-input="sek">
+    <label class="visually-hidden" for="{{ sek.id_for_label }}">{{ sek.label }}</label>
+    {{ sek }}
+  </span>
+  {% for error in eur.errors %}<div class="form-field__errors" role="alert"><p>EUR: {{ error }}</p></div>{% endfor %}
+  {% for error in sek.errors %}<div class="form-field__errors" role="alert"><p>SEK: {{ error }}</p></div>{% endfor %}
+</div>

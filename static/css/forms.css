@@ -531,3 +531,82 @@
 .password-field__toggle[aria-pressed="true"] .password-field__icon--show {
   display: none;
 }
+
+
+/* =============================================================================
+   Lock button (includes/ui/lock_button.html, form_lock.js)
+
+   A round lock that keeps hands off part of a form: grey and closed; open,
+   green with the shackle up.
+   ============================================================================= */
+
+.lock-button {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+
+  color: var(--color-neutral-600);
+  background: var(--color-white);
+  border: var(--border-subtle);
+  border-radius: 50%;
+  cursor: pointer;
+
+  transition:
+    color var(--motion-fast),
+    background var(--motion-fast),
+    border-color var(--motion-fast),
+    box-shadow var(--motion-fast);
+}
+
+.lock-button:hover {
+  color: var(--color-primary-800);
+  box-shadow: var(--shadow-accent-glow);
+}
+
+.lock-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
+}
+
+/* The two icons share the circle; one shows at a time. */
+.lock-button__closed,
+.lock-button__open {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  transition:
+    opacity 160ms ease-out,
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lock-button__open {
+  opacity: 0;
+  transform: translateY(2px) rotate(-12deg) scale(0.85);
+}
+
+.lock-button[aria-pressed="true"] {
+  color: var(--color-status-success-text);
+  background: rgb(var(--color-status-success) / 0.11);
+  border-color: rgb(var(--color-status-success) / 0.32);
+  box-shadow: var(--shadow-success-glow);
+}
+
+.lock-button[aria-pressed="true"] .lock-button__closed {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+.lock-button[aria-pressed="true"] .lock-button__open {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lock-button__closed,
+  .lock-button__open {
+    transition: none;
+  }
+}

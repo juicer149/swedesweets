@@ -514,14 +514,17 @@ def rename_variant(
 def variant_has_history(
     variant: ProductVariant,
 ) -> bool:
-    """A batch, a price (and so maybe a cart line) or an order line ever
-    used this variant: its weight is fixed and it can only be paused, not
-    deleted (rules 5 and 6)."""
+    """A batch, an order line or a cart line used this variant: its weight
+    is fixed and it can only be paused, not deleted (rules 5 and 6). Its
+    prices alone are not history (every variant gets a standard offer when
+    the product form saves it); they go with it."""
 
     return (
         variant.batches.exists()
-        or variant.commercial_prices.exists()
         or variant.order_lines.exists()
+        or variant.commercial_prices.filter(
+            cart_lines__isnull=False,
+        ).exists()
     )
 
 
@@ -624,6 +627,8 @@ def delete_variant(
             "the product instead"
         )
 
+    # Its prices, which nothing used (variant_has_history), go with it.
+    variant.commercial_prices.all().delete()
     variant.delete()
 
 

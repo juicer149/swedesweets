@@ -1,8 +1,9 @@
 {% comment %}
   The Product tab: the product's data; its variants (one line each, or the
-  one) with SKU, weight and what is on the shelf, and Add batch; its
-  pricing, Business and Retail as tags (green active, grey not) over the
-  prices; Edit product.
+  one) with SKU, weight, their prices when there are several, and what is
+  on the shelf, and Add batch; its pricing, Business and Retail as tags
+  (green active, grey not) over the prices of its only variant; Edit
+  product.
 {% endcomment %}
 {% include "ops_portal/products/includes/product_details.html" %}
 
@@ -40,16 +41,20 @@
     {% endfor %}
   </p>
 
-  <dl class="facts">
-    {% for channel in pricing.channels %}
-      <div class="facts__row">
-        <dt>{{ channel.label }}</dt>
-        <dd>
-          {% for amount in channel.amounts %}{% if not forloop.first %} · {% endif %}{{ amount.label }}{% empty %}—{% endfor %}
-        </dd>
-      </div>
-    {% endfor %}
-  </dl>
+  {% if has_several_variants %}
+    <p class="page__note pricing-channels__note">Each variant's prices are on its line above.</p>
+  {% else %}
+    <dl class="facts">
+      {% for channel in pricing.channels %}
+        <div class="facts__row">
+          <dt>{{ channel.label }}</dt>
+          <dd>
+            {% for amount in channel.amounts %}{% if not forloop.first %} · {% endif %}{{ amount.label }}{% empty %}—{% endfor %}
+          </dd>
+        </div>
+      {% endfor %}
+    </dl>
+  {% endif %}
 </section>
 
 {% if edit_action %}

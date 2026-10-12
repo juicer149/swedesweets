@@ -14,12 +14,12 @@ from ops_portal.products.forms import (
 )
 from ops_portal.products.presentation import product_status_icon
 from ops_portal.products.pricing_forms import (
+    ProductChannelsForm,
     ProductPricingForm,
 )
 from ops_portal.products.variant_forms import (
     LABEL_SUGGESTIONS_ID,
     SUGGESTED_VARIANT_LABELS,
-    VARIANTS_UNLOCKED_FIELD,
     BaseVariantFormSet,
 )
 from products.images import product_display_url
@@ -28,20 +28,25 @@ from products.models import Product
 
 @dataclass(frozen=True, slots=True)
 class FormSection:
-    """One section of the product form, one under the other on one page
-    (no tabs: what belongs together stays in sight)."""
+    """One section of the product form, one under the other on one page,
+    all open (no tabs, no folding: what belongs together stays in sight)."""
 
     key: str
     title: str
     template: str
+    # Behind a lock in the page (product_form.html, form_lock.js).
+    locked: bool = False
 
 
+PRODUCT_SECTION = FormSection(
+    key="product",
+    title="Product",
+    template="ops_portal/products/includes/form_section_product.html",
+)
+
+# A new product: its data, then its prices (it has one variant).
 PRODUCT_FORM_SECTIONS = (
-    FormSection(
-        key="product",
-        title="Product",
-        template="ops_portal/products/includes/form_section_product.html",
-    ),
+    PRODUCT_SECTION,
     FormSection(
         key="pricing",
         title="Pricing",
@@ -49,13 +54,18 @@ PRODUCT_FORM_SECTIONS = (
     ),
 )
 
-# Editing a product adds its Variants last, before the actions (a new
-# product starts with one).
+# Editing: the product's data behind a lock, then its variants with their
+# prices.
 PRODUCT_EDIT_FORM_SECTIONS = (
-    *PRODUCT_FORM_SECTIONS,
+    FormSection(
+        key=PRODUCT_SECTION.key,
+        title=PRODUCT_SECTION.title,
+        template=PRODUCT_SECTION.template,
+        locked=True,
+    ),
     FormSection(
         key="variants",
-        title="Variants",
+        title="Variants and prices",
         template="ops_portal/products/includes/form_section_variants.html",
     ),
 )
@@ -67,14 +77,14 @@ class ProductFormContext:
         ProductForm
         | ProductEditForm
     )
-    pricing_form: ProductPricingForm
     title: str
     description: str
     submit_label: str
     cancel_url: str
+    pricing_form: ProductPricingForm | None = None
+    channels_form: ProductChannelsForm | None = None
     product: Product | None = None
     variant_formset: BaseVariantFormSet | None = None
-    variants_unlocked: bool = False
 
     def as_dict(
         self,
@@ -84,6 +94,7 @@ class ProductFormContext:
             "pricing_form": (
                 self.pricing_form
             ),
+            "channels_form": self.channels_form,
             "product": self.product,
             "form_sections": (
                 PRODUCT_EDIT_FORM_SECTIONS
@@ -91,8 +102,6 @@ class ProductFormContext:
                 else PRODUCT_FORM_SECTIONS
             ),
             "variant_formset": self.variant_formset,
-            "variants_unlocked": self.variants_unlocked,
-            "variants_unlocked_field": VARIANTS_UNLOCKED_FIELD,
             "variant_label_suggestions": SUGGESTED_VARIANT_LABELS,
             "variant_label_suggestions_id": LABEL_SUGGESTIONS_ID,
             "status_key": (
@@ -139,17 +148,15 @@ def build_create_product_form_context(
 def build_edit_product_form_context(
     *,
     form: ProductEditForm,
-    pricing_form: ProductPricingForm,
+    channels_form: ProductChannelsForm,
     product: Product,
-    variant_formset: BaseVariantFormSet | None = None,
-    variants_unlocked: bool = False,
+    variant_formset: BaseVariantFormSet,
 ) -> ProductFormContext:
     return ProductFormContext(
         form=form,
-        pricing_form=pricing_form,
+        channels_form=channels_form,
         product=product,
         variant_formset=variant_formset,
-        variants_unlocked=variants_unlocked,
         title=f"Edit {product.display_name}",
         description="",
         submit_label="Update product",

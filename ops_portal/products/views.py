@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -43,11 +45,11 @@ from ops_portal.products.list_viewmodels import (
     build_products_page_header,
 )
 from ops_portal.products.pricing_forms import (
+    ProductChannelsForm,
     ProductPricingForm,
-    build_product_pricing_initial_data,
+    build_product_channels_initial_data,
 )
 from ops_portal.products.variant_forms import (
-    VARIANTS_UNLOCKED_FIELD,
     build_variant_formset,
 )
 from pricing.errors import (
@@ -55,10 +57,12 @@ from pricing.errors import (
 )
 from pricing.models import CommercialPrice
 from pricing.product_configuration import (
+    VariantPrices,
+    update_product_pricing,
     update_product_standard_pricing,
 )
 from pricing.selectors import (
-    get_product_commercial_price,
+    standard_prices_by_variant_id,
 )
 from products.errors import (
     InvalidProductData,
@@ -269,33 +273,10 @@ def detail(
         product_pk
     )
 
-    business_price = (
-        get_product_commercial_price(
-            product=product,
-            channel=(
-                CommercialPrice
-                .Channel
-                .BUSINESS
-            ),
-        )
-    )
-
-    retail_price = (
-        get_product_commercial_price(
-            product=product,
-            channel=(
-                CommercialPrice
-                .Channel
-                .RETAIL
-            ),
-        )
-    )
-
     context = (
         build_product_detail_context(
             product=product,
-            business_price=business_price,
-            retail_price=retail_price,
+            prices_by_channel=_standard_prices_by_channel(product),
             role_spec=request.role_spec,
             cancel_url=reverse(
                 "ops_products:index"
@@ -325,123 +306,69 @@ def edit(
     request,
     product_pk: int,
 ):
+    """The product's own data (behind a lock in the page) and its variants
+    with their prices, saved together; the page comes back after a save."""
+
     product = _get_product_or_404(
         product_pk
     )
 
-    business_price = (
-        get_product_commercial_price(
-            product=product,
-            channel=(
-                CommercialPrice
-                .Channel
-                .BUSINESS
-            ),
-        )
-    )
-
-    retail_price = (
-        get_product_commercial_price(
-            product=product,
-            channel=(
-                CommercialPrice
-                .Channel
-                .RETAIL
-            ),
-        )
-    )
+    prices_by_channel = _standard_prices_by_channel(product)
 
     if request.method == "POST":
         form = ProductEditForm(
             request.POST,
             product=product,
         )
-
-        pricing_form = (
-            ProductPricingForm(
-                request.POST,
-            )
-        )
-
-        # The Variants tab is sent only when its lock was opened.
-        variants_unlocked = (
-            request.POST.get(VARIANTS_UNLOCKED_FIELD) == "1"
+        channels_form = ProductChannelsForm(
+            request.POST,
         )
         variant_formset = build_variant_formset(
             product=product,
-            data=request.POST if variants_unlocked else None,
+            data=request.POST,
         )
 
-        product_form_is_valid = (
-            form.is_valid()
-        )
-        pricing_form_is_valid = (
-            pricing_form.is_valid()
-        )
-        variants_are_valid = (
-            not variants_unlocked
-            or variant_formset.is_valid()
+        forms_are_valid = all(
+            [
+                form.is_valid(),
+                channels_form.is_valid(),
+                variant_formset.is_valid(),
+            ]
         )
 
-        if (
-            product_form_is_valid
-            and pricing_form_is_valid
-            and variants_are_valid
-        ):
+        if forms_are_valid:
             try:
                 with transaction.atomic():
-                    updated_product = (
-                        update_product(
-                            product=product,
-                            internal_number=(
-                                form.cleaned_data[
-                                    "internal_number"
-                                ]
-                            ),
-                            manufacturer=(
-                                form.cleaned_data[
-                                    "manufacturer"
-                                ]
-                            ),
-                            brand=(
-                                form.cleaned_data[
-                                    "brand"
-                                ]
-                            ),
-                            name=(
-                                form.cleaned_data[
-                                    "name"
-                                ]
-                            ),
-                            active=(
-                                form.active_value
-                            ),
-                            vegan=(
-                                form.cleaned_data[
-                                    "vegan"
-                                ]
-                            ),
-                            user=request.user,
-                        )
+                    updated_product = update_product(
+                        product=product,
+                        internal_number=form.cleaned_data["internal_number"],
+                        manufacturer=form.cleaned_data["manufacturer"],
+                        brand=form.cleaned_data["brand"],
+                        name=form.cleaned_data["name"],
+                        active=form.active_value,
+                        vegan=form.cleaned_data["vegan"],
+                        user=request.user,
                     )
 
-                    (
-                        update_product_standard_pricing(
-                            product=(
-                                updated_product
-                            ),
-                            **(
-                                pricing_form
-                                .pricing_values()
-                            ),
-                        )
+                    save_variants(
+                        product=updated_product,
+                        changes=variant_formset.changes(),
                     )
 
-                    if variants_unlocked:
-                        save_variants(
+                    update_product_pricing(
+                        product=updated_product,
+                        business_enabled=channels_form.cleaned_data[
+                            "business_active"
+                        ],
+                        retail_enabled=channels_form.cleaned_data[
+                            "retail_active"
+                        ],
+                        prices=_prices_by_variant_id(
                             product=updated_product,
-                            changes=variant_formset.changes(),
-                        )
+                            variant_formset=variant_formset,
+                            all_variants=channels_form.all_variants_prices(),
+                        ),
+                    )
 
             except InvalidProductData as error:
                 form.add_error(
@@ -450,7 +377,7 @@ def edit(
                 )
 
             except InvalidCommercialPrice as error:
-                pricing_form.add_error(
+                channels_form.add_error(
                     None,
                     str(error),
                 )
@@ -458,71 +385,95 @@ def edit(
             else:
                 messages.success(
                     request,
-                    (
-                        "Product "
-                        f"{updated_product.sku} "
-                        "updated."
-                    ),
+                    f"Product {updated_product.sku} updated.",
                 )
 
-                # Saved, and still here: the page comes back with the
-                # section that was open (form_sections.js keeps its #).
+                # Saved, and still here.
                 return redirect(
                     "ops_products:edit",
-                    product_pk=(
-                        updated_product.pk
-                    ),
+                    product_pk=updated_product.pk,
                 )
 
     else:
-        variants_unlocked = False
+        form = ProductEditForm(
+            initial=build_product_edit_initial_data(product),
+            product=product,
+        )
+        channels_form = ProductChannelsForm(
+            initial=build_product_channels_initial_data(
+                business_prices=prices_by_channel[
+                    CommercialPrice.Channel.BUSINESS
+                ],
+                retail_prices=prices_by_channel[
+                    CommercialPrice.Channel.RETAIL
+                ],
+            ),
+        )
         variant_formset = build_variant_formset(
             product=product,
-        )
-
-        form = ProductEditForm(
-            initial=(
-                build_product_edit_initial_data(
-                    product
-                )
-            ),
-            product=product,
-        )
-
-        pricing_form = (
-            ProductPricingForm(
-                initial=(
-                    build_product_pricing_initial_data(
-                        business_price=(
-                            business_price
-                        ),
-                        retail_price=(
-                            retail_price
-                        ),
-                    )
-                )
-            )
+            prices_by_channel=prices_by_channel,
         )
 
     context = (
         build_edit_product_form_context(
             form=form,
-            pricing_form=pricing_form,
+            channels_form=channels_form,
             product=product,
             variant_formset=variant_formset,
-            variants_unlocked=variants_unlocked,
         )
         .as_dict()
     )
 
     return render(
         request,
-        (
-            "ops_portal/products/"
-            "product_form.html"
-        ),
+        "ops_portal/products/product_form.html",
         context,
     )
+
+
+def _standard_prices_by_channel(
+    product: Product,
+) -> dict[str, dict[int, CommercialPrice]]:
+    return {
+        channel: standard_prices_by_variant_id(
+            product=product,
+            channel=channel,
+        )
+        for channel in CommercialPrice.Channel.values
+    }
+
+
+def _prices_by_variant_id(
+    *,
+    product: Product,
+    variant_formset,
+    all_variants: dict,
+) -> dict[int, VariantPrices]:
+    """Each kept row's prices, by its variant (a new row's by its label,
+    now saved), with the "All variants" amounts over them."""
+
+    variant_id_by_label = {
+        variant.label.casefold(): variant.pk
+        for variant in product.variants.all()
+    }
+    prices: dict[int, VariantPrices] = {}
+
+    for row in variant_formset.ordered_forms_by_position:
+        data = row.cleaned_data
+
+        if data.get("delete"):
+            continue
+
+        variant_id = data.get("variant_id") or variant_id_by_label.get(
+            " ".join(data["label"].split()).casefold()
+        )
+
+        if variant_id is None:
+            continue
+
+        prices[variant_id] = replace(row.prices(), **all_variants)
+
+    return prices
 
 
 @login_required
