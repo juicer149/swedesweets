@@ -2,13 +2,13 @@
   One variant in the variants editor: a card, and under it, with its own
   price, a yellow tab with its prices.
 
-  The card's first line: label, weight, sales channels (Retail, Business;
-  neither: paused), the price tag and the trash; its second: the SKU ("New"
-  until saved) and, under the sales channels, what it sells at. The arrows
-  beside both lines, up at the top, down at the bottom. The tag on: the
-  tab slides out under the card, a price field per channel it is sold in
-  (the editor's currency shows); a field left empty is the product's
-  price. Off: the variant is sold at the product's price.
+  The card: the arrows that move it, label, weight, sales channels
+  (Retail, Business; neither: paused), the price tag and the trash. The
+  tag on: the tab slides out under the card, a price field per channel it
+  is sold in (the editor's currency shows); a field left empty is the
+  product's price (its placeholder). Off: the variant is sold at the
+  product's price. A variant with stock or orders says under its card why
+  its weight is fixed.
 
   row      a VariantForm (ops_portal/products/variant_forms.py)
   is_new   the template row "Add variant" copies
@@ -80,22 +80,6 @@
       {% endif %}
     </div>
 
-    <span class="variant-row__sku">
-      {% if row.state %}
-        {{ row.state.variant.sku }}
-        {% if row.state.is_stocked_or_ordered %}<span class="variant-row__fixed">· weight fixed: has stock or orders</span>{% endif %}
-      {% else %}
-        New · SKU when saved
-      {% endif %}
-    </span>
-
-    {# What it sells at, under the sales channels (variant_editor.js). #}
-    <span class="variant-row__price" data-variant-price-summary aria-hidden="true">
-      <span class="variant-row__price-line" data-summary-channel="retail"><span class="variant-row__price-caption">Retail</span> <span data-summary-value>—</span></span>
-      <span class="variant-row__price-line" data-summary-channel="business"><span class="variant-row__price-caption">Business</span> <span data-summary-value>—</span></span>
-      <span class="variant-row__price-line variant-row__price-paused">Paused</span>
-    </span>
-
     {% for error in row.delete.errors %}<div class="form-field__errors variant-row__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
   </div>
 
@@ -108,4 +92,12 @@
       <p class="variant-row__prices-hint">Empty: the product's price.</p>
     </div>
   </div>
+
+  {% if row.state.is_stocked_or_ordered %}
+    {# Why its weight cannot change (rule 5, docs/product-variants.md). #}
+    <p class="variant-row__note">
+      {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
+      Weight fixed: {{ row.state.variant.label|default:"this variant" }} has stock or orders.
+    </p>
+  {% endif %}
 </li>

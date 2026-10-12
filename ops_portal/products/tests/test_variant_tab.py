@@ -173,7 +173,8 @@ def test_the_page_opens_with_both_sections_locked(client):
     # EUR / SEK tabs.
     assert 'name="variants-1-retail"' in content
     assert 'name="variants-1-own_price"' in content
-    assert content.count("data-variant-price-summary") == 3  # + the template
+    # No SKU line on the cards (the product page has them).
+    assert "variant-row__sku" not in content
     # Each price says its channel (hidden while that channel is off).
     assert 'data-price-channel="business"' in content
     # No template comment leaks into the page.
@@ -429,6 +430,8 @@ def test_a_used_variant_cannot_be_deleted(client):
     data |= {
         "variants-0-delete": "on",
     }
+
+    assert "Weight fixed: S has stock or orders." in page.content.decode()
 
     response = client.post(_edit_url(product), data)
 

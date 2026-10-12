@@ -9,9 +9,6 @@
     js/smooth-details.js's, same time and easing); off, it slides back.
     Each own price field shows the product's price as its placeholder: left
     empty, that is the price.
-  - Each row says what it sells at in the editor's currency: its own
-    prices, or the product's (a channel it is not sold in is hidden by
-    css/variants.css).
   - The trash asks, then the row flashes red and folds away (line_flash.js)
     and is marked for deletion on save; a row not saved yet just goes.
   - "+ Add variant" copies the template row as a new formset form at the
@@ -40,34 +37,8 @@
     );
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const signs = { eur: "€", sek: "kr" };
     // The slides running now, by panel.
     const slides = new Map();
-
-    function ownPriceOn(row) {
-      const toggle = row.querySelector("[data-variant-own-price]");
-
-      return Boolean(toggle && toggle.checked);
-    }
-
-    // What a row sells at, per channel, in the editor's currency.
-    function summarize(row) {
-      const currency = editor.dataset.currency || "eur";
-      const own = ownPriceOn(row);
-
-      row.querySelectorAll("[data-summary-channel]").forEach((line) => {
-        const channel = line.dataset.summaryChannel;
-        const key = `${channel}_${currency}`;
-        const ownInput = row.querySelector(`input[name$="-${key}"]`);
-        const productInput = editor.querySelector(`input[name="product_${key}"]`);
-        const ownValue = own && ownInput ? ownInput.value.trim() : "";
-        const value = ownValue || (productInput ? productInput.value.trim() : "");
-
-        line.querySelector("[data-summary-value]").textContent = value
-          ? `${value} ${signs[currency]}`
-          : "—";
-      });
-    }
 
     // Each own price field shows the product's price: empty, that is it.
     function placeholders(row) {
@@ -81,11 +52,8 @@
       });
     }
 
-    function summarizeAll() {
-      rows.querySelectorAll("[data-variant-row]").forEach((row) => {
-        placeholders(row);
-        summarize(row);
-      });
+    function placeholdersAll() {
+      rows.querySelectorAll("[data-variant-row]").forEach(placeholders);
     }
 
     // The row's own prices slide open or shut (as js/smooth-details.js).
@@ -140,8 +108,7 @@
       }
     });
 
-    editor.addEventListener("input", summarizeAll);
-    editor.addEventListener("change", summarizeAll);
+    editor.addEventListener("input", placeholdersAll);
 
     currencyChips.forEach((chip) => {
       chip.addEventListener("click", () => {
@@ -153,8 +120,6 @@
           other.setAttribute("aria-selected", String(chosen));
           other.classList.toggle("section-nav__link--active", chosen);
         });
-
-        summarizeAll();
       });
     });
 
@@ -296,7 +261,6 @@
         totalForms.value = String(index + 1);
         changed();
         placeholders(row);
-        summarize(row);
 
         if (window.lineFlash) {
           window.lineFlash.added(row);
@@ -327,7 +291,7 @@
     });
 
     renumber();
-    summarizeAll();
+    placeholdersAll();
   }
 
   document.querySelectorAll("[data-variant-editor]").forEach(setUp);

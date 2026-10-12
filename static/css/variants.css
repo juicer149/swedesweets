@@ -129,9 +129,9 @@
 
 /* -----------------------------------------------------------------------------
    The variants: a card each (arrows, label, weight, sales channels, price
-   tag, trash; under them the SKU and, under the channels, what it sells
-   at), and with its own price a yellow tab under the card with its
-   prices, nearly as wide as the card. Label and weight are short (S, M,
+   tag, trash), and with its own price a yellow tab under the card with
+   its prices, nearly as wide as the card; under them, for a variant with
+   stock or orders, why its weight is fixed. Label and weight are short (S, M,
    450), so their columns are narrow.
    ----------------------------------------------------------------------------- */
 
@@ -255,8 +255,15 @@
   box-shadow: none;
 }
 
-.variant-row__fixed {
-  font-weight: 500;
+/* Under the card (and its tab): why the weight is fixed. */
+.variant-row__note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-2) var(--variant-radius) 0;
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  font-weight: 600;
 }
 
 .variant-row__channels {
@@ -279,14 +286,6 @@
 .variant-row__remove .line__remove-button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
-}
-
-.variant-row__sku {
-  grid-row: 2;
-  grid-column: 2 / 4;
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-14);
-  font-weight: 600;
 }
 
 /* The tab under the card, yellow like the product's price: the variant's
@@ -336,9 +335,9 @@
   font-size: var(--font-size-14);
 }
 
-/* Up at the row's top, down at its bottom, beside all its lines. */
+/* Up over down, beside the card's line. */
 .variant-row__move {
-  grid-row: 1 / span 2;
+  grid-row: 1;
   grid-column: 1;
   align-self: stretch;
   display: flex;
@@ -387,23 +386,8 @@
 
 /* -----------------------------------------------------------------------------
    The price tag that gives the variant its own (a round switch, green when
-   on, like the sales channels), and under the sales channels what it
-   sells at in the editor's currency.
+   on, like the sales channels).
    ----------------------------------------------------------------------------- */
-
-/* Under the sales channels. */
-.variant-row__price {
-  grid-row: 2;
-  grid-column: 4 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-4);
-  min-width: 0;
-  font-size: var(--font-size-14);
-  font-weight: 700;
-  line-height: 1.3;
-  white-space: nowrap;
-}
 
 .variant-price-toggle {
   position: relative;
@@ -459,34 +443,20 @@
   opacity: 1;
 }
 
-.variant-row__price-caption {
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-12);
-  font-weight: 600;
-}
-
-/* A sales channel switched off: its price is not shown, in the summary
-   or in the box; in neither channel the variant is paused. */
-.variant-row:has(input[name$="-retail"]:not(:checked)) :is(
-  [data-summary-channel="retail"],
-  [data-price-channel="retail"]
-),
-.variant-row:has(input[name$="-business"]:not(:checked)) :is(
-  [data-summary-channel="business"],
-  [data-price-channel="business"]
-),
-.variant-row__price-paused,
+/* A sales channel switched off: its price field is not shown; in neither
+   channel the tab says so. */
+.variant-row:has(input[name$="-retail"]:not(:checked)) [data-price-channel="retail"],
+.variant-row:has(input[name$="-business"]:not(:checked)) [data-price-channel="business"],
 .variant-row__prices-none {
   display: none;
 }
 
 .variant-row:has(input[name$="-retail"]:not(:checked)):has(
   input[name$="-business"]:not(:checked)
-) :is(.variant-row__price-paused, .variant-row__prices-none) {
+) .variant-row__prices-none {
   display: block;
 }
 
-.variant-row__price-paused,
 .variant-row__prices-none {
   margin: 0;
   color: var(--color-neutral-600);
@@ -538,9 +508,9 @@
 }
 
 /* -----------------------------------------------------------------------------
-   Phones: each card stacks: label and weight, the channels, the price,
-   then the SKU with arrows and trash; the tab under it a little in from
-   both sides; the field labels show.
+   Phones: each card stacks: label and weight, the channels with the
+   price tag, then the arrows and the trash; the tab under it a little in
+   from both sides; the field labels show.
    ----------------------------------------------------------------------------- */
 
 @media (max-width: 640px) {
@@ -558,15 +528,12 @@
     grid-template-areas:
       "label label weight weight"
       "channels channels channels own"
-      "price price price price"
-      "sku sku move remove";
+      "move move move remove";
   }
 
   .variant-row__label { grid-area: label; }
   .variant-row__weight { grid-area: weight; }
   .variant-row__channels { grid-area: channels; }
-  .variant-row__price { grid-area: price; }
-  .variant-row__sku { grid-area: sku; }
   .variant-row__move {
     grid-area: move;
     flex-direction: row;
