@@ -1,7 +1,8 @@
 """Variants and prices on the product edit form (docs/product-variants.md).
 
-Each existing variant is a row (label, weight, its sales channels, its own
-retail and business prices in EUR and SEK, delete), in the order shown
+Each existing variant is a row (label, weight, its sales channels, its coin:
+its own retail and business prices in EUR and SEK, or the product's;
+delete), in the order shown
 everywhere; new rows are added in the page (variant_editor.js) and
 everything is saved with "Update product". The sales channels say where
 the variant is sold: with neither, it is paused. The section sits behind a
@@ -18,8 +19,9 @@ from django.forms import BaseFormSet, formset_factory
 
 from ops_portal.products.pricing_forms import (
     PRICE_FIELDS,
-    offer_amount,
     price_field,
+    product_amounts,
+    variant_amounts,
 )
 from pricing.models import CommercialPrice
 from pricing.product_configuration import VariantPrices
@@ -107,6 +109,19 @@ class VariantForm(forms.Form):
         label="Business",
         widget=forms.CheckboxInput(
             attrs={"class": "product-tag-toggle__input"}
+        ),
+    )
+
+    # The row's coin: on, the variant has its own prices (the fields under
+    # it); off, it is sold at the product's price (ProductPricesForm).
+    own_price = forms.BooleanField(
+        required=False,
+        label="Own price",
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "variant-coin__input",
+                "data-variant-own-price": "true",
+            }
         ),
     )
 
@@ -347,31 +362,38 @@ def build_variant_formset(
     (`prices_by_channel`: channel → variant id → offer)."""
 
     prices_by_channel = prices_by_channel or {}
-    initial = [
-        {
-            "variant_id": variant.pk,
-            "position": index,
-            "label": variant.label,
-            "weight_per_unit": variant.weight_per_unit,
-            "retail": variant.active and _enabled(
-                prices_by_channel.get(CommercialPrice.Channel.RETAIL, {}),
-                variant,
-            ),
-            "business": variant.active and _enabled(
-                prices_by_channel.get(CommercialPrice.Channel.BUSINESS, {}),
-                variant,
-            ),
-            "delete": False,
-            **{
-                field_name: offer_amount(
-                    prices_by_channel.get(channel, {}).get(variant.pk),
-                    currency=currency,
-                )
-                for field_name, channel, currency in PRICE_FIELDS
-            },
-        }
-        for index, variant in enumerate(product.variants.all(), start=1)
-    ]
+    variants = list(product.variants.all())
+    shared = product_amounts(
+        prices_by_channel=prices_by_channel,
+        variant_ids=[variant.pk for variant in variants],
+    )
+    initial = []
+
+    for index, variant in enumerate(variants, start=1):
+        amounts = variant_amounts(
+            prices_by_channel=prices_by_channel,
+            variant_id=variant.pk,
+        )
+        initial.append(
+            {
+                "variant_id": variant.pk,
+                "position": index,
+                "label": variant.label,
+                "weight_per_unit": variant.weight_per_unit,
+                "retail": variant.active and _enabled(
+                    prices_by_channel.get(CommercialPrice.Channel.RETAIL, {}),
+                    variant,
+                ),
+                "business": variant.active and _enabled(
+                    prices_by_channel.get(CommercialPrice.Channel.BUSINESS, {}),
+                    variant,
+                ),
+                # Prices unlike the product's are the variant's own.
+                "own_price": amounts != shared,
+                "delete": False,
+                **amounts,
+            }
+        )
 
     return VariantFormSet(
         data=data,

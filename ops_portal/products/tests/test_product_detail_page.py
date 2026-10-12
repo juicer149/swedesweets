@@ -100,12 +100,12 @@ def test_product_edit_form_is_one_page_of_sections(client):
     assert content.index('name="active"') < content.index('name="internal_number"')
     assert content.index('name="internal_number"') < content.index('name="brand"')
     assert content.index('name="name"') < content.index('name="vegan"')
-    # Each variant's sales channels; its own prices (shown with price per
-    # variant) and the product's price.
+    # Each variant's sales channels and coin; its own prices (shown with
+    # the coin on) and the product's price.
     assert 'type="checkbox" name="variants-0-business"' in content
+    assert 'type="checkbox" name="variants-0-own_price"' in content
     assert 'name="variants-0-business_eur"' in content
-    assert 'name="all_business_sek"' in content
-    assert 'name="individual_prices"' in content
+    assert 'name="product_business_sek"' in content
     assert "Swedish/internal MVP" not in content
     # "Edit" over the name.
     assert '<span class="page__kicker">Edit</span>' in content

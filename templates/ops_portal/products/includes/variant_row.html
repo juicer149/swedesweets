@@ -1,8 +1,10 @@
 {% comment %}
-  One variant in the variants editor. Its first line: the arrows that move
-  it up and down, its label, weight, sales channels (Retail, Business;
-  neither: paused) and the trash. Under them the SKU, and with prices per
-  variant its own (the editor's currency shows).
+  One variant in the variants editor. Its first line: its label, weight,
+  sales channels (Retail, Business; neither: paused), its coin and the
+  trash; the arrows beside it all, up at the top, down at the bottom.
+  Under them the SKU ("New" until saved), and with the coin on the
+  variant's own prices (the editor's currency shows); off, it is sold at
+  the product's price.
 
   row      a VariantForm (ops_portal/products/variant_forms.py)
   is_new   the template row "Add variant" copies
@@ -51,6 +53,25 @@
     </label>
   </div>
 
+  {# The coin: dim with a cross, the product's price; lit, its own. #}
+  <label class="variant-coin" for="{{ row.own_price.id_for_label }}" title="Own price: on, this variant has prices of its own; off, the product's price">
+    {{ row.own_price }}
+    <span class="visually-hidden">Own price{% if row.state %} for {{ row.state.variant.display_name }}{% endif %}</span>
+    <svg class="variant-coin__icon" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+      <g class="variant-coin__rays">
+        <path d="M16 2.5v4" />
+        <path d="m7.2 5.6 2.5 3.1" />
+        <path d="m24.8 5.6-2.5 3.1" />
+      </g>
+      <circle class="variant-coin__face" cx="16" cy="19.5" r="9.5" />
+      <circle class="variant-coin__rim" cx="16" cy="19.5" r="6" />
+      <g class="variant-coin__cross">
+        <path d="m13 16.5 6 6" />
+        <path d="m19 16.5-6 6" />
+      </g>
+    </svg>
+  </label>
+
   <div class="variant-row__remove">
     {% if is_new or row.can_delete %}
       <button class="line__remove-button" type="button" aria-label="Delete variant" data-variant-trash>
@@ -64,12 +85,14 @@
     {% endif %}
   </div>
 
-  {% if row.state %}
-    <span class="variant-row__sku">
+  <span class="variant-row__sku">
+    {% if row.state %}
       {{ row.state.variant.sku }}
       {% if row.state.is_stocked_or_ordered %}<span class="variant-row__fixed">· weight fixed: has stock or orders</span>{% endif %}
-    </span>
-  {% endif %}
+    {% else %}
+      New · SKU when saved
+    {% endif %}
+  </span>
 
   <div class="variant-row__prices">
     {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=row.retail_eur sek=row.retail_sek only %}

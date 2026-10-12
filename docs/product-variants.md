@@ -116,12 +116,12 @@ fall back to the order they were added in.
   stock of each.
 - **Edit** has **Variants and offers**, behind one lock like Product:
   - EUR / SEK as two small tabs (which currency's prices show);
-  - the product's price; under it a button: one price for the product
-    (every variant's), or a price per variant, with "All variants" to set
-    them all at once;
-  - a row per variant: arrows to move it up or down, label, weight, its
-    sales channels (Retail, Business; in neither it is paused), its prices
-    (with a price per variant), delete (only without history, rule 6);
+  - the product's price: every variant's without a price of its own;
+  - a row per variant: arrows to move it (up at its top, down at its
+    bottom), label, weight, its sales channels (Retail, Business; in
+    neither it is paused), its coin (off: the product's price, dim with a
+    cross; on: lit, with its own prices under the row), delete (only
+    without history, rule 6);
   - a faint "+ Add variant" row under the last one;
   - saved with "Update product".
   Suggested labels (XS, S, M, L, XL, XXL, One size) come as a datalist; any

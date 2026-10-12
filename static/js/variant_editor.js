@@ -4,8 +4,8 @@
 
   - The EUR / SEK tabs: the editor shows that currency's prices (its
     data-currency; css/variants.css hides the other, still sent).
-  - The price-per-variant button: shows the rows' price lines
-    (data-individual).
+  - A row's coin: on, its own prices show (css/variants.css); switched on
+    with none typed yet, they start from the product's price.
   - The trash asks, then the row flashes red and folds away (line_flash.js)
     and is marked for deletion on save; a row not saved yet just goes.
   - "+ Add variant" copies the template row as a new formset form at the
@@ -28,39 +28,36 @@
       return;
     }
 
-    // Price per variant: on, each row's price line shows and the shared
-    // line becomes "All variants", empty (what it held waits, and comes
-    // back if switched off again); off, the shared line is the product's
-    // price again.
-    const individual = editor.querySelector("[data-individual-prices]");
-    const shared = Array.from(
+    // The product's price fields (product_retail_eur …).
+    const productPrices = Array.from(
       editor.querySelectorAll(".variant-shared input[name]")
     );
 
-    if (individual) {
-      individual.addEventListener("change", () => {
-        editor.dataset.individual = String(individual.checked);
+    // A coin switched on: the row's own prices start from the product's,
+    // unless it already has some.
+    rows.addEventListener("change", (event) => {
+      const coin = event.target.closest("[data-variant-own-price]");
 
-        // Off with nothing waiting (the page came with prices per
-        // variant): the first variant's prices become the product's, so
-        // a save does not empty them all.
-        const firstRow = visibleRows()[0];
+      if (!coin || !coin.checked) {
+        return;
+      }
 
-        shared.forEach((input) => {
-          if (individual.checked) {
-            input.dataset.productPrice = input.value;
-            input.value = "";
-          } else if ("productPrice" in input.dataset) {
-            input.value = input.dataset.productPrice;
-          } else if (firstRow) {
-            const key = input.name.replace(/^all_/, "");
-            const own = firstRow.querySelector(`input[name$="-${key}"]`);
+      const row = coin.closest("[data-variant-row]");
+      const own = Array.from(row.querySelectorAll(".variant-row__prices input[name]"));
 
-            input.value = own ? own.value : "";
-          }
-        });
+      if (own.some((input) => input.value.trim())) {
+        return;
+      }
+
+      productPrices.forEach((input) => {
+        const key = input.name.replace(/^product_/, "");
+        const field = row.querySelector(`input[name$="-${key}"]`);
+
+        if (field) {
+          field.value = input.value;
+        }
       });
-    }
+    });
 
     currencyChips.forEach((chip) => {
       chip.addEventListener("click", () => {

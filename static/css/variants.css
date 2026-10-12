@@ -3,12 +3,12 @@
 
    The product page lists the variants as read-only lines (lines.css). The
    edit form's "Variants and offers": EUR / SEK as two small tabs, the
-   product's price line with the "price per variant" button under it, then
-   a row per variant between hairlines, like the lines of an order: the
-   arrows that move it, label and weight, its sales channels (chips.css)
-   and the trash (lines.css, with its red flash); the SKU under the label,
-   and the variant's own prices under that when it has them. Last a faint
-   row "+ Add variant".
+   product's price, then a row per variant between hairlines, like the
+   lines of an order: the arrows that move it (up at its top, down at its
+   bottom), label and weight, its sales channels (chips.css), its coin and
+   the trash (lines.css, with its red flash); the SKU under the label, and
+   with the coin on the variant's own prices under that. Last a faint row
+   "+ Add variant".
    ============================================================================= */
 
 .product-variants {
@@ -16,8 +16,7 @@
 }
 
 /* -----------------------------------------------------------------------------
-   Over the list: the currency tabs, the shared price line and the button
-   that gives each variant a price of its own
+   Over the list: the currency tabs and the product's price
    ----------------------------------------------------------------------------- */
 
 .variant-editor__currencies.section-nav {
@@ -46,7 +45,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-3) var(--space-6);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-5);
   padding: var(--space-3) var(--space-4);
   background: color-mix(in srgb, var(--color-accent-600) 9%, transparent);
   border-radius: var(--radius-control);
@@ -57,25 +56,6 @@
   margin: 0;
   color: var(--color-neutral-800);
   font-weight: 700;
-}
-
-/* "Price" while the product has one; "All variants" with prices each (and
-   the button says the other way). */
-.variant-editor[data-individual="true"] .variant-shared__when-one,
-.variant-editor:not([data-individual="true"]) .variant-shared__when-each {
-  display: none;
-}
-
-.variant-editor__individual {
-  display: flex;
-  width: fit-content;
-  margin: 0 0 var(--space-5) auto;
-  cursor: pointer;
-}
-
-.variant-editor__individual:has(input:focus-visible) {
-  outline: 2px solid var(--color-accent-600);
-  outline-offset: 3px;
 }
 
 /* A small round "?" whose title explains. */
@@ -148,22 +128,27 @@
 
 /* -----------------------------------------------------------------------------
    The rows: arrows, label, weight, sales channels, trash; under them the
-   SKU and, with price per variant, the variant's prices. Label and weight
+   SKU and, with its coin on, the variant's prices. Label and weight
    are short (S, M, 450), so their columns are narrow.
    ----------------------------------------------------------------------------- */
 
-/* arrows | label | weight | channels | trash */
+/* arrows | label | weight | channels | coin | trash */
 .variant-rows__head,
 .variant-row {
   display: grid;
   grid-template-columns:
-    3.5rem
+    1.75rem
     7.5rem
     5.5rem
     1fr
+    4.5rem
     2.5rem;
   column-gap: var(--space-3);
   align-items: center;
+}
+
+.variant-rows__head-coin {
+  text-align: center;
 }
 
 .variant-rows__head {
@@ -275,7 +260,7 @@
   font-weight: 600;
 }
 
-/* With price per variant: the variant's prices on a line of their own. */
+/* The variant's own prices, on a line of their own. */
 .variant-row__prices {
   display: none;
   grid-row: 3;
@@ -284,14 +269,25 @@
   gap: var(--space-2) var(--space-6);
 }
 
-.variant-editor[data-individual="true"] .variant-row__prices {
+/* Coin on (or an error in its own prices): its prices show. */
+.variant-row:has([data-variant-own-price]:checked) .variant-row__prices,
+.variant-row__prices:has(.form-field__errors) {
   display: flex;
 }
 
-/* Up and down, side by side in the first column. */
+/* Up at the row's top, down at its bottom, beside all its lines. */
 .variant-row__move {
+  grid-row: 1 / span 2;
+  grid-column: 1;
+  align-self: stretch;
   display: flex;
-  gap: 0;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.variant-row:has([data-variant-own-price]:checked) .variant-row__move {
+  grid-row: 1 / span 3;
 }
 
 .variant-row__move-button {
@@ -328,6 +324,89 @@
 
 .variant-row__errors {
   grid-column: 2 / -1;
+}
+
+/* -----------------------------------------------------------------------------
+   The coin: the variant's own price, on or off. Off: dim, a cross on its
+   face (sold at the product's price). On: lit in the accent, three rays
+   over it, and the row's prices show.
+   ----------------------------------------------------------------------------- */
+
+.variant-coin {
+  position: relative;
+  display: inline-flex;
+  justify-self: center;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  color: color-mix(in srgb, var(--color-neutral-600) 55%, var(--color-neutral-300));
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition:
+    color var(--motion-fast),
+    background var(--motion-fast);
+}
+
+.variant-coin:hover {
+  color: var(--color-neutral-600);
+  background: color-mix(in srgb, var(--color-neutral-900) 5%, transparent);
+}
+
+.variant-coin:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: 2px;
+}
+
+.variant-coin__input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.variant-coin__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  overflow: visible;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.variant-coin__face {
+  fill: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.variant-coin__rim {
+  stroke-width: 1.25;
+  opacity: 0.7;
+}
+
+.variant-coin__rays {
+  opacity: 0;
+  transform: translateY(2px);
+  transition:
+    opacity var(--motion-fast),
+    transform var(--motion-fast);
+}
+
+.variant-coin:has(input:checked) {
+  color: var(--color-accent-600);
+}
+
+.variant-coin:has(input:checked) .variant-coin__face {
+  fill: color-mix(in srgb, var(--color-accent-600) 22%, transparent);
+}
+
+.variant-coin:has(input:checked) .variant-coin__rays {
+  opacity: 1;
+  transform: none;
+}
+
+.variant-coin:has(input:checked) .variant-coin__cross {
+  display: none;
 }
 
 /* -----------------------------------------------------------------------------
@@ -387,7 +466,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
     grid-template-areas:
       "label label weight weight"
-      "channels channels channels channels"
+      "channels channels coin coin"
       "prices prices prices prices"
       "sku sku move remove";
   }
@@ -397,7 +476,15 @@
   .variant-row__channels { grid-area: channels; }
   .variant-row__prices { grid-area: prices; }
   .variant-row__sku { grid-area: sku; }
-  .variant-row__move { grid-area: move; }
+  .variant-row__move,
+  .variant-row:has([data-variant-own-price]:checked) .variant-row__move {
+    grid-area: move;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: var(--space-1);
+  }
+
+  .variant-coin { grid-area: coin; justify-self: end; }
   .variant-row__remove { grid-area: remove; }
 
   .variant-row__field-label {
@@ -406,10 +493,6 @@
     height: auto;
     overflow: visible;
     clip-path: none;
-  }
-
-  .variant-editor__individual {
-    margin-left: 0;
   }
 
   .variant-price__input {

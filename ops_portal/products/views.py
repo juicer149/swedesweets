@@ -450,7 +450,7 @@ def _prices_are_complete(
     variant_formset,
 ) -> bool:
     """A variant sold in retail needs a retail price (EUR or SEK): said on
-    its row, or on the shared row when the product has one price."""
+    its row when it has its own, otherwise on the product's price."""
 
     complete = True
 
@@ -458,18 +458,18 @@ def _prices_are_complete(
         if not row.cleaned_data.get("retail"):
             continue
 
-        prices = prices_form.prices_for(row.prices())
+        prices = prices_form.prices_for(row)
 
         if prices.retail_eur is not None or prices.retail_sek is not None:
             continue
 
         complete = False
 
-        if prices_form.individual:
+        if row.cleaned_data.get("own_price"):
             row.add_error("retail_eur", "Sold in retail: give it a price.")
-        elif "all_retail_eur" not in prices_form.errors:
+        elif "product_retail_eur" not in prices_form.errors:
             prices_form.add_error(
-                "all_retail_eur",
+                "product_retail_eur",
                 "A variant is sold in retail: give the retail price.",
             )
 
@@ -503,7 +503,7 @@ def _pricing_by_variant_id(
         pricing[variant_id] = VariantPricing(
             retail_enabled=bool(data.get("retail")),
             business_enabled=bool(data.get("business")),
-            prices=prices_form.prices_for(row.prices()),
+            prices=prices_form.prices_for(row),
         )
 
     return pricing

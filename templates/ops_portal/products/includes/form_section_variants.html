@@ -3,25 +3,17 @@
   whole section behind one lock (product_form.html, form_lock.js).
 
   At the top, EUR and SEK as two small tabs: which currency's prices show
-  (both are kept and sent). Then the product's price line: with one price
-  for the product it is "Price", saved as every variant's; with a price
-  per variant it is "All variants", never filled in (a price typed there
-  becomes every variant's), and each variant shows its own prices. The
-  button under it switches between the two.
+  (both are kept and sent). Then the product's price: every variant's
+  whose coin is off.
 
-  Then a row per variant: the arrows that move it, label, weight, its
-  sales channels (Retail, Business: where it is sold; neither, it is
-  paused), the trash; under them the SKU and, with prices per variant, its
-  own. Last, a faint row "+ Add variant": it becomes a new row, and moves
-  down under it.
+  Then a row per variant: the arrows that move it (up at its top, down at
+  its bottom), label, weight, its sales channels (Retail, Business: where
+  it is sold; neither, it is paused), its coin, the trash; under them the
+  SKU and, with the coin on, the variant's own prices. Last, a faint row
+  "+ Add variant": it becomes a new row, and moves down under it.
 {% endcomment %}
 {% with formset=variant_formset prices=prices_form %}
-  <div
-    class="variant-editor"
-    data-variant-editor
-    data-currency="eur"
-    data-individual="{% if prices.individual_prices.value %}true{% else %}false{% endif %}"
-  >
+  <div class="variant-editor" data-variant-editor data-currency="eur">
     {{ formset.management_form }}
 
     <nav class="section-nav variant-editor__currencies" role="tablist" aria-label="Currency of the prices">
@@ -38,27 +30,19 @@
 
     <div class="variant-shared">
       <p class="variant-shared__name">
-        <span class="variant-shared__when-one">Price</span>
-        <span class="variant-shared__when-each">
-          All variants
-          <span class="info-dot" tabindex="0" title="A price typed here becomes every variant's price when you save. It stays empty.">?</span>
-        </span>
+        Price
+        <span class="info-dot" tabindex="0" title="Every variant whose coin is off is sold at this price. Switch a variant's coin on to give it its own.">?</span>
       </p>
-      {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=prices.all_retail_eur sek=prices.all_retail_sek only %}
-      {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=prices.all_business_eur sek=prices.all_business_sek only %}
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=prices.product_retail_eur sek=prices.product_retail_sek only %}
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=prices.product_business_eur sek=prices.product_business_sek only %}
     </div>
-
-    <label class="button button--sm button--soft button--tone-place variant-editor__individual" for="{{ prices.individual_prices.id_for_label }}">
-      {{ prices.individual_prices }}
-      <span class="variant-shared__when-one">Set a price per variant</span>
-      <span class="variant-shared__when-each">One price for all variants</span>
-    </label>
 
     <div class="variant-rows__head" aria-hidden="true">
       <span></span>
       <span>Label</span>
       <span>Weight (g)</span>
       <span>Sales channels</span>
+      <span class="variant-rows__head-coin">Own price</span>
     </div>
 
     <ol class="variant-rows" data-variant-rows>

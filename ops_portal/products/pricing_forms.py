@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import replace
 from decimal import Decimal
 
 from django import forms
@@ -76,8 +75,8 @@ def _active_toggle(
     return field
 
 
-# A variant's prices: (field, channel, currency). The product form's
-# shared row has the same fields with "all_" before them.
+# A variant's prices: (field, channel, currency). The product's price on
+# the edit form has the same fields with "product_" before them.
 PRICE_FIELDS = (
     ("retail_eur", CommercialPrice.Channel.RETAIL, PriceAmount.Currency.EUR),
     ("retail_sek", CommercialPrice.Channel.RETAIL, PriceAmount.Currency.SEK),
@@ -87,59 +86,71 @@ PRICE_FIELDS = (
 
 
 class ProductPricesForm(forms.Form):
-    """The prices over the variants on the edit form.
+    """The product's price over the variants on the edit form: saved as the
+    price of every variant without its own (a row's coin switched off;
+    variant_forms.VariantForm.own_price). An empty field removes that
+    price from them."""
 
-    "Price per variant" off: one price for the whole product (the shared
-    row, filled with it), saved as every variant's. On: each variant has its
-    own price line, and the shared row becomes "All variants", never filled
-    in: a price typed there is every variant's once saved.
-    """
+    product_retail_eur = price_field(label="Retail price in EUR")
+    product_retail_sek = price_field(label="Retail price in SEK")
+    product_business_eur = price_field(label="Business price in EUR")
+    product_business_sek = price_field(label="Business price in SEK")
 
-    individual_prices = forms.BooleanField(
-        required=False,
-        label="Price per variant",
-        widget=forms.CheckboxInput(
-            attrs={
-                "class": "product-tag-toggle__input",
-                "data-individual-prices": "true",
+    def prices_for(self, row) -> VariantPrices:
+        """A variant's prices once saved: its own, or the product's."""
+
+        if row.cleaned_data.get("own_price"):
+            return row.prices()
+
+        return VariantPrices(
+            **{
+                field_name: self.cleaned_data.get(f"product_{field_name}")
+                for field_name, _channel, _currency in PRICE_FIELDS
             }
-        ),
-    )
-
-    all_retail_eur = price_field(label="Retail price in EUR")
-    all_retail_sek = price_field(label="Retail price in SEK")
-    all_business_eur = price_field(label="Business price in EUR")
-    all_business_sek = price_field(label="Business price in SEK")
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-        for field_name, _channel, _currency in PRICE_FIELDS:
-            self.fields[f"all_{field_name}"].widget.attrs["placeholder"] = (
-                "0.00"
-            )
-
-    @property
-    def individual(self) -> bool:
-        return bool(self.cleaned_data.get("individual_prices"))
-
-    def prices_for(self, own: VariantPrices) -> VariantPrices:
-        """A variant's prices once saved: the product's (price per variant
-        off: the shared row, an empty field removing that price), or its
-        own with what was typed in "All variants" over them."""
-
-        shared = {
-            field_name: self.cleaned_data.get(f"all_{field_name}")
-            for field_name, _channel, _currency in PRICE_FIELDS
-        }
-
-        if not self.individual:
-            return VariantPrices(**shared)
-
-        return replace(
-            own,
-            **{name: value for name, value in shared.items() if value is not None},
         )
+
+
+def variant_amounts(
+    *,
+    prices_by_channel: dict[str, dict[int, CommercialPrice]],
+    variant_id: int,
+) -> dict[str, Decimal | None]:
+    """A variant's standard prices, by field (PRICE_FIELDS)."""
+
+    return {
+        field_name: offer_amount(
+            prices_by_channel.get(channel, {}).get(variant_id),
+            currency=currency,
+        )
+        for field_name, channel, currency in PRICE_FIELDS
+    }
+
+
+def product_amounts(
+    *,
+    prices_by_channel: dict[str, dict[int, CommercialPrice]],
+    variant_ids: list[int],
+) -> dict[str, Decimal | None]:
+    """The product's price as the page shows it: the prices most variants
+    share (on a tie, the first variant's). Nothing stores it apart: a
+    variant whose prices differ has its own."""
+
+    best: dict[str, Decimal | None] = {
+        field_name: None for field_name, _channel, _currency in PRICE_FIELDS
+    }
+    best_count = 0
+    per_variant = [
+        variant_amounts(prices_by_channel=prices_by_channel, variant_id=pk)
+        for pk in variant_ids
+    ]
+
+    for amounts in per_variant:
+        count = per_variant.count(amounts)
+
+        if count > best_count:
+            best, best_count = amounts, count
+
+    return best
 
 
 def build_product_prices_initial_data(
@@ -147,27 +158,12 @@ def build_product_prices_initial_data(
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
     variant_ids: list[int],
 ) -> dict[str, object]:
-    """Price per variant on when the variants' prices differ; off, the
-    shared row shows the product's price."""
-
-    def amounts(variant_id: int) -> dict[str, Decimal | None]:
-        return {
-            field_name: offer_amount(
-                prices_by_channel.get(channel, {}).get(variant_id),
-                currency=currency,
-            )
-            for field_name, channel, currency in PRICE_FIELDS
-        }
-
-    per_variant = [amounts(variant_id) for variant_id in variant_ids]
-    individual = any(prices != per_variant[0] for prices in per_variant[1:])
-
-    if individual or not per_variant:
-        return {"individual_prices": individual}
-
     return {
-        "individual_prices": False,
-        **{f"all_{name}": value for name, value in per_variant[0].items()},
+        f"product_{field_name}": value
+        for field_name, value in product_amounts(
+            prices_by_channel=prices_by_channel,
+            variant_ids=variant_ids,
+        ).items()
     }
 
 

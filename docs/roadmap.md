@@ -20,10 +20,11 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   the cross or the icon, back to the page before. Plain navigation where
   the browser has no View Transitions. The cart is already on the server;
   half-filled contact details are kept in the session.
-- **Prices per variant**: "Price per variant" off, the product has one
-  price, saved as every variant's; on, each variant has its own, and a
-  price typed in "All variants" overwrites them all. Each variant has its
-  own sales channels (retail, business); in neither, it is paused.
+- **Prices per variant**: the product has one price, every variant's
+  unless the variant's coin is on: then it has its own. Nothing stores the
+  product's price apart: the page shows the prices most variants share.
+  Each variant has its own sales channels (retail, business); in neither,
+  it is paused.
 - **Edit pages**: sections open one under the other (no folding), the
   important parts behind a lock in the page (the product's data, its
   variants and offers); saving comes back to the same page.
@@ -116,10 +117,10 @@ mobile).
 ingredients under one tab per language.
 
 **Edit page**: Product behind a lock, then **Variants and offers** behind
-one: EUR / SEK as tabs; the product's price (or "All variants") with the
-price-per-variant button under it; then a row per variant: arrows, label,
-weight, sales channels (Retail, Business), and its own prices on a second
-line with a price per variant; "+ Add variant" as a faint last row.
+one: EUR / SEK as tabs; the product's price; then a row per variant:
+arrows (up at the top, down at the bottom), label, weight, sales channels
+(Retail, Business), its coin (own price on or off) and, with the coin on,
+its own prices on a second line; "+ Add variant" as a faint last row.
 
 ## Done
 
