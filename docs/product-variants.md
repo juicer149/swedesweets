@@ -117,12 +117,13 @@ fall back to the order they were added in.
 - **Edit** has **Variants and offers**, behind one lock like Product:
   - EUR / SEK as two small tabs (which currency's prices show);
   - the product's price: every variant's without a price of its own;
-  - a card per variant (edged in the accent): arrows to move it (up at its top, down at its
-    bottom), label, weight, its sales channels (Retail, Business; in
-    neither it is paused), its price (what it sells at, in the shown
-    currency) with a tag: off, the product's price; on (green), its own:
-    the row turns yellow and its prices slide open in a box under it;
-    delete (only without history, rule 6);
+  - a card per variant (rounded, edged in the accent): arrows to move it
+    (up at its top, down at its bottom), label, weight, its sales
+    channels (Retail, Business; in neither it is paused), delete (only
+    without history, rule 6); under the channels its price (what it sells
+    at in the shown currency; a channel that is off shows none) with a
+    tag: off, the product's price; on (green), its own: the card turns
+    yellow and a tab with its prices slides out under it;
   - a faint "+ Add variant" row under the last one;
   - saved with "Update product".
   Suggested labels (XS, S, M, L, XL, XXL, One size) come as a datalist; any

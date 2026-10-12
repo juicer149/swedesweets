@@ -119,8 +119,8 @@ ingredients under one tab per language.
 **Edit page**: Product behind a lock, then **Variants and offers** behind
 one: EUR / SEK as tabs; the product's price; then a row per variant:
 arrows (up at the top, down at the bottom), label, weight, sales channels
-(Retail, Business), its price with the tag for its own (on: the row
-turns yellow and its prices slide open under it); "+ Add variant" as a
+(Retail, Business), and under them its price with the tag for its own
+(on: the card turns yellow and a tab with its prices slides out under it); "+ Add variant" as a
 faint last row.
 
 ## Done

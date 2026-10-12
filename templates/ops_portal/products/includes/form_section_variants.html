@@ -6,12 +6,12 @@
   (both are kept and sent). Then the product's price: every variant's
   without its own (a row's tag switched off).
 
-  Then a row per variant: the arrows that move it (up at its top, down at
-  its bottom), label, weight, its sales channels (Retail, Business: where
-  it is sold; neither, it is paused), its price with the tag that gives it
-  its own, the trash; under them the SKU and, with its own price, its
-  prices. Last, a faint row
-  "+ Add variant": it becomes a new row, and moves down under it.
+  Then a card per variant (variant_row.html): the arrows that move it,
+  label, weight, its sales channels (Retail, Business: where it is sold;
+  neither, it is paused), the trash; under them the SKU and its price with
+  the tag that gives it its own: then the card turns yellow and a tab
+  with its prices slides out under it. Last, a faint row "+ Add variant":
+  it becomes a new card, and moves down under it.
 {% endcomment %}
 {% with formset=variant_formset prices=prices_form %}
   <div class="variant-editor" data-variant-editor data-currency="eur">
@@ -43,7 +43,6 @@
       <span>Label</span>
       <span>Weight (g)</span>
       <span>Sales channels</span>
-      <span>Price</span>
     </div>
 
     <ol class="variant-rows" data-variant-rows>

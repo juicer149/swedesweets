@@ -128,40 +128,52 @@
 }
 
 /* -----------------------------------------------------------------------------
-   The rows: arrows, label, weight, sales channels, price, trash; under
-   them the SKU and, with its own price, the variant's prices. Label and
-   weight are short (S, M, 450), so their columns are narrow.
+   The variants: a card each (arrows, label, weight, sales channels, trash;
+   under them the SKU and, under the channels, its price), and with its own
+   price a tab under the card with the variant's prices. Label and weight
+   are short (S, M, 450), so their columns are narrow.
    ----------------------------------------------------------------------------- */
 
-/* arrows | label | weight | channels | price | trash */
+.variant-editor {
+  --variant-pad: var(--space-4);
+  --variant-gap: var(--space-4);
+  --variant-col-move: 1.75rem;
+  --variant-col-label: 7rem;
+  --variant-col-weight: 5rem;
+  --variant-radius: 16px;
+  /* Where the sales channels start in a card: the tab starts there too. */
+  --variant-tab-inset: calc(
+    var(--variant-pad) + 1px + var(--variant-col-move)
+    + var(--variant-col-label) + var(--variant-col-weight)
+    + 3 * var(--variant-gap)
+  );
+}
+
+/* arrows | label | weight | channels | trash */
 .variant-rows__head,
-.variant-row {
+.variant-row__card {
   display: grid;
   grid-template-columns:
-    1.75rem
-    6rem
-    4.5rem
-    10.25rem
+    var(--variant-col-move)
+    var(--variant-col-label)
+    var(--variant-col-weight)
     minmax(0, 1fr)
     2.25rem;
-  column-gap: var(--space-2);
+  column-gap: var(--variant-gap);
   align-items: center;
 }
 
 /* Over the cards: their columns, past each card's edge and border. */
 .variant-rows__head {
-  padding: 0 calc(var(--space-4) + 1px) var(--space-2);
+  padding: 0 calc(var(--variant-pad) + 1px) var(--space-2);
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
   font-weight: 700;
 }
 
-/* Each variant a card of its own, edged in the accent; with its own price
-   the edge is the full accent and the card yellow like the product's
-   price over the list. */
 .variant-rows {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -169,19 +181,26 @@
 
 .variant-row {
   --line-flash-room: 0px;
+}
 
-  row-gap: var(--space-2);
-  padding: var(--space-4);
+/* The card, edged in the accent; with its own price the edge is the full
+   accent and the card yellow like the product's price over the list. */
+.variant-row__card {
+  /* Over the tab's top edge, so the card's own edge runs on. */
+  position: relative;
+  z-index: 1;
+  row-gap: var(--space-3);
+  padding: var(--variant-pad);
   background: rgb(255 255 255 / 0.45);
   border: 1px solid color-mix(in srgb, var(--color-accent-600) 38%, transparent);
-  border-radius: var(--radius-card-inner);
+  border-radius: var(--variant-radius);
   transition:
     background var(--motion-fast),
     border-color var(--motion-fast);
 }
 
-.variant-row:has([data-variant-own-price]:checked) {
-  background: color-mix(in srgb, var(--color-accent-600) 9%, transparent);
+.variant-row:has([data-variant-own-price]:checked) .variant-row__card {
+  background: color-mix(in srgb, var(--color-accent-600) 12%, var(--color-neutral-50));
   border-color: var(--color-accent-600);
 }
 
@@ -247,6 +266,8 @@
 .variant-row__channels {
   display: flex;
   gap: var(--space-2);
+  grid-row: 1;
+  grid-column: 4;
 }
 
 .variant-row__channels .product-tag-toggle__surface {
@@ -266,22 +287,19 @@
 
 .variant-row__sku {
   grid-row: 2;
-  grid-column: 2 / -1;
+  grid-column: 2 / 4;
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
   font-weight: 600;
 }
 
-/* The variant's own prices, a box set in under the label. It shows with
-   its own price on (or an error in it); variant_editor.js slides it open
-   and shut (as js/smooth-details.js does), keeping it shown while it
-   shuts (is-closing). No row gap above it: the box's own margin, so the
-   slide starts from nothing. */
+/* The tab under the card: the variant's own prices, from under the sales
+   channels, left-aligned. It shows with its own price on (or an error in
+   it); variant_editor.js slides it out and back (as js/smooth-details.js
+   does), keeping it shown while it goes back (is-closing). */
 .variant-row__prices {
   display: none;
-  grid-row: 3;
-  grid-column: 2 / -1;
-  margin-top: calc(-1 * var(--space-2));
+  margin: -1px var(--variant-radius) 0 var(--variant-tab-inset);
 }
 
 .variant-row:has([data-variant-own-price]:checked) .variant-row__prices,
@@ -293,12 +311,23 @@
 .variant-row__prices-box {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3) var(--space-6);
-  margin: var(--space-4) 0 0 var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  background: color-mix(in srgb, var(--color-neutral-50) 75%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-accent-600) 28%, transparent);
-  border-radius: var(--radius-control);
+  justify-content: flex-start;
+  gap: var(--space-2) var(--space-4);
+  padding: calc(var(--space-3) + 1px) var(--space-3) var(--space-3);
+  background: rgb(255 255 255 / 0.7);
+  border: 1px solid var(--color-accent-600);
+  border-top: 0;
+  border-radius: 0 0 var(--radius-card-inner) var(--radius-card-inner);
+}
+
+.variant-row__prices-box .variant-price__input {
+  width: 5.5rem;
+}
+
+.variant-row__prices-box input:not([type="checkbox"], [type="hidden"]) {
+  min-height: 2.25rem;
+  padding-block: 0.35rem;
+  font-size: var(--font-size-14);
 }
 
 /* Up at the row's top, down at its bottom, beside all its lines. */
@@ -351,15 +380,18 @@
 }
 
 /* -----------------------------------------------------------------------------
-   The row's price: the tag that gives the variant its own (a round switch,
-   green when on, like the sales channels), and beside it what the variant
-   sells at in the editor's currency; a channel it is not sold in dims.
+   The variant's price, under its sales channels: the tag that gives it its
+   own (a round switch, green when on, like the sales channels), and beside
+   it what it sells at in the editor's currency.
    ----------------------------------------------------------------------------- */
 
+/* Under the sales channels. */
 .variant-row__price {
+  grid-row: 2;
+  grid-column: 4 / -1;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   min-width: 0;
 }
 
@@ -418,7 +450,9 @@
 }
 
 .variant-row__price-summary {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-4);
   min-width: 0;
   font-size: var(--font-size-14);
   font-weight: 700;
@@ -505,30 +539,34 @@
 }
 
 /* -----------------------------------------------------------------------------
-   Phones: each row stacks: label and weight, the channels and the price,
-   the SKU with arrows and trash, then its own prices; the field labels
-   show.
+   Phones: each card stacks: label and weight, the channels, the price,
+   then the SKU with arrows and trash; the tab under it a little in from
+   both sides; the field labels show.
    ----------------------------------------------------------------------------- */
 
 @media (max-width: 640px) {
+  .variant-editor {
+    --variant-pad: var(--space-3);
+    --variant-gap: var(--space-2);
+  }
+
   .variant-rows__head {
     display: none;
   }
 
-  .variant-row {
-    padding: var(--space-3);
+  .variant-row__card {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
     grid-template-areas:
       "label label weight weight"
-      "channels channels price price"
-      "sku sku move remove"
-      "prices prices prices prices";
+      "channels channels channels channels"
+      "price price price price"
+      "sku sku move remove";
   }
 
   .variant-row__label { grid-area: label; }
   .variant-row__weight { grid-area: weight; }
   .variant-row__channels { grid-area: channels; }
-  .variant-row__prices { grid-area: prices; }
+  .variant-row__price { grid-area: price; }
   .variant-row__sku { grid-area: sku; }
   .variant-row__move {
     grid-area: move;
@@ -537,8 +575,11 @@
     gap: var(--space-1);
   }
 
-  .variant-row__price { grid-area: price; justify-self: end; }
   .variant-row__remove { grid-area: remove; }
+
+  .variant-row__prices {
+    margin-inline: var(--space-4);
+  }
 
   .variant-row__field-label {
     position: static;
