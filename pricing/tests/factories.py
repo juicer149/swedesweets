@@ -8,7 +8,7 @@ from django.utils import timezone
 from inventory.models import InventoryBatch
 from inventory.tests.factories import batch_factory
 from pricing.models import CommercialPrice, PriceAmount
-from products.models import Product
+from products.models import Product, ProductVariant
 from products.tests.factories import product_factory
 
 
@@ -46,12 +46,19 @@ def commercial_price_factory(
     channel: str = CommercialPrice.Channel.RETAIL,
     reason: str = "",
     enabled: bool = False,
+    variant: ProductVariant | None = None,
 ) -> CommercialPrice:
     if product is None:
-        product = batch.product if batch is not None else pricing_product_factory()
+        if variant is not None:
+            product = variant.product
+        elif batch is not None:
+            product = batch.product
+        else:
+            product = pricing_product_factory()
 
     return CommercialPrice.objects.create(
         product=product,
+        variant=variant,
         batch=batch,
         channel=channel,
         reason=reason,

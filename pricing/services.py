@@ -8,7 +8,7 @@ from django.db import IntegrityError, transaction
 from inventory.models import InventoryBatch
 from pricing.errors import InvalidCommercialPrice
 from pricing.models import CommercialPrice, PriceAmount
-from products.models import Product
+from products.models import Product, ProductVariant
 
 
 def _to_decimal(
@@ -51,16 +51,19 @@ def create_commercial_price(
     channel: str,
     batch: InventoryBatch | None = None,
     reason: str = "",
+    variant: ProductVariant | None = None,
 ) -> CommercialPrice:
-    """Create disabled commercial pricing for one product scope."""
+    """Create disabled commercial pricing for one scope: a batch, or a
+    variant's standard offer (`variant`, or the product's only one)."""
 
     existing_prices = CommercialPrice.objects.filter(
         channel=channel,
     )
 
     if batch is None:
+        variant = variant or _only_variant(product)
         duplicate_exists = existing_prices.filter(
-            product=product,
+            variant=variant,
             batch__isnull=True,
         ).exists()
     else:
@@ -75,6 +78,7 @@ def create_commercial_price(
 
     commercial_price = CommercialPrice(
         product=product,
+        variant=variant if batch is None else None,
         batch=batch,
         channel=channel,
         reason=reason,
@@ -229,10 +233,12 @@ def set_commercial_price_enabled(
 @transaction.atomic
 def ensure_standard_offer(
     *,
-    product: Product,
     channel: str,
+    product: Product | None = None,
+    variant: ProductVariant | None = None,
 ) -> CommercialPrice:
-    """Return the product-wide standard offer for a channel, creating it if missing.
+    """Return a variant's standard offer for a channel, creating it if
+    missing. The variant is `variant`, or the only one of `product`.
 
     Idempotent. A newly created standard offer is enabled, because before
     explicit offers existed every active product with stock was orderable in
@@ -256,10 +262,18 @@ def ensure_standard_offer(
             "for the business channel"
         )
 
+    if variant is None:
+        if product is None:
+            raise InvalidCommercialPrice(
+                "a standard offer needs a product or a variant"
+            )
+
+        variant = _only_variant(product)
+
     existing = (
         CommercialPrice.objects
         .filter(
-            product=product,
+            variant=variant,
             channel=channel,
             batch__isnull=True,
         )
@@ -272,7 +286,8 @@ def ensure_standard_offer(
     try:
         with transaction.atomic():
             return CommercialPrice.objects.create(
-                product=product,
+                product_id=variant.product_id,
+                variant=variant,
                 batch=None,
                 channel=channel,
                 reason="",
@@ -280,9 +295,22 @@ def ensure_standard_offer(
             )
     except IntegrityError:
         # A concurrent caller created it between the read and the insert;
-        # unique_product_price_per_channel guarantees there is exactly one.
+        # unique_variant_price_per_channel guarantees there is exactly one.
         return CommercialPrice.objects.get(
-            product=product,
+            variant=variant,
             channel=channel,
             batch__isnull=True,
         )
+
+
+def _only_variant(product: Product) -> ProductVariant:
+    """The variant a product-wide call means: the product's only one."""
+
+    variant = product.only_variant()
+
+    if variant is None:
+        raise InvalidCommercialPrice(
+            "choose which variant of the product this price is for"
+        )
+
+    return variant

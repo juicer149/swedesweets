@@ -981,6 +981,11 @@ def _get_retail_price_and_amount(
             "product is not enabled for retail"
         )
 
+    if not commercial_price.variant.active:
+        raise InvalidRetailOrder(
+            "variant is not enabled for retail"
+        )
+
     try:
         amount = commercial_price.amounts.get(
             currency=currency,

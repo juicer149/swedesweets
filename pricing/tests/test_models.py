@@ -79,7 +79,7 @@ def test_product_can_have_separate_business_and_retail_prices():
 
 
 @pytest.mark.django_db(transaction=True)
-def test_product_can_have_only_one_product_wide_price_per_channel():
+def test_a_variant_can_have_only_one_standard_price_per_channel():
     product = pricing_product_factory()
 
     commercial_price_factory(

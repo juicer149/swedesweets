@@ -139,6 +139,7 @@ def _commercially_eligible_business_offer_ids(
             channel=CommercialPrice.Channel.BUSINESS,
             enabled=True,
             product__active=True,
+            variant__active=True,
         )
         .filter(
             Q(batch__isnull=True)

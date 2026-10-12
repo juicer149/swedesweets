@@ -13,7 +13,7 @@ from payments.models import PaymentAttempt
 from pricing.models import CommercialPrice
 from pricing.selectors import (
     get_batch_price_amount,
-    get_product_price_amount,
+    get_offer_price_amount,
     list_orderable_batches_for_offer,
 )
 from retail.models import RetailCheckoutSession
@@ -46,9 +46,10 @@ def list_batches_for_retail_price(
             currency=currency,
         )
     else:
-        amount = get_product_price_amount(
-            product=commercial_price.product,
-            channel=CommercialPrice.Channel.RETAIL,
+        # A variant's standard offer: its own amount (a product with
+        # several variants has one such offer per variant).
+        amount = get_offer_price_amount(
+            offer=commercial_price,
             currency=currency,
         )
 

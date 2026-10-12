@@ -13,7 +13,8 @@ from products.models import ProductVariant
 class CommercialPrice(models.Model):
     """Current commercial pricing policy for one product scope and sales channel.
 
-    A row without a batch applies to the product's ordinary eligible stock pool.
+    A row without a batch is a variant's standard offer: it applies to that
+    variant's ordinary eligible stock pool.
 
     A row with a batch applies only to that exact physical batch and may
     override the product-wide price for the same channel.
@@ -81,13 +82,8 @@ class CommercialPrice(models.Model):
             models.Index(fields=["batch", "channel"]),
         ]
         constraints = [
-            # One standard offer per product and channel, until the code
-            # that looks it up by product reads it by variant (steps 5-6).
-            models.UniqueConstraint(
-                fields=["product", "channel"],
-                condition=Q(batch__isnull=True),
-                name="unique_product_price_per_channel",
-            ),
+            # One standard offer per variant and channel (a product with
+            # several variants has one per variant).
             models.UniqueConstraint(
                 fields=["variant", "channel"],
                 condition=Q(batch__isnull=True),

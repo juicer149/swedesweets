@@ -10,7 +10,7 @@ from inventory.expiry import orderable_best_before_cutoff
 from inventory.models import InventoryBatch
 from inventory.selectors import list_orderable_batches_for_product
 from pricing.models import CommercialPrice, PriceAmount
-from products.models import Product
+from products.models import Product, ProductVariant
 
 
 def _filter_channels(
@@ -31,7 +31,9 @@ def get_product_commercial_price(
     product: Product,
     channel: str,
 ) -> CommercialPrice | None:
-    """Return the product-wide pricing definition for one sales channel.
+    """Return a product's standard offer for one sales channel: its first
+    variant's (the only one's, while it has one). Per variant:
+    get_variant_commercial_price, standard_prices_by_variant_id.
 
     Disabled pricing is deliberately included because ops needs to edit the
     configured definition, not only resolve currently sellable pricing.
@@ -45,8 +47,50 @@ def get_product_commercial_price(
             batch__isnull=True,
             channel=channel,
         )
+        .order_by("variant__position", "variant_id")
         .first()
     )
+
+
+def get_variant_commercial_price(
+    *,
+    variant: ProductVariant,
+    channel: str,
+) -> CommercialPrice | None:
+    """Return one variant's standard offer for a channel, enabled or not."""
+
+    return (
+        CommercialPrice.objects
+        .prefetch_related("amounts")
+        .filter(
+            variant=variant,
+            batch__isnull=True,
+            channel=channel,
+        )
+        .first()
+    )
+
+
+def standard_prices_by_variant_id(
+    *,
+    product: Product,
+    channel: str,
+) -> dict[int, CommercialPrice]:
+    """Each variant's standard offer for a channel, enabled or not (the
+    ops product page and form); a variant without one is left out."""
+
+    return {
+        price.variant_id: price
+        for price in (
+            CommercialPrice.objects
+            .prefetch_related("amounts")
+            .filter(
+                product=product,
+                batch__isnull=True,
+                channel=channel,
+            )
+        )
+    }
 
 def get_batch_commercial_price(
     *,
@@ -76,7 +120,8 @@ def get_product_price_amount(
     channel: str,
     currency: str,
 ) -> PriceAmount | None:
-    """Return the enabled product-wide amount for one channel and currency."""
+    """Return the enabled standard amount for one channel and currency: the
+    first variant's that has one (the only variant's, while there is one)."""
 
     return (
         PriceAmount.objects
@@ -91,7 +136,32 @@ def get_product_price_amount(
             commercial_price__enabled=True,
             currency=currency,
         )
+        .order_by(
+            "commercial_price__variant__position",
+            "commercial_price__variant_id",
+        )
         .first()
+    )
+
+
+def get_offer_price_amount(
+    *,
+    offer: CommercialPrice,
+    currency: str,
+) -> PriceAmount | None:
+    """Return an enabled offer's own amount in a currency (None when the
+    offer is disabled or has no amount in it)."""
+
+    if not offer.enabled:
+        return None
+
+    return next(
+        (
+            amount
+            for amount in offer.amounts.all()
+            if amount.currency == currency
+        ),
+        None,
     )
 
 
@@ -171,7 +241,8 @@ def list_orderable_batches_for_offer(
     themselves before calling; callers that allow an unpriced standard offer
     (business) simply don't.
 
-    A disabled offer, or an offer for an inactive product, has no pool.
+    A disabled offer, or an offer for an inactive product or a paused
+    variant, has no pool.
 
     A batch-specific offer's pool is exactly its own batch.
 
@@ -184,7 +255,12 @@ def list_orderable_batches_for_offer(
 
     today = today or timezone.localdate()
 
-    if not offer.enabled or not offer.product.active:
+    if (
+        not offer.enabled
+        or not offer.product.active
+        or not offer.variant.active
+    ):
+        # A paused variant is left out of catalogs and new orders.
         return InventoryBatch.objects.none()
 
     if offer.batch_id is not None:
