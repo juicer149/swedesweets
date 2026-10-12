@@ -57,7 +57,8 @@
     Its price: the tag switches its own price on (green, the row turns
     yellow and its prices slide open under it) or off (the product's). Beside
     it what the variant sells at, in the editor's currency
-    (variant_editor.js fills it in).
+    (variant_editor.js fills it in). A sales channel switched off hides its
+    price, here and in the box (css/variants.css).
   {% endcomment %}
   <div class="variant-row__price">
     <label class="variant-price-toggle" for="{{ row.own_price.id_for_label }}" title="Own price: on, this variant has prices of its own; off, the product's price">
@@ -70,6 +71,7 @@
     <span class="variant-row__price-summary" data-variant-price-summary aria-hidden="true">
       <span class="variant-row__price-line" data-summary-channel="retail"><span class="variant-row__price-caption">Retail</span> <span data-summary-value>—</span></span>
       <span class="variant-row__price-line" data-summary-channel="business"><span class="variant-row__price-caption">Business</span> <span data-summary-value>—</span></span>
+      <span class="variant-row__price-line variant-row__price-paused">Paused</span>
     </span>
   </div>
 
@@ -97,8 +99,9 @@
 
   <div class="variant-row__prices" data-variant-prices>
     <div class="variant-row__prices-box">
-      {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" eur=row.retail_eur sek=row.retail_sek only %}
-      {% include "ops_portal/products/includes/variant_price.html" with caption="Business" eur=row.business_eur sek=row.business_sek only %}
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" channel="retail" eur=row.retail_eur sek=row.retail_sek only %}
+      {% include "ops_portal/products/includes/variant_price.html" with caption="Business" channel="business" eur=row.business_eur sek=row.business_sek only %}
+      <p class="variant-row__prices-none">In no sales channel: switch one on to price it.</p>
     </div>
   </div>
 

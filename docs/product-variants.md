@@ -117,7 +117,7 @@ fall back to the order they were added in.
 - **Edit** has **Variants and offers**, behind one lock like Product:
   - EUR / SEK as two small tabs (which currency's prices show);
   - the product's price: every variant's without a price of its own;
-  - a row per variant: arrows to move it (up at its top, down at its
+  - a card per variant (edged in the accent): arrows to move it (up at its top, down at its
     bottom), label, weight, its sales channels (Retail, Business; in
     neither it is paused), its price (what it sells at, in the shown
     currency) with a tag: off, the product's price; on (green), its own:

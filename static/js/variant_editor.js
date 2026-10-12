@@ -9,7 +9,8 @@
     same time and easing); switched on with none typed yet, they start
     from the product's price. Off, they slide shut.
   - Each row says what it sells at in the editor's currency: its own
-    prices, or the product's; a channel it is not sold in dims.
+    prices, or the product's (a channel it is not sold in is hidden by
+    css/variants.css).
   - The trash asks, then the row flashes red and folds away (line_flash.js)
     and is marked for deletion on save; a row not saved yet just goes.
   - "+ Add variant" copies the template row as a new formset form at the
@@ -60,12 +61,10 @@
           ? row.querySelector(`input[name$="-${key}"]`)
           : editor.querySelector(`input[name="product_${key}"]`);
         const value = input ? input.value.trim() : "";
-        const sold = row.querySelector(`input[name$="-${channel}"][type="checkbox"]`);
 
         line.querySelector("[data-summary-value]").textContent = value
           ? `${value} ${signs[currency]}`
           : "—";
-        line.classList.toggle("is-off", Boolean(sold && !sold.checked));
       });
     }
 

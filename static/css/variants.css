@@ -146,35 +146,43 @@
     2.25rem;
   column-gap: var(--space-2);
   align-items: center;
-  padding-inline: var(--space-2);
 }
 
+/* Over the cards: their columns, past each card's edge and border. */
 .variant-rows__head {
-  padding-bottom: var(--space-2);
+  padding: 0 calc(var(--space-4) + 1px) var(--space-2);
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
   font-weight: 700;
 }
 
+/* Each variant a card of its own, edged in the accent; with its own price
+   the edge is the full accent and the card yellow like the product's
+   price over the list. */
 .variant-rows {
+  display: grid;
+  gap: var(--space-3);
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--color-neutral-200);
 }
 
 .variant-row {
-  --line-flash-room: calc(-1 * var(--space-2));
+  --line-flash-room: 0px;
 
   row-gap: var(--space-2);
-  padding-block: var(--space-4);
-  border-bottom: 1px solid var(--color-neutral-200);
-  transition: background var(--motion-fast);
+  padding: var(--space-4);
+  background: rgb(255 255 255 / 0.45);
+  border: 1px solid color-mix(in srgb, var(--color-accent-600) 38%, transparent);
+  border-radius: var(--radius-card-inner);
+  transition:
+    background var(--motion-fast),
+    border-color var(--motion-fast);
 }
 
-/* Its own price: yellow like the product's price over the list. */
 .variant-row:has([data-variant-own-price]:checked) {
   background: color-mix(in srgb, var(--color-accent-600) 9%, transparent);
+  border-color: var(--color-accent-600);
 }
 
 /* Deleted, waiting for Save: gone from the list (still sent). */
@@ -424,8 +432,33 @@
   font-weight: 600;
 }
 
-.variant-row__price-line.is-off {
-  opacity: 0.45;
+/* A sales channel switched off: its price is not shown, in the summary
+   or in the box; in neither channel the variant is paused. */
+.variant-row:has(input[name$="-retail"]:not(:checked)) :is(
+  [data-summary-channel="retail"],
+  [data-price-channel="retail"]
+),
+.variant-row:has(input[name$="-business"]:not(:checked)) :is(
+  [data-summary-channel="business"],
+  [data-price-channel="business"]
+),
+.variant-row__price-paused,
+.variant-row__prices-none {
+  display: none;
+}
+
+.variant-row:has(input[name$="-retail"]:not(:checked)):has(
+  input[name$="-business"]:not(:checked)
+) :is(.variant-row__price-paused, .variant-row__prices-none) {
+  display: block;
+}
+
+.variant-row__price-paused,
+.variant-row__prices-none {
+  margin: 0;
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  font-weight: 600;
 }
 
 /* -----------------------------------------------------------------------------
@@ -440,7 +473,7 @@
   gap: var(--space-2);
   width: 100%;
   min-height: 3.5rem;
-  margin: var(--space-2) 0 0;
+  margin: var(--space-3) 0 0;
   padding: var(--space-3);
 
   color: var(--color-neutral-600);
@@ -483,6 +516,7 @@
   }
 
   .variant-row {
+    padding: var(--space-3);
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
     grid-template-areas:
       "label label weight weight"

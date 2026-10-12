@@ -174,6 +174,8 @@ def test_the_page_opens_with_both_sections_locked(client):
     assert 'name="variants-1-retail"' in content
     assert 'name="variants-1-own_price"' in content
     assert content.count("data-variant-price-summary") == 3  # + the template
+    # Each price says its channel (hidden while that channel is off).
+    assert 'data-price-channel="business"' in content
     # No template comment leaks into the page.
     assert "{#" not in content
     assert 'name="product_retail_eur"' in content
