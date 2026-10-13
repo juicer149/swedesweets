@@ -212,6 +212,15 @@ def _line_record(line: OrderLine) -> dict[str, Any]:
     return {
         "source_line_id": line.id,
         "product": _product_ref(line.product),
+        # What was bought, as it was then (OrderLine's copy): the variant
+        # with its size.
+        "bought": {
+            "name": line.name_snapshot,
+            "sku": line.sku_snapshot,
+            "variant_label": line.variant_label_snapshot,
+            "weight_per_unit": line.weight_per_unit_snapshot,
+            "stock_unit": line.stock_unit_snapshot,
+        },
         "quantity_in_units": line.quantity_in_units,
         "unit_price_snapshot": _decimal(line.unit_price_snapshot),
         "line_total": _decimal(line.line_total),

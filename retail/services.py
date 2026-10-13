@@ -514,7 +514,7 @@ def _reserve_retail_order_lines(
             )
         except InsufficientReservationCapacity as exc:
             raise InsufficientStockError(
-                product_name=line.product.display_name,
+                product_name=line.display_name,
                 requested_quantity=exc.requested_quantity,
                 available_quantity=exc.available_quantity,
                 missing_quantity=exc.missing_quantity,

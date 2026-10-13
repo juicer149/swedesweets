@@ -87,6 +87,9 @@ def list_reserved_picks_for_order(
         .select_related(
             "batch",
             "batch__product",
+            "order_line",
+            "order_line__product",
+            "order_line__variant",
         )
         .order_by(
             "order_line_id",
@@ -118,6 +121,9 @@ def list_consumed_picks_for_order(
         .select_related(
             "batch",
             "batch__product",
+            "order_line",
+            "order_line__product",
+            "order_line__variant",
         )
         .order_by(
             "order_line_id",
@@ -190,11 +196,17 @@ def _build_reservation_pick(
     allocation: Allocation,
 ) -> ReservationPick:
     product = allocation.batch.product
+    line = allocation.order_line
 
     return ReservationPick(
         allocation_id=allocation.id,
-        sku=product.sku,
-        product_name=product.catalog_label,
+        # What was ordered, as it was then (OrderLine's copy), with its
+        # size: the one to pick.
+        sku=line.sku_snapshot or line.variant.sku,
+        product_name=(
+            f"{product.code_label} · {line.display_name} · "
+            f"{line.unit_weight_label}"
+        ),
         batch_code=allocation.batch.batch_id,
         location=allocation.batch.location,
         quantity=allocation.quantity,

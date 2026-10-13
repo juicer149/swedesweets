@@ -75,10 +75,9 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 
 - Is **brand + name** unique (two brands may each have a "Sour Mix"), or the
   name alone? Product + variant label then identifies one thing to sell.
-- **Order lines keep a copy** (name, label, SKU, weight, unit, price,
-  thumbnail path) so old orders read the same whatever happens to the
-  product. Should products then be deletable (the order line's link
-  emptied), or only archived?
+- Order lines now keep a copy of name, label, SKU, weight and unit (the
+  price was already kept; the thumbnail path is not). Should products then
+  be deletable (the order line's link emptied), or only archived?
 
 ## Next, in order
 
@@ -91,11 +90,10 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    switch; saving stays on the page. Then the other pages, one by one:
    the products list, inventory (its section nav, the batch page and its
    pricing), customers, orders, accounts.
-1. **Order lines keep a copy** of what was bought, and brand + name unique
-   (after the open questions).
+1. **Brand + name unique** (after the open questions).
 2. **Variants, step 6, the rest**: the "+" on a card opens the sizes as
    round chips (sold-out ones muted) instead of leading to the product
-   page; the variant's name on packing lists, mails and exports; merch
+   page; merch
    shows its size, not a candy weight. Sketched in Figma with the catalog
    cards.
 3. **Variants, steps 7–8**: the ops order form by variant; clean-up
@@ -188,6 +186,10 @@ the channel is off), "Use for all variants" under them; "+ Add variant"
 as a faint last row. Price changes ask for the password.
 
 ## Done
+
+- Order lines keep a copy of what was bought (`orders/0018`): the name with
+  the size, SKU, label, weight and stock unit, taken when a line is first
+  saved; mails, the pick list, the ops order page and the export read it.
 
 - Ordering by weight removed (order lines count stock units).
 - Product variants, steps 1–5: the model, batches, prices and order lines

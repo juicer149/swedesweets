@@ -467,6 +467,16 @@ class Order(models.Model):
         return f"Order {self.pk}"
 
 
+# Filled in from the variant when a line is first saved (OrderLine).
+SNAPSHOT_FIELDS = (
+    "name_snapshot",
+    "sku_snapshot",
+    "variant_label_snapshot",
+    "weight_per_unit_snapshot",
+    "stock_unit_snapshot",
+)
+
+
 class OrderLine(models.Model):
     order = models.ForeignKey(
         Order,
@@ -491,6 +501,39 @@ class OrderLine(models.Model):
 
     # How many of the product's stock unit (boxes, pieces) the line holds.
     quantity_in_units = models.PositiveIntegerField()
+
+    # What was bought, as it was then: taken from the variant when the line
+    # is first saved (snapshot_variant) and never changed after, so an old
+    # order reads the same however the product is later renamed, its
+    # variant relabelled or its weight fixed anew. Mails, the pick list,
+    # the ops order page and the export read these (docs/roadmap.md,
+    # "Order lines keep a copy").
+    name_snapshot = models.CharField(
+        # Brand — name — label (products.catalog: 160 + 160 + 40, and the
+        # separators).
+        max_length=400,
+        blank=True,
+        default="",
+    )
+    sku_snapshot = models.CharField(
+        max_length=180,
+        blank=True,
+        default="",
+    )
+    variant_label_snapshot = models.CharField(
+        max_length=40,
+        blank=True,
+        default="",
+    )
+    weight_per_unit_snapshot = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+    stock_unit_snapshot = models.CharField(
+        max_length=20,
+        blank=True,
+        default="",
+    )
 
     unit_price_snapshot = models.DecimalField(
         max_digits=10,
@@ -548,7 +591,29 @@ class OrderLine(models.Model):
                     "variant",
                 }
 
+        if not self.name_snapshot and self.variant_id is not None:
+            self.snapshot_variant()
+
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = {
+                    *kwargs["update_fields"],
+                    *SNAPSHOT_FIELDS,
+                }
+
         super().save(*args, **kwargs)
+
+    def snapshot_variant(self) -> None:
+        """Copy what is bought from its variant (and product): its name with
+        the size, SKU, label, weight and stock unit."""
+
+        variant = self.variant
+        product = variant.product
+
+        self.name_snapshot = variant.display_name
+        self.sku_snapshot = variant.sku
+        self.variant_label_snapshot = variant.label
+        self.weight_per_unit_snapshot = variant.weight_per_unit
+        self.stock_unit_snapshot = product.stock_unit
 
     def _resolve_variant(self) -> None:
         """The line's variant is its offer's (docs/product-variants.md,
@@ -573,6 +638,25 @@ class OrderLine(models.Model):
             )
 
     @property
+    def display_name(self) -> str:
+        """What was bought, "SwedeSweets — Hoodie — M", as it was named
+        when ordered."""
+
+        return self.name_snapshot or self.variant.display_name
+
+    @property
+    def unit_weight_label(self) -> str:
+        """ "450 g / Box", as it was when ordered."""
+
+        weight = self.weight_per_unit_snapshot or self.variant.weight_per_unit
+        unit = self.stock_unit_snapshot or self.product.stock_unit
+
+        return _("%(weight)s g / %(unit)s") % {
+            "weight": weight,
+            "unit": self.product.StockUnit(unit).label,
+        }
+
+    @property
     def line_total(self) -> Decimal | None:
         """Return price for the normalized stock quantity on this line."""
 
@@ -582,4 +666,4 @@ class OrderLine(models.Model):
         return self.unit_price_snapshot * self.quantity_in_units
 
     def __str__(self) -> str:
-        return f"{self.product.sku}: {self.quantity_in_units}"
+        return f"{self.sku_snapshot or self.product.sku}: {self.quantity_in_units}"

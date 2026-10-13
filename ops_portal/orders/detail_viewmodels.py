@@ -41,6 +41,10 @@ RETAIL_BUYER_LABEL = "Retail buyer"
 class OrderContentLine:
     product: Product
     product_detail_href: str
+    # What was bought, as it was then (OrderLine's copy): its name with the
+    # size, and "450 g / Box".
+    name: str
+    unit_weight_label: str
     quantity: int
     quantity_label: str
     catalog_label: str
@@ -49,11 +53,11 @@ class OrderContentLine:
     @property
     def view(self) -> LineView:
         return LineView(
-            name=self.product.display_name,
+            name=self.name,
             href=self.product_detail_href,
             image_url=self.image_url,
             metas=metas(
-                meta(f"{self.product.code_label} · {self.product.weight_label}"),
+                meta(f"{self.product.code_label} · {self.unit_weight_label}"),
             ),
             aside=self.quantity_label,
         )
@@ -400,6 +404,8 @@ def _build_content_lines(lines: list[OrderLine]) -> list[OrderContentLine]:
             OrderContentLine(
                 product=line.product,
                 product_detail_href=line_product_detail_href,
+                name=line.display_name,
+                unit_weight_label=line.unit_weight_label,
                 quantity=line.quantity_in_units,
                 quantity_label=quantity_text,
                 catalog_label=line.product.catalog_label,

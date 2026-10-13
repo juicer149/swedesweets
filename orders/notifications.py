@@ -196,7 +196,8 @@ def _mail_context(order: Order) -> dict:
     lines = [
         {
             "quantity": line.quantity_in_units,
-            "name": line.product.display_name,
+            # As it was bought, with its size (OrderLine's copy).
+            "name": line.display_name,
             "total": _price_label(line.line_total),
         }
         for line in order.lines.all()

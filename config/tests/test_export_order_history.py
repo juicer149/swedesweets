@@ -163,6 +163,10 @@ def test_export_covers_business_retail_and_cancelled_orders(
     }
     assert explicit_record["lines"][0]["unit_price_snapshot"] == "2.50"
     assert explicit_record["lines"][0]["line_total"] == "10.00"
+    # What was bought, as it was then (the line's copy).
+    bought = explicit_record["lines"][0]["bought"]
+    assert bought["sku"] == apple.variants.get().sku
+    assert bought["name"] == apple.display_name
     assert explicit_record["total"] == "10.00"
 
     retail_record = by_id[retail.id]
