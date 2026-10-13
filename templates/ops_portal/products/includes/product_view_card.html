@@ -2,11 +2,12 @@
   The product on the product page, first in its Product tab: its card with
   its picture (when it has one), brand over name and beside the name a
   label saying whether it is in the shop (and if not, what keeps it out),
-  its status and facts (its category among them). No stock here (the Inventory tab); Edit is at the
+  its facts (its category among them), and its status in the top right
+  corner. No stock here (the Inventory tab); Edit is at the
   page's foot.
 
   Context: product, heading_image_url, status_key, status_icon,
-  status_label, attribute_tags, in_shop, shop_label, profile
+  status_label, attribute_tags, shop_tone, shop_label, profile
 {% endcomment %}
 <section class="product-card product-view" aria-labelledby="product-card-title">
   {% if heading_image_url %}
@@ -17,17 +18,11 @@
     {% if product.brand %}<p class="product-card__brand">{{ product.brand }}</p>{% endif %}
     <div class="product-view__head">
       <h2 class="product-card__title product-view__title" id="product-card-title">{{ product.name }}</h2>
-      {# In the shop or not, and what keeps it out. #}
-      <span class="product-view__shop{% if in_shop %} product-view__shop--in{% endif %}">{{ shop_label }}</span>
+      {# In the shop (green), for sale with nothing to sell (red), or what keeps it out (grey). #}
+      <span class="product-view__shop product-view__shop--{{ shop_tone }}">{{ shop_label }}</span>
     </div>
 
     <p class="product-card__facts">
-      <span class="order-status order-status--{{ status_key }} product-view__status">
-        <span class="order-status__state">
-          {% include "includes/ui/icon_block.html" with name=status_icon size="sm" only %}
-          {{ status_label }}
-        </span>
-      </span>
       <span>Catalog ID <b>{{ product.internal_number|default:"—" }}</b></span>
       <span>Category <b>{{ profile.category_label|default:"—" }}</b></span>
       <span>SKU <b>{{ product.sku }}</b></span>
@@ -40,4 +35,12 @@
       {% endfor %}
     </p>
   </div>
+
+  {# Its status in the card's top right corner. #}
+  <span class="order-status order-status--{{ status_key }} product-view__status">
+    <span class="order-status__state">
+      {% include "includes/ui/icon_block.html" with name=status_icon size="sm" only %}
+      {{ status_label }}
+    </span>
+  </span>
 </section>

@@ -22,11 +22,13 @@ class PageTab:
 
 @dataclass(frozen=True, slots=True)
 class TabAction:
-    """An action at the right of the section nav, shown while its tab is
-    open (tabs.js): the product page's Edit leads to the product's form on
-    the Product tab, to the catalog's on the Catalog tab."""
+    """An action at the right of a page's foot, shown while its tab is
+    open (tabs.js; page_tabs.html): the product page's Edit leads to the
+    product's form on the Product tab, to the shop text's on Shop text."""
 
     tab: str
     href: str
     label: str = "Edit"
     icon: str = "pencil"
+    # "solid" (yellow; the tab's main action) or "outline" (beside it).
+    style: str = "solid"

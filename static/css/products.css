@@ -415,7 +415,7 @@
 }
 
 .product-card__row .product-card__field {
-  flex: 1 1 11rem;
+  flex: 0 1 18rem;
 }
 
 /* A switch (Vegan) keeps its own width. */
@@ -528,8 +528,17 @@
   margin-top: var(--space-2);
 }
 
+/* Room at the top right for its status. */
+.product-view__text {
+  padding-right: 6.5rem;
+}
+
+/* Its status in the card's top right corner. */
 .product-view__status {
-  justify-content: flex-start;
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-4);
+  justify-content: flex-end;
 }
 
 /* The name, and beside it whether it is in the shop: green, or grey
@@ -557,6 +566,13 @@
   color: var(--color-status-success-text);
   background: rgb(var(--color-status-success) / 0.2);
   border-color: rgb(var(--color-status-success) / 0.5);
+}
+
+/* For sale, nothing to sell. */
+.product-view__shop--out {
+  color: var(--color-status-danger-text);
+  background: rgb(var(--color-status-danger) / 0.1);
+  border-color: rgb(var(--color-status-danger) / 0.45);
 }
 
 @media (max-width: 640px) {

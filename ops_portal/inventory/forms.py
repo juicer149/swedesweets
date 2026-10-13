@@ -77,11 +77,12 @@ class BatchForm(forms.Form):
             "invalid": "Enter a whole number.",
             "min_value": "A new batch must contain at least 1 unit.",
         },
-        widget=forms.NumberInput(
+        # Typed, never stepped: a text field that takes digits.
+        widget=forms.TextInput(
             attrs={
-                "min": "1",
-                "step": "1",
                 "inputmode": "numeric",
+                "pattern": "[0-9]*",
+                "autocomplete": "off",
             }
         ),
     )
@@ -197,11 +198,12 @@ class BatchEditForm(forms.Form):
             "invalid": "Enter a whole number.",
             "min_value": "Quantity cannot be negative.",
         },
-        widget=forms.NumberInput(
+        # Typed, never stepped: a text field that takes digits.
+        widget=forms.TextInput(
             attrs={
-                "min": "0",
-                "step": "1",
                 "inputmode": "numeric",
+                "pattern": "[0-9]*",
+                "autocomplete": "off",
             }
         ),
     )

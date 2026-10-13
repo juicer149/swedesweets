@@ -14,7 +14,12 @@ from common.detail_cards import (
     build_secondary_get_action,
 )
 from common.page_tabs import PageTab, TabAction
-from inventory.expiry import ExpiryInfo, ExpiryState, build_expiry_info
+from inventory.expiry import (
+    ExpiryInfo,
+    ExpiryState,
+    build_expiry_info,
+    is_orderable_best_before,
+)
 from inventory.models import InventoryBatch
 from ops_portal.inventory.access import can_create_batch
 from ops_portal.products.access import (
@@ -38,9 +43,8 @@ from products.models import (
 )
 
 PRODUCT_DETAIL_TABS = (
-    # The product and what is sold (its variants and their prices), how
-    # the shop shows it, then what is on the shelf (each variant's stock
-    # and batches).
+    # The product and what is sold (its variants: their stock and
+    # prices), then its shop text.
     PageTab(
         key="product",
         label="Product",
@@ -52,12 +56,6 @@ PRODUCT_DETAIL_TABS = (
         label="Shop text",
         icon="image",
         template="ops_portal/products/includes/detail_tab_text.html",
-    ),
-    PageTab(
-        key="inventory",
-        label="Inventory",
-        icon="inventory",
-        template="ops_portal/products/includes/detail_tab_inventory.html",
     ),
 )
 
@@ -158,10 +156,24 @@ class BatchLink:
 
 
 @dataclass(frozen=True, slots=True)
+class VariantStock:
+    """A variant's stock on the product page: how many are in stock, and
+    its batches on the shelf, the soonest best-before first."""
+
+    stock_label: str
+    in_stock: bool
+    batches: tuple[BatchLink, ...]
+
+    @property
+    def has_expired_batch(self) -> bool:
+        return any(batch.expired for batch in self.batches)
+
+
+@dataclass(frozen=True, slots=True)
 class VariantCard:
     """A variant on the product page, as its card on the edit page: label,
-    weight, sales channels, its prices (its stock is on the Inventory
-    tab: VariantStock)."""
+    weight, its batches on the shelf (stock), its sales channels with their
+    prices."""
 
     label: str
     weight_label: str
@@ -174,23 +186,7 @@ class VariantCard:
     channels: tuple[ChannelOffer, ...]
     # Stock or orders: its weight can no longer change.
     weight_fixed: bool
-
-
-@dataclass(frozen=True, slots=True)
-class VariantStock:
-    """A variant on the product page's Inventory tab: how many are in
-    stock, and its batches on the shelf, the soonest best-before first."""
-
-    label: str
-    weight_label: str
-    paused: bool
-    stock_label: str
-    in_stock: bool
-    batches: tuple[BatchLink, ...]
-
-    @property
-    def has_expired_batch(self) -> bool:
-        return any(batch.expired for batch in self.batches)
+    stock: VariantStock
 
 
 CHANNELS = (
@@ -228,11 +224,13 @@ class ProductDetailContext:
         ...,
     ]
     variant_cards: tuple[VariantCard, ...]
-    variant_stocks: tuple[VariantStock, ...]
     language_texts: tuple[LanguageText, ...]
     in_shop: bool
-    # The product card's label: "In shop", or what keeps it out.
+    # The product card's label: "In shop" (green), "Out of stock" (red:
+    # for sale, nothing to sell), or "Not in shop" and what keeps it out
+    # (grey): its tone "in", "out" or "off".
     shop_label: str
+    shop_tone: str
     status_key: str
     status_label: str
     status_icon: str
@@ -246,26 +244,28 @@ class ProductDetailContext:
 
     @property
     def tab_actions(self) -> tuple[TabAction, ...]:
-        """At the page's foot, the open tab's: Edit (the product's form on
-        Product, the shop text's on Shop text), Add batch on Inventory."""
+        """At the page's foot, the open tab's: on Product, Add batch (its
+        stock is there) and Edit (the product's form); on Shop text, Edit
+        (the shop text's form)."""
 
         actions = []
+
+        if self.add_batch_href:
+            actions.append(
+                TabAction(
+                    tab="product",
+                    href=self.add_batch_href,
+                    label="Add batch",
+                    icon="plus",
+                    style="outline",
+                )
+            )
 
         if self.edit_action is not None:
             actions += [
                 TabAction(tab="product", href=f"{self.edit_action.href}#product"),
                 TabAction(tab="text", href=self.edit_catalog_href),
             ]
-
-        if self.add_batch_href:
-            actions.append(
-                TabAction(
-                    tab="inventory",
-                    href=self.add_batch_href,
-                    label="Add batch",
-                    icon="plus",
-                )
-            )
 
         return tuple(actions)
 
@@ -286,10 +286,10 @@ class ProductDetailContext:
                 self.attribute_tags
             ),
             "variant_cards": self.variant_cards,
-            "variant_stocks": self.variant_stocks,
             "language_texts": self.language_texts,
             "in_shop": self.in_shop,
             "shop_label": self.shop_label,
+            "shop_tone": self.shop_tone,
             "edit_catalog_href": self.edit_catalog_href,
             "status_key": self.status_key,
             "status_label": self.status_label,
@@ -326,7 +326,28 @@ def build_product_detail_context(
 ) -> ProductDetailContext:
     variants = list(product.variants.all())
     stock_by_variant = stock_by_variant or {}
-    total_stock = sum(stock_by_variant.get(variant.pk, 0) for variant in variants)
+    batches_by_variant = batches_by_variant or {}
+    today = today or timezone.localdate()
+    variant_cards = build_variant_cards(
+        variants=variants,
+        prices_by_channel=prices_by_channel,
+        stocks=build_variant_stocks(
+            product=product,
+            variants=variants,
+            stock_by_variant=stock_by_variant,
+            batches_by_variant=batches_by_variant,
+            today=today,
+        ),
+    )
+    shop_tone, shop_label = _shop_state(
+        product=product,
+        variants=variants,
+        variant_cards=variant_cards,
+        prices_by_channel=prices_by_channel,
+        batches_by_variant=batches_by_variant,
+        today=today,
+        in_shop=shop_product is not None,
+    )
 
     return ProductDetailContext(
         product=product,
@@ -341,26 +362,11 @@ def build_product_detail_context(
                 product
             )
         ),
-        variant_cards=build_variant_cards(
-            variants=variants,
-            prices_by_channel=prices_by_channel,
-        ),
-        variant_stocks=build_variant_stocks(
-            product=product,
-            variants=variants,
-            stock_by_variant=stock_by_variant,
-            batches_by_variant=batches_by_variant or {},
-            today=today or timezone.localdate(),
-        ),
+        variant_cards=variant_cards,
         language_texts=build_language_texts(product),
         in_shop=shop_product is not None,
-        shop_label=_shop_label(
-            product=product,
-            variants=variants,
-            prices_by_channel=prices_by_channel,
-            total_stock=total_stock,
-            in_shop=shop_product is not None,
-        ),
+        shop_label=shop_label,
+        shop_tone=shop_tone,
         status_key=(
             "active" if product.active else "inactive"
         ),
@@ -388,20 +394,37 @@ def build_product_detail_context(
     )
 
 
-def _shop_label(
+def _shop_state(
     *,
     product: Product,
     variants: list[ProductVariant],
+    variant_cards: tuple[VariantCard, ...],
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
-    total_stock: int,
+    batches_by_variant: dict[int, list[InventoryBatch]],
+    today: date,
     in_shop: bool,
-) -> str:
-    """"In shop", or "Not in shop" and what keeps it out: inactive, no
-    retail price in EUR, no stock (the shop's rules,
-    retail.catalog_selectors)."""
+) -> tuple[str, str]:
+    """The product card's label and its tone (the shop's rules,
+    retail.catalog_selectors): "In shop"; "Out of stock" when it is for
+    sale (active, a variant in a sales channel) with nothing to sell (no
+    stock, or only batches past their best-before); else "Not in shop" and
+    what keeps it out: inactive, no retail price in EUR, no stock."""
 
     if in_shop:
-        return "In shop"
+        return "in", "In shop"
+
+    sellable_stock = sum(
+        batch.quantity
+        for variant in variants
+        for batch in batches_by_variant.get(variant.pk, [])
+        if is_orderable_best_before(best_before=batch.best_before, today=today)
+    )
+    for_sale = product.active and any(
+        card.retail or card.business for card in variant_cards
+    )
+
+    if for_sale and sellable_stock <= 0:
+        return "out", "Out of stock"
 
     retail_offers = prices_by_channel.get(CommercialPrice.Channel.RETAIL, {})
     has_retail_price = any(
@@ -419,12 +442,12 @@ def _shop_label(
         for reason, missing in (
             ("inactive", not product.active),
             ("no retail price", not has_retail_price),
-            ("no stock", total_stock <= 0),
+            ("no stock", sellable_stock <= 0),
         )
         if missing
     ]
 
-    return " · ".join(["Not in shop", *gaps])
+    return "off", " · ".join(["Not in shop", *gaps])
 
 
 # A product with one variant (no label): what its card is called.
@@ -435,9 +458,14 @@ def build_variant_cards(
     *,
     variants: list[ProductVariant],
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
+    stocks: dict[int, VariantStock] | None = None,
 ) -> tuple[VariantCard, ...]:
     """The product's variants in order, as on the edit page, each with its
-    prices in the channels it is sold in."""
+    stock (`stocks`, by variant id) and its prices in the channels it is
+    sold in."""
+
+    stocks = stocks or {}
+    no_stock = VariantStock(stock_label="", in_stock=False, batches=())
 
     cards = []
 
@@ -480,6 +508,7 @@ def build_variant_cards(
                     variant.batches.exists()
                     or variant.order_lines.exists()
                 ),
+                stock=stocks.get(variant.pk, no_stock),
             )
         )
 
@@ -493,20 +522,17 @@ def build_variant_stocks(
     stock_by_variant: dict[int, int],
     batches_by_variant: dict[int, list[InventoryBatch]],
     today: date,
-) -> tuple[VariantStock, ...]:
-    """The product's variants in order, each with its stock and its
-    batches on the shelf (a batch past its best-before: expired)."""
+) -> dict[int, VariantStock]:
+    """Each variant's stock, by variant id: how many, and its batches on
+    the shelf (a batch past its best-before: expired)."""
 
-    stocks = []
+    stocks = {}
 
     for variant in variants:
         stock = stock_by_variant.get(variant.pk, 0)
 
-        stocks.append(
+        stocks[variant.pk] = (
             VariantStock(
-                label=variant.label or ONLY_VARIANT_NAME,
-                weight_label=f"{variant.weight_per_unit} g",
-                paused=not variant.active,
                 stock_label=product.stock_quantity_label(stock),
                 in_stock=stock > 0,
                 batches=tuple(

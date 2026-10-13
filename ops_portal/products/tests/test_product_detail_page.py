@@ -31,14 +31,13 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
 
     assert response.status_code == 200
     assert response.context["status_key"] == "active"
-    # The product and what is sold, its shop text, then what is on the
-    # shelf.
+    # The product and what is sold (with its stock), then its shop text.
     assert [tab.key for tab in response.context["page_tabs"]] == [
         "product",
         "text",
-        "inventory",
     ]
-    (stock,) = response.context["variant_stocks"]
+    (card,) = response.context["variant_cards"]
+    stock = card.stock
     assert stock.stock_label == product.stock_quantity_label(12)
     assert stock.in_stock is True
     # No hero: the product's card first in the Product tab, without stock.
@@ -47,11 +46,11 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     assert content.index('role="tablist"') < content.index("product-view")
     assert content.index("product-view") < content.index("variant-view__card")
     assert "total_stock" not in response.context
-    # A card per variant (its channels as chips, Business over Retail,
-    # each with its price beside it when sold in it), with the section's
-    # help; its stock on the Inventory tab.
+    # A card per variant (its batches between weight and channels; its
+    # channels as chips with a tick or a cross, Business over Retail, each
+    # with its price beside it when sold in it), with the section's help.
     assert "variant-view__chip" in content
-    (card,) = response.context["variant_cards"]
+    assert "variant-view__chip-icon" in content
     assert [channel.label for channel in card.channels] == [
         "Business",
         "Retail",
@@ -61,17 +60,17 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     )
     assert 'data-help-open="variants-help"' in content
     assert "demand" not in response.context
-    assert content.index('id="panel-product"') < content.index(
-        "variant-view__chip"
-    ) < content.index('id="panel-inventory"')
-    # Its batch at the card's right on the Inventory tab, to its page.
+    assert 'id="panel-inventory"' not in content
+    # Its batch on its card, before its channels, to the batch's page.
     (batch_link,) = stock.batches
     assert batch_link.batch_id == "B-501"
     assert batch_link.expired is False
     batch = product.batches.get()
     batch_url = reverse("ops_inventory:detail", kwargs={"batch_pk": batch.pk})
-    assert content.index('id="panel-inventory"') < content.index(
-        f'href="{batch_url}"'
+    assert (
+        content.index('id="panel-product"')
+        < content.index(f'href="{batch_url}"')
+        < content.index("variant-view__chip")
     )
 
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
@@ -81,17 +80,21 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     )
     assert f'href="{edit_url}#product"' in content
     assert f'href="{catalog_url}"' in content
-    # At the page's foot, the open tab's action: Edit (the product's form
-    # on Product, the shop text's on Shop text), Add batch on Inventory.
+    # At the page's foot, the open tab's actions: Add batch (outline) and
+    # Edit on Product, Edit on Shop text.
     add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert [
-        (action.tab, action.label, action.href)
+        (action.tab, action.label, action.href, action.style)
         for action in response.context["tab_actions"]
     ] == [
-        ("product", "Edit", f"{edit_url}#product"),
-        ("text", "Edit", catalog_url),
-        ("inventory", "Add batch", add_batch_url),
+        ("product", "Add batch", add_batch_url, "outline"),
+        ("product", "Edit", f"{edit_url}#product", "solid"),
+        ("text", "Edit", catalog_url, "solid"),
     ]
+    assert (
+        "button--outline button--tone-place button--with-icon tabs-foot__action"
+        in content
+    )
     # No Edit product or Add batch at the tabs' feet.
     assert "Edit product</a>" not in content
     assert "product-actions" not in content
@@ -164,7 +167,8 @@ def test_variant_card_lists_its_batches_on_the_shelf(client):
     )
     content = response.content.decode()
 
-    (stock,) = response.context["variant_stocks"]
+    (card,) = response.context["variant_cards"]
+    stock = card.stock
     # The soonest best-before first; none with less than one unit.
     assert [batch.batch_id for batch in stock.batches] == [
         "B-OLD",
@@ -369,8 +373,6 @@ def test_shop_text_tab_shows_each_languages_own_text(client):
     # Whether it is in the shop: a label beside the name on the card;
     # its category among the card's facts.
     assert response.context["in_shop"] is False
-    assert "Not in shop" in response.context["shop_label"]
-    assert "no retail price" in response.context["shop_label"]
     assert (
         content.index("product-card-title")
         < content.index("product-view__shop")
@@ -379,3 +381,72 @@ def test_shop_text_tab_shows_each_languages_own_text(client):
     category_label = response.context["profile"].category_label
     assert category_label
     assert f"Category <b>{category_label}</b>" in content
+
+
+def _business_priced_product(internal_number):
+    from decimal import Decimal
+
+    from pricing.product_configuration import update_product_standard_pricing
+
+    product = product_factory(name="Pear", internal_number=internal_number)
+    update_product_standard_pricing(
+        product=product,
+        business_eur=Decimal("1.90"),
+        business_sek=None,
+        business_enabled=True,
+        retail_eur=None,
+        retail_sek=None,
+        retail_enabled=False,
+    )
+
+    return product
+
+
+@pytest.mark.django_db
+def test_for_sale_with_nothing_to_sell_is_out_of_stock_in_red(client):
+    from datetime import timedelta
+
+    from inventory.models import InventoryBatch
+
+    client.force_login(full_staff_user_factory())
+    product = _business_priced_product(520)
+    url = reverse("ops_products:detail", kwargs={"product_pk": product.pk})
+
+    # Active, sold to business customers, no stock: out of stock (red).
+    response = client.get(url)
+
+    assert response.context["shop_tone"] == "out"
+    assert response.context["shop_label"] == "Out of stock"
+    assert "product-view__shop--out" in response.content.decode()
+
+    # Only a batch past its best-before: still nothing to sell.
+    batch = batch_factory(product=product, today=TODAY, batch_id="P-OLD")
+    InventoryBatch.objects.filter(pk=batch.pk).update(
+        best_before=TODAY - timedelta(days=2),
+    )
+
+    assert client.get(url).context["shop_tone"] == "out"
+
+    # A good batch: something to sell; not in the shop (no retail price).
+    batch_factory(product=product, today=TODAY, batch_id="P-NEW")
+    response = client.get(url)
+
+    assert response.context["shop_tone"] == "off"
+    assert response.context["shop_label"] == "Not in shop · no retail price"
+
+
+@pytest.mark.django_db
+def test_an_inactive_product_is_not_out_of_stock(client):
+    from products.services import update_product_active
+
+    client.force_login(full_staff_user_factory())
+    product = _business_priced_product(521)
+    update_product_active(product=product, active=False)
+
+    response = client.get(
+        reverse("ops_products:detail", kwargs={"product_pk": product.pk}),
+    )
+
+    assert response.context["shop_tone"] == "off"
+    assert response.context["shop_label"].startswith("Not in shop · inactive")
+

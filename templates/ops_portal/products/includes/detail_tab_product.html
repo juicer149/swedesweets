@@ -1,10 +1,12 @@
 {% comment %}
   The Product tab: the product's card (product_view_card.html), then
   Variants and offers as the edit page shows them, in reading: a card per
-  variant in order: label, weight, and at its right its sales channels,
-  Business over Retail, each with its price beside it when sold in it;
-  why its weight is fixed. Stock and batches are on the Inventory tab;
-  Edit is at the tabs' right.
+  variant in order: label, weight, its batches on the shelf stacked (ID
+  and how many, to the batch's page; the soonest best-before at the top,
+  expired red, soon orange; "Out of stock" without), and at its right its
+  sales channels, Business over Retail, each chip with a tick or a cross
+  and its price beside it when sold in it; why its weight is fixed. Add
+  batch and Edit are at the page's foot.
 {% endcomment %}
 {% include "ops_portal/products/includes/product_view_card.html" %}
 
@@ -20,12 +22,34 @@
         <div class="variant-view__card">
           <span class="variant-view__label">{{ variant.label }}</span>
           <span class="variant-view__weight">{{ variant.weight_label }}</span>
-          <span class="variant-view__state">{% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}</span>
-          {# Its channels, Business over Retail, each with its price when sold in it. #}
+          {# Its batches on the shelf, the soonest best-before at the top (expired red, soon orange). #}
+          <div class="variant-view__stock-cell">
+            {% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}
+            {% if variant.stock.batches %}
+              <ul class="variant-batches" aria-label="Batches of {{ variant.label }}">
+                {% for batch in variant.stock.batches %}
+                  <li>
+                    <a class="variant-batch variant-batch--{{ batch.tone }}" href="{{ batch.href }}" title="{{ batch.expiry.label }}{% if batch.tone == 'safe' %} {{ batch.best_before|date:'j M Y' }}{% endif %}">
+                      <span class="variant-batch__id">{{ batch.batch_id }}</span>
+                      {% if batch.tone != "safe" %}<span class="visually-hidden">({{ batch.expiry.label|lower }})</span>{% endif %}
+                      <span class="variant-batch__quantity">{{ batch.quantity_label }}</span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <span class="variant-view__none">Out of stock</span>
+            {% endif %}
+          </div>
+          {# Its channels, Business over Retail, each with a tick or a cross and its price when sold in it. #}
           <dl class="variant-offers">
             {% for channel in variant.channels %}
               <div class="variant-offers__row">
-                <dt class="variant-view__chip{% if channel.sold %} variant-view__chip--on{% endif %}">{{ channel.label }}<span class="visually-hidden">: {% if channel.sold %}sold{% else %}not sold{% endif %}</span></dt>
+                <dt class="variant-view__chip{% if channel.sold %} variant-view__chip--on{% endif %}">
+                  {{ channel.label }}
+                  {% include "includes/ui/icon_block.html" with name=channel.sold|yesno:"check,x" size="sm" class_name="variant-view__chip-icon" only %}
+                  <span class="visually-hidden">: {% if channel.sold %}sold{% else %}not sold{% endif %}</span>
+                </dt>
                 <dd class="variant-offers__price">{{ channel.amounts }}</dd>
               </div>
             {% endfor %}

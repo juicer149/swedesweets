@@ -43,13 +43,17 @@
           <span>Back</span>
         </a>
       {% endif %}
-      {% for action in tab_actions %}
-        {# Shown while its tab is open (tabs.js); without script, the first tab's. #}
-        <a class="button button--md button--solid button--tone-place button--with-icon tabs-foot__action" href="{{ action.href }}" data-tab-action="{{ action.tab }}"{% if action.tab != page_tabs.0.key %} hidden{% endif %}>
-          <span class="button__icon" aria-hidden="true">{% include "includes/ui/icon.html" with name=action.icon only %}</span>
-          <span class="button__label">{{ action.label }}</span>
-        </a>
-      {% endfor %}
+      {% if tab_actions %}
+        <div class="tabs-foot__actions">
+          {% for action in tab_actions %}
+            {# Shown while its tab is open (tabs.js); without script, the first tab's. #}
+            <a class="button button--md button--{{ action.style }} button--tone-place button--with-icon tabs-foot__action" href="{{ action.href }}" data-tab-action="{{ action.tab }}"{% if action.tab != page_tabs.0.key %} hidden{% endif %}>
+              <span class="button__icon" aria-hidden="true">{% include "includes/ui/icon.html" with name=action.icon only %}</span>
+              <span class="button__label">{{ action.label }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
   {% endif %}
 </div>
