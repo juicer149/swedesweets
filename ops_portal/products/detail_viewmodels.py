@@ -43,8 +43,8 @@ from products.models import (
 )
 
 PRODUCT_DETAIL_TABS = (
-    # The product and what is sold (its variants: their stock and
-    # prices), then its shop text.
+    # The product and what is sold (its variants and their prices), its
+    # shop text, then what is on the shelf (each variant's batches).
     PageTab(
         key="product",
         label="Product",
@@ -56,6 +56,12 @@ PRODUCT_DETAIL_TABS = (
         label="Shop text",
         icon="image",
         template="ops_portal/products/includes/detail_tab_text.html",
+    ),
+    PageTab(
+        key="inventory",
+        label="Inventory",
+        icon="inventory",
+        template="ops_portal/products/includes/detail_tab_inventory.html",
     ),
 )
 
@@ -172,8 +178,8 @@ class VariantStock:
 @dataclass(frozen=True, slots=True)
 class VariantCard:
     """A variant on the product page, as its card on the edit page: label,
-    weight, its batches on the shelf (stock), its sales channels with their
-    prices."""
+    weight, its sales channels with their prices; its stock (its batches
+    on the shelf) on the Inventory tab."""
 
     label: str
     weight_label: str
@@ -244,28 +250,26 @@ class ProductDetailContext:
 
     @property
     def tab_actions(self) -> tuple[TabAction, ...]:
-        """At the page's foot, the open tab's: on Product, Add batch (its
-        stock is there) and Edit (the product's form); on Shop text, Edit
-        (the shop text's form)."""
+        """At the page's foot, the open tab's: Edit (the product's form on
+        Product, the shop text's on Shop text), Add batch on Inventory."""
 
         actions = []
-
-        if self.add_batch_href:
-            actions.append(
-                TabAction(
-                    tab="product",
-                    href=self.add_batch_href,
-                    label="Add batch",
-                    icon="plus",
-                    style="outline",
-                )
-            )
 
         if self.edit_action is not None:
             actions += [
                 TabAction(tab="product", href=f"{self.edit_action.href}#product"),
                 TabAction(tab="text", href=self.edit_catalog_href),
             ]
+
+        if self.add_batch_href:
+            actions.append(
+                TabAction(
+                    tab="inventory",
+                    href=self.add_batch_href,
+                    label="Add batch",
+                    icon="plus",
+                )
+            )
 
         return tuple(actions)
 
@@ -556,7 +560,7 @@ def build_variant_stocks(
             )
         )
 
-    return tuple(stocks)
+    return stocks
 
 
 def _enabled(

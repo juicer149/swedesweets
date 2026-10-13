@@ -41,8 +41,9 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 - **Product page and edit page alike**: the product page shows the same
   cards as the edit page, to read: tabs Product (the product's card with
   "In shop", "Out of stock" or what keeps it out beside its name, then
-  Variants and offers: each variant's batches between its weight and its
-  channels, the channels with their prices at its right) and Shop text.
+  Variants and offers: each variant's channels with their prices at its
+  right), Shop text, and Inventory (each variant's batches at its right).
+  Stock lives only on Inventory.
   Edit stays a page of its own for now (one page for both, later
   perhaps).
 - **Tabs in a form show their changes**: a tab whose panel has a changed
@@ -139,28 +140,31 @@ mobile).
 
 ## Ops product pages
 
-**Detail page** (no hero; a hidden page title), two tabs; at the foot
-Back at the left, the open tab's actions at the right: on Product "Add
-batch" (outline) and "Edit" (pencil) to the product's form, on Shop text
-"Edit" to its form (`TabAction`, page_tabs.html):
+**Detail page** (no hero; a hidden page title), three tabs; at the foot
+Back at the left, the open tab's actions at the right: "Edit" (pencil) to
+the product's form on Product, to its own on Shop text, "Add batch" on
+Inventory (`TabAction`, page_tabs.html; a tab may have several, `style`
+solid or outline):
 
 - **Product**: the product's card (picture, brand over name, catalog ID,
   category, SKU, manufacturer, attributes; its status in the top right
   corner; beside the name "In shop" in green, "Out of stock" in red (for
   sale, in a channel, but no stock or only batches past their
   best-before) or "Not in shop" and what keeps it out in grey; no pencil),
-  then **Variants and offers**: a card per variant: label, weight, its
-  batches on the shelf stacked (the soonest best-before at the top: ID
-  and how many, to its page; none under one unit; past its best-before
-  and not closed in red, within `EXPIRY_SOON_DAYS` (inventory/expiry.py)
-  in orange; "Out of stock" without), and at its right its channels as
-  chips with a tick or a cross, Business over Retail, each with its price
-  beside it when sold in it.
+  then **Variants and offers**: a card per variant: label, weight, and at
+  its right its channels as chips with a tick or a cross, Business over
+  Retail, each with its price beside it when sold in it.
 - **Shop text**: the language tabs, close under the page's; per language
   its shop name, description and ingredients, an empty one saying what
   the shop shows instead; a language with none says so, with "Add …
   text" (the shop text page on that language). No preview of the shop's
   page: its price and buttons are the Product tab's.
+
+- **Inventory**: a card per variant (label, weight), at its right its
+  batches on the shelf stacked, the soonest best-before at the top: each
+  batch's ID and how many, to its page; none with less than one unit;
+  past its best-before and not closed in red, within `EXPIRY_SOON_DAYS`
+  (inventory/expiry.py) in orange; "Out of stock" without.
 
 **Shop text page** (`edit_catalog`; no hero, a hidden page title): name,
 description and ingredients under one tab per language (`#en` opens

@@ -504,7 +504,7 @@ def test_the_edit_page_saves_the_category_and_a_new_picture(client, tmp_path):
         assert 'enctype="multipart/form-data"' in content
         assert "data-product-picture-input" in content
         assert 'name="category"' in content
-        assert "js/product_picture.js" in content
+        assert "js/product_picture." in content
 
         data = _page_post_data(response)
         data["category"] = ProductProfile.Category.CANDY

@@ -1,0 +1,42 @@
+{% comment %}
+  The Inventory tab: what is on the shelf, a card per variant in order
+  (label, weight), and at its right its batches on the shelf stacked, the
+  soonest best-before at the top: each batch's ID and how many, linking
+  to its page; past its best-before (and not closed) in red, within
+  inventory/expiry.py's EXPIRY_SOON_DAYS in orange; "Out of stock"
+  without. Add batch is at the page's foot.
+{% endcomment %}
+<section class="product-section product-variants-tab" aria-labelledby="product-stock-title">
+  <div class="form-section__head">
+    <h2 class="form-section__title" id="product-stock-title">Stock and batches</h2>
+  </div>
+
+  <ul class="variant-views" aria-label="Stock by variant">
+    {% for variant in variant_cards %}
+      <li class="variant-view">
+        <div class="variant-view__card">
+          <span class="variant-view__label">{{ variant.label }}</span>
+          <span class="variant-view__weight">{{ variant.weight_label }}</span>
+          <span class="variant-view__state">{% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}</span>
+          <div class="variant-view__stock-cell">
+            {% if variant.stock.batches %}
+              <ul class="variant-batches" aria-label="Batches of {{ variant.label }}">
+                {% for batch in variant.stock.batches %}
+                  <li>
+                    <a class="variant-batch variant-batch--{{ batch.tone }}" href="{{ batch.href }}" title="{{ batch.expiry.label }}{% if batch.tone == 'safe' %} {{ batch.best_before|date:'j M Y' }}{% endif %}">
+                      <span class="variant-batch__id">{{ batch.batch_id }}</span>
+                      {% if batch.tone != "safe" %}<span class="visually-hidden">({{ batch.expiry.label|lower }})</span>{% endif %}
+                      <span class="variant-batch__quantity">{{ batch.quantity_label }}</span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <span class="variant-view__none">Out of stock</span>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+</section>

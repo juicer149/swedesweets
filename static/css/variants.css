@@ -732,15 +732,20 @@
   white-space: nowrap;
 }
 
-/* Between the weight and the channels: its batches on the shelf, the
-   soonest best-before at the top, each to its page (past its best-before
-   in red, soon in orange: inventory/expiry.py; else dark blue); "Out of
-   stock" without. Paused over them. */
-.variant-view__stock-cell {
+/* Paused, after the weight. */
+.variant-view__state {
   grid-column: 3;
+}
+
+/* On the Inventory tab, at the card's right: its batches on the shelf,
+   the soonest best-before at the top, each to its page (past its
+   best-before in red, soon in orange: inventory/expiry.py; else dark
+   blue); "Out of stock" without. */
+.variant-view__stock-cell {
+  grid-column: 4;
   display: grid;
-  justify-items: start;
-  gap: var(--space-1);
+  justify-items: end;
+  min-width: 11rem;
 }
 
 .variant-view__none {
@@ -752,7 +757,7 @@
 .variant-batches {
   display: grid;
   gap: 2px;
-  width: min(100%, 13rem);
+  width: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -813,11 +818,20 @@
     grid-template-columns: auto minmax(0, 1fr);
   }
 
-  /* The batches at the right of label and weight. */
+  /* The batches at the right of label and weight, Paused under them. */
   .variant-view__stock-cell {
     grid-column: 3;
     grid-row: 1;
-    justify-items: end;
+    min-width: 0;
+  }
+
+  .variant-view__state {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .variant-view__state:empty {
+    display: none;
   }
 }
 

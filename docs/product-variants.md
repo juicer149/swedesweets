@@ -112,18 +112,20 @@ fall back to the order they were added in.
 
 ## Ops
 
-- **Product page**: tabs **Product** and **Shop text**. Product: the
+- **Product page**: tabs **Product**, **Shop text** and **Inventory**.
+  Product: the
   product's card (picture, brand over name, catalog ID, SKU,
   manufacturer, attributes; its status in the corner; beside the name
   "In shop", "Out of stock" or what keeps it out), then **Variants and
-  offers**: a card per variant in order (weight; its batches on the shelf
-  stacked, the soonest best-before at the top, ID and how many, to the
-  batch's page, expired in red, soon in orange; at its right its sales
+  offers**: a card per variant in order (weight; at its right its sales
   channels as chips with a tick or a cross, Business over Retail, each
   with its price beside it; why its weight is fixed). Shop text: its
-  name, description and ingredients per language. At the foot Back at
-  the left, the open tab's actions at the right: "Add batch" and "Edit"
-  on Product, "Edit" on Shop text.
+  name, description and ingredients per language. Inventory: a card per
+  variant, its batches on the shelf stacked at its right, the soonest
+  best-before at the top (ID and how many, to the batch's page; expired
+  in red, soon in orange). At the foot Back at the left, the open tab's
+  action at the right: "Edit" (the product's form, the shop text's),
+  "Add batch" on Inventory.
 - **Edit** has **Variants and offers**:
   - EUR / SEK as two small tabs over the cards (which currency's prices
     show);

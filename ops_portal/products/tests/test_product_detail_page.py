@@ -31,10 +31,11 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
 
     assert response.status_code == 200
     assert response.context["status_key"] == "active"
-    # The product and what is sold (with its stock), then its shop text.
+    # The product and what is sold, its shop text, then its stock.
     assert [tab.key for tab in response.context["page_tabs"]] == [
         "product",
         "text",
+        "inventory",
     ]
     (card,) = response.context["variant_cards"]
     stock = card.stock
@@ -46,9 +47,9 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     assert content.index('role="tablist"') < content.index("product-view")
     assert content.index("product-view") < content.index("variant-view__card")
     assert "total_stock" not in response.context
-    # A card per variant (its batches between weight and channels; its
-    # channels as chips with a tick or a cross, Business over Retail, each
-    # with its price beside it when sold in it), with the section's help.
+    # A card per variant (its channels as chips with a tick or a cross,
+    # Business over Retail, each with its price beside it when sold in it),
+    # with the section's help.
     assert "variant-view__chip" in content
     assert "variant-view__chip-icon" in content
     assert [channel.label for channel in card.channels] == [
@@ -60,8 +61,7 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     )
     assert 'data-help-open="variants-help"' in content
     assert "demand" not in response.context
-    assert 'id="panel-inventory"' not in content
-    # Its batch on its card, before its channels, to the batch's page.
+    # Its batch on its card on the Inventory tab, to the batch's page.
     (batch_link,) = stock.batches
     assert batch_link.batch_id == "B-501"
     assert batch_link.expired is False
@@ -69,8 +69,9 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     batch_url = reverse("ops_inventory:detail", kwargs={"batch_pk": batch.pk})
     assert (
         content.index('id="panel-product"')
-        < content.index(f'href="{batch_url}"')
         < content.index("variant-view__chip")
+        < content.index('id="panel-inventory"')
+        < content.index(f'href="{batch_url}"')
     )
 
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
@@ -80,21 +81,17 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     )
     assert f'href="{edit_url}#product"' in content
     assert f'href="{catalog_url}"' in content
-    # At the page's foot, the open tab's actions: Add batch (outline) and
-    # Edit on Product, Edit on Shop text.
+    # At the page's foot, the open tab's action: Edit on Product and on
+    # Shop text (their forms), Add batch on Inventory.
     add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert [
-        (action.tab, action.label, action.href, action.style)
+        (action.tab, action.label, action.href)
         for action in response.context["tab_actions"]
     ] == [
-        ("product", "Add batch", add_batch_url, "outline"),
-        ("product", "Edit", f"{edit_url}#product", "solid"),
-        ("text", "Edit", catalog_url, "solid"),
+        ("product", "Edit", f"{edit_url}#product"),
+        ("text", "Edit", catalog_url),
+        ("inventory", "Add batch", add_batch_url),
     ]
-    assert (
-        "button--outline button--tone-place button--with-icon tabs-foot__action"
-        in content
-    )
     # No Edit product or Add batch at the tabs' feet.
     assert "Edit product</a>" not in content
     assert "product-actions" not in content
@@ -106,7 +103,8 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     )
     assert "data-back-link" in content
     assert "page__back" not in content
-    assert "js/back_link.js" in content
+    # (Static files carry a hash in their names: js/back_link.<hash>.js.)
+    assert "js/back_link." in content
     assert content.index('id="panel-inventory"') < content.index("tabs-foot")
     assert 'class="tabs-foot__action' not in content  # a solid button
     assert "tabs-foot__action" in content
@@ -228,9 +226,9 @@ def test_product_edit_form_is_one_page_of_sections(client):
     # The product page's buttons link to the sections by id.
     assert 'id="product"' in content
     assert 'id="variants"' in content
-    # The catalog has its own page.
+    # The shop text has its own page; the category is the product's.
     assert 'name="fr-description"' not in content
-    assert 'name="category"' not in content
+    assert 'name="category"' in content
     # The product as a card: catalog ID and the status switch at its top,
     # then brand and name; the section has its help.
     assert 'class="product-card product-card--form"' in content

@@ -262,6 +262,8 @@ def test_build_product_edit_initial_data():
         "name": "Tyrkisk Peber",
         "active": True,
         "vegan": True,
+        # No category chosen yet.
+        "category": "",
     }
 
 
