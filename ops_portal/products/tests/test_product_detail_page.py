@@ -110,8 +110,9 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     # No pencil on the product's card (Edit is at the foot).
     assert "product-card__edit" not in content
     assert f'href="{catalog_url}" data-tab-action="text" hidden' in content
-    assert content.index('data-tab-action="product"') < content.index(
-        'id="panel-product"'
+    # The actions come after the tabs' panels (at the foot).
+    assert content.index('id="panel-product"') < content.index(
+        'data-tab-action="product"'
     )
 
     assert f'href="{add_batch_url}"' in content

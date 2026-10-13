@@ -796,16 +796,25 @@
   font-weight: 500;
 }
 
+/* Its batches share their columns (subgrid): the ID as wide as the
+   longest, on one line; in stock and reserved right-aligned, as under
+   the heads over the first card. */
 .variant-batches {
   display: grid;
-  gap: 2px;
+  grid-template-columns: max-content 3.5rem 4rem;
+  column-gap: var(--space-3);
+  row-gap: 2px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* A batch: its ID, in stock, reserved; the numbers right-aligned in
-   their columns, as under the heads over the first card. */
+.variant-batches > li {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+}
+
 .variant-batch {
   display: grid;
   grid-template-columns: 5.5rem 3.5rem 4rem;
@@ -815,6 +824,15 @@
   color: var(--color-primary-900);
   font-size: var(--font-size-14);
   text-decoration: none;
+}
+
+.variant-batches .variant-batch {
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+}
+
+.variant-batch__id {
+  white-space: nowrap;
 }
 
 .variant-batch__quantity,
