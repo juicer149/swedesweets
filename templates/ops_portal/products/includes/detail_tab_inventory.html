@@ -1,10 +1,9 @@
 {% comment %}
   The Inventory tab: what is on the shelf, a card per variant in order
-  (label, weight, how many in stock), its batches on the shelf in a tab
-  hanging under it at the right (card_tab, variants.css; the Product tab
-  hangs its prices the same way at the left): each batch's ID and how
-  many, linking to its page; one past its best-before (and not closed) in
-  red. Add batch at the foot.
+  (label, weight), and at its right its batches on the shelf stacked, the
+  soonest best-before at the top: each batch's ID and how many, linking
+  to its page; past its best-before (and not closed) in red, within
+  inventory/expiry.py's EXPIRY_SOON_DAYS in orange. Add batch at the foot.
 {% endcomment %}
 <section class="product-section product-variants-tab" aria-labelledby="product-stock-title">
   <div class="form-section__head">
@@ -17,41 +16,24 @@
         <div class="variant-view__card">
           <span class="variant-view__label">{{ variant.label }}</span>
           <span class="variant-view__weight">{{ variant.weight_label }}</span>
-          <span class="variant-view__channels">
-            {% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}
-          </span>
-          <span class="variant-view__stock{% if not variant.in_stock %} variant-view__stock--none{% endif %}">
-            {% if variant.in_stock %}
-              {{ variant.stock_label }}
-              <small>in stock</small>
-            {% else %}
-              <small>Out of stock</small>
-            {% endif %}
-          </span>
+          <span class="variant-view__state">{% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}</span>
+          {% if variant.batches %}
+            {# Its batches on the shelf, the soonest best-before at the top. #}
+            <ul class="variant-batches" aria-label="Batches of {{ variant.label }}">
+              {% for batch in variant.batches %}
+                <li>
+                  <a class="variant-batch variant-batch--{{ batch.tone }}" href="{{ batch.href }}" title="{{ batch.expiry.label }}{% if batch.tone == 'safe' %} {{ batch.best_before|date:'j M Y' }}{% endif %}">
+                    <span class="variant-batch__id">{{ batch.batch_id }}</span>
+                    {% if batch.tone != "safe" %}<span class="visually-hidden">({{ batch.expiry.label|lower }})</span>{% endif %}
+                    <span class="variant-batch__quantity">{{ batch.quantity_label }}</span>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <span class="variant-view__stock variant-view__stock--none">Out of stock</span>
+          {% endif %}
         </div>
-
-        {% if variant.batches %}
-          <details class="card-tab card-tab--end card-tab--batches" data-smooth open>
-            <summary class="card-tab__toggle">
-              <span>{% if variant.batches|length == 1 %}1 batch{% else %}{{ variant.batches|length }} batches{% endif %}</span>
-              {% if variant.has_expired_batch %}<span class="card-tab__alert">expired</span>{% endif %}
-              {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="card-tab__chevron" only %}
-            </summary>
-            <div data-smooth-content>
-              <ul class="card-tab__body">
-                {% for batch in variant.batches %}
-                  <li>
-                    <a class="variant-batch{% if batch.expired %} variant-batch--expired{% endif %}" href="{{ batch.href }}" title="{% if batch.expired %}Expired{% else %}Best before{% endif %} {{ batch.best_before|date:'j M Y' }}">
-                      <span class="variant-batch__id">{{ batch.batch_id }}</span>
-                      {% if batch.expired %}<span class="visually-hidden">(expired)</span>{% endif %}
-                      <span class="variant-batch__quantity">{{ batch.quantity_label }}</span>
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-          </details>
-        {% endif %}
       </li>
     {% endfor %}
   </ul>

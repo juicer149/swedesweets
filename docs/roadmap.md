@@ -40,9 +40,9 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   page.
 - **Product page and edit page alike**: the product page shows the same
   cards as the edit page, to read: tabs Product (the product's card with a
-  pencil in its corner, then Variants and offers, each variant's prices
-  in a tab under its card), Catalog, and Inventory (each variant's stock,
-  its batches in a tab under its card). Stock lives only on Inventory.
+  pencil in its corner, then Variants and offers, each variant's channels
+  with their prices at its right), Catalog, and Inventory (each variant's
+  batches at its right). Stock lives only on Inventory.
   Edit stays a page of its own for now (one page for both, later
   perhaps).
 - **Tabs in a form show their changes**: a tab whose panel has a changed
@@ -133,16 +133,17 @@ mobile).
 - **Product**: the product's card (picture, brand over name, status,
   catalog ID, SKU, manufacturer, attributes; a pencil in its top right
   corner, no stock), then **Variants and offers**: a card per variant
-  (label, weight, its channels as chips), its prices in a folder-like tab
-  hanging under the card at the left. Edit product.
+  (label, weight; at its right its channels as chips, Business over
+  Retail, each with its price beside it when sold in it). Edit product.
 - **Catalog**: the language tabs with "Edit catalog" (the list pages'
   small action) at their right, a label over the shop's page ("In shop",
   or what keeps it out), the shop's product page a little smaller;
   category and picture.
-- **Inventory**: a card per variant (label, weight, how many in stock),
-  its batches on the shelf in the same kind of tab at the right: each
+- **Inventory**: a card per variant (label, weight), at its right its
+  batches on the shelf stacked, the soonest best-before at the top: each
   batch's ID and how many, to its page; none with less than one unit;
-  past its best-before and not closed in red. Add batch.
+  past its best-before and not closed in red, within `EXPIRY_SOON_DAYS`
+  (inventory/expiry.py) in orange. Add batch.
 
 **Catalog page**: category and picture, then name, description and
 ingredients under one tab per language; a language with a change gets a
@@ -151,9 +152,10 @@ dot.
 **Edit page**: Product as a card (its picture, catalog ID and status at
 its top, brand and name large), then **Variants and offers**: EUR / SEK
 tabs, then a card per variant: arrows (up at the top, down at the
-bottom), label, weight, sales channels (Retail, Business), and under them
-its prices with "Use for all variants"; "+ Add variant" as a faint last
-row. Price changes ask for the password.
+bottom), label, weight, its sales channels one over the other (Business,
+Retail), each with its price at its right (read-only and greyed while
+the channel is off), "Use for all variants" under them; "+ Add variant"
+as a faint last row. Price changes ask for the password.
 
 ## Done
 

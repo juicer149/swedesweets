@@ -4,6 +4,8 @@
 
   - The EUR / SEK tabs: the editor shows that currency's prices (its
     data-currency; css/variants.css hides the other, still sent).
+  - A card's prices sit beside their sales channels; a channel switched
+    off makes its price read-only (muted, still sent).
   - "Use for all variants" copies a card's prices (both currencies) to the
     other cards, asking first when that overwrites prices they have. It
     shows once there are two variants or more.
@@ -34,7 +36,26 @@
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     function priceInputs(row) {
-      return Array.from(row.querySelectorAll(".variant-row__prices input[name]"));
+      return Array.from(row.querySelectorAll("[data-price-channel] .variant-price input[name]"));
+    }
+
+    // A channel switched off: its price stays (and is sent) but is not to
+    // be typed in; css/variants.css mutes it like the switch.
+    function syncChannels(row) {
+      row.querySelectorAll("[data-price-channel]").forEach((offer) => {
+        const toggle = offer.querySelector('input[type="checkbox"]');
+        const on = Boolean(toggle && toggle.checked);
+
+        offer.querySelectorAll(".variant-price input").forEach((input) => {
+          input.readOnly = !on;
+
+          if (on) {
+            input.removeAttribute("tabindex");
+          } else {
+            input.tabIndex = -1;
+          }
+        });
+      });
     }
 
     // "Use for all variants": this card's prices on every other card.
@@ -299,6 +320,7 @@
         const row = holder.firstElementChild;
 
         rows.appendChild(row);
+        syncChannels(row);
         totalForms.value = String(index + 1);
         changed();
 
@@ -430,6 +452,13 @@
       }
     });
 
+    rows.addEventListener("change", (event) => {
+      if (event.target.closest("[data-price-channel]") && event.target.type === "checkbox") {
+        syncChannels(event.target.closest("[data-variant-row]"));
+      }
+    });
+
+    rows.querySelectorAll("[data-variant-row]").forEach(syncChannels);
     renumber();
   }
 

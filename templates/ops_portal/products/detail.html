@@ -1,5 +1,4 @@
 {% extends "layouts/detail.html" %}
-{% load static %}
 
 {% block page_heading %}
   {# No hero: the Product tab's first card says what product it is. #}
@@ -11,9 +10,4 @@
   <div class="product-page">
     {% include "includes/ui/page_tabs.html" %}
   </div>
-{% endblock %}
-
-{% block page_scripts %}
-  {# The tabs under a variant's card slide open and shut (card-tab). #}
-  <script src="{% static 'js/smooth-details.js' %}" defer></script>
 {% endblock %}

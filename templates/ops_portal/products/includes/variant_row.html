@@ -1,10 +1,11 @@
 {% comment %}
-  One variant in the variants editor: a card. Its first line: the arrows
-  that move it (or drag it by the grip between them), label, weight, sales
-  channels (Retail, Business; neither: paused) and the trash. Its second:
-  its prices, one per channel it is sold in (the editor's currency shows),
-  and "Use for all variants", which copies them to the others. A variant
-  with stock or orders says under its card why its weight is fixed.
+  One variant in the variants editor: a card. The arrows that move it (or
+  drag it by the grip between them), label, weight, its sales channels
+  one over the other (Business, Retail; neither: paused), each with its
+  price at its right (the editor's currency shows; typed only while the
+  channel is on), and the trash. Under them "Use for all variants", which
+  copies its prices to the others. A variant with stock or orders says
+  under its card why its weight is fixed.
 
   row      a VariantForm (ops_portal/products/variant_forms.py)
   is_new   the template row "Add variant" copies
@@ -47,15 +48,22 @@
       {% for error in row.weight_per_unit.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
     </div>
 
-    <div class="variant-row__channels" role="group" aria-label="Sales channels">
-      <label class="product-tag-toggle product-tag-toggle--status" for="{{ row.retail.id_for_label }}">
-        {{ row.retail }}
-        <span class="product-tag-toggle__surface">{{ row.retail.label }}</span>
-      </label>
-      <label class="product-tag-toggle product-tag-toggle--status" for="{{ row.business.id_for_label }}">
-        {{ row.business }}
-        <span class="product-tag-toggle__surface">{{ row.business.label }}</span>
-      </label>
+    {# Its sales channels, Business over Retail, each with its price at its right: to be typed only while the channel is on, else muted with it (variant_editor.js; still sent). #}
+    <div class="variant-row__channels" role="group" aria-label="Sales channels and prices">
+      <div class="variant-row__offer" data-price-channel="business">
+        <label class="product-tag-toggle product-tag-toggle--status" for="{{ row.business.id_for_label }}">
+          {{ row.business }}
+          <span class="product-tag-toggle__surface">{{ row.business.label }}</span>
+        </label>
+        {% include "ops_portal/products/includes/variant_price.html" with caption="Business" bare=True eur=row.business_eur sek=row.business_sek only %}
+      </div>
+      <div class="variant-row__offer" data-price-channel="retail">
+        <label class="product-tag-toggle product-tag-toggle--status" for="{{ row.retail.id_for_label }}">
+          {{ row.retail }}
+          <span class="product-tag-toggle__surface">{{ row.retail.label }}</span>
+        </label>
+        {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" bare=True eur=row.retail_eur sek=row.retail_sek only %}
+      </div>
     </div>
 
     <div class="variant-row__remove">
@@ -71,13 +79,9 @@
       {% endif %}
     </div>
 
-    {# Its prices, one per channel it is sold in (css/variants.css hides a channel that is off). #}
-    <div class="variant-row__prices">
-      {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" channel="retail" eur=row.retail_eur sek=row.retail_sek only %}
-      {% include "ops_portal/products/includes/variant_price.html" with caption="Business" channel="business" eur=row.business_eur sek=row.business_sek only %}
-      <p class="variant-row__prices-none">Paused: switch a sales channel on to price it.</p>
-      <button class="variant-row__use-for-all" type="button" data-variant-use-for-all>Use for all variants</button>
-    </div>
+    {# Under the channels: paused (neither on), and "Use for all variants". #}
+    <p class="variant-row__prices-none">Paused: switch a sales channel on to price it.</p>
+    <button class="variant-row__use-for-all" type="button" data-variant-use-for-all>Use for all variants</button>
 
     {% for error in row.delete.errors %}<div class="form-field__errors variant-row__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
   </div>

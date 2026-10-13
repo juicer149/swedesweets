@@ -4,12 +4,13 @@
   (variant_editor.js); both are sent. The currency's sign sits in the field.
 
   caption   "Retail" or "Business"
-  channel   "retail" or "business" on a variant's row: hidden while the
-            row's channel is off (css/variants.css)
+  bare      no visible caption (a variant's row: its channel's switch
+            beside it says which); the fields keep theirs for screen
+            readers
   eur, sek  the two fields of one channel
 {% endcomment %}
-<div class="form-field variant-price{% if eur.errors or sek.errors %} form-field--error{% endif %}"{% if channel %} data-price-channel="{{ channel }}"{% endif %}>
-  <span class="variant-price__caption" aria-hidden="true">{{ caption }}</span>
+<div class="form-field variant-price{% if eur.errors or sek.errors %} form-field--error{% endif %}">
+  {% if not bare %}<span class="variant-price__caption" aria-hidden="true">{{ caption }}</span>{% endif %}
   <span class="variant-price__input" data-currency-input="eur" data-currency-sign="€">
     <label class="visually-hidden" for="{{ eur.id_for_label }}">{{ caption }} price in EUR</label>
     {{ eur }}

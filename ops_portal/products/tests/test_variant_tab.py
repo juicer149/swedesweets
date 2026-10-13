@@ -176,8 +176,9 @@ def test_the_page_opens_with_its_sections_open(client):
     assert "data-variant-use-for-all" in content
     # No SKU line on the cards (the product page has them).
     assert "variant-row__sku" not in content
-    # Each price says its channel (hidden while that channel is off).
+    # Each price beside its channel's switch (read-only while it is off).
     assert 'data-price-channel="business"' in content
+    assert 'data-price-channel="retail"' in content
     # No template comment leaks into the page.
     assert "{#" not in content
     assert "product_retail_eur" not in content

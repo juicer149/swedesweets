@@ -1,10 +1,9 @@
 {% comment %}
   The Product tab: the product's card (product_view_card.html), then
   Variants and offers as the edit page shows them, in reading: a card per
-  variant in order (label, weight, sales channels), its prices in a tab
-  hanging under it at the left (card_tab, variants.css; the Inventory tab
-  hangs its batches the same way at the right); why its weight is fixed.
-  Stock and batches are on the Inventory tab.
+  variant in order: label, weight, and at its right its sales channels,
+  Business over Retail, each with its price beside it when sold in it;
+  why its weight is fixed. Stock and batches are on the Inventory tab.
 {% endcomment %}
 {% include "ops_portal/products/includes/product_view_card.html" %}
 
@@ -20,31 +19,17 @@
         <div class="variant-view__card">
           <span class="variant-view__label">{{ variant.label }}</span>
           <span class="variant-view__weight">{{ variant.weight_label }}</span>
-          <span class="variant-view__channels">
-            <span class="variant-view__chip{% if variant.retail %} variant-view__chip--on{% endif %}">Retail<span class="visually-hidden">: {% if variant.retail %}sold{% else %}not sold{% endif %}</span></span>
-            <span class="variant-view__chip{% if variant.business %} variant-view__chip--on{% endif %}">Business<span class="visually-hidden">: {% if variant.business %}sold{% else %}not sold{% endif %}</span></span>
-            {% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}
-          </span>
+          <span class="variant-view__state">{% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}</span>
+          {# Its channels, Business over Retail, each with its price when sold in it. #}
+          <dl class="variant-offers">
+            {% for channel in variant.channels %}
+              <div class="variant-offers__row">
+                <dt class="variant-view__chip{% if channel.sold %} variant-view__chip--on{% endif %}">{{ channel.label }}<span class="visually-hidden">: {% if channel.sold %}sold{% else %}not sold{% endif %}</span></dt>
+                <dd class="variant-offers__price">{{ channel.amounts }}</dd>
+              </div>
+            {% endfor %}
+          </dl>
         </div>
-
-        {% if variant.prices %}
-          <details class="card-tab card-tab--start card-tab--prices" data-smooth open>
-            <summary class="card-tab__toggle">
-              <span>Prices</span>
-              {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="card-tab__chevron" only %}
-            </summary>
-            <div data-smooth-content>
-              <dl class="card-tab__body variant-prices">
-                {% for price in variant.prices %}
-                  <div class="variant-prices__row">
-                    <dt>{{ price.label }}</dt>
-                    <dd>{{ price.amounts }}</dd>
-                  </div>
-                {% endfor %}
-              </dl>
-            </div>
-          </details>
-        {% endif %}
 
         {% if variant.weight_fixed %}
           <p class="variant-row__note">

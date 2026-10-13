@@ -291,16 +291,45 @@
   font-weight: 500;
 }
 
+/* Its channels one over the other (Business, Retail), each with its
+   price at its right. */
 .variant-row__channels {
   display: flex;
+  flex-direction: column;
   gap: var(--space-2);
   grid-row: 1;
   grid-column: 4;
 }
 
+.variant-row__offer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .variant-row__channels .product-tag-toggle__surface {
+  min-width: 6.25rem;
   min-height: 30px;
   padding: 4px 12px;
+}
+
+.variant-row__offer .variant-price__input {
+  width: 8rem;
+}
+
+/* A channel switched off: its price muted like the switch, not to be
+   typed in (variant_editor.js makes it read-only; it is still sent). */
+.variant-row__offer:has(.product-tag-toggle__input:not(:checked)) .variant-price input {
+  color: var(--color-status-muted-text);
+  background: rgb(var(--color-status-muted) / 0.06);
+  border-color: rgb(var(--color-status-muted) / 0.22);
+  border-style: solid;
+  opacity: 0.78;
+  cursor: default;
+}
+
+.variant-row__offer:has(.product-tag-toggle__input:not(:checked)) .variant-price input:focus {
+  box-shadow: none;
 }
 
 .variant-row__remove {
@@ -313,23 +342,11 @@
   cursor: not-allowed;
 }
 
-/* Its prices, on the card's second line under the label: one per
-   channel it is sold in; "Use for all variants" at the right. */
-.variant-row__prices {
-  grid-row: 2;
-  grid-column: 2 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-5);
-}
-
-.variant-row__prices .variant-price__input {
-  width: 6.5rem;
-}
-
+/* Under the channels: "Use for all variants" at the right. */
 .variant-row__use-for-all {
-  margin-left: auto;
+  grid-row: 2;
+  grid-column: 4 / -1;
+  justify-self: end;
   padding: var(--space-1) var(--space-2);
   color: var(--color-link);
   background: transparent;
@@ -351,9 +368,9 @@
   display: none;
 }
 
-/* Up at the card's top, down at its bottom, beside both its lines. */
+/* Up at the card's top, down at its bottom. */
 .variant-row__move {
-  grid-row: 1 / span 2;
+  grid-row: 1;
   grid-column: 1;
   align-self: stretch;
   display: flex;
@@ -427,10 +444,7 @@
   grid-column: 2 / -1;
 }
 
-/* A sales channel switched off: its price field is not shown; in neither
-   the card says so. */
-.variant-row:has(input[name$="-retail"]:not(:checked)) [data-price-channel="retail"],
-.variant-row:has(input[name$="-business"]:not(:checked)) [data-price-channel="business"],
+/* In neither channel the card says it is paused. */
 .variant-row__prices-none {
   display: none;
 }
@@ -449,6 +463,8 @@
 }
 
 .variant-row__prices-none {
+  grid-row: 2;
+  grid-column: 2 / -1;
   margin: 0;
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
@@ -518,7 +534,7 @@
     grid-template-areas:
       "label label weight weight"
       "channels channels channels channels"
-      "prices prices prices prices"
+      "foot foot foot foot"
       "move move move remove";
   }
 
@@ -533,10 +549,11 @@
   }
 
   .variant-row__remove { grid-area: remove; }
-  .variant-row__prices { grid-area: prices; }
+  .variant-row__prices-none,
+  .variant-row__use-for-all { grid-area: foot; }
 
   .variant-row__use-for-all {
-    margin-left: 0;
+    justify-self: start;
   }
 
   .variant-row__field-label {
@@ -599,10 +616,10 @@
 
 /* -----------------------------------------------------------------------------
    The product page: the variants as on the edit page, to read, a card
-   each. On the Product tab (detail_tab_product.html): label, weight, its
-   sales channels as chips, its prices in a tab under the card at the
-   left. On the Inventory tab (detail_tab_inventory.html): label, weight,
-   how many in stock, its batches in a tab under the card at the right.
+   each: label, weight, then at its right on the Product tab
+   (detail_tab_product.html) its sales channels, Business over Retail,
+   each with its price beside it; on the Inventory tab
+   (detail_tab_inventory.html) its batches stacked, ID and how many.
    ----------------------------------------------------------------------------- */
 
 .product-section.product-variants-tab {
@@ -651,11 +668,12 @@
   font-weight: 500;
 }
 
-.variant-view__channels {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
+.variant-view__paused {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-12);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 /* The sales channels, as on the edit page but not to be clicked: off in
@@ -663,6 +681,8 @@
 .variant-view__chip {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: 5.5rem;
   padding: 3px 11px;
   color: var(--color-neutral-700);
   background: rgb(var(--color-status-muted) / 0.12);
@@ -678,170 +698,63 @@
   border-color: rgb(var(--color-status-success) / 0.5);
 }
 
-.variant-view__paused {
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-12);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.variant-view__stock {
+/* At the card's right: a channel a line, its price beside it. */
+.variant-offers {
   grid-column: 4;
-  color: var(--color-neutral-800);
-  font-weight: 700;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.variant-view__stock small {
-  display: block;
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-12);
-  font-weight: 500;
-}
-
-.variant-view__stock--none {
-  color: var(--color-neutral-600);
-}
-
-@media (max-width: 640px) {
-  .variant-view__card {
-    grid-template-columns: auto auto minmax(0, 1fr);
-  }
-
-  .variant-view__channels {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  /* Nothing in it (the Inventory tab, not paused): no empty row. */
-  .variant-view__channels:empty {
-    display: none;
-  }
-
-  .variant-view__stock {
-    grid-column: 3;
-    grid-row: 1;
-  }
-}
-
-/* -----------------------------------------------------------------------------
-   A tab hanging under a variant's card, like a folder's: its name with a
-   chevron, opening to what it holds (smooth-details.js slides it). Both
-   tabs look and move alike; the prices hang at the left in the card's
-   yellow, the batches at the right in blue, each reaching to the middle.
-   ----------------------------------------------------------------------------- */
-
-.card-tab {
-  --card-tab-edge: color-mix(in srgb, var(--color-accent-600) 38%, transparent);
-  --card-tab-text: var(--color-neutral-800);
-
-  position: relative;
-  width: fit-content;
-  min-width: 11rem;
-  max-width: calc(50% - var(--space-4));
-  /* Tucked under the card's edge. */
-  margin-top: -1px;
-  color: var(--card-tab-text);
-  border: 1px solid var(--card-tab-edge);
-  border-top: 0;
-  border-radius: 0 0 12px 12px;
-}
-
-.card-tab--start {
-  margin-left: var(--space-4);
-}
-
-.card-tab--end {
-  margin-left: auto;
-  margin-right: var(--space-4);
-}
-
-.card-tab--batches {
-  --card-tab-edge: var(--color-primary-300);
-  --card-tab-text: var(--color-primary-800);
-}
-
-.card-tab__toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 5px 12px 6px;
-  font-size: var(--font-size-12);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  list-style: none;
-  cursor: pointer;
-}
-
-.card-tab__toggle::-webkit-details-marker {
-  display: none;
-}
-
-.card-tab__toggle:focus-visible {
-  outline: 2px solid var(--color-accent-600);
-  outline-offset: -2px;
-  border-radius: 0 0 12px 12px;
-}
-
-.card-tab__chevron {
-  margin-left: auto;
-  transition: transform var(--motion-fast);
-}
-
-.card-tab[open] .card-tab__chevron {
-  transform: rotate(180deg);
-}
-
-.card-tab__alert {
-  padding: 0 7px;
-  color: var(--color-status-danger-text);
-  border: 1px solid rgb(var(--color-status-danger) / 0.45);
-  border-radius: var(--radius-pill);
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.card-tab__body {
   display: grid;
-  gap: 2px;
+  grid-template-columns: auto minmax(9rem, auto);
+  gap: var(--space-2) var(--space-3);
   margin: 0;
-  padding: 0 12px 10px;
-  list-style: none;
 }
 
-/* The prices: channel, then the amounts, clear against the page. */
-.variant-prices__row {
-  display: grid;
-  grid-template-columns: 5rem auto;
-  align-items: baseline;
-  gap: var(--space-3);
+.variant-offers__row {
+  display: contents;
 }
 
-.variant-prices dt {
-  color: var(--color-neutral-700);
-  font-size: var(--font-size-14);
-  font-weight: 500;
-}
-
-.variant-prices dd {
+.variant-offers__price {
+  align-self: center;
   margin: 0;
   color: var(--color-neutral-900);
   font-size: var(--font-size-16);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
 }
 
-/* A batch: its ID, then how many, to its page. */
+.variant-view__stock {
+  grid-column: 4;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.variant-view__stock--none {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+  font-weight: 500;
+}
+
+/* At the card's right: its batches, the soonest best-before at the top,
+   each to its page. Past its best-before in red, soon in orange
+   (inventory/expiry.py), else dark blue. */
+.variant-batches {
+  grid-column: 4;
+  display: grid;
+  gap: 2px;
+  min-width: 11rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .variant-batch {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--space-5);
   padding: 2px 0;
-  color: inherit;
+  color: var(--color-primary-900);
   font-size: var(--font-size-14);
   text-decoration: none;
 }
@@ -870,14 +783,40 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Past its best-before and not closed. */
+.variant-batch--soon {
+  color: var(--color-expiry-soon-text);
+}
+
 .variant-batch--expired {
   color: var(--color-status-danger-text);
 }
 
 @media (max-width: 640px) {
-  .card-tab {
-    max-width: calc(100% - 2 * var(--space-4));
+  .variant-view__card {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: start;
+  }
+
+  /* The channels and their prices under label and weight. */
+  .variant-offers {
+    grid-column: 1 / -1;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .variant-batches,
+  .variant-view__stock {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .variant-view__state {
+    grid-column: 1 / 3;
+    grid-row: 2;
+  }
+
+  .variant-view__state:empty {
+    display: none;
   }
 }
 

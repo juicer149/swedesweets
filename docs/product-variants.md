@@ -115,23 +115,24 @@ fall back to the order they were added in.
 - **Product page**: tabs **Product**, **Catalog** and **Inventory**.
   Product: the product's card (picture, brand over name, status, catalog
   ID, SKU, manufacturer, attributes; a pencil in its corner), then
-  **Variants and offers**: a card per variant in order (weight, its sales
-  channels as chips; why its weight is fixed), its prices in a tab
-  hanging under it at the left. Catalog: the shop's page per language,
-  "Edit catalog" beside the languages, a label over the page saying "In
-  shop" or what keeps it out. Inventory: a card per variant with how many
-  are in stock, its batches on the shelf in a tab hanging under it at the
-  right (ID and how many, to the batch's page; one past its best-before
-  in red); Add batch.
+  **Variants and offers**: a card per variant in order (weight; at its
+  right its sales channels as chips, Business over Retail, each with its
+  price beside it; why its weight is fixed). Catalog: the shop's page per
+  language, "Edit catalog" beside the languages, a label over the page
+  saying "In shop" or what keeps it out. Inventory: a card per variant,
+  its batches on the shelf stacked at its right, the soonest best-before
+  at the top (ID and how many, to the batch's page; expired in red, soon
+  in orange); Add batch.
 - **Edit** has **Variants and offers**:
   - EUR / SEK as two small tabs over the cards (which currency's prices
     show);
   - a card per variant (rounded, edged in the accent): arrows to move it
     (up at its top, down at its bottom, or drag it by the grip between
-    them), label, weight, its sales channels (Retail, Business; in
-    neither it is paused), delete (only without history, rule 6); under
-    them its prices, one per channel it is sold in, and "Use for all
-    variants" to give the others the same;
+    them), label, weight, its sales channels one over the other
+    (Business, Retail; in neither it is paused), each with its price at
+    its right (typed only while the channel is on, else greyed and kept),
+    delete (only without history, rule 6); under them "Use for all
+    variants" to give the others the same prices;
   - changes to prices already set ask for the password before saving
     (`PRICE_CHANGE_CHECK`, on by default; a first price never asks);
   - a faint "+ Add variant" row under the last one;

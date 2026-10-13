@@ -14,6 +14,7 @@ from common.detail_cards import (
     build_secondary_get_action,
 )
 from common.page_tabs import PageTab
+from inventory.expiry import ExpiryInfo, ExpiryState, build_expiry_info
 from inventory.models import InventoryBatch
 from ops_portal.inventory.access import can_create_batch
 from ops_portal.products.access import (
@@ -118,16 +119,45 @@ class ChannelPrice:
 
 
 @dataclass(frozen=True, slots=True)
+class ChannelOffer:
+    """A sales channel on a variant's card: its chip (on or off) and,
+    when the variant is sold in it, its price beside the chip."""
+
+    label: str
+    sold: bool
+    # "55.00 € · 549.00 kr"; empty when not sold in it.
+    amounts: str
+
+
+@dataclass(frozen=True, slots=True)
 class BatchLink:
     """A batch on the shelf, in its variant's card on the Inventory tab:
-    to its page."""
+    to its page, coloured by its best-before (inventory/expiry.py)."""
 
     batch_id: str
     best_before: date
     quantity_label: str
     href: str
-    # Past its best-before and still on the shelf (not closed).
-    expired: bool
+    expiry: ExpiryInfo
+
+    @property
+    def expired(self) -> bool:
+        """Past its best-before and still on the shelf (not closed)."""
+
+        return self.expiry.state == ExpiryState.EXPIRED
+
+    @property
+    def tone(self) -> str:
+        """Expired (red); critical or soon, within EXPIRY_SOON_DAYS
+        (orange); else safe."""
+
+        if self.expired:
+            return "expired"
+
+        if self.expiry.state in (ExpiryState.CRITICAL, ExpiryState.SOON):
+            return "soon"
+
+        return "safe"
 
 
 @dataclass(frozen=True, slots=True)
@@ -143,6 +173,8 @@ class VariantCard:
     paused: bool
     # Its prices in the channels it is sold in.
     prices: tuple[ChannelPrice, ...]
+    # Its channels, Business over Retail, each with its price when sold.
+    channels: tuple[ChannelOffer, ...]
     # Stock or orders: its weight can no longer change.
     weight_fixed: bool
 
@@ -408,6 +440,18 @@ def build_variant_cards(
                     for _channel, key, label in CHANNELS
                     if sold[key]
                 ),
+                channels=tuple(
+                    ChannelOffer(
+                        label=label,
+                        sold=sold[key],
+                        amounts=(
+                            _channel_price(amounts, key=key, label=label).amounts
+                            if sold[key]
+                            else ""
+                        ),
+                    )
+                    for _channel, key, label in reversed(CHANNELS)
+                ),
                 weight_fixed=(
                     variant.batches.exists()
                     or variant.order_lines.exists()
@@ -452,7 +496,10 @@ def build_variant_stocks(
                             "ops_inventory:detail",
                             kwargs={"batch_pk": batch.pk},
                         ),
-                        expired=batch.best_before < today,
+                        expiry=build_expiry_info(
+                            best_before=batch.best_before,
+                            today=today,
+                        ),
                     )
                     for batch in batches_by_variant.get(variant.pk, [])
                 ),
