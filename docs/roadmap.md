@@ -148,9 +148,8 @@ solid or outline):
 
 - **Product**: the product's card (picture, brand over name, catalog ID,
   category, SKU, manufacturer, attributes; its status in the top right
-  corner; beside the name "In shop" in green, "Out of stock" in red (for
-  sale, in a channel, but no stock or only batches past their
-  best-before) or "Not in shop" and what keeps it out in grey; no pencil),
+  corner; nothing of the shop or stock: that is the Inventory tab's; no
+  pencil),
   then **Variants and offers**: a card per variant: label, weight, and at
   its right its channels as chips with a tick or a cross, Business over
   Retail, each with its price beside it when sold in it.
@@ -160,11 +159,16 @@ solid or outline):
   text" (the shop text page on that language). No preview of the shop's
   page: its price and buttons are the Product tab's.
 
-- **Inventory**: a card per variant (label, weight), at its right its
-  batches on the shelf stacked, the soonest best-before at the top: each
-  batch's ID and how many, to its page; none with less than one unit;
-  past its best-before and not closed in red, within `EXPIRY_SOON_DAYS`
-  (inventory/expiry.py) in orange; "Out of stock" without.
+- **Inventory**: first what needs looking at, in red: "Out of stock"
+  (for sale, in a channel, but no stock or only batches past their
+  best-before) and batches past their best-before. Then a card per
+  variant (label, weight), at its right its batches on the shelf
+  stacked, the soonest best-before at the top: each batch's ID, in stock
+  and reserved as plain numbers (heads over the first card say which),
+  to its page; none with less than one unit; past its best-before and
+  not closed in red, within `EXPIRY_SOON_DAYS` (inventory/expiry.py) in
+  orange; "Out of stock" without. Available (in stock less reserved) is
+  not shown.
 
 **Shop text page** (`edit_catalog`; no hero, a hidden page title): name,
 description and ingredients under one tab per language (`#en` opens

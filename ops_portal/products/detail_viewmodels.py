@@ -137,7 +137,9 @@ class BatchLink:
 
     batch_id: str
     best_before: date
-    quantity_label: str
+    # In stock (on the shelf), and how many of them orders hold.
+    quantity: int
+    reserved: int
     href: str
     expiry: ExpiryInfo
 
@@ -249,6 +251,34 @@ class ProductDetailContext:
     cancel_url: str
 
     @property
+    def inventory_notes(self) -> tuple[str, ...]:
+        """What the Inventory tab warns about, first: for sale with nothing
+        to sell, and batches past their best-before still on the shelf."""
+
+        notes = []
+
+        if self.shop_tone == "out":
+            notes.append(
+                "Out of stock: it is for sale, but there is nothing to sell."
+            )
+
+        expired = sum(
+            batch.expired
+            for card in self.variant_cards
+            for batch in card.stock.batches
+        )
+
+        if expired:
+            notes.append(
+                "1 batch past best-before (in red): sell it off or close it."
+                if expired == 1
+                else f"{expired} batches past best-before (in red): sell "
+                "them off or close them."
+            )
+
+        return tuple(notes)
+
+    @property
     def tab_actions(self) -> tuple[TabAction, ...]:
         """At the page's foot, the open tab's: Edit (the product's form on
         Product, the shop text's on Shop text), Add batch on Inventory."""
@@ -294,6 +324,7 @@ class ProductDetailContext:
             "in_shop": self.in_shop,
             "shop_label": self.shop_label,
             "shop_tone": self.shop_tone,
+            "inventory_notes": self.inventory_notes,
             "edit_catalog_href": self.edit_catalog_href,
             "status_key": self.status_key,
             "status_label": self.status_label,
@@ -325,6 +356,7 @@ def build_product_detail_context(
     cancel_url: str,
     stock_by_variant: dict[int, int] | None = None,
     batches_by_variant: dict[int, list[InventoryBatch]] | None = None,
+    reserved_by_batch: dict[int, int] | None = None,
     shop_product: CatalogProduct | None = None,
     today: date | None = None,
 ) -> ProductDetailContext:
@@ -340,6 +372,7 @@ def build_product_detail_context(
             variants=variants,
             stock_by_variant=stock_by_variant,
             batches_by_variant=batches_by_variant,
+            reserved_by_batch=reserved_by_batch or {},
             today=today,
         ),
     )
@@ -525,6 +558,7 @@ def build_variant_stocks(
     variants: list[ProductVariant],
     stock_by_variant: dict[int, int],
     batches_by_variant: dict[int, list[InventoryBatch]],
+    reserved_by_batch: dict[int, int],
     today: date,
 ) -> dict[int, VariantStock]:
     """Each variant's stock, by variant id: how many, and its batches on
@@ -543,9 +577,8 @@ def build_variant_stocks(
                     BatchLink(
                         batch_id=batch.batch_id,
                         best_before=batch.best_before,
-                        quantity_label=product.stock_quantity_label(
-                            batch.quantity
-                        ),
+                        quantity=batch.quantity,
+                        reserved=reserved_by_batch.get(batch.pk, 0),
                         href=reverse(
                             "ops_inventory:detail",
                             kwargs={"batch_pk": batch.pk},

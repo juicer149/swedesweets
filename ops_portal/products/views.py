@@ -87,6 +87,7 @@ from products.services import (
     update_product,
     update_product_catalog,
 )
+from reservations.api import active_reserved_quantities_by_batch_pk
 from retail.catalog_selectors import (
     get_retail_catalog_product,
 )
@@ -273,6 +274,7 @@ def detail(
     product = _get_product_or_404(
         product_pk
     )
+    batches_by_variant = shelf_batches_by_variant(product=product)
 
     context = (
         build_product_detail_context(
@@ -285,8 +287,14 @@ def detail(
             stock_by_variant=physical_quantity_by_variant(
                 product=product,
             ),
-            batches_by_variant=shelf_batches_by_variant(
-                product=product,
+            batches_by_variant=batches_by_variant,
+            # How many of each batch orders hold (the Inventory tab).
+            reserved_by_batch=active_reserved_quantities_by_batch_pk(
+                batch_pks=[
+                    batch.pk
+                    for batches in batches_by_variant.values()
+                    for batch in batches
+                ],
             ),
             shop_product=get_retail_catalog_product(
                 product_id=product.pk,

@@ -106,7 +106,6 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     # (Static files carry a hash in their names: js/back_link.<hash>.js.)
     assert "js/back_link." in content
     assert content.index('id="panel-inventory"') < content.index("tabs-foot")
-    assert 'class="tabs-foot__action' not in content  # a solid button
     assert "tabs-foot__action" in content
     # No pencil on the product's card (Edit is at the foot).
     assert "product-card__edit" not in content
@@ -180,6 +179,15 @@ def test_variant_card_lists_its_batches_on_the_shelf(client):
         "safe",
     ]
     assert stock.has_expired_batch is True
+    # Plain numbers (no unit): in stock, and how many orders hold (none);
+    # the heads over the first card say which is which.
+    assert [(batch.quantity, batch.reserved) for batch in stock.batches] == [
+        (3, 0),
+        (5, 0),
+        (4, 0),
+    ]
+    assert "variant-views__head" in content
+    assert ">Reserved<" in content
     assert "B-EMPTY" not in content
     assert "variant-batch--expired" in content
     assert "variant-batch--soon" in content
@@ -368,14 +376,9 @@ def test_shop_text_tab_shows_each_languages_own_text(client):
     # Product tab's).
     assert "data-product-add-form" not in content
     assert "catalog_previews" not in response.context
-    # Whether it is in the shop: a label beside the name on the card;
-    # its category among the card's facts.
-    assert response.context["in_shop"] is False
-    assert (
-        content.index("product-card-title")
-        < content.index("product-view__shop")
-        < content.index('id="panel-text"')
-    )
+    # The card says nothing of the shop or stock (the Inventory tab);
+    # its category is among its facts.
+    assert "product-view__shop" not in content
     category_label = response.context["profile"].category_label
     assert category_label
     assert f"Category <b>{category_label}</b>" in content
@@ -401,7 +404,7 @@ def _business_priced_product(internal_number):
 
 
 @pytest.mark.django_db
-def test_for_sale_with_nothing_to_sell_is_out_of_stock_in_red(client):
+def test_inventory_tab_warns_of_nothing_to_sell_and_expired_batches(client):
     from datetime import timedelta
 
     from inventory.models import InventoryBatch
@@ -410,12 +413,19 @@ def test_for_sale_with_nothing_to_sell_is_out_of_stock_in_red(client):
     product = _business_priced_product(520)
     url = reverse("ops_products:detail", kwargs={"product_pk": product.pk})
 
-    # Active, sold to business customers, no stock: out of stock (red).
+    # Active, sold to business customers, no stock: out of stock, said
+    # first on the Inventory tab.
     response = client.get(url)
+    content = response.content.decode()
 
     assert response.context["shop_tone"] == "out"
-    assert response.context["shop_label"] == "Out of stock"
-    assert "product-view__shop--out" in response.content.decode()
+    assert response.context["inventory_notes"] == (
+        "Out of stock: it is for sale, but there is nothing to sell.",
+    )
+    assert (
+        content.index('id="panel-inventory"')
+        < content.index("inventory-notes__note")
+    )
 
     # Only a batch past its best-before: still nothing to sell.
     batch = batch_factory(product=product, today=TODAY, batch_id="P-OLD")
@@ -423,7 +433,13 @@ def test_for_sale_with_nothing_to_sell_is_out_of_stock_in_red(client):
         best_before=TODAY - timedelta(days=2),
     )
 
-    assert client.get(url).context["shop_tone"] == "out"
+    response = client.get(url)
+
+    assert response.context["shop_tone"] == "out"
+    assert response.context["inventory_notes"] == (
+        "Out of stock: it is for sale, but there is nothing to sell.",
+        "1 batch past best-before (in red): sell it off or close it.",
+    )
 
     # A good batch: something to sell; not in the shop (no retail price).
     batch_factory(product=product, today=TODAY, batch_id="P-NEW")
@@ -431,6 +447,10 @@ def test_for_sale_with_nothing_to_sell_is_out_of_stock_in_red(client):
 
     assert response.context["shop_tone"] == "off"
     assert response.context["shop_label"] == "Not in shop · no retail price"
+    # The expired one still warned about; no more out of stock.
+    assert response.context["inventory_notes"] == (
+        "1 batch past best-before (in red): sell it off or close it.",
+    )
 
 
 @pytest.mark.django_db

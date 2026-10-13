@@ -493,7 +493,8 @@ def test_the_edit_page_saves_the_category_and_a_new_picture(client, tmp_path):
     from products.models import ProductProfile
 
     client.force_login(full_staff_user_factory())
-    product = product_factory(name="Hoodie", internal_number=640)
+    # Sold in a channel: an active product needs one to be saved.
+    product = _priced_apple()
 
     with override_settings(MEDIA_ROOT=tmp_path):
         response = client.get(_edit_url(product))
@@ -512,7 +513,7 @@ def test_the_edit_page_saves_the_category_and_a_new_picture(client, tmp_path):
 
         response = client.post(_edit_url(product), data)
 
-        assert response.status_code == 302
+        assert response.status_code == 302, response.context["form"].errors
         profile = ProductProfile.objects.get(product=product)
         assert profile.category == ProductProfile.Category.CANDY
         assert profile.image
@@ -522,7 +523,9 @@ def test_the_edit_page_saves_the_category_and_a_new_picture(client, tmp_path):
         response = client.get(_edit_url(product))
         data = _page_post_data(response)
         data["image"] = _png("hoodie-2.png")
-        client.post(_edit_url(product), data)
+        response = client.post(_edit_url(product), data)
+
+        assert response.status_code == 302
 
         profile.refresh_from_db()
         assert profile.image.name != first_image
@@ -538,14 +541,15 @@ def test_saving_without_a_picture_keeps_the_old_one(client, tmp_path):
     from products.models import ProductProfile
 
     client.force_login(full_staff_user_factory())
-    product = product_factory(name="Hoodie", internal_number=641)
+    product = _priced_apple()
 
     with override_settings(MEDIA_ROOT=tmp_path):
         change_product_image(product=product, uploaded_image=_png()).commit()
         before = ProductProfile.objects.get(product=product).image.name
 
         response = client.get(_edit_url(product))
-        client.post(_edit_url(product), _page_post_data(response))
+        response = client.post(_edit_url(product), _page_post_data(response))
 
+        assert response.status_code == 302
         assert ProductProfile.objects.get(product=product).image.name == before
 

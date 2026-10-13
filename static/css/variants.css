@@ -712,8 +712,8 @@
 .variant-offers {
   grid-column: 4;
   display: grid;
-  grid-template-columns: auto minmax(9rem, auto);
-  gap: var(--space-2) var(--space-3);
+  grid-template-columns: auto minmax(12rem, auto);
+  gap: var(--space-2) var(--space-6);
   margin: 0;
 }
 
@@ -745,7 +745,49 @@
   grid-column: 4;
   display: grid;
   justify-items: end;
-  min-width: 11rem;
+}
+
+/* Over the first card: what the numbers in the batch rows are, over
+   their columns (the card's grid, past its edge and padding). */
+.variant-views__head {
+  display: grid;
+  grid-template-columns: 4.5rem 4.5rem minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  padding: 0 calc(var(--space-4) + 1px) var(--space-1);
+}
+
+.variant-views__head .variant-batch {
+  grid-column: 4;
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-12);
+  font-weight: 500;
+}
+
+.variant-views__head .variant-batch > span {
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* What needs looking at first: out of stock, batches past best-before. */
+.inventory-notes {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.inventory-notes__note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-status-danger-text);
+  background: rgb(var(--color-status-danger) / 0.07);
+  border: 1px solid rgb(var(--color-status-danger) / 0.3);
+  border-radius: var(--radius-control);
+  font-size: var(--font-size-14);
+  font-weight: 600;
 }
 
 .variant-view__none {
@@ -757,21 +799,32 @@
 .variant-batches {
   display: grid;
   gap: 2px;
-  width: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* A batch: its ID, in stock, reserved; the numbers right-aligned in
+   their columns, as under the heads over the first card. */
 .variant-batch {
-  display: flex;
+  display: grid;
+  grid-template-columns: 5.5rem 3.5rem 4rem;
   align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-5);
+  gap: var(--space-3);
   padding: 2px 0;
   color: var(--color-primary-900);
   font-size: var(--font-size-14);
   text-decoration: none;
+}
+
+.variant-batch__quantity,
+.variant-batch__reserved {
+  text-align: right;
+}
+
+.variant-batch__reserved {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
 .variant-batch__id {
@@ -816,6 +869,15 @@
   .variant-offers {
     grid-column: 1 / -1;
     grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  /* The heads over the batches, right-aligned like them. */
+  .variant-views__head {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .variant-views__head .variant-batch {
+    grid-column: 2;
   }
 
   /* The batches at the right of label and weight, Paused under them. */
