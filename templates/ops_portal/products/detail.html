@@ -1,6 +1,5 @@
 {% extends "layouts/detail.html" %}
 
 {% block page_heading %}
-  {# No hero: the Product tab's first card says what product it is. #}
-  <h1 id="page-title" class="visually-hidden">{{ title }}</h1>
+  {% include "ops_portal/products/includes/product_hero.html" %}
 {% endblock %}

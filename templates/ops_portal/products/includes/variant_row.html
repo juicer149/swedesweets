@@ -1,14 +1,10 @@
 {% comment %}
-  One variant in the variants editor: a card, and under it, with its own
-  price, a yellow tab with its prices.
-
-  The card: the arrows that move it, label, weight, sales channels
-  (Retail, Business; neither: paused), the price tag and the trash. The
-  tag on: the tab slides out under the card, a price field per channel it
-  is sold in (the editor's currency shows); a field left empty is the
-  product's price (its placeholder). Off: the variant is sold at the
-  product's price. A variant with stock or orders says under its card why
-  its weight is fixed.
+  One variant in the variants editor: a card. Its first line: the arrows
+  that move it (or drag it by the grip between them), label, weight, sales
+  channels (Retail, Business; neither: paused) and the trash. Its second:
+  its prices, one per channel it is sold in (the editor's currency shows),
+  and "Use for all variants", which copies them to the others. A variant
+  with stock or orders says under its card why its weight is fixed.
 
   row      a VariantForm (ops_portal/products/variant_forms.py)
   is_new   the template row "Add variant" copies
@@ -62,15 +58,6 @@
       </label>
     </div>
 
-    {# Its own price: on (green), the yellow tab under the card. #}
-    <label class="product-tag-toggle product-tag-toggle--status product-tag-toggle--icon variant-row__own" for="{{ row.own_price.id_for_label }}" title="Own price: on, prices of its own (an empty one is the product's); off, the product's price">
-      {{ row.own_price }}
-      <span class="product-tag-toggle__surface">
-        {% include "includes/ui/icon_block.html" with name="tag" size="sm" only %}
-        <span class="visually-hidden">Own price{% if row.state %} for {{ row.state.variant.display_name }}{% endif %}</span>
-      </span>
-    </label>
-
     <div class="variant-row__remove">
       {% if is_new or row.can_delete %}
         <button class="line__remove-button" type="button" aria-label="Delete variant" data-variant-trash>
@@ -84,16 +71,15 @@
       {% endif %}
     </div>
 
-    {% for error in row.delete.errors %}<div class="form-field__errors variant-row__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
-  </div>
-
-  {# The tab: its own prices; one left empty is the product's (shown as its placeholder). #}
-  <div class="variant-row__prices" data-variant-prices>
-    <div class="variant-row__prices-box">
+    {# Its prices, one per channel it is sold in (css/variants.css hides a channel that is off). #}
+    <div class="variant-row__prices">
       {% include "ops_portal/products/includes/variant_price.html" with caption="Retail" channel="retail" eur=row.retail_eur sek=row.retail_sek only %}
       {% include "ops_portal/products/includes/variant_price.html" with caption="Business" channel="business" eur=row.business_eur sek=row.business_sek only %}
-      <p class="variant-row__prices-none">In no sales channel: switch one on to price it.</p>
+      <p class="variant-row__prices-none">Paused: switch a sales channel on to price it.</p>
+      <button class="variant-row__use-for-all" type="button" data-variant-use-for-all>Use for all variants</button>
     </div>
+
+    {% for error in row.delete.errors %}<div class="form-field__errors variant-row__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
   </div>
 
   {% if row.state.is_stocked_or_ordered %}

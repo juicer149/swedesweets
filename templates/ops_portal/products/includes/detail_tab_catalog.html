@@ -2,19 +2,15 @@
 {% comment %}
   The Catalog tab: the shop's page for the product, once per language
   (catalog_previews, ops_portal/products/catalog_preview.py) under language
-  tabs, each in its own language with the shop's fallbacks. Shown, not used:
-  its form is inert. Then what is the same in every language (category,
+  tabs, each in its own language with the shop's fallbacks, a label in
+  the corner saying whether it is in the shop (and if not, what keeps it
+  out). Shown, not used: its form is inert. Then what is the same in every language (category,
   picture) and Edit catalog (its own page).
 {% endcomment %}
-<p class="page__note catalog-preview__note">
-  As the shop shows it.
-  {% if not in_shop %}
-    Not in the shop now: it shows once the product is active, has a retail
-    price in EUR and is in stock.
-  {% endif %}
-</p>
-
 <div class="page-tabs catalog-preview" data-tabs>
+  {# In the shop or not, and what keeps it out (a label in the corner). #}
+  <span class="catalog-preview__shop{% if in_shop %} catalog-preview__shop--in{% endif %}">{{ shop_label }}</span>
+
   <nav class="section-nav" aria-label="Languages" role="tablist">
     {% for preview in catalog_previews %}
       {% include "includes/ui/section_tab.html" with key=preview.language_code label=preview.language_name is_active=forloop.first tab_id="tab-preview-"|add:preview.language_code panel_id="panel-preview-"|add:preview.language_code only %}

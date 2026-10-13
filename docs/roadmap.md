@@ -20,12 +20,11 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   the cross or the icon, back to the page before. Plain navigation where
   the browser has no View Transitions. The cart is already on the server;
   half-filled contact details are kept in the session.
-- **Prices per variant**: the product has one price, every variant's
-  unless the variant's price tag is on: then it has its own (per channel
-  and currency; left empty, the product's). Nothing stores the
-  product's price apart: the page shows the prices most variants share.
-  Each variant has its own sales channels (retail, business); in neither,
-  it is paused.
+- **Prices per variant**: each variant has its own prices (per channel
+  and currency), as they are stored; no product price over them. "Use
+  for all variants" copies one variant's prices to the others. Each
+  variant has its own sales channels (retail, business); in neither, it
+  is paused.
 - **Price changes ask for the password**: saving a change to a price
   already set (raised, lowered, removed) lists the changes and asks for
   the password again; a first price never asks. `PRICE_CHANGE_CHECK`
@@ -40,8 +39,9 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   look asks for it, like price changes); saving comes back to the same
   page.
 - **Product page and edit page alike**: the product page shows the same
-  cards as the edit page, to read (product card, product price, a card per
-  variant with stock); Edit leads to the same places.
+  variant cards as the edit page, to read, under a hero with the
+  product's total stock; tabs Variants & offers and Catalog. Edit stays a
+  page of its own for now (one page for both, later perhaps).
 - **Help on a page**: a round "?" beside a title opens a dialog with what
   everything there means (`includes/ui/help.html`, its text a template of
   its own; a form section takes it as `help`). First on Variants and
@@ -134,14 +134,12 @@ mobile).
 **Catalog page**: category and picture, then name, description and
 ingredients under one tab per language.
 
-**Edit page**: Product as a card (catalog ID and status at its top, brand
-and name large), then **Variants and offers**: the product's price
-with the EUR / SEK tabs in it; then a card per variant:
-arrows (up at the top, down at the bottom), label, weight, sales channels
-(Retail, Business), the price tag, and under the channels what it sells
-at; the tag on, a yellow tab with its own prices slides out under the
-card; "+ Add variant" as a faint last row. Price changes ask for the
-password.
+**Edit page**: Product as a card (its picture, catalog ID and status at
+its top, brand and name large), then **Variants and offers**: EUR / SEK
+tabs, then a card per variant: arrows (up at the top, down at the
+bottom), label, weight, sales channels (Retail, Business), and under them
+its prices with "Use for all variants"; "+ Add variant" as a faint last
+row. Price changes ask for the password.
 
 ## Done
 

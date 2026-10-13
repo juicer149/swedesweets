@@ -26,7 +26,6 @@ from ops_portal.products.presentation import (
     product_status_icon,
 )
 from ops_portal.products.pricing_forms import (
-    product_amounts,
     variant_amounts,
 )
 from pricing.models import CommercialPrice
@@ -38,11 +37,13 @@ from products.models import (
 )
 
 PRODUCT_DETAIL_TABS = (
+    # What is sold (the variants, their prices and stock), then how the
+    # shop shows it.
     PageTab(
-        key="product",
-        label="Product",
-        icon="lollipop",
-        template="ops_portal/products/includes/detail_tab_product.html",
+        key="variants",
+        label="Variants & offers",
+        icon="variants",
+        template="ops_portal/products/includes/detail_tab_variants.html",
     ),
     PageTab(
         key="catalog",
@@ -109,16 +110,15 @@ class ChannelPrice:
 @dataclass(frozen=True, slots=True)
 class VariantCard:
     """A variant on the product page, as its card on the edit page: label,
-    weight, sales channels, its own prices (when it has some), stock."""
+    weight, sales channels, its prices, stock."""
 
     label: str
     weight_label: str
     retail: bool
     business: bool
     paused: bool
-    # Its prices in the channels it is sold in, when unlike the
-    # product's; empty: it sells at the product's price.
-    own_prices: tuple[ChannelPrice, ...]
+    # Its prices in the channels it is sold in.
+    prices: tuple[ChannelPrice, ...]
     stock_label: str
     in_stock: bool
     # Stock or orders: its weight can no longer change.
@@ -159,10 +159,14 @@ class ProductDetailContext:
         ProductTagPresentation,
         ...,
     ]
-    product_price: tuple[ChannelPrice, ...]
+    # All its variants' stock together (the hero's corner).
+    total_stock: int
+    total_stock_label: str
     variant_cards: tuple[VariantCard, ...]
     catalog_previews: tuple[CatalogPagePreview, ...]
     in_shop: bool
+    # The Catalog tab's label: "In shop", or what keeps it out.
+    shop_label: str
     status_key: str
     status_label: str
     status_icon: str
@@ -183,10 +187,12 @@ class ProductDetailContext:
             "attribute_tags": (
                 self.attribute_tags
             ),
-            "product_price": self.product_price,
+            "total_stock": self.total_stock,
+            "total_stock_label": self.total_stock_label,
             "variant_cards": self.variant_cards,
             "catalog_previews": self.catalog_previews,
             "in_shop": self.in_shop,
+            "shop_label": self.shop_label,
             "edit_catalog_href": reverse(
                 "ops_products:edit_catalog",
                 kwargs={"product_pk": self.product.pk},
@@ -222,10 +228,8 @@ def build_product_detail_context(
     shop_product: CatalogProduct | None = None,
 ) -> ProductDetailContext:
     variants = list(product.variants.all())
-    shared = product_amounts(
-        prices_by_channel=prices_by_channel,
-        variant_ids=[variant.pk for variant in variants],
-    )
+    stock_by_variant = stock_by_variant or {}
+    total_stock = sum(stock_by_variant.get(variant.pk, 0) for variant in variants)
 
     return ProductDetailContext(
         product=product,
@@ -240,22 +244,26 @@ def build_product_detail_context(
                 product
             )
         ),
-        product_price=tuple(
-            _channel_price(shared, key=key, label=label)
-            for _channel, key, label in CHANNELS
-        ),
+        total_stock=total_stock,
+        total_stock_label=product.stock_quantity_label(total_stock),
         variant_cards=build_variant_cards(
             product=product,
             variants=variants,
             prices_by_channel=prices_by_channel,
-            shared=shared,
-            stock_by_variant=stock_by_variant or {},
+            stock_by_variant=stock_by_variant,
         ),
         catalog_previews=build_catalog_page_previews(
             product=product,
             shop_product=shop_product,
         ),
         in_shop=shop_product is not None,
+        shop_label=_shop_label(
+            product=product,
+            variants=variants,
+            prices_by_channel=prices_by_channel,
+            total_stock=total_stock,
+            in_shop=shop_product is not None,
+        ),
         status_key=(
             "active" if product.active else "inactive"
         ),
@@ -283,6 +291,45 @@ def build_product_detail_context(
     )
 
 
+def _shop_label(
+    *,
+    product: Product,
+    variants: list[ProductVariant],
+    prices_by_channel: dict[str, dict[int, CommercialPrice]],
+    total_stock: int,
+    in_shop: bool,
+) -> str:
+    """"In shop", or "Not in shop" and what keeps it out: inactive, no
+    retail price in EUR, no stock (the shop's rules,
+    retail.catalog_selectors)."""
+
+    if in_shop:
+        return "In shop"
+
+    retail_offers = prices_by_channel.get(CommercialPrice.Channel.RETAIL, {})
+    has_retail_price = any(
+        variant.active
+        and _enabled(retail_offers, variant)
+        and variant_amounts(
+            prices_by_channel=prices_by_channel,
+            variant_id=variant.pk,
+        )["retail_eur"]
+        is not None
+        for variant in variants
+    )
+    gaps = [
+        reason
+        for reason, missing in (
+            ("inactive", not product.active),
+            ("no retail price", not has_retail_price),
+            ("no stock", total_stock <= 0),
+        )
+        if missing
+    ]
+
+    return " · ".join(["Not in shop", *gaps])
+
+
 # A product with one variant (no label): what its card is called.
 ONLY_VARIANT_NAME = "One variant"
 
@@ -292,12 +339,10 @@ def build_variant_cards(
     product: Product,
     variants: list[ProductVariant],
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
-    shared: dict[str, Decimal | None],
     stock_by_variant: dict[int, int],
 ) -> tuple[VariantCard, ...]:
-    """The product's variants in order, as on the edit page: a variant has
-    its own prices when one of them is unlike the product's (the same rule
-    as the edit form's price tag, variant_forms.build_variant_formset)."""
+    """The product's variants in order, as on the edit page, each with its
+    prices in the channels it is sold in."""
 
     cards = []
 
@@ -311,10 +356,6 @@ def build_variant_cards(
             and _enabled(prices_by_channel.get(channel, {}), variant)
             for channel, key, _label in CHANNELS
         }
-        own = any(
-            value is not None and value != shared[field_name]
-            for field_name, value in amounts.items()
-        )
         stock = stock_by_variant.get(variant.pk, 0)
 
         cards.append(
@@ -325,14 +366,10 @@ def build_variant_cards(
                 business=sold["business"],
                 # Paused: switched off (both channels off on the edit page).
                 paused=not variant.active,
-                own_prices=(
-                    tuple(
-                        _channel_price(amounts, key=key, label=label)
-                        for _channel, key, label in CHANNELS
-                        if sold[key]
-                    )
-                    if own
-                    else ()
+                prices=tuple(
+                    _channel_price(amounts, key=key, label=label)
+                    for _channel, key, label in CHANNELS
+                    if sold[key]
                 ),
                 stock_label=product.stock_quantity_label(stock),
                 in_stock=stock > 0,

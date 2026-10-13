@@ -4,11 +4,9 @@
 
   - The EUR / SEK tabs: the editor shows that currency's prices (its
     data-currency; css/variants.css hides the other, still sent).
-  - A row's price tag: on, the yellow tab with its own prices slides out
-    under the card (css/variants.css shows it; the slide is
-    js/smooth-details.js's, same time and easing); off, it slides back.
-    Each own price field shows the product's price as its placeholder: left
-    empty, that is the price.
+  - "Use for all variants" copies a card's prices (both currencies) to the
+    other cards, asking first when that overwrites prices they have. It
+    shows once there are two variants or more.
   - The trash asks, then the row flashes red and folds away (line_flash.js)
     and is marked for deletion on save; a row not saved yet just goes.
   - "+ Add variant" copies the template row as a new formset form at the
@@ -33,84 +31,53 @@
       return;
     }
 
-    // The product's price fields (product_retail_eur …).
-    const productPrices = Array.from(
-      editor.querySelectorAll(".variant-shared input[name]")
-    );
-
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    // The slides running now, by panel.
-    const slides = new Map();
 
-    // Each own price field shows the product's price: empty, that is it.
-    function placeholders(row) {
-      productPrices.forEach((input) => {
-        const key = input.name.replace(/^product_/, "");
-        const field = row.querySelector(`[data-variant-prices] input[name$="-${key}"]`);
+    function priceInputs(row) {
+      return Array.from(row.querySelectorAll(".variant-row__prices input[name]"));
+    }
 
-        if (field) {
-          field.placeholder = input.value.trim() || "0.00";
+    // "Use for all variants": this card's prices on every other card.
+    async function useForAll(row) {
+      const own = new Map(
+        priceInputs(row).map((input) => [input.name.replace(/^.*-/, ""), input.value.trim()])
+      );
+      const others = visibleRows().filter((other) => other !== row);
+      const overwrites = others.some((other) =>
+        priceInputs(other).some((input) => {
+          const value = input.value.trim();
+
+          return value && value !== own.get(input.name.replace(/^.*-/, ""));
+        })
+      );
+
+      if (overwrites && window.confirmDialog) {
+        const sure = await window.confirmDialog(
+          `Give every variant the prices of ${rowName(row)}? It replaces the prices they have now.`,
+          {
+            title: "Use for all variants",
+            confirmLabel: "Use for all",
+            cancelLabel: "Keep their prices",
+          }
+        );
+
+        if (!sure) {
+          return;
+        }
+      }
+
+      others.forEach((other) => {
+        priceInputs(other).forEach((input) => {
+          input.value = own.get(input.name.replace(/^.*-/, "")) ?? "";
+          // dirty_form.js marks each changed field.
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+
+        if (window.lineFlash) {
+          window.lineFlash.added(other);
         }
       });
     }
-
-    function placeholdersAll() {
-      rows.querySelectorAll("[data-variant-row]").forEach(placeholders);
-    }
-
-    // The row's own prices slide open or shut (as js/smooth-details.js).
-    function slide(row, open) {
-      const panel = row.querySelector("[data-variant-prices]");
-
-      if (!panel || reducedMotion.matches) {
-        return;
-      }
-
-      // Turned back mid-slide: on from where it got to.
-      const running = slides.get(panel);
-      const from = running ? panel.getBoundingClientRect().height : null;
-
-      if (running) {
-        slides.delete(panel);
-        running.cancel();
-      }
-
-      // Shutting: kept shown until the slide ends (the CSS hides it at once).
-      panel.classList.toggle("is-closing", !open);
-
-      const full = panel.scrollHeight;
-      const start = from ?? (open ? 0 : full);
-      const animation = panel.animate(
-        [
-          { height: `${start}px`, opacity: open ? 0 : 1 },
-          { height: `${open ? full : 0}px`, opacity: open ? 1 : 0 },
-        ],
-        { duration: 280, easing: "cubic-bezier(0.2, 0, 0, 1)" },
-      );
-
-      slides.set(panel, animation);
-      panel.style.overflow = "hidden";
-      animation.onfinish = () => {
-        if (slides.get(panel) !== animation) {
-          return;
-        }
-
-        slides.delete(panel);
-        panel.style.overflow = "";
-        panel.classList.remove("is-closing");
-      };
-    }
-
-    // The price tag: the tab slides out (on) or back (off).
-    rows.addEventListener("change", (event) => {
-      const toggle = event.target.closest("[data-variant-own-price]");
-
-      if (toggle) {
-        slide(toggle.closest("[data-variant-row]"), toggle.checked);
-      }
-    });
-
-    editor.addEventListener("input", placeholdersAll);
 
     currencyChips.forEach((chip) => {
       chip.addEventListener("click", () => {
@@ -149,6 +116,12 @@
 
         if (down) {
           down.disabled = index === visible.length - 1;
+        }
+
+        const forAll = row.querySelector("[data-variant-use-for-all]");
+
+        if (forAll) {
+          forAll.hidden = visible.length < 2;
         }
       });
     }
@@ -328,7 +301,6 @@
         rows.appendChild(row);
         totalForms.value = String(index + 1);
         changed();
-        placeholders(row);
 
         if (window.lineFlash) {
           window.lineFlash.added(row);
@@ -453,11 +425,12 @@
         move(row, 1);
       } else if (event.target.closest("[data-variant-trash]")) {
         trash(row);
+      } else if (event.target.closest("[data-variant-use-for-all]")) {
+        useForAll(row);
       }
     });
 
     renumber();
-    placeholdersAll();
   }
 
   document.querySelectorAll("[data-variant-editor]").forEach(setUp);

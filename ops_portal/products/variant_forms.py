@@ -1,8 +1,8 @@
 """Variants and prices on the product edit form (docs/product-variants.md).
 
 Each existing variant is a row (label, weight, its sales channels, its
-price tag: its own retail and business prices in EUR and SEK, or the
-product's; delete), in the order shown everywhere; new rows are added
+retail and business prices in EUR and SEK, delete), in the order shown
+everywhere; new rows are added
 in the page (variant_editor.js) and everything is saved with "Update
 product". The sales channels say where the variant is sold: with
 neither, it is paused.
@@ -18,7 +18,6 @@ from django.forms import BaseFormSet, formset_factory
 from ops_portal.products.pricing_forms import (
     PRICE_FIELDS,
     price_field,
-    product_amounts,
     variant_amounts,
 )
 from pricing.models import CommercialPrice
@@ -112,20 +111,7 @@ class VariantForm(forms.Form):
         ),
     )
 
-    # The row's price tag: on, the variant has its own prices (the fields
-    # in the tab under it; one left empty is the product's); off, it is
-    # sold at the product's price (ProductPricesForm).
-    own_price = forms.BooleanField(
-        required=False,
-        label="Own price",
-        widget=forms.CheckboxInput(
-            attrs={
-                "class": "product-tag-toggle__input",
-                "data-variant-own-price": "true",
-            }
-        ),
-    )
-
+    # Its prices, per channel and currency (an empty one: none).
     retail_eur = price_field(label="Retail EUR")
     retail_sek = price_field(label="Retail SEK")
     business_eur = price_field(label="Business EUR")
@@ -366,10 +352,6 @@ def build_variant_formset(
 
     prices_by_channel = prices_by_channel or {}
     variants = list(product.variants.all())
-    shared = product_amounts(
-        prices_by_channel=prices_by_channel,
-        variant_ids=[variant.pk for variant in variants],
-    )
     initial = []
 
     for index, variant in enumerate(variants, start=1):
@@ -377,12 +359,6 @@ def build_variant_formset(
             prices_by_channel=prices_by_channel,
             variant_id=variant.pk,
         )
-        # Its own: the prices unlike the product's; the rest it takes from
-        # the product (empty fields).
-        own = {
-            field_name: value if value != shared[field_name] else None
-            for field_name, value in amounts.items()
-        }
         initial.append(
             {
                 "variant_id": variant.pk,
@@ -397,11 +373,8 @@ def build_variant_formset(
                     prices_by_channel.get(CommercialPrice.Channel.BUSINESS, {}),
                     variant,
                 ),
-                "own_price": any(
-                    value is not None for value in own.values()
-                ),
                 "delete": False,
-                **own,
+                **amounts,
             }
         )
 

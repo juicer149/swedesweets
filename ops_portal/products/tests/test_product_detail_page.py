@@ -31,23 +31,20 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
 
     assert response.status_code == 200
     assert response.context["status_key"] == "active"
-    # Two tabs: the Product tab's variants show the stock.
+    # Two tabs: what is sold (each variant's stock), then the catalog.
     assert [tab.key for tab in response.context["page_tabs"]] == [
-        "product",
+        "variants",
         "catalog",
     ]
     (card,) = response.context["variant_cards"]
     assert card.stock_label == product.stock_quantity_label(12)
     assert card.in_stock is True
-    # The heading says no stock (the variants do).
-    assert "available" not in content.split("</header>")[0]
-    # The product's card, then Variants and offers with the product price
-    # and a card per variant (its channels as chips), with its help.
-    # No hero: a hidden title, the product's card first in the Product tab.
-    assert '<h1 id="page-title" class="visually-hidden">' in content
-    assert 'class="product-card product-view"' in content
-    assert content.index('role="tablist"') < content.index("product-view")
-    assert 'id="product-variants-title">Variants and offers</h2>' in content
+    # The hero over the tabs: the product, and all its stock in a corner.
+    assert 'class="product-card product-hero"' in content
+    assert content.index("product-hero") < content.index('role="tablist"')
+    assert response.context["total_stock"] == 12
+    assert "product-hero__stock" in content
+    # A card per variant (its channels as chips), with the tab's help.
     assert "variant-view__chip" in content
     assert 'data-help-open="variants-help"' in content
     assert "demand" not in response.context
@@ -110,12 +107,11 @@ def test_product_edit_form_is_one_page_of_sections(client):
     assert content.index('name="active"') < content.index('name="brand"')
     assert 'data-help-open="product-help"' in content
     assert content.index('name="name"') < content.index('name="vegan"')
-    # Each variant's sales channels and price tag; its own prices (shown
-    # with the tag on) and the product's price.
+    # Each variant's sales channels and its prices on its card.
     assert 'type="checkbox" name="variants-0-business"' in content
-    assert 'type="checkbox" name="variants-0-own_price"' in content
     assert 'name="variants-0-business_eur"' in content
-    assert 'name="product_business_sek"' in content
+    assert 'name="variants-0-business_sek"' in content
+    assert "own_price" not in content
     assert "Swedish/internal MVP" not in content
     # No hero: the Product card says which product (a hidden title).
     assert '<h1 id="page-title" class="visually-hidden">Edit ' in content
@@ -237,8 +233,11 @@ def test_catalog_tab_previews_the_shop_page_in_each_language(client):
     assert "Ingrédients" in content
     assert 'id="preview-fr-product-title"' in content
     assert 'id="preview-en-product-title"' in content
-    # Not sold (no retail price): shown without a price, and said so.
+    # Not sold (no retail price): shown without a price, and the label
+    # says what keeps it out.
     assert response.context["in_shop"] is False
     assert french.offers == ()
-    assert "Not in the shop now" in content
+    assert "Not in shop" in response.context["shop_label"]
+    assert "no retail price" in response.context["shop_label"]
+    assert "catalog-preview__shop" in content
     assert "data-product-add-form" in content and " inert" in content

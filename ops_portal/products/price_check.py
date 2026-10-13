@@ -57,7 +57,6 @@ def check_is_on() -> bool:
 def price_changes(
     *,
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
-    prices_form,
     variant_formset,
 ) -> list[PriceChange]:
     """The saved variants' prices that saving would change."""
@@ -76,7 +75,7 @@ def price_changes(
             prices_by_channel=prices_by_channel,
             variant_id=variant_id,
         )
-        new = prices_form.prices_for(row)
+        new = row.prices()
 
         for field_name, channel, currency in PRICE_FIELDS:
             before = old[field_name]

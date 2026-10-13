@@ -15,7 +15,6 @@ from ops_portal.products.forms import (
 from ops_portal.products.presentation import product_status_icon
 from ops_portal.products.price_check import PriceCheck
 from ops_portal.products.pricing_forms import (
-    ProductPricesForm,
     ProductPricingForm,
 )
 from ops_portal.products.variant_forms import (
@@ -80,7 +79,6 @@ class ProductFormContext:
     submit_label: str
     cancel_url: str
     pricing_form: ProductPricingForm | None = None
-    prices_form: ProductPricesForm | None = None
     product: Product | None = None
     variant_formset: BaseVariantFormSet | None = None
     # Price changes waiting for the password (price_check.py).
@@ -94,7 +92,6 @@ class ProductFormContext:
             "pricing_form": (
                 self.pricing_form
             ),
-            "prices_form": self.prices_form,
             "price_check": self.price_check,
             "product": self.product,
             "form_sections": (
@@ -153,14 +150,12 @@ def build_create_product_form_context(
 def build_edit_product_form_context(
     *,
     form: ProductEditForm,
-    prices_form: ProductPricesForm,
     product: Product,
     variant_formset: BaseVariantFormSet,
     price_check: PriceCheck | None = None,
 ) -> ProductFormContext:
     return ProductFormContext(
         form=form,
-        prices_form=prices_form,
         product=product,
         variant_formset=variant_formset,
         price_check=price_check,

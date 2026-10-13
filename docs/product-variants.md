@@ -112,24 +112,22 @@ fall back to the order they were added in.
 
 ## Ops
 
-- **Product page** reads like the edit page: the product's card (brand
-  over name, catalog ID, SKU, manufacturer, attributes, a pencil to edit),
-  then **Variants and offers**: the product price, and a card per variant
-  in order (weight, its sales channels as chips, the price tag and its
-  own prices in a yellow tab when it has them, stock; why its weight is
-  fixed).
+- **Product page**: a hero over its tabs (picture, brand over name, a
+  pencil to edit, status, catalog ID, SKU, manufacturer, attributes; all
+  the variants' stock together in its corner). Tabs **Variants & offers**
+  (a card per variant in order: weight, its sales channels as chips, its
+  prices in them, stock; why its weight is fixed) and **Catalog** (the
+  shop's page per language, a label saying "In shop" or what keeps it
+  out).
 - **Edit** has **Variants and offers**:
-  - **Product price**: every variant's without a price of its own; in its
-    box EUR / SEK as two small tabs (which currency's prices show, there
-    and in the variants' tabs);
+  - EUR / SEK as two small tabs over the cards (which currency's prices
+    show);
   - a card per variant (rounded, edged in the accent): arrows to move it
-    (up at its top, down at its bottom), label, weight, its sales
-    channels (Retail, Business; in neither it is paused), its price tag,
-    delete (only without history, rule 6); under the channels what it
-    sells at in the shown currency (a channel that is off shows none). The
-    tag on (green): a yellow tab slides out under the card with a price
-    field per channel it is sold in; a field left empty is the product's
-    price (shown as its placeholder);
+    (up at its top, down at its bottom, or drag it by the grip between
+    them), label, weight, its sales channels (Retail, Business; in
+    neither it is paused), delete (only without history, rule 6); under
+    them its prices, one per channel it is sold in, and "Use for all
+    variants" to give the others the same;
   - changes to prices already set ask for the password before saving
     (`PRICE_CHANGE_CHECK`, on by default; a first price never asks);
   - a faint "+ Add variant" row under the last one;

@@ -1,25 +1,11 @@
 {% comment %}
-  The Product tab, as the edit page in reading: the product's card
-  (product_view_card.html); then Variants and offers:
-  the product price, and a card per variant in order (weight, sales
-  channels, the price tag when it has its own prices, in a yellow tab
-  under it, stock; why its weight is fixed); Edit product and Add batch.
+  The Variants & offers tab, as the edit page in reading: a card per
+  variant in order (weight, sales channels, its prices in them, stock; why
+  its weight is fixed), its help; Edit product and Add batch.
 {% endcomment %}
-{% include "ops_portal/products/includes/product_view_card.html" %}
-
-<section class="product-section" aria-labelledby="product-variants-title">
-  <div class="form-section__head">
-    <h2 class="form-section__title" id="product-variants-title">Variants and offers</h2>
+<section class="product-section product-variants-tab" aria-label="Variants">
+  <div class="product-variants-tab__head">
     {% include "includes/ui/help.html" with id="variants-help" title="Variants and offers" body="ops_portal/products/help/variants.html" only %}
-  </div>
-
-  <div class="variant-shared variant-shared--read">
-    <p class="variant-shared__name">Product price</p>
-    <p class="variant-shared__values">
-      {% for price in product_price %}
-        <span class="variant-shared__value"><span class="variant-shared__caption">{{ price.label }}</span> {{ price.amounts }}</span>
-      {% endfor %}
-    </p>
   </div>
 
   <ul class="variant-views" aria-label="Variants">
@@ -31,27 +17,21 @@
           <span class="variant-view__channels">
             <span class="variant-view__chip{% if variant.retail %} variant-view__chip--on{% endif %}">Retail<span class="visually-hidden">: {% if variant.retail %}sold{% else %}not sold{% endif %}</span></span>
             <span class="variant-view__chip{% if variant.business %} variant-view__chip--on{% endif %}">Business<span class="visually-hidden">: {% if variant.business %}sold{% else %}not sold{% endif %}</span></span>
-            {% if variant.own_prices %}
-              <span class="variant-view__own" title="Its own price">
-                {% include "includes/ui/icon_block.html" with name="tag" size="sm" only %}
-                <span class="visually-hidden">Its own price</span>
-              </span>
-            {% endif %}
             {% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}
           </span>
           <span class="variant-view__stock{% if not variant.in_stock %} variant-view__stock--none{% endif %}">
             {{ variant.stock_label }}
             <small>{% if variant.in_stock %}on the shelf{% else %}none in stock{% endif %}</small>
           </span>
-        </div>
 
-        {% if variant.own_prices %}
-          <p class="variant-view__tab">
-            {% for price in variant.own_prices %}
-              <span><span class="variant-shared__caption">{{ price.label }}</span> {{ price.amounts }}</span>
-            {% endfor %}
-          </p>
-        {% endif %}
+          {% if variant.prices %}
+            <p class="variant-view__prices">
+              {% for price in variant.prices %}
+                <span><span class="variant-view__caption">{{ price.label }}</span> {{ price.amounts }}</span>
+              {% endfor %}
+            </p>
+          {% endif %}
+        </div>
 
         {% if variant.weight_fixed %}
           <p class="variant-row__note">
@@ -66,7 +46,7 @@
 
 <div class="form-actions page__actions product-actions">
   {% if edit_action %}
-    <a class="button button--md button--solid button--tone-place" href="{{ edit_action.href }}#product">Edit product</a>
+    <a class="button button--md button--solid button--tone-place" href="{{ edit_action.href }}#variants">Edit product</a>
   {% endif %}
   {% if add_batch_href %}
     <a class="button button--md button--soft button--tone-neutral" href="{{ add_batch_href }}">

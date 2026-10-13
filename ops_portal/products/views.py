@@ -49,9 +49,7 @@ from ops_portal.products.price_check import (
     price_changes,
 )
 from ops_portal.products.pricing_forms import (
-    ProductPricesForm,
     ProductPricingForm,
-    build_product_prices_initial_data,
 )
 from ops_portal.products.variant_forms import (
     build_variant_formset,
@@ -327,9 +325,6 @@ def edit(
             request.POST,
             product=product,
         )
-        prices_form = ProductPricesForm(
-            request.POST,
-        )
         variant_formset = build_variant_formset(
             product=product,
             data=request.POST,
@@ -339,18 +334,13 @@ def edit(
         forms_are_valid = all(
             [
                 form.is_valid(),
-                prices_form.is_valid(),
                 variant_formset.is_valid(),
             ]
-        ) and _prices_are_complete(
-            prices_form=prices_form,
-            variant_formset=variant_formset,
-        )
+        ) and _prices_are_complete(variant_formset)
 
         if forms_are_valid and check_is_on():
             changes = price_changes(
                 prices_by_channel=prices_by_channel,
-                prices_form=prices_form,
                 variant_formset=variant_formset,
             )
             check_form = PasswordAgainForm(request.POST, user=request.user)
@@ -381,7 +371,6 @@ def edit(
                         product=updated_product,
                         pricing=_pricing_by_variant_id(
                             product=updated_product,
-                            prices_form=prices_form,
                             variant_formset=variant_formset,
                         ),
                     )
@@ -393,7 +382,7 @@ def edit(
                 )
 
             except InvalidCommercialPrice as error:
-                prices_form.add_error(
+                form.add_error(
                     None,
                     str(error),
                 )
@@ -415,12 +404,6 @@ def edit(
             initial=build_product_edit_initial_data(product),
             product=product,
         )
-        prices_form = ProductPricesForm(
-            initial=build_product_prices_initial_data(
-                prices_by_channel=prices_by_channel,
-                variant_ids=[variant.pk for variant in product.variants.all()],
-            ),
-        )
         variant_formset = build_variant_formset(
             product=product,
             prices_by_channel=prices_by_channel,
@@ -429,7 +412,6 @@ def edit(
     context = (
         build_edit_product_form_context(
             form=form,
-            prices_form=prices_form,
             product=product,
             variant_formset=variant_formset,
             price_check=price_check,
@@ -464,13 +446,9 @@ def _kept_rows(variant_formset) -> list:
     ]
 
 
-def _prices_are_complete(
-    *,
-    prices_form: ProductPricesForm,
-    variant_formset,
-) -> bool:
-    """A variant sold in retail needs a retail price (EUR or SEK): said on
-    its row when it has its own, otherwise on the product's price."""
+def _prices_are_complete(variant_formset) -> bool:
+    """A variant sold in retail needs a retail price (EUR or SEK), said on
+    its card."""
 
     complete = True
 
@@ -478,20 +456,13 @@ def _prices_are_complete(
         if not row.cleaned_data.get("retail"):
             continue
 
-        prices = prices_form.prices_for(row)
+        prices = row.prices()
 
         if prices.retail_eur is not None or prices.retail_sek is not None:
             continue
 
         complete = False
-
-        if row.cleaned_data.get("own_price"):
-            row.add_error("retail_eur", "Sold in retail: give it a price.")
-        elif "product_retail_eur" not in prices_form.errors:
-            prices_form.add_error(
-                "product_retail_eur",
-                "A variant is sold in retail: give the retail price.",
-            )
+        row.add_error("retail_eur", "Sold in retail: give it a price.")
 
     return complete
 
@@ -499,7 +470,6 @@ def _prices_are_complete(
 def _pricing_by_variant_id(
     *,
     product: Product,
-    prices_form: ProductPricesForm,
     variant_formset,
 ) -> dict[int, VariantPricing]:
     """Each kept row's channels and prices, by its variant (a new row's by
@@ -523,7 +493,7 @@ def _pricing_by_variant_id(
         pricing[variant_id] = VariantPricing(
             retail_enabled=bool(data.get("retail")),
             business_enabled=bool(data.get("business")),
-            prices=prices_form.prices_for(row),
+            prices=row.prices(),
         )
 
     return pricing

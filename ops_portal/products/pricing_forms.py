@@ -6,7 +6,6 @@ from django import forms
 
 from common.form_layout import set_form_field_layout
 from pricing.models import CommercialPrice, PriceAmount
-from pricing.product_configuration import VariantPrices
 
 PRICE_DECIMAL_PLACES = 2
 PRICE_MAX_DIGITS = 10
@@ -75,44 +74,13 @@ def _active_toggle(
     return field
 
 
-# A variant's prices: (field, channel, currency). The product's price on
-# the edit form has the same fields with "product_" before them.
+# A variant's prices: (field, channel, currency).
 PRICE_FIELDS = (
     ("retail_eur", CommercialPrice.Channel.RETAIL, PriceAmount.Currency.EUR),
     ("retail_sek", CommercialPrice.Channel.RETAIL, PriceAmount.Currency.SEK),
     ("business_eur", CommercialPrice.Channel.BUSINESS, PriceAmount.Currency.EUR),
     ("business_sek", CommercialPrice.Channel.BUSINESS, PriceAmount.Currency.SEK),
 )
-
-
-class ProductPricesForm(forms.Form):
-    """The product's price over the variants on the edit form: saved as the
-    price of every variant without its own (a row's price tag switched off;
-    variant_forms.VariantForm.own_price), and of every field a variant with
-    its own leaves empty. An empty field here removes that price from
-    them."""
-
-    product_retail_eur = price_field(label="Retail price in EUR")
-    product_retail_sek = price_field(label="Retail price in SEK")
-    product_business_eur = price_field(label="Business price in EUR")
-    product_business_sek = price_field(label="Business price in SEK")
-
-    def prices_for(self, row) -> VariantPrices:
-        """A variant's prices once saved: with its own price on, each price
-        it was given, the product's for the fields it left empty; off, the
-        product's."""
-
-        own = row.cleaned_data.get("own_price")
-
-        return VariantPrices(
-            **{
-                field_name: (
-                    row.cleaned_data.get(field_name) if own else None
-                )
-                or self.cleaned_data.get(f"product_{field_name}")
-                for field_name, _channel, _currency in PRICE_FIELDS
-            }
-        )
 
 
 def variant_amounts(
@@ -128,46 +96,6 @@ def variant_amounts(
             currency=currency,
         )
         for field_name, channel, currency in PRICE_FIELDS
-    }
-
-
-def product_amounts(
-    *,
-    prices_by_channel: dict[str, dict[int, CommercialPrice]],
-    variant_ids: list[int],
-) -> dict[str, Decimal | None]:
-    """The product's price as the page shows it: per price, the one most
-    variants share (on a tie, the first variant's). Nothing stores it
-    apart: a variant with a price unlike it has its own."""
-
-    per_variant = [
-        variant_amounts(prices_by_channel=prices_by_channel, variant_id=pk)
-        for pk in variant_ids
-    ]
-    product: dict[str, Decimal | None] = {}
-
-    for field_name, _channel, _currency in PRICE_FIELDS:
-        values = [amounts[field_name] for amounts in per_variant]
-        product[field_name] = max(
-            values,
-            key=values.count,
-            default=None,
-        )
-
-    return product
-
-
-def build_product_prices_initial_data(
-    *,
-    prices_by_channel: dict[str, dict[int, CommercialPrice]],
-    variant_ids: list[int],
-) -> dict[str, object]:
-    return {
-        f"product_{field_name}": value
-        for field_name, value in product_amounts(
-            prices_by_channel=prices_by_channel,
-            variant_ids=variant_ids,
-        ).items()
     }
 
 
