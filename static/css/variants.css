@@ -608,12 +608,6 @@
   margin-top: 0;
 }
 
-.product-variants-tab__head {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: var(--space-2);
-}
-
 .variant-views {
   display: grid;
   gap: var(--space-3);
@@ -699,15 +693,143 @@
   color: var(--color-neutral-600);
 }
 
-/* Its prices, on the card's second line. */
-.variant-view__prices {
+/* The card's second line: its prices at the left, its batches on the
+   shelf at the right. */
+.variant-view__foot {
   grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+  align-items: start;
+  gap: var(--space-2) var(--space-4);
+}
+
+/* Below the product's card on the product page. */
+.product-variants-tab {
+  margin-top: var(--space-6);
+}
+
+.variant-view__prices {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1) var(--space-5);
   margin: 0;
+  padding-block: 6px;
   color: var(--color-neutral-800);
   font-size: var(--font-size-14);
+  font-weight: 700;
+}
+
+/* -----------------------------------------------------------------------------
+   A variant's batches on the shelf (detail_tab_product.html, batch_link.html),
+   on light blue: one as a link, several behind a button that slides the
+   list open (smooth-details.js). One past its best-before in red.
+   ----------------------------------------------------------------------------- */
+
+.variant-batches {
+  grid-column: 2;
+  min-width: min(100%, 17rem);
+  background: var(--color-primary-100);
+  border: 1px solid var(--color-primary-200);
+  border-radius: 12px;
+}
+
+.variant-batches--many {
+  overflow: hidden;
+}
+
+.variant-batches__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 12px;
+  color: var(--color-primary-900);
+  font-size: var(--font-size-14);
+  font-weight: 700;
+  list-style: none;
+  cursor: pointer;
+}
+
+.variant-batches__toggle::-webkit-details-marker {
+  display: none;
+}
+
+.variant-batches__toggle:focus-visible {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+.variant-batches__alert {
+  padding: 1px 8px;
+  color: var(--color-status-danger-text);
+  background: rgb(var(--color-status-danger) / 0.1);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-12);
+}
+
+.variant-batches__chevron {
+  margin-left: auto;
+  transition: transform var(--motion-fast);
+}
+
+.variant-batches[open] .variant-batches__chevron {
+  transform: rotate(180deg);
+}
+
+.variant-batches__list {
+  display: grid;
+  margin: 0;
+  padding: 0 0 4px;
+  list-style: none;
+  border-top: 1px solid var(--color-primary-200);
+}
+
+.variant-batch {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: 6px 12px;
+  color: var(--color-primary-900);
+  font-size: var(--font-size-14);
+  text-decoration: none;
+  border-radius: 12px;
+}
+
+.variant-batch:hover,
+.variant-batch:focus-visible {
+  background: color-mix(in srgb, var(--color-primary-200) 55%, transparent);
+}
+
+.variant-batch:focus-visible {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: -2px;
+}
+
+.variant-batch__id {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+.variant-batch__date {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-12);
+  font-weight: 500;
+}
+
+.variant-batch__quantity {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.variant-batch--expired,
+.variant-batch--expired .variant-batch__date {
+  color: var(--color-status-danger-text);
+}
+
+.variant-batch--expired .variant-batch__date {
   font-weight: 700;
 }
 
@@ -732,8 +854,13 @@
     grid-row: 1;
   }
 
-  .variant-view__prices {
+  .variant-view__foot {
     grid-row: 3;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .variant-batches {
+    grid-column: 1;
   }
 }
 

@@ -404,20 +404,22 @@
 
 
 /* =============================================================================
-   The product page's hero (product_hero.html): the product's card over the
-   tabs, its picture at the left, brand over name with the pencil beside
-   it, its facts; all its stock in the right corner.
+   The product page's product card (product_view_card.html), first in its
+   Product tab: its picture at the left, brand over name, its facts; the
+   pencil in the card's top right corner.
    ============================================================================= */
 
-.product-hero {
+.product-view {
+  position: relative;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: var(--space-4);
-  margin-bottom: var(--space-5);
+  /* Room for the pencil in the corner. */
+  padding-right: calc(var(--space-5) + 2rem);
 }
 
-.product-hero__picture {
+.product-view__picture {
   width: 4.5rem;
   height: 4.5rem;
   object-fit: cover;
@@ -426,100 +428,97 @@
   border-radius: 50%;
 }
 
-/* Without a picture the text starts at the left. */
-.product-hero__text:first-child {
-  grid-column: 1 / 3;
+/* Without a picture the text takes the whole card. */
+.product-view__text:first-child {
+  grid-column: 1 / -1;
 }
 
-.product-hero__name {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.product-hero__title {
+.product-view__title {
   font-size: var(--font-size-24);
 }
 
-.product-hero__name .product-card__edit {
+.product-view .product-card__facts {
+  margin-top: var(--space-2);
+}
+
+.product-view__status {
+  justify-content: flex-start;
+}
+
+.product-view__edit {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
   width: 2rem;
   height: 2rem;
 }
 
-.product-hero .product-card__facts {
-  margin-top: var(--space-2);
-}
-
-.product-hero__status {
-  justify-content: flex-start;
-}
-
-.product-hero__stock {
-  align-self: start;
-  margin: 0;
-  color: var(--color-neutral-800);
-  text-align: right;
-  white-space: nowrap;
-}
-
-.product-hero__stock b {
-  display: block;
-  font-size: var(--font-size-20);
-  font-weight: 700;
-}
-
-.product-hero__stock small {
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-14);
-  font-weight: 500;
-}
-
-.product-hero__stock--none {
-  color: var(--color-neutral-600);
-}
-
 @media (max-width: 640px) {
-  .product-hero {
-    grid-template-columns: auto minmax(0, 1fr);
+  .product-view {
     gap: var(--space-3);
+    padding-right: calc(var(--space-4) + 2rem);
   }
 
-  .product-hero__picture {
+  .product-view__picture {
     width: 3.5rem;
     height: 3.5rem;
   }
-
-  .product-hero__text:first-child {
-    grid-column: 1 / -1;
-  }
-
-  /* The stock under the facts, at the left. */
-  .product-hero__stock {
-    grid-column: 1 / -1;
-    text-align: left;
-  }
-
-  .product-hero__stock b {
-    display: inline;
-    margin-right: var(--space-1);
-  }
 }
 
 
-/* The Catalog tab's label: in the shop (green) or what keeps it out
-   (grey), in the corner of the preview's language tabs. */
-.catalog-preview {
-  position: relative;
+/* =============================================================================
+   The Catalog tab (detail_tab_catalog.html): the language tabs with Edit
+   catalog at their right, then a label over the shop's page: in the shop
+   (green) or what keeps it out (grey).
+   ============================================================================= */
+
+.catalog-preview__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  margin-block: var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--color-neutral-200);
+}
+
+.catalog-preview__bar .section-nav {
+  grid-column: 2;
+  margin: 0;
+  border-bottom: 0;
+}
+
+.catalog-preview__edit {
+  grid-column: 3;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+  padding: 5px 12px;
+  color: var(--color-neutral-700);
+  background: var(--color-white);
+  border: var(--border-subtle);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-14);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    color var(--motion-fast),
+    box-shadow var(--motion-fast);
+}
+
+.catalog-preview__edit:hover,
+.catalog-preview__edit:focus-visible {
+  color: var(--color-primary-800);
+  box-shadow: var(--shadow-accent-glow);
 }
 
 .catalog-preview__shop {
-  position: absolute;
-  /* In line with the language tabs (section-nav's top margin). */
-  top: calc(var(--space-5) + 0.5rem);
-  right: 0;
-  z-index: 1;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  width: fit-content;
+  margin: 0 auto var(--space-3);
   padding: 3px 11px;
   color: var(--color-status-muted-text);
   background: rgb(var(--color-status-muted) / 0.06);
@@ -536,9 +535,27 @@
 }
 
 @media (max-width: 640px) {
-  .catalog-preview__shop {
-    position: static;
-    margin-bottom: var(--space-2);
+  /* The languages at the left, the pencil alone at the right. */
+  .catalog-preview__bar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .catalog-preview__bar .section-nav {
+    grid-column: 1;
+    justify-content: flex-start;
+  }
+
+  .catalog-preview__edit {
+    grid-column: 2;
+    padding: 7px;
+  }
+
+  .catalog-preview__edit span:last-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 }
-

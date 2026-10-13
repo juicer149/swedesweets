@@ -106,6 +106,27 @@
 }
 
 
+/* A tab whose panel has a changed field (dirty_form.js): a small dot at
+   its label's top right, like the one before a changed field's label
+   (forms.css). */
+.section-nav__link--changed > span:last-child {
+  position: relative;
+}
+
+.section-nav__link--changed > span:last-child::after {
+  content: "";
+  position: absolute;
+  top: -0.15rem;
+  right: -0.6rem;
+
+  width: 6px;
+  height: 6px;
+
+  background: var(--color-accent-600);
+  border-radius: 50%;
+}
+
+
 /* =============================================================================
    In-page tab panels
    ============================================================================= */

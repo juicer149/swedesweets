@@ -1,0 +1,96 @@
+{% comment %}
+  The Product tab: the product's card (product_view_card.html), then
+  Variants and offers as the edit page shows them, in reading: a card per
+  variant in order (label, weight, sales channels, stock in stock; under
+  them its prices at the left and its batches on the shelf at the right:
+  one batch as a link, several behind a button that opens the list; a
+  batch past its best-before in red); why its weight is fixed. Edit
+  product and Add batch at the foot.
+{% endcomment %}
+{% include "ops_portal/products/includes/product_view_card.html" %}
+
+<section class="product-section product-variants-tab" aria-labelledby="product-variants-title">
+  <div class="form-section__head">
+    <h2 class="form-section__title" id="product-variants-title">Variants and offers</h2>
+    {% include "includes/ui/help.html" with id="variants-help" title="Variants and offers" body="ops_portal/products/help/variants.html" only %}
+  </div>
+
+  <ul class="variant-views" aria-label="Variants">
+    {% for variant in variant_cards %}
+      <li class="variant-view">
+        <div class="variant-view__card">
+          <span class="variant-view__label">{{ variant.label }}</span>
+          <span class="variant-view__weight">{{ variant.weight_label }}</span>
+          <span class="variant-view__channels">
+            <span class="variant-view__chip{% if variant.retail %} variant-view__chip--on{% endif %}">Retail<span class="visually-hidden">: {% if variant.retail %}sold{% else %}not sold{% endif %}</span></span>
+            <span class="variant-view__chip{% if variant.business %} variant-view__chip--on{% endif %}">Business<span class="visually-hidden">: {% if variant.business %}sold{% else %}not sold{% endif %}</span></span>
+            {% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}
+          </span>
+          <span class="variant-view__stock{% if not variant.in_stock %} variant-view__stock--none{% endif %}">
+            {% if variant.in_stock %}
+              {{ variant.stock_label }}
+              <small>in stock</small>
+            {% else %}
+              <small>Out of stock</small>
+            {% endif %}
+          </span>
+
+          {% if variant.prices or variant.batches %}
+            <div class="variant-view__foot">
+              <p class="variant-view__prices">
+                {% for price in variant.prices %}
+                  <span><span class="variant-view__caption">{{ price.label }}</span> {{ price.amounts }}</span>
+                {% empty %}
+                  <span class="variant-view__caption">No prices</span>
+                {% endfor %}
+              </p>
+
+              {% if variant.batches|length == 1 %}
+                {% with batch=variant.batches.0 %}
+                  <div class="variant-batches">
+                    {% include "ops_portal/products/includes/batch_link.html" with batch=batch only %}
+                  </div>
+                {% endwith %}
+              {% elif variant.batches %}
+                <details class="variant-batches variant-batches--many" data-smooth>
+                  <summary class="variant-batches__toggle">
+                    {% include "includes/ui/icon_block.html" with name="inventory" size="sm" only %}
+                    <span>{{ variant.batches|length }} batches</span>
+                    {% if variant.has_expired_batch %}<span class="variant-batches__alert">expired</span>{% endif %}
+                    {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="variant-batches__chevron" only %}
+                  </summary>
+                  <div data-smooth-content>
+                    <ul class="variant-batches__list">
+                      {% for batch in variant.batches %}
+                        <li>{% include "ops_portal/products/includes/batch_link.html" with batch=batch only %}</li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </details>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if variant.weight_fixed %}
+          <p class="variant-row__note">
+            {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
+            Weight fixed: it has stock or orders.
+          </p>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<div class="form-actions page__actions product-actions">
+  {% if edit_action %}
+    <a class="button button--md button--solid button--tone-place" href="{{ edit_action.href }}#variants">Edit product</a>
+  {% endif %}
+  {% if add_batch_href %}
+    <a class="button button--md button--soft button--tone-neutral" href="{{ add_batch_href }}">
+      {% include "includes/ui/icon_block.html" with name="inventory" size="sm" only %}
+      Add batch
+    </a>
+  {% endif %}
+</div>

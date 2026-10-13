@@ -98,6 +98,26 @@
     }
   }
 
+  /*
+   * A tab whose panel holds a changed field gets a dot (the language tabs
+   * on the catalog page, say), so a change in a hidden panel still shows.
+   * The tab is the one the panel is labelled by.
+   */
+  function markChangedTabs() {
+    form.querySelectorAll("[data-tab-panel]").forEach((panel) => {
+      const tab = document.getElementById(
+        panel.getAttribute("aria-labelledby") || ""
+      );
+
+      if (tab) {
+        tab.classList.toggle(
+          "section-nav__link--changed",
+          Boolean(panel.querySelector(".form-field--changed"))
+        );
+      }
+    });
+  }
+
   function handleBeforeUnload(event) {
     if (!isDirty || isSubmitting) {
       return;
@@ -164,6 +184,7 @@
       }
     });
 
+    markChangedTabs();
     setDirty(anyChanged);
   }
 
@@ -175,6 +196,7 @@
       setFieldChanged(field, false);
     });
 
+    markChangedTabs();
     setDirty(false);
   }
 

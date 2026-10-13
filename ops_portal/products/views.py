@@ -19,6 +19,7 @@ from common.table_controls import (
 )
 from inventory.selectors import (
     physical_quantity_by_variant,
+    shelf_batches_by_variant,
 )
 from ops_portal.products.catalog_forms import (
     CatalogForm,
@@ -284,6 +285,9 @@ def detail(
                 "ops_products:index"
             ),
             stock_by_variant=physical_quantity_by_variant(
+                product=product,
+            ),
+            batches_by_variant=shelf_batches_by_variant(
                 product=product,
             ),
             shop_product=get_retail_catalog_product(

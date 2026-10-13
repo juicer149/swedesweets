@@ -112,13 +112,15 @@ fall back to the order they were added in.
 
 ## Ops
 
-- **Product page**: a hero over its tabs (picture, brand over name, a
-  pencil to edit, status, catalog ID, SKU, manufacturer, attributes; all
-  the variants' stock together in its corner). Tabs **Variants & offers**
-  (a card per variant in order: weight, its sales channels as chips, its
-  prices in them, stock; why its weight is fixed) and **Catalog** (the
-  shop's page per language, a label saying "In shop" or what keeps it
-  out).
+- **Product page**: tabs **Product** and **Catalog**. Product: the
+  product's card (picture, brand over name, status, catalog ID, SKU,
+  manufacturer, attributes; a pencil in its corner), then **Variants and
+  offers**: a card per variant in order (weight, its sales channels as
+  chips, how many in stock; under them its prices at the left and its
+  batches on the shelf at the right, each linking to its page, one past
+  its best-before in red; why its weight is fixed). Catalog: the shop's
+  page per language, "Edit catalog" beside the languages, a label over
+  the page saying "In shop" or what keeps it out.
 - **Edit** has **Variants and offers**:
   - EUR / SEK as two small tabs over the cards (which currency's prices
     show);

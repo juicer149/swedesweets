@@ -31,23 +31,35 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
 
     assert response.status_code == 200
     assert response.context["status_key"] == "active"
-    # Two tabs: what is sold (each variant's stock), then the catalog.
+    # Two tabs: the product and what is sold, then the catalog.
     assert [tab.key for tab in response.context["page_tabs"]] == [
-        "variants",
+        "product",
         "catalog",
     ]
     (card,) = response.context["variant_cards"]
     assert card.stock_label == product.stock_quantity_label(12)
     assert card.in_stock is True
-    # The hero over the tabs: the product, and all its stock in a corner.
-    assert 'class="product-card product-hero"' in content
-    assert content.index("product-hero") < content.index('role="tablist"')
-    assert response.context["total_stock"] == 12
-    assert "product-hero__stock" in content
-    # A card per variant (its channels as chips), with the tab's help.
+    # No hero: the product's card first in the Product tab, without stock.
+    assert "product-hero" not in content
+    assert 'class="product-card product-view"' in content
+    assert content.index('role="tablist"') < content.index("product-view")
+    assert content.index("product-view") < content.index("variant-view__card")
+    assert "total_stock" not in response.context
+    # A card per variant (its channels as chips, its stock in stock), with
+    # the section's help.
     assert "variant-view__chip" in content
+    assert "in stock" in content
+    assert "on the shelf" not in content
     assert 'data-help-open="variants-help"' in content
     assert "demand" not in response.context
+    # Its only batch, as a link on the card (no list to open).
+    (batch_link,) = card.batches
+    assert batch_link.batch_id == "B-501"
+    assert batch_link.expired is False
+    batch = product.batches.get()
+    batch_url = reverse("ops_inventory:detail", kwargs={"batch_pk": batch.pk})
+    assert f'href="{batch_url}"' in content
+    assert "variant-batches--many" not in content
 
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
     catalog_url = reverse(
@@ -60,6 +72,61 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert f'href="{add_batch_url}"' in content
     assert f'href="{reverse("ops_products:index")}"' in content
+
+
+@pytest.mark.django_db
+def test_variant_card_lists_its_batches_on_the_shelf(client):
+    from datetime import timedelta
+
+    from inventory.models import InventoryBatch
+
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Pear", internal_number=503)
+    later = batch_factory(
+        product=product,
+        today=TODAY,
+        batch_id="B-LATER",
+        quantity=4,
+        best_before=TODAY + timedelta(days=90),
+    )
+    expired = batch_factory(
+        product=product,
+        today=TODAY,
+        batch_id="B-OLD",
+        quantity=3,
+    )
+    empty = batch_factory(
+        product=product,
+        today=TODAY,
+        batch_id="B-EMPTY",
+        quantity=2,
+    )
+    # Past its best-before and not closed; and one with none left.
+    InventoryBatch.objects.filter(pk=expired.pk).update(
+        best_before=TODAY - timedelta(days=1),
+    )
+    InventoryBatch.objects.filter(pk=empty.pk).update(quantity=0)
+
+    response = client.get(
+        reverse("ops_products:detail", kwargs={"product_pk": product.pk}),
+    )
+    content = response.content.decode()
+
+    (card,) = response.context["variant_cards"]
+    # The soonest best-before first; none with less than one unit.
+    assert [batch.batch_id for batch in card.batches] == ["B-OLD", "B-LATER"]
+    assert [batch.expired for batch in card.batches] == [True, False]
+    assert card.has_expired_batch is True
+    assert "B-EMPTY" not in content
+    # Several: behind a button that opens the list; the expired one in red.
+    assert "variant-batches--many" in content
+    assert "variant-batch--expired" in content
+    for batch in (later, expired):
+        batch_url = reverse(
+            "ops_inventory:detail",
+            kwargs={"batch_pk": batch.pk},
+        )
+        assert f'href="{batch_url}"' in content
 
 
 @pytest.mark.django_db
@@ -239,5 +306,11 @@ def test_catalog_tab_previews_the_shop_page_in_each_language(client):
     assert french.offers == ()
     assert "Not in shop" in response.context["shop_label"]
     assert "no retail price" in response.context["shop_label"]
+    # The label over the shop's page; Edit catalog beside the languages.
     assert "catalog-preview__shop" in content
+    assert (
+        content.index("catalog-preview__edit")
+        < content.index("catalog-preview__shop")
+        < content.index('id="panel-preview-fr"')
+    )
     assert "data-product-add-form" in content and " inert" in content

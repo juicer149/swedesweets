@@ -39,9 +39,14 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   look asks for it, like price changes); saving comes back to the same
   page.
 - **Product page and edit page alike**: the product page shows the same
-  variant cards as the edit page, to read, under a hero with the
-  product's total stock; tabs Variants & offers and Catalog. Edit stays a
-  page of its own for now (one page for both, later perhaps).
+  cards as the edit page, to read: tabs Product (the product's card with a
+  pencil in its corner, then Variants and offers) and Catalog. Each
+  variant's card says how many are in stock, its prices at the left and
+  its batches on the shelf at the right. Edit stays a page of its own for
+  now (one page for both, later perhaps).
+- **Tabs in a form show their changes**: a tab whose panel has a changed
+  field gets a dot (`dirty_form.js`), first on the catalog page's
+  languages.
 - **Help on a page**: a round "?" beside a title opens a dialog with what
   everything there means (`includes/ui/help.html`, its text a template of
   its own; a form section takes it as `help`). First on Variants and
@@ -122,17 +127,23 @@ mobile).
 
 ## Ops product pages
 
-**Detail page**, two tabs:
+**Detail page** (no hero; a hidden page title), two tabs:
 
-- **Product**: the details (catalog ID, brand, name, status, attributes,
-  the variants' labels), the **Variants** (each with its SKU, weight,
-  prices when there are several, and stock; Add batch) and **Pricing**
-  (Business and Retail as tags; the only variant's prices).
-- **Catalog**: the shop's product page, a little smaller, once per
-  language; category, picture and "Edit catalog".
+- **Product**: the product's card (picture, brand over name, status,
+  catalog ID, SKU, manufacturer, attributes; a pencil in its top right
+  corner, no stock), then **Variants and offers**: a card per variant
+  (label, weight, its channels as chips, how many in stock; under them
+  its prices at the left and, on light blue at the right, its batches on
+  the shelf: one as a link, several behind a button that slides the list
+  open; none with less than one unit; past its best-before and not closed
+  in red). Edit product and Add batch.
+- **Catalog**: the language tabs with "Edit catalog" at their right, a
+  label over the shop's page ("In shop", or what keeps it out), the
+  shop's product page a little smaller; category and picture.
 
 **Catalog page**: category and picture, then name, description and
-ingredients under one tab per language.
+ingredients under one tab per language; a language with a change gets a
+dot.
 
 **Edit page**: Product as a card (its picture, catalog ID and status at
 its top, brand and name large), then **Variants and offers**: EUR / SEK

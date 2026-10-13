@@ -1,0 +1,14 @@
+{% comment %}
+  A batch on the shelf, from its variant's card on the product page: its
+  ID, best-before and how many are in stock, linking to the batch's page;
+  past its best-before (and not closed) in red.
+
+  Context: batch (BatchLink, ops_portal/products/detail_viewmodels.py)
+{% endcomment %}
+<a class="variant-batch{% if batch.expired %} variant-batch--expired{% endif %}" href="{{ batch.href }}">
+  <span class="variant-batch__id">{{ batch.batch_id }}</span>
+  <span class="variant-batch__date">
+    {% if batch.expired %}Expired {% else %}Best before {% endif %}<time datetime="{{ batch.best_before|date:'Y-m-d' }}">{{ batch.best_before|date:"j M Y" }}</time>
+  </span>
+  <span class="variant-batch__quantity">{{ batch.quantity_label }}</span>
+</a>

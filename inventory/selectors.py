@@ -254,6 +254,26 @@ def physical_quantity_by_variant(
     }
 
 
+def shelf_batches_by_variant(
+    *,
+    product: Product,
+) -> dict[int, list[InventoryBatch]]:
+    """A product's batches on the shelf (active, at least one unit), by
+    variant id, the soonest best-before first; a variant with none is left
+    out."""
+
+    batches_by_variant: dict[int, list[InventoryBatch]] = {}
+
+    for batch in InventoryBatch.objects.filter(
+        product=product,
+        status=InventoryBatch.Status.ACTIVE,
+        quantity__gt=0,
+    ).order_by("best_before", "batch_id"):
+        batches_by_variant.setdefault(batch.variant_id, []).append(batch)
+
+    return batches_by_variant
+
+
 def list_available_batches_for_product(
     *,
     product: Product,
