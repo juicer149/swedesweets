@@ -80,9 +80,8 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     )
     assert f'href="{edit_url}#product"' in content
     assert f'href="{catalog_url}"' in content
-    # At the section nav's right, the open tab's action: Edit (the
-    # product's form on Product, the catalog's on Catalog), Add batch on
-    # Inventory.
+    # At the page's foot, the open tab's action: Edit (the product's form
+    # on Product, the catalog's on Catalog), Add batch on Inventory.
     add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert [
         (action.tab, action.label, action.href)
@@ -95,15 +94,20 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     # No Edit product or Add batch at the tabs' feet.
     assert "Edit product</a>" not in content
     assert "product-actions" not in content
-    # Back at the nav's left: to the page before (back_link.js), else the
-    # product list; no Back under the page.
+    # Back at the foot's left: to the page before (back_link.js), else the
+    # product list; the old Back under the page goes.
     products_url = reverse("ops_products:index")
     assert (
-        f'class="quiet-link tabs-bar__back" href="{products_url}"' in content
+        f'class="quiet-link tabs-foot__back" href="{products_url}"' in content
     )
     assert "data-back-link" in content
     assert "page__back" not in content
     assert "js/back_link.js" in content
+    assert content.index('id="panel-inventory"') < content.index("tabs-foot")
+    assert 'class="tabs-foot__action' not in content  # a solid button
+    assert "tabs-foot__action" in content
+    # No pencil on the product's card (Edit is at the foot).
+    assert "product-card__edit" not in content
     assert f'href="{catalog_url}" data-tab-action="catalog" hidden' in content
     assert content.index('data-tab-action="product"') < content.index(
         'id="panel-product"'
@@ -361,12 +365,13 @@ def test_catalog_tab_previews_the_shop_page_in_each_language(client):
     assert french.offers == ()
     assert "Not in shop" in response.context["shop_label"]
     assert "no retail price" in response.context["shop_label"]
-    # The languages alone (Edit is the page's, at its tabs' right), then
-    # the label over the shop's page.
+    # The languages alone (Edit is the page's, at its foot); whether it is
+    # in the shop is a label beside the name on the Product tab's card.
     assert "catalog-preview__edit" not in content
+    assert "catalog-preview__shop" not in content
     assert (
-        content.index("catalog-preview__languages")
-        < content.index("catalog-preview__shop")
-        < content.index('id="panel-preview-fr"')
+        content.index("product-card-title")
+        < content.index("product-view__shop")
+        < content.index('id="panel-catalog"')
     )
     assert "data-product-add-form" in content and " inert" in content

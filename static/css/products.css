@@ -327,7 +327,7 @@
 
 /* =============================================================================
    The product page's product card (detail_tab_product.html): brand over
-   name, a pencil to edit, its facts in a row.
+   name, its facts in a row.
    ============================================================================= */
 
 .product-card__title {
@@ -341,30 +341,10 @@
 
 .product-card__brand {
   display: block;
+  margin: 0;
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
   font-weight: 500;
-}
-
-.product-card__edit {
-  display: inline-grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  color: var(--color-neutral-700);
-  background: var(--color-white);
-  border: var(--border-subtle);
-  border-radius: 50%;
-  transition:
-    color var(--motion-fast),
-    box-shadow var(--motion-fast);
-}
-
-.product-card__edit:hover,
-.product-card__edit:focus-visible {
-  color: var(--color-primary-800);
-  box-shadow: var(--shadow-accent-glow);
 }
 
 .product-card__facts {
@@ -415,8 +395,6 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: var(--space-4);
-  /* Room for the pencil in the corner. */
-  padding-right: calc(var(--space-5) + 2rem);
 }
 
 .product-view__picture {
@@ -445,18 +423,36 @@
   justify-content: flex-start;
 }
 
-.product-view__edit {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-  width: 2rem;
-  height: 2rem;
+/* The name, and beside it whether it is in the shop: green, or grey
+   with what keeps it out. */
+.product-view__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.product-view__shop {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 11px;
+  color: var(--color-neutral-700);
+  background: rgb(var(--color-status-muted) / 0.12);
+  border: 1px solid rgb(var(--color-status-muted) / 0.34);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-12);
+  font-weight: 700;
+}
+
+.product-view__shop--in {
+  color: var(--color-status-success-text);
+  background: rgb(var(--color-status-success) / 0.2);
+  border-color: rgb(var(--color-status-success) / 0.5);
 }
 
 @media (max-width: 640px) {
   .product-view {
     gap: var(--space-3);
-    padding-right: calc(var(--space-4) + 2rem);
   }
 
   .product-view__picture {
@@ -467,9 +463,8 @@
 
 
 /* =============================================================================
-   The Catalog tab (detail_tab_catalog.html): the language tabs, then a
-   label over the shop's page: in the shop (green) or what keeps it out
-   (grey).
+   The Catalog tab (detail_tab_catalog.html): the language tabs, close
+   under the page's own.
    ============================================================================= */
 
 /* The languages, alone under the page's tabs. */
@@ -477,24 +472,8 @@
   margin-block: 0 var(--space-6);
 }
 
-.catalog-preview__shop {
-  display: flex;
-  align-items: center;
-  width: fit-content;
-  margin: 0 auto var(--space-5);
-  padding: 3px 11px;
-  color: var(--color-neutral-700);
-  background: rgb(var(--color-status-muted) / 0.12);
-  border: 1px solid rgb(var(--color-status-muted) / 0.34);
-  border-radius: var(--radius-pill);
-  font-size: var(--font-size-12);
-  font-weight: 700;
-}
-
-.catalog-preview__shop--in {
-  color: var(--color-status-success-text);
-  background: rgb(var(--color-status-success) / 0.2);
-  border-color: rgb(var(--color-status-success) / 0.5);
+.product-page > .page-tabs > .page-tabs__panel[data-tab-panel="catalog"] {
+  padding-top: var(--space-3);
 }
 
 /* =============================================================================

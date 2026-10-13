@@ -114,13 +114,14 @@ fall back to the order they were added in.
 
 - **Product page**: tabs **Product**, **Catalog** and **Inventory**.
   Product: the product's card (picture, brand over name, status, catalog
-  ID, SKU, manufacturer, attributes; a pencil in its corner), then
+  ID, SKU, manufacturer, attributes; beside the name "In shop" or what
+  keeps it out), then
   **Variants and offers**: a card per variant in order (weight; at its
   right its sales channels as chips, Business over Retail, each with its
   price beside it; why its weight is fixed). Catalog: the shop's page per
-  language, a label over the page saying "In shop" or what keeps it out.
-  Back at the tabs' left; at their right the open tab's action: "Edit"
-  (the product's form, the catalog's), "Add batch" on Inventory. Inventory: a card per variant,
+  language. At the foot Back at the left, the open tab's action at the
+  right: "Edit" (the product's form, the catalog's), "Add batch" on
+  Inventory. Inventory: a card per variant,
   its batches on the shelf stacked at its right, the soonest best-before
   at the top (ID and how many, to the batch's page; expired in red, soon
   in orange).

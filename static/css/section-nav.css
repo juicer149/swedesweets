@@ -267,65 +267,30 @@
 
 
 /* =============================================================================
-   Tabs with Back at their left and the open tab's action at their right
-   (page_tabs.html: tabs_back_url, tab_actions): the tabs in the middle,
-   one edge under all three. On phones Back and the action keep only their
-   icons, the tabs at the left beside Back.
+   The foot of a page with tabs (page_tabs.html: tabs_back_url,
+   tab_actions): Back at the left, the open tab's action (the product
+   page's Edit, Add batch) at the right.
    ============================================================================= */
 
-.tabs-bar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+.tabs-foot {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
-  margin-block: 0 var(--space-4);
-  border-bottom: 1px solid var(--color-neutral-200);
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  margin-top: clamp(var(--space-6), 6dvh, var(--space-10));
 }
 
-.tabs-bar > .section-nav {
-  grid-column: 2;
-  margin: 0;
-  border-bottom: 0;
-}
-
-.tabs-bar__back {
-  grid-column: 1;
-  grid-row: 1;
-  justify-self: start;
+.tabs-foot__back {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
 }
 
-.tabs-bar__action {
-  grid-column: 3;
-  grid-row: 1;
-  justify-self: end;
-  margin-bottom: var(--space-2);
+.tabs-foot__action {
+  margin-left: auto;
 }
 
-.tabs-bar__action[hidden] {
+.tabs-foot__action[hidden] {
   display: none;
-}
-
-@media (max-width: 767px) {
-  .tabs-bar {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: var(--space-2);
-  }
-
-  .tabs-bar__action {
-    padding-inline: var(--space-2);
-  }
-
-  .tabs-bar__back-label,
-  .tabs-bar__action .button__label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
 }
