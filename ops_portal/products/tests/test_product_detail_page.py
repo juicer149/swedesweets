@@ -185,6 +185,10 @@ def test_variant_card_lists_its_batches_on_the_shelf(client):
     ]
     assert "variant-views__head" in content
     assert ">Reserved<" in content
+    # Each batch's best-before after its ID (a heading over it too).
+    assert ">Best before<" in content
+    expired_on = (TODAY - timedelta(days=1)).isoformat()
+    assert f'<time datetime="{expired_on}">' in content
     assert "B-EMPTY" not in content
     assert "variant-batch--expired" in content
     assert "variant-batch--soon" in content

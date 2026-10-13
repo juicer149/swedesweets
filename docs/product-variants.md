@@ -121,7 +121,8 @@ fall back to the order they were added in.
   with its price beside it; why its weight is fixed). Shop text: its
   name, description and ingredients per language. Inventory: a card per
   variant, its batches on the shelf stacked at its right, the soonest
-  best-before at the top (ID, in stock and reserved, to the batch's page;
+  best-before at the top (ID, best-before, in stock and reserved, to the
+  batch's page;
   expired in red, soon in orange), under notes for out of stock and
   expired batches. At the foot Back at the left, the open tab's
   action at the right: "Edit" (the product's form, the shop text's),

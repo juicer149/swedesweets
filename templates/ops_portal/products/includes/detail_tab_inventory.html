@@ -3,7 +3,8 @@
   sale with nothing to sell, batches past their best-before), then a card
   per variant in order (label, weight), and at its right its batches on
   the shelf stacked, the soonest best-before at the top: each batch's ID,
-  how many are in stock and how many of them orders hold (the heads over
+  its best-before, how many are in stock and how many of them orders hold
+  (the heads over
   the first card say which is which), linking to its page; past its
   best-before (and not closed) in red, within inventory/expiry.py's
   EXPIRY_SOON_DAYS in orange; "Out of stock" without. Add batch is at the
@@ -29,6 +30,7 @@
   <div class="variant-views__head" aria-hidden="true">
     <span class="variant-batch">
       <span class="variant-batch__id"></span>
+      <span class="variant-batch__date">Best before</span>
       <span class="variant-batch__quantity">In stock</span>
       <span class="variant-batch__reserved">Reserved</span>
     </span>
@@ -48,6 +50,7 @@
                   <li>
                     <a class="variant-batch variant-batch--{{ batch.tone }}" href="{{ batch.href }}" title="{{ batch.expiry.label }}{% if batch.tone == 'safe' %} {{ batch.best_before|date:'j M Y' }}{% endif %}">
                       <span class="variant-batch__id">{{ batch.batch_id }}{% if batch.tone != "safe" %}<span class="visually-hidden"> ({{ batch.expiry.label|lower }})</span>{% endif %}</span>
+                      <span class="variant-batch__date"><span class="visually-hidden">Best before </span><time datetime="{{ batch.best_before|date:'Y-m-d' }}">{{ batch.best_before|date:"j M Y" }}</time></span>
                       <span class="variant-batch__quantity"><span class="visually-hidden">In stock: </span>{{ batch.quantity }}</span>
                       <span class="variant-batch__reserved"><span class="visually-hidden">Reserved: </span>{{ batch.reserved }}</span>
                     </a>

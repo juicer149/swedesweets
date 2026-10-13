@@ -164,8 +164,9 @@ solid or outline):
   (for sale, in a channel, but no stock or only batches past their
   best-before) and batches past their best-before. Then a card per
   variant (label, weight), at its right its batches on the shelf
-  stacked, the soonest best-before at the top: each batch's ID, in stock
-  and reserved as plain numbers (heads over the first card say which),
+  stacked, the soonest best-before at the top: each batch's ID, its
+  best-before, in stock and reserved as plain numbers (heads over the
+  first card say which; on phones the batches under label and weight),
   to its page; none with less than one unit; past its best-before and
   not closed in red, within `EXPIRY_SOON_DAYS` (inventory/expiry.py) in
   orange; "Out of stock" without. Available (in stock less reserved) is
