@@ -736,8 +736,16 @@
 .variant-views__head {
   display: grid;
   grid-template-columns: 4.5rem 4.5rem minmax(0, 1fr) auto;
+  align-items: end;
   gap: var(--space-3);
   padding: 0 calc(var(--space-4) + 1px) var(--space-1);
+}
+
+.variant-views__head-label,
+.variant-views__head-weight {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-12);
+  font-weight: 500;
 }
 
 .variant-views__head .variant-batch {
@@ -780,12 +788,12 @@
   font-weight: 500;
 }
 
-/* Its batches share their columns (subgrid): the ID as wide as the
-   longest, on one line; its best-before; in stock and reserved
-   right-aligned, as under the heads over the first card. */
+/* Its batches share their columns (subgrid), the same in every card so
+   the heads over the first stand over them all: the ID on one line, its
+   best-before, in stock and reserved right-aligned. */
 .variant-batches {
   display: grid;
-  grid-template-columns: max-content 6.5rem 3.5rem 4rem;
+  grid-template-columns: 9.5rem 6.5rem 3.5rem 4rem;
   column-gap: var(--space-3);
   row-gap: 2px;
   margin: 0;
@@ -801,7 +809,7 @@
 
 .variant-batch {
   display: grid;
-  grid-template-columns: 5.5rem 6.5rem 3.5rem 4rem;
+  grid-template-columns: 9.5rem 6.5rem 3.5rem 4rem;
   align-items: baseline;
   gap: var(--space-3);
   padding: 2px 0;
@@ -817,6 +825,8 @@
 
 .variant-batch__id,
 .variant-batch__date {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -897,13 +907,19 @@
   }
 
   .variant-batches {
-    grid-template-columns: max-content 6rem 3rem 3.5rem;
+    grid-template-columns: 7rem 5.5rem 2.75rem 3.75rem;
     column-gap: var(--space-2);
   }
 
   .variant-batch {
-    grid-template-columns: 5.5rem 6rem 3rem 3.5rem;
+    grid-template-columns: 7rem 5.5rem 2.75rem 3.75rem;
     gap: var(--space-2);
+  }
+
+  /* Label and weight read for themselves on a phone. */
+  .variant-views__head-label,
+  .variant-views__head-weight {
+    display: none;
   }
 
   .variant-view__state {
