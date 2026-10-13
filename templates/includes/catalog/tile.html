@@ -1,21 +1,27 @@
 {% load i18n %}
 {% comment %}
-  One product on the candy wall: its picture is the bin, and a label is
-  stuck on its foot like a gift tag: the name on a yellow band (it and
-  the picture lead to the product page), the package and price, a hint
-  when it has a special offer. A round button half off the label's foot
-  adds it: "+" and a scoop for candy, "+" alone for the rest. It asks for
-  a quantity (catalog.js) and the round green tick puts that many of the
-  tile's offer in the cart; other offers are chosen on the product page.
-  Without JavaScript it adds one. A product with several sizes on sale
-  (card.has_variant_choice) has the same round "+" as a link to its page,
-  where the size is chosen. A striped shelf runs under each row
-  (css/catalog.css).
+  One product on the candy wall: its picture is the bin, with the price on
+  a tag hung on its corner (when there is one: the cheapest size's, "from"
+  when the sizes differ; a special offer's reason above it). A label is
+  stuck on its foot like a gift tag: the name on a yellow band (it and the
+  picture lead to the product page), then one row in two halves:
+
+    size     several sizes: a small dropdown, "Choose size" until one is
+             picked, then "Size" and the size, big (sold-out sizes are in
+             the list, muted, not choosable); one size: the package
+    buy      how many (catalog.js: a list of 1-9 on the first tap, typing
+             on the second) and the green cart button, which adds them
+
+  While adding (catalog.js) the row gives way to the scoop in the middle;
+  then the label turns green and our bag pops up (or red with a cross),
+  and the row comes back as it started. Without JavaScript the dropdowns
+  are plain and the cart button posts the form. A striped shelf runs under
+  each row (css/catalog.css).
 
   card        ProductCardVM
   csrf_token  the page's token
 {% endcomment %}
-{% with offer=card.initial_offer deal=card.other_deal detail_href=card.secondary_action.href %}
+{% with offer=card.initial_offer tag=card.price_tag detail_href=card.secondary_action.href %}
   <article
     class="tile"
     data-catalog-product
@@ -29,36 +35,24 @@
       {% else %}
         <span class="tile__image tile__image--empty"></span>
       {% endif %}
+
+      {% if tag %}
+        <span class="tile__tag">
+          {% if tag.deal_label %}<small class="tile__tag-deal">{{ tag.deal_label }}</small>{% endif %}
+          <span class="tile__tag-price">{{ tag.price_label }}</span>
+        </span>
+      {% endif %}
     </a>
 
     <div class="tile__body tile__label">
       <h2 class="tile__name"><a href="{{ detail_href }}">{{ card.name }}</a></h2>
-      <p class="tile__meta">
-        {{ card.package_label }}{% if offer.price_label %} · <strong class="tile__price">{{ offer.price_label }}</strong>{% endif %}
-      </p>
 
-      {% if offer.badge_label %}
-        <p class="tile__deal">{{ offer.badge_label }}</p>
-      {% elif deal %}
-        <p class="tile__deal">
-          <a href="{{ detail_href }}">{{ deal.badge_label }}{% if deal.price_label %} · {{ deal.price_label }}{% endif %}</a>
-        </p>
+      {# The tag is on the picture, which screen readers skip. #}
+      {% if tag %}
+        <p class="visually-hidden">{% if tag.deal_label %}{{ tag.deal_label }}, {% endif %}{{ tag.price_label }}</p>
       {% endif %}
 
-      {% if offer and card.has_variant_choice %}
-        <div class="tile__order">
-          <div class="tile__buy">
-            {% trans "Choose a size" as choose_label %}
-            <a class="tile__add" href="{{ detail_href }}" aria-label="{{ choose_label }}: {{ card.name }}">
-              {% include "includes/ui/icon_block.html" with name="plus" size="sm" class_name="tile__add-plus" only %}
-              {% if card.category_key == "candy" %}
-                {% include "includes/ui/scoop.html" %}
-              {% endif %}
-              <span class="visually-hidden">{{ choose_label }}</span>
-            </a>
-          </div>
-        </div>
-      {% elif offer %}
+      {% if offer %}
         <form
           id="catalog-add-form-{{ card.product_id }}"
           class="tile__order"
@@ -67,38 +61,86 @@
           data-catalog-add-form
         >
           {% csrf_token %}
-          <input type="hidden" name="commercial_price_id" value="{{ offer.commercial_price_id }}">
 
-          <div class="tile__buy" data-catalog-purchase-default>
-            <button
-              class="tile__add"
-              type="submit"
-              aria-label="{{ card.primary_action.aria_label }}"
-              data-catalog-add-button
-            >
-              {% include "includes/ui/icon_block.html" with name="plus" size="sm" class_name="tile__add-plus" only %}
-              {% if card.category_key == "candy" %}
-                {% include "includes/ui/scoop.html" %}
+          <div class="tile__row">
+            <div class="tile__size">
+              {% if card.has_size_choice %}
+                <label class="tile__picker" for="catalog-size-{{ card.product_id }}">
+                  <span class="tile__picker-face" aria-hidden="true">
+                    <span class="tile__picker-empty" data-size-empty>
+                      <span class="tile__picker-long">{% trans "Choose size" %}</span>
+                      <span class="tile__picker-short">{% trans "Size" %}</span>
+                    </span>
+                    <span class="tile__picker-chosen" data-size-chosen hidden>
+                      <small>{% trans "Size" %}</small>
+                      <b data-size-value></b>
+                    </span>
+                    {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="tile__chevron" only %}
+                  </span>
+
+                  <span class="visually-hidden">{% trans "Size" %}</span>
+                  <select
+                    id="catalog-size-{{ card.product_id }}"
+                    class="tile__select"
+                    name="commercial_price_id"
+                    required
+                    data-size-select
+                  >
+                    <option value="" selected disabled>{% trans "Choose size" %}</option>
+                    {% for choice in card.size_choices %}
+                      <option
+                        value="{{ choice.commercial_price_id }}"
+                        data-size-label="{{ choice.label }}"
+                        {% if choice.sold_out %}disabled{% endif %}
+                      >{{ choice.label }}{% if choice.sold_out %} — {% trans "sold out" %}{% endif %}</option>
+                    {% endfor %}
+                  </select>
+                </label>
+              {% else %}
+                <input type="hidden" name="commercial_price_id" value="{{ offer.commercial_price_id }}">
+                <span class="tile__package">{{ card.package_label }}</span>
               {% endif %}
-              <span class="visually-hidden">{{ card.primary_action.text }}</span>
-            </button>
-          </div>
+            </div>
 
-          <div class="tile__status" data-catalog-status hidden></div>
+            <div class="tile__buy">
+              <div class="tile__quantity" data-catalog-quantity>
+                <label class="visually-hidden" for="catalog-quantity-{{ card.product_id }}">{% trans "Quantity" %}</label>
+                <input
+                  id="catalog-quantity-{{ card.product_id }}"
+                  class="tile__quantity-input"
+                  type="number"
+                  name="quantity"
+                  value="1"
+                  min="1"
+                  step="1"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  required
+                  data-quantity-input
+                >
+                {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="tile__chevron tile__quantity-chevron" only %}
 
-          <div class="tile__quantity" data-catalog-purchase-quantity hidden>
-            {% include "includes/ui/quantity_stepper.html" with id_prefix="catalog-quantity-" id_suffix=card.product_id only %}
+                <div class="tile__quantity-list" role="listbox" aria-label="{% trans 'Quantity' %}" hidden data-quantity-list>
+                  {% for number in "123456789" %}
+                    <button class="tile__quantity-option" type="button" role="option" tabindex="-1" data-quantity-option="{{ number }}">{{ number }}</button>
+                  {% endfor %}
+                </div>
+              </div>
 
-            <div class="tile__quantity-actions">
-              <button class="tile__confirm" type="submit" aria-label="{% trans 'Add' %}" data-catalog-confirm-button>
-                {% include "includes/ui/icon_block.html" with name="check" size="sm" only %}
-              </button>
-
-              <button class="quiet-link tile__cancel" type="button" aria-label="{% trans 'Cancel' %}" data-catalog-cancel-button>
-                {% include "includes/ui/icon_block.html" with name="x" size="sm" only %}
+              <button
+                class="tile__add"
+                type="submit"
+                aria-label="{{ card.primary_action.aria_label }}"
+                data-catalog-add-button
+              >
+                {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__add-icon" only %}
+                <span class="visually-hidden">{{ card.primary_action.text }}</span>
               </button>
             </div>
           </div>
+
+          {# While adding: the scoop, then the bag or the cross (catalog.js). #}
+          <div class="tile__status" data-catalog-status hidden></div>
         </form>
       {% endif %}
     </div>

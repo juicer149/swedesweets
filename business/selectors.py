@@ -196,6 +196,7 @@ def list_business_catalog_products(
             available_units=available_units,
             variant_id=commercial_price.variant_id,
             variant_label=commercial_price.variant.label,
+            variant_position=commercial_price.variant.position,
         )
 
         batch_offers_by_product_id[
@@ -230,6 +231,7 @@ def list_business_catalog_products(
         )
 
         offers: list[CatalogOffer] = []
+        sold_out: list[CatalogOffer] = []
 
         # Each variant's standard offer, in the variants' order, with that
         # variant's stock less what its batch offers sell.
@@ -261,6 +263,14 @@ def list_business_catalog_products(
                         standard_offer=standard_offer,
                     )
                 )
+            elif standard_offer.enabled and standard_offer.variant.label:
+                # On sale, nothing to sell now: listed muted on the card.
+                sold_out.append(
+                    _build_standard_offer(
+                        available_units=0,
+                        standard_offer=standard_offer,
+                    )
+                )
 
         offers.extend(
             batch_offers
@@ -278,6 +288,7 @@ def list_business_catalog_products(
                 offers=tuple(
                     offers
                 ),
+                sold_out=tuple(sold_out),
             )
         )
 
@@ -398,6 +409,7 @@ def _build_standard_offer(
         available_units=available_units,
         variant_id=standard_offer.variant_id,
         variant_label=standard_offer.variant.label,
+        variant_position=standard_offer.variant.position,
     )
 
 

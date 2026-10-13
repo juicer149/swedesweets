@@ -5,13 +5,12 @@
    (includes/catalog/grid.html, tile.html, product.html):
 
      .catalog__tools   category tabs on the left, the search on the right
-     .tiles > .tile    the candy wall: each product's picture as its bin,
-                       a gift-tag label on its foot (name on a yellow
-                       band, package · price, a deal hint) with a round
-                       "+ scoop" button, a striped shelf under each row
-     .tile__quantity   what the round button opens, folding down over the
-                       row under it: stepper, then green tick and ×
-     .tile__status     while adding: only the status burst (catalog.js)
+     .tiles > .tile    the candy wall: each product's picture as its bin
+                       with the price on a tag, a gift-tag label on its
+                       foot (name on a yellow band, then size | how many
+                       and the cart button), a striped shelf under each row
+     .tile__status     while adding: only the status burst, the label
+                       green when added, red when not (catalog.js)
      .product          a product's page: picture beside what to buy, then
                        Description and Ingredients as tabs
    ============================================================================= */
@@ -122,6 +121,7 @@
 }
 
 .tile__media {
+  position: relative;
   display: block;
   width: 100%;
 }
@@ -139,20 +139,60 @@
   background: var(--color-neutral-100);
 }
 
+/* The price, on a tag hung on the picture's corner: white with the
+   label's yellow edge, a little hole, a little crooked. */
+.tile__tag {
+  position: absolute;
+  top: 0.55rem;
+  right: -0.35rem;
+  display: grid;
+  justify-items: end;
+  padding: 0.2rem 0.55rem 0.2rem 1.05rem;
+
+  color: var(--color-neutral-900);
+  background: var(--color-white);
+  border: 1.5px solid var(--color-accent-600);
+  border-radius: 7px;
+  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.18);
+
+  font-size: var(--font-size-14);
+  font-weight: 800;
+  line-height: 1.15;
+  transform: rotate(4deg);
+}
+
+.tile__tag::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0.45rem;
+  width: 0.3rem;
+  height: 0.3rem;
+  margin-top: -0.15rem;
+  border-radius: 50%;
+  background: var(--color-neutral-300);
+}
+
+/* A special offer's reason: amber, like the warning it is. */
+.tile__tag-deal {
+  color: var(--color-status-warning-text);
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
 /* The label, stuck on the bin's foot like a gift tag: white with a
    yellow edge, the name on a yellow band, a little crooked (each a
-   different way); straight again while its quantity is chosen. */
+   different way); straight while a list is open on it or it is adding. */
 .tile__label {
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
   width: 90%;
   min-width: 0;
   margin-top: -1.4rem;
-  padding: 0 var(--space-2) 1.6rem;
+  padding: 0 var(--space-2) var(--space-2);
 
   text-align: center;
   background: var(--color-white);
@@ -161,26 +201,40 @@
   box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15);
 
   transform: rotate(var(--tile-tilt, 0deg));
-  transition: transform var(--motion-fast);
+  transition:
+    transform var(--motion-fast),
+    background var(--motion-fast),
+    border-color var(--motion-fast);
+  container-type: inline-size;
 }
 
 .tile:nth-child(3n + 1) { --tile-tilt: -2deg; }
 .tile:nth-child(3n + 2) { --tile-tilt: 1.5deg; }
 .tile:nth-child(3n) { --tile-tilt: -0.8deg; }
 
-/* Straight while its quantity is chosen, and over the row under it (the
-   quantity folds down over it rather than pushing the wall down). */
-.tile:has(.tile__quantity:not([hidden])) {
+.tile:has(.tile__quantity-list:not([hidden])) {
   z-index: 5;
 }
 
-.tile__label:has(.tile__quantity:not([hidden])) {
+.tile__label:has(.tile__quantity-list:not([hidden])),
+.tile__label:has(.tile__order[data-state]) {
   transform: none;
+}
+
+/* Added: the white of the label turns green; not added: red. */
+.tile__label:has(.tile__order[data-state="done"]) {
+  background: var(--color-action-deliver-light-bg);
+  border-color: var(--color-action-deliver-on-light);
+}
+
+.tile__label:has(.tile__order[data-state="failed"]) {
+  background: var(--color-action-danger-light-bg);
+  border-color: var(--color-action-danger-on-light);
 }
 
 .tile__name {
   width: calc(100% + 2 * var(--space-2));
-  margin: 0 calc(-1 * var(--space-2)) var(--space-1);
+  margin: 0 calc(-1 * var(--space-2)) var(--space-2);
   padding: 0.35rem var(--space-2) 0.3rem;
 
   background: var(--color-accent-500);
@@ -206,87 +260,253 @@
   text-underline-offset: 0.18em;
 }
 
-.tile__meta {
-  margin: 0;
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-12);
-  font-weight: 600;
-}
-
-.tile__price {
-  color: var(--color-neutral-900);
-  font-size: var(--font-size-14);
-  font-weight: 800;
-}
-
-/* A special offer (best before soon…): amber, like the warning it is. */
-.tile__deal {
-  margin: 0;
-  color: var(--color-status-warning-text);
-  font-size: var(--font-size-12);
-  font-weight: 800;
-}
-
-.tile__deal a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.tile__deal a:hover {
-  text-decoration: underline;
-}
-
+/* The row: the size (or the package) on the left, how many and the cart
+   button on the right, a dashed line between. */
 .tile__order {
+  position: relative;
   width: 100%;
-  margin-top: var(--space-1);
 }
 
-.tile__quantity,
-.tile__status {
+.tile__row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  align-items: stretch;
+  min-height: 2.6rem;
+}
+
+/* While adding, only the burst in the middle; the row keeps its place. */
+.tile__order[data-state] .tile__row {
+  visibility: hidden;
+}
+
+.tile__size {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  min-height: 2.5rem;
+  justify-content: center;
+  min-width: 0;
+  padding-right: var(--space-1);
 }
 
-.tile__buy[hidden],
-.tile__quantity[hidden],
-.tile__status[hidden] {
+.tile__buy {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  min-width: 0;
+  padding-left: 0.4rem;
+  border-left: 1.5px dashed var(--color-accent-300);
+}
+
+.tile__package {
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-14);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.tile__chevron.ui-icon-block {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--color-neutral-500);
+  --icon-stroke-width: 2.6;
+}
+
+/* The size: a native dropdown (the phone's own picker), shown as
+   "Choose size", then "Size" and the size, big. Without JavaScript the
+   dropdown itself, plain (catalog.js marks the form when it takes over). */
+.tile__picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tile__picker-face {
   display: none;
 }
 
-/* While the product is added: only the status burst, where the round
-   button was. */
-.tile__status {
-  position: absolute;
-  bottom: -1.25rem;
-  left: 50%;
-  justify-content: center;
-  transform: translateX(-50%);
+.tile__select {
+  max-width: 100%;
+  font: inherit;
+  font-size: var(--font-size-14);
 }
 
-/* The add button: round, half off the label's foot; "+" and a scoop
-   (candy) or "+" alone. Edged in the action yellow, not filled (the
-   filled yellow is the one action of a page; a catalog has one each). */
-.tile__buy {
-  position: absolute;
-  bottom: -1.2rem;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.tile__add {
-  display: inline-flex;
+.tile__order[data-enhanced] .tile__picker-face {
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1px;
-  min-width: 2.5rem;
-  height: 2.5rem;
-  padding: 0 0.6rem 0 0.5rem;
+  gap: 0.2rem;
+  min-width: 0;
+}
 
-  color: var(--color-accent-950);
+.tile__order[data-enhanced] .tile__select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.tile__order[data-enhanced] .tile__picker:hover {
+  background: var(--color-accent-100);
+}
+
+.tile__order[data-enhanced] .tile__picker:has(.tile__select:focus-visible) {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 1px;
+}
+
+.tile__picker-empty {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-12);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.tile__picker-short {
+  display: none;
+}
+
+/* A narrow label: "Size" alone. */
+@container (max-width: 11rem) {
+  .tile__picker-long {
+    display: none;
+  }
+
+  .tile__picker-short {
+    display: inline;
+  }
+}
+
+.tile__picker-chosen {
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+  line-height: 1;
+}
+
+.tile__picker-chosen[hidden] {
+  display: none;
+}
+
+.tile__picker-chosen small {
+  color: var(--color-neutral-600);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.tile__picker-chosen b {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--color-neutral-900);
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* How many: a box with a chevron; the first tap lists 1-9, the second
+   lets you type (catalog.js). */
+.tile__quantity {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 2.75rem;
+  max-width: 4.25rem;
+}
+
+.tile__quantity-input {
+  width: 100%;
+  height: 2.3rem;
+  padding: 0 1.05rem 0 0.35rem;
+
+  color: var(--color-neutral-900);
+  background: var(--color-white);
+  border: 1.5px solid var(--color-neutral-300);
+  border-radius: 8px;
+
+  font: 800 var(--font-size-16) var(--font-body);
+  text-align: center;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.tile__quantity-input::-webkit-outer-spin-button,
+.tile__quantity-input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.tile__quantity-input:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 1px;
+}
+
+.tile__quantity-chevron.ui-icon-block {
+  position: absolute;
+  top: 50%;
+  right: 0.3rem;
+  margin-top: -0.375rem;
+  pointer-events: none;
+}
+
+.tile__quantity-list {
+  position: absolute;
+  z-index: 9;
+  top: calc(100% + 4px);
+  left: 50%;
+  display: grid;
+  min-width: 3.25rem;
+  padding: 0.3rem;
+
   background: var(--color-white);
   border: 1.5px solid var(--color-accent-600);
+  border-radius: 9px;
+  box-shadow: 0 8px 14px rgb(var(--color-row-shadow) / 0.2);
+  transform: translateX(-50%);
+}
+
+.tile__quantity-list[hidden] {
+  display: none;
+}
+
+.tile__quantity-option {
+  padding: 0.3rem 0.6rem;
+
+  color: var(--color-neutral-900);
+  background: none;
+  border: 0;
+  border-radius: 6px;
+
+  font: 800 var(--font-size-14) var(--font-body);
+  cursor: pointer;
+}
+
+.tile__quantity-option:hover,
+.tile__quantity-option[aria-selected="true"] {
+  background: var(--color-accent-100);
+}
+
+/* The cart button: round, light green with a dark green edge and cart
+   (the deliver green, like the tick it replaces); grey until a size is
+   chosen (pressing it then asks for one). */
+.tile__add {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2.3rem;
+  height: 2.3rem;
+  padding: 0;
+
+  color: var(--color-action-deliver-on-light);
+  background: var(--color-action-deliver-light-bg);
+  border: 1.5px solid var(--color-action-deliver-on-light);
   border-radius: var(--radius-pill);
   box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.14);
 
@@ -294,19 +514,15 @@
   transition: background var(--motion-fast), transform var(--motion-fast);
 }
 
-.tile__add .tile__add-plus {
-  width: 0.95rem;
-  height: 0.95rem;
-  --icon-stroke-width: 2.6;
-}
-
-.tile__add .scoop {
-  width: 1.55rem;
-  height: 1.55rem;
+/* The cart drawn a little right of its middle: nudged back. */
+.tile__add .tile__add-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  transform: translateX(-2px);
 }
 
 .tile__add:hover {
-  background: var(--color-accent-100);
+  background: var(--color-action-deliver-light-bg-hover);
 }
 
 .tile__add:active {
@@ -318,92 +534,28 @@
   outline-offset: 2px;
 }
 
-/* What the round button opens: the label folds down, over whatever is
-   under it (nothing moves): the stepper across the label's width, the
-   tick and × centred under it. */
-.tile__quantity {
-  position: absolute;
-  top: calc(100% - 1.6rem - 1.5px);
-  right: -1.5px;
-  left: -1.5px;
-
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-2) var(--space-3);
-
-  background: var(--color-white);
-  border: 1.5px solid var(--color-accent-600);
-  border-top: 0;
-  border-radius: 0 0 9px 9px;
-  box-shadow: 0 8px 14px rgb(var(--color-row-shadow) / 0.18);
-}
-
-.tile__quantity .quantity-stepper {
-  grid-template-columns: 2.25rem minmax(1.5rem, 1fr) 2.25rem;
-  width: 100%;
-  max-width: none;
-}
-
-.tile__quantity .quantity-stepper__button {
-  min-width: 2rem;
-  min-height: 2.25rem;
-}
-
-.tile__quantity-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-}
-
-/* The tick that adds: round, in the deliver green (light inside, dark
-   tick and edge). */
-.tile__confirm {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0;
-
-  color: var(--color-action-deliver-on-light);
-  background: var(--color-action-deliver-light-bg);
-  border: 1.5px solid var(--color-action-deliver-on-light);
-  border-radius: var(--radius-pill);
-
-  cursor: pointer;
-  transition: background var(--motion-fast), color var(--motion-fast);
-}
-
-.tile__confirm:hover {
-  background: var(--color-action-deliver-light-bg-hover);
-}
-
-.tile__confirm:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
-}
-
-/* × to put it back: a circle like the tick beside it, in quiet grey. */
-.tile__cancel.quiet-link {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0;
-
-  color: var(--color-neutral-600);
-  border: 1.5px solid var(--color-neutral-300);
-  border-radius: var(--radius-pill);
-
-  text-decoration: none;
-}
-
-.tile__cancel.quiet-link:hover {
-  color: var(--color-neutral-800);
+.tile__order:has(.tile__select:invalid) .tile__add {
+  color: var(--color-neutral-400);
   background: var(--color-neutral-100);
-  text-decoration: none;
+  border-color: var(--color-neutral-300);
+  box-shadow: none;
+}
+
+/* While adding: the burst in the middle of the row's place (the scoop,
+   then our bag or a dark red cross). */
+.tile__status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.tile__status[hidden] {
+  display: none;
+}
+
+.tile__status .status-burst__mark--error {
+  color: var(--color-action-danger-on-light);
 }
 
 

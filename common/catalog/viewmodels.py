@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from decimal import Decimal
 
 from django.utils.translation import gettext_lazy as _
 
@@ -20,6 +21,14 @@ class CatalogOfferVM:
     price_label: str | None
     availability_label: str
     available_units: int
+    # For the card: the cheapest size's price on its tag, the sizes in
+    # their order.
+    price: Decimal | None = None
+    position: int = 0
+
+    @property
+    def sold_out(self) -> bool:
+        return self.available_units <= 0
 
     def as_dict(self) -> dict[str, object]:
         return {
@@ -32,6 +41,15 @@ class CatalogOfferVM:
             "availability_label": self.availability_label,
             "available_units": self.available_units,
         }
+
+
+@dataclass(frozen=True, slots=True)
+class PriceTagVM:
+    """The tag hung on a card's picture: its price, and a special offer's
+    reason ("Short dated") when there is one."""
+
+    price_label: str
+    deal_label: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,19 +66,76 @@ class ProductCardVM:
     offers: tuple[CatalogOfferVM, ...] = ()
     category_key: str = "other"
     search_text: str = ""
+    # Sizes on sale with nothing to sell now: in the size list, muted.
+    sold_out: tuple[CatalogOfferVM, ...] = ()
 
     @property
     def initial_offer(self) -> CatalogOfferVM | None:
-        """The offer the tile's "+" adds (the first, normally standard)."""
+        """The offer the tile adds when it has no sizes to choose from
+        (the first, normally standard)."""
 
         return self.offers[0] if self.offers else None
 
     @property
-    def has_variant_choice(self) -> bool:
-        """Several variants on sale (a standard offer each): the "+" leads
-        to the product page, where the size is chosen."""
+    def size_choices(self) -> tuple[CatalogOfferVM, ...]:
+        """The sizes, in their order: each variant's standard offer, the
+        sold-out ones too (muted, not choosable)."""
 
-        return sum(offer.kind == "standard" for offer in self.offers) > 1
+        return tuple(
+            sorted(
+                (
+                    *(offer for offer in self.offers if offer.kind == "standard"),
+                    *self.sold_out,
+                ),
+                key=lambda offer: offer.position,
+            )
+        )
+
+    @property
+    def has_size_choice(self) -> bool:
+        """Several sizes: the tile's left half is a size dropdown (and the
+        cart button waits for a size); otherwise it shows the package."""
+
+        choices = self.size_choices
+
+        return len(choices) > 1 and any(not offer.sold_out for offer in choices)
+
+    @property
+    def price_tag(self) -> PriceTagVM | None:
+        """The price tag on the picture's corner, when there is a price:
+        the cheapest size's, "from" when the sizes differ; a special
+        offer's reason above it."""
+
+        deal = self.initial_offer.badge_label if self.initial_offer else None
+        deal = deal or (self.other_deal.badge_label if self.other_deal else None)
+
+        if not self.has_size_choice:
+            offer = self.initial_offer
+            if offer is None or not offer.price_label:
+                return None
+
+            return PriceTagVM(price_label=offer.price_label, deal_label=deal)
+
+        priced = [
+            offer
+            for offer in self.size_choices
+            if not offer.sold_out and offer.price is not None and offer.price_label
+        ]
+
+        if not priced:
+            return None
+
+        cheapest = min(priced, key=lambda offer: offer.price)
+        prices = {offer.price for offer in priced}
+
+        return PriceTagVM(
+            price_label=(
+                str(_("from %(price)s") % {"price": cheapest.price_label})
+                if len(prices) > 1
+                else cheapest.price_label
+            ),
+            deal_label=deal,
+        )
 
     @property
     def other_deal(self) -> CatalogOfferVM | None:

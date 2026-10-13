@@ -91,14 +91,9 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    the products list, inventory (its section nav, the batch page and its
    pricing), customers, orders, accounts.
 1. **Brand + name unique** (after the open questions).
-2. **Variants, step 6, the rest**: the "+" on a card opens the sizes as
-   round chips (sold-out ones muted) instead of leading to the product
-   page; merch
-   shows its size, not a candy weight. Sketched in Figma with the catalog
-   cards.
-3. **Variants, steps 7–8**: the ops order form by variant; clean-up
+2. **Variants, steps 7–8**: the ops order form by variant; clean-up
    (`Product.sku` and `Product.weight_per_unit` read from the variant).
-4. **Shared expandable row** (button with `aria-expanded`, the FAQ and
+3. **Shared expandable row** (button with `aria-expanded`, the FAQ and
    dashboard animation), then the ops lists that use it:
    - Products: picture and name first, brand, manufacturer and weight as
      quiet text under the name, vegan as an icon, active as a small dot,
@@ -109,7 +104,7 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    - Customers: contact details and active orders, "View details".
    - Accounts: last login, role, the three latest activities, "View
      details"; from the existing activity history, no new log.
-5. **Retail flow**, after a look at what exists (payment states, webhooks,
+4. **Retail flow**, after a look at what exists (payment states, webhooks,
    reconciliation and their tests are already there):
    1. Mini-cart on desktop: picture, name, variant, unit price, stepper
       (the minus becomes the trash at 1 in retail; B2B keeps a separate
@@ -118,7 +113,7 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    2. The mobile cart sheet.
    3. Cart and contact details on one page.
    4. Confirmation page and mail; SumUp keys set in Railway.
-6. **Order messages**, in three parts:
+5. **Order messages**, in three parts:
    1. A thread per order ("Have a question about this order?"), status,
       ops replies from the order, mail to info@ and to the customer (the
       app is the record; mail only notifies, with retry and no doubles),
@@ -127,7 +122,7 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    3. Questions that need the customer's decision (approve or decline),
       each acted on by a separate, checked order action.
    The model lives in `orders` to begin with.
-7. **Catalog cards**: weight or size under the name, the price on its own
+6. **Catalog cards**: weight or size under the name, the price on its own
    small tilted label, attribute icons; colours per category, sketched in
    Figma first, together with the size chips (step 2).
 
@@ -186,6 +181,11 @@ the channel is off), "Use for all variants" under them; "+ Add variant"
 as a faint last row. Price changes ask for the password.
 
 ## Done
+
+- Catalog cards choose the size (variants step 6): a size dropdown with
+  sold-out sizes muted, how many as a 1–9 list or typed, a green cart
+  button, the price on a tag ("from" the cheapest), the label green with
+  the bag when added.
 
 - Order lines keep a copy of what was bought (`orders/0018`): the name with
   the size, SKU, label, weight and stock unit, taken when a line is first

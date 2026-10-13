@@ -1,12 +1,15 @@
 """Catalogs, carts and orders by variant: a standard offer per variant with
 its own stock, its label on the choice, the cart line and the order line;
-a paused variant is not sold."""
+a paused variant is not sold; a size on sale with no stock is listed sold
+out on the card, which has a size dropdown and the cheapest price."""
 
 from __future__ import annotations
 
+from dataclasses import replace
 from decimal import Decimal
 
 import pytest
+from django.urls import reverse
 from django.utils import timezone
 
 from business.drafts import resolve_standard_business_offer
@@ -170,33 +173,128 @@ def test_an_offer_choice_says_its_size():
     )
 
 
+def _card(offers, sold_out=()):
+    return ProductCardVM(
+        product_id=1,
+        name="Hoodie",
+        package_label="400 g",
+        badge_label=None,
+        primary_action=UiText(text="Add", href="#"),
+        offers=tuple(offers),
+        sold_out=tuple(sold_out),
+    )
+
+
+def _with_large(product, channel):
+    large = variant_factory(product=product, label="L", weight_per_unit=500)
+    # On sale, nothing in stock.
+    _offer(variant=large, channel=channel, price="4.50")
+
+    return large
+
+
 @pytest.mark.django_db
-def test_a_card_with_several_sizes_leads_to_its_page():
+@pytest.mark.parametrize("channel", [BUSINESS, RETAIL])
+def test_a_size_on_sale_with_no_stock_is_listed_sold_out(channel):
+    product, *_ = _hoodie(channel)
+    _with_large(product, channel)
+    list_products = (
+        list_business_catalog_products
+        if channel == BUSINESS
+        else list_retail_catalog_products
+    )
+
+    (catalog_product,) = list_products()
+
+    assert [offer.variant_label for offer in catalog_product.offers] == ["S", "M"]
+    assert [
+        (offer.variant_label, offer.available_units)
+        for offer in catalog_product.sold_out
+    ] == [("L", 0)]
+
+
+@pytest.mark.django_db
+def test_a_paused_size_is_not_listed_sold_out():
+    product, *_ = _hoodie(RETAIL)
+    large = _with_large(product, RETAIL)
+    set_variant_active(variant=large, active=False)
+
+    (catalog_product,) = list_retail_catalog_products()
+
+    assert catalog_product.sold_out == ()
+
+
+@pytest.mark.django_db
+def test_a_card_with_several_sizes_has_a_size_dropdown():
+    product, *_ = _hoodie(RETAIL)
+    _with_large(product, RETAIL)
+    (catalog_product,) = list_retail_catalog_products()
+    card = _card(
+        (build_retail_offer_viewmodel(offer) for offer in catalog_product.offers),
+        (build_retail_offer_viewmodel(offer) for offer in catalog_product.sold_out),
+    )
+
+    assert card.has_size_choice is True
+    assert [
+        (choice.label, choice.sold_out) for choice in card.size_choices
+    ] == [("S", False), ("M", False), ("L", True)]
+    # The cheapest size's price, "from" as the sizes differ.
+    assert card.price_tag.price_label == "from €2.50"
+
+    one_size = _card(card.offers[:1])
+    assert one_size.has_size_choice is False
+    assert one_size.price_tag.price_label == "€2.50"
+
+
+@pytest.mark.django_db
+def test_sizes_at_one_price_need_no_from():
     _hoodie(BUSINESS)
     (catalog_product,) = list_business_catalog_products()
-    offers = tuple(
-        build_business_offer_viewmodel(offer)
-        for offer in catalog_product.offers
-    )
+    offers = [
+        build_business_offer_viewmodel(offer) for offer in catalog_product.offers
+    ]
+    same_price = [
+        replace(offer, price=Decimal("2.50"), price_label="€2.50")
+        for offer in offers
+    ]
 
-    card = ProductCardVM(
-        product_id=catalog_product.product.pk,
-        name="Hoodie",
-        package_label="",
-        badge_label=None,
-        primary_action=UiText(text="Add", href="#"),
-        offers=offers,
-    )
+    assert _card(same_price).price_tag.price_label == "€2.50"
+    # Unpriced (a business standard offer may be): no tag.
+    unpriced = [replace(offer, price=None, price_label=None) for offer in offers]
+    assert _card(unpriced).price_tag is None
 
-    assert card.has_variant_choice is True
-    assert ProductCardVM(
-        product_id=1,
-        name="Apple",
-        package_label="",
-        badge_label=None,
-        primary_action=UiText(text="Add", href="#"),
-        offers=offers[:1],
-    ).has_variant_choice is False
+
+@pytest.mark.django_db
+def test_a_card_whose_sizes_are_all_sold_out_adds_its_deal():
+    # Only a batch offer left: no dropdown of nothing but sold-out sizes.
+    product, small, medium, small_offer, medium_offer = _hoodie(RETAIL)
+    deal = build_retail_offer_viewmodel(
+        list_retail_catalog_products()[0].offers[0]
+    )
+    deal = replace(deal, kind="batch", badge_label="Short dated")
+    sold = [
+        replace(build_retail_offer_viewmodel(offer), available_units=0)
+        for offer in list_retail_catalog_products()[0].offers
+    ]
+
+    card = _card([deal], sold)
+
+    assert card.has_size_choice is False
+    assert card.initial_offer == deal
+    assert card.price_tag.deal_label == "Short dated"
+
+
+@pytest.mark.django_db
+def test_the_shop_catalog_shows_the_size_dropdown(client):
+    product, *_ = _hoodie(RETAIL)
+    _with_large(product, RETAIL)
+
+    html = client.get(reverse("storefront:product_list")).content.decode()
+
+    assert "data-size-select" in html
+    assert "L — sold out" in html
+    assert "from €2.50" in html
+    assert 'name="quantity"' in html
 
 
 @pytest.mark.django_db

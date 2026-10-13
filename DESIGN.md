@@ -185,8 +185,13 @@ small yellow-edged outline button with a plus.
 
 **Catalog:** `includes/catalog/` holds the shop's and the business
 portal's catalog: `grid.html` (category tabs, search, tiles), `tile.html`
-(a product on the page, no card; the round yellow-edged "+" asks for a
-quantity before it adds) and `product.html` (a product's page: picture
+(a product on the page, no card: the price on a tag on the picture's
+corner, "from" the cheapest when sizes differ; under the name one row,
+never more: the size as a small dropdown (sold-out sizes muted in it) or
+the package, then how many (1–9 listed on the first tap, typed on the
+second) and the round light-green cart button; while adding the scoop in
+the row's middle, then the label green with our bag, or red with a dark
+red cross, and the row back as it started) and `product.html` (a product's page: picture
 beside what to buy, offers as chips, Description and Ingredients as
 tabs). The channel's pages only say where the form posts and what its
 button says. CSS in `static/css/catalog.css`.

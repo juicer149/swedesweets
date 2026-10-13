@@ -1,6 +1,6 @@
 # Product variants
 
-Status: agreed; steps 1–5 done, step 6 mostly done (the size chips on catalog cards remain), steps 7–8 next.
+Status: agreed; steps 1–6 done, steps 7–8 next.
 
 A product can come in variants: a hoodie in XS–XL, a chocolate bar in 60, 100
 and 120 g. Variants are modelled the way Shopify does it: **every product has
@@ -197,7 +197,10 @@ variants into view.
    navbar cart, checkout and business orders; a card with several sizes
    leads to its page. Names with the size on packing lists, mails, the ops
    order page and exports come from the order line's copy (`orders/0018`).
-   Still to come: the "+" opening the sizes as chips, sold-out sizes.
+   The catalog card chooses the size itself: a small dropdown with the
+   sold-out sizes muted in it (sizes on sale with no stock,
+   `CatalogProduct.sold_out`), the cheapest price on its tag ("from" when
+   the sizes differ).
 7. **Ops orders** — the order form and Previous orders by variant.
 8. **Clean-up** — drop `Product.sku` and `Product.weight_per_unit` (read
    from the variant); demo data: hoodie and T-shirt in XS–XL.

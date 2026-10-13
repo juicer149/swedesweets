@@ -1686,9 +1686,22 @@ msgstr "Informations sur le produit"
 msgid "Back to catalog"
 msgstr "Retour au catalogue"
 
-#: templates/includes/catalog/tile.html:51
-msgid "Choose a size"
-msgstr "Choisir une taille"
+#: templates/includes/catalog/tile.html
+msgid "Choose size"
+msgstr "Choisir la taille"
+
+#: templates/includes/catalog/tile.html
+msgid "Size"
+msgstr "Taille"
+
+#: templates/includes/catalog/tile.html
+msgid "sold out"
+msgstr "épuisé"
+
+#: common/catalog/viewmodels.py
+#, python-format
+msgid "from %(price)s"
+msgstr "dès %(price)s"
 
 #: templates/includes/footer.html:9
 msgid "Site footer"

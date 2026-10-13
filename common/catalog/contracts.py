@@ -41,6 +41,9 @@ class CatalogOffer:
     # product has several; "" for a product's only variant.
     variant_id: int | None = None
     variant_label: str = ""
+    # Where the variant stands among the product's sizes (the catalog
+    # card's size list keeps that order, sold-out sizes included).
+    variant_position: int = 0
 
     @property
     def is_standard(self) -> bool:
@@ -58,3 +61,8 @@ class CatalogProduct:
     product: Product
     available_units: int
     offers: tuple[CatalogOffer, ...]
+    # The sizes on sale in this channel with nothing to sell right now
+    # (their standard offers, no units): the catalog card lists them muted.
+    # Not orderable; only named variants (a product's only variant has no
+    # size to show).
+    sold_out: tuple[CatalogOffer, ...] = ()

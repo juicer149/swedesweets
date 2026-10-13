@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from dataclasses import replace
 
 from django.urls import reverse
 from django.utils.translation import (
@@ -136,6 +137,10 @@ def _build_business_product_card(
             for offer
             in catalog_product.offers
         ),
+        sold_out=tuple(
+            build_business_offer_viewmodel(offer)
+            for offer in catalog_product.sold_out
+        ),
         category_key=category_key,
         search_text=(
             _catalog_search_text(
@@ -155,6 +160,19 @@ def _build_business_product_card(
 
 
 def build_business_offer_viewmodel(
+    offer: CatalogOffer,
+) -> CatalogOfferVM:
+    """An offer as the catalog shows it, with its price and its size's
+    place for the card's size list and price tag."""
+
+    return replace(
+        _build_business_offer_viewmodel_without_order(offer),
+        price=offer.price,
+        position=offer.variant_position,
+    )
+
+
+def _build_business_offer_viewmodel_without_order(
     offer: CatalogOffer,
 ) -> CatalogOfferVM:
     if (

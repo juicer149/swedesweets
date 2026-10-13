@@ -44,6 +44,7 @@ def list_retail_catalog_products() -> tuple[CatalogProduct, ...]:
         return ()
 
     offers_by_product_id: dict[int, list[CatalogOffer]] = defaultdict(list)
+    sold_out_by_product_id: dict[int, list[CatalogOffer]] = defaultdict(list)
     offer_order: dict[int, tuple] = {}
     total_available_units_by_product_id: dict[int, int] = defaultdict(int)
 
@@ -62,25 +63,20 @@ def list_retail_catalog_products() -> tuple[CatalogProduct, ...]:
         )
 
         if available_units <= 0:
+            if _is_named_size_on_sale(commercial_price):
+                sold_out_by_product_id[commercial_price.product_id].append(
+                    _offer(
+                        commercial_price=commercial_price,
+                        amount=amount,
+                        available_units=0,
+                    )
+                )
             continue
 
-        offer = CatalogOffer(
-            kind=(
-                CatalogOfferKind.BATCH
-                if commercial_price.batch_id is not None
-                else CatalogOfferKind.STANDARD
-            ),
-            commercial_price_id=commercial_price.pk,
-            batch_id=commercial_price.batch_id,
-            reason=(
-                commercial_price.reason
-                or None
-            ),
-            price=amount.price,
-            currency=amount.currency,
+        offer = _offer(
+            commercial_price=commercial_price,
+            amount=amount,
             available_units=available_units,
-            variant_id=commercial_price.variant_id,
-            variant_label=commercial_price.variant.label,
         )
         offer_order[offer.commercial_price_id] = (
             # Each variant's standard offer in the variants' order, then
@@ -124,6 +120,15 @@ def list_retail_catalog_products() -> tuple[CatalogProduct, ...]:
                     key=lambda offer: offer_order[offer.commercial_price_id],
                 )
             ),
+            sold_out=tuple(
+                sorted(
+                    sold_out_by_product_id.get(product.id, ()),
+                    key=lambda offer: (
+                        offer.variant_position,
+                        offer.variant_id,
+                    ),
+                )
+            ),
         )
         for product in products
         if offers_by_product_id.get(product.id)
@@ -147,6 +152,46 @@ def get_retail_catalog_product(
             return catalog_product
 
     return None
+
+
+def _offer(
+    *,
+    commercial_price: CommercialPrice,
+    amount: PriceAmount,
+    available_units: int,
+) -> CatalogOffer:
+    return CatalogOffer(
+        kind=(
+            CatalogOfferKind.BATCH
+            if commercial_price.batch_id is not None
+            else CatalogOfferKind.STANDARD
+        ),
+        commercial_price_id=commercial_price.pk,
+        batch_id=commercial_price.batch_id,
+        reason=(
+            commercial_price.reason
+            or None
+        ),
+        price=amount.price,
+        currency=amount.currency,
+        available_units=available_units,
+        variant_id=commercial_price.variant_id,
+        variant_label=commercial_price.variant.label,
+        variant_position=commercial_price.variant.position,
+    )
+
+
+def _is_named_size_on_sale(commercial_price: CommercialPrice) -> bool:
+    """A size the card lists as sold out: a named, active variant's
+    standard offer (a batch offer that sold out is simply gone)."""
+
+    variant = commercial_price.variant
+
+    return (
+        commercial_price.batch_id is None
+        and variant.active
+        and bool(variant.label)
+    )
 
 
 def _available_units(
