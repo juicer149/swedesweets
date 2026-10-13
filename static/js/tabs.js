@@ -26,6 +26,14 @@
       ),
     ].filter(ownedByGroup);
 
+    // Actions at the nav's right (page_tabs.html): each shown while its
+    // tab is open.
+    const actions = [
+      ...group.querySelectorAll(
+        "[data-tab-action]"
+      ),
+    ].filter(ownedByGroup);
+
     if (
       tabs.length === 0
       || panels.length === 0
@@ -63,6 +71,11 @@
           panel.dataset.tabPanel === tabKey;
 
         panel.hidden = !isActive;
+      }
+
+      for (const action of actions) {
+        action.hidden =
+          action.dataset.tabAction !== tabKey;
       }
     }
 

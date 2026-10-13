@@ -80,6 +80,18 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     )
     assert f'href="{edit_url}#product"' in content
     assert f'href="{catalog_url}"' in content
+    # Edit at the section nav's right, the open tab's: the product's form
+    # on Product, the catalog's on Catalog, none on Inventory.
+    assert [
+        (action.tab, action.href) for action in response.context["tab_actions"]
+    ] == [
+        ("product", f"{edit_url}#product"),
+        ("catalog", catalog_url),
+    ]
+    assert f'href="{catalog_url}" data-tab-action="catalog" hidden' in content
+    assert content.index('data-tab-action="product"') < content.index(
+        'id="panel-product"'
+    )
 
     add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert f'href="{add_batch_url}"' in content
@@ -334,10 +346,11 @@ def test_catalog_tab_previews_the_shop_page_in_each_language(client):
     assert french.offers == ()
     assert "Not in shop" in response.context["shop_label"]
     assert "no retail price" in response.context["shop_label"]
-    # The label over the shop's page; Edit catalog beside the languages.
-    assert "catalog-preview__shop" in content
+    # The languages alone (Edit is the page's, at its tabs' right), then
+    # the label over the shop's page.
+    assert "catalog-preview__edit" not in content
     assert (
-        content.index("catalog-preview__edit")
+        content.index("catalog-preview__languages")
         < content.index("catalog-preview__shop")
         < content.index('id="panel-preview-fr"')
     )

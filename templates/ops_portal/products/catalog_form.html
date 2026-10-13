@@ -2,15 +2,17 @@
 {% load i18n static %}
 {% comment %}
   What the shop shows of a product, apart from the product form, in two
-  open sections: what is the same in every language (category, picture),
-  then the words under one tab per language (languages: name, description,
-  ingredients).
+  open sections: what is the same in every language (the category, the
+  picture at its right), then the words under one tab per language
+  (languages: name, description, ingredients); a language with a change
+  gets a dot (dirty_form.js). No hero: a hidden title.
   A language with an error opens first (tabs.js); an empty field falls back
   in the shop, and its help says to what.
 {% endcomment %}
 
 {% block page_heading %}
-  {% include "includes/ui/status_heading.html" with title_id="page-title" kicker=heading_kicker title=heading|default:title status=status_key icon=status_icon label=status_label who=product.code_label image=heading_image_url only %}
+  {# No hero, as on the product's edit page (a hidden title). #}
+  <h1 id="page-title" class="visually-hidden">{{ title }}</h1>
 {% endblock %}
 
 {% block page_body %}
@@ -24,7 +26,8 @@
         <h2 class="form-section__title" id="shop-title">In the shop</h2>
       </div>
 
-      <div class="form-grid">
+      {# The category, and at its right the picture (under it on phones). #}
+      <div class="form-grid catalog-form__shop">
         {% include "includes/ui/form_field.html" with field=form.category only %}
         {% include "ops_portal/products/includes/catalog_picture_field.html" %}
       </div>

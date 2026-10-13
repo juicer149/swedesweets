@@ -189,14 +189,9 @@ class CatalogFormContext:
             "form": self.form,
             "languages": self.languages,
             "product": product,
-            "status_key": "active" if product.active else "inactive",
-            "status_label": "Active" if product.active else "Inactive",
-            "status_icon": product_status_icon(product),
             "current_image_url": _current_product_image_url(product),
+            # No hero (catalog_form.html): the hidden title names it.
             "title": f"Edit catalog: {product.display_name}",
-            "heading_kicker": "Edit catalog",
-            "heading": product.display_name,
-            "heading_image_url": product_image_url(product) or "",
             "description": "",
             "submit_label": "Update catalog",
             "cancel_url": (

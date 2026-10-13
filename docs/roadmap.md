@@ -128,26 +128,27 @@ mobile).
 
 ## Ops product pages
 
-**Detail page** (no hero; a hidden page title), three tabs:
+**Detail page** (no hero; a hidden page title), three tabs, and at their
+right "Edit" (pencil) for the open tab: the product's form on Product, the
+catalog's on Catalog, none on Inventory (`TabAction`, page_tabs.html):
 
 - **Product**: the product's card (picture, brand over name, status,
   catalog ID, SKU, manufacturer, attributes; a pencil in its top right
   corner, no stock), then **Variants and offers**: a card per variant
   (label, weight; at its right its channels as chips, Business over
   Retail, each with its price beside it when sold in it). Edit product.
-- **Catalog**: the language tabs with "Edit catalog" (the list pages'
-  small action) at their right, a label over the shop's page ("In shop",
-  or what keeps it out), the shop's product page a little smaller;
-  category and picture.
+- **Catalog**: the language tabs alone, a label over the shop's page
+  ("In shop", or what keeps it out), the shop's product page a little
+  smaller; category and picture.
 - **Inventory**: a card per variant (label, weight), at its right its
   batches on the shelf stacked, the soonest best-before at the top: each
   batch's ID and how many, to its page; none with less than one unit;
   past its best-before and not closed in red, within `EXPIRY_SOON_DAYS`
   (inventory/expiry.py) in orange. Add batch.
 
-**Catalog page**: category and picture, then name, description and
-ingredients under one tab per language; a language with a change gets a
-dot.
+**Catalog page** (no hero; a hidden page title): the category, the
+picture small at its right, then name, description and ingredients under
+one tab per language; a language with a change gets a dot.
 
 **Edit page**: Product as a card (its picture, catalog ID and status at
 its top, brand and name large), then **Variants and offers**: EUR / SEK

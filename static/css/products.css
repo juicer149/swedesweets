@@ -467,31 +467,14 @@
 
 
 /* =============================================================================
-   The Catalog tab (detail_tab_catalog.html): the language tabs with Edit
-   catalog at their right, then a label over the shop's page: in the shop
-   (green) or what keeps it out (grey).
+   The Catalog tab (detail_tab_catalog.html): the language tabs, then a
+   label over the shop's page: in the shop (green) or what keeps it out
+   (grey).
    ============================================================================= */
 
-.catalog-preview__bar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: var(--space-3);
+/* The languages, alone under the page's tabs. */
+.page-tabs .catalog-preview__languages {
   margin-block: 0 var(--space-6);
-  border-bottom: 1px solid var(--color-neutral-200);
-}
-
-.catalog-preview__bar .section-nav {
-  grid-column: 2;
-  margin: 0;
-  border-bottom: 0;
-}
-
-/* The list pages' small yellow-edged action (buttons.css). */
-.catalog-preview__edit {
-  grid-column: 3;
-  justify-self: end;
-  margin-bottom: var(--space-2);
 }
 
 .catalog-preview__shop {
@@ -514,33 +497,6 @@
   border-color: rgb(var(--color-status-success) / 0.5);
 }
 
-@media (max-width: 640px) {
-  /* The languages at the left, the pencil alone at the right. */
-  .catalog-preview__bar {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .catalog-preview__bar .section-nav {
-    grid-column: 1;
-    justify-content: flex-start;
-  }
-
-  .catalog-preview__edit {
-    grid-column: 2;
-  }
-
-  /* The pencil alone. */
-  .catalog-preview__edit .button__label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-}
-
-
 /* =============================================================================
    The product page's tabs (detail.html): a little closer to the navbar
    than a form's first section, more room between them and what they
@@ -553,4 +509,48 @@
 
 .product-page > .page-tabs > .page-tabs__panel {
   padding-top: var(--space-8);
+}
+
+
+/* =============================================================================
+   The catalog page (catalog_form.html): the category, and at its right
+   the picture, small; under it on phones.
+   ============================================================================= */
+
+/* Side by side: no field takes the whole row here. */
+.catalog-form__shop > .form-field {
+  grid-column: auto;
+}
+
+.catalog-form__shop .product-image-upload {
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.catalog-form__shop .product-image-upload__preview {
+  width: min(100%, 12rem);
+}
+
+.catalog-form__shop .product-image-upload__empty {
+  flex-direction: column;
+  min-height: 0;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.catalog-form__shop .product-image-upload__empty-icon {
+  width: 3rem;
+  height: 3rem;
+}
+
+.catalog-form__shop .product-image-upload__empty-icon .ui-icon-block {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+@media (max-width: 640px) {
+  .catalog-form__shop {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

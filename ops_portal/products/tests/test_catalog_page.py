@@ -49,6 +49,11 @@ def test_the_catalog_page_has_a_tab_per_language(client):
     assert 'name="en-description"' in content
     assert 'name="category"' in content
     assert 'enctype="multipart/form-data"' in content
+    # No hero: a hidden title; the picture beside the category.
+    assert '<h1 id="page-title" class="visually-hidden">Edit catalog: ' in content
+    assert "page__kicker" not in content
+    assert "catalog-form__shop" in content
+    assert "form-field--full product-image-field" not in content
 
 
 @pytest.mark.django_db

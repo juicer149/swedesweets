@@ -18,3 +18,15 @@ class PageTab:
     label: str
     template: str
     icon: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class TabAction:
+    """An action at the right of the section nav, shown while its tab is
+    open (tabs.js): the product page's Edit leads to the product's form on
+    the Product tab, to the catalog's on the Catalog tab."""
+
+    tab: str
+    href: str
+    label: str = "Edit"
+    icon: str = "pencil"

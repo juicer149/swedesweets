@@ -118,8 +118,9 @@ fall back to the order they were added in.
   **Variants and offers**: a card per variant in order (weight; at its
   right its sales channels as chips, Business over Retail, each with its
   price beside it; why its weight is fixed). Catalog: the shop's page per
-  language, "Edit catalog" beside the languages, a label over the page
-  saying "In shop" or what keeps it out. Inventory: a card per variant,
+  language, a label over the page saying "In shop" or what keeps it out.
+  At the tabs' right "Edit", for the open tab: the product's form, the
+  catalog's (none on Inventory). Inventory: a card per variant,
   its batches on the shelf stacked at its right, the soonest best-before
   at the top (ID and how many, to the batch's page; expired in red, soon
   in orange); Add batch.

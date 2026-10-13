@@ -2,28 +2,18 @@
 {% comment %}
   The Catalog tab: the shop's page for the product, once per language
   (catalog_previews, ops_portal/products/catalog_preview.py) under language
-  tabs with Edit catalog (its own page) at their right; over the page a
+  tabs (the page's Edit leads to the catalog's own page); over the page a
   label saying whether it is in the shop (and if not, what keeps it out).
   Each page in its own language with the shop's fallbacks; shown, not
   used: its form is inert. Then what is the same in every language
   (category, picture).
 {% endcomment %}
 <div class="page-tabs catalog-preview" data-tabs>
-  <div class="catalog-preview__bar">
-    <nav class="section-nav" aria-label="Languages" role="tablist">
-      {% for preview in catalog_previews %}
-        {% include "includes/ui/section_tab.html" with key=preview.language_code label=preview.language_name is_active=forloop.first tab_id="tab-preview-"|add:preview.language_code panel_id="panel-preview-"|add:preview.language_code only %}
-      {% endfor %}
-    </nav>
-
-    {% if edit_action %}
-      {# The list pages' small yellow-edged action (includes/ui/list_action.html). #}
-      <a class="button button--sm button--outline button--tone-place button--with-icon catalog-preview__edit" href="{{ edit_catalog_href }}">
-        <span class="button__icon" aria-hidden="true">{% include "includes/ui/icon.html" with name="pencil" only %}</span>
-        <span class="button__label">Edit catalog</span>
-      </a>
-    {% endif %}
-  </div>
+  <nav class="section-nav catalog-preview__languages" aria-label="Languages" role="tablist">
+    {% for preview in catalog_previews %}
+      {% include "includes/ui/section_tab.html" with key=preview.language_code label=preview.language_name is_active=forloop.first tab_id="tab-preview-"|add:preview.language_code panel_id="panel-preview-"|add:preview.language_code only %}
+    {% endfor %}
+  </nav>
 
   {# In the shop or not, and what keeps it out: over the page. #}
   <p class="catalog-preview__shop{% if in_shop %} catalog-preview__shop--in{% endif %}">{{ shop_label }}</p>

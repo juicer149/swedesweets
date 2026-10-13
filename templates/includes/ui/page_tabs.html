@@ -7,13 +7,26 @@
   tabs_label  aria-label for the tab list
   id_prefix   optional, before the tab and panel ids, when the same tabs
               are on the page more than once (the catalog previews)
+  tab_actions optional TabAction list: each at the nav's right while its
+              tab is open (the product page's Edit)
 {% endcomment %}
 <div class="page-tabs" data-tabs>
+  {% if tab_actions %}<div class="tabs-bar">{% endif %}
   <nav class="section-nav" aria-label="{{ tabs_label|default:'Sections' }}" role="tablist">
     {% for tab in page_tabs %}
       {% include "includes/ui/section_tab.html" with key=tab.key label=tab.label icon=tab.icon is_active=forloop.first tab_id=id_prefix|add:"tab-"|add:tab.key panel_id=id_prefix|add:"panel-"|add:tab.key only %}
     {% endfor %}
   </nav>
+  {% if tab_actions %}
+    {% for action in tab_actions %}
+      {# Shown while its tab is open (tabs.js); without script, the first tab's. #}
+      <a class="button button--sm button--outline button--tone-place button--with-icon tabs-bar__action" href="{{ action.href }}" data-tab-action="{{ action.tab }}"{% if action.tab != page_tabs.0.key %} hidden{% endif %}>
+        <span class="button__icon" aria-hidden="true">{% include "includes/ui/icon.html" with name=action.icon only %}</span>
+        <span class="button__label">{{ action.label }}</span>
+      </a>
+    {% endfor %}
+  </div>
+  {% endif %}
 
   {% for tab in page_tabs %}
     <section

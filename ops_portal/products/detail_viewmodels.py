@@ -13,7 +13,7 @@ from common.detail_cards import (
     DetailAction,
     build_secondary_get_action,
 )
-from common.page_tabs import PageTab
+from common.page_tabs import PageTab, TabAction
 from inventory.expiry import ExpiryInfo, ExpiryState, build_expiry_info
 from inventory.models import InventoryBatch
 from ops_portal.inventory.access import can_create_batch
@@ -247,6 +247,26 @@ class ProductDetailContext:
     description: str
     cancel_url: str
 
+    @property
+    def tab_actions(self) -> tuple[TabAction, ...]:
+        """Edit at the section nav's right: the product's form on the
+        Product tab, the catalog's on the Catalog tab; none on Inventory."""
+
+        if self.edit_action is None:
+            return ()
+
+        return (
+            TabAction(tab="product", href=f"{self.edit_action.href}#product"),
+            TabAction(tab="catalog", href=self.edit_catalog_href),
+        )
+
+    @property
+    def edit_catalog_href(self) -> str:
+        return reverse(
+            "ops_products:edit_catalog",
+            kwargs={"product_pk": self.product.pk},
+        )
+
     def as_dict(
         self,
     ) -> dict[str, object]:
@@ -261,10 +281,7 @@ class ProductDetailContext:
             "catalog_previews": self.catalog_previews,
             "in_shop": self.in_shop,
             "shop_label": self.shop_label,
-            "edit_catalog_href": reverse(
-                "ops_products:edit_catalog",
-                kwargs={"product_pk": self.product.pk},
-            ),
+            "edit_catalog_href": self.edit_catalog_href,
             "status_key": self.status_key,
             "status_label": self.status_label,
             "status_icon": self.status_icon,
@@ -273,6 +290,7 @@ class ProductDetailContext:
             "edit_action": self.edit_action,
             "add_batch_href": self.add_batch_href,
             "page_tabs": self.page_tabs,
+            "tab_actions": self.tab_actions,
             "tabs_label": "Product sections",
             "back_url": self.back_url,
             "back_label": "Back to products",
