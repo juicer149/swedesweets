@@ -1,10 +1,12 @@
 {% comment %}
-  The Product tab, as the edit page in reading (the product itself is the
-  page's hero, product_hero.html): Variants and offers:
+  The Product tab, as the edit page in reading: the product's card
+  (product_view_card.html); then Variants and offers:
   the product price, and a card per variant in order (weight, sales
   channels, the price tag when it has its own prices, in a yellow tab
   under it, stock; why its weight is fixed); Edit product and Add batch.
 {% endcomment %}
+{% include "ops_portal/products/includes/product_view_card.html" %}
+
 <section class="product-section" aria-labelledby="product-variants-title">
   <div class="form-section__head">
     <h2 class="form-section__title" id="product-variants-title">Variants and offers</h2>

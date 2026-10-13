@@ -1,24 +1,24 @@
 {% comment %}
-  The product page's hero, over its tabs (Product, Catalog): the product's
-  card with its picture (when it has one), brand over name, its status and
-  facts, and a pencil to edit it.
+  The product on the product page (first in its Product tab; the page has
+  no hero): its card with its picture (when it has one), brand over name,
+  its status and facts, and a pencil to edit it.
 
   Context: product, heading_image_url, status_key, status_icon,
   status_label, attribute_tags, edit_action
 {% endcomment %}
-<header class="product-card product-hero">
+<section class="product-card product-view" aria-labelledby="product-card-title">
   {% if heading_image_url %}
-    <img class="product-hero__picture" src="{{ heading_image_url }}" alt="" width="72" height="72">
+    <img class="product-view__picture" src="{{ heading_image_url }}" alt="" width="72" height="72">
   {% endif %}
 
-  <div class="product-hero__text">
-    <h1 class="product-card__title product-hero__title" id="page-title">
+  <div class="product-view__text">
+    <h2 class="product-card__title product-view__title" id="product-card-title">
       {% if product.brand %}<span class="product-card__brand">{{ product.brand }}</span>{% endif %}
       {{ product.name }}
-    </h1>
+    </h2>
 
     <p class="product-card__facts">
-      <span class="order-status order-status--{{ status_key }} product-hero__status">
+      <span class="order-status order-status--{{ status_key }} product-view__status">
         <span class="order-status__state">
           {% include "includes/ui/icon_block.html" with name=status_icon size="sm" only %}
           {{ status_label }}
@@ -41,4 +41,4 @@
       {% include "includes/ui/icon_block.html" with name="pencil" size="sm" only %}
     </a>
   {% endif %}
-</header>
+</section>

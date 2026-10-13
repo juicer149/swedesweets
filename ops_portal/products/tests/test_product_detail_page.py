@@ -43,9 +43,10 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     assert "available" not in content.split("</header>")[0]
     # The product's card, then Variants and offers with the product price
     # and a card per variant (its channels as chips), with its help.
-    # The product is the page's hero, over the tabs (Product, Catalog).
-    assert 'class="product-card product-hero"' in content
-    assert content.index("product-hero") < content.index('role="tablist"')
+    # No hero: a hidden title, the product's card first in the Product tab.
+    assert '<h1 id="page-title" class="visually-hidden">' in content
+    assert 'class="product-card product-view"' in content
+    assert content.index('role="tablist"') < content.index("product-view")
     assert 'id="product-variants-title">Variants and offers</h2>' in content
     assert "variant-view__chip" in content
     assert 'data-help-open="variants-help"' in content
