@@ -83,7 +83,8 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 ## Next, in order
 
 0. **Detail and edit pages in one design**, before the steps below. The
-   product pages set it (see "Ops product pages"): no hero; cards like the
+   product pages set it (`DESIGN.md`, "Ops work pages"; what they hold:
+   "Ops product pages" below): no hero; cards like the
    edit page's; tabs with Back and the open tab's action at the foot; a
    "?" where a section needs explaining; open sections, no locks (what
    needs a second look asks for it, like price changes); statuses as one
@@ -166,7 +167,8 @@ solid or outline):
   variant (label, weight), at its right its batches on the shelf
   stacked, the soonest best-before at the top: each batch's ID, its
   best-before, in stock and reserved as plain numbers (heads over the
-  first card say which; on phones the batches under label and weight),
+  first card name every column; on phones the batches under label and
+  weight),
   to its page; none with less than one unit; past its best-before and
   not closed in red, within `EXPIRY_SOON_DAYS` (inventory/expiry.py) in
   orange; "Out of stock" without. Available (in stock less reserved) is

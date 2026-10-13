@@ -24,6 +24,10 @@ navigation already says.
 
 1. **No boxes.** No white cards, no yellow-topped panels, no borders around
    groups. Group with space, hairlines and the glow (`.page::before`).
+   One exception, on ops work pages: **the thing being worked on is a
+   card** (a product, each of its variants), the same card on its page
+   and on its edit page, so the edit page reads as the page made
+   editable. See "Ops work pages" below.
 2. **One yellow action per page.** The filled yellow button is "the thing to
    do here". Cancel, back, decline, remove: quiet links. If a page seems to
    need two yellow buttons, one of them is a link or belongs on another page.
@@ -70,6 +74,14 @@ Status colours mean the same everywhere:
   green, Inactive = red, Listed = green, Not listed = grey.
 - **Contact rows:** mail, phone and place icons each have their own tone
   (`.icon-rows__icon--mail|phone|place`).
+- **A sales channel** (`.variant-view__chip`): sold in it = green with a
+  tick, not = grey with a cross.
+- **Best-before** (`inventory/expiry.py`): past it = red, within
+  `EXPIRY_SOON_DAYS` = amber (`--color-expiry-soon-text`), else dark blue
+  (primary-900) or plain text.
+- **Something to act on** (`.inventory-notes`): a red note with the
+  warning icon at the top of its tab (out of stock, batches past their
+  best-before).
 
 Decoration (the binoculars) uses brand yellow softened with
 `color-mix(… transparent)` so it never reads as a button.
@@ -95,7 +107,8 @@ Decoration (the binoculars) uses brand yellow softened with
 - Spacing tokens `--space-1 … -16`. Gaps that should shrink on small
   screens use `clamp(var(--space-x), Ndvh, var(--space-y))`.
 - Breakpoints (the only widths a media query may use): `1023px`, `767px`
-  (phone: bottom navigation, actions at the bottom), `639px`, `479px`.
+  (phone: bottom navigation, actions at the bottom), `639px`, `479px`
+  (and their `min-width` complements, `768px` and so on).
 - Icons: `--size-icon-sm` (1rem) in text and rows, `-md` for pins.
 - The column: `.page` is 380px; `--wide` 640px; FAQ 600px; About 560px.
 
@@ -110,7 +123,7 @@ Every page starts from one of these (`static/css/page.css`).
 | `.page-section` | Pages that scroll: lists, detail pages, cart, FAQ, Find Sweets, About. `--top` puts work pages close to the navbar. |
 | `.page`, `--centered`, `--wide` | The column inside either shell. Carries the glow. |
 | `.page--auth` | Login and the password reset pages: title, fields and button kept together as one group a little above the middle, on every screen. |
-| `layouts/detail.html` | A detail page or an edit form: status heading, tabs (`page_tabs`), back link. Each tab carries its own actions at its foot. |
+| `layouts/detail.html` | A detail page or an edit form: heading (status heading, or a hidden title on ops work pages), tabs (`page_tabs`) and at their foot Back at the left, the open tab's actions at the right. |
 | `layouts/error.html` | 400/403/404/500 and similar: small grey code, title, one line, one yellow way back. |
 
 Parts of the column: `.page__heading`, `.page__lead` (the title),
@@ -143,7 +156,27 @@ icons; `--links` when each is one tap away. Use
 are written).
 
 **Status heading:** `includes/ui/status_heading.html`. A title with one
-quiet line under it: the status in its colour, the date, who, what.
+quiet line under it: the status in its colour, the date, who, what. Ops
+work pages that open on a card (the product's) have a hidden title
+instead; the card says what it is.
+
+**Tabs with a foot:** `includes/ui/page_tabs.html` with `tabs_back_url`
+(and `tabs_back_label`) and `tab_actions` (`common.page_tabs.TabAction`):
+under the open tab, Back at the left and that tab's actions at the right
+(the yellow one, and beside it an outline one if a tab needs two).
+`layouts/detail.html` passes the page's `back_url`, so every detail page
+has the Back. Back leads to the page one came from when it is this
+site's and not the page itself or one under it (`back_link.js`), else to
+`back_url`. The section nav stays tabs alone.
+
+**Help:** `includes/ui/help.html`, a round "?" beside a section's title
+that opens a dialog (`help_dialog.js`) with what everything there means;
+its text is a template of its own. A form section takes it as `help`.
+
+**Password once more:** `includes/ui/password_again_dialog.html` with
+`accounts/password_again.py` (five wrong ones lock it for 15 minutes) for
+a change that deserves a second look: changing a price already set lists
+the changes and asks for the password before saving.
 
 **List pages:** hidden title (`list_page_head.html`), then either tabs or
 `includes/table/list_toolbar.html` (quick search on the left, the add
@@ -195,6 +228,25 @@ Place order lands on it with `?placed=1`).
 **Tables** remain only where ops compare many columns (orders, batches,
 stock). On phones they become rows (`.mobile-lines`).
 
+**Ops work pages** (the product's page and its edit, shop text and
+inventory: `products.css`, `variants.css`; the pattern for the other ops
+pages to follow):
+
+- The thing worked on is a card, edged in the accent (`.product-card`,
+  `.variant-view__card`, `.variant-row__card`), its status in its top
+  right corner, its picture in a circle.
+- When cards have columns, heads over the first card name them (the
+  card's own grid, past its edge), so the cards carry no repeated labels
+  and numbers no units.
+- Rows under a card's own columns that must line up across cards share
+  one column width (the Inventory tab's batches: ID, best-before, in
+  stock, reserved).
+- What needs acting on comes first, as a red note.
+- A thing's parts get their own tab when they would crowd it (Product,
+  Shop text, Inventory), not when they fit.
+- On a phone, columns that do not fit move to a row of their own; the
+  page never scrolls sideways.
+
 **Accordions:** `<details data-smooth data-smooth-group="…">` with
 `smooth-details.js`; one open at a time per group (FAQ, dashboard queues).
 
@@ -208,12 +260,17 @@ drawing's faded foot (Find Sweets).
 ## Actions
 
 - **The action:** `button button--md button--solid button--tone-place
-  page__submit`. One per page or per tab.
+  page__submit`. One per page or per tab; on a page with tabs, at the
+  tabs' foot with its icon (`TabAction`).
 - **Secondary:** `.quiet-link`, grey, underlined on hover, with a small
   icon (`arrow-return` for Cancel/Back). Works on `<button>` too.
   `.quiet-link--danger` turns red on hover for things that cannot be undone.
 - **Where:** `.page__actions.page-actions`: the yellow button, then
-  `.page-actions__links` with the quiet links under it, centred.
+  `.page-actions__links` with the quiet links under it, centred. On a page
+  with tabs: Back at the left of the foot, the actions at its right.
+- **Back or Cancel** (`includes/ui/back_or_cancel.html`): an edit form's
+  way out says Back while nothing is changed and Cancel once something
+  is; both leave without asking.
 - **Confirming:** destructive actions ask first with the site's own dialog
   (`data-confirm`, `data-confirm-title`; `confirm_dialog.js`,
   `confirm_action.js`), never the browser's `confirm()`.
@@ -232,12 +289,25 @@ drawing's faded foot (Find Sweets).
   half=…, third=…)` (`common/form_layout.py`).
 - **Yes/no choices are chips, not checkboxes:** a `ChoiceField` (or
   `TypedChoiceField`) with `RadioSelect(attrs={"class":
-  "radio-chip-group"})`, e.g. Active/Inactive, Listed/Not listed.
+  "radio-chip-group"})`, e.g. Active/Inactive, Listed/Not listed. On an
+  ops card a yes/no is one switch instead (`.product-tag-toggle`: green
+  on, grey off): Active, Vegan, a variant's sales channels.
+- **Numbers are typed, never stepped:** a text field with
+  `inputmode="numeric"` (and `pattern="[0-9]*"`), no spinner arrows
+  (catalog ID, quantities, weights).
+- **Something switched off keeps its value:** greyed like its switch and
+  read-only, still sent (a variant's price while its channel is off), so
+  switching back loses nothing.
+- **Edit pages:** open sections, no locks (having opened the page is the
+  intent; what needs a second look asks for it); saving comes back to
+  the same page. A changed field gets a dot before its label, and a tab
+  holding one a dot too (`dirty_form.js`).
 - A named group inside a form: a section with `.pricing-channel` and
   `.pricing-channel__title` (pricing, Find Sweets).
 - Help text under the field; errors replace it, in red.
 - Create forms have no visible title (the button that led there and the
-  submit label say enough). Edit forms use the status heading.
+  submit label say enough). Edit forms use the status heading, or on ops
+  work pages a hidden title and the thing's card.
 - Selects with many options use Tom Select (`data-enhanced-select`).
 
 
@@ -313,7 +383,8 @@ drawing's faded foot (Find Sweets).
 
 1. Which shell: `.screen` (fits one screen) or `.page-section` (scrolls)?
 2. Does it need a visible title, or does the navigation say it?
-3. What is the one yellow action? What are the quiet links?
+3. What is the one yellow action? What are the quiet links? On an ops work
+   page: what is the card, and what are its tabs and their actions?
 4. Can the content be `.lines`, `.facts` or `.icon-rows` instead of
    something new?
 5. Does every colour on it mean something from the colour table?

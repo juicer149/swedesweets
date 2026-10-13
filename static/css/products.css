@@ -424,7 +424,7 @@
   flex: 0 0 auto;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .product-card {
     padding: var(--space-3) var(--space-4);
   }
@@ -526,7 +526,7 @@
   justify-content: flex-end;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .product-view {
     gap: var(--space-3);
   }

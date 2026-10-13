@@ -503,7 +503,7 @@
    then the arrows and the trash; the field labels show.
    ----------------------------------------------------------------------------- */
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .variant-editor {
     --variant-pad: var(--space-3);
     --variant-gap: var(--space-2);
@@ -877,7 +877,7 @@
   color: var(--color-status-danger-text);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .variant-view__card {
     grid-template-columns: auto auto minmax(0, 1fr);
     align-items: start;
