@@ -40,14 +40,21 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   page.
 - **Product page and edit page alike**: the product page shows the same
   cards as the edit page, to read: tabs Product (the product's card with
-  "In shop" or what keeps it out beside its name, then Variants and offers, each variant's channels
-  with their prices at its right), Catalog, and Inventory (each variant's
-  batches at its right). Stock lives only on Inventory.
+  "In shop" or what keeps it out beside its name, then Variants and
+  offers, each variant's channels with their prices at its right), Shop
+  text, and Inventory (each variant's batches at its right). Stock lives
+  only on Inventory.
   Edit stays a page of its own for now (one page for both, later
   perhaps).
 - **Tabs in a form show their changes**: a tab whose panel has a changed
-  field gets a dot (`dirty_form.js`), first on the catalog page's
+  field gets a dot (`dirty_form.js`), first on the shop text page's
   languages.
+- **Category and picture belong to the product**: on its edit page, in
+  the Product card (the category in its top row, the picture in a larger
+  circle with a button to change it, a cross to undo before saving). A
+  new picture replaces the old one, whose files go once saved; a picture
+  is changed, not removed. The rest of what the shop shows per language
+  is the **shop text**: its own tab and page.
 - **Pages with tabs**: at the foot Back at the left (to the page one
   came from, else the page's list) and the open tab's action at the right,
   a solid yellow button with its icon (page_tabs.html: `tabs_back_url`,
@@ -135,28 +142,32 @@ mobile).
 
 **Detail page** (no hero; a hidden page title), three tabs; at the foot
 Back at the left, the open tab's action at the right: "Edit" (pencil) to
-the product's form on Product, the catalog's on Catalog, "Add batch" on
-Inventory (`TabAction`, page_tabs.html):
+the product's form on Product, the shop text's on Shop text, "Add batch"
+on Inventory (`TabAction`, page_tabs.html):
 
 - **Product**: the product's card (picture, brand over name, status,
-  catalog ID, SKU, manufacturer, attributes; beside the name "In shop" or
-  what keeps it out; no stock, no pencil), then **Variants and offers**: a card per variant
+  catalog ID, category, SKU, manufacturer, attributes; beside the name "In
+  shop" or what keeps it out; no stock, no pencil), then **Variants and offers**: a card per variant
   (label, weight; at its right its channels as chips, Business over
   Retail, each with its price beside it when sold in it).
-- **Catalog**: the language tabs alone, close under the page's, the
-  shop's product page a little smaller; category and picture.
+- **Shop text**: the language tabs, close under the page's; per language
+  its shop name, description and ingredients, an empty one saying what
+  the shop shows instead; a language with none says so, with "Add …
+  text" (the shop text page on that language). No preview of the shop's
+  page: its price and buttons are the Product tab's.
 - **Inventory**: a card per variant (label, weight), at its right its
   batches on the shelf stacked, the soonest best-before at the top: each
   batch's ID and how many, to its page; none with less than one unit;
   past its best-before and not closed in red, within `EXPIRY_SOON_DAYS`
   (inventory/expiry.py) in orange.
 
-**Catalog page** (no hero; a hidden page title): the category, the
-picture small at its right, then name, description and ingredients under
-one tab per language; a language with a change gets a dot.
+**Shop text page** (`edit_catalog`; no hero, a hidden page title): name,
+description and ingredients under one tab per language (`#en` opens
+English); a language with a change gets a dot.
 
-**Edit page**: Product as a card (its picture, catalog ID and status at
-its top, brand and name large), then **Variants and offers**: EUR / SEK
+**Edit page**: Product as a card (its picture with a button to change
+it, catalog ID, SKU, category and status at its top, brand and name
+large), then **Variants and offers**: EUR / SEK
 tabs, then a card per variant: arrows (up at the top, down at the
 bottom), label, weight, its sales channels one over the other (Business,
 Retail), each with its price at its right (read-only and greyed while

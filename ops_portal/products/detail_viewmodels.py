@@ -20,10 +20,6 @@ from ops_portal.inventory.access import can_create_batch
 from ops_portal.products.access import (
     can_edit_product,
 )
-from ops_portal.products.catalog_preview import (
-    CatalogPagePreview,
-    build_catalog_page_previews,
-)
 from ops_portal.products.presentation import (
     ProductTagPresentation,
     product_attribute_tags,
@@ -32,6 +28,7 @@ from ops_portal.products.presentation import (
 from ops_portal.products.pricing_forms import (
     variant_amounts,
 )
+from ops_portal.products.shop_text import LanguageText, build_language_texts
 from pricing.models import CommercialPrice
 from products.images import product_display_url, product_image_url
 from products.models import (
@@ -51,10 +48,10 @@ PRODUCT_DETAIL_TABS = (
         template="ops_portal/products/includes/detail_tab_product.html",
     ),
     PageTab(
-        key="catalog",
-        label="Catalog",
+        key="text",
+        label="Shop text",
         icon="image",
-        template="ops_portal/products/includes/detail_tab_catalog.html",
+        template="ops_portal/products/includes/detail_tab_text.html",
     ),
     PageTab(
         key="inventory",
@@ -232,9 +229,9 @@ class ProductDetailContext:
     ]
     variant_cards: tuple[VariantCard, ...]
     variant_stocks: tuple[VariantStock, ...]
-    catalog_previews: tuple[CatalogPagePreview, ...]
+    language_texts: tuple[LanguageText, ...]
     in_shop: bool
-    # The Catalog tab's label: "In shop", or what keeps it out.
+    # The product card's label: "In shop", or what keeps it out.
     shop_label: str
     status_key: str
     status_label: str
@@ -249,16 +246,15 @@ class ProductDetailContext:
 
     @property
     def tab_actions(self) -> tuple[TabAction, ...]:
-        """At the section nav's right, the open tab's: Edit (the product's
-        form on Product, the catalog's on Catalog), Add batch on
-        Inventory."""
+        """At the page's foot, the open tab's: Edit (the product's form on
+        Product, the shop text's on Shop text), Add batch on Inventory."""
 
         actions = []
 
         if self.edit_action is not None:
             actions += [
                 TabAction(tab="product", href=f"{self.edit_action.href}#product"),
-                TabAction(tab="catalog", href=self.edit_catalog_href),
+                TabAction(tab="text", href=self.edit_catalog_href),
             ]
 
         if self.add_batch_href:
@@ -291,7 +287,7 @@ class ProductDetailContext:
             ),
             "variant_cards": self.variant_cards,
             "variant_stocks": self.variant_stocks,
-            "catalog_previews": self.catalog_previews,
+            "language_texts": self.language_texts,
             "in_shop": self.in_shop,
             "shop_label": self.shop_label,
             "edit_catalog_href": self.edit_catalog_href,
@@ -356,10 +352,7 @@ def build_product_detail_context(
             batches_by_variant=batches_by_variant or {},
             today=today or timezone.localdate(),
         ),
-        catalog_previews=build_catalog_page_previews(
-            product=product,
-            shop_product=shop_product,
-        ),
+        language_texts=build_language_texts(product),
         in_shop=shop_product is not None,
         shop_label=_shop_label(
             product=product,

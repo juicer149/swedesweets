@@ -1,5 +1,5 @@
-"""The catalog page of an ops product: category, picture and the text per
-language, apart from the product form."""
+"""The shop text page of an ops product: the text per language, apart from
+the product form (which has the category and picture)."""
 
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ def _catalog_url(product):
 
 def _post_data(**overrides):
     data = {
-        "category": ProductProfile.Category.CANDY,
         "fr-name": "Poivre turc",
         "fr-description": "Salé.",
         "fr-ingredients": "Sucre.",
@@ -47,19 +46,22 @@ def test_the_catalog_page_has_a_tab_per_language(client):
     assert 'data-tab="en"' in content
     assert 'name="fr-description"' in content
     assert 'name="en-description"' in content
-    assert 'name="category"' in content
-    assert 'enctype="multipart/form-data"' in content
-    # No hero: a hidden title; the picture beside the category.
-    assert '<h1 id="page-title" class="visually-hidden">Edit catalog: ' in content
+    # Only the text: the category and picture are on the product form.
+    assert 'name="category"' not in content
+    assert 'name="image"' not in content
+    assert 'enctype="multipart/form-data"' not in content
+    # No hero: a hidden title.
+    assert '<h1 id="page-title" class="visually-hidden">Edit shop text: ' in content
     assert "page__kicker" not in content
-    assert "catalog-form__shop" in content
-    assert "form-field--full product-image-field" not in content
 
 
 @pytest.mark.django_db
 def test_saving_the_catalog_page(client):
+    from products.services import update_product_catalog
+
     client.force_login(full_staff_user_factory())
     product = product_factory(name="Apple", internal_number=702)
+    update_product_catalog(product=product, category=ProductProfile.Category.CANDY)
 
     response = client.post(
         _catalog_url(product),
@@ -70,6 +72,7 @@ def test_saving_the_catalog_page(client):
     assert response.status_code == 302
     assert response.url == _catalog_url(product)
 
+    # The category stays as it was.
     product.profile.refresh_from_db()
     assert product.profile.category == ProductProfile.Category.CANDY
     texts = {
@@ -103,7 +106,7 @@ def test_an_error_in_a_language_keeps_the_page(client):
 
 
 @pytest.mark.django_db
-def test_a_new_product_goes_on_to_its_catalog_page(client):
+def test_a_new_product_goes_on_to_its_edit_page(client):
     client.force_login(full_staff_user_factory())
 
     response = client.post(
@@ -125,4 +128,8 @@ def test_a_new_product_goes_on_to_its_catalog_page(client):
 
     assert response.status_code == 302
     product = Product.objects.get(internal_number=704)
-    assert response.url == _catalog_url(product)
+    # Its picture and category next (the edit page), then its shop text.
+    assert response.url == reverse(
+        "ops_products:edit",
+        kwargs={"product_pk": product.pk},
+    )

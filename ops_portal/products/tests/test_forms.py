@@ -7,7 +7,7 @@ from ops_portal.products.forms import (
     ProductForm,
     build_product_edit_initial_data,
 )
-from products.models import Product
+from products.models import Product, ProductProfile
 from products.tests.factories import product_factory
 
 
@@ -69,18 +69,82 @@ def test_product_form_accepts_valid_data():
     }
 
 
-def test_the_product_forms_leave_the_catalog_to_its_own_page():
-    catalog_fields = {
+def test_the_product_forms_leave_the_shop_text_to_its_own_page():
+    text_fields = {
         "customer_facing_name_fr",
-        "category",
         "description",
         "ingredients",
-        "image",
-        "remove_image",
     }
 
-    assert not catalog_fields & set(ProductForm().fields)
-    assert not catalog_fields & set(ProductEditForm().fields)
+    assert not text_fields & set(ProductForm().fields)
+    assert not text_fields & set(ProductEditForm().fields)
+    # Editing, the product's card also has its category and picture (a
+    # picture is changed, never removed there); adding, not yet.
+    assert {"category", "image"} <= set(ProductEditForm().fields)
+    assert "remove_image" not in ProductEditForm().fields
+    assert not {"category", "image"} & set(ProductForm().fields)
+
+
+def _uploaded_image(*, name="product.png", image_format="PNG"):
+    from io import BytesIO
+
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    from PIL import Image
+
+    output = BytesIO()
+    Image.new("RGB", (40, 40)).save(output, format=image_format)
+
+    return SimpleUploadedFile(
+        name,
+        output.getvalue(),
+        content_type="image/jpeg" if image_format == "JPEG" else "image/png",
+    )
+
+
+@pytest.mark.parametrize(
+    ("name", "image_format"),
+    [("product.png", "PNG"), ("product.jpg", "JPEG")],
+)
+def test_product_edit_form_takes_a_png_or_jpeg_picture(name, image_format):
+    form = ProductEditForm(
+        data=valid_product_edit_form_data(),
+        files={"image": _uploaded_image(name=name, image_format=image_format)},
+    )
+
+    assert form.is_valid(), form.errors
+    assert form.cleaned_data["image"].name == name
+
+
+def test_product_edit_form_refuses_a_file_that_is_not_a_picture():
+    from django.core.files.uploadedfile import SimpleUploadedFile
+
+    form = ProductEditForm(
+        data=valid_product_edit_form_data(),
+        files={
+            "image": SimpleUploadedFile(
+                "product.txt",
+                b"not an image",
+                content_type="text/plain",
+            ),
+        },
+    )
+
+    assert not form.is_valid()
+    assert "image" in form.errors
+
+
+def test_product_edit_form_category_is_optional_but_known():
+    assert ProductEditForm(
+        data=valid_product_edit_form_data(category=""),
+    ).is_valid()
+    assert ProductEditForm(
+        data=valid_product_edit_form_data(category=ProductProfile.Category.CANDY),
+    ).is_valid()
+
+    form = ProductEditForm(data=valid_product_edit_form_data(category="drinks"))
+
+    assert not form.is_valid()
+    assert "category" in form.errors
 
 
 def test_product_form_accepts_piece_stock_unit():

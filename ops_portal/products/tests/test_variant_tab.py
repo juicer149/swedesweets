@@ -470,3 +470,80 @@ def test_without_the_check_a_price_changes_at_once(client, settings):
 
     assert response.status_code == 302
     assert _price(product.variants.get(), RETAIL) == Decimal("3.00")
+
+
+def _png(name="hoodie.png"):
+    from io import BytesIO
+
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    from PIL import Image
+
+    output = BytesIO()
+    Image.new("RGB", (40, 40)).save(output, format="PNG")
+
+    return SimpleUploadedFile(name, output.getvalue(), content_type="image/png")
+
+
+@pytest.mark.django_db
+def test_the_edit_page_saves_the_category_and_a_new_picture(client, tmp_path):
+    from django.test import override_settings
+
+    from products.models import ProductProfile
+
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Hoodie", internal_number=640)
+
+    with override_settings(MEDIA_ROOT=tmp_path):
+        response = client.get(_edit_url(product))
+        content = response.content.decode()
+
+        # In the Product card: the picture (a button to change it) and the
+        # category; the form sends files.
+        assert 'enctype="multipart/form-data"' in content
+        assert "data-product-picture-input" in content
+        assert 'name="category"' in content
+        assert "js/product_picture.js" in content
+
+        data = _page_post_data(response)
+        data["category"] = ProductProfile.Category.CANDY
+        data["image"] = _png()
+
+        response = client.post(_edit_url(product), data)
+
+        assert response.status_code == 302
+        profile = ProductProfile.objects.get(product=product)
+        assert profile.category == ProductProfile.Category.CANDY
+        assert profile.image
+        first_image = profile.image.name
+
+        # A second picture replaces the first; the first's file goes.
+        response = client.get(_edit_url(product))
+        data = _page_post_data(response)
+        data["image"] = _png("hoodie-2.png")
+        client.post(_edit_url(product), data)
+
+        profile.refresh_from_db()
+        assert profile.image.name != first_image
+        assert not (tmp_path / first_image).exists()
+        assert profile.category == ProductProfile.Category.CANDY
+
+
+@pytest.mark.django_db
+def test_saving_without_a_picture_keeps_the_old_one(client, tmp_path):
+    from django.test import override_settings
+
+    from products.image_services import change_product_image
+    from products.models import ProductProfile
+
+    client.force_login(full_staff_user_factory())
+    product = product_factory(name="Hoodie", internal_number=641)
+
+    with override_settings(MEDIA_ROOT=tmp_path):
+        change_product_image(product=product, uploaded_image=_png()).commit()
+        before = ProductProfile.objects.get(product=product).image.name
+
+        response = client.get(_edit_url(product))
+        client.post(_edit_url(product), _page_post_data(response))
+
+        assert ProductProfile.objects.get(product=product).image.name == before
+

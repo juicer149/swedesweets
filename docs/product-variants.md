@@ -112,16 +112,16 @@ fall back to the order they were added in.
 
 ## Ops
 
-- **Product page**: tabs **Product**, **Catalog** and **Inventory**.
+- **Product page**: tabs **Product**, **Shop text** and **Inventory**.
   Product: the product's card (picture, brand over name, status, catalog
   ID, SKU, manufacturer, attributes; beside the name "In shop" or what
   keeps it out), then
   **Variants and offers**: a card per variant in order (weight; at its
   right its sales channels as chips, Business over Retail, each with its
-  price beside it; why its weight is fixed). Catalog: the shop's page per
-  language. At the foot Back at the left, the open tab's action at the
-  right: "Edit" (the product's form, the catalog's), "Add batch" on
-  Inventory. Inventory: a card per variant,
+  price beside it; why its weight is fixed). Shop text: its name,
+  description and ingredients per language. At the foot Back at the
+  left, the open tab's action at the right: "Edit" (the product's form,
+  the shop text's), "Add batch" on Inventory. Inventory: a card per variant,
   its batches on the shelf stacked at its right, the soonest best-before
   at the top (ID and how many, to the batch's page; expired in red, soon
   in orange).

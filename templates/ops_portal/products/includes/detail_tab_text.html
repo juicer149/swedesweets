@@ -1,0 +1,53 @@
+{% comment %}
+  The Shop text tab: what the product's text says in each language
+  (language_texts, ops_portal/products/shop_text.py), under language tabs.
+  Per language its shop name, description and ingredients; a field left
+  empty says what the shop shows instead. A language with no text of its
+  own says so, and what the shop shows, with a button to add it (the shop
+  text page, open on that language). Edit is at the page's foot.
+{% endcomment %}
+<div class="page-tabs shop-text" data-tabs>
+  <nav class="section-nav shop-text__languages" aria-label="Languages" role="tablist">
+    {% for language in language_texts %}
+      {% include "includes/ui/section_tab.html" with key=language.code label=language.name is_active=forloop.first tab_id="tab-text-"|add:language.code panel_id="panel-text-"|add:language.code only %}
+    {% endfor %}
+  </nav>
+
+  {% for language in language_texts %}
+    <section
+      id="panel-text-{{ language.code }}"
+      class="page-tabs__panel shop-text__panel"
+      role="tabpanel"
+      aria-labelledby="tab-text-{{ language.code }}"
+      data-tab-panel="{{ language.code }}"
+      lang="{{ language.code }}"
+      {% if not forloop.first %}hidden{% endif %}
+    >
+      {% if language.has_own_text %}
+        <dl class="shop-text__fields">
+          {% for field in language.fields %}
+            <div class="shop-text__field">
+              <dt lang="en">{{ field.label }}</dt>
+              {% if field.value %}
+                <dd class="shop-text__value">{{ field.value|linebreaksbr }}</dd>
+              {% else %}
+                <dd class="shop-text__fallback" lang="en">{{ field.fallback }}</dd>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </dl>
+      {% else %}
+        <div class="shop-text__empty" lang="en">
+          <p class="shop-text__empty-title">No {{ language.name }} text yet</p>
+          <p class="shop-text__fallback">{{ language.fallback_note }}</p>
+          {% if edit_action %}
+            <a class="button button--sm button--outline button--tone-place button--with-icon" href="{{ language.edit_href }}">
+              <span class="button__icon" aria-hidden="true">{% include "includes/ui/icon.html" with name="plus" only %}</span>
+              <span class="button__label">Add {{ language.name }} text</span>
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </section>
+  {% endfor %}
+</div>

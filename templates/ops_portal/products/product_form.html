@@ -6,8 +6,9 @@
   Variants and offers (variant_editor.js). Each section has an id the
   product page's buttons link to (#product, #variants). The actions at the
   foot; saving comes back to this page. Price changes come back in a
-  dialog asking for the password (password_again_dialog.html). What the shop
-  shows (catalog_form.html) has its own page.
+  dialog asking for the password (password_again_dialog.html). Editing, the
+  Product card also changes the picture and the category; the shop text
+  (catalog_form.html) has its own page.
 {% endcomment %}
 
 {% block page_heading %}
@@ -16,7 +17,7 @@
 {% endblock %}
 
 {% block page_body %}
-  <form class="product-form" method="post" novalidate data-dirty-form>
+  <form class="product-form" method="post" enctype="multipart/form-data" novalidate data-dirty-form>
     {% csrf_token %}
 
     {% for section in form_sections %}
@@ -67,4 +68,5 @@
   <script src="{% static 'js/password_again.js' %}" defer></script>
   <script src="{% static 'js/price_currency.js' %}" defer></script>
   <script src="{% static 'js/form_sections.js' %}" defer></script>
+  <script src="{% static 'js/product_picture.js' %}" defer></script>
 {% endblock %}

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from django import forms
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import UploadedFile
 
 from common.form_layout import (
     set_form_field_layout,
@@ -12,7 +14,32 @@ from products.catalog import (
 )
 from products.models import (
     Product,
+    ProductProfile,
 )
+
+MAX_PRODUCT_IMAGE_BYTES = 10 * 1024 * 1024
+
+ALLOWED_PRODUCT_IMAGE_FORMATS = frozenset({"JPEG", "PNG"})
+
+
+def clean_product_image(
+    image: UploadedFile | None,
+) -> UploadedFile | None:
+    """A product's picture: a JPEG or PNG of 10 MB at most."""
+
+    if image is None:
+        return None
+
+    if image.size > MAX_PRODUCT_IMAGE_BYTES:
+        raise ValidationError("Product image must be 10 MB or smaller.")
+
+    pillow_image = getattr(image, "image", None)
+    image_format = (getattr(pillow_image, "format", "") or "").upper()
+
+    if image_format not in ALLOWED_PRODUCT_IMAGE_FORMATS:
+        raise ValidationError("Product image must be a JPEG or PNG.")
+
+    return image
 
 
 def _configure_vegan_toggle(
@@ -121,7 +148,7 @@ class ProductForm(forms.Form):
         label="Product name",
         help_text=(
             "The product's own (Swedish) name. What the shop calls it "
-            "in each language is on the catalog page."
+            "in each language is its shop text."
         ),
         error_messages={
             "required": (
@@ -318,7 +345,7 @@ class ProductEditForm(forms.Form):
         label="Product name",
         help_text=(
             "The product's own (Swedish) name. What the shop calls it "
-            "in each language is on the catalog page."
+            "in each language is its shop text."
         ),
         error_messages={
             "required": (
@@ -364,6 +391,29 @@ class ProductEditForm(forms.Form):
         ),
     )
 
+    # Where the shop lists it, the same in every language.
+    category = forms.ChoiceField(
+        required=False,
+        choices=(
+            ("", "No category"),
+            *ProductProfile.Category.choices,
+        ),
+        label="Category",
+    )
+
+    # A new picture replaces the old one (whose files go once saved); a
+    # picture is changed, never removed here.
+    image = forms.ImageField(
+        required=False,
+        label="Change picture",
+        widget=forms.FileInput(
+            attrs={
+                "accept": "image/jpeg,image/png",
+                "data-product-picture-input": "true",
+            },
+        ),
+    )
+
     def __init__(
         self,
         *args,
@@ -406,6 +456,9 @@ class ProductEditForm(forms.Form):
             self.cleaned_data["active"]
         )
 
+    def clean_image(self) -> UploadedFile | None:
+        return clean_product_image(self.cleaned_data.get("image"))
+
 
 def build_product_edit_initial_data(
     product: Product,
@@ -421,4 +474,10 @@ def build_product_edit_initial_data(
         "name": product.name,
         "active": product.active,
         "vegan": product.vegan,
+        # A product without its profile yet has no category.
+        "category": getattr(
+            getattr(product, "profile", None),
+            "category",
+            "",
+        ),
     }

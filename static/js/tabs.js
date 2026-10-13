@@ -9,7 +9,7 @@
 
   function initializeTabs(group) {
     // A group's own tabs and panels, not those of a group inside one of
-    // its panels (the language tabs in the Catalog tab, say).
+    // its panels (the language tabs in the Shop text tab, say).
     const ownedByGroup = (element) => (
       element.closest("[data-tabs]") === group
     );

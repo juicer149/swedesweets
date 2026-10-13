@@ -22,8 +22,6 @@ from inventory.selectors import (
     shelf_batches_by_variant,
 )
 from ops_portal.products.catalog_forms import (
-    CatalogForm,
-    build_catalog_initial_data,
     build_catalog_languages,
 )
 from ops_portal.products.detail_viewmodels import (
@@ -312,9 +310,9 @@ def edit(
     request,
     product_pk: int,
 ):
-    """The product's own data and its variants
-    with their sales channels and prices, saved together; the page comes
-    back after a save. Big price changes wait for the user's password
+    """The product's own data (with its category and picture) and its
+    variants with their sales channels and prices, saved together; the page
+    comes back after a save. Big price changes wait for the user's password
     (price_check.py)."""
 
     product = _get_product_or_404(
@@ -327,6 +325,7 @@ def edit(
     if request.method == "POST":
         form = ProductEditForm(
             request.POST,
+            request.FILES,
             product=product,
         )
         variant_formset = build_variant_formset(
@@ -353,6 +352,8 @@ def edit(
                 price_check = PriceCheck(changes=changes, form=check_form)
 
         if forms_are_valid and price_check is None:
+            image_change = ProductImageChange.empty()
+
             try:
                 with transaction.atomic():
                     updated_product = update_product(
@@ -379,19 +380,41 @@ def edit(
                         ),
                     )
 
+                    update_product_catalog(
+                        product=updated_product,
+                        category=form.cleaned_data["category"],
+                        user=request.user,
+                    )
+
+                    # A new picture replaces the old one; the old files go
+                    # once everything is saved (commit below).
+                    image_change = change_product_image(
+                        product=updated_product,
+                        uploaded_image=form.cleaned_data["image"],
+                        remove_image=False,
+                    )
+
             except InvalidProductData as error:
+                image_change.rollback()
                 form.add_error(
                     None,
                     str(error),
                 )
 
             except InvalidCommercialPrice as error:
+                image_change.rollback()
                 form.add_error(
                     None,
                     str(error),
                 )
 
+            except Exception:
+                image_change.rollback()
+                raise
+
             else:
+                image_change.commit()
+
                 messages.success(
                     request,
                     f"Product {updated_product.sku} updated.",
@@ -604,17 +627,18 @@ def create(request):
                         "ops_products:index"
                     )
 
-                # A new product goes on to what the shop shows of it.
+                # A new product goes on to its edit page: its picture and
+                # category, then its shop text (its own page).
                 messages.success(
                     request,
                     (
                         f"{result.message} "
-                        "Now add its picture and catalog text."
+                        "Now add its picture and category, then its shop text."
                     ),
                 )
 
                 return redirect(
-                    "ops_products:edit_catalog",
+                    "ops_products:edit",
                     product_pk=result.item.pk,
                 )
 
@@ -647,65 +671,37 @@ def edit_catalog(
     request,
     product_pk: int,
 ):
-    """What the shop shows of a product: category and picture, and per
-    language its name, description and ingredients."""
+    """The product's shop text: per language its name, description and
+    ingredients (its category and picture are on the product form)."""
 
     product = _get_product_or_404(
         product_pk
     )
 
     if request.method == "POST":
-        form = CatalogForm(
-            request.POST,
-            request.FILES,
-        )
         languages = build_catalog_languages(
             product=product,
             data=request.POST,
         )
 
-        forms_are_valid = all(
-            [
-                form.is_valid(),
-                *(language.form.is_valid() for language in languages),
-            ]
-        )
-
-        if forms_are_valid:
-            image_change = ProductImageChange.empty()
-
+        if all([language.form.is_valid() for language in languages]):
             try:
-                with transaction.atomic():
-                    product = update_product_catalog(
-                        product=product,
-                        category=form.cleaned_data["category"],
-                        texts={
-                            language.code: language.form.change()
-                            for language in languages
-                        },
-                        user=request.user,
-                    )
-
-                    image_change = change_product_image(
-                        product=product,
-                        uploaded_image=form.cleaned_data["image"],
-                        remove_image=form.cleaned_data["remove_image"],
-                    )
+                product = update_product_catalog(
+                    product=product,
+                    texts={
+                        language.code: language.form.change()
+                        for language in languages
+                    },
+                    user=request.user,
+                )
 
             except InvalidProductData as error:
-                image_change.rollback()
-                form.add_error(None, str(error))
-
-            except Exception:
-                image_change.rollback()
-                raise
+                languages[0].form.add_error(None, str(error))
 
             else:
-                image_change.commit()
-
                 messages.success(
                     request,
-                    f"Catalog of {product.sku} updated.",
+                    f"Shop text of {product.sku} updated.",
                 )
 
                 # Saved, and still here, like the product form.
@@ -715,15 +711,11 @@ def edit_catalog(
                 )
 
     else:
-        form = CatalogForm(
-            initial=build_catalog_initial_data(product),
-        )
         languages = build_catalog_languages(
             product=product,
         )
 
     context = build_catalog_form_context(
-        form=form,
         languages=languages,
         product=product,
     ).as_dict()

@@ -1,21 +1,46 @@
 {% comment %}
   The Product section of the product form, as a card like the variants'
-  (help: help/product.html). At the top its picture (when it has one), the
-  catalog ID, the SKU and (when editing) the status as one switch; then brand and name, large; then the
+  (help: help/product.html). At the top (when editing) its picture in a
+  circle with a button to change it, the catalog ID, the SKU, the category
+  and the status as one switch; then brand and name, large; then the
   manufacturer, (when adding) unit and weight, and the attributes (vegan;
   more may come).
 {% endcomment %}
 <div class="product-card product-card--form">
   <div class="product-card__top">
+    {% if product %}
+      {# Its picture: the round button on it chooses a new one, shown at once; the cross undoes the choice (product_picture.js). Saved with the product; it replaces the old one. #}
+      <div class="product-picture" data-product-picture>
+        <span class="product-picture__circle">
+          <img class="product-picture__image" src="{{ heading_image_url }}" alt="" width="72" height="72" data-product-picture-image data-original-src="{{ heading_image_url }}"{% if not heading_image_url %} hidden{% endif %}>
+          <span class="product-picture__empty" data-product-picture-empty{% if heading_image_url %} hidden{% endif %}>
+            {% include "includes/ui/icon_block.html" with name="image" size="md" only %}
+          </span>
+        </span>
+        <label class="product-picture__change" for="{{ form.image.id_for_label }}" title="Change picture">
+          {% include "includes/ui/icon_block.html" with name="pencil" size="sm" only %}
+          <span class="visually-hidden">Change picture</span>
+        </label>
+        {{ form.image }}
+        <button class="product-picture__undo" type="button" data-product-picture-undo hidden title="Keep the old picture">
+          {% include "includes/ui/icon_block.html" with name="x" size="sm" only %}
+          <span class="visually-hidden">Keep the old picture</span>
+        </button>
+      </div>
+    {% endif %}
     <div class="product-card__identity">
-      {% if heading_image_url %}
-        <img class="product-card__picture" src="{{ heading_image_url }}" alt="" width="44" height="44">
-      {% endif %}
       <label class="product-card__pill{% if form.internal_number.errors %} product-card__pill--error{% endif %}" for="{{ form.internal_number.id_for_label }}">
         {{ form.internal_number.label }}
         {{ form.internal_number }}
       </label>
-      {% if product %}<span class="product-card__muted">SKU {{ product.sku }}</span>{% endif %}
+      {% if product %}
+        <span class="product-card__muted">SKU {{ product.sku }}</span>
+        {# Where the shop lists it, the same in every language. #}
+        <label class="product-card__pill product-card__pill--select{% if form.category.errors %} product-card__pill--error{% endif %}" for="{{ form.category.id_for_label }}">
+          {{ form.category.label }}
+          {{ form.category }}
+        </label>
+      {% endif %}
     </div>
 
     {% if product %}
@@ -29,6 +54,10 @@
     {% endif %}
   </div>
   {% for error in form.internal_number.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
+  {% if product %}
+    {% for error in form.image.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
+    {% for error in form.category.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}
+  {% endif %}
   {% if product %}{% for error in form.active.errors %}<div class="form-field__errors" role="alert"><p>{{ error }}</p></div>{% endfor %}{% endif %}
 
   <div class="product-card__names">

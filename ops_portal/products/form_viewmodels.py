@@ -4,10 +4,7 @@ from dataclasses import dataclass
 
 from django.urls import reverse
 
-from ops_portal.products.catalog_forms import (
-    CatalogForm,
-    CatalogLanguage,
-)
+from ops_portal.products.catalog_forms import CatalogLanguage
 from ops_portal.products.forms import (
     ProductEditForm,
     ProductForm,
@@ -22,7 +19,7 @@ from ops_portal.products.variant_forms import (
     SUGGESTED_VARIANT_LABELS,
     BaseVariantFormSet,
 )
-from products.images import product_display_url, product_image_url
+from products.images import product_image_url
 from products.models import Product
 
 
@@ -175,10 +172,9 @@ def build_edit_product_form_context(
 
 @dataclass(frozen=True, slots=True)
 class CatalogFormContext:
-    """The catalog form: category and picture, then the words per
-    language under language tabs (catalog_form.html)."""
+    """The shop text form: the name, description and ingredients under one
+    tab per language (catalog_form.html)."""
 
-    form: CatalogForm
     languages: tuple[CatalogLanguage, ...]
     product: Product
 
@@ -186,38 +182,28 @@ class CatalogFormContext:
         product = self.product
 
         return {
-            "form": self.form,
             "languages": self.languages,
             "product": product,
-            "current_image_url": _current_product_image_url(product),
             # No hero (catalog_form.html): the hidden title names it.
-            "title": f"Edit catalog: {product.display_name}",
+            "title": f"Edit shop text: {product.display_name}",
             "description": "",
-            "submit_label": "Update catalog",
+            "submit_label": "Update shop text",
             "cancel_url": (
                 reverse(
                     "ops_products:detail",
                     kwargs={"product_pk": product.pk},
                 )
-                + "#catalog"
+                + "#text"
             ),
         }
 
 
 def build_catalog_form_context(
     *,
-    form: CatalogForm,
     languages: tuple[CatalogLanguage, ...],
     product: Product,
 ) -> CatalogFormContext:
     return CatalogFormContext(
-        form=form,
         languages=languages,
         product=product,
     )
-
-
-def _current_product_image_url(
-    product: Product,
-) -> str:
-    return product_display_url(getattr(product, "profile", None)) or ""

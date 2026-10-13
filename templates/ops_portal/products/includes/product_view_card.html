@@ -2,11 +2,11 @@
   The product on the product page, first in its Product tab: its card with
   its picture (when it has one), brand over name and beside the name a
   label saying whether it is in the shop (and if not, what keeps it out),
-  its status and facts. No stock here (the Inventory tab); Edit is at the
+  its status and facts (its category among them). No stock here (the Inventory tab); Edit is at the
   page's foot.
 
   Context: product, heading_image_url, status_key, status_icon,
-  status_label, attribute_tags, in_shop, shop_label
+  status_label, attribute_tags, in_shop, shop_label, profile
 {% endcomment %}
 <section class="product-card product-view" aria-labelledby="product-card-title">
   {% if heading_image_url %}
@@ -29,6 +29,7 @@
         </span>
       </span>
       <span>Catalog ID <b>{{ product.internal_number|default:"—" }}</b></span>
+      <span>Category <b>{{ profile.category_label|default:"—" }}</b></span>
       <span>SKU <b>{{ product.sku }}</b></span>
       {% if product.manufacturer %}<span>Manufacturer <b>{{ product.manufacturer }}</b></span>{% endif %}
       {% for tag in attribute_tags %}

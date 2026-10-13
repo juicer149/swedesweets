@@ -31,10 +31,11 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
 
     assert response.status_code == 200
     assert response.context["status_key"] == "active"
-    # The product and what is sold, the catalog, then what is on the shelf.
+    # The product and what is sold, its shop text, then what is on the
+    # shelf.
     assert [tab.key for tab in response.context["page_tabs"]] == [
         "product",
-        "catalog",
+        "text",
         "inventory",
     ]
     (stock,) = response.context["variant_stocks"]
@@ -81,14 +82,14 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     assert f'href="{edit_url}#product"' in content
     assert f'href="{catalog_url}"' in content
     # At the page's foot, the open tab's action: Edit (the product's form
-    # on Product, the catalog's on Catalog), Add batch on Inventory.
+    # on Product, the shop text's on Shop text), Add batch on Inventory.
     add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert [
         (action.tab, action.label, action.href)
         for action in response.context["tab_actions"]
     ] == [
         ("product", "Edit", f"{edit_url}#product"),
-        ("catalog", "Edit", catalog_url),
+        ("text", "Edit", catalog_url),
         ("inventory", "Add batch", add_batch_url),
     ]
     # No Edit product or Add batch at the tabs' feet.
@@ -108,7 +109,7 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     assert "tabs-foot__action" in content
     # No pencil on the product's card (Edit is at the foot).
     assert "product-card__edit" not in content
-    assert f'href="{catalog_url}" data-tab-action="catalog" hidden' in content
+    assert f'href="{catalog_url}" data-tab-action="text" hidden' in content
     assert content.index('data-tab-action="product"') < content.index(
         'id="panel-product"'
     )
@@ -319,7 +320,7 @@ def test_product_list_table_has_picture_circle_and_no_unit(client):
 
 
 @pytest.mark.django_db
-def test_catalog_tab_previews_the_shop_page_in_each_language(client):
+def test_shop_text_tab_shows_each_languages_own_text(client):
     from products.services import CatalogTextChange, update_product_catalog
 
     client.force_login(full_staff_user_factory())
@@ -331,7 +332,6 @@ def test_catalog_tab_previews_the_shop_page_in_each_language(client):
             "fr": CatalogTextChange(
                 name="Poivre turc",
                 description="Salé.",
-                ingredients="Sucre.",
             ),
         },
     )
@@ -341,37 +341,41 @@ def test_catalog_tab_previews_the_shop_page_in_each_language(client):
     )
     content = response.content.decode()
 
-    french, english = response.context["catalog_previews"]
-    assert (french.language_code, french.product_name) == ("fr", "Poivre turc")
-    # English has no text of its own: the shop's fallbacks.
-    assert english.product_name == product.display_name
-    assert english.description == "Salé."
-    assert [tab.key for tab in english.page_tabs] == [
-        "description",
-        "ingredients",
-    ]
-    # In each language's own words (the category, the shop's labels).
-    assert (french.category_label, english.category_label) == (
-        "Bonbons",
-        "Candy",
+    french, english = response.context["language_texts"]
+    assert (french.code, english.code) == ("fr", "en")
+    # French: its own text; an empty field says what the shop shows.
+    assert french.has_own_text is True
+    name, description, ingredients = french.fields
+    assert (name.value, description.value) == ("Poivre turc", "Salé.")
+    assert ingredients.value == ""
+    assert ingredients.fallback == "The shop shows none."
+    assert "Poivre turc" in content
+    # English has none: said so, with what the shop shows and a way to
+    # add it (the shop text page, open on English).
+    assert english.has_own_text is False
+    assert "No English text yet" in content
+    assert "French text" in english.fallback_note
+    catalog_url = reverse(
+        "ops_products:edit_catalog",
+        kwargs={"product_pk": product.pk},
     )
-    assert "Ajouter au panier" in content
-    assert "Ingrédients" in content
-    assert 'id="preview-fr-product-title"' in content
-    assert 'id="preview-en-product-title"' in content
-    # Not sold (no retail price): shown without a price, and the label
-    # says what keeps it out.
+    assert english.edit_href == f"{catalog_url}#en"
+    assert f'href="{catalog_url}#en"' in content
+    assert "Add English text" in content
+    # No preview of the shop's page (its price and buttons are the
+    # Product tab's).
+    assert "data-product-add-form" not in content
+    assert "catalog_previews" not in response.context
+    # Whether it is in the shop: a label beside the name on the card;
+    # its category among the card's facts.
     assert response.context["in_shop"] is False
-    assert french.offers == ()
     assert "Not in shop" in response.context["shop_label"]
     assert "no retail price" in response.context["shop_label"]
-    # The languages alone (Edit is the page's, at its foot); whether it is
-    # in the shop is a label beside the name on the Product tab's card.
-    assert "catalog-preview__edit" not in content
-    assert "catalog-preview__shop" not in content
     assert (
         content.index("product-card-title")
         < content.index("product-view__shop")
-        < content.index('id="panel-catalog"')
+        < content.index('id="panel-text"')
     )
-    assert "data-product-add-form" in content and " inert" in content
+    category_label = response.context["profile"].category_label
+    assert category_label
+    assert f"Category <b>{category_label}</b>" in content

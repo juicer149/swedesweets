@@ -100,7 +100,7 @@
 
   /*
    * A tab whose panel holds a changed field gets a dot (the language tabs
-   * on the catalog page, say), so a change in a hidden panel still shows.
+   * on the shop text page, say), so a change in a hidden panel still shows.
    * The tab is the one the panel is labelled by.
    */
   function markChangedTabs() {

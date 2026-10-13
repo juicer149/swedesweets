@@ -341,14 +341,14 @@ class CatalogTextChange:
 def update_product_catalog(
     *,
     product: Product,
-    category: str,
-    texts: Mapping[str, CatalogTextChange],
+    category: str | None = None,
+    texts: Mapping[str, CatalogTextChange] | None = None,
     user=None,
 ) -> Product:
-    """Save what the shop shows of a product: its category, and for each
-    language given its name, description and ingredients. A language left
-    out is not changed; one given with every field empty has no text of
-    its own (the shop falls back)."""
+    """Save what the shop shows of a product: its category (None: left as
+    it is), and for each language given its name, description and
+    ingredients. A language left out is not changed; one given with every
+    field empty has no text of its own (the shop falls back)."""
 
     product = (
         Product.objects
@@ -356,12 +356,13 @@ def update_product_catalog(
         .get(pk=product.pk)
     )
 
-    _set_product_profile(
-        product=product,
-        category=category,
-    )
+    if category is not None:
+        _set_product_profile(
+            product=product,
+            category=category,
+        )
 
-    for language_code, text in texts.items():
+    for language_code, text in (texts or {}).items():
         set_catalog_text(
             product=product,
             language_code=language_code,
