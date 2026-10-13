@@ -323,7 +323,8 @@ def build_variant_cards(
                 weight_label=f"{variant.weight_per_unit} g",
                 retail=sold["retail"],
                 business=sold["business"],
-                paused=not any(sold.values()),
+                # Paused: switched off (both channels off on the edit page).
+                paused=not variant.active,
                 own_prices=(
                     tuple(
                         _channel_price(amounts, key=key, label=label)

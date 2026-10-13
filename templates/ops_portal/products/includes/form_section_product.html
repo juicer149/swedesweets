@@ -1,13 +1,16 @@
 {% comment %}
   The Product section of the product form, as a card like the variants'
-  (help: help/product.html). At the top the catalog ID, the SKU and (when
-  editing) the status as one switch; then brand and name, large; then the
+  (help: help/product.html). At the top its picture (when it has one), the
+  catalog ID, the SKU and (when editing) the status as one switch; then brand and name, large; then the
   manufacturer, (when adding) unit and weight, and the attributes (vegan;
   more may come).
 {% endcomment %}
 <div class="product-card product-card--form">
   <div class="product-card__top">
     <div class="product-card__identity">
+      {% if heading_image_url %}
+        <img class="product-card__picture" src="{{ heading_image_url }}" alt="" width="44" height="44">
+      {% endif %}
       <label class="product-card__pill{% if form.internal_number.errors %} product-card__pill--error{% endif %}" for="{{ form.internal_number.id_for_label }}">
         {{ form.internal_number.label }}
         {{ form.internal_number }}

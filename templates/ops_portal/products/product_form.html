@@ -11,11 +11,8 @@
 {% endcomment %}
 
 {% block page_heading %}
-  {% if product %}
-    {% include "includes/ui/status_heading.html" with title_id="page-title" kicker=heading_kicker title=heading|default:title status=status_key icon=status_icon label=status_label who=product.code_label image=heading_image_url only %}
-  {% else %}
-    <h1 id="page-title" class="visually-hidden">{{ title }}</h1>
-  {% endif %}
+  {# No hero: the Product card says what product it is (with its picture). #}
+  <h1 id="page-title" class="visually-hidden">{{ title }}</h1>
 {% endblock %}
 
 {% block page_body %}

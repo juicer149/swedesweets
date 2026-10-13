@@ -97,7 +97,7 @@
 .variant-price__caption {
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .variant-price__input {
@@ -172,7 +172,7 @@
   padding: 0 calc(var(--variant-pad) + 1px) var(--space-2);
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .variant-rows {
@@ -313,7 +313,7 @@
   margin: var(--space-2) var(--variant-radius, 16px) 0;
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .variant-row__channels {
@@ -638,14 +638,14 @@
   gap: var(--space-1) var(--space-5);
   margin: 0;
   color: var(--color-neutral-800);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .variant-shared__caption {
   margin-right: var(--space-1);
   color: var(--color-neutral-600);
   font-size: var(--font-size-14);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .variant-views {
@@ -672,13 +672,13 @@
 .variant-view__label {
   color: var(--color-neutral-800);
   font-size: var(--font-size-18);
-  font-weight: 800;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 
 .variant-view__weight {
   color: var(--color-neutral-600);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .variant-view__channels {
@@ -698,7 +698,7 @@
   border: 1px solid rgb(var(--color-status-muted) / 0.22);
   border-radius: var(--radius-pill);
   font-size: var(--font-size-12);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .variant-view__chip--on {
@@ -721,14 +721,14 @@
 .variant-view__paused {
   color: var(--color-neutral-600);
   font-size: var(--font-size-12);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .variant-view__stock {
   color: var(--color-neutral-800);
-  font-weight: 800;
+  font-weight: 700;
   text-align: right;
   white-space: nowrap;
 }
@@ -737,7 +737,7 @@
   display: block;
   color: var(--color-neutral-600);
   font-size: var(--font-size-12);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .variant-view__stock--none {
@@ -756,7 +756,7 @@
   border-top: 0;
   border-radius: 0 0 var(--radius-card-inner) var(--radius-card-inner);
   font-size: var(--font-size-14);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 @media (max-width: 640px) {

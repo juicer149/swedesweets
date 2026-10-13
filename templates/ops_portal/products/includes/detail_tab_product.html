@@ -1,38 +1,10 @@
 {% comment %}
-  The Product tab, as the edit page in reading: the product's card (brand
-  over name, its facts, a pencil to edit it); then Variants and offers:
+  The Product tab, as the edit page in reading (the product itself is the
+  page's hero, product_hero.html): Variants and offers:
   the product price, and a card per variant in order (weight, sales
   channels, the price tag when it has its own prices, in a yellow tab
   under it, stock; why its weight is fixed); Edit product and Add batch.
 {% endcomment %}
-<section class="product-section" aria-labelledby="product-card-title">
-  <div class="product-card">
-    <div class="product-card__top">
-      <h2 class="product-card__title" id="product-card-title">
-        {% if product.brand %}<span class="product-card__brand">{{ product.brand }}</span>{% endif %}
-        {{ product.name }}
-      </h2>
-      {% if edit_action %}
-        <a class="product-card__edit" href="{{ edit_action.href }}#product" aria-label="Edit product" title="Edit product">
-          {% include "includes/ui/icon_block.html" with name="pencil" size="sm" only %}
-        </a>
-      {% endif %}
-    </div>
-
-    <p class="product-card__facts">
-      <span>Catalog ID <b>{{ product.internal_number|default:"—" }}</b></span>
-      <span>SKU <b>{{ product.sku }}</b></span>
-      {% if product.manufacturer %}<span>Manufacturer <b>{{ product.manufacturer }}</b></span>{% endif %}
-      {% for tag in attribute_tags %}
-        <span class="{{ tag.css_class }}">
-          {% include "includes/ui/icon_block.html" with name=tag.icon size="sm" class_name=tag.icon_class only %}
-          <span>{{ tag.label }}</span>
-        </span>
-      {% endfor %}
-    </p>
-  </div>
-</section>
-
 <section class="product-section" aria-labelledby="product-variants-title">
   <div class="form-section__head">
     <h2 class="form-section__title" id="product-variants-title">Variants and offers</h2>

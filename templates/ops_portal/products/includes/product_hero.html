@@ -1,0 +1,44 @@
+{% comment %}
+  The product page's hero, over its tabs (Product, Catalog): the product's
+  card with its picture (when it has one), brand over name, its status and
+  facts, and a pencil to edit it.
+
+  Context: product, heading_image_url, status_key, status_icon,
+  status_label, attribute_tags, edit_action
+{% endcomment %}
+<header class="product-card product-hero">
+  {% if heading_image_url %}
+    <img class="product-hero__picture" src="{{ heading_image_url }}" alt="" width="72" height="72">
+  {% endif %}
+
+  <div class="product-hero__text">
+    <h1 class="product-card__title product-hero__title" id="page-title">
+      {% if product.brand %}<span class="product-card__brand">{{ product.brand }}</span>{% endif %}
+      {{ product.name }}
+    </h1>
+
+    <p class="product-card__facts">
+      <span class="order-status order-status--{{ status_key }} product-hero__status">
+        <span class="order-status__state">
+          {% include "includes/ui/icon_block.html" with name=status_icon size="sm" only %}
+          {{ status_label }}
+        </span>
+      </span>
+      <span>Catalog ID <b>{{ product.internal_number|default:"—" }}</b></span>
+      <span>SKU <b>{{ product.sku }}</b></span>
+      {% if product.manufacturer %}<span>Manufacturer <b>{{ product.manufacturer }}</b></span>{% endif %}
+      {% for tag in attribute_tags %}
+        <span class="{{ tag.css_class }}">
+          {% include "includes/ui/icon_block.html" with name=tag.icon size="sm" class_name=tag.icon_class only %}
+          <span>{{ tag.label }}</span>
+        </span>
+      {% endfor %}
+    </p>
+  </div>
+
+  {% if edit_action %}
+    <a class="product-card__edit" href="{{ edit_action.href }}#product" aria-label="Edit product" title="Edit product">
+      {% include "includes/ui/icon_block.html" with name="pencil" size="sm" only %}
+    </a>
+  {% endif %}
+</header>

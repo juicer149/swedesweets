@@ -43,7 +43,9 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     assert "available" not in content.split("</header>")[0]
     # The product's card, then Variants and offers with the product price
     # and a card per variant (its channels as chips), with its help.
-    assert 'class="product-card"' in content
+    # The product is the page's hero, over the tabs (Product, Catalog).
+    assert 'class="product-card product-hero"' in content
+    assert content.index("product-hero") < content.index('role="tablist"')
     assert 'id="product-variants-title">Variants and offers</h2>' in content
     assert "variant-view__chip" in content
     assert 'data-help-open="variants-help"' in content
@@ -114,8 +116,9 @@ def test_product_edit_form_is_one_page_of_sections(client):
     assert 'name="variants-0-business_eur"' in content
     assert 'name="product_business_sek"' in content
     assert "Swedish/internal MVP" not in content
-    # "Edit" over the name.
-    assert '<span class="page__kicker">Edit</span>' in content
+    # No hero: the Product card says which product (a hidden title).
+    assert '<h1 id="page-title" class="visually-hidden">Edit ' in content
+    assert "page__kicker" not in content
     # No picture yet: no circle by the name.
     assert "page__heading-picture" not in content
     # Back while nothing is changed; Cancel once something is (CSS).
