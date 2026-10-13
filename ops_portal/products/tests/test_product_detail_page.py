@@ -38,9 +38,7 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
         "inventory",
     ]
     (card,) = response.context["variant_cards"]
-    stock = card.stock
-    assert stock.stock_label == product.stock_quantity_label(12)
-    assert stock.in_stock is True
+    assert [batch.quantity for batch in card.batches] == [12]
     # No hero: the product's card first in the Product tab, without stock.
     assert "product-hero" not in content
     assert 'class="product-card product-view"' in content
@@ -62,7 +60,7 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     assert 'data-help-open="variants-help"' in content
     assert "demand" not in response.context
     # Its batch on its card on the Inventory tab, to the batch's page.
-    (batch_link,) = stock.batches
+    (batch_link,) = card.batches
     assert batch_link.batch_id == "B-501"
     assert batch_link.expired is False
     batch = product.batches.get()
@@ -166,23 +164,21 @@ def test_variant_card_lists_its_batches_on_the_shelf(client):
     content = response.content.decode()
 
     (card,) = response.context["variant_cards"]
-    stock = card.stock
     # The soonest best-before first; none with less than one unit.
-    assert [batch.batch_id for batch in stock.batches] == [
+    assert [batch.batch_id for batch in card.batches] == [
         "B-OLD",
         "B-SOON",
         "B-LATER",
     ]
     # Expired in red, soon (inventory/expiry.py) in orange, else plain.
-    assert [batch.tone for batch in stock.batches] == [
+    assert [batch.tone for batch in card.batches] == [
         "expired",
         "soon",
         "safe",
     ]
-    assert stock.has_expired_batch is True
     # Plain numbers (no unit): in stock, and how many orders hold (none);
     # the heads over the first card say which is which.
-    assert [(batch.quantity, batch.reserved) for batch in stock.batches] == [
+    assert [(batch.quantity, batch.reserved) for batch in card.batches] == [
         (3, 0),
         (5, 0),
         (4, 0),
@@ -419,7 +415,6 @@ def test_inventory_tab_warns_of_nothing_to_sell_and_expired_batches(client):
     response = client.get(url)
     content = response.content.decode()
 
-    assert response.context["shop_tone"] == "out"
     assert response.context["inventory_notes"] == (
         "Out of stock: it is for sale, but there is nothing to sell.",
     )
@@ -436,18 +431,15 @@ def test_inventory_tab_warns_of_nothing_to_sell_and_expired_batches(client):
 
     response = client.get(url)
 
-    assert response.context["shop_tone"] == "out"
     assert response.context["inventory_notes"] == (
         "Out of stock: it is for sale, but there is nothing to sell.",
         "1 batch past best-before (in red): sell it off or close it.",
     )
 
-    # A good batch: something to sell; not in the shop (no retail price).
+    # A good batch: something to sell.
     batch_factory(product=product, today=TODAY, batch_id="P-NEW")
     response = client.get(url)
 
-    assert response.context["shop_tone"] == "off"
-    assert response.context["shop_label"] == "Not in shop · no retail price"
     # The expired one still warned about; no more out of stock.
     assert response.context["inventory_notes"] == (
         "1 batch past best-before (in red): sell it off or close it.",
@@ -466,6 +458,6 @@ def test_an_inactive_product_is_not_out_of_stock(client):
         reverse("ops_products:detail", kwargs={"product_pk": product.pk}),
     )
 
-    assert response.context["shop_tone"] == "off"
-    assert response.context["shop_label"].startswith("Not in shop · inactive")
+    # Not for sale: nothing to warn about.
+    assert response.context["inventory_notes"] == ()
 

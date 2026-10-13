@@ -8,7 +8,6 @@ from django.urls import reverse
 from django.utils import timezone
 
 from accounts.roles import RoleSpec
-from common.catalog.contracts import CatalogProduct
 from common.detail_cards import (
     DetailAction,
     build_secondary_get_action,
@@ -35,10 +34,9 @@ from ops_portal.products.pricing_forms import (
 )
 from ops_portal.products.shop_text import LanguageText, build_language_texts
 from pricing.models import CommercialPrice
-from products.images import product_display_url, product_image_url
+from products.images import product_image_url
 from products.models import (
     Product,
-    ProductProfile,
     ProductVariant,
 )
 
@@ -70,53 +68,21 @@ PRODUCT_DETAIL_TABS = (
 class ProductProfileSummary:
     category: str
     category_label: str
-    image_url: str
 
     @classmethod
     def from_product(
         cls,
         product: Product,
     ) -> ProductProfileSummary:
-        try:
-            profile = product.profile
-        except (
-            Product.profile
-            .RelatedObjectDoesNotExist
-        ):
-            return cls.empty()
+        profile = getattr(product, "profile", None)
+
+        if profile is None or not profile.category:
+            return cls(category="", category_label="")
 
         return cls(
             category=profile.category,
-            category_label=(
-                profile.get_category_display()
-                if profile.category
-                else ""
-            ),
-            image_url=(
-                _profile_original_image_url(
-                    profile
-                )
-            ),
+            category_label=profile.get_category_display(),
         )
-
-    @classmethod
-    def empty(
-        cls,
-    ) -> ProductProfileSummary:
-        return cls(
-            category="",
-            category_label="",
-            image_url="",
-        )
-
-
-@dataclass(frozen=True, slots=True)
-class ChannelPrice:
-    """A channel's price as the product page shows it: "55.00 € · 549.00
-    kr", or "—"."""
-
-    label: str
-    amounts: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -164,37 +130,24 @@ class BatchLink:
 
 
 @dataclass(frozen=True, slots=True)
-class VariantStock:
-    """A variant's stock on the product page: how many are in stock, and
-    its batches on the shelf, the soonest best-before first."""
-
-    stock_label: str
-    in_stock: bool
-    batches: tuple[BatchLink, ...]
-
-    @property
-    def has_expired_batch(self) -> bool:
-        return any(batch.expired for batch in self.batches)
-
-
-@dataclass(frozen=True, slots=True)
 class VariantCard:
     """A variant on the product page, as its card on the edit page: label,
-    weight, its sales channels with their prices; its stock (its batches
-    on the shelf) on the Inventory tab."""
+    weight, its sales channels with their prices (the Product tab); its
+    batches on the shelf (the Inventory tab)."""
 
     label: str
     weight_label: str
-    retail: bool
-    business: bool
     paused: bool
-    # Its prices in the channels it is sold in.
-    prices: tuple[ChannelPrice, ...]
     # Its channels, Business over Retail, each with its price when sold.
     channels: tuple[ChannelOffer, ...]
     # Stock or orders: its weight can no longer change.
     weight_fixed: bool
-    stock: VariantStock
+    # On the shelf, the soonest best-before first.
+    batches: tuple[BatchLink, ...]
+
+    @property
+    def is_sold(self) -> bool:
+        return any(channel.sold for channel in self.channels)
 
 
 CHANNELS = (
@@ -208,19 +161,21 @@ CURRENCY_SIGNS = (
 )
 
 
-def _channel_price(
+def _channel_amounts(
     amounts: dict[str, Decimal | None],
     *,
     key: str,
-    label: str,
-) -> ChannelPrice:
+) -> str:
+    """A channel's price as the product page shows it: "55.00 € · 549.00
+    kr", or "—"."""
+
     parts = [
         f"{amounts[f'{key}_{currency}']:.2f} {sign}"
         for currency, sign in CURRENCY_SIGNS
         if amounts.get(f"{key}_{currency}") is not None
     ]
 
-    return ChannelPrice(label=label, amounts=" · ".join(parts) or "—")
+    return " · ".join(parts) or "—"
 
 
 @dataclass(frozen=True, slots=True)
@@ -233,12 +188,9 @@ class ProductDetailContext:
     ]
     variant_cards: tuple[VariantCard, ...]
     language_texts: tuple[LanguageText, ...]
-    in_shop: bool
-    # The product card's label: "In shop" (green), "Out of stock" (red:
-    # for sale, nothing to sell), or "Not in shop" and what keeps it out
-    # (grey): its tone "in", "out" or "off".
-    shop_label: str
-    shop_tone: str
+    # For sale (active, a variant in a sales channel) with nothing to sell
+    # (no stock, or only batches past their best-before).
+    out_of_stock: bool
     status_key: str
     status_label: str
     status_icon: str
@@ -257,7 +209,7 @@ class ProductDetailContext:
 
         notes = []
 
-        if self.shop_tone == "out":
+        if self.out_of_stock:
             notes.append(
                 "Out of stock: it is for sale, but there is nothing to sell."
             )
@@ -265,7 +217,7 @@ class ProductDetailContext:
         expired = sum(
             batch.expired
             for card in self.variant_cards
-            for batch in card.stock.batches
+            for batch in card.batches
         )
 
         if expired:
@@ -321,18 +273,14 @@ class ProductDetailContext:
             ),
             "variant_cards": self.variant_cards,
             "language_texts": self.language_texts,
-            "in_shop": self.in_shop,
-            "shop_label": self.shop_label,
-            "shop_tone": self.shop_tone,
             "inventory_notes": self.inventory_notes,
-            "edit_catalog_href": self.edit_catalog_href,
             "status_key": self.status_key,
             "status_label": self.status_label,
             "status_icon": self.status_icon,
-            # Its picture beside the name (status_heading.html).
+            # Its picture on its card (product_view_card.html).
             "heading_image_url": product_image_url(self.product) or "",
+            # Who may edit: the Shop text tab's "Add … text".
             "edit_action": self.edit_action,
-            "add_batch_href": self.add_batch_href,
             "page_tabs": self.page_tabs,
             "tab_actions": self.tab_actions,
             "tabs_label": "Product sections",
@@ -354,36 +302,19 @@ def build_product_detail_context(
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
     role_spec: RoleSpec,
     cancel_url: str,
-    stock_by_variant: dict[int, int] | None = None,
     batches_by_variant: dict[int, list[InventoryBatch]] | None = None,
     reserved_by_batch: dict[int, int] | None = None,
-    shop_product: CatalogProduct | None = None,
     today: date | None = None,
 ) -> ProductDetailContext:
     variants = list(product.variants.all())
-    stock_by_variant = stock_by_variant or {}
     batches_by_variant = batches_by_variant or {}
     today = today or timezone.localdate()
     variant_cards = build_variant_cards(
         variants=variants,
         prices_by_channel=prices_by_channel,
-        stocks=build_variant_stocks(
-            product=product,
-            variants=variants,
-            stock_by_variant=stock_by_variant,
-            batches_by_variant=batches_by_variant,
-            reserved_by_batch=reserved_by_batch or {},
-            today=today,
-        ),
-    )
-    shop_tone, shop_label = _shop_state(
-        product=product,
-        variants=variants,
-        variant_cards=variant_cards,
-        prices_by_channel=prices_by_channel,
         batches_by_variant=batches_by_variant,
+        reserved_by_batch=reserved_by_batch or {},
         today=today,
-        in_shop=shop_product is not None,
     )
 
     return ProductDetailContext(
@@ -401,9 +332,13 @@ def build_product_detail_context(
         ),
         variant_cards=variant_cards,
         language_texts=build_language_texts(product),
-        in_shop=shop_product is not None,
-        shop_label=shop_label,
-        shop_tone=shop_tone,
+        out_of_stock=_out_of_stock(
+            product=product,
+            variants=variants,
+            variant_cards=variant_cards,
+            batches_by_variant=batches_by_variant,
+            today=today,
+        ),
         status_key=(
             "active" if product.active else "inactive"
         ),
@@ -431,60 +366,27 @@ def build_product_detail_context(
     )
 
 
-def _shop_state(
+def _out_of_stock(
     *,
     product: Product,
     variants: list[ProductVariant],
     variant_cards: tuple[VariantCard, ...],
-    prices_by_channel: dict[str, dict[int, CommercialPrice]],
     batches_by_variant: dict[int, list[InventoryBatch]],
     today: date,
-    in_shop: bool,
-) -> tuple[str, str]:
-    """The product card's label and its tone (the shop's rules,
-    retail.catalog_selectors): "In shop"; "Out of stock" when it is for
-    sale (active, a variant in a sales channel) with nothing to sell (no
-    stock, or only batches past their best-before); else "Not in shop" and
-    what keeps it out: inactive, no retail price in EUR, no stock."""
+) -> bool:
+    """For sale (active, a variant in a sales channel) with nothing to
+    sell: no stock, or only batches past their best-before (the shop's
+    rule, inventory/expiry.py)."""
 
-    if in_shop:
-        return "in", "In shop"
-
+    for_sale = product.active and any(card.is_sold for card in variant_cards)
     sellable_stock = sum(
         batch.quantity
         for variant in variants
         for batch in batches_by_variant.get(variant.pk, [])
         if is_orderable_best_before(best_before=batch.best_before, today=today)
     )
-    for_sale = product.active and any(
-        card.retail or card.business for card in variant_cards
-    )
 
-    if for_sale and sellable_stock <= 0:
-        return "out", "Out of stock"
-
-    retail_offers = prices_by_channel.get(CommercialPrice.Channel.RETAIL, {})
-    has_retail_price = any(
-        variant.active
-        and _enabled(retail_offers, variant)
-        and variant_amounts(
-            prices_by_channel=prices_by_channel,
-            variant_id=variant.pk,
-        )["retail_eur"]
-        is not None
-        for variant in variants
-    )
-    gaps = [
-        reason
-        for reason, missing in (
-            ("inactive", not product.active),
-            ("no retail price", not has_retail_price),
-            ("no stock", sellable_stock <= 0),
-        )
-        if missing
-    ]
-
-    return "off", " · ".join(["Not in shop", *gaps])
+    return for_sale and sellable_stock <= 0
 
 
 # A product with one variant (no label): what its card is called.
@@ -495,15 +397,18 @@ def build_variant_cards(
     *,
     variants: list[ProductVariant],
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
-    stocks: dict[int, VariantStock] | None = None,
+    batches_by_variant: dict[int, list[InventoryBatch]] | None = None,
+    reserved_by_batch: dict[int, int] | None = None,
+    today: date | None = None,
 ) -> tuple[VariantCard, ...]:
     """The product's variants in order, as on the edit page, each with its
-    stock (`stocks`, by variant id) and its prices in the channels it is
-    sold in."""
+    prices in the channels it is sold in and its batches on the shelf
+    (`batches_by_variant`; how many of each orders hold:
+    `reserved_by_batch`)."""
 
-    stocks = stocks or {}
-    no_stock = VariantStock(stock_label="", in_stock=False, batches=())
-
+    batches_by_variant = batches_by_variant or {}
+    reserved_by_batch = reserved_by_batch or {}
+    today = today or timezone.localdate()
     cards = []
 
     for variant in variants:
@@ -520,21 +425,14 @@ def build_variant_cards(
             VariantCard(
                 label=variant.label or ONLY_VARIANT_NAME,
                 weight_label=f"{variant.weight_per_unit} g",
-                retail=sold["retail"],
-                business=sold["business"],
                 # Paused: switched off (both channels off on the edit page).
                 paused=not variant.active,
-                prices=tuple(
-                    _channel_price(amounts, key=key, label=label)
-                    for _channel, key, label in CHANNELS
-                    if sold[key]
-                ),
                 channels=tuple(
                     ChannelOffer(
                         label=label,
                         sold=sold[key],
                         amounts=(
-                            _channel_price(amounts, key=key, label=label).amounts
+                            _channel_amounts(amounts, key=key)
                             if sold[key]
                             else ""
                         ),
@@ -545,34 +443,6 @@ def build_variant_cards(
                     variant.batches.exists()
                     or variant.order_lines.exists()
                 ),
-                stock=stocks.get(variant.pk, no_stock),
-            )
-        )
-
-    return tuple(cards)
-
-
-def build_variant_stocks(
-    *,
-    product: Product,
-    variants: list[ProductVariant],
-    stock_by_variant: dict[int, int],
-    batches_by_variant: dict[int, list[InventoryBatch]],
-    reserved_by_batch: dict[int, int],
-    today: date,
-) -> dict[int, VariantStock]:
-    """Each variant's stock, by variant id: how many, and its batches on
-    the shelf (a batch past its best-before: expired)."""
-
-    stocks = {}
-
-    for variant in variants:
-        stock = stock_by_variant.get(variant.pk, 0)
-
-        stocks[variant.pk] = (
-            VariantStock(
-                stock_label=product.stock_quantity_label(stock),
-                in_stock=stock > 0,
                 batches=tuple(
                     BatchLink(
                         batch_id=batch.batch_id,
@@ -593,7 +463,7 @@ def build_variant_stocks(
             )
         )
 
-    return stocks
+    return tuple(cards)
 
 
 def _enabled(
@@ -629,14 +499,6 @@ def build_product_secondary_actions(
             ),
         ),
     )
-
-
-def _profile_original_image_url(
-    profile: ProductProfile,
-) -> str:
-    """The large picture behind "Open image" (the display size)."""
-
-    return product_display_url(profile) or ""
 
 
 def _product_status_label(

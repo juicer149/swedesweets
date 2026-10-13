@@ -42,9 +42,9 @@
           <span class="variant-view__weight">{{ variant.weight_label }}</span>
           <span class="variant-view__state">{% if variant.paused %}<span class="variant-view__paused">Paused</span>{% endif %}</span>
           <div class="variant-view__stock-cell">
-            {% if variant.stock.batches %}
+            {% if variant.batches %}
               <ul class="variant-batches" aria-label="Batches of {{ variant.label }}">
-                {% for batch in variant.stock.batches %}
+                {% for batch in variant.batches %}
                   <li>
                     <a class="variant-batch variant-batch--{{ batch.tone }}" href="{{ batch.href }}" title="{{ batch.expiry.label }}{% if batch.tone == 'safe' %} {{ batch.best_before|date:'j M Y' }}{% endif %}">
                       <span class="variant-batch__id">{{ batch.batch_id }}{% if batch.tone != "safe" %}<span class="visually-hidden"> ({{ batch.expiry.label|lower }})</span>{% endif %}</span>

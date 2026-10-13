@@ -99,17 +99,11 @@ def test_the_product_page_lists_its_variants_with_their_stock(client):
 
     response = client.get(_detail_url(product))
     small, medium = response.context["variant_cards"]
-    small_stock, medium_stock = (
-        card.stock for card in response.context["variant_cards"]
-    )
 
     assert (small.label, medium.label) == ("S", "M")
     # S has the batch (so its weight is fixed); M has none.
-    assert (small_stock.stock_label, medium_stock.stock_label) == (
-        "4 boxes",
-        "0 boxes",
-    )
-    assert medium.paused is True
+    assert [batch.quantity for batch in small.batches] == [4]
+    assert medium.batches == ()
     assert (small.weight_fixed, medium.weight_fixed) == (True, False)
     assert (small.paused, medium.paused) == (False, True)
     assert "Weight fixed: it has stock or orders." in response.content.decode()
@@ -396,9 +390,11 @@ def test_the_product_page_shows_each_variants_prices(client):
     response = client.get(_detail_url(product))
     small, medium = response.context["variant_cards"]
 
-    assert small.prices[0].label == "Retail"
-    assert small.prices[0].amounts == "2.50 €"
-    assert medium.prices[0].amounts == "4.50 € · 49.00 kr"
+    # Business over Retail; each sold channel with its price.
+    assert [channel.label for channel in small.channels] == ["Business", "Retail"]
+    retail = small.channels[1]
+    assert (retail.sold, retail.amounts) == (True, "2.50 €")
+    assert medium.channels[1].amounts == "4.50 € · 49.00 kr"
 
 
 def _priced_apple():

@@ -9,7 +9,6 @@ from ops_portal.products.forms import (
     ProductEditForm,
     ProductForm,
 )
-from ops_portal.products.presentation import product_status_icon
 from ops_portal.products.price_check import PriceCheck
 from ops_portal.products.pricing_forms import (
     ProductPricingForm,
@@ -99,19 +98,8 @@ class ProductFormContext:
             "variant_formset": self.variant_formset,
             "variant_label_suggestions": SUGGESTED_VARIANT_LABELS,
             "variant_label_suggestions_id": LABEL_SUGGESTIONS_ID,
-            "status_key": (
-                "active" if self.product and self.product.active else "inactive"
-            ),
-            "status_label": (
-                "Active" if self.product and self.product.active else "Inactive"
-            ),
-            "status_icon": (
-                product_status_icon(self.product) if self.product else ""
-            ),
             "title": self.title,
-            "heading_kicker": "Edit" if self.product else "",
-            "heading": self.product.display_name if self.product else "",
-            # Its picture beside the name (status_heading.html).
+            # Its picture in the Product card (form_section_product.html).
             "heading_image_url": (
                 product_image_url(self.product) or "" if self.product else ""
             ),

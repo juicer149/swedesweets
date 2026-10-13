@@ -18,7 +18,6 @@ from common.table_controls import (
     TableSortField,
 )
 from inventory.selectors import (
-    physical_quantity_by_variant,
     shelf_batches_by_variant,
 )
 from ops_portal.products.catalog_forms import (
@@ -88,9 +87,6 @@ from products.services import (
     update_product_catalog,
 )
 from reservations.api import active_reserved_quantities_by_batch_pk
-from retail.catalog_selectors import (
-    get_retail_catalog_product,
-)
 
 PRODUCT_FILTERS = [
     TableFilter(
@@ -284,9 +280,6 @@ def detail(
             cancel_url=reverse(
                 "ops_products:index"
             ),
-            stock_by_variant=physical_quantity_by_variant(
-                product=product,
-            ),
             batches_by_variant=batches_by_variant,
             # How many of each batch orders hold (the Inventory tab).
             reserved_by_batch=active_reserved_quantities_by_batch_pk(
@@ -295,9 +288,6 @@ def detail(
                     for batches in batches_by_variant.values()
                     for batch in batches
                 ],
-            ),
-            shop_product=get_retail_catalog_product(
-                product_id=product.pk,
             ),
         )
         .as_dict()

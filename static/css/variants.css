@@ -47,22 +47,6 @@
   display: none;
 }
 
-/* A small round "?" whose title explains. */
-.info-dot {
-  display: inline-grid;
-  place-items: center;
-  width: 1.1rem;
-  height: 1.1rem;
-  margin-left: var(--space-1);
-  color: var(--color-neutral-600);
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  font-size: var(--font-size-12);
-  font-weight: 700;
-  cursor: help;
-  vertical-align: 0.1em;
-}
-
 /* -----------------------------------------------------------------------------
    A price: its caption, then the field with the currency's sign in it
    ----------------------------------------------------------------------------- */

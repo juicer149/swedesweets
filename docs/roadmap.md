@@ -39,11 +39,11 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
   look asks for it, like price changes); saving comes back to the same
   page.
 - **Product page and edit page alike**: the product page shows the same
-  cards as the edit page, to read: tabs Product (the product's card with
-  "In shop", "Out of stock" or what keeps it out beside its name, then
+  cards as the edit page, to read: tabs Product (the product's card, then
   Variants and offers: each variant's channels with their prices at its
-  right), Shop text, and Inventory (each variant's batches at its right).
-  Stock lives only on Inventory.
+  right), Shop text, and Inventory (each variant's batches at its right,
+  under warnings: out of stock, batches past best-before). Stock lives
+  only on Inventory.
   Edit stays a page of its own for now (one page for both, later
   perhaps).
 - **Tabs in a form show their changes**: a tab whose panel has a changed
@@ -82,12 +82,14 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 
 ## Next, in order
 
-0. **Edit pages in one design**, before the steps below. The product and
-   catalog pages set it: "Edit" over the name in the heading; open
-   sections, locks where data matters; statuses as one switch, first in
-   their part; EUR / SEK as filter chips; saving stays on the page. Then
-   the other edit pages, one by one: batches (its pricing too), customers,
-   orders, accounts.
+0. **Detail and edit pages in one design**, before the steps below. The
+   product pages set it (see "Ops product pages"): no hero; cards like the
+   edit page's; tabs with Back and the open tab's action at the foot; a
+   "?" where a section needs explaining; open sections, no locks (what
+   needs a second look asks for it, like price changes); statuses as one
+   switch; saving stays on the page. Then the other pages, one by one:
+   the products list, inventory (its section nav, the batch page and its
+   pricing), customers, orders, accounts.
 1. **Order lines keep a copy** of what was bought, and brand + name unique
    (after the open questions).
 2. **Variants, step 6, the rest**: the "+" on a card opens the sizes as
@@ -158,7 +160,6 @@ solid or outline):
   the shop shows instead; a language with none says so, with "Add …
   text" (the shop text page on that language). No preview of the shop's
   page: its price and buttons are the Product tab's.
-
 - **Inventory**: first what needs looking at, in red: "Out of stock"
   (for sale, in a channel, but no stock or only batches past their
   best-before) and batches past their best-before. Then a card per
@@ -193,3 +194,6 @@ as a faint last row. Price changes ask for the password.
 - Prices per variant (step 6): a standard offer per variant, set from the
   edit page; catalogs and carts by variant (a card with several sizes
   leads to its page), names with the size in carts and orders.
+- The product pages in the new design: the product page (Product, Shop
+  text, Inventory), the edit page (category and picture in the Product
+  card, prices beside their channels), the shop text page.
