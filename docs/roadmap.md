@@ -48,6 +48,11 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 - **Tabs in a form show their changes**: a tab whose panel has a changed
   field gets a dot (`dirty_form.js`), first on the catalog page's
   languages.
+- **Pages with tabs**: Back at the tabs' left (to the page one came
+  from, else the page's list; the arrow alone on phones), the open tab's
+  action at their right (page_tabs.html: `tabs_back_url`,
+  `tab_actions`); no Back under the page. Every detail page has the Back;
+  actions are added page by page, first on the product page.
 - **Help on a page**: a round "?" beside a title opens a dialog with what
   everything there means (`includes/ui/help.html`, its text a template of
   its own; a form section takes it as `help`). First on Variants and
@@ -128,15 +133,16 @@ mobile).
 
 ## Ops product pages
 
-**Detail page** (no hero; a hidden page title), three tabs, and at their
-right "Edit" (pencil) for the open tab: the product's form on Product, the
-catalog's on Catalog, none on Inventory (`TabAction`, page_tabs.html):
+**Detail page** (no hero; a hidden page title), three tabs; at their left
+Back, at their right the open tab's action: "Edit" (pencil) to the
+product's form on Product, the catalog's on Catalog, "Add batch" on
+Inventory (`TabAction`, page_tabs.html):
 
 - **Product**: the product's card (picture, brand over name, status,
   catalog ID, SKU, manufacturer, attributes; a pencil in its top right
   corner, no stock), then **Variants and offers**: a card per variant
   (label, weight; at its right its channels as chips, Business over
-  Retail, each with its price beside it when sold in it). Edit product.
+  Retail, each with its price beside it when sold in it).
 - **Catalog**: the language tabs alone, a label over the shop's page
   ("In shop", or what keeps it out), the shop's product page a little
   smaller; category and picture.
@@ -144,7 +150,7 @@ catalog's on Catalog, none on Inventory (`TabAction`, page_tabs.html):
   batches on the shelf stacked, the soonest best-before at the top: each
   batch's ID and how many, to its page; none with less than one unit;
   past its best-before and not closed in red, within `EXPIRY_SOON_DAYS`
-  (inventory/expiry.py) in orange. Add batch.
+  (inventory/expiry.py) in orange.
 
 **Catalog page** (no hero; a hidden page title): the category, the
 picture small at its right, then name, description and ingredients under

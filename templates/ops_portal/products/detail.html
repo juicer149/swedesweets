@@ -8,6 +8,6 @@
 {% block page_body %}
   {# Its tabs a little closer to the navbar, more room under them. #}
   <div class="product-page">
-    {% include "includes/ui/page_tabs.html" %}
+    {% include "includes/ui/page_tabs.html" with tabs_back_url=back_url tabs_back_label=back_label %}
   </div>
 {% endblock %}

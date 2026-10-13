@@ -3,7 +3,8 @@
   (label, weight), and at its right its batches on the shelf stacked, the
   soonest best-before at the top: each batch's ID and how many, linking
   to its page; past its best-before (and not closed) in red, within
-  inventory/expiry.py's EXPIRY_SOON_DAYS in orange. Add batch at the foot.
+  inventory/expiry.py's EXPIRY_SOON_DAYS in orange. Add batch is at the
+  tabs' right.
 {% endcomment %}
 <section class="product-section product-variants-tab" aria-labelledby="product-stock-title">
   <div class="form-section__head">
@@ -38,12 +39,3 @@
     {% endfor %}
   </ul>
 </section>
-
-{% if add_batch_href %}
-  <div class="form-actions page__actions product-actions">
-    <a class="button button--md button--solid button--tone-place button--with-icon" href="{{ add_batch_href }}">
-      <span class="button__icon" aria-hidden="true">{% include "includes/ui/icon.html" with name="inventory" only %}</span>
-      <span class="button__label">Add batch</span>
-    </a>
-  </div>
-{% endif %}

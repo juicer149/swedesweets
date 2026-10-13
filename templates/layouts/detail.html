@@ -6,7 +6,9 @@
     heading     block page_heading (usually includes/ui/status_heading.html)
     tabs        page_tabs from the view (includes/ui/page_tabs.html); a
                 form overrides block page_body to wrap them in its <form>
-    back link   back_url / back_label from the view
+    back link   back_url / back_label from the view: at the tabs' left
+                (to the page one came from, back_link.js), or under the
+                page when it has no tabs
 
   Each tab's template carries its own actions at its foot.
 {% endcomment %}
@@ -21,11 +23,12 @@
     {% endblock %}
 
     {% block page_body %}
-      {% include "includes/ui/page_tabs.html" %}
+      {% include "includes/ui/page_tabs.html" with tabs_back_url=back_url tabs_back_label=back_label %}
     {% endblock %}
 
+    {# With tabs, Back sits at their left (page_tabs.html); without, here. #}
     {% block page_back %}
-      {% if back_url %}
+      {% if back_url and not page_tabs %}
         <div class="page-actions__links page__back">
           <a class="quiet-link" href="{{ back_url }}">
             {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
@@ -41,6 +44,7 @@
 {% block scripts %}
   {{ block.super }}
   <script src="{% static 'js/tabs.js' %}" defer></script>
+  <script src="{% static 'js/back_link.js' %}" defer></script>
   <script src="{% static 'js/help_dialog.js' %}" defer></script>
   {% block page_scripts %}{% endblock %}
 {% endblock %}

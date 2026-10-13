@@ -119,11 +119,11 @@ fall back to the order they were added in.
   right its sales channels as chips, Business over Retail, each with its
   price beside it; why its weight is fixed). Catalog: the shop's page per
   language, a label over the page saying "In shop" or what keeps it out.
-  At the tabs' right "Edit", for the open tab: the product's form, the
-  catalog's (none on Inventory). Inventory: a card per variant,
+  Back at the tabs' left; at their right the open tab's action: "Edit"
+  (the product's form, the catalog's), "Add batch" on Inventory. Inventory: a card per variant,
   its batches on the shelf stacked at its right, the soonest best-before
   at the top (ID and how many, to the batch's page; expired in red, soon
-  in orange); Add batch.
+  in orange).
 - **Edit** has **Variants and offers**:
   - EUR / SEK as two small tabs over the cards (which currency's prices
     show);

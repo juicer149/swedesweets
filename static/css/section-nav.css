@@ -267,10 +267,10 @@
 
 
 /* =============================================================================
-   Tabs with an action at their right (page_tabs.html's tab_actions): the
-   tabs in the middle, the open tab's action (the product page's Edit) at
-   the right, one edge under both. On phones the action keeps only its
-   icon.
+   Tabs with Back at their left and the open tab's action at their right
+   (page_tabs.html: tabs_back_url, tab_actions): the tabs in the middle,
+   one edge under all three. On phones Back and the action keep only their
+   icons, the tabs at the left beside Back.
    ============================================================================= */
 
 .tabs-bar {
@@ -288,6 +288,16 @@
   border-bottom: 0;
 }
 
+.tabs-bar__back {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
 .tabs-bar__action {
   grid-column: 3;
   grid-row: 1;
@@ -301,18 +311,15 @@
 
 @media (max-width: 767px) {
   .tabs-bar {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .tabs-bar > .section-nav {
-    grid-column: 1;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-2);
   }
 
   .tabs-bar__action {
-    grid-column: 2;
     padding-inline: var(--space-2);
   }
 
+  .tabs-bar__back-label,
   .tabs-bar__action .button__label {
     position: absolute;
     width: 1px;

@@ -8,16 +8,26 @@
   id_prefix   optional, before the tab and panel ids, when the same tabs
               are on the page more than once (the catalog previews)
   tab_actions optional TabAction list: each at the nav's right while its
-              tab is open (the product page's Edit)
+              tab is open (the product page's Edit, Add batch)
+  tabs_back_url  optional: Back at the nav's left, to the page one came
+              from (back_link.js), else here; tabs_back_label its title
+              (layouts/detail.html passes the page's back_url, back_label)
 {% endcomment %}
 <div class="page-tabs" data-tabs>
-  {% if tab_actions %}<div class="tabs-bar">{% endif %}
+  {% if tab_actions or tabs_back_url %}<div class="tabs-bar">{% endif %}
+  {% if tabs_back_url %}
+    {# Back to where one came from (back_link.js), else to tabs_back_url; on phones the arrow alone. #}
+    <a class="quiet-link tabs-bar__back" href="{{ tabs_back_url }}" title="{{ tabs_back_label|default:'Back' }}" data-back-link>
+      {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+      <span class="tabs-bar__back-label">Back</span>
+    </a>
+  {% endif %}
   <nav class="section-nav" aria-label="{{ tabs_label|default:'Sections' }}" role="tablist">
     {% for tab in page_tabs %}
       {% include "includes/ui/section_tab.html" with key=tab.key label=tab.label icon=tab.icon is_active=forloop.first tab_id=id_prefix|add:"tab-"|add:tab.key panel_id=id_prefix|add:"panel-"|add:tab.key only %}
     {% endfor %}
   </nav>
-  {% if tab_actions %}
+  {% if tab_actions or tabs_back_url %}
     {% for action in tab_actions %}
       {# Shown while its tab is open (tabs.js); without script, the first tab's. #}
       <a class="button button--sm button--outline button--tone-place button--with-icon tabs-bar__action" href="{{ action.href }}" data-tab-action="{{ action.tab }}"{% if action.tab != page_tabs.0.key %} hidden{% endif %}>

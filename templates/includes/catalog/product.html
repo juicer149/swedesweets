@@ -117,7 +117,8 @@
     {% if page_tabs %}
       <div class="product__tabs">
         {% trans "Product information" as tabs_label %}
-        {% include "includes/ui/page_tabs.html" with page_tabs=page_tabs tabs_label=tabs_label %}
+        {# Not the page's own Back and actions (the ops product page's preview sits inside them). #}
+        {% include "includes/ui/page_tabs.html" with page_tabs=page_tabs tabs_label=tabs_label tab_actions=None tabs_back_url=None %}
       </div>
     {% endif %}
 

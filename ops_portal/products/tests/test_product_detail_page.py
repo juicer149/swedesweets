@@ -80,20 +80,35 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
     )
     assert f'href="{edit_url}#product"' in content
     assert f'href="{catalog_url}"' in content
-    # Edit at the section nav's right, the open tab's: the product's form
-    # on Product, the catalog's on Catalog, none on Inventory.
+    # At the section nav's right, the open tab's action: Edit (the
+    # product's form on Product, the catalog's on Catalog), Add batch on
+    # Inventory.
+    add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert [
-        (action.tab, action.href) for action in response.context["tab_actions"]
+        (action.tab, action.label, action.href)
+        for action in response.context["tab_actions"]
     ] == [
-        ("product", f"{edit_url}#product"),
-        ("catalog", catalog_url),
+        ("product", "Edit", f"{edit_url}#product"),
+        ("catalog", "Edit", catalog_url),
+        ("inventory", "Add batch", add_batch_url),
     ]
+    # No Edit product or Add batch at the tabs' feet.
+    assert "Edit product</a>" not in content
+    assert "product-actions" not in content
+    # Back at the nav's left: to the page before (back_link.js), else the
+    # product list; no Back under the page.
+    products_url = reverse("ops_products:index")
+    assert (
+        f'class="quiet-link tabs-bar__back" href="{products_url}"' in content
+    )
+    assert "data-back-link" in content
+    assert "page__back" not in content
+    assert "js/back_link.js" in content
     assert f'href="{catalog_url}" data-tab-action="catalog" hidden' in content
     assert content.index('data-tab-action="product"') < content.index(
         'id="panel-product"'
     )
 
-    add_batch_url = f"{reverse('ops_inventory:create')}?product={product.pk}"
     assert f'href="{add_batch_url}"' in content
     assert f'href="{reverse("ops_products:index")}"' in content
 

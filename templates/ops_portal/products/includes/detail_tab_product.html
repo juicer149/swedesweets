@@ -3,7 +3,8 @@
   Variants and offers as the edit page shows them, in reading: a card per
   variant in order: label, weight, and at its right its sales channels,
   Business over Retail, each with its price beside it when sold in it;
-  why its weight is fixed. Stock and batches are on the Inventory tab.
+  why its weight is fixed. Stock and batches are on the Inventory tab;
+  Edit is at the tabs' right.
 {% endcomment %}
 {% include "ops_portal/products/includes/product_view_card.html" %}
 
@@ -41,9 +42,3 @@
     {% endfor %}
   </ul>
 </section>
-
-{% if edit_action %}
-  <div class="form-actions page__actions product-actions">
-    <a class="button button--md button--solid button--tone-place" href="{{ edit_action.href }}#variants">Edit product</a>
-  </div>
-{% endif %}

@@ -249,16 +249,29 @@ class ProductDetailContext:
 
     @property
     def tab_actions(self) -> tuple[TabAction, ...]:
-        """Edit at the section nav's right: the product's form on the
-        Product tab, the catalog's on the Catalog tab; none on Inventory."""
+        """At the section nav's right, the open tab's: Edit (the product's
+        form on Product, the catalog's on Catalog), Add batch on
+        Inventory."""
 
-        if self.edit_action is None:
-            return ()
+        actions = []
 
-        return (
-            TabAction(tab="product", href=f"{self.edit_action.href}#product"),
-            TabAction(tab="catalog", href=self.edit_catalog_href),
-        )
+        if self.edit_action is not None:
+            actions += [
+                TabAction(tab="product", href=f"{self.edit_action.href}#product"),
+                TabAction(tab="catalog", href=self.edit_catalog_href),
+            ]
+
+        if self.add_batch_href:
+            actions.append(
+                TabAction(
+                    tab="inventory",
+                    href=self.add_batch_href,
+                    label="Add batch",
+                    icon="plus",
+                )
+            )
+
+        return tuple(actions)
 
     @property
     def edit_catalog_href(self) -> str:
