@@ -17,9 +17,10 @@
     </nav>
 
     {% if edit_action %}
-      <a class="catalog-preview__edit" href="{{ edit_catalog_href }}">
-        {% include "includes/ui/icon_block.html" with name="pencil" size="sm" only %}
-        <span>Edit catalog</span>
+      {# The list pages' small yellow-edged action (includes/ui/list_action.html). #}
+      <a class="button button--sm button--outline button--tone-place button--with-icon catalog-preview__edit" href="{{ edit_catalog_href }}">
+        <span class="button__icon" aria-hidden="true">{% include "includes/ui/icon.html" with name="pencil" only %}</span>
+        <span class="button__label">Edit catalog</span>
       </a>
     {% endif %}
   </div>

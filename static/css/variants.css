@@ -598,19 +598,29 @@
 }
 
 /* -----------------------------------------------------------------------------
-   The product page (detail_tab_variants.html): the variants as on the
-   edit page, to read: a card each (label, weight, its sales channels as
-   chips, stock; under them its prices in the channels it is sold in).
+   The product page: the variants as on the edit page, to read, a card
+   each. On the Product tab (detail_tab_product.html): label, weight, its
+   sales channels as chips, its prices in a tab under the card at the
+   left. On the Inventory tab (detail_tab_inventory.html): label, weight,
+   how many in stock, its batches in a tab under the card at the right.
    ----------------------------------------------------------------------------- */
 
-/* The tab's help "?" at its top right. */
-.product-variants-tab {
+.product-section.product-variants-tab {
+  margin-top: var(--space-10);
+}
+
+.product-variants-tab .form-section__head {
+  margin-bottom: var(--space-4);
+}
+
+/* The Inventory tab starts with its section. */
+.page-tabs__panel > .product-section.product-variants-tab:first-child {
   margin-top: 0;
 }
 
 .variant-views {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -648,14 +658,15 @@
   gap: var(--space-2);
 }
 
-/* The sales channels, as on the edit page but not to be clicked. */
+/* The sales channels, as on the edit page but not to be clicked: off in
+   grey, on in green. */
 .variant-view__chip {
   display: inline-flex;
   align-items: center;
   padding: 3px 11px;
-  color: var(--color-status-muted-text);
-  background: rgb(var(--color-status-muted) / 0.06);
-  border: 1px solid rgb(var(--color-status-muted) / 0.22);
+  color: var(--color-neutral-700);
+  background: rgb(var(--color-status-muted) / 0.12);
+  border: 1px solid rgb(var(--color-status-muted) / 0.34);
   border-radius: var(--radius-pill);
   font-size: var(--font-size-12);
   font-weight: 700;
@@ -663,8 +674,8 @@
 
 .variant-view__chip--on {
   color: var(--color-status-success-text);
-  background: rgb(var(--color-status-success) / 0.11);
-  border-color: rgb(var(--color-status-success) / 0.32);
+  background: rgb(var(--color-status-success) / 0.2);
+  border-color: rgb(var(--color-status-success) / 0.5);
 }
 
 .variant-view__paused {
@@ -676,6 +687,7 @@
 }
 
 .variant-view__stock {
+  grid-column: 4;
   color: var(--color-neutral-800);
   font-weight: 700;
   text-align: right;
@@ -693,152 +705,6 @@
   color: var(--color-neutral-600);
 }
 
-/* The card's second line: its prices at the left, its batches on the
-   shelf at the right. */
-.variant-view__foot {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
-  align-items: start;
-  gap: var(--space-2) var(--space-4);
-}
-
-/* Below the product's card on the product page. */
-.product-variants-tab {
-  margin-top: var(--space-6);
-}
-
-.variant-view__prices {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-5);
-  margin: 0;
-  padding-block: 6px;
-  color: var(--color-neutral-800);
-  font-size: var(--font-size-14);
-  font-weight: 700;
-}
-
-/* -----------------------------------------------------------------------------
-   A variant's batches on the shelf (detail_tab_product.html, batch_link.html),
-   on light blue: one as a link, several behind a button that slides the
-   list open (smooth-details.js). One past its best-before in red.
-   ----------------------------------------------------------------------------- */
-
-.variant-batches {
-  grid-column: 2;
-  min-width: min(100%, 17rem);
-  background: var(--color-primary-100);
-  border: 1px solid var(--color-primary-200);
-  border-radius: 12px;
-}
-
-.variant-batches--many {
-  overflow: hidden;
-}
-
-.variant-batches__toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 6px 12px;
-  color: var(--color-primary-900);
-  font-size: var(--font-size-14);
-  font-weight: 700;
-  list-style: none;
-  cursor: pointer;
-}
-
-.variant-batches__toggle::-webkit-details-marker {
-  display: none;
-}
-
-.variant-batches__toggle:focus-visible {
-  outline: 2px solid var(--color-accent-600);
-  outline-offset: 2px;
-  border-radius: 12px;
-}
-
-.variant-batches__alert {
-  padding: 1px 8px;
-  color: var(--color-status-danger-text);
-  background: rgb(var(--color-status-danger) / 0.1);
-  border-radius: var(--radius-pill);
-  font-size: var(--font-size-12);
-}
-
-.variant-batches__chevron {
-  margin-left: auto;
-  transition: transform var(--motion-fast);
-}
-
-.variant-batches[open] .variant-batches__chevron {
-  transform: rotate(180deg);
-}
-
-.variant-batches__list {
-  display: grid;
-  margin: 0;
-  padding: 0 0 4px;
-  list-style: none;
-  border-top: 1px solid var(--color-primary-200);
-}
-
-.variant-batch {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: var(--space-3);
-  padding: 6px 12px;
-  color: var(--color-primary-900);
-  font-size: var(--font-size-14);
-  text-decoration: none;
-  border-radius: 12px;
-}
-
-.variant-batch:hover,
-.variant-batch:focus-visible {
-  background: color-mix(in srgb, var(--color-primary-200) 55%, transparent);
-}
-
-.variant-batch:focus-visible {
-  outline: 2px solid var(--color-accent-600);
-  outline-offset: -2px;
-}
-
-.variant-batch__id {
-  font-weight: 700;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
-  text-underline-offset: 3px;
-}
-
-.variant-batch__date {
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-12);
-  font-weight: 500;
-}
-
-.variant-batch__quantity {
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.variant-batch--expired,
-.variant-batch--expired .variant-batch__date {
-  color: var(--color-status-danger-text);
-}
-
-.variant-batch--expired .variant-batch__date {
-  font-weight: 700;
-}
-
-.variant-view__caption {
-  margin-right: var(--space-1);
-  color: var(--color-neutral-600);
-  font-weight: 500;
-}
-
 @media (max-width: 640px) {
   .variant-view__card {
     grid-template-columns: auto auto minmax(0, 1fr);
@@ -849,18 +715,169 @@
     grid-row: 2;
   }
 
+  /* Nothing in it (the Inventory tab, not paused): no empty row. */
+  .variant-view__channels:empty {
+    display: none;
+  }
+
   .variant-view__stock {
     grid-column: 3;
     grid-row: 1;
   }
+}
 
-  .variant-view__foot {
-    grid-row: 3;
-    grid-template-columns: minmax(0, 1fr);
-  }
+/* -----------------------------------------------------------------------------
+   A tab hanging under a variant's card, like a folder's: its name with a
+   chevron, opening to what it holds (smooth-details.js slides it). Both
+   tabs look and move alike; the prices hang at the left in the card's
+   yellow, the batches at the right in blue, each reaching to the middle.
+   ----------------------------------------------------------------------------- */
 
-  .variant-batches {
-    grid-column: 1;
+.card-tab {
+  --card-tab-edge: color-mix(in srgb, var(--color-accent-600) 38%, transparent);
+  --card-tab-text: var(--color-neutral-800);
+
+  position: relative;
+  width: fit-content;
+  min-width: 11rem;
+  max-width: calc(50% - var(--space-4));
+  /* Tucked under the card's edge. */
+  margin-top: -1px;
+  color: var(--card-tab-text);
+  border: 1px solid var(--card-tab-edge);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+}
+
+.card-tab--start {
+  margin-left: var(--space-4);
+}
+
+.card-tab--end {
+  margin-left: auto;
+  margin-right: var(--space-4);
+}
+
+.card-tab--batches {
+  --card-tab-edge: var(--color-primary-300);
+  --card-tab-text: var(--color-primary-800);
+}
+
+.card-tab__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 5px 12px 6px;
+  font-size: var(--font-size-12);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  list-style: none;
+  cursor: pointer;
+}
+
+.card-tab__toggle::-webkit-details-marker {
+  display: none;
+}
+
+.card-tab__toggle:focus-visible {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: -2px;
+  border-radius: 0 0 12px 12px;
+}
+
+.card-tab__chevron {
+  margin-left: auto;
+  transition: transform var(--motion-fast);
+}
+
+.card-tab[open] .card-tab__chevron {
+  transform: rotate(180deg);
+}
+
+.card-tab__alert {
+  padding: 0 7px;
+  color: var(--color-status-danger-text);
+  border: 1px solid rgb(var(--color-status-danger) / 0.45);
+  border-radius: var(--radius-pill);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.card-tab__body {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0 12px 10px;
+  list-style: none;
+}
+
+/* The prices: channel, then the amounts, clear against the page. */
+.variant-prices__row {
+  display: grid;
+  grid-template-columns: 5rem auto;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.variant-prices dt {
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-14);
+  font-weight: 500;
+}
+
+.variant-prices dd {
+  margin: 0;
+  color: var(--color-neutral-900);
+  font-size: var(--font-size-16);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A batch: its ID, then how many, to its page. */
+.variant-batch {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 2px 0;
+  color: inherit;
+  font-size: var(--font-size-14);
+  text-decoration: none;
+}
+
+.variant-batch__id {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+.variant-batch:hover .variant-batch__id,
+.variant-batch:focus-visible .variant-batch__id {
+  text-decoration-color: currentColor;
+}
+
+.variant-batch:focus-visible {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.variant-batch__quantity {
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Past its best-before and not closed. */
+.variant-batch--expired {
+  color: var(--color-status-danger-text);
+}
+
+@media (max-width: 640px) {
+  .card-tab {
+    max-width: calc(100% - 2 * var(--space-4));
   }
 }
 

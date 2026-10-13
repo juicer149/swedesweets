@@ -40,8 +40,9 @@ from products.models import (
 )
 
 PRODUCT_DETAIL_TABS = (
-    # The product and what is sold (its variants, their prices and
-    # stock), then how the shop shows it.
+    # The product and what is sold (its variants and their prices), how
+    # the shop shows it, then what is on the shelf (each variant's stock
+    # and batches).
     PageTab(
         key="product",
         label="Product",
@@ -53,6 +54,12 @@ PRODUCT_DETAIL_TABS = (
         label="Catalog",
         icon="image",
         template="ops_portal/products/includes/detail_tab_catalog.html",
+    ),
+    PageTab(
+        key="inventory",
+        label="Inventory",
+        icon="inventory",
+        template="ops_portal/products/includes/detail_tab_inventory.html",
     ),
 )
 
@@ -112,7 +119,8 @@ class ChannelPrice:
 
 @dataclass(frozen=True, slots=True)
 class BatchLink:
-    """A batch on the shelf, from its variant's card: to its page."""
+    """A batch on the shelf, in its variant's card on the Inventory tab:
+    to its page."""
 
     batch_id: str
     best_before: date
@@ -125,7 +133,8 @@ class BatchLink:
 @dataclass(frozen=True, slots=True)
 class VariantCard:
     """A variant on the product page, as its card on the edit page: label,
-    weight, sales channels, its prices, stock."""
+    weight, sales channels, its prices (its stock is on the Inventory
+    tab: VariantStock)."""
 
     label: str
     weight_label: str
@@ -134,12 +143,21 @@ class VariantCard:
     paused: bool
     # Its prices in the channels it is sold in.
     prices: tuple[ChannelPrice, ...]
-    stock_label: str
-    in_stock: bool
-    # Its batches on the shelf, the soonest best-before first.
-    batches: tuple[BatchLink, ...]
     # Stock or orders: its weight can no longer change.
     weight_fixed: bool
+
+
+@dataclass(frozen=True, slots=True)
+class VariantStock:
+    """A variant on the product page's Inventory tab: how many are in
+    stock, and its batches on the shelf, the soonest best-before first."""
+
+    label: str
+    weight_label: str
+    paused: bool
+    stock_label: str
+    in_stock: bool
+    batches: tuple[BatchLink, ...]
 
     @property
     def has_expired_batch(self) -> bool:
@@ -181,6 +199,7 @@ class ProductDetailContext:
         ...,
     ]
     variant_cards: tuple[VariantCard, ...]
+    variant_stocks: tuple[VariantStock, ...]
     catalog_previews: tuple[CatalogPagePreview, ...]
     in_shop: bool
     # The Catalog tab's label: "In shop", or what keeps it out.
@@ -206,6 +225,7 @@ class ProductDetailContext:
                 self.attribute_tags
             ),
             "variant_cards": self.variant_cards,
+            "variant_stocks": self.variant_stocks,
             "catalog_previews": self.catalog_previews,
             "in_shop": self.in_shop,
             "shop_label": self.shop_label,
@@ -263,9 +283,12 @@ def build_product_detail_context(
             )
         ),
         variant_cards=build_variant_cards(
-            product=product,
             variants=variants,
             prices_by_channel=prices_by_channel,
+        ),
+        variant_stocks=build_variant_stocks(
+            product=product,
+            variants=variants,
             stock_by_variant=stock_by_variant,
             batches_by_variant=batches_by_variant or {},
             today=today or timezone.localdate(),
@@ -354,12 +377,8 @@ ONLY_VARIANT_NAME = "One variant"
 
 def build_variant_cards(
     *,
-    product: Product,
     variants: list[ProductVariant],
     prices_by_channel: dict[str, dict[int, CommercialPrice]],
-    stock_by_variant: dict[int, int],
-    batches_by_variant: dict[int, list[InventoryBatch]],
-    today: date,
 ) -> tuple[VariantCard, ...]:
     """The product's variants in order, as on the edit page, each with its
     prices in the channels it is sold in."""
@@ -376,8 +395,6 @@ def build_variant_cards(
             and _enabled(prices_by_channel.get(channel, {}), variant)
             for channel, key, _label in CHANNELS
         }
-        stock = stock_by_variant.get(variant.pk, 0)
-
         cards.append(
             VariantCard(
                 label=variant.label or ONLY_VARIANT_NAME,
@@ -391,6 +408,37 @@ def build_variant_cards(
                     for _channel, key, label in CHANNELS
                     if sold[key]
                 ),
+                weight_fixed=(
+                    variant.batches.exists()
+                    or variant.order_lines.exists()
+                ),
+            )
+        )
+
+    return tuple(cards)
+
+
+def build_variant_stocks(
+    *,
+    product: Product,
+    variants: list[ProductVariant],
+    stock_by_variant: dict[int, int],
+    batches_by_variant: dict[int, list[InventoryBatch]],
+    today: date,
+) -> tuple[VariantStock, ...]:
+    """The product's variants in order, each with its stock and its
+    batches on the shelf (a batch past its best-before: expired)."""
+
+    stocks = []
+
+    for variant in variants:
+        stock = stock_by_variant.get(variant.pk, 0)
+
+        stocks.append(
+            VariantStock(
+                label=variant.label or ONLY_VARIANT_NAME,
+                weight_label=f"{variant.weight_per_unit} g",
+                paused=not variant.active,
                 stock_label=product.stock_quantity_label(stock),
                 in_stock=stock > 0,
                 batches=tuple(
@@ -408,14 +456,10 @@ def build_variant_cards(
                     )
                     for batch in batches_by_variant.get(variant.pk, [])
                 ),
-                weight_fixed=(
-                    variant.batches.exists()
-                    or variant.order_lines.exists()
-                ),
             )
         )
 
-    return tuple(cards)
+    return tuple(stocks)
 
 
 def _enabled(

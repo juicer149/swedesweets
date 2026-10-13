@@ -31,35 +31,41 @@ def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
 
     assert response.status_code == 200
     assert response.context["status_key"] == "active"
-    # Two tabs: the product and what is sold, then the catalog.
+    # The product and what is sold, the catalog, then what is on the shelf.
     assert [tab.key for tab in response.context["page_tabs"]] == [
         "product",
         "catalog",
+        "inventory",
     ]
-    (card,) = response.context["variant_cards"]
-    assert card.stock_label == product.stock_quantity_label(12)
-    assert card.in_stock is True
+    (stock,) = response.context["variant_stocks"]
+    assert stock.stock_label == product.stock_quantity_label(12)
+    assert stock.in_stock is True
     # No hero: the product's card first in the Product tab, without stock.
     assert "product-hero" not in content
     assert 'class="product-card product-view"' in content
     assert content.index('role="tablist"') < content.index("product-view")
     assert content.index("product-view") < content.index("variant-view__card")
     assert "total_stock" not in response.context
-    # A card per variant (its channels as chips, its stock in stock), with
-    # the section's help.
+    # A card per variant (its channels as chips, its prices in a tab
+    # under it), with the section's help; its stock on the Inventory tab.
     assert "variant-view__chip" in content
-    assert "in stock" in content
-    assert "on the shelf" not in content
     assert 'data-help-open="variants-help"' in content
     assert "demand" not in response.context
-    # Its only batch, as a link on the card (no list to open).
-    (batch_link,) = card.batches
+    assert content.index('id="panel-product"') < content.index(
+        "variant-view__chip"
+    ) < content.index('id="panel-inventory"')
+    assert content.index('id="panel-inventory"') < content.index(
+        "<small>in stock</small>"
+    )
+    # Its batch, in the tab under its card, to the batch's page.
+    (batch_link,) = stock.batches
     assert batch_link.batch_id == "B-501"
     assert batch_link.expired is False
+    assert "card-tab--batches" in content
+    assert "1 batch" in content
     batch = product.batches.get()
     batch_url = reverse("ops_inventory:detail", kwargs={"batch_pk": batch.pk})
     assert f'href="{batch_url}"' in content
-    assert "variant-batches--many" not in content
 
     edit_url = reverse("ops_products:edit", kwargs={"product_pk": product.pk})
     catalog_url = reverse(
@@ -112,14 +118,14 @@ def test_variant_card_lists_its_batches_on_the_shelf(client):
     )
     content = response.content.decode()
 
-    (card,) = response.context["variant_cards"]
+    (stock,) = response.context["variant_stocks"]
     # The soonest best-before first; none with less than one unit.
-    assert [batch.batch_id for batch in card.batches] == ["B-OLD", "B-LATER"]
-    assert [batch.expired for batch in card.batches] == [True, False]
-    assert card.has_expired_batch is True
+    assert [batch.batch_id for batch in stock.batches] == ["B-OLD", "B-LATER"]
+    assert [batch.expired for batch in stock.batches] == [True, False]
+    assert stock.has_expired_batch is True
     assert "B-EMPTY" not in content
-    # Several: behind a button that opens the list; the expired one in red.
-    assert "variant-batches--many" in content
+    # In the tab under the card; the expired one in red.
+    assert "2 batches" in content
     assert "variant-batch--expired" in content
     for batch in (later, expired):
         batch_url = reverse(

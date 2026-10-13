@@ -112,15 +112,17 @@ fall back to the order they were added in.
 
 ## Ops
 
-- **Product page**: tabs **Product** and **Catalog**. Product: the
-  product's card (picture, brand over name, status, catalog ID, SKU,
-  manufacturer, attributes; a pencil in its corner), then **Variants and
-  offers**: a card per variant in order (weight, its sales channels as
-  chips, how many in stock; under them its prices at the left and its
-  batches on the shelf at the right, each linking to its page, one past
-  its best-before in red; why its weight is fixed). Catalog: the shop's
-  page per language, "Edit catalog" beside the languages, a label over
-  the page saying "In shop" or what keeps it out.
+- **Product page**: tabs **Product**, **Catalog** and **Inventory**.
+  Product: the product's card (picture, brand over name, status, catalog
+  ID, SKU, manufacturer, attributes; a pencil in its corner), then
+  **Variants and offers**: a card per variant in order (weight, its sales
+  channels as chips; why its weight is fixed), its prices in a tab
+  hanging under it at the left. Catalog: the shop's page per language,
+  "Edit catalog" beside the languages, a label over the page saying "In
+  shop" or what keeps it out. Inventory: a card per variant with how many
+  are in stock, its batches on the shelf in a tab hanging under it at the
+  right (ID and how many, to the batch's page; one past its best-before
+  in red); Add batch.
 - **Edit** has **Variants and offers**:
   - EUR / SEK as two small tabs over the cards (which currency's prices
     show);

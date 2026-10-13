@@ -99,10 +99,15 @@ def test_the_product_page_lists_its_variants_with_their_stock(client):
 
     response = client.get(_detail_url(product))
     small, medium = response.context["variant_cards"]
+    small_stock, medium_stock = response.context["variant_stocks"]
 
     assert (small.label, medium.label) == ("S", "M")
     # S has the batch (so its weight is fixed); M has none.
-    assert (small.stock_label, medium.stock_label) == ("4 boxes", "0 boxes")
+    assert (small_stock.stock_label, medium_stock.stock_label) == (
+        "4 boxes",
+        "0 boxes",
+    )
+    assert medium_stock.paused is True
     assert (small.weight_fixed, medium.weight_fixed) == (True, False)
     assert (small.paused, medium.paused) == (False, True)
     assert "Weight fixed: it has stock or orders." in response.content.decode()

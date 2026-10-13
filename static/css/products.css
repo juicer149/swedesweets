@@ -477,7 +477,7 @@
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: var(--space-3);
-  margin-block: var(--space-5) var(--space-4);
+  margin-block: 0 var(--space-6);
   border-bottom: 1px solid var(--color-neutral-200);
 }
 
@@ -487,42 +487,22 @@
   border-bottom: 0;
 }
 
+/* The list pages' small yellow-edged action (buttons.css). */
 .catalog-preview__edit {
   grid-column: 3;
   justify-self: end;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-1);
-  padding: 5px 12px;
-  color: var(--color-neutral-700);
-  background: var(--color-white);
-  border: var(--border-subtle);
-  border-radius: var(--radius-pill);
-  font-size: var(--font-size-14);
-  font-weight: 700;
-  text-decoration: none;
-  white-space: nowrap;
-  transition:
-    color var(--motion-fast),
-    box-shadow var(--motion-fast);
-}
-
-.catalog-preview__edit:hover,
-.catalog-preview__edit:focus-visible {
-  color: var(--color-primary-800);
-  box-shadow: var(--shadow-accent-glow);
+  margin-bottom: var(--space-2);
 }
 
 .catalog-preview__shop {
   display: flex;
   align-items: center;
   width: fit-content;
-  margin: 0 auto var(--space-3);
+  margin: 0 auto var(--space-5);
   padding: 3px 11px;
-  color: var(--color-status-muted-text);
-  background: rgb(var(--color-status-muted) / 0.06);
-  border: 1px solid rgb(var(--color-status-muted) / 0.22);
+  color: var(--color-neutral-700);
+  background: rgb(var(--color-status-muted) / 0.12);
+  border: 1px solid rgb(var(--color-status-muted) / 0.34);
   border-radius: var(--radius-pill);
   font-size: var(--font-size-12);
   font-weight: 700;
@@ -530,8 +510,8 @@
 
 .catalog-preview__shop--in {
   color: var(--color-status-success-text);
-  background: rgb(var(--color-status-success) / 0.11);
-  border-color: rgb(var(--color-status-success) / 0.32);
+  background: rgb(var(--color-status-success) / 0.2);
+  border-color: rgb(var(--color-status-success) / 0.5);
 }
 
 @media (max-width: 640px) {
@@ -547,10 +527,10 @@
 
   .catalog-preview__edit {
     grid-column: 2;
-    padding: 7px;
   }
 
-  .catalog-preview__edit span:last-child {
+  /* The pencil alone. */
+  .catalog-preview__edit .button__label {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -558,4 +538,19 @@
     clip: rect(0 0 0 0);
     white-space: nowrap;
   }
+}
+
+
+/* =============================================================================
+   The product page's tabs (detail.html): a little closer to the navbar
+   than a form's first section, more room between them and what they
+   open to.
+   ============================================================================= */
+
+.page-section--top .page > .visually-hidden:first-child + .product-page {
+  margin-top: var(--space-2);
+}
+
+.product-page > .page-tabs > .page-tabs__panel {
+  padding-top: var(--space-8);
 }
