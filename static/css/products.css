@@ -105,20 +105,18 @@
 
 /* The shop's tile as customers see it: its own width, not a grid's, and
    not to be clicked (inert). */
-/* The Catalog tab: the shop's product page, a little smaller, in a frame
-   on the shop's own background, under its language tabs. */
+/* The Catalog tab: the shop's product page, smaller, in a frame on the
+   shop's own background, under its language tabs. */
 .catalog-preview {
   margin-bottom: var(--space-6);
 }
 
-/* Wider than the page's column where the screen allows, like a small
-   window onto the shop: its page is two columns up to 860px wide. */
+/* A third smaller than before and inside the page's column, so it reads
+   as part of the page: the shop's page drawn smaller (zoom), its two
+   columns kept. */
 .catalog-preview__frame {
-  --frame-width: clamp(18rem, 100vw - 2 * var(--space-4), 52rem);
-
-  width: var(--frame-width);
-  margin: var(--space-3) calc((100% - var(--frame-width)) / 2) 0;
-  padding-inline: clamp(var(--space-3), 3vw, var(--space-8));
+  margin-top: var(--space-3);
+  padding-inline: clamp(var(--space-2), 2vw, var(--space-5));
   border: 1px solid var(--color-neutral-200);
   border-radius: var(--radius-md);
   background: var(--color-neutral-50);
@@ -127,6 +125,7 @@
 /* The page's own padding and glow are the shop's, not the frame's. */
 .catalog-preview__frame .page-section {
   padding-block: var(--space-4);
+  zoom: 0.8;
 }
 
 .catalog-preview__frame .page::before {
@@ -135,7 +134,7 @@
 
 @media (min-width: 768px) {
   .catalog-preview__frame .page-section {
-    zoom: 0.85;
+    zoom: 0.57;
   }
 }
 
