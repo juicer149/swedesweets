@@ -19,6 +19,7 @@ from common.catalog.contracts import (
 from common.catalog.viewmodels import (
     CatalogOfferVM,
     ProductCardVM,
+    catalog_price_label,
     offer_choice_label,
 )
 from common.ui import UiText
@@ -331,9 +332,7 @@ def _price_label(
     if offer.price is None:
         return None
 
-    return (
-        f"€{offer.price:.2f}"
-    )
+    return catalog_price_label(offer.price)
 
 
 # Under ten a shop sees how many are left; above it only "In stock".

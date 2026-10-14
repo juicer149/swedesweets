@@ -21,7 +21,11 @@ from business_portal.orders.product_presentation import (
 from carts.selectors import units_in_cart_by_product_id
 from carts.services import add_cart_line, create_cart
 from common.catalog.contracts import CatalogOfferKind
-from common.catalog.viewmodels import ProductCardVM, offer_choice_label
+from common.catalog.viewmodels import (
+    ProductCardVM,
+    catalog_price_label,
+    offer_choice_label,
+)
 from common.channels import SalesChannel
 from common.ui import UiText
 from inventory.tests.factories import batch_factory
@@ -246,6 +250,9 @@ def test_a_card_with_several_sizes_has_a_size_dropdown():
     ] == [("S", False), ("M", False), ("L", True)]
     # The cheapest size's price, "from" as the sizes differ.
     assert card.price_tag.price_label == "from €2.50"
+    # Whole prices without cents.
+    assert catalog_price_label(Decimal("50.00")) == "€50"
+    assert catalog_price_label(Decimal("4.90")) == "€4.90"
 
     one_size = _card(card.offers[:1])
     assert one_size.has_size_choice is False

@@ -19,6 +19,7 @@ from common.catalog.contracts import (
 from common.catalog.viewmodels import (
     CatalogOfferVM,
     ProductCardVM,
+    catalog_price_label,
     offer_choice_label,
 )
 from common.ui import UiText
@@ -270,7 +271,7 @@ def _price_label(offer: CatalogOffer) -> str | None:
     if offer.price is None:
         return None
 
-    return f"€{offer.price:.2f}"
+    return catalog_price_label(offer.price)
 
 
 def _availability_label(

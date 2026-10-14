@@ -9,6 +9,16 @@ from common.page_tabs import PageTab
 from common.ui import UiText
 
 
+def catalog_price_label(price: Decimal) -> str:
+    """A catalog price: "€50" when it is whole, "€12.50" otherwise (carts,
+    checkout and mails keep their cents)."""
+
+    if price == price.to_integral_value():
+        return f"€{price:.0f}"
+
+    return f"€{price:.2f}"
+
+
 @dataclass(frozen=True, slots=True)
 class CatalogOfferVM:
     """Presentation contract for one selectable catalog offer."""
