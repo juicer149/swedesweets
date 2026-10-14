@@ -958,28 +958,6 @@
   line-height: 1.65;
 }
 
-/* A card's page opened in place (catalog.js): a row of its own across
-   the wall, a little apart from the rows above and below; the card's own
-   place stays, empty, until the page folds back into it. */
-.tiles__detail {
-  grid-column: 1 / -1;
-  margin-block: var(--space-6);
-  scroll-margin-top: calc(var(--detail-top, 0px) + var(--space-4));
-}
-
-.tiles__detail .page-section {
-  padding: 0;
-}
-
-.tiles__detail .page.product {
-  width: min(100%, 860px);
-  margin-inline: auto;
-}
-
-.tile--away > * {
-  visibility: hidden;
-}
-
 /* The wall's foot while the next cards come: the three dots, then the
    crown (as at login and on orders). */
 .catalog__more {

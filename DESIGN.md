@@ -201,12 +201,11 @@ above it, beside it the card's label scaled up (the name breaks as on the
 card): the name on the yellow band, the category, size | how many, the
 chosen size's special offer to tick, the stock, the round cart button on
 its foot; Description and Ingredients under the label, as wide as it). On
-the catalog a card opens its page with its own address (catalog.js): on
-a computer in place, a row of its own under the card's row (the card's
-place left empty), the label folding to its band, the picture, tag,
-badge, band and cart button floating there (a view transition) and the
-label unfolding, then the tabs' nav, then the text; one open at a time,
-closing the same backwards. On a phone it opens over the wall. The ×
+the catalog a card opens its page over the wall, with its own address
+(catalog.js): on a computer the label folds to its band, the picture,
+tag, badge and band float to their places (a view transition) and the
+label unfolds; closing is the same backwards, the wall where it was. A
+phone, reduced motion or no view transitions: the page just shows. The ×
 above the picture goes back; there is no Back link at the foot. The channel's pages only say where the form posts and what its
 button says. CSS in `static/css/catalog.css`.
 
