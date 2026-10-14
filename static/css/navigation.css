@@ -272,9 +272,9 @@
 
   /* the navbar's blue with a light yellow ring and a yellow cart; filled
      yellow when pointed at or open */
-  color: var(--color-accent-600);
+  color: var(--color-accent-300);
   background: var(--color-primary-600);
-  border: 1.75px solid var(--color-accent-300);
+  border: 1.25px solid var(--color-accent-300);
   border-radius: var(--radius-pill);
 
   cursor: pointer;
