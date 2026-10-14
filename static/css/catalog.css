@@ -824,11 +824,22 @@
   border-radius: 10px;
 }
 
-.product__tabs {
-  transition: opacity 260ms ease 120ms, translate 260ms ease 120ms;
+/* Unfolding: the tabs' nav right after the label, then the text. */
+.product__tabs .section-nav,
+.product__tabs .page-tabs__panel {
+  transition: opacity 240ms ease, translate 240ms ease;
 }
 
-.product--folded .product__tabs {
+.product__tabs .section-nav {
+  transition-delay: 220ms;
+}
+
+.product__tabs .page-tabs__panel {
+  transition-delay: 420ms;
+}
+
+.product--folded .product__tabs .section-nav,
+.product--folded .product__tabs .page-tabs__panel {
   opacity: 0;
   translate: 0 -0.5rem;
   transition-delay: 0s;
