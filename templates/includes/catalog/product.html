@@ -37,7 +37,7 @@
         {% if image_url %}
           <img class="product__image" src="{{ image_url }}" alt="{{ product_name }}" style="view-transition-name: product-{{ product.id }}-picture">
         {% else %}
-          <span class="product__image product__image--empty" aria-hidden="true" style="view-transition-name: product-{{ product.id }}-picture"></span>
+          <span class="product__image product__image--empty" aria-hidden="true" style="view-transition-name: product-{{ product.id }}-picture">{% include "includes/catalog/no_photo.html" %}</span>
         {% endif %}
 
         <span class="tile__in-cart product__in-cart" aria-hidden="true" data-in-cart {% if not card.in_cart_units %}hidden{% endif %} style="view-transition-name: product-{{ product.id }}-in-cart">

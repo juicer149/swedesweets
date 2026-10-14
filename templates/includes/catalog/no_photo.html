@@ -1,0 +1,9 @@
+{% load i18n %}
+{% comment %}
+  In place of a product's picture when it has none: the logo's crown,
+  muted, and a line saying so (css/catalog.css, .catalog-no-photo).
+{% endcomment %}
+<span class="catalog-no-photo">
+  {% include "includes/ui/icon_block.html" with name="crown" class_name="catalog-no-photo__crown" only %}
+  <span class="catalog-no-photo__text">{% trans "No photo for this product" %}</span>
+</span>

@@ -78,12 +78,18 @@
 }
 
 
-/* The chosen language filled yellow, as in the navbar (navigation.css):
-   the start page is the navbar's menu, large. */
+/* The language as in the navbar (navigation.css): the chosen one in
+   yellow, ring and letters, the other muted. The start page is the
+   navbar's menu, large. */
+.landing .language-switcher .language-switcher__option {
+  color: color-mix(in srgb, var(--landing-ink) 65%, transparent);
+  border-color: color-mix(in srgb, var(--landing-ink) 30%, transparent);
+}
+
 .landing .language-switcher .language-switcher__option--active,
 .landing .language-switcher .language-switcher__option[aria-current="true"] {
-  color: var(--color-primary-900);
-  background: var(--color-accent-600);
+  color: var(--color-accent-600);
+  background: transparent;
   border-color: var(--color-accent-600);
 }
 

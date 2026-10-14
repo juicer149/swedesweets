@@ -195,7 +195,8 @@ typed, no box; the round light-green cart button on the label's foot,
 44px; while adding the scoop in
 the row's middle, then the label green with our bag, or red with a dark
 red cross and then why, in the red, until tapped; and the row back as it
-started) and `product.html` (a product's page in the card's
+started) and `no_photo.html` (in place of a missing picture: the logo's crown,
+muted, and "No photo for this product") and `product.html` (a product's page in the card's
 design: the picture with the price tag and in-cart badge and a round ×
 above it, beside it the card's label scaled up (the name breaks as on the
 card): the name on the yellow band, the category, size | how many, the
@@ -343,7 +344,10 @@ drawing's faded foot (Find Sweets).
   a yellow line (accent-600) between it and the page; the chosen language
   filled yellow, Login outlined cream; the cart blue with a light yellow ring
   and a yellow cart, filled yellow when pointed at or open; its count
-  yellow (accent-600, primary-950 text), hidden while the cart is open. On a phone the bottom
+  yellow (accent-600, primary-950 text), hidden while the cart is open
+  and when it is empty. The chosen language a yellow ring and yellow
+  letters, the other muted (on the start page too). On a phone the
+  account is its icon and a short word ("Me"). On a phone the bottom
   bar has a thin yellow edge. The cart's popover stays cream.
 - **Desktop:** links in the top bar, with icons; the page you are on gets
   the crown tilted on its last letter (as on the logo and the start page),

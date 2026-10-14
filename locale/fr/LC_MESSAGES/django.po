@@ -2169,6 +2169,14 @@ msgstr "Aucune boutique n'est encore listée."
 msgid "Sweden’s sweetest tradition"
 msgstr "La plus douce tradition suédoise"
 
+#: accounts/account_menus.py
+msgid "Me"
+msgstr "Moi"
+
+#: templates/includes/catalog/no_photo.html
+msgid "No photo for this product"
+msgstr "Pas de photo pour ce produit"
+
 #~ msgid "FAQ"
 #~ msgstr "FAQ"
 

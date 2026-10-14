@@ -15,12 +15,15 @@
       {% include "includes/ui/icon.html" with name="cart" %}
     </span>
 
-    <span
-      class="site-nav-cart__count"
-      aria-hidden="true"
-    >
-      {{ navbar_cart.line_count }}
-    </span>
+    {# How much it holds, at a glance; an empty cart shows none. #}
+    {% if navbar_cart.line_count %}
+      <span
+        class="site-nav-cart__count"
+        aria-hidden="true"
+      >
+        {{ navbar_cart.line_count }}
+      </span>
+    {% endif %}
 
     <span class="visually-hidden">
       {% blocktrans count count=navbar_cart.line_count %}

@@ -36,7 +36,7 @@
       {% if card.image_url %}
         <img class="tile__image" src="{{ card.image_url }}" alt="" loading="lazy">
       {% else %}
-        <span class="tile__image tile__image--empty"></span>
+        <span class="tile__image tile__image--empty">{% include "includes/catalog/no_photo.html" %}</span>
       {% endif %}
 
       {# In the cart already: an active cart and how many, top left. #}

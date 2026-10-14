@@ -145,6 +145,8 @@
   position: relative;
   display: block;
   width: 100%;
+  /* a link: no underline under the no-photo line */
+  text-decoration: none;
 }
 
 .tile__image {
@@ -158,6 +160,37 @@
 
 .tile__image--empty {
   background: var(--color-neutral-100);
+}
+
+/* No picture (includes/catalog/no_photo.html): the logo's crown, muted,
+   and a quiet line, in the part of the square the label leaves free. */
+.tile__image--empty,
+.product__image--empty {
+  display: grid;
+  container-type: inline-size;
+}
+
+.catalog-no-photo {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 0 12% 22%;
+
+  color: var(--color-neutral-600);
+  text-align: center;
+}
+
+.catalog-no-photo__crown.ui-icon-block {
+  width: clamp(2rem, 28cqi, 4.5rem);
+  height: clamp(2rem, 28cqi, 4.5rem);
+  color: color-mix(in srgb, var(--color-brand-yellow) 45%, var(--color-neutral-200));
+}
+
+.catalog-no-photo__text {
+  font-size: clamp(0.7rem, 6cqi, var(--font-size-14));
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 /* The price, on a tag hung on the picture's corner: white with the
