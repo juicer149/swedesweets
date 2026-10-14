@@ -188,9 +188,9 @@
 
   color: var(--color-action-deliver-on-light);
   background: var(--color-action-deliver-light-bg);
-  border: 1.5px solid var(--color-action-deliver-on-light);
+  /* a thin, softer edge than the button's: a hint, not a second button */
+  border: 1px solid color-mix(in srgb, var(--color-action-deliver-on-light) 35%, transparent);
   border-radius: var(--radius-pill);
-  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.14);
 
   font-size: var(--font-size-12);
   font-weight: 800;
@@ -315,7 +315,9 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  padding: 0 var(--space-1) 0.45rem;
+  /* a little below the row's middle: nearer the middle of the white,
+     beside the cart button */
+  padding: 0.35rem var(--space-1) 0;
 }
 
 .tile__buy {
@@ -550,7 +552,7 @@
   display: grid;
   place-items: center;
   margin: 0;
-  padding: 0 var(--space-1) 0.45rem;
+  padding: 0.35rem var(--space-1) 0;
 
   color: var(--color-action-danger-on-light);
   font-size: var(--font-size-12);

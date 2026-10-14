@@ -250,6 +250,10 @@
       form.dataset.state = added ? "done" : "failed";
 
       if (added) {
+        // Counted at once; the navbar cart's refresh just after counts
+        // every badge anew from the cart itself.
+        countIn(form, quantity);
+
         window.setTimeout(() => {
           document.dispatchEvent(
             new CustomEvent("cart-changed", {
@@ -272,7 +276,6 @@
     if (ok) {
       delete form.dataset.state;
       setFeedback(value.message || addedLabel, { quiet: true });
-      countIn(form, quantity);
       reset();
       return;
     }
