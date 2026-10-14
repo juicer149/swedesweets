@@ -1191,6 +1191,14 @@
   50% { transform: translateY(-2px) rotate(-1.2deg); }
 }
 
+/* On a phone the tabs' line runs edge to edge, their text keeps off the
+   screen's edges. */
+@media (max-width: 767px) {
+  .product__tabs .page-tabs__panel {
+    padding-inline: var(--space-5);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pick-shelf__scoops,
   .pick-shelf__bags {
