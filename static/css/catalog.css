@@ -950,15 +950,34 @@
   margin-top: clamp(var(--space-10, 2.5rem), 6dvh, var(--space-12));
 }
 
-.product .page__back {
-  margin-top: clamp(var(--space-8), 6dvh, var(--space-12));
-}
 
 /* Centred under the centred tabs, read left to right. */
 .product__text {
   max-width: 62ch;
   margin-inline: auto;
   line-height: 1.65;
+}
+
+/* A card's page opened in place (catalog.js): a row of its own across
+   the wall, a little apart from the rows above and below; the card's own
+   place stays, empty, until the page folds back into it. */
+.tiles__detail {
+  grid-column: 1 / -1;
+  margin-block: var(--space-6);
+  scroll-margin-top: calc(var(--detail-top, 0px) + var(--space-4));
+}
+
+.tiles__detail .page-section {
+  padding: 0;
+}
+
+.tiles__detail .page.product {
+  width: min(100%, 860px);
+  margin-inline: auto;
+}
+
+.tile--away > * {
+  visibility: hidden;
 }
 
 /* The wall's foot while the next cards come: the three dots, then the
@@ -1088,10 +1107,6 @@
 
   .product__close {
     top: -2.9rem;
-  }
-
-  .product .page__back {
-    display: none;
   }
 }
 
