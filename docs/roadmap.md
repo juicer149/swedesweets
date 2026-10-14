@@ -91,8 +91,8 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    the products list, inventory (its section nav, the batch page and its
    pricing), customers, orders, accounts.
 1. **Brand + name unique** (after the open questions).
-2. **Variants, steps 7–8**: the ops order form by variant; clean-up
-   (`Product.sku` and `Product.weight_per_unit` read from the variant).
+2. **Variants, the rest of step 8**: `Product.sku` and
+   `Product.weight_per_unit` (after "brand + name unique", above).
 3. **Shared expandable row** (button with `aria-expanded`, the FAQ and
    dashboard animation), then the ops lists that use it:
    - Products: picture and name first, brand, manufacturer and weight as
@@ -181,6 +181,12 @@ the channel is off), "Use for all variants" under them; "+ Add variant"
 as a faint last row. Price changes ask for the password.
 
 ## Done
+
+- Variants step 7: the ops order form by variant (a row per size, its
+  weight and stock; lines and Previous orders name the size). Demo hoodie
+  and T-shirt in XS–XL.
+- Catalog: whole prices without cents (€50); the in-cart badges follow
+  the navbar cart.
 
 - Catalog cards choose the size (variants step 6): a size dropdown with
   sold-out sizes muted, how many typed, a round green cart button on

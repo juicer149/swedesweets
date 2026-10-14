@@ -1,6 +1,8 @@
 # Product variants
 
-Status: agreed; steps 1–6 done, steps 7–8 next.
+Status: agreed; steps 1–7 done; step 8's demo sizes done, its clean-up of
+`Product.sku` and `Product.weight_per_unit` waits on how a product is
+identified (below).
 
 A product can come in variants: a hoodie in XS–XL, a chocolate bar in 60, 100
 and 120 g. Variants are modelled the way Shopify does it: **every product has
@@ -201,9 +203,17 @@ variants into view.
    sold-out sizes muted in it (sizes on sale with no stock,
    `CatalogProduct.sold_out`), the cheapest price on its tag ("from" when
    the sizes differ).
-7. **Ops orders** — the order form and Previous orders by variant.
-8. **Clean-up** — drop `Product.sku` and `Product.weight_per_unit` (read
-   from the variant); demo data: hoodie and T-shirt in XS–XL.
+7. **Ops orders** — the order form and Previous orders by variant: every
+   size its own row in the product search ("SwedeSweets — Hoodie — M"),
+   its own weight and stock; a chosen line, a shortage and Previous orders
+   name the size. Done.
+8. **Clean-up** — demo data: hoodie and T-shirt in XS–XL (the T-shirt's L
+   sold out). Done. Still open: `Product.sku` and `Product.weight_per_unit`.
+   They are the product's identity today (the SKU is made from brand,
+   name and weight, and a new variant's SKU and default weight come from
+   them), so dropping them is the roadmap's open question "brand + name
+   unique?". Until then what is shown reads the variant where a size is
+   meant.
 
 Each step is its own branch, merged with the full test suite green.
 
