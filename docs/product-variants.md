@@ -2,7 +2,7 @@
 
 Status: agreed; steps 1–7 done; step 8's demo sizes done, its clean-up of
 `Product.sku` and `Product.weight_per_unit` waits on how a product is
-identified (below).
+identified (the roadmap's open question "brand + name unique").
 
 A product can come in variants: a hoodie in XS–XL, a chocolate bar in 60, 100
 and 120 g. Variants are modelled the way Shopify does it: **every product has

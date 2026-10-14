@@ -75,13 +75,23 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
 
 - Is **brand + name** unique (two brands may each have a "Sour Mix"), or the
   name alone? Product + variant label then identifies one thing to sell.
+  Suggested: brand + name unique, and `Product.sku` kept as the product's
+  base code (variants' SKUs and default weight still start from it).
 - Order lines now keep a copy of name, label, SKU, weight and unit (the
   price was already kept; the thumbnail path is not). Should products then
   be deletable (the order line's link emptied), or only archived?
+  Suggested: archived only (it can be undone).
 
 ## Next, in order
 
-0. **Detail and edit pages in one design**, before the steps below. The
+0. **The navbar on blue, like the start page's menu**: the header in
+   primary-600 with the cream logo, the links cream, the page you are on
+   yellow with the crown (the phone's bottom bar too), so the start
+   page's menu and the navbar read as one. Then **the start page into the
+   navbar**: on leaving it the menu folds into the logo, the logo shrinks
+   to its place in the navbar and the links unfold from it to theirs
+   (the catalog card's fold, float and unfold; same order and spacing).
+1. **Detail and edit pages in one design**, before the steps below. The
    product pages set it (`DESIGN.md`, "Ops work pages"; what they hold:
    "Ops product pages" below): no hero; cards like the
    edit page's; tabs with Back and the open tab's action at the foot; a
@@ -90,10 +100,10 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    switch; saving stays on the page. Then the other pages, one by one:
    the products list, inventory (its section nav, the batch page and its
    pricing), customers, orders, accounts.
-1. **Brand + name unique** (after the open questions).
-2. **Variants, the rest of step 8**: `Product.sku` and
+2. **Brand + name unique** (after the open questions).
+3. **Variants, the rest of step 8**: `Product.sku` and
    `Product.weight_per_unit` (after "brand + name unique", above).
-3. **Shared expandable row** (button with `aria-expanded`, the FAQ and
+4. **Shared expandable row** (button with `aria-expanded`, the FAQ and
    dashboard animation), then the ops lists that use it:
    - Products: picture and name first, brand, manufacturer and weight as
      quiet text under the name, vegan as an icon, active as a small dot,
@@ -104,7 +114,7 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    - Customers: contact details and active orders, "View details".
    - Accounts: last login, role, the three latest activities, "View
      details"; from the existing activity history, no new log.
-4. **Retail flow**, after a look at what exists (payment states, webhooks,
+5. **Retail flow**, after a look at what exists (payment states, webhooks,
    reconciliation and their tests are already there):
    1. Mini-cart on desktop: picture, name, variant, unit price, stepper
       (the minus becomes the trash at 1 in retail; B2B keeps a separate
@@ -113,7 +123,7 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    2. The mobile cart sheet.
    3. Cart and contact details on one page.
    4. Confirmation page and mail; SumUp keys set in Railway.
-5. **Order messages**, in three parts:
+6. **Order messages**, in three parts:
    1. A thread per order ("Have a question about this order?"), status,
       ops replies from the order, mail to info@ and to the customer (the
       app is the record; mail only notifies, with retry and no doubles),
@@ -122,9 +132,11 @@ Product variants have their own spec: [product-variants.md](product-variants.md)
    3. Questions that need the customer's decision (approve or decline),
       each acted on by a separate, checked order action.
    The model lives in `orders` to begin with.
-6. **Catalog cards**: weight or size under the name, the price on its own
-   small tilted label, attribute icons; colours per category, sketched in
-   Figma first, together with the size chips (step 2).
+7. **Catalog cards, what is left**: attribute icons (vegan and the like)
+   and colours per category, sketched in Figma first. The rest (weight or
+   size under the name, the price on its tilted tag, the size dropdown) is
+   done. Later perhaps: a card opening in place, on its own row of the
+   wall, instead of over it (tried, set aside for now).
 
 Later, not planned yet: **prices in SEK from EUR** at the day's rate (an
 exchange-rate API), EUR staying the price that is set; the SEK fields would
@@ -182,6 +194,15 @@ as a faint last row. Price changes ask for the password.
 
 ## Done
 
+- Catalog product pages open over the wall with their own address: on a
+  computer and on a phone the card's label folds to its band, floats with
+  the picture, tag and badge to its place and unfolds (view
+  transitions); closing goes back the same way to where the wall was.
+  The size is the site's own dropdown, tilted with the label; a round ×
+  over the picture goes back. The page covers the footer and ends with
+  room under it (on a phone past the bottom bar). The wall loads 24 cards
+  at a time, dots then the crown at its foot; all products stay in the
+  page, so search finds them.
 - Variants step 7: the ops order form by variant (a row per size, its
   weight and stock; lines and Previous orders name the size). Demo hoodie
   and T-shirt in XS–XL.

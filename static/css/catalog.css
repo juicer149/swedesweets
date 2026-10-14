@@ -394,13 +394,6 @@
   border-bottom: 1.5px solid transparent;
 }
 
-.tile__chevron.ui-icon-block {
-  width: 0.75rem;
-  height: 0.75rem;
-  color: var(--color-neutral-600);
-  --icon-stroke-width: 2.6;
-}
-
 /* The size: the site's own dropdown (enhanced_selects.js, Tom Select),
    inside the label so it tilts with it; its closed face quiet, as the
    weight beside it would be: "Choose size" and the site's caret, then the

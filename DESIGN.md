@@ -207,7 +207,12 @@ tag, badge and band float to their places (a view transition) and the
 label unfolds; closing is the same backwards, the wall where it was; on a phone too,
 to the label over the picture's foot. Reduced motion or no view
 transitions: the page just shows. The ×
-above the picture goes back; there is no Back link at the foot. The channel's pages only say where the form posts and what its
+above the picture goes back; there is no Back link at the foot. Over the
+wall the page is moved under the body (out of the catalog's stacking
+context), so it covers the footer, and ends with room under it. The wall
+shows 24 cards at a time and the next 24 as one nears its foot (dots, then
+the crown); all cards are in the page, so search and the categories reach
+them. The channel's pages only say where the form posts and what its
 button says. CSS in `static/css/catalog.css`.
 
 **Status burst:** `includes/ui/status_burst.html`, rendered once in
