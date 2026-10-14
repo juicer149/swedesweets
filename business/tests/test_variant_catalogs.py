@@ -329,6 +329,17 @@ def test_the_shop_catalog_shows_the_size_dropdown(client):
 
     assert "data-size-select" in html
     assert "data-in-cart" in html
+
+
+@pytest.mark.django_db
+def test_a_card_with_one_size_shows_just_its_weight(client):
+    product = product_factory(name="Apple", weight_per_unit=4000)
+    _offer(variant=product.variants.get(), channel=RETAIL, price="9.00")
+    batch_factory(product=product, today=TODAY, quantity=5)
+
+    html = client.get(reverse("storefront:product_list")).content.decode()
+
+    assert '<span class="tile__package">4000 g</span>' in html
     assert "L — sold out" in html
     assert "from €2.50" in html
     assert 'name="quantity"' in html

@@ -80,6 +80,8 @@ class ProductCardVM:
     sold_out: tuple[CatalogOfferVM, ...] = ()
     # How many the visitor's cart holds (all sizes): a badge on the picture.
     in_cart_units: int = 0
+    # The card's own: just the weight ("4000 g"), no stock unit.
+    weight_label: str = ""
 
     @property
     def initial_offer(self) -> CatalogOfferVM | None:

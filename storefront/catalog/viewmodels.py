@@ -74,6 +74,7 @@ def _build_retail_product_card(
         name=product_name,
         package_label=product.unit_weight_label,
         badge_label=None,
+        weight_label=product.weight_label,
         primary_action=UiText(
             text=_("Add to cart"),
             href=reverse(

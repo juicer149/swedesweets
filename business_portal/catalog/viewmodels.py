@@ -82,6 +82,7 @@ def _build_business_product_card(
             product.unit_weight_label
         ),
         badge_label=None,
+        weight_label=product.weight_label,
         primary_action=UiText(
             text=_("Add to order"),
             href=reverse(

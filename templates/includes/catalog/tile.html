@@ -9,7 +9,7 @@
 
     size     several sizes: a small dropdown, "Choose size" until one is
              picked, then the size (sold-out sizes are in the list, muted,
-             not choosable); one size: the package
+             not choosable); one size: its weight ("4000 g")
     buy      how many, typed
 
   and the round green cart button on the label's foot, which adds them.
@@ -107,7 +107,7 @@
                 </label>
               {% else %}
                 <input type="hidden" name="commercial_price_id" value="{{ offer.commercial_price_id }}">
-                <span class="tile__package">{{ card.package_label }}</span>
+                <span class="tile__package">{{ card.weight_label|default:card.package_label }}</span>
               {% endif %}
             </div>
 
