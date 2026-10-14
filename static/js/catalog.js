@@ -2,16 +2,16 @@
   The catalog (includes/catalog/grid.html), shop and business portal alike:
 
   - the category tabs and the search hide the tiles that do not match;
-  - a tile's size dropdown shows the size big once picked; its quantity
-    box lists 1-9 on the first tap and lets you type on the second;
+  - a tile's size dropdown shows "Choose size", then the size; how many
+    is typed;
   - the cart button posts the form as JSON while only the status burst
     shows in the row's middle (status_burst.js: the scoop, then our bag,
     the label green; or a cross, the label red), then the row comes back
     as it started and the navbar cart refreshes with a little jump
     (cart-changed with bump).
 
-  Without JavaScript the dropdowns are plain and the cart button posts
-  the form.
+  Without JavaScript the size dropdown is plain and the cart button
+  posts the form.
 */
 (() => {
   "use strict";
@@ -111,7 +111,7 @@
   }
 
   /* The size dropdown is the native one (the phone's own picker), laid
-     unseen over its face: "Choose size", then "Size" and the size, big. */
+     unseen over its face: "Choose size", then the size. */
   function setUpSize(form) {
     const select = form.querySelector("[data-size-select]");
 
@@ -121,20 +121,17 @@
 
     const empty = form.querySelector("[data-size-empty]");
     const chosen = form.querySelector("[data-size-chosen]");
-    const value = form.querySelector("[data-size-value]");
 
     const show = () => {
       const option = select.selectedOptions[0];
       const label = option && option.value ? option.dataset.sizeLabel : "";
 
-      if (value) {
-        value.textContent = label || "";
+      if (chosen) {
+        chosen.textContent = label || "";
+        chosen.hidden = !label;
       }
       if (empty) {
         empty.hidden = Boolean(label);
-      }
-      if (chosen) {
-        chosen.hidden = !label;
       }
     };
 
@@ -147,107 +144,14 @@
     };
   }
 
-  /* How many: the first tap lists 1-9 (no keyboard: the box is read-only
-     while the list is open), the second lets you type. From the keyboard
-     it is a plain number box; ArrowDown opens the list. */
+  /* How many: typed; back to 1 after an add. */
   function setUpQuantity(form) {
     const input = form.querySelector("[data-quantity-input]");
-    const list = form.querySelector("[data-quantity-list]");
-
-    if (!input || !list) {
-      return () => {};
-    }
-
-    const options = Array.from(list.querySelectorAll("[data-quantity-option]"));
-
-    const mark = () => {
-      for (const option of options) {
-        option.setAttribute(
-          "aria-selected",
-          String(option.dataset.quantityOption === input.value)
-        );
-      }
-    };
-
-    const open = () => {
-      mark();
-      list.hidden = false;
-      input.setAttribute("aria-expanded", "true");
-    };
-
-    const close = () => {
-      list.hidden = true;
-      input.readOnly = false;
-      input.setAttribute("aria-expanded", "false");
-    };
-
-    input.setAttribute("aria-haspopup", "listbox");
-    input.setAttribute("aria-expanded", "false");
-
-    input.addEventListener("pointerdown", () => {
-      if (list.hidden) {
-        // Read-only as it takes the focus, so no keyboard comes up.
-        input.readOnly = true;
-        open();
-      } else {
-        // The second tap: type.
-        close();
-        window.setTimeout(() => input.select(), 0);
-      }
-    });
-
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "ArrowDown" && list.hidden) {
-        event.preventDefault();
-        open();
-        (options.find((o) => o.getAttribute("aria-selected") === "true")
-          || options[0])?.focus();
-      } else if (event.key === "Escape" && !list.hidden) {
-        event.preventDefault();
-        close();
-      }
-    });
-
-    for (const option of options) {
-      // Keep the focus on the box while a number is picked.
-      option.addEventListener("pointerdown", (event) => event.preventDefault());
-
-      option.addEventListener("click", () => {
-        input.value = option.dataset.quantityOption;
-        close();
-        input.focus();
-      });
-
-      option.addEventListener("keydown", (event) => {
-        const index = options.indexOf(option);
-
-        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-          event.preventDefault();
-          const next = index + (event.key === "ArrowDown" ? 1 : -1);
-          options[Math.max(0, Math.min(options.length - 1, next))].focus();
-        } else if (event.key === "Escape") {
-          event.preventDefault();
-          close();
-          input.focus();
-        }
-      });
-    }
-
-    form.addEventListener("focusout", (event) => {
-      if (!form.querySelector("[data-catalog-quantity]").contains(event.relatedTarget)) {
-        close();
-      }
-    });
-
-    document.addEventListener("pointerdown", (event) => {
-      if (!list.hidden && !form.querySelector("[data-catalog-quantity]").contains(event.target)) {
-        close();
-      }
-    });
 
     return () => {
-      close();
-      input.value = "1";
+      if (input) {
+        input.value = "1";
+      }
     };
   }
 

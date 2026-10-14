@@ -183,8 +183,8 @@ as a faint last row. Price changes ask for the password.
 ## Done
 
 - Catalog cards choose the size (variants step 6): a size dropdown with
-  sold-out sizes muted, how many as a 1–9 list or typed, a green cart
-  button, the price on a tag ("from" the cheapest), the label green with
+  sold-out sizes muted, how many typed, a round green cart button on
+  the label's foot, the price on a tag ("from" the cheapest), the label green with
   the bag when added.
 
 - Order lines keep a copy of what was bought (`orders/0018`): the name with

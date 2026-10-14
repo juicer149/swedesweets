@@ -7,16 +7,17 @@
   picture lead to the product page), then one row in two halves:
 
     size     several sizes: a small dropdown, "Choose size" until one is
-             picked, then "Size" and the size, big (sold-out sizes are in
-             the list, muted, not choosable); one size: the package
-    buy      how many (catalog.js: a list of 1-9 on the first tap, typing
-             on the second) and the green cart button, which adds them
+             picked, then the size (sold-out sizes are in the list, muted,
+             not choosable); one size: the package
+    buy      how many, typed
+
+  and the round green cart button on the label's foot, which adds them.
 
   While adding (catalog.js) the row gives way to the scoop in the middle;
   then the label turns green and our bag pops up (or red with a cross),
-  and the row comes back as it started. Without JavaScript the dropdowns
-  are plain and the cart button posts the form. A striped shelf runs under
-  each row (css/catalog.css).
+  and the row comes back as it started. Without JavaScript the size
+  dropdown is plain and the cart button posts the form. A striped shelf
+  runs under each row (css/catalog.css).
 
   card        ProductCardVM
   csrf_token  the page's token
@@ -71,10 +72,7 @@
                       <span class="tile__picker-long">{% trans "Choose size" %}</span>
                       <span class="tile__picker-short">{% trans "Size" %}</span>
                     </span>
-                    <span class="tile__picker-chosen" data-size-chosen hidden>
-                      <small>{% trans "Size" %}</small>
-                      <b data-size-value></b>
-                    </span>
+                    <span class="tile__picker-chosen" data-size-chosen hidden data-size-value></span>
                     {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="tile__chevron" only %}
                   </span>
 
@@ -103,29 +101,20 @@
             </div>
 
             <div class="tile__buy">
-              <div class="tile__quantity" data-catalog-quantity>
-                <label class="visually-hidden" for="catalog-quantity-{{ card.product_id }}">{% trans "Quantity" %}</label>
-                <input
-                  id="catalog-quantity-{{ card.product_id }}"
-                  class="tile__quantity-input"
-                  type="number"
-                  name="quantity"
-                  value="1"
-                  min="1"
-                  step="1"
-                  inputmode="numeric"
-                  autocomplete="off"
-                  required
-                  data-quantity-input
-                >
-                {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="tile__chevron tile__quantity-chevron" only %}
-
-                <div class="tile__quantity-list" role="listbox" aria-label="{% trans 'Quantity' %}" hidden data-quantity-list>
-                  {% for number in "123456789" %}
-                    <button class="tile__quantity-option" type="button" role="option" tabindex="-1" data-quantity-option="{{ number }}">{{ number }}</button>
-                  {% endfor %}
-                </div>
-              </div>
+              <label class="visually-hidden" for="catalog-quantity-{{ card.product_id }}">{% trans "Quantity" %}</label>
+              <input
+                id="catalog-quantity-{{ card.product_id }}"
+                class="tile__quantity"
+                type="number"
+                name="quantity"
+                value="1"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                autocomplete="off"
+                required
+                data-quantity-input
+              >
 
               <button
                 class="tile__add"
