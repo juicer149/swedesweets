@@ -337,11 +337,16 @@ drawing's faded foot (Find Sweets).
 
 ## Navigation and chrome
 
+- **The navbar is the start page's menu in a bar:** primary-600 with the
+  cream logo, cream links, the page you are on yellow (brand-yellow) with
+  the crown, which has a dark blue shadow under it as on the start page;
+  the language buttons and Login as on the blue pages. The cart's
+  popover stays cream.
 - **Desktop:** links in the top bar, with icons; the page you are on gets
   the crown tilted on its last letter (as on the logo and the start page),
   and the yellow underline only answers the pointer. On a phone the crown
   sits on the icon, the labels being too small for it.
-- **Phone:** the same links as a fixed bottom bar
+- **Phone:** the same links as a fixed bottom bar, the same blue
   (`--site-nav-count` columns); pages leave room for it.
 - **Customer pages** (shop and business portal): Catalog/Shop, Find
   Sweets, FAQ, About us. **Ops** has its own links and no footer.

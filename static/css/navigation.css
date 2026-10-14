@@ -1,14 +1,31 @@
 /* =============================================================================
    Site navigation
+
+   On blue, as the start page's menu (landing.css), so the two read as one
+   menu: the header in primary-600 with the cream logo, the links cream,
+   the page you are on yellow (brand-yellow) with the crown, which stands
+   on the blue with a dark blue shadow under it. The phone's bottom bar is
+   the same blue. Cream on this blue is about 7:1, the yellow about 4:1
+   (bold, as on the start page). The cart's popover stays cream: it is a
+   sheet of the shop, not the menu.
    ============================================================================= */
 
 .site-header {
+  --nav-ink: var(--color-neutral-50);
+  --nav-chosen: var(--color-brand-yellow);
+  --nav-blue: var(--color-primary-600);
+  --nav-line: color-mix(in srgb, var(--nav-ink) 70%, transparent);
+  --nav-crown-shadow: drop-shadow(
+    0 0.08em 0.06em color-mix(in srgb, var(--color-primary-900) 70%, transparent)
+  );
+
   position: sticky;
   top: 0;
   z-index: 100;
 
-  background: rgb(255 251 241 / 0.98);
-  border-bottom: 1px solid var(--color-neutral-200);
+  color: var(--nav-ink);
+  background: var(--nav-blue);
+  border-bottom: 1px solid var(--color-primary-700);
 }
 
 .site-nav {
@@ -24,7 +41,7 @@
   align-items: center;
   flex: 0 0 auto;
 
-  color: var(--color-neutral-600);
+  color: var(--nav-ink);
   text-decoration: none;
 
   transition:
@@ -34,7 +51,6 @@
 
 .site-brand:hover,
 .site-brand:focus-visible {
-  color: var(--color-primary-900);
   transform: translateY(-1px);
 }
 
@@ -79,7 +95,7 @@
   align-items: center;
   gap: clamp(0.2rem, 0.35vw, 0.4rem);
 
-  color: var(--color-link);
+  color: var(--nav-ink);
   font-size: clamp(0.8125rem, 0.92vw, var(--font-size-16));
   font-weight: 700;
   line-height: 1;
@@ -111,7 +127,7 @@
 .site-nav__link:focus-visible,
 .site-nav__link--active,
 .site-nav__link[aria-current="page"] {
-  color: var(--color-primary-900);
+  color: var(--nav-chosen);
 }
 
 .site-nav__link:hover,
@@ -142,6 +158,7 @@
   height: 1.15em;
 
   background: url("../images/favicon.svg") center / contain no-repeat;
+  filter: var(--nav-crown-shadow);
   pointer-events: none;
 }
 
@@ -187,9 +204,9 @@
   padding-block: clamp(0.32rem, 0.45vw, 0.45rem);
   padding-inline: clamp(0.5rem, 0.8vw, 0.85rem);
 
-  color: var(--color-primary-900);
+  color: var(--nav-ink);
   background: transparent;
-  border: 1px solid var(--color-neutral-300);
+  border: 1px solid var(--nav-line);
   border-radius: 999px;
 
   font: inherit;
@@ -209,9 +226,8 @@
 
 .site-nav__auth-action:hover,
 .site-nav__auth-action:focus-visible {
-  color: var(--color-primary-950);
-  background: var(--color-accent-100);
-  border-color: var(--color-accent-600);
+  color: var(--nav-chosen);
+  border-color: var(--nav-chosen);
   transform: translateY(-1px);
 }
 
@@ -253,9 +269,9 @@
   height: clamp(2rem, 2.4vw, 2.25rem);
   padding: 0;
 
-  color: var(--color-primary-900);
+  color: var(--nav-ink);
   background: transparent;
-  border: 1px solid var(--color-neutral-300);
+  border: 1px solid var(--nav-line);
   border-radius: var(--radius-pill);
 
   cursor: pointer;
@@ -270,9 +286,8 @@
 .site-nav-cart__trigger:hover,
 .site-nav-cart__trigger:focus-visible,
 .site-nav-cart[open] .site-nav-cart__trigger {
-  color: var(--color-primary-950);
-  background: var(--color-accent-100);
-  border-color: var(--color-accent-600);
+  color: var(--nav-chosen);
+  border-color: var(--nav-chosen);
 }
 
 .site-nav-cart__trigger:hover,
@@ -374,9 +389,10 @@
   height: 1.2rem;
   padding-inline: 0.28rem;
 
-  color: var(--color-white);
-  background: var(--color-primary-900);
-  border: 2px solid rgb(255 251 241);
+  /* yellow as on the start page's cart */
+  color: var(--color-neutral-900);
+  background: var(--nav-chosen);
+  border: 2px solid var(--nav-blue);
   border-radius: var(--radius-pill);
 
   font-size: 0.65rem;
@@ -650,6 +666,19 @@
   display: none;
 }
 
+/* In the navbar: as on the other blue pages (on-blue.css). */
+.site-header .language-switcher__option {
+  color: var(--nav-ink);
+  border-color: var(--nav-line);
+}
+
+.site-header .language-switcher__option--active,
+.site-header .language-switcher__option[aria-current="true"] {
+  color: var(--color-primary-700);
+  background: var(--nav-ink);
+  border-color: var(--nav-ink);
+}
+
 
 /* The account slot (includes/account_menu.html): page links like the
    others at the far right of the navbar (staff: the public/ops switch,
@@ -694,8 +723,8 @@
     min-height: 2rem;
     padding: 0.3rem 0.65rem 0.3rem 0.5rem;
 
-    color: var(--color-primary-800);
-    border: 1px solid var(--color-primary-800);
+    color: var(--nav-ink);
+    border: 1px solid var(--nav-line);
     border-radius: var(--radius-pill);
 
     font-size: var(--font-size-12);
@@ -744,7 +773,7 @@
     height: 1.5em;
 
     background: url("../images/favicon.svg") center / contain no-repeat;
-    filter: drop-shadow(0 2px 2px rgb(var(--color-row-shadow) / 0.35));
+    filter: var(--nav-crown-shadow);
     pointer-events: none;
   }
 }
@@ -762,15 +791,6 @@
    ============================================================================= */
 
 @media (max-width: 767px) {
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-
-    background: rgb(255 251 241 / 0.98);
-    border-bottom: 1px solid var(--color-neutral-200);
-  }
-
   .site-nav {
     min-height: 58px;
     padding-block: var(--space-2);
@@ -871,15 +891,13 @@
     min-width: 0;
     padding: clamp(0.35rem, 1.2vw, var(--space-2));
 
-    background: rgb(255 251 241 / 0.96);
-    border: 1px solid var(--color-neutral-200);
+    background: var(--nav-blue);
+    border: 1px solid var(--color-primary-700);
     border-radius: 24px;
 
     box-shadow:
-      0 18px 50px rgb(var(--color-row-shadow) / 0.18),
-      0 1px 0 rgb(255 255 255 / 0.9) inset;
-
-    backdrop-filter: blur(12px);
+      0 18px 50px rgb(var(--color-row-shadow) / 0.28),
+      0 1px 0 rgb(255 255 255 / 0.12) inset;
   }
 
   @supports (bottom: env(safe-area-inset-bottom)) {
@@ -899,7 +917,7 @@
       clamp(0.35rem, 1.2vw, 0.45rem)
       clamp(0.12rem, 0.7vw, 0.25rem);
 
-    color: var(--color-link);
+    color: var(--nav-ink);
     background: transparent;
     border-radius: 18px;
 
@@ -948,7 +966,7 @@
   .site-nav__link:focus-visible,
   .site-nav__link--active,
   .site-nav__link[aria-current="page"] {
-    color: var(--color-primary-900);
+    color: var(--nav-chosen);
     background: transparent;
   }
 
@@ -991,7 +1009,7 @@
     height: 115%;
 
     background: url("../images/favicon.svg") center / contain no-repeat;
-    filter: drop-shadow(0 2px 2px rgb(var(--color-row-shadow) / 0.35));
+    filter: var(--nav-crown-shadow);
     pointer-events: none;
   }
 
