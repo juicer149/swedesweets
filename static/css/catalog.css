@@ -174,8 +174,8 @@
   background: var(--color-neutral-300);
 }
 
-/* In the cart already: the cart button's green, filled in (active), with
-   how many, on the picture's other corner. */
+/* In the cart already: a small copy of the cart button (light green, dark
+   green edge and cart) with how many, on the picture's other corner. */
 .tile__in-cart {
   position: absolute;
   top: 0.55rem;
@@ -183,15 +183,16 @@
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  padding: 0.2rem 0.5rem 0.2rem 0.4rem;
+  height: 1.75rem;
+  padding: 0 0.5rem 0 0.4rem;
 
-  color: var(--color-white);
-  background: var(--color-action-deliver);
+  color: var(--color-action-deliver-on-light);
+  background: var(--color-action-deliver-light-bg);
   border: 1.5px solid var(--color-action-deliver-on-light);
   border-radius: var(--radius-pill);
-  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.18);
+  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.14);
 
-  font-size: var(--font-size-14);
+  font-size: var(--font-size-12);
   font-weight: 800;
   line-height: 1;
 }
@@ -201,8 +202,8 @@
 }
 
 .tile__in-cart .tile__in-cart-icon {
-  width: 1rem;
-  height: 1rem;
+  width: 0.95rem;
+  height: 0.95rem;
 }
 
 /* A special offer's reason: amber, like the warning it is. */

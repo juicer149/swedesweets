@@ -186,8 +186,8 @@ small yellow-edged outline button with a plus.
 **Catalog:** `includes/catalog/` holds the shop's and the business
 portal's catalog: `grid.html` (category tabs, search, tiles), `tile.html`
 (a product on the page, no card: the price on a tag on the picture's
-corner, "from" the cheapest when sizes differ, and an active green cart
-with how many in the other corner when the cart holds some; under the
+corner, "from" the cheapest when sizes differ, and a small copy of the cart
+button with how many in the other corner when the cart holds some; under the
 name one row,
 never more, in two halves: the size as a small dropdown ("Choose size",
 then the size; sold-out sizes muted in it) or the package, then how many,
