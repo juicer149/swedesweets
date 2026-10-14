@@ -10,12 +10,6 @@
   title          the page's name, for screen readers (the navbar shows it)
   csrf_token     the page's token, for the tiles' forms
 {% endcomment %}
-{# Its cards float to their pages on a computer (catalog.css). #}
-<style>
-  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-    @view-transition { navigation: auto; }
-  }
-</style>
 <section
   class="page-section catalog"
   aria-labelledby="catalog-title"
@@ -58,6 +52,9 @@
         {% trans "No products match your search." %}
       </p>
 
+
+      {# A card's page, opened over the wall (catalog.js). #}
+      <div class="catalog__detail" data-catalog-detail hidden></div>
 
       <div class="tiles" aria-label="{% trans 'Products' %}">
         {% for card in product_cards %}

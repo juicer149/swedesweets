@@ -226,7 +226,7 @@
   min-width: 0;
   margin-top: -1.4rem;
   /* room at the foot for the top of the round cart button */
-  padding: 0 var(--space-2) 0.9rem;
+  padding: 0 var(--space-2) var(--tile-foot);
 
   text-align: center;
   background: var(--color-white);
@@ -238,7 +238,8 @@
   transition:
     transform var(--motion-fast),
     background var(--motion-fast),
-    border-color var(--motion-fast);
+    border-color var(--motion-fast),
+    --tile-foot 220ms ease;
   container-type: inline-size;
 }
 
@@ -264,6 +265,7 @@
 .tile__name {
   width: calc(100% + 2 * var(--space-2));
   margin: 0 calc(-1 * var(--space-2)) var(--space-2);
+  transition: margin 220ms ease, border-radius 220ms ease;
   padding: 0.35rem var(--space-2) 0.3rem;
 
   background: var(--color-accent-500);
@@ -294,14 +296,47 @@
    under it, a little over both. */
 .tile__order {
   position: relative;
+  display: grid;
+  grid-template-rows: 1fr;
   width: 100%;
+  transition: grid-template-rows 220ms ease;
 }
 
 .tile__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: stretch;
-  min-height: 2.6rem;
+  min-height: 0;
+  height: 2.6rem;
+  overflow: clip;
+  overflow-clip-margin: 4px;
+  transition: height 220ms ease;
+}
+
+/* Opening its page (catalog.js): the label folds to its yellow band, the
+   white going up into it and the cart button riding up with it; and
+   unfolds again on the way back. */
+@property --tile-foot {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0.9rem;
+}
+
+.tile--folded {
+  --tile-foot: 0rem;
+}
+
+.tile--folded .tile__order {
+  grid-template-rows: 0fr;
+}
+
+.tile--folded .tile__row {
+  height: 0;
+}
+
+.tile--folded .tile__name {
+  margin-bottom: 0;
+  border-radius: 7px;
 }
 
 /* While adding, only the burst in the middle; the row keeps its place. */
@@ -481,7 +516,7 @@
   z-index: 2;
   /* its middle on the label's bottom edge: below the row, the label's
      foot padding and edge, then half itself */
-  bottom: calc(-0.9rem - 1.5px - var(--tile-add-size) / 2);
+  bottom: calc(-1 * var(--tile-foot) - 1.5px - var(--tile-add-size) / 2);
   left: 50%;
   display: grid;
   place-items: center;
@@ -573,6 +608,8 @@
 
 .page.product {
   width: min(100%, 860px);
+  /* room above the picture for the × */
+  padding-top: var(--space-10);
 }
 
 /* The picture a fixed, modest size beside its label; it should show the
@@ -585,23 +622,45 @@
 }
 
 /* Beside the picture: the label a little down from its top, then
-   Description and Ingredients under it. */
+   Description and Ingredients under it, as wide as it. The label is the
+   card's, bigger: --tile-label-width times --label-scale (catalog.js sets
+   both from the opened card, so the name breaks as it did there). */
 .product__side {
+  --label-scale: 1.8;
+
   display: grid;
   align-content: start;
+  width: min(100%, calc(var(--tile-label-width, 12rem) * var(--label-scale)));
   min-width: 0;
   padding-top: clamp(var(--space-2), 3dvh, var(--space-6));
 }
 
-/* One size and no offer: less to hold, a narrower label. */
-.product__label--simple {
-  justify-self: start;
-  width: min(100%, 24rem);
+/* Back to the catalog: a round × above the picture, at its left. */
+.product__close {
+  position: absolute;
+  z-index: 2;
+  top: -3.1rem;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+
+  color: var(--color-neutral-700);
+  background: var(--color-white);
+  border: 1.5px solid var(--color-neutral-300);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.14);
 }
 
-/* Back: at the foot on a computer, at the top left on a phone. */
-.product__back-top {
-  display: none;
+.product__close:hover {
+  color: var(--color-neutral-900);
+  background: var(--color-neutral-100);
+}
+
+.product__close:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
 }
 
 .product__media {
@@ -676,40 +735,91 @@
 }
 
 .product__band {
-  padding: 0.7rem var(--space-4) 0.6rem;
+  padding:
+    calc(0.35rem * var(--label-scale))
+    calc(var(--space-2) * var(--label-scale))
+    calc(0.3rem * var(--label-scale));
   text-align: center;
   background: var(--color-accent-500);
   border-radius: 10px 10px 0 0;
+  transition: border-radius 220ms ease;
+}
+
+.product__name {
+  margin: 0;
+  color: var(--color-accent-950);
+  font-family: var(--font-body);
+  font-size: calc(var(--font-size-14) * var(--label-scale));
+  font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .product__kicker {
   margin: 0;
-  color: var(--color-accent-950);
+  color: var(--color-neutral-600);
   font-size: var(--font-size-12);
   font-weight: 800;
   letter-spacing: 0.12em;
-  opacity: 0.7;
+  text-align: center;
   text-transform: uppercase;
 }
 
-.product__name {
-  margin: 0.1rem 0 0;
-  color: var(--color-accent-950);
-  font-family: var(--font-body);
-  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
-  font-weight: 800;
-  line-height: 1.2;
-  overflow-wrap: anywhere;
+/* The white under the band, folding (catalog.js: opening over the
+   catalog, the label arrives folded to its band and unfolds here). */
+@property --product-foot {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 2.25rem;
 }
 
-/* The white under the band; room at its foot for the cart button's top. */
 .product__form {
-  padding: var(--space-3) var(--space-4) 1.75rem;
+  padding: 0 var(--space-4) var(--product-foot);
+  transition: --product-foot 220ms ease;
+}
+
+.product__fold {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 260ms ease;
 }
 
 .product__body {
   display: grid;
   gap: var(--space-3);
+  min-height: 0;
+  padding-top: var(--space-3);
+  overflow: clip;
+  overflow-clip-margin: 4px;
+  transition: padding 260ms ease, opacity 260ms ease;
+}
+
+.product--folded {
+  --product-foot: 0rem;
+}
+
+.product--folded .product__fold {
+  grid-template-rows: 0fr;
+}
+
+.product--folded .product__body {
+  padding-top: 0;
+  opacity: 0;
+}
+
+.product--folded .product__band {
+  border-radius: 10px;
+}
+
+.product__tabs {
+  transition: opacity 260ms ease 120ms, translate 260ms ease 120ms;
+}
+
+.product--folded .product__tabs {
+  opacity: 0;
+  translate: 0 -0.5rem;
+  transition-delay: 0s;
 }
 
 .product__form[data-state] .product__body {
@@ -787,6 +897,12 @@
   bottom: calc(-1.5px - var(--tile-add-size) / 2);
 }
 
+/* The form's foot is the label's: the button's middle on its edge, riding
+   up with the fold as the foot shrinks. */
+.product__form .product__add-button.tile__add {
+  bottom: calc(-1.5px - var(--tile-add-size) / 2);
+}
+
 .product__add-button .tile__add-icon {
   width: 1.5rem;
   height: 1.5rem;
@@ -822,11 +938,29 @@
   line-height: 1.65;
 }
 
+/* A card's page, over the catalog (catalog.js): under the site header,
+   the wall where it was underneath, not scrolling while it is open. */
+.catalog__detail {
+  position: fixed;
+  z-index: 90;
+  inset: var(--detail-top, 0) 0 0 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--color-neutral-50);
+}
+
+.catalog__detail[hidden] {
+  display: none;
+}
+
+.catalog--detail-open {
+  overflow: hidden;
+}
+
 /* From a card to its page and back, on a computer: the picture, its tag
-   and badge and the label float to their places (view transitions; both
-   pages opt in: grid.html and product.html; the catalog names only the
-   card opened or come back to: catalog.js). Browsers without
-   cross-document view transitions (Firefox) open the page plainly. */
+   and badge and the folded label float to their places (a view
+   transition within the catalog page; catalog.js names the opened card's
+   parts as the page's are named). */
 ::view-transition-group(*) {
   animation-duration: 650ms;
   animation-timing-function: cubic-bezier(0.22, 0.8, 0.2, 1);
@@ -887,8 +1021,13 @@
     padding-top: 0;
   }
 
-  .product__label,
-  .product__label--simple {
+  .product__side {
+    --label-scale: 1.45;
+
+    width: 100%;
+  }
+
+  .product__label {
     position: relative;
     z-index: 1;
     justify-self: center;
@@ -897,11 +1036,8 @@
     transform: none;
   }
 
-  .product__back-top {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    margin-bottom: var(--space-3);
+  .product__close {
+    top: -2.9rem;
   }
 
   .product .page__back {

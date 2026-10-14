@@ -196,15 +196,16 @@ typed, no box; the round light-green cart button on the label's foot,
 the row's middle, then the label green with our bag, or red with a dark
 red cross and then why, in the red, until tapped; and the row back as it
 started) and `product.html` (a product's page in the card's
-design: the picture with the price tag and in-cart badge, beside it the
-card's label, bigger: the name on the yellow band, size | how many, the
-chosen size's special offer to tick when it has one, the stock, the round
-cart button on its foot (narrower for one size and no offer); adding as
-on a card; Description and Ingredients as tabs under the label. On a
-computer the card's picture, tag, badge and label float to their places
-on the page and back (cross-document view transitions, both pages opting
-in); on a phone the label sits over the picture's foot as on the card,
-and Back is at the top left). The channel's pages only say where the form posts and what its
+design: the picture with the price tag and in-cart badge and a round ×
+above it, beside it the card's label scaled up (the name breaks as on the
+card): the name on the yellow band, the category, size | how many, the
+chosen size's special offer to tick, the stock, the round cart button on
+its foot; Description and Ingredients under the label, as wide as it). On
+the catalog a card opens its page over the wall, with its own address
+(catalog.js): on a computer the label folds to its band, the picture,
+tag, badge and band float to their places (a view transition) and the
+label unfolds; closing is the same backwards, the wall where it was. A
+phone, reduced motion or no view transitions: the page just shows. The channel's pages only say where the form posts and what its
 button says. CSS in `static/css/catalog.css`.
 
 **Status burst:** `includes/ui/status_burst.html`, rendered once in

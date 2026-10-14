@@ -7,6 +7,15 @@
     initializeTabs(group);
   }
 
+  // For tabs added later (a product opened over the catalog, catalog.js).
+  window.SwedeSweetsTabs = {
+    init(root) {
+      for (const group of root.querySelectorAll("[data-tabs]")) {
+        initializeTabs(group);
+      }
+    },
+  };
+
   function initializeTabs(group) {
     // A group's own tabs and panels, not those of a group inside one of
     // its panels (the language tabs in the Shop text tab, say).

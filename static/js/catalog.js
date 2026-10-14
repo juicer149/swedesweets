@@ -339,11 +339,21 @@
   }
 
 
-  /* From a card to its page and back (a computer, view transitions;
-     catalog.css): only the card that is opened or come back to carries
-     the names its page's picture, tag, badge and label carry, so the
-     browser moves those four and fades the rest, not the whole wall. */
+  /* A card's page, over the catalog ------------------------------------
 
+     Opening a card (its picture or name) brings its page over the wall,
+     its own address in the bar (so it can be linked, and the browser's
+     back closes it), the wall where it was underneath. On a computer, with
+     motion: the card's label folds to its yellow band (the cart button
+     riding up to it), the picture, tag, badge and band float to their
+     places on the page (a view transition, the same names on both), and
+     there the label unfolds with what the page adds. Closing is the same
+     backwards. A phone, reduced motion or a browser without view
+     transitions: the page just shows. The page is the product's own page,
+     fetched; failing that, the browser goes there. */
+
+  const detail = catalog.querySelector("[data-catalog-detail]");
+  const FOLD_MS = 220;
   const PARTS = {
     picture: ".tile__image",
     tag: ".tile__tag",
@@ -351,17 +361,23 @@
     label: ".tile__label",
   };
 
-  function tileFor(url) {
-    if (!url) {
-      return null;
-    }
+  const opened = {
+    tile: null,
+    url: "",
+    title: "",
+    busy: false,
+  };
 
-    const path = new URL(url, window.location.href).pathname;
+  function wait(ms) {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
+  }
 
-    return tiles.find((tile) => {
-      const link = tile.querySelector(".tile__media");
-      return link && new URL(link.href).pathname === path;
-    }) || null;
+  function withMotion() {
+    return Boolean(
+      document.startViewTransition
+      && !window.matchMedia("(max-width: 767px)").matches
+      && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    );
   }
 
   function nameTile(tile, on) {
@@ -376,41 +392,206 @@
     }
   }
 
-  function clearNames() {
-    for (const tile of tiles) {
-      nameTile(tile, false);
+  function tileFor(url) {
+    const path = new URL(url, window.location.href).pathname;
+
+    return tiles.find((tile) => {
+      const link = tile.querySelector(".tile__media");
+      return link && new URL(link.href).pathname === path;
+    }) || null;
+  }
+
+  async function fetchPage(url) {
+    const response = await fetch(url, {
+      headers: { Accept: "text/html" },
+      credentials: "same-origin",
+    });
+
+    if (!response.ok) {
+      throw new Error("not found");
+    }
+
+    const page = new DOMParser().parseFromString(await response.text(), "text/html");
+    const article = page.querySelector("[data-product-page]");
+
+    if (!article) {
+      throw new Error("not a product");
+    }
+
+    return {
+      section: article.closest(".page-section") || article,
+      title: page.title,
+    };
+  }
+
+  /* The page's label is the card's, bigger: the same width-to-text ratio,
+     so the name breaks the same way. */
+  function scaleLabel(article, tile) {
+    const tileLabel = tile?.querySelector(".tile__label");
+    const main = article.querySelector(".product__main");
+    const media = article.querySelector(".product__media");
+    const side = article.querySelector(".product__side");
+
+    if (!tileLabel || !main || !media || !side) {
+      return;
+    }
+
+    const gap = parseFloat(getComputedStyle(main).columnGap) || 0;
+    const tileWidth = tileLabel.offsetWidth;
+    const room = Math.min(main.clientWidth - media.offsetWidth - gap, 24 * 16);
+
+    if (tileWidth > 0 && room > 0) {
+      side.style.setProperty("--tile-label-width", `${tileWidth}px`);
+      side.style.setProperty("--label-scale", String(room / tileWidth));
     }
   }
 
-  // Leaving for a card's page: that card's parts go with the page.
-  window.addEventListener("pageswap", (event) => {
-    if (!event.viewTransition) {
+  function show(section, tile) {
+    detail.replaceChildren(section);
+    detail.style.setProperty(
+      "--detail-top",
+      `${document.querySelector(".site-header")?.getBoundingClientRect().bottom || 0}px`
+    );
+    detail.hidden = false;
+    document.documentElement.classList.add("catalog--detail-open");
+
+    if (!window.matchMedia("(max-width: 767px)").matches) {
+      scaleLabel(section.querySelector("[data-product-page]") || section, tile);
+    }
+  }
+
+  function hide() {
+    detail.hidden = true;
+    detail.replaceChildren();
+    document.documentElement.classList.remove("catalog--detail-open");
+  }
+
+  async function openProduct(tile, url, { push = true, keyboard = false } = {}) {
+    if (!detail || opened.busy || opened.tile) {
       return;
     }
 
-    clearNames();
-    const tile = tileFor(event.activation?.entry?.url);
+    opened.busy = true;
+    const motion = withMotion();
+    const loading = fetchPage(url);
+
+    if (motion && tile) {
+      tile.classList.add("tile--folded");
+    }
+
+    let page;
+    try {
+      [page] = await Promise.all([loading, motion ? wait(FOLD_MS) : null]);
+    } catch (error) {
+      window.location.assign(url);
+      return;
+    }
+
+    const article = page.section.querySelector("[data-product-page]") || page.section;
+
+    opened.tile = tile;
+    opened.url = url;
+    opened.title = document.title;
+
+    if (push) {
+      window.history.pushState({ catalogProduct: url }, "", url);
+    }
+    document.title = page.title || document.title;
+
+    if (motion && tile) {
+      article.classList.add("product--folded");
+      nameTile(tile, true);
+
+      const transition = document.startViewTransition(() => {
+        nameTile(tile, false);
+        show(page.section, tile);
+      });
+
+      await transition.finished.catch(() => {});
+      // Then the label unfolds with what the page adds.
+      void article.offsetWidth;
+      article.classList.remove("product--folded");
+    } else {
+      show(page.section, tile);
+    }
+
+    window.SwedeSweetsTabs?.init(page.section);
+    window.SwedeSweetsProduct?.init(article, {
+      onClose: () => window.history.back(),
+      onAdded: () => window.history.back(),
+    });
+    // From the keyboard, on to the page's ×; a click leaves the focus be.
+    if (keyboard) {
+      article.querySelector("[data-product-close]")?.focus({ preventScroll: true });
+    }
+
+    opened.busy = false;
+  }
+
+  async function closeProduct() {
+    if (!detail || !opened.url || opened.busy) {
+      return;
+    }
+
+    opened.busy = true;
+    const tile = opened.tile;
+    const article = detail.querySelector("[data-product-page]");
+    const motion = withMotion() && tile && tile.classList.contains("tile--folded");
+
+    if (motion && article) {
+      article.classList.add("product--folded");
+      await wait(FOLD_MS);
+
+      const transition = document.startViewTransition(() => {
+        hide();
+        nameTile(tile, true);
+      });
+
+      await transition.finished.catch(() => {});
+      nameTile(tile, false);
+    } else {
+      hide();
+    }
 
     if (tile) {
-      nameTile(tile, true);
-    }
-  });
-
-  // Back from a card's page: its parts come back to that card.
-  window.addEventListener("pagereveal", (event) => {
-    clearNames();
-
-    if (!event.viewTransition) {
-      return;
+      tile.classList.remove("tile--folded");
+      tile.querySelector(".tile__name a")?.focus({ preventScroll: true, focusVisible: false });
     }
 
-    const tile = tileFor(window.navigation?.activation?.from?.url);
+    document.title = opened.title || document.title;
+    opened.tile = null;
+    opened.url = "";
+    opened.busy = false;
+  }
 
-    if (!tile) {
-      return;
-    }
+  if (detail) {
+    catalog.addEventListener("click", (event) => {
+      const link = event.target.closest(".tile__media, .tile__name a");
 
-    nameTile(tile, true);
-    event.viewTransition.finished.finally(() => nameTile(tile, false));
-  });
+      if (
+        !link
+        || event.defaultPrevented
+        || event.button !== 0
+        || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      void openProduct(link.closest("[data-catalog-product]"), link.href, {
+        keyboard: event.detail === 0,
+      });
+    });
+
+    // The browser's back closes it; forward opens it again.
+    window.addEventListener("popstate", (event) => {
+      const url = event.state?.catalogProduct;
+
+      if (opened.url && !url) {
+        void closeProduct();
+      } else if (url && !opened.url) {
+        void openProduct(tileFor(url), url, { push: false });
+      }
+    });
+  }
 })();

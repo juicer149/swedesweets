@@ -17,9 +17,14 @@
 (() => {
   "use strict";
 
-  const form = document.querySelector("[data-product-add-form]");
+/* root: the product's <article data-product-page>, on its own page or
+   opened over the catalog. options.onClose(): the × and Back close it
+   (over the catalog); options.onAdded(): after an add, instead of opening
+   the catalog. */
+function initProduct(root, options = {}) {
+  const form = root.querySelector("[data-product-add-form]");
 
-  if (!form) {
+  if (!form || form.dataset.enhanced !== undefined) {
     return;
   }
 
@@ -39,9 +44,12 @@
     }
   })();
 
-  for (const link of document.querySelectorAll(".product__back-top, .product .page__back a")) {
+  for (const link of root.querySelectorAll("[data-product-close]")) {
     link.addEventListener("click", (event) => {
-      if (cameFromCatalog && window.history.length > 1) {
+      if (options.onClose) {
+        event.preventDefault();
+        options.onClose();
+      } else if (cameFromCatalog && window.history.length > 1) {
         event.preventDefault();
         window.history.back();
       }
@@ -57,10 +65,10 @@
   const dealText = form.querySelector("[data-deal-text]");
   const stock = form.querySelector("[data-product-stock]");
   const stockText = form.querySelector("[data-product-stock-text]");
-  const tag = document.querySelector("[data-product-tag]");
-  const tagPrice = document.querySelector("[data-product-price]");
-  const tagNote = document.querySelector("[data-product-tag-note]");
-  const badge = document.querySelector("[data-in-cart]");
+  const tag = root.querySelector("[data-product-tag]");
+  const tagPrice = root.querySelector("[data-product-price]");
+  const tagNote = root.querySelector("[data-product-tag-note]");
+  const badge = root.querySelector("[data-in-cart]");
   const badgeCount = badge?.querySelector("[data-in-cart-count]");
   const feedback = form.querySelector("[data-product-feedback]");
   const status = form.querySelector("[data-product-status]");
@@ -196,6 +204,10 @@
   }
 
   document.addEventListener("navbar-cart-refreshed", (event) => {
+    if (!root.isConnected) {
+      return;
+    }
+
     const productId = form.dataset.productId;
     const lines = (event.detail?.container || document).querySelectorAll(
       "[data-navbar-cart-line][data-product-id]"
@@ -321,7 +333,13 @@
         feedback.textContent = value.message || "";
       }
 
-      // Added: on to the catalog, as without JavaScript.
+      // Added: back to the catalog (closing, over it), as without JavaScript.
+      if (options.onAdded) {
+        delete form.dataset.state;
+        options.onAdded();
+        return;
+      }
+
       if (form.dataset.doneUrl) {
         window.location.assign(form.dataset.doneUrl);
         return;
@@ -338,4 +356,14 @@
     form.dataset.state = "failed";
     showError(message);
   });
+}
+
+  window.SwedeSweetsProduct = { init: initProduct };
+
+  // Its own page.
+  const page = document.querySelector("[data-product-page]");
+
+  if (page) {
+    initProduct(page);
+  }
 })();
