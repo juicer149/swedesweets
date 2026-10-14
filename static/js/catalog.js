@@ -413,13 +413,13 @@
 
      Opening a card (its picture or name) brings its page over the wall,
      its own address in the bar (so it can be linked, and the browser's
-     back closes it), the wall where it was underneath. On a computer, with
-     motion: the card's label folds to its yellow band (the cart button
-     riding up to it), the picture, tag, badge and band float to their
-     places on the page (a view transition, the same names on both), and
-     there the label unfolds with what the page adds. Closing is the same
-     backwards. A phone, reduced motion or a browser without view
-     transitions: the page just shows. The page is the product's own page,
+     back closes it), the wall where it was underneath. With motion, on a
+     computer and a phone alike: the card's label folds to its yellow band
+     (the cart button riding up to it), the picture, tag, badge, band and
+     button float to their places on the page (a view transition, the same
+     names on both), and there the label unfolds with what the page adds.
+     Closing is the same backwards. Reduced motion or a browser without
+     view transitions: the page just shows. The page is the product's own page,
      fetched; failing that, the browser goes there. */
 
   const detail = catalog.querySelector("[data-catalog-detail]");
@@ -455,7 +455,6 @@
   function withMotion() {
     return Boolean(
       document.startViewTransition
-      && !window.matchMedia("(max-width: 767px)").matches
       && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
     );
   }
@@ -518,7 +517,11 @@
 
     const gap = parseFloat(getComputedStyle(main).columnGap) || 0;
     const tileWidth = tileLabel.offsetWidth;
-    const room = Math.min(main.clientWidth - media.offsetWidth - gap, 24 * 16);
+    // A phone: the label over the picture's foot, as wide as it is there
+    // (catalog.css); a computer: beside the picture, at most 24rem.
+    const room = window.matchMedia("(max-width: 767px)").matches
+      ? (article.querySelector(".product__label")?.offsetWidth || 0)
+      : Math.min(main.clientWidth - media.offsetWidth - gap, 24 * 16);
 
     if (tileWidth > 0 && room > 0) {
       side.style.setProperty("--tile-label-width", `${tileWidth}px`);
@@ -536,9 +539,7 @@
     detail.hidden = false;
     document.documentElement.classList.add("catalog--detail-open");
 
-    if (!window.matchMedia("(max-width: 767px)").matches) {
-      scaleLabel(section.querySelector("[data-product-page]") || section, tile);
-    }
+    scaleLabel(section.querySelector("[data-product-page]") || section, tile);
   }
 
   function hide() {
