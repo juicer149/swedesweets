@@ -425,6 +425,13 @@
       if (root.querySelector("[data-cart-empty]")) {
         root.dispatchEvent(new CustomEvent("cart-line-removed"));
       } else if (!linesLeft) {
+        // The page comes back as the empty cart: its navbar cart still
+        // flashes red (navbar-cart.js, on load).
+        try {
+          window.sessionStorage.setItem("navbar-cart-bump", "removed");
+        } catch (error) {
+          // no storage: no flash
+        }
         window.location.reload();
       }
     }

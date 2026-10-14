@@ -18,6 +18,8 @@
 
 .page.catalog__page {
   width: min(100%, var(--width-page));
+  /* never wider than that for long words in it (the categories scroll) */
+  min-width: 0;
 }
 
 .catalog__tools {
@@ -1110,18 +1112,40 @@
     border-bottom: 0;
   }
 
+  /* The categories in one row that scrolls sideways when the words are
+     long (French), instead of pushing the page, and the search with it,
+     past the screen. The line under them is drawn inside (a scroll box
+     clips what is outside), with room for the yellow underline on it. */
   .catalog__tools .section-nav {
-    border-bottom: 1px solid var(--color-neutral-200);
+    min-width: 0;
+    padding-bottom: calc(var(--space-1) + 1px);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+
+    border-bottom: 0;
+    box-shadow: inset 0 -1px 0 var(--color-neutral-200);
+  }
+
+  .catalog__tools .section-nav::-webkit-scrollbar {
+    display: none;
   }
 
   .catalog__search {
     flex: none;
+    min-width: 0;
     padding: 0;
   }
 
   .catalog__categories .section-nav__link {
+    flex: 1 0 auto;
     padding-inline: var(--space-1);
     white-space: nowrap;
+  }
+
+  /* Its ring inside: outside it would be cut by the scroll box. */
+  .catalog__categories .section-nav__link:focus-visible {
+    outline-offset: -2px;
   }
 
 

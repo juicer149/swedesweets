@@ -480,6 +480,20 @@
   }
 
 
+  /* A flash asked for before the page reloaded (cart.js: the last line
+     taken out of the cart page). */
+  try {
+    const kind = window.sessionStorage.getItem("navbar-cart-bump");
+
+    if (kind) {
+      window.sessionStorage.removeItem("navbar-cart-bump");
+      bumpCart(kind);
+    }
+  } catch (error) {
+    // no storage: no flash
+  }
+
+
   /*
    * Back and forward: the browser may show this page as it was when it
    * was left (the back/forward cache, or its HTTP cache), with the cart
