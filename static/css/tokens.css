@@ -357,7 +357,7 @@
      ========================================================================== */
 
   /* ## Surface: the blue, the letters on it, the yellow of the chosen */
-  --menu-bg: var(--color-primary-900);
+  --menu-bg: var(--color-primary-800);
   --menu-ink: var(--color-neutral-50);
   --menu-chosen: var(--color-brand-yellow);
   /* outlined buttons on the blue (Login, the account on a phone) */
