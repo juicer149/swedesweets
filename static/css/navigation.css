@@ -273,8 +273,8 @@
   /* light yellow with a yellow ring and a yellow cart, as the add
      buttons' light fill */
   color: var(--color-accent-600);
-  background: var(--color-accent-100);
-  border: 1.5px solid var(--color-accent-600);
+  background: var(--color-primary-600);
+  border: 1.75px solid var(--color-accent-300);
   border-radius: var(--radius-pill);
 
   cursor: pointer;
@@ -289,9 +289,10 @@
 .site-nav-cart__trigger:hover,
 .site-nav-cart__trigger:focus-visible,
 .site-nav-cart[open] .site-nav-cart__trigger {
-  color: var(--color-accent-700);
-  background: var(--color-white);
+  color: var(--color-primary-900);
+  background: var(--color-accent-600);
   box-shadow: var(--shadow-accent-glow);
+  border: 1.75px solid var(--color-accent-600);
 }
 
 .site-nav-cart__trigger:hover,
