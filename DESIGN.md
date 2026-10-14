@@ -341,8 +341,9 @@ drawing's faded foot (Find Sweets).
   cream logo, cream links, the page you are on yellow (brand-yellow) with
   the crown, which has a dark blue shadow under it as on the start page;
   a yellow line (accent-600) between it and the page; the chosen language
-  filled yellow, Login outlined cream; the cart light yellow (accent-100)
-  with a yellow ring and cart, its count dark blue. On a phone the bottom
+  filled yellow, Login outlined cream; the cart blue with a light yellow ring
+  and a yellow cart, filled yellow when pointed at or open; its count
+  yellow (accent-600, primary-950 text), hidden while the cart is open. On a phone the bottom
   bar has a thin yellow edge. The cart's popover stays cream.
 - **Desktop:** links in the top bar, with icons; the page you are on gets
   the crown tilted on its last letter (as on the logo and the start page),
