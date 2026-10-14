@@ -52,7 +52,12 @@ class DemoMerch:
     name: str
     weight_per_unit: int
     retail_price_eur: Decimal
+    # Per size when it has sizes.
     quantity: int
+    # Its sizes, each a variant with its own offer and batch.
+    sizes: tuple[str, ...] = ()
+    # Sizes on sale with no stock (shown sold out in the shop).
+    sold_out: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -63,6 +68,8 @@ class DemoBatch:
     received: date
     best_before: date
     location: str
+    # The variant's label, for a product with sizes.
+    variant_label: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -136,10 +143,13 @@ CUSTOMERS: tuple[DemoCustomer, ...] = (
     ),
 )
 
-# Retail merchandise: sold to consumers in the storefront, priced in EUR.
+SIZES = ("XS", "S", "M", "L", "XL")
+
+# Retail merchandise: sold to consumers in the storefront, priced in EUR;
+# the hoodie and the T-shirt in sizes (the T-shirt's L sold out).
 MERCH: tuple[DemoMerch, ...] = (
-    DemoMerch(901, "Hoodie", 600, Decimal("55.00"), 20),
-    DemoMerch(902, "T-shirt", 200, Decimal("25.00"), 30),
+    DemoMerch(901, "Hoodie", 600, Decimal("55.00"), 6, SIZES),
+    DemoMerch(902, "T-shirt", 200, Decimal("25.00"), 8, SIZES, sold_out=("L",)),
     DemoMerch(903, "Cap Classic", 150, Decimal("22.00"), 15),
     DemoMerch(904, "Cap Trucker", 150, Decimal("22.00"), 15),
 )
@@ -195,16 +205,25 @@ def build_batches(
 
 
 def merch_batches(*, today: date) -> list[DemoBatch]:
+    """A batch per merch item, or per size (none for a sold-out one)."""
+
     return [
         DemoBatch(
             internal_number=item.internal_number,
-            batch_id=f"DEMO-{item.internal_number:03d}-A",
+            batch_id=(
+                f"DEMO-{item.internal_number:03d}-{size}"
+                if size
+                else f"DEMO-{item.internal_number:03d}-A"
+            ),
             quantity=item.quantity,
             received=today - timedelta(days=30),
             best_before=today + timedelta(days=3650),
             location="M1",
+            variant_label=size,
         )
         for item in MERCH
+        for size in (item.sizes or ("",))
+        if size not in item.sold_out
     ]
 
 

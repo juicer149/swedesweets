@@ -67,7 +67,7 @@ from pricing.services import (
 )
 from products.image_services import change_product_image
 from products.models import Product, ProductProfile, ProductVariant
-from products.services import create_product
+from products.services import add_variant, create_product
 from reservations.models import Allocation
 
 from . import _demo_data as demo
@@ -327,18 +327,32 @@ class Command(BaseCommand):
             )
             product = getattr(result, "item", result)
 
-            # Merch is sold to retail customers only: a RETAIL offer and no
-            # BUSINESS offer, so it stays out of the business catalogue.
-            offer = create_commercial_price(
-                product=product,
-                channel=CommercialPrice.Channel.RETAIL,
-            )
-            set_price_amount(
-                commercial_price=offer,
-                currency=PriceAmount.Currency.EUR,
-                price=item.retail_price_eur,
-            )
-            set_commercial_price_enabled(commercial_price=offer, enabled=True)
+            # Its sizes: the only variant takes the first, then the rest.
+            for label in item.sizes[1:]:
+                add_variant(
+                    product=product,
+                    label=label,
+                    first_label=item.sizes[0],
+                )
+
+            # Merch is sold to retail customers only: a RETAIL offer per
+            # size and no BUSINESS offer, so it stays out of the business
+            # catalogue.
+            for variant in product.variants.all():
+                offer = create_commercial_price(
+                    product=product,
+                    channel=CommercialPrice.Channel.RETAIL,
+                    variant=variant,
+                )
+                set_price_amount(
+                    commercial_price=offer,
+                    currency=PriceAmount.Currency.EUR,
+                    price=item.retail_price_eur,
+                )
+                set_commercial_price_enabled(
+                    commercial_price=offer,
+                    enabled=True,
+                )
 
             merch[item.internal_number] = product
 
@@ -373,8 +387,14 @@ class Command(BaseCommand):
         products: dict[int, Product],
     ) -> None:
         for batch in batches:
+            product = products[batch.internal_number]
             create_batch(
-                product=products[batch.internal_number],
+                product=product,
+                variant=(
+                    product.variants.get(label=batch.variant_label)
+                    if batch.variant_label
+                    else None
+                ),
                 quantity=batch.quantity,
                 best_before=batch.best_before,
                 location=batch.location,

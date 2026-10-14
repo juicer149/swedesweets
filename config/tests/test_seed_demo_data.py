@@ -69,12 +69,32 @@ def test_merch_has_enabled_retail_prices(debug):
 
     for item in demo.MERCH:
         product = Product.objects.get(internal_number=item.internal_number)
-        offer = CommercialPrice.objects.get(
+        offers = CommercialPrice.objects.filter(
             product=product,
             channel=CommercialPrice.Channel.RETAIL,
         )
-        assert offer.enabled
-        assert offer.amounts.get().price == item.retail_price_eur
+        # One per size (or the one).
+        assert offers.count() == max(len(item.sizes), 1)
+
+        for offer in offers:
+            assert offer.enabled
+            assert offer.amounts.get().price == item.retail_price_eur
+
+
+@pytest.mark.django_db
+def test_the_hoodie_and_t_shirt_come_in_sizes(debug):
+    _seed()
+
+    hoodie = Product.objects.get(internal_number=901)
+    t_shirt = Product.objects.get(internal_number=902)
+
+    assert [variant.label for variant in hoodie.variants.all()] == list(demo.SIZES)
+    # The T-shirt's L is on sale with nothing in stock: sold out.
+    stocked = {
+        batch.variant.label
+        for batch in InventoryBatch.objects.filter(product=t_shirt)
+    }
+    assert stocked == set(demo.SIZES) - {"L"}
 
 
 @pytest.mark.django_db

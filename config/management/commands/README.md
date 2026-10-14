@@ -28,7 +28,8 @@ Everything except the product catalogue is invented (`_demo_data.py`):
   phone numbers from the range reserved for fiction (+33 1 99 00 xx xx)
 - one long-dated batch per active product, plus short-dated batches for the
   expiry queue and a few small ones for the low-stock queue
-- four retail merch products with EUR prices
+- four retail merch products with EUR prices; the hoodie and the T-shirt
+  in sizes XS–XL (the T-shirt's L sold out)
 - with `--with-images`, a drawn picture for every product (`_demo_images.py`):
   a heap of sweets in the flavour's colours, chips, dip-mix sachets and
   merch garments; no network and no third-party pictures
