@@ -340,8 +340,10 @@ drawing's faded foot (Find Sweets).
 - **The navbar is the start page's menu in a bar:** primary-600 with the
   cream logo, cream links, the page you are on yellow (brand-yellow) with
   the crown, which has a dark blue shadow under it as on the start page;
-  the language buttons and Login as on the blue pages. The cart's
-  popover stays cream.
+  a yellow line (accent-600) between it and the page; the chosen language
+  filled yellow, Login outlined cream; the cart light yellow (accent-100)
+  with a yellow ring and cart, its count dark blue. On a phone the bottom
+  bar has a thin yellow edge. The cart's popover stays cream.
 - **Desktop:** links in the top bar, with icons; the page you are on gets
   the crown tilted on its last letter (as on the logo and the start page),
   and the yellow underline only answers the pointer. On a phone the crown

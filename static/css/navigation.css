@@ -25,7 +25,8 @@
 
   color: var(--nav-ink);
   background: var(--nav-blue);
-  border-bottom: 1px solid var(--color-primary-700);
+  /* a yellow line between the menu and the page */
+  border-bottom: 2px solid var(--color-accent-600);
 }
 
 .site-nav {
@@ -269,9 +270,11 @@
   height: clamp(2rem, 2.4vw, 2.25rem);
   padding: 0;
 
-  color: var(--nav-ink);
-  background: transparent;
-  border: 1px solid var(--nav-line);
+  /* light yellow with a yellow ring and a yellow cart, as the add
+     buttons' light fill */
+  color: var(--color-accent-600);
+  background: var(--color-accent-100);
+  border: 1.5px solid var(--color-accent-600);
   border-radius: var(--radius-pill);
 
   cursor: pointer;
@@ -286,8 +289,9 @@
 .site-nav-cart__trigger:hover,
 .site-nav-cart__trigger:focus-visible,
 .site-nav-cart[open] .site-nav-cart__trigger {
-  color: var(--nav-chosen);
-  border-color: var(--nav-chosen);
+  color: var(--color-accent-700);
+  background: var(--color-white);
+  box-shadow: var(--shadow-accent-glow);
 }
 
 .site-nav-cart__trigger:hover,
@@ -389,9 +393,9 @@
   height: 1.2rem;
   padding-inline: 0.28rem;
 
-  /* yellow as on the start page's cart */
-  color: var(--color-neutral-900);
-  background: var(--nav-chosen);
+  /* dark blue: it stands out on the yellow button */
+  color: var(--color-white);
+  background: var(--color-primary-900);
   border: 2px solid var(--nav-blue);
   border-radius: var(--radius-pill);
 
@@ -674,9 +678,9 @@
 
 .site-header .language-switcher__option--active,
 .site-header .language-switcher__option[aria-current="true"] {
-  color: var(--color-primary-700);
-  background: var(--nav-ink);
-  border-color: var(--nav-ink);
+  color: var(--color-primary-900);
+  background: var(--color-accent-600);
+  border-color: var(--color-accent-600);
 }
 
 
@@ -889,10 +893,14 @@
     gap: clamp(0.1rem, 0.6vw, var(--space-1));
 
     min-width: 0;
-    padding: clamp(0.35rem, 1.2vw, var(--space-2));
+    /* the links a little low in the bar: the crowns stand over them */
+    padding:
+      calc(clamp(0.35rem, 1.2vw, var(--space-2)) + 0.3rem)
+      clamp(0.35rem, 1.2vw, var(--space-2))
+      calc(clamp(0.35rem, 1.2vw, var(--space-2)) - 0.1rem);
 
     background: var(--nav-blue);
-    border: 1px solid var(--color-primary-700);
+    border: 1px solid var(--color-accent-600);
     border-radius: 24px;
 
     box-shadow:
