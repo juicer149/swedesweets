@@ -105,6 +105,9 @@ def build_business_offer_choice_context(
                 "product__brand",
                 "product__name",
                 "product_id",
+                # The sizes in their order, each its own row.
+                "variant__position",
+                "variant_id",
                 "batch_id",
                 "id",
             )

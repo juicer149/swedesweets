@@ -720,6 +720,15 @@ class ProductVariant(models.Model):
             self.label,
         )
 
+    @property
+    def unit_weight_label(self) -> str:
+        """ "450 g / Box": the variant's own weight, the product's unit."""
+
+        return _("%(weight)s g / %(unit)s") % {
+            "weight": self.weight_per_unit,
+            "unit": self.product.stock_unit_singular,
+        }
+
     def __str__(self) -> str:
         return self.sku
 

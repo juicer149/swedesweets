@@ -107,7 +107,11 @@ def _line(
     selectable_offer_ids: Collection[int],
 ) -> OpsRecentOrderLine:
     return OpsRecentOrderLine(
-        offer=build_order_line_offer_view(line.commercial_offer),
+        # Named as it was ordered (the line's copy), with its size.
+        offer=build_order_line_offer_view(
+            line.commercial_offer,
+            name=line.display_name,
+        ),
         quantity=line.quantity_in_units,
         commercial_price_id=(
             line.commercial_offer_id

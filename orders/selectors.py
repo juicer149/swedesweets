@@ -241,6 +241,7 @@ def list_recent_business_orders(
             "lines__variant",
             "lines__commercial_offer__batch",
             "lines__commercial_offer__product__profile",
+            "lines__commercial_offer__variant",
         )
         .order_by("-created_at", "-id")
     )

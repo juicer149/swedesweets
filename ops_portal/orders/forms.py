@@ -13,7 +13,6 @@ from business.datatypes import BusinessOfferLineInput
 from business.offer_choices import build_business_offer_choice_context
 from customers.models import Customer
 from ops_portal.products.presentation import (
-    translated_product_catalog_label,
     translated_product_name,
 )
 from orders.models import Order
@@ -22,6 +21,7 @@ from orders.order_limits import (
     is_unusually_large_order_line,
 )
 from pricing.models import CommercialPrice
+from products.catalog import variant_display_name
 from products.images import product_image_url
 from products.models import Product
 
@@ -43,9 +43,10 @@ class CustomerChoiceField(forms.ModelChoiceField):
 
 
 class BusinessOfferSelect(forms.Select):
-    """A select whose options carry the product's picture, name, weight,
-    stock and offer, for the enhanced dropdown (enhanced_selects.js) to
-    draw. The field fills the data (BusinessOfferChoiceField.option_data):
+    """A select whose options carry the product's picture, the name with
+    its size ("SwedeSweets — Hoodie — M": every variant its own row),
+    weight, stock and offer, for the enhanced dropdown (enhanced_selects.js)
+    to draw. The field fills the data (BusinessOfferChoiceField.option_data):
     Django asks the widget, not the field, for each option."""
 
     option_field: BusinessOfferChoiceField | None = None
@@ -137,13 +138,14 @@ class BusinessOfferChoiceField(forms.ModelChoiceField):
         offer: CommercialPrice,
     ) -> dict[str, str]:
         product = offer.product
+        variant = offer.variant
 
         return {
             "data-code": product.code_label,
             "data-name": self._product_name(
-                product
+                offer
             ),
-            "data-weight": product.unit_weight_label,
+            "data-weight": variant.unit_weight_label,
             "data-offer-detail": _offer_detail(
                 offer
             ),
@@ -154,10 +156,10 @@ class BusinessOfferChoiceField(forms.ModelChoiceField):
                 f"{product.internal_number or ''} "
                 f"{product.brand} "
                 f"{product.name} "
-                f"{product.display_name} "
-                f"{self._product_name(product)} "
-                f"{self._product_label(product)} "
-                f"{product.sku} "
+                f"{variant.display_name} "
+                f"{self._product_name(offer)} "
+                f"{self._product_label(offer)} "
+                f"{variant.sku} "
                 f"{_offer_detail(offer)}"
             ),
         }
@@ -187,7 +189,7 @@ class BusinessOfferChoiceField(forms.ModelChoiceField):
         offer: CommercialPrice,
     ) -> str:
         product_label = self._product_label(
-            offer.product
+            offer
         )
         offer_detail = _offer_detail(
             offer
@@ -203,31 +205,33 @@ class BusinessOfferChoiceField(forms.ModelChoiceField):
 
     def _product_label(
         self,
-        product: Product,
+        offer: CommercialPrice,
     ) -> str:
-        if self.language_code:
-            return translated_product_catalog_label(
-                product,
-                language_code=self.language_code,
-            )
+        """ "#12 · SwedeSweets — Hoodie — M · 450 g / Box"."""
 
         return (
-            f"{product.code_label} · "
-            f"{product.display_name} · "
-            f"{product.unit_weight_label}"
+            f"{offer.product.code_label} · "
+            f"{self._product_name(offer)} · "
+            f"{offer.variant.unit_weight_label}"
         )
 
     def _product_name(
         self,
-        product: Product,
+        offer: CommercialPrice,
     ) -> str:
-        if self.language_code:
-            return translated_product_name(
+        """The name with its size: "SwedeSweets — Hoodie — M"."""
+
+        product = offer.product
+        name = (
+            translated_product_name(
                 product,
                 language_code=self.language_code,
             )
+            if self.language_code
+            else product.display_name
+        )
 
-        return product.display_name
+        return variant_display_name(name, offer.variant.label)
 
 
 class OrderCreateForm(forms.Form):
@@ -287,7 +291,7 @@ class AddOrderLineProductForm(forms.Form):
         # Each option shows the product's picture: load the profiles
         # with the offers, not one query per option.
         offer_field.queryset = (
-            offer_queryset.select_related("product__profile")
+            offer_queryset.select_related("product__profile", "variant")
             if offer_queryset is not None
             else CommercialPrice.objects.none()
         )
@@ -375,6 +379,7 @@ class OrderLineForm(forms.Form):
             CommercialPrice.objects
             .select_related(
                 "product__profile",
+                "variant",
                 "batch",
             )
             .filter(pk=offer_id)
@@ -602,7 +607,7 @@ class BaseOrderLineFormSet(BaseFormSet):
                     f"Only "
                     f"{product.stock_quantity_label(available_quantity)} "
                     f"available for "
-                    f"{product.display_name}"
+                    f"{offer.variant.display_name}"
                     f"{offer_description}."
                 )
 
@@ -738,14 +743,20 @@ class OrderLineOfferView:
 
 def build_order_line_offer_view(
     offer: CommercialPrice,
+    *,
+    name: str | None = None,
 ) -> OrderLineOfferView:
+    """The line as the form draws it: the name with its size, "#12 · 450 g
+    / Box". name: what an earlier order called it (its line's copy)."""
+
     product = offer.product
+    variant = offer.variant
 
     return OrderLineOfferView(
-        name=product.display_name,
+        name=name or variant.display_name,
         meta=(
             f"{product.code_label} · "
-            f"{product.unit_weight_label}"
+            f"{variant.unit_weight_label}"
         ),
         offer_detail=_offer_detail(offer),
         image_url=product_image_url(product),
