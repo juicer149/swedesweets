@@ -31,6 +31,7 @@
   );
   const searchInput = catalog.querySelector("[data-catalog-search]");
   const noResults = catalog.querySelector("[data-catalog-no-results]");
+  const more = catalog.querySelector("[data-catalog-more]");
   const feedback = catalog.querySelector("[data-catalog-feedback]");
 
   const addedLabel = catalog.dataset.catalogAddedLabel || "Added";
@@ -63,13 +64,32 @@
     return inCategory && inSearch;
   }
 
-  function applyFilters() {
+  /* A page of cards at a time: 24, whole rows of 2, 3 or 4. Every card is
+     on the page (the search and the tabs look through them all); the
+     ones past the page wait hidden until the wall's foot comes into view,
+     then the three dots, the crown, and the next 24. */
+  const PAGE_SIZE = 24;
+  let shownLimit = PAGE_SIZE;
+  let matchingCount = 0;
+
+  function applyFilters({ keepPage = false } = {}) {
     let visible = 0;
 
+    if (!keepPage) {
+      shownLimit = PAGE_SIZE;
+    }
+
     for (const tile of tiles) {
-      const show = tileMatches(tile);
+      const matches = tileMatches(tile);
+      const show = matches && visible < shownLimit;
       tile.hidden = !show;
-      visible += show ? 1 : 0;
+      visible += matches ? 1 : 0;
+    }
+
+    matchingCount = visible;
+
+    if (more) {
+      more.hidden = matchingCount <= shownLimit;
     }
 
     if (noResults) {
@@ -98,6 +118,46 @@
   }
 
   applyFilters();
+
+  /* The next page, when the wall's foot comes into view. */
+  if (more && "IntersectionObserver" in window) {
+    let loading = false;
+
+    const showMore = async () => {
+      if (loading || matchingCount <= shownLimit) {
+        return;
+      }
+
+      loading = true;
+      const place = more.querySelector("[data-catalog-more-status]");
+
+      if (window.statusBurst && place) {
+        // Nothing to fetch: the cards are here; the dots and the crown
+        // say the wall goes on.
+        await window.statusBurst.run(place, "default", () => Promise.resolve());
+      }
+
+      shownLimit += PAGE_SIZE;
+      applyFilters({ keepPage: true });
+      loading = false;
+
+      // Still at the foot (a tall screen): the next one.
+      if (isAtFoot()) {
+        void showMore();
+      }
+    };
+
+    const isAtFoot = () => {
+      const box = more.getBoundingClientRect();
+      return !more.hidden && box.top < window.innerHeight + 200;
+    };
+
+    new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        void showMore();
+      }
+    }, { rootMargin: "0px 0px 200px 0px" }).observe(more);
+  }
 
 
   /* Size, how many, then add ------------------------------------------ */

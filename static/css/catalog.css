@@ -238,8 +238,7 @@
   transition:
     transform var(--motion-fast),
     background var(--motion-fast),
-    border-color var(--motion-fast),
-    --tile-foot 220ms ease;
+    border-color var(--motion-fast);
   container-type: inline-size;
 }
 
@@ -316,10 +315,19 @@
 /* Opening its page (catalog.js): the label folds to its yellow band, the
    white going up into it and the cart button riding up with it; and
    unfolds again on the way back. */
+/* (A registered length's initial value cannot be in rem: in px here, and
+   each card sets its own; the card, not the label, animates it, so the
+   label's foot and the button on it move together.) */
 @property --tile-foot {
   syntax: "<length>";
   inherits: true;
-  initial-value: 0.9rem;
+  initial-value: 0px;
+}
+
+.tile {
+  --tile-foot: 0.9rem;
+
+  transition: --tile-foot 220ms ease;
 }
 
 .tile--folded {
@@ -717,7 +725,8 @@
   transition:
     transform var(--motion-fast),
     background var(--motion-fast),
-    border-color var(--motion-fast);
+    border-color var(--motion-fast),
+    --product-foot 220ms ease;
 }
 
 .product__label:has(.product__form[data-state]) {
@@ -771,12 +780,15 @@
 @property --product-foot {
   syntax: "<length>";
   inherits: true;
-  initial-value: 2.25rem;
+  initial-value: 0px;
+}
+
+.product__label {
+  --product-foot: 2.25rem;
 }
 
 .product__form {
   padding: 0 var(--space-4) var(--product-foot);
-  transition: --product-foot 220ms ease;
 }
 
 .product__fold {
@@ -795,7 +807,7 @@
   transition: padding 260ms ease, opacity 260ms ease;
 }
 
-.product--folded {
+.product--folded .product__label {
   --product-foot: 0rem;
 }
 
@@ -936,6 +948,33 @@
   max-width: 62ch;
   margin-inline: auto;
   line-height: 1.65;
+}
+
+/* The wall's foot while the next cards come: the three dots, then the
+   crown (as at login and on orders). */
+.catalog__more {
+  display: grid;
+  place-items: center;
+  min-height: 4rem;
+  margin-top: var(--space-6);
+}
+
+.catalog__more[hidden] {
+  display: none;
+}
+
+.catalog__more-status {
+  --feedback-burst-style: dots;
+  --feedback-burst-mark: crown;
+  --status-burst-dot: var(--color-accent-500);
+  --status-burst-success: var(--color-accent-500);
+  --feedback-min-loading: 550ms;
+  --feedback-burst-rest: 80ms;
+  --feedback-mark-hold: 350ms;
+
+  display: grid;
+  place-items: center;
+  min-height: 2.5rem;
 }
 
 /* A card's page, over the catalog (catalog.js): under the site header,

@@ -61,6 +61,11 @@
           {% include "includes/catalog/tile.html" with card=card csrf_token=csrf_token only %}
         {% endfor %}
       </div>
+
+      {# The next 24 cards, when this comes into view (catalog.js): the dots, then the crown. #}
+      <div class="catalog__more" data-catalog-more hidden>
+        <span class="catalog__more-status" data-catalog-more-status></span>
+      </div>
     {% else %}
       <p class="page__note catalog__empty">{% trans "No products are currently available." %}</p>
     {% endif %}
