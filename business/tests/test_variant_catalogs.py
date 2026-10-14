@@ -378,3 +378,35 @@ def test_ordering_by_product_takes_the_first_sold_variant():
 
     with pytest.raises(InvalidOrderOperation, match="not available"):
         resolve_standard_business_offer(product=product)
+
+
+@pytest.mark.django_db
+def test_the_product_page_chooses_the_size_and_shows_its_offer(client):
+    product, small, medium, small_offer, medium_offer = _hoodie(RETAIL)
+    _with_large(product, RETAIL)
+    short = batch_factory(
+        product=product,
+        variant=medium,
+        today=TODAY,
+        quantity=2,
+        batch_id="M-SHORT",
+    )
+    deal = _offer(
+        variant=medium,
+        batch=short,
+        channel=RETAIL,
+        price="3.00",
+        reason=CommercialPrice.Reason.SHORT_DATED,
+    )
+
+    html = client.get(
+        reverse("storefront:product_detail", kwargs={"product_id": product.pk})
+    ).content.decode()
+
+    assert 'id="product-size"' in html
+    assert "L — sold out" in html
+    # M carries its special offer, shown once M is chosen.
+    assert f'data-deal-id="{deal.pk}"' in html
+    assert "data-deal-input" in html
+    assert "from €2.50" in html
+    assert "product__band" in html

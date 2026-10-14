@@ -224,9 +224,15 @@ def product_detail(
             "Product is not available in the retail catalog."
         )
 
+    in_cart = units_in_cart_by_product_id(
+        cart=get_retail_cart(
+            cart_id=getattr(request, "retail_cart_id", None),
+        ),
+    )
     context = build_retail_catalog_product_detail_context(
         catalog_product=catalog_product,
         language_code=request.LANGUAGE_CODE,
+        in_cart_units=in_cart.get(catalog_product.product.id, 0),
     )
 
     return render(

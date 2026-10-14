@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from django.urls import reverse
 
@@ -9,6 +9,7 @@ from common.catalog.contracts import (
 )
 from common.catalog.viewmodels import (
     CatalogOfferVM,
+    ProductCardVM,
     build_product_tabs,
 )
 from common.page_tabs import PageTab
@@ -20,6 +21,7 @@ from products.models import (
     ProductProfile,
 )
 from storefront.catalog.viewmodels import (
+    _build_retail_product_card,
     build_retail_offer_viewmodel,
 )
 
@@ -40,6 +42,9 @@ class RetailCatalogProductDetailContext:
     page_tabs: tuple[PageTab, ...]
     title: str
     cancel_url: str
+    # The catalog card's parts, for the page's label: sizes, deals, the
+    # price tag, the weight, the in-cart badge.
+    card: ProductCardVM | None = None
 
     def as_dict(self) -> dict[str, object]:
         return {
@@ -55,6 +60,7 @@ class RetailCatalogProductDetailContext:
             "page_tabs": self.page_tabs,
             "title": self.title,
             "cancel_url": self.cancel_url,
+            "card": self.card,
         }
 
 
@@ -62,6 +68,7 @@ def build_retail_catalog_product_detail_context(
     *,
     catalog_product: CatalogProduct,
     language_code: str,
+    in_cart_units: int = 0,
 ) -> RetailCatalogProductDetailContext:
     product = catalog_product.product
 
@@ -106,6 +113,13 @@ def build_retail_catalog_product_detail_context(
         title=product_name,
         cancel_url=reverse(
             "storefront:product_list"
+        ),
+        card=replace(
+            _build_retail_product_card(
+                catalog_product=catalog_product,
+                language_code=language_code,
+            ),
+            in_cart_units=in_cart_units,
         ),
     )
 

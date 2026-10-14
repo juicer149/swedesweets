@@ -220,7 +220,7 @@ def product_detail(
 ):
     """Render one currently orderable Business catalog product."""
 
-    get_portal_customer_for_user(
+    customer = get_portal_customer_for_user(
         user=request.user,
     )
 
@@ -237,6 +237,9 @@ def product_detail(
         build_business_catalog_product_detail_context(
             catalog_product=catalog_product,
             language_code=request.LANGUAGE_CODE,
+            in_cart_units=units_in_cart_by_product_id(
+                cart=get_customer_cart(customer=customer),
+            ).get(catalog_product.product.id, 0),
         )
     )
 

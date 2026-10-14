@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from django.urls import reverse
 
 from business_portal.catalog.viewmodels import (
+    _build_business_product_card,
     build_business_offer_viewmodel,
 )
 from common.catalog.contracts import (
@@ -12,6 +13,7 @@ from common.catalog.contracts import (
 )
 from common.catalog.viewmodels import (
     CatalogOfferVM,
+    ProductCardVM,
     build_product_tabs,
 )
 from common.page_tabs import PageTab
@@ -40,6 +42,9 @@ class BusinessCatalogProductDetailContext:
     page_tabs: tuple[PageTab, ...]
     title: str
     cancel_url: str
+    # The catalog card's parts, for the page's label: sizes, deals, the
+    # price tag, the weight, the in-cart badge.
+    card: ProductCardVM | None = None
 
     def as_dict(
         self,
@@ -76,6 +81,7 @@ class BusinessCatalogProductDetailContext:
             "cancel_url": (
                 self.cancel_url
             ),
+            "card": self.card,
         }
 
 
@@ -83,6 +89,7 @@ def build_business_catalog_product_detail_context(
     *,
     catalog_product: CatalogProduct,
     language_code: str,
+    in_cart_units: int = 0,
 ) -> BusinessCatalogProductDetailContext:
     product = (
         catalog_product.product
@@ -148,6 +155,13 @@ def build_business_catalog_product_detail_context(
             title=product_name,
             cancel_url=reverse(
                 "business_portal:catalog"
+            ),
+            card=replace(
+                _build_business_product_card(
+                    catalog_product=catalog_product,
+                    language_code=language_code,
+                ),
+                in_cart_units=in_cart_units,
             ),
         )
     )

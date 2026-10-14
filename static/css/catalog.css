@@ -575,13 +575,17 @@
   width: min(100%, 860px);
 }
 
-/* The picture a fixed, modest size beside what to buy; it should show
-   the product, not fill the screen. */
+/* The picture a fixed, modest size beside its label; it should show the
+   product, not fill the screen. */
 .product__main {
   display: grid;
   grid-template-columns: minmax(0, clamp(16rem, 32vw, 22rem)) minmax(0, 1fr);
-  align-items: start;
+  align-items: center;
   gap: clamp(var(--space-6), 5vw, var(--space-16));
+}
+
+.product__media {
+  position: relative;
 }
 
 .product__image {
@@ -596,96 +600,195 @@
   background: var(--color-neutral-100);
 }
 
+/* The card's price tag and in-cart badge, a size up. */
+.product__tag.tile__tag {
+  top: 0.9rem;
+  right: -0.5rem;
+  padding: 0.3rem 0.8rem 0.3rem 1.4rem;
+  font-size: var(--font-size-20, 1.25rem);
+}
+
+.product__tag.tile__tag::before {
+  left: 0.6rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-top: -0.2rem;
+}
+
+.product__tag[hidden],
+.product__tag [hidden] {
+  display: none;
+}
+
+.product__in-cart.tile__in-cart {
+  top: 0.9rem;
+  left: 0.9rem;
+}
+
+/* The card's label, bigger: white with the yellow edge, the name on the
+   yellow band, a little crooked (straight while adding); green when
+   added, red when not. */
+.product__label {
+  position: relative;
+  background: var(--color-white);
+  border: 1.5px solid var(--color-accent-600);
+  border-radius: 12px;
+  box-shadow: 0 3px 6px rgb(var(--color-row-shadow) / 0.15);
+  transform: rotate(-1deg);
+  transition:
+    transform var(--motion-fast),
+    background var(--motion-fast),
+    border-color var(--motion-fast);
+}
+
+.product__label:has(.product__form[data-state]) {
+  transform: none;
+}
+
+.product__label:has(.product__form[data-state="done"]) {
+  background: var(--color-action-deliver-light-bg);
+  border-color: var(--color-action-deliver-on-light);
+}
+
+.product__label:has(.product__form[data-state="failed"]) {
+  background: var(--color-action-danger-light-bg);
+  border-color: var(--color-action-danger-on-light);
+}
+
+.product__band {
+  padding: 0.7rem var(--space-4) 0.6rem;
+  text-align: center;
+  background: var(--color-accent-500);
+  border-radius: 10px 10px 0 0;
+}
+
 .product__kicker {
-  margin: 0 0 var(--space-1);
-  color: var(--color-neutral-600);
+  margin: 0;
+  color: var(--color-accent-950);
   font-size: var(--font-size-12);
   font-weight: 800;
   letter-spacing: 0.12em;
+  opacity: 0.7;
   text-transform: uppercase;
 }
 
 .product__name {
-  margin: 0;
-  color: var(--page-title-color, var(--color-neutral-800));
-  font-family: var(--font-heading);
-  font-size: clamp(var(--font-size-24), 3vw, var(--font-size-32));
-  font-weight: var(--font-weight-heading);
+  margin: 0.1rem 0 0;
+  color: var(--color-accent-950);
+  font-family: var(--font-body);
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  font-weight: 800;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
-.product__meta {
-  margin: var(--space-2) 0 0;
-  color: var(--color-neutral-600);
+/* The white under the band; room at its foot for the cart button's top. */
+.product__form {
+  padding: var(--space-3) var(--space-4) 1.75rem;
+}
+
+.product__body {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.product__form[data-state] .product__body {
+  visibility: hidden;
 }
 
 .product__tags {
-  margin: var(--space-4) 0 0;
+  margin: 0;
+  justify-content: center;
 }
 
-.product__price {
-  margin: clamp(var(--space-5), 4dvh, var(--space-8)) 0 0;
-  color: var(--color-neutral-800);
-  font-size: var(--font-size-24);
-  font-weight: 700;
-}
-
-/* How many are left: centred over the stepper, beside the button. */
-.product__quantity {
+.product__row {
   display: grid;
-  justify-items: center;
-  gap: var(--space-1);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 3.2rem;
+}
+
+.product__half {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 var(--space-1);
+}
+
+.product__half--quantity {
+  border-left: 1.5px dashed var(--color-accent-300);
+}
+
+.product__picker .tile__picker-chosen,
+.product__package,
+.product__quantity.tile__quantity {
+  font-size: var(--font-size-18, 1.125rem);
+}
+
+.product__quantity.tile__quantity {
+  width: min(100%, 4rem);
+}
+
+/* The chosen size's special offer: a dashed amber pill to tick. */
+.product__deal {
+  display: inline-flex;
+  align-items: center;
+  justify-self: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.8rem;
+
+  color: var(--color-status-warning-text);
+  border: 1.5px dashed var(--color-status-warning-text);
+  border-radius: var(--radius-pill);
+
+  font-size: var(--font-size-14);
+  cursor: pointer;
+}
+
+.product__deal[hidden] {
+  display: none;
 }
 
 .product__stock {
   margin: 0;
   font-size: var(--font-size-14);
+  font-weight: 700;
   text-align: center;
-  white-space: nowrap;
 }
 
-.product__form {
-  display: grid;
-  gap: clamp(var(--space-5), 4dvh, var(--space-8));
-  margin-top: clamp(var(--space-5), 4dvh, var(--space-8));
-}
-
-.product__offers {
-  margin: 0;
-}
-
-.product__add {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--space-4);
-}
-
-.product__add .page__submit {
-  flex: 1 1 auto;
-  width: auto;
-  margin: 0;
-}
-
-/* While adding: only the status burst, centred where the quantity and
-   the button were, at their height, so nothing below jumps. */
-.product__status {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.9rem;
-}
-
-.product__status[hidden],
-.product__add[hidden] {
+.product__stock[hidden] {
   display: none;
 }
 
-.product__feedback:empty {
-  display: none;
+/* The card's round cart button, a size up, on the label's foot. */
+.product__add-button.tile__add {
+  --tile-add-size: 3.2rem;
+
+  bottom: calc(-1.5px - var(--tile-add-size) / 2);
+}
+
+.product__add-button .tile__add-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.product__form:has(.tile__select:invalid) .product__add-button {
+  color: var(--color-neutral-400);
+  background: var(--color-neutral-100);
+  border-color: var(--color-neutral-300);
+  box-shadow: none;
+}
+
+.product__form[data-state] .product__add-button {
+  visibility: hidden;
+}
+
+.product__status .status-burst {
+  --status-burst-size: 2.75rem;
 }
 
 .product__tabs {
-  margin-top: clamp(var(--space-8), 6dvh, var(--space-12));
+  margin-top: clamp(var(--space-10, 2.5rem), 7dvh, var(--space-16));
 }
 
 .product .page__back {
@@ -729,16 +832,22 @@
 
   .product__main {
     grid-template-columns: 1fr;
+    gap: 0;
   }
 
   .product__media {
     width: min(100%, 18rem);
     margin-inline: auto;
   }
-}
 
-.product__status .status-burst {
-  --status-burst-size: 2.75rem;
+  /* As on a card: straight, over the picture's foot. */
+  .product__label {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 19.5rem);
+    margin: -2rem auto 0;
+    transform: none;
+  }
 }
 
 

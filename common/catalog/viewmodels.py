@@ -152,6 +152,39 @@ class ProductCardVM:
         )
 
     @property
+    def size_rows(
+        self,
+    ) -> tuple[tuple[CatalogOfferVM, CatalogOfferVM | None], ...]:
+        """Each size with its special offer, if it has one (a product's
+        page shows it once the size is chosen)."""
+
+        return tuple(
+            (choice, self._deal_at(choice.position))
+            for choice in self.size_choices
+        )
+
+    @property
+    def only_deal(self) -> CatalogOfferVM | None:
+        """A one-size product's special offer beside its standard one."""
+
+        offer = self.initial_offer
+
+        if self.has_size_choice or offer is None or offer.kind != "standard":
+            return None
+
+        return self._deal_at(offer.position)
+
+    def _deal_at(self, position: int) -> CatalogOfferVM | None:
+        return next(
+            (
+                offer
+                for offer in self.offers
+                if offer.kind != "standard" and offer.position == position
+            ),
+            None,
+        )
+
+    @property
     def other_deal(self) -> CatalogOfferVM | None:
         """A special offer besides the one the tile adds: a hint on the
         tile that the product page has another choice."""

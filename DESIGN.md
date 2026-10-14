@@ -195,9 +195,12 @@ typed, no box; the round light-green cart button on the label's foot,
 44px; while adding the scoop in
 the row's middle, then the label green with our bag, or red with a dark
 red cross and then why, in the red, until tapped; and the row back as it
-started) and `product.html` (a product's page: picture
-beside what to buy, offers as chips, Description and Ingredients as
-tabs). The channel's pages only say where the form posts and what its
+started) and `product.html` (a product's page in the card's
+design: the picture with the price tag and in-cart badge, beside it the
+card's label, bigger: the name on the yellow band, size | how many, the
+chosen size's special offer to tick when it has one, the stock, the round
+cart button on its foot; adding as on a card; Description and Ingredients
+as tabs under both). The channel's pages only say where the form posts and what its
 button says. CSS in `static/css/catalog.css`.
 
 **Status burst:** `includes/ui/status_burst.html`, rendered once in

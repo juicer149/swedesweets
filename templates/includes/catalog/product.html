@@ -1,18 +1,24 @@
 {% load i18n %}
 {% comment %}
-  A catalog product's page in the calm design, shared by the shop and the
-  business portal. The picture beside what to buy: category, name,
-  package, price and stock, the offers as chips when there are several,
-  quantity and the one yellow button (catalog_detail.js: the dots, then
-  the green cart, then back to the catalog, as without JavaScript). Under both, Description and
-  Ingredients as tabs (page_tabs), and at the foot the quiet way back, as
-  on every detail page (layouts/detail.html). catalog_detail.js keeps the
-  price and stock in step with the chosen offer.
+  A catalog product's page, shared by the shop and the business portal, in
+  the catalog card's design: the picture with its price tag and in-cart
+  badge, and beside it the card's label, bigger: the name on the yellow
+  band (the category over it), then one row in two halves (the size as a
+  dropdown, "Choose size" until chosen, or the weight; how many, typed),
+  the chosen size's special offer when it has one (ticked, it is the one
+  added), the stock, and the round green cart button on the label's foot.
+  Adding is as on a card (catalog_detail.js): the scoop, then the label
+  green with the bag (and on to the catalog) or red with why. Under both,
+  Description and Ingredients as tabs, and the quiet way back.
+
+  Without JavaScript the dropdown is plain and the offer's tick box posts
+  its offer in the size's place (the last commercial_price_id wins).
 
   From the detail viewmodel: product, product_name, category_label,
-  image_url, offers, initial_offer, page_tabs, cancel_url
+  image_url, card (ProductCardVM), initial_offer, page_tabs, cancel_url
   From the page: add_url (where the form posts), add_label (its button)
 {% endcomment %}
+{% with tag=card.price_tag deal=card.only_deal %}
 <section class="page-section" aria-labelledby="product-title">
   <article class="page product">
     <div class="product__main">
@@ -22,89 +28,160 @@
         {% else %}
           <span class="product__image product__image--empty" aria-hidden="true"></span>
         {% endif %}
+
+        <span class="tile__in-cart product__in-cart" aria-hidden="true" data-in-cart {% if not card.in_cart_units %}hidden{% endif %}>
+          {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__in-cart-icon" only %}
+          <b data-in-cart-count>{{ card.in_cart_units }}</b>
+        </span>
+
+        <span class="tile__tag product__tag" aria-hidden="true" data-product-tag {% if not tag %}hidden{% endif %}>
+          <small class="tile__tag-deal" data-product-tag-note {% if not tag.deal_label %}hidden{% endif %}>{{ tag.deal_label|default:"" }}</small>
+          <span class="tile__tag-price" data-product-price data-initial="{{ tag.price_label|default:'' }}">{{ tag.price_label|default:"" }}</span>
+        </span>
       </div>
 
-      <div class="product__buy">
-        {% if category_label %}
-          <p class="product__kicker">{{ category_label }}</p>
+      <div class="product__label">
+        <div class="product__band">
+          {% if category_label %}
+            <p class="product__kicker">{{ category_label }}</p>
+          {% endif %}
+          <h1 id="product-title" class="product__name">{{ product_name }}</h1>
+        </div>
+
+        {% if tag %}
+          <p class="visually-hidden">{{ tag.price_label }}</p>
         {% endif %}
-
-        <h1 id="product-title" class="product__name">{{ product_name }}</h1>
-        <p class="product__meta">{{ product.unit_weight_label }}</p>
-
-        {% if product.vegan %}
-          <p class="product-tag-list product__tags">
-            <span class="product-tag product-tag--vegan">
-              {% include "includes/ui/icon_block.html" with name="leaf" size="sm" class_name="product-tag__icon" only %}
-              <span>{% trans "Vegan" %}</span>
-            </span>
-          </p>
+        {% if card.in_cart_units %}
+          <p class="visually-hidden">{% blocktrans count units=card.in_cart_units %}{{ units }} in your cart{% plural %}{{ units }} in your cart{% endblocktrans %}</p>
         {% endif %}
-
-        <p class="product__price" data-product-price {% if not initial_offer.price_label %}hidden{% endif %}>
-          {{ initial_offer.price_label|default:"" }}
-        </p>
 
         <form
-          class="product__form"
+          class="tile__order product__form"
           method="post"
           action="{{ add_url }}"
           data-product-add-form
+          data-product-id="{{ product.id }}"
           data-done-url="{{ cancel_url }}"
           data-error-message="{% trans 'Could not add product.' %}"
         >
           {% csrf_token %}
 
-          {% if offers|length > 1 %}
-            <div class="form-field product__offers">
-              <span id="product-offers-label" class="form-label">{% trans "Offer" %}</span>
+          <div class="product__body">
+            {% if product.vegan %}
+              <p class="product-tag-list product__tags">
+                <span class="product-tag product-tag--vegan">
+                  {% include "includes/ui/icon_block.html" with name="leaf" size="sm" class_name="product-tag__icon" only %}
+                  <span>{% trans "Vegan" %}</span>
+                </span>
+              </p>
+            {% endif %}
 
-              <div class="radio-chip-group" role="radiogroup" aria-labelledby="product-offers-label">
-                {% for offer in offers %}
-                  <div>
-                    <label for="product-offer-{{ forloop.counter }}">
-                      <input
-                        id="product-offer-{{ forloop.counter }}"
-                        type="radio"
-                        name="commercial_price_id"
-                        value="{{ offer.commercial_price_id }}"
-                        data-price-label="{{ offer.price_label|default:'' }}"
-                        data-stock-label="{{ offer.availability_label }}"
-                        data-stock-low="{% if offer.available_units < 10 %}true{% else %}false{% endif %}"
-                        {% if forloop.first %}checked{% endif %}
-                      >
-                      {{ offer.label }}{% if offer.price_label %} · {{ offer.price_label }}{% endif %}
-                    </label>
-                  </div>
-                {% endfor %}
+            <div class="product__row">
+              <div class="product__half">
+                {% if card.has_size_choice %}
+                  <label class="tile__picker product__picker" for="product-size">
+                    <span class="tile__picker-face" aria-hidden="true">
+                      <span class="tile__picker-empty" data-size-empty>{% trans "Choose size" %}</span>
+                      <span class="tile__picker-chosen" data-size-chosen hidden></span>
+                      {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="tile__chevron" only %}
+                    </span>
+
+                    <span class="visually-hidden">{% trans "Size" %}</span>
+                    <select
+                      id="product-size"
+                      class="tile__select"
+                      name="commercial_price_id"
+                      required
+                      data-size-select
+                    >
+                      <option value="" selected disabled>{% trans "Choose size" %}</option>
+                      {% for choice, choice_deal in card.size_rows %}
+                        <option
+                          value="{{ choice.commercial_price_id }}"
+                          data-size-label="{{ choice.label }}"
+                          data-price-label="{{ choice.price_label|default:'' }}"
+                          data-stock-label="{{ choice.availability_label }}"
+                          data-stock-low="{% if choice.available_units < 10 %}true{% else %}false{% endif %}"
+                          {% if choice_deal %}
+                            data-deal-id="{{ choice_deal.commercial_price_id }}"
+                            data-deal-label="{{ choice_deal.badge_label }}"
+                            data-deal-price-label="{{ choice_deal.price_label|default:'' }}"
+                            data-deal-stock-label="{{ choice_deal.availability_label }}"
+                            data-deal-stock-low="{% if choice_deal.available_units < 10 %}true{% else %}false{% endif %}"
+                          {% endif %}
+                          {% if choice.sold_out %}disabled{% endif %}
+                        >{{ choice.label }}{% if choice.sold_out %} — {% trans "sold out" %}{% endif %}</option>
+                      {% endfor %}
+                    </select>
+                  </label>
+                {% else %}
+                  <input type="hidden" name="commercial_price_id" value="{{ initial_offer.commercial_price_id }}" data-only-offer
+                    data-price-label="{{ initial_offer.price_label|default:'' }}"
+                    data-stock-label="{{ initial_offer.availability_label }}"
+                    data-stock-low="{% if initial_offer.available_units < 10 %}true{% else %}false{% endif %}">
+                  <span class="tile__package product__package">{{ card.weight_label|default:card.package_label }}</span>
+                {% endif %}
+              </div>
+
+              <div class="product__half product__half--quantity">
+                <label class="visually-hidden" for="product-quantity">{% trans "Quantity" %}</label>
+                <input
+                  id="product-quantity"
+                  class="tile__quantity product__quantity"
+                  type="number"
+                  name="quantity"
+                  value="1"
+                  min="1"
+                  step="1"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  required
+                  data-quantity-input
+                >
               </div>
             </div>
-          {% else %}
-            <input type="hidden" name="commercial_price_id" value="{{ initial_offer.commercial_price_id }}">
-          {% endif %}
 
-          <div class="product__add" data-product-add>
-            {# How many are left, centred over the stepper that picks how many. #}
-            <div class="product__quantity">
-              <p class="product__stock">
-                <span
-                  class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %} facts__status"
-                  data-product-stock
-                >{{ initial_offer.availability_label }}</span>
-              </p>
+            {# The chosen size's special offer: ticked, it is the one added. #}
+            <label class="product__deal" data-product-deal {% if not deal %}hidden{% endif %}>
+              <input
+                type="checkbox"
+                name="commercial_price_id"
+                value="{{ deal.commercial_price_id|default:'' }}"
+                data-deal-input
+                {% if deal %}
+                  data-price-label="{{ deal.price_label|default:'' }}"
+                  data-stock-label="{{ deal.availability_label }}"
+                  data-stock-low="{% if deal.available_units < 10 %}true{% else %}false{% endif %}"
+                {% else %}
+                  disabled
+                {% endif %}
+              >
+              <span data-deal-text>{% if deal %}<b>{{ deal.badge_label }}</b>{% if deal.price_label %} · {{ deal.price_label }}{% endif %}{% endif %}</span>
+            </label>
 
-              {% include "includes/ui/quantity_stepper.html" with id_prefix="product-quantity" only %}
-            </div>
-
-            <button class="button button--md button--solid button--tone-place page__submit product__submit" type="submit">
-              {{ add_label }}
-            </button>
+            <p class="product__stock" data-product-stock {% if card.has_size_choice %}hidden{% endif %}>
+              <span
+                class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %}"
+                data-product-stock-text
+              >{{ initial_offer.availability_label }}</span>
+            </p>
           </div>
 
-          {# While adding (catalog_detail.js): the scoop spins, then our bag pops up over a green burst, in its place. #}
-          <div class="product__status" data-product-status hidden></div>
+          <button
+            class="tile__add product__add-button"
+            type="submit"
+            aria-label="{{ add_label }}: {{ product_name }}"
+            data-product-add-button
+          >
+            {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__add-icon" only %}
+            <span class="visually-hidden">{{ add_label }}</span>
+          </button>
 
-          <p class="page__note product__feedback" data-product-feedback role="status" aria-live="polite"></p>
+          {# While adding: the scoop, then the bag or the cross; then why, in the red. #}
+          <div class="tile__status product__status" data-product-status hidden></div>
+          <p class="tile__error product__error" data-product-error hidden></p>
+
+          <p class="visually-hidden" data-product-feedback role="status" aria-live="polite"></p>
         </form>
       </div>
     </div>
@@ -125,3 +202,4 @@
     </div>
   </article>
 </section>
+{% endwith %}
