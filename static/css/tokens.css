@@ -342,6 +342,64 @@
   --shadow-focus-info: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
   --shadow-focus-danger: 0 0 0 3px rgb(var(--color-status-danger) / 0.10);
   --shadow-focus-danger-strong: 0 0 0 3px rgb(var(--color-status-danger) / 0.14);
+
+
+  /* ==========================================================================
+     # The menu
+
+     The navbar, the phone's bottom bar, the start page and the other blue
+     pages (login): one menu in different sizes, so they share their
+     colours. Change them here; navigation.css, landing.css and
+     on-blue.css only read them.
+
+     Headings in these comments read as Markdown: # a part of the site,
+     ## a piece of it, ### a detail of that piece.
+     ========================================================================== */
+
+  /* ## Surface: the blue, the letters on it, the yellow of the chosen */
+  --menu-bg: var(--color-primary-800);
+  --menu-ink: var(--color-neutral-50);
+  --menu-chosen: var(--color-brand-yellow);
+  /* outlined buttons on the blue (Login, the account on a phone) */
+  --menu-line: color-mix(in srgb, var(--menu-ink) 70%, transparent);
+
+  /* ## Edge: the yellow line between the navbar and the page, and round
+     the phone's bottom bar */
+  --menu-edge: var(--color-accent-600);
+  --menu-edge-width: 2px;
+
+  /* ## Links */
+  /* ### The underline that answers the pointer */
+  --menu-underline: var(--color-accent-600);
+  /* ### The crown on the page you are on: a dark shadow under it so it
+     stands on the blue */
+  --menu-crown-shadow: drop-shadow(
+    0 0.08em 0.06em color-mix(in srgb, var(--color-primary-950) 70%, transparent)
+  );
+
+  /* ## Cart */
+  /* ### At rest */
+  --menu-cart-ink: var(--color-accent-300);
+  --menu-cart-bg: var(--menu-bg);
+  --menu-cart-ring: var(--color-accent-300);
+  --menu-cart-ring-width: 1.25px;
+  /* ### Pointed at, or open */
+  --menu-cart-ink-hover: var(--color-primary-900);
+  --menu-cart-bg-hover: var(--color-accent-600);
+  --menu-cart-ring-hover: var(--color-accent-600);
+  --menu-cart-ring-width-hover: 1.75px;
+  /* ### The count over its corner */
+  --menu-cart-count-ink: var(--color-primary-950);
+  --menu-cart-count-bg: var(--color-accent-600);
+
+  /* ## Language: the chosen one a yellow ring and letters, the other muted */
+  --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
+  --menu-language-ring: color-mix(in srgb, var(--menu-ink) 30%, transparent);
+  --menu-language-chosen: var(--color-accent-600);
+
+  /* ## Phone bar: the links at the bottom of a phone's screen */
+  --menu-bar-bg: var(--menu-bg);
+  --menu-bar-edge: var(--menu-edge);
 }
 
 

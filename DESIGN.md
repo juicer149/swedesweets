@@ -338,7 +338,11 @@ drawing's faded foot (Find Sweets).
 
 ## Navigation and chrome
 
-- **The navbar is the start page's menu in a bar:** primary-600 with the
+The menu's colours (navbar, phone bar, start page, login) are tokens in
+`tokens.css` under "# The menu" (`--menu-bg` the blue, now primary-800;
+`--menu-cart-*`, `--menu-language-*`, …); the CSS files only read them.
+
+- **The navbar is the start page's menu in a bar:** the menu's blue with the
   cream logo, cream links, the page you are on yellow (brand-yellow) with
   the crown, which has a dark blue shadow under it as on the start page;
   a yellow line (accent-600) between it and the page; the chosen language
@@ -368,7 +372,7 @@ drawing's faded foot (Find Sweets).
   FAQ are in the navbar, not repeated here. Quiet and small, every size
   clamped; it sits at the foot of the screen on a short page.
 - **Start page** (`storefront/landing.html`, `landing.css`): the one loud
-  page. Cream on primary-600, the logo and "Sweden’s sweetest tradition"
+  page. Cream on the menu's blue, the logo and "Sweden’s sweetest tradition"
   alone for a moment, then a menu of the navbar's own links rises under
   them, like a game's: the crown is the cursor, tilted on the chosen
   word's last letter as on the logo; pointer, Tab or ↑↓ move it and it

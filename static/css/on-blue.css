@@ -1,7 +1,7 @@
 /* =============================================================================
    On blue: the ways in (the start page, login and the password reset)
 
-   <body class="on-blue">: the blue of their posts (primary-600), cream
+   <body class="on-blue">: the menu's blue (--menu-bg), cream
    letters, the yellow button as everywhere. Blue is the door, cream is
    the shop. Cream on this blue is about 7:1.
 
@@ -13,12 +13,13 @@
    ============================================================================= */
 
 body.on-blue {
-  --on-blue-ink: var(--color-neutral-50);
+  --on-blue-ink: var(--menu-ink);
   --on-blue-mark: var(--color-accent-600);
   --page-title-color: var(--on-blue-ink);
 
   color: var(--on-blue-ink);
-  background: var(--color-primary-600);
+  /* the menu's blue (tokens.css, "# The menu"), as the start page */
+  background: var(--menu-bg);
 }
 
 

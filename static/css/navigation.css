@@ -2,31 +2,24 @@
    Site navigation
 
    On blue, as the start page's menu (landing.css), so the two read as one
-   menu: the header in primary-600 with the cream logo, the links cream,
-   the page you are on yellow (brand-yellow) with the crown, which stands
-   on the blue with a dark blue shadow under it. The phone's bottom bar is
-   the same blue. Cream on this blue is about 7:1, the yellow about 4:1
-   (bold, as on the start page). The cart's popover stays cream: it is a
-   sheet of the shop, not the menu.
+   menu: the header blue with the cream logo, the links cream, the page
+   you are on yellow with the crown, which stands on the blue with a dark
+   shadow under it. The phone's bottom bar is the same blue. The cart's
+   popover stays cream: it is a sheet of the shop, not the menu.
+
+   Its colours are tokens (tokens.css, "# The menu"), shared with the
+   start page and login: change them there.
    ============================================================================= */
 
 .site-header {
-  --nav-ink: var(--color-neutral-50);
-  --nav-chosen: var(--color-brand-yellow);
-  --nav-blue: var(--color-primary-600);
-  --nav-line: color-mix(in srgb, var(--nav-ink) 70%, transparent);
-  --nav-crown-shadow: drop-shadow(
-    0 0.08em 0.06em color-mix(in srgb, var(--color-primary-900) 70%, transparent)
-  );
-
   position: sticky;
   top: 0;
   z-index: 100;
 
-  color: var(--nav-ink);
-  background: var(--nav-blue);
+  color: var(--menu-ink);
+  background: var(--menu-bg);
   /* a yellow line between the menu and the page */
-  border-bottom: 2px solid var(--color-accent-600);
+  border-bottom: var(--menu-edge-width) solid var(--menu-edge);
 }
 
 .site-nav {
@@ -42,7 +35,7 @@
   align-items: center;
   flex: 0 0 auto;
 
-  color: var(--nav-ink);
+  color: var(--menu-ink);
   text-decoration: none;
 
   transition:
@@ -96,7 +89,7 @@
   align-items: center;
   gap: clamp(0.2rem, 0.35vw, 0.4rem);
 
-  color: var(--nav-ink);
+  color: var(--menu-ink);
   font-size: clamp(0.8125rem, 0.92vw, var(--font-size-16));
   font-weight: 700;
   line-height: 1;
@@ -117,7 +110,7 @@
   width: 0;
   height: 2px;
 
-  background: var(--color-accent-600);
+  background: var(--menu-underline);
   border-radius: 999px;
 
   transform: translateX(-50%);
@@ -128,7 +121,7 @@
 .site-nav__link:focus-visible,
 .site-nav__link--active,
 .site-nav__link[aria-current="page"] {
-  color: var(--nav-chosen);
+  color: var(--menu-chosen);
 }
 
 .site-nav__link:hover,
@@ -159,7 +152,7 @@
   height: 1.15em;
 
   background: url("../images/favicon.svg") center / contain no-repeat;
-  filter: var(--nav-crown-shadow);
+  filter: var(--menu-crown-shadow);
   pointer-events: none;
 }
 
@@ -205,9 +198,9 @@
   padding-block: clamp(0.32rem, 0.45vw, 0.45rem);
   padding-inline: clamp(0.5rem, 0.8vw, 0.85rem);
 
-  color: var(--nav-ink);
+  color: var(--menu-ink);
   background: transparent;
-  border: 1px solid var(--nav-line);
+  border: 1px solid var(--menu-line);
   border-radius: 999px;
 
   font: inherit;
@@ -227,8 +220,8 @@
 
 .site-nav__auth-action:hover,
 .site-nav__auth-action:focus-visible {
-  color: var(--nav-chosen);
-  border-color: var(--nav-chosen);
+  color: var(--menu-chosen);
+  border-color: var(--menu-chosen);
   transform: translateY(-1px);
 }
 
@@ -272,9 +265,9 @@
 
   /* the navbar's blue with a light yellow ring and a yellow cart; filled
      yellow when pointed at or open */
-  color: var(--color-accent-300);
-  background: var(--color-primary-600);
-  border: 1.25px solid var(--color-accent-300);
+  color: var(--menu-cart-ink);
+  background: var(--menu-cart-bg);
+  border: var(--menu-cart-ring-width) solid var(--menu-cart-ring);
   border-radius: var(--radius-pill);
 
   cursor: pointer;
@@ -289,10 +282,10 @@
 .site-nav-cart__trigger:hover,
 .site-nav-cart__trigger:focus-visible,
 .site-nav-cart[open] .site-nav-cart__trigger {
-  color: var(--color-primary-900);
-  background: var(--color-accent-600);
+  color: var(--menu-cart-ink-hover);
+  background: var(--menu-cart-bg-hover);
   box-shadow: var(--shadow-accent-glow);
-  border: 1.75px solid var(--color-accent-600);
+  border: var(--menu-cart-ring-width-hover) solid var(--menu-cart-ring-hover);
 }
 
 .site-nav-cart__trigger:hover,
@@ -408,9 +401,9 @@
   padding-inline: 0.28rem;
 
   /* yellow: how much the cart holds, at a glance */
-  color: var(--color-primary-950);
-  background: var(--color-accent-600);
-  border: 2px solid var(--nav-blue);
+  color: var(--menu-cart-count-ink);
+  background: var(--menu-cart-count-bg);
+  border: 2px solid var(--menu-bg);
   border-radius: var(--radius-pill);
 
   font-size: 0.65rem;
@@ -697,15 +690,15 @@
 /* In the navbar (and on the start page, landing.css): the chosen
    language in yellow, ring and letters; the other muted. */
 .site-header .language-switcher__option {
-  color: color-mix(in srgb, var(--nav-ink) 65%, transparent);
-  border-color: color-mix(in srgb, var(--nav-ink) 30%, transparent);
+  color: var(--menu-language-ink);
+  border-color: var(--menu-language-ring);
 }
 
 .site-header .language-switcher__option--active,
 .site-header .language-switcher__option[aria-current="true"] {
-  color: var(--color-accent-600);
+  color: var(--menu-language-chosen);
   background: transparent;
-  border-color: var(--color-accent-600);
+  border-color: var(--menu-language-chosen);
 }
 
 
@@ -752,8 +745,8 @@
     min-height: 2rem;
     padding: 0.3rem 0.65rem 0.3rem 0.5rem;
 
-    color: var(--nav-ink);
-    border: 1px solid var(--nav-line);
+    color: var(--menu-ink);
+    border: 1px solid var(--menu-line);
     border-radius: var(--radius-pill);
 
     font-size: var(--font-size-12);
@@ -802,7 +795,7 @@
     height: 1.5em;
 
     background: url("../images/favicon.svg") center / contain no-repeat;
-    filter: var(--nav-crown-shadow);
+    filter: var(--menu-crown-shadow);
     pointer-events: none;
   }
 }
@@ -924,8 +917,8 @@
       clamp(0.35rem, 1.2vw, var(--space-2))
       calc(clamp(0.35rem, 1.2vw, var(--space-2)) - 0.1rem);
 
-    background: var(--nav-blue);
-    border: 1px solid var(--color-accent-600);
+    background: var(--menu-bar-bg);
+    border: 1px solid var(--menu-bar-edge);
     border-radius: 24px;
 
     box-shadow:
@@ -950,7 +943,7 @@
       clamp(0.35rem, 1.2vw, 0.45rem)
       clamp(0.12rem, 0.7vw, 0.25rem);
 
-    color: var(--nav-ink);
+    color: var(--menu-ink);
     background: transparent;
     border-radius: 18px;
 
@@ -988,7 +981,7 @@
     width: 0;
     height: 3px;
 
-    background: var(--color-accent-600);
+    background: var(--menu-underline);
     border-radius: 999px;
 
     transform: translateX(-50%);
@@ -999,7 +992,7 @@
   .site-nav__link:focus-visible,
   .site-nav__link--active,
   .site-nav__link[aria-current="page"] {
-    color: var(--nav-chosen);
+    color: var(--menu-chosen);
     background: transparent;
   }
 
@@ -1042,7 +1035,7 @@
     height: 115%;
 
     background: url("../images/favicon.svg") center / contain no-repeat;
-    filter: var(--nav-crown-shadow);
+    filter: var(--menu-crown-shadow);
     pointer-events: none;
   }
 
