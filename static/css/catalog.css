@@ -307,9 +307,15 @@
   align-items: stretch;
   min-height: 0;
   height: 2.6rem;
+  transition: height 220ms ease;
+}
+
+/* Clipped only while it folds or unfolds, so the size list can open out
+   of it the rest of the time. */
+.tile--folded .tile__row,
+.tile[data-unfolding] .tile__row {
   overflow: clip;
   overflow-clip-margin: 4px;
-  transition: height 220ms ease;
 }
 
 /* Opening its page (catalog.js): the label folds to its yellow band, the
@@ -369,7 +375,6 @@
 
 /* The size and how many in one weight and size, on one line. */
 .tile__package,
-.tile__picker-chosen,
 .tile__quantity {
   color: var(--color-neutral-900);
   font: 700 var(--font-size-16) / 1.2 var(--font-body);
@@ -392,13 +397,14 @@
 .tile__chevron.ui-icon-block {
   width: 0.75rem;
   height: 0.75rem;
-  color: var(--color-neutral-500);
+  color: var(--color-neutral-600);
   --icon-stroke-width: 2.6;
 }
 
-/* The size: a native dropdown (the phone's own picker), shown as
-   "Choose size" and an arrow, then the size. Without JavaScript the
-   dropdown itself, plain (catalog.js marks the form when it takes over). */
+/* The size: the site's own dropdown (enhanced_selects.js, Tom Select),
+   inside the label so it tilts with it; its closed face quiet, as the
+   weight beside it would be: "Choose size" and the site's caret, then the
+   size. Without JavaScript the plain select. */
 .tile__picker {
   position: relative;
   display: flex;
@@ -407,78 +413,110 @@
   width: 100%;
   min-width: 0;
   min-height: 2.25rem;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
-.tile__picker-face {
-  display: none;
-}
-
-.tile__select {
+.tile__picker > select {
   max-width: 100%;
   font: inherit;
   font-size: var(--font-size-14);
 }
 
-.tile__order[data-enhanced] .tile__picker-face {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  min-width: 0;
-  padding: 0 0.25rem;
+.tile__picker .ts-wrapper {
+  width: 100%;
 }
 
-.tile__order[data-enhanced] .tile__select {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
+.tile__picker .ts-control {
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: 0 0.95rem 0 0.15rem;
+
+  color: var(--color-neutral-900);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: none;
+
+  font-size: var(--font-size-16);
+  font-weight: 700;
   cursor: pointer;
 }
 
-.tile__order[data-enhanced] .tile__picker:hover {
+.tile__picker .ts-wrapper .ts-control .item {
+  flex: 0 1 auto;
+  width: auto;
+  margin-inline: auto;
+  color: var(--color-neutral-900);
+  text-align: center;
+}
+
+/* "Choose size" (the empty choice, shown as the value) quieter. */
+.tile__picker .ts-wrapper .ts-control .item[data-value=""] {
+  color: var(--color-neutral-600);
+  font-size: 0.8125rem;
+}
+
+/* Its caret: a small chevron at the right, turned up while open. */
+.tile__picker .ts-wrapper.single .ts-control::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0.25rem;
+  width: 0.35rem;
+  height: 0.35rem;
+  margin-top: -0.3rem;
+  border: solid var(--color-neutral-600);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  transition: transform var(--motion-fast);
+}
+
+.tile__picker .ts-wrapper.single.dropdown-active .ts-control::after {
+  margin-top: -0.1rem;
+  border-color: var(--color-neutral-600);
+  border-width: 0 2px 2px 0;
+  transform: rotate(-135deg);
+}
+
+.tile__picker .ts-wrapper .ts-control,
+.tile__picker .ts-wrapper.focus .ts-control {
+  background: transparent;
+  box-shadow: none;
+}
+
+.tile__picker .ts-wrapper:hover .ts-control,
+.tile__picker .ts-wrapper.dropdown-active .ts-control {
   background: var(--color-accent-100);
 }
 
-.tile__order[data-enhanced] .tile__picker:has(.tile__select:focus-visible) {
+.tile__picker .ts-control:focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 1px;
 }
 
-.tile__picker-empty {
-  color: var(--color-neutral-600);
-  font-size: var(--font-size-14);
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
+/* Its list: the site's, a little wider than the half, the empty choice
+   left out, sold-out sizes muted. */
+.tile__picker .ts-dropdown {
+  left: 50%;
+  width: max-content;
+  min-width: max(100%, 7rem);
+  max-width: none;
+  translate: -50% 0;
+  text-align: left;
 }
 
-.tile__picker-short {
+.tile__picker .ts-dropdown .option[data-value=""] {
   display: none;
 }
 
-/* A narrow label: "Size" alone. */
-@container (max-width: 11rem) {
-  .tile__picker-long {
-    display: none;
-  }
-
-  .tile__picker-short {
-    display: inline;
-  }
+.tile__picker .ts-dropdown .option.disabled,
+.tile__picker .ts-dropdown .option[aria-disabled="true"] {
+  color: color-mix(in srgb, var(--color-neutral-600) 55%, transparent);
+  cursor: default;
 }
 
-.tile__picker-chosen {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tile__picker-chosen[hidden] {
-  display: none;
+/* Over the cards around it while it is open. */
+.tile:has(.ts-wrapper.dropdown-active) {
+  z-index: 6;
 }
 
 /* How many: typed, no box (a quiet line under it says it can be). */
@@ -563,8 +601,9 @@
   outline-offset: 2px;
 }
 
-.tile__order:has(.tile__select:invalid) .tile__add {
-  color: var(--color-neutral-400);
+.tile__order:has([data-size-select]:invalid) .tile__add,
+.tile__order:has(.ts-control .item[data-value=""]) .tile__add {
+  color: color-mix(in srgb, var(--color-neutral-600) 55%, transparent);
   background: var(--color-neutral-100);
   border-color: var(--color-neutral-300);
   box-shadow: none;
@@ -802,9 +841,18 @@
   gap: var(--space-3);
   min-height: 0;
   padding-top: var(--space-3);
+  transition: padding 260ms ease, opacity 260ms ease;
+}
+
+.product--folded .product__body,
+.product[data-unfolding] .product__body {
   overflow: clip;
   overflow-clip-margin: 4px;
-  transition: padding 260ms ease, opacity 260ms ease;
+}
+
+/* Its size list over the tabs under it. */
+.product__label:has(.ts-wrapper.dropdown-active) {
+  z-index: 6;
 }
 
 .product--folded .product__label {
@@ -872,7 +920,7 @@
   border-left: 1.5px dashed var(--color-accent-300);
 }
 
-.product__picker .tile__picker-chosen,
+.product__picker .ts-control,
 .product__package,
 .product__quantity.tile__quantity {
   font-size: var(--font-size-18, 1.125rem);
@@ -931,8 +979,9 @@
   height: 1.5rem;
 }
 
-.product__form:has(.tile__select:invalid) .product__add-button {
-  color: var(--color-neutral-400);
+.product__form:has([data-size-select]:invalid) .product__add-button,
+.product__form:has(.ts-control .item[data-value=""]) .product__add-button {
+  color: color-mix(in srgb, var(--color-neutral-600) 55%, transparent);
   background: var(--color-neutral-100);
   border-color: var(--color-neutral-300);
   box-shadow: none;

@@ -30,6 +30,8 @@
       price: option.dataset.price || "",
       stock: option.dataset.stock || "",
       search: optionSearchText(option),
+      // Shown, not choosable (a sold-out size).
+      disabled: option.disabled,
     };
   }
 
@@ -38,6 +40,12 @@
   }
 
   function buildItems(select) {
+    // data-enhanced-select-empty: its empty choice shows as the value
+    // ("Choose size"), where a static select has no placeholder to show.
+    if (select.dataset.enhancedSelectEmpty !== undefined) {
+      return [select.value];
+    }
+
     return select.value ? [select.value] : [];
   }
 

@@ -78,24 +78,19 @@
             <div class="tile__size">
               {% if card.has_size_choice %}
                 <label class="tile__picker" for="catalog-size-{{ card.product_id }}">
-                  <span class="tile__picker-face" aria-hidden="true">
-                    <span class="tile__picker-empty" data-size-empty>
-                      <span class="tile__picker-long">{% trans "Choose size" %}</span>
-                      <span class="tile__picker-short">{% trans "Size" %}</span>
-                    </span>
-                    <span class="tile__picker-chosen" data-size-chosen hidden data-size-value></span>
-                    {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="tile__chevron" only %}
-                  </span>
-
                   <span class="visually-hidden">{% trans "Size" %}</span>
+                  {# The site's own dropdown (enhanced_selects.js), in the label, tilted with it. #}
                   <select
                     id="catalog-size-{{ card.product_id }}"
-                    class="tile__select"
+                    placeholder="{% trans 'Choose size' %}"
+                    data-enhanced-select
+                    data-enhanced-select-search="false"
+                    data-enhanced-select-empty
                     name="commercial_price_id"
                     required
                     data-size-select
                   >
-                    <option value="" selected disabled>{% trans "Choose size" %}</option>
+                    <option value="" selected data-short="{% trans 'Size' %}">{% trans "Choose size" %}</option>
                     {% for choice in card.size_choices %}
                       <option
                         value="{{ choice.commercial_price_id }}"

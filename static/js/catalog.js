@@ -171,8 +171,7 @@
     }
   }
 
-  /* The size dropdown is the native one (the phone's own picker), laid
-     unseen over its face: "Choose size", then the size. */
+  /* The size dropdown is the site's own (enhanced_selects.js). */
   function setUpSize(form) {
     const select = form.querySelector("[data-size-select]");
 
@@ -180,28 +179,13 @@
       return () => {};
     }
 
-    const empty = form.querySelector("[data-size-empty]");
-    const chosen = form.querySelector("[data-size-chosen]");
-
-    const show = () => {
-      const option = select.selectedOptions[0];
-      const label = option && option.value ? option.dataset.sizeLabel : "";
-
-      if (chosen) {
-        chosen.textContent = label || "";
-        chosen.hidden = !label;
-      }
-      if (empty) {
-        empty.hidden = Boolean(label);
-      }
-    };
-
-    select.addEventListener("change", show);
-    show();
-
+    // Back to "Choose size" after an add.
     return () => {
-      select.value = "";
-      show();
+      if (select.tomselect) {
+        select.tomselect.setValue("", true);
+      } else {
+        select.value = "";
+      }
     };
   }
 
@@ -372,8 +356,22 @@
     }
   });
 
+  /* A narrow card says "Size", not "Choose size" (before the site's
+     dropdown takes the select over, on DOMContentLoaded). */
+  for (const select of catalog.querySelectorAll(".tile [data-size-select]")) {
+    const empty = select.querySelector('option[value=""][data-short]');
+    const label = select.closest(".tile__label");
+
+    if (empty && label && label.offsetWidth < 200) {
+      empty.textContent = empty.dataset.short;
+    }
+  }
+
   for (const form of catalog.querySelectorAll("[data-catalog-add-form]")) {
     form.dataset.enhanced = "";
+    // The checks are ours (below): the size's select is hidden behind the
+    // site's dropdown, which the browser could not point at.
+    form.noValidate = true;
 
     const resetSize = setUpSize(form);
     const resetQuantity = setUpQuantity(form);
@@ -386,6 +384,18 @@
       event.preventDefault();
 
       if (form.dataset.state) {
+        return;
+      }
+
+      // No size yet: its list opens.
+      const size = form.querySelector("[data-size-select]");
+      if (size && !size.value) {
+        if (size.tomselect) {
+          size.tomselect.focus();
+          size.tomselect.open();
+        } else {
+          size.focus();
+        }
         return;
       }
 
@@ -432,6 +442,14 @@
 
   function wait(ms) {
     return new Promise((resolve) => window.setTimeout(resolve, ms));
+  }
+
+  /* Unfold: clipped while it grows (data-unfolding), then open again so
+     the size list can spill out of it. */
+  function unfold(element, foldedClass) {
+    element.dataset.unfolding = "";
+    element.classList.remove(foldedClass);
+    window.setTimeout(() => delete element.dataset.unfolding, 320);
   }
 
   function withMotion() {
@@ -510,6 +528,7 @@
 
   function show(section, tile) {
     detail.replaceChildren(section);
+    window.enhanceSelects?.(section);
     detail.style.setProperty(
       "--detail-top",
       `${document.querySelector(".site-header")?.getBoundingClientRect().bottom || 0}px`
@@ -570,9 +589,10 @@
       });
 
       await transition.finished.catch(() => {});
-      // Then the label unfolds with what the page adds.
+      // Then the label unfolds with what the page adds (clipped while it
+      // does).
       void article.offsetWidth;
-      article.classList.remove("product--folded");
+      unfold(article, "product--folded");
     } else {
       show(page.section, tile);
     }

@@ -2,9 +2,9 @@
   A catalog product's page (includes/catalog/product.html), in the catalog
   card's design:
 
-  - the size dropdown is the native one, laid unseen over its face
-    ("Choose size", then the size); choosing one sets the price tag and
-    the stock to it, and shows its special offer when it has one;
+  - the size dropdown is the site's own (enhanced_selects.js); choosing
+    one sets the price tag and the stock to it, and shows its special
+    offer when it has one;
   - ticking the offer sets them to the offer (its tick box posts it in the
     size's place);
   - the cart button sends the form in the background while only the
@@ -29,6 +29,9 @@ function initProduct(root, options = {}) {
   }
 
   form.dataset.enhanced = "";
+  // The checks are ours (on submit): the size's select is hidden behind
+  // the site's dropdown, which the browser could not point at.
+  form.noValidate = true;
 
   /* Back to the catalog the way one came: the browser's own back, so the
      catalog is where it was left (its scroll) and its card is the one
@@ -58,8 +61,6 @@ function initProduct(root, options = {}) {
 
   const select = form.querySelector("[data-size-select]");
   const onlyOffer = form.querySelector("[data-only-offer]");
-  const empty = form.querySelector("[data-size-empty]");
-  const chosen = form.querySelector("[data-size-chosen]");
   const dealBox = form.querySelector("[data-product-deal]");
   const dealInput = form.querySelector("[data-deal-input]");
   const dealText = form.querySelector("[data-deal-text]");
@@ -114,18 +115,6 @@ function initProduct(root, options = {}) {
   function render() {
     const option = select ? chosenOption() : onlyOffer;
     const dealOn = Boolean(dealInput && !dealInput.disabled && dealInput.checked);
-
-    if (select) {
-      const label = option?.dataset.sizeLabel || "";
-
-      if (chosen) {
-        chosen.textContent = label;
-        chosen.hidden = !label;
-      }
-      if (empty) {
-        empty.hidden = Boolean(label);
-      }
-    }
 
     if (!option) {
       // Nothing chosen yet: the cheapest price ("from"), no stock line.
@@ -278,6 +267,17 @@ function initProduct(root, options = {}) {
     event.preventDefault();
 
     if (form.dataset.state) {
+      return;
+    }
+
+    // No size yet: its list opens.
+    if (select && !select.value) {
+      if (select.tomselect) {
+        select.tomselect.focus();
+        select.tomselect.open();
+      } else {
+        select.focus();
+      }
       return;
     }
 
