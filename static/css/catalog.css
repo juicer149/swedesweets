@@ -174,6 +174,37 @@
   background: var(--color-neutral-300);
 }
 
+/* In the cart already: the cart button's green, filled in (active), with
+   how many, on the picture's other corner. */
+.tile__in-cart {
+  position: absolute;
+  top: 0.55rem;
+  left: 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.2rem 0.5rem 0.2rem 0.4rem;
+
+  color: var(--color-white);
+  background: var(--color-action-deliver);
+  border: 1.5px solid var(--color-action-deliver-on-light);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.18);
+
+  font-size: var(--font-size-14);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.tile__in-cart[hidden] {
+  display: none;
+}
+
+.tile__in-cart .tile__in-cart-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
 /* A special offer's reason: amber, like the warning it is. */
 .tile__tag-deal {
   color: var(--color-status-warning-text);
@@ -508,6 +539,28 @@
 
 .tile__status .status-burst__mark--error {
   color: var(--color-action-danger-on-light);
+}
+
+/* Why it did not work: in the red, where the row was, until tapped (or a
+   few seconds). */
+.tile__error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0 var(--space-1) 0.45rem;
+
+  color: var(--color-action-danger-on-light);
+  font-size: var(--font-size-12);
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.tile__error[hidden] {
+  display: none;
 }
 
 

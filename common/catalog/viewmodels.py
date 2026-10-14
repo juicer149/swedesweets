@@ -68,6 +68,8 @@ class ProductCardVM:
     search_text: str = ""
     # Sizes on sale with nothing to sell now: in the size list, muted.
     sold_out: tuple[CatalogOfferVM, ...] = ()
+    # How many the visitor's cart holds (all sizes): a badge on the picture.
+    in_cart_units: int = 0
 
     @property
     def initial_offer(self) -> CatalogOfferVM | None:

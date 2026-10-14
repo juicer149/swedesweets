@@ -2,7 +2,8 @@
 {% comment %}
   One product on the candy wall: its picture is the bin, with the price on
   a tag hung on its corner (when there is one: the cheapest size's, "from"
-  when the sizes differ; a special offer's reason above it). A label is
+  when the sizes differ; a special offer's reason above it) and, when the
+  cart holds some, an active cart with how many in the other. A label is
   stuck on its foot like a gift tag: the name on a yellow band (it and the
   picture lead to the product page), then one row in two halves:
 
@@ -14,10 +15,11 @@
   and the round green cart button on the label's foot, which adds them.
 
   While adding (catalog.js) the row gives way to the scoop in the middle;
-  then the label turns green and our bag pops up (or red with a cross),
-  and the row comes back as it started. Without JavaScript the size
-  dropdown is plain and the cart button posts the form. A striped shelf
-  runs under each row (css/catalog.css).
+  then the label turns green and our bag pops up and the badge counts
+  them; or red with a cross, then why in the red until tapped. The row
+  comes back as it started (as it was after a failure). Without
+  JavaScript the size dropdown is plain and the cart button posts the
+  form. A striped shelf runs under each row (css/catalog.css).
 
   card        ProductCardVM
   csrf_token  the page's token
@@ -37,6 +39,12 @@
         <span class="tile__image tile__image--empty"></span>
       {% endif %}
 
+      {# In the cart already: an active cart and how many, top left. #}
+      <span class="tile__in-cart" data-in-cart {% if not card.in_cart_units %}hidden{% endif %}>
+        {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__in-cart-icon" only %}
+        <b data-in-cart-count>{{ card.in_cart_units }}</b>
+      </span>
+
       {% if tag %}
         <span class="tile__tag">
           {% if tag.deal_label %}<small class="tile__tag-deal">{{ tag.deal_label }}</small>{% endif %}
@@ -48,9 +56,12 @@
     <div class="tile__body tile__label">
       <h2 class="tile__name"><a href="{{ detail_href }}">{{ card.name }}</a></h2>
 
-      {# The tag is on the picture, which screen readers skip. #}
+      {# The tag and the badge are on the picture, which screen readers skip. #}
       {% if tag %}
         <p class="visually-hidden">{% if tag.deal_label %}{{ tag.deal_label }}, {% endif %}{{ tag.price_label }}</p>
+      {% endif %}
+      {% if card.in_cart_units %}
+        <p class="visually-hidden">{% blocktrans count units=card.in_cart_units %}{{ units }} in your cart{% plural %}{{ units }} in your cart{% endblocktrans %}</p>
       {% endif %}
 
       {% if offer %}
@@ -128,8 +139,10 @@
             </div>
           </div>
 
-          {# While adding: the scoop, then the bag or the cross (catalog.js). #}
+          {# While adding: the scoop, then the bag or the cross (catalog.js); #}
+          {# then, when it did not work, why, in the red, until tapped. #}
           <div class="tile__status" data-catalog-status hidden></div>
+          <p class="tile__error" data-catalog-error hidden></p>
         </form>
       {% endif %}
     </div>

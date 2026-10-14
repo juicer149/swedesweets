@@ -18,8 +18,11 @@ from business_portal.catalog.viewmodels import build_business_offer_viewmodel
 from business_portal.orders.product_presentation import (
     business_variant_catalog_label,
 )
+from carts.selectors import units_in_cart_by_product_id
+from carts.services import add_cart_line, create_cart
 from common.catalog.contracts import CatalogOfferKind
 from common.catalog.viewmodels import ProductCardVM, offer_choice_label
+from common.channels import SalesChannel
 from common.ui import UiText
 from inventory.tests.factories import batch_factory
 from orders.errors import InvalidOrderOperation
@@ -27,7 +30,10 @@ from pricing.models import CommercialPrice, PriceAmount
 from products.services import set_variant_active
 from products.tests.factories import product_factory, variant_factory
 from retail.catalog_selectors import list_retail_catalog_products
-from storefront.catalog.viewmodels import build_retail_offer_viewmodel
+from storefront.catalog.viewmodels import (
+    build_retail_offer_viewmodel,
+    build_retail_product_cards,
+)
 
 TODAY = timezone.localdate()
 BUSINESS = CommercialPrice.Channel.BUSINESS
@@ -285,6 +291,29 @@ def test_a_card_whose_sizes_are_all_sold_out_adds_its_deal():
 
 
 @pytest.mark.django_db
+def test_a_card_counts_what_the_cart_holds_of_its_product():
+    product, small, medium, small_offer, medium_offer = _hoodie(RETAIL)
+    other = product_factory(name="Apple")
+    cart = create_cart(channel=SalesChannel.RETAIL)
+    add_cart_line(cart=cart, commercial_price=small_offer, quantity=2)
+    add_cart_line(cart=cart, commercial_price=medium_offer, quantity=3)
+
+    in_cart = units_in_cart_by_product_id(cart=cart)
+
+    # Both sizes together.
+    assert in_cart == {product.pk: 5}
+    assert units_in_cart_by_product_id(cart=None) == {}
+
+    (card,) = build_retail_product_cards(
+        products=list_retail_catalog_products(),
+        language_code="en",
+        in_cart=in_cart,
+    )
+    assert card.in_cart_units == 5
+    assert other.pk not in in_cart
+
+
+@pytest.mark.django_db
 def test_the_shop_catalog_shows_the_size_dropdown(client):
     product, *_ = _hoodie(RETAIL)
     _with_large(product, RETAIL)
@@ -292,6 +321,7 @@ def test_the_shop_catalog_shows_the_size_dropdown(client):
     html = client.get(reverse("storefront:product_list")).content.decode()
 
     assert "data-size-select" in html
+    assert "data-in-cart" in html
     assert "L — sold out" in html
     assert "from €2.50" in html
     assert 'name="quantity"' in html

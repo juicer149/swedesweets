@@ -14,6 +14,7 @@ from django.shortcuts import (
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
+from business.cart_selectors import get_customer_cart
 from business.cart_services import (
     InvalidBusinessCart,
     add_catalog_offer_to_cart,
@@ -31,6 +32,7 @@ from business_portal.catalog.viewmodels import (
 from business_portal.selectors import (
     get_portal_customer_for_user,
 )
+from carts.selectors import units_in_cart_by_product_id
 from common.http import wants_json
 from products.models import Product
 
@@ -185,7 +187,7 @@ def add_product(
 def catalog(request):
     """Render the business customer's orderable catalog."""
 
-    get_portal_customer_for_user(
+    customer = get_portal_customer_for_user(
         user=request.user,
     )
 
@@ -196,6 +198,9 @@ def catalog(request):
     product_cards = build_business_product_cards(
         products=catalog_products,
         language_code=request.LANGUAGE_CODE,
+        in_cart=units_in_cart_by_product_id(
+            cart=get_customer_cart(customer=customer),
+        ),
     )
 
 

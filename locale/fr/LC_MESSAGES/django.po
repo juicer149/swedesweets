@@ -1698,6 +1698,13 @@ msgstr "Taille"
 msgid "sold out"
 msgstr "épuisé"
 
+#: templates/includes/catalog/tile.html
+#, python-format
+msgid "%(units)s in your cart"
+msgid_plural "%(units)s in your cart"
+msgstr[0] "%(units)s dans votre panier"
+msgstr[1] "%(units)s dans votre panier"
+
 #: common/catalog/viewmodels.py
 #, python-format
 msgid "from %(price)s"

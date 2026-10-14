@@ -6,9 +6,10 @@
     is typed;
   - the cart button posts the form as JSON while only the status burst
     shows in the row's middle (status_burst.js: the scoop, then our bag,
-    the label green; or a cross, the label red), then the row comes back
-    as it started and the navbar cart refreshes with a little jump
-    (cart-changed with bump).
+    the label green; or a cross, the label red, then why); then the row
+    comes back as it started, the picture's in-cart badge counts them,
+    and the navbar cart refreshes with a little jump (cart-changed with
+    bump).
 
   Without JavaScript the size dropdown is plain and the cart button
   posts the form.
@@ -172,10 +173,51 @@
     return payload;
   }
 
+  /* The badge on the picture: how many the cart holds. */
+  function countIn(form, added) {
+    const tile = form.closest("[data-catalog-product]");
+    const badge = tile?.querySelector("[data-in-cart]");
+    const count = badge?.querySelector("[data-in-cart-count]");
+
+    if (!badge || !count || !(added > 0)) {
+      return;
+    }
+
+    count.textContent = String((Number(count.textContent) || 0) + added);
+    badge.hidden = false;
+  }
+
+  /* Why it did not work, in the red where the row was, until tapped or a
+     few seconds have passed; then the row, as it was, to try again. */
+  function showError(form, message) {
+    const error = form.querySelector("[data-catalog-error]");
+
+    if (!error) {
+      delete form.dataset.state;
+      return;
+    }
+
+    error.textContent = message;
+    error.hidden = false;
+
+    let timer = 0;
+    const done = () => {
+      window.clearTimeout(timer);
+      error.removeEventListener("click", done);
+      error.hidden = true;
+      delete form.dataset.state;
+      form.querySelector("[data-catalog-add-button]")?.focus();
+    };
+
+    error.addEventListener("click", done);
+    timer = window.setTimeout(done, 4000);
+  }
+
   /* While the product is added the row gives way to the burst in its
      middle (the scoop); when the mark comes the label turns green and our
-     bag pops up, or red with a cross; then the row comes back, as it
-     started after an add, as it was after a failure (to try again). */
+     bag pops up, or red with a cross; then the row comes back as it
+     started after an add (the badge counting them), and after a failure
+     the reason shows in the red first. */
   async function addToCart(form, reset) {
     const status = form.querySelector("[data-catalog-status]");
 
@@ -185,6 +227,8 @@
 
     form.dataset.state = "adding";
     status.hidden = false;
+
+    const quantity = Number(form.querySelector("[data-quantity-input]")?.value) || 0;
 
     const run = window.statusBurst
       ? window.statusBurst.run
@@ -224,16 +268,19 @@
     );
 
     status.hidden = true;
-    delete form.dataset.state;
 
     if (ok) {
+      delete form.dataset.state;
       setFeedback(value.message || addedLabel, { quiet: true });
+      countIn(form, quantity);
       reset();
       return;
     }
 
-    setFeedback(error instanceof Error ? error.message : fallbackErrorMessage);
-    form.querySelector("[data-catalog-add-button]")?.focus();
+    const message = error instanceof Error ? error.message : fallbackErrorMessage;
+    setFeedback(message, { quiet: true });
+    form.dataset.state = "failed";
+    showError(form, message);
   }
 
   for (const form of catalog.querySelectorAll("[data-catalog-add-form]")) {

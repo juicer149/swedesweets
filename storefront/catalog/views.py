@@ -18,10 +18,12 @@ from django.views.decorators.http import require_POST
 
 from accounts.roles import AccountRole
 from carts.models import Cart
+from carts.selectors import units_in_cart_by_product_id
 from carts.services import create_cart
 from common.channels import SalesChannel
 from common.http import wants_json
 from products.models import Product
+from retail.cart_selectors import get_retail_cart
 from retail.catalog_selectors import (
     get_retail_catalog_product,
     list_retail_catalog_products,
@@ -180,6 +182,11 @@ def product_list(request: HttpRequest):
     product_cards = build_retail_product_cards(
         products=catalog_products,
         language_code=request.LANGUAGE_CODE,
+        in_cart=units_in_cart_by_product_id(
+            cart=get_retail_cart(
+                cart_id=getattr(request, "retail_cart_id", None),
+            ),
+        ),
     )
 
 

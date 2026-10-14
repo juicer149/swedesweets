@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import replace
 
 from django.urls import reverse
@@ -33,11 +33,20 @@ def build_retail_product_cards(
     *,
     products: Iterable[CatalogProduct],
     language_code: str,
+    in_cart: Mapping[int, int] | None = None,
 ) -> tuple[ProductCardVM, ...]:
+    """The catalog's cards; in_cart, how many of each product (by id) the
+    cart holds, for the card's badge."""
+
+    in_cart = in_cart or {}
+
     return tuple(
-        _build_retail_product_card(
-            catalog_product=catalog_product,
-            language_code=language_code,
+        replace(
+            _build_retail_product_card(
+                catalog_product=catalog_product,
+                language_code=language_code,
+            ),
+            in_cart_units=in_cart.get(catalog_product.product.id, 0),
         )
         for catalog_product in products
     )
