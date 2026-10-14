@@ -415,17 +415,21 @@ def _create_order_lines(
             line=line,
         )
 
-    OrderLine.objects.bulk_create(
-        [
-            OrderLine(
-                order=order,
-                product=line.product,
-                quantity_in_units=line.quantity_in_units,
-                unit_price_snapshot=line.unit_price_snapshot,
-                commercial_offer=line.commercial_offer,
-                # bulk_create skips save(): the offer's variant by hand.
-                variant_id=line.commercial_offer.variant_id,
-            )
-            for line in resolved_lines
-        ]
-    )
+    order_lines = [
+        OrderLine(
+            order=order,
+            product=line.product,
+            quantity_in_units=line.quantity_in_units,
+            unit_price_snapshot=line.unit_price_snapshot,
+            commercial_offer=line.commercial_offer,
+            # bulk_create skips save(): the offer's variant by hand.
+            variant_id=line.commercial_offer.variant_id,
+        )
+        for line in resolved_lines
+    ]
+
+    # ...and the copy of what is bought (OrderLine.snapshot_variant).
+    for order_line in order_lines:
+        order_line.snapshot_variant()
+
+    OrderLine.objects.bulk_create(order_lines)
