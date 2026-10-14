@@ -380,6 +380,8 @@
       await refreshNavbarCart({
         preserveOpenState: true,
       });
+
+      bumpCart("removed");
     } catch (error) {
       navbarCartLineShow(
         line
@@ -444,31 +446,33 @@
       });
 
       if (event.detail?.bump) {
-        void refreshed.then(bumpCart);
+        const kind = event.detail.bump === "removed" ? "removed" : "added";
+        void refreshed.then(() => bumpCart(kind));
       }
     }
   );
 
 
-  /* A little jump and a green flash of the cart button: something just
-     went into it (navigation.css). */
-  function bumpCart() {
+  /* A little jump and a flash of the cart button (navigation.css): green
+     when something just went into it, red when something went out. */
+  function bumpCart(kind = "added") {
     const trigger = cartTriggerElement();
 
     if (!trigger) {
       return;
     }
 
-    trigger.classList.remove("is-bumped");
+    trigger.classList.remove("is-bumped", "is-bumped--removed");
     void trigger.offsetWidth; // restart the animation
     trigger.classList.add("is-bumped");
+    trigger.classList.toggle("is-bumped--removed", kind === "removed");
     // Done when the green flash (the longer of the two) has ended.
     const done = (event) => {
       if (event.target !== trigger || event.animationName !== "site-nav-cart-flash") {
         return;
       }
 
-      trigger.classList.remove("is-bumped");
+      trigger.classList.remove("is-bumped", "is-bumped--removed");
       trigger.removeEventListener("animationend", done);
     };
 

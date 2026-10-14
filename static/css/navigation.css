@@ -307,7 +307,18 @@
 
 /* Something just went into the cart (catalog "+ Add"): a little jump,
    and a light green flash of the button, its icon and its count, the
-   green of the tick that was pressed and the cart that grew in. */
+   green of the tick that was pressed and the cart that grew in. Something
+   went out (a bin, here or on the cart's page): the same in red. */
+.site-nav-cart__trigger {
+  --cart-flash: var(--color-action-deliver);
+  --cart-flash-bg: var(--color-action-deliver-light-bg);
+}
+
+.site-nav-cart__trigger.is-bumped--removed {
+  --cart-flash: var(--color-action-danger);
+  --cart-flash-bg: var(--color-action-danger-light-bg);
+}
+
 .site-nav-cart__trigger.is-bumped {
   animation:
     site-nav-cart-bump 0.45s cubic-bezier(0.3, 1.6, 0.6, 1),
@@ -323,21 +334,22 @@
     /* the button's own colours */
   }
 
-  /* green at once, held a while, then a long soft fade with an afterglow */
+  /* the colour at once, held a while, then a long soft fade with an
+     afterglow */
   12%, 35% {
-    color: var(--color-action-deliver);
-    background: var(--color-action-deliver-light-bg);
-    border-color: var(--color-action-deliver);
+    color: var(--cart-flash);
+    background: var(--cart-flash-bg);
+    border-color: var(--cart-flash);
     /* a soft glow, blurred outwards, no ring */
     box-shadow:
-      0 0 12px 3px color-mix(in srgb, var(--color-action-deliver) 35%, transparent),
-      0 0 26px 10px color-mix(in srgb, var(--color-action-deliver-light-bg) 85%, transparent);
+      0 0 12px 3px color-mix(in srgb, var(--cart-flash) 35%, transparent),
+      0 0 26px 10px color-mix(in srgb, var(--cart-flash-bg) 85%, transparent);
   }
 
   70% {
     box-shadow:
-      0 0 16px 4px color-mix(in srgb, var(--color-action-deliver) 15%, transparent),
-      0 0 32px 14px color-mix(in srgb, var(--color-action-deliver-light-bg) 45%, transparent);
+      0 0 16px 4px color-mix(in srgb, var(--cart-flash) 15%, transparent),
+      0 0 32px 14px color-mix(in srgb, var(--cart-flash-bg) 45%, transparent);
   }
 }
 
@@ -347,7 +359,8 @@
   }
 
   12%, 35% {
-    background: var(--color-action-deliver);
+    color: var(--color-white);
+    background: var(--cart-flash);
   }
 }
 
@@ -358,7 +371,7 @@
   100% { transform: scale(1); }
 }
 
-/* Less motion: no jump, the green flash only. */
+/* Less motion: no jump, the flash only. */
 @media (prefers-reduced-motion: reduce) {
   .site-nav-cart__trigger.is-bumped {
     animation: site-nav-cart-flash 1.6s ease-out;

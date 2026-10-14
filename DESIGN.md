@@ -357,7 +357,8 @@ drawing's faded foot (Find Sweets).
   edit. Its lines are the read-only line (picture, name, grey lines, `× 2`
   on the right) with only the bin; the quantity is changed on the cart's
   page, reached by the yellow button. Something added: it jumps and
-  flashes green.
+  flashes green; something taken out (a bin, in it or on the cart's
+  page): the same in red.
 - **Footer** (customer pages only): the name with the crown, and under
   it phone, mail, Instagram and TikTok as icons, centred. About us and
   FAQ are in the navbar, not repeated here. Quiet and small, every size

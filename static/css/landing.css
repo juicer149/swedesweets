@@ -78,6 +78,16 @@
 }
 
 
+/* The chosen language filled yellow, as in the navbar (navigation.css):
+   the start page is the navbar's menu, large. */
+.landing .language-switcher .language-switcher__option--active,
+.landing .language-switcher .language-switcher__option[aria-current="true"] {
+  color: var(--color-primary-900);
+  background: var(--color-accent-600);
+  border-color: var(--color-accent-600);
+}
+
+
 /* The stage: the logo and the line, then the menu ------------------------- */
 
 .landing__stage {

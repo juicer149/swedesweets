@@ -413,6 +413,8 @@
               lineId,
               quantity: 0,
               payload,
+              // the navbar cart flashes red: something went out
+              bump: "removed",
             },
           }
         )

@@ -75,6 +75,24 @@
    Tiles
    ----------------------------------------------------------------------------- */
 
+/* The section clips sideways (page.css: the glow must not widen the
+   page), at its own edge, which cut the price tags of the outer cards
+   where they stick out past the picture. Its edge moves out into the
+   page's side margin (as wide as that margin, so the page never widens)
+   and its content back in, so they show whole. */
+.page-section.catalog {
+  --catalog-bleed: 1rem;
+
+  margin-inline: calc(-1 * var(--catalog-bleed));
+  padding-inline: var(--catalog-bleed);
+}
+
+@media (max-width: 639px) {
+  .page-section.catalog {
+    --catalog-bleed: 0.5rem;
+  }
+}
+
 .tiles {
   --tile-row-gap: clamp(var(--space-12), 7vw, 4rem);
   --tile-column-gap: clamp(var(--space-4), 2.5vw, var(--space-6));
