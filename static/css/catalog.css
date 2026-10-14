@@ -1049,6 +1049,18 @@
   display: none;
 }
 
+/* Room under the page, so its last line scrolls clear of the screen's
+   foot (on a phone, of the bottom bar too). */
+.catalog__detail > .page-section {
+  padding-bottom: clamp(var(--space-12), 12dvh, var(--space-16));
+}
+
+@media (max-width: 767px) {
+  .catalog__detail > .page-section {
+    padding-bottom: calc(6.5rem + var(--space-8));
+  }
+}
+
 .catalog--detail-open {
   overflow: hidden;
 }

@@ -423,6 +423,13 @@
      fetched; failing that, the browser goes there. */
 
   const detail = catalog.querySelector("[data-catalog-detail]");
+
+  // Out of the catalog's page (its own stacking context) and straight
+  // under the body, so it lies over everything on the page, the footer
+  // too, and under the site's header and phone bar only.
+  if (detail) {
+    document.body.append(detail);
+  }
   const FOLD_MS = 220;
   const PARTS = {
     picture: ".tile__image",
