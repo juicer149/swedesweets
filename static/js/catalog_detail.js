@@ -25,6 +25,29 @@
 
   form.dataset.enhanced = "";
 
+  /* Back to the catalog the way one came: the browser's own back, so the
+     catalog is where it was left (its scroll) and its card is the one
+     the page floats back to. Opened from elsewhere: the link as it is. */
+  const cameFromCatalog = (() => {
+    try {
+      const from = new URL(document.referrer);
+      const catalog = new URL(form.dataset.doneUrl || "", window.location.href);
+      return from.origin === window.location.origin
+        && from.pathname === catalog.pathname;
+    } catch (error) {
+      return false;
+    }
+  })();
+
+  for (const link of document.querySelectorAll(".product__back-top, .product .page__back a")) {
+    link.addEventListener("click", (event) => {
+      if (cameFromCatalog && window.history.length > 1) {
+        event.preventDefault();
+        window.history.back();
+      }
+    });
+  }
+
   const select = form.querySelector("[data-size-select]");
   const onlyOffer = form.querySelector("[data-only-offer]");
   const empty = form.querySelector("[data-size-empty]");

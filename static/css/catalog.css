@@ -824,15 +824,24 @@
 
 /* From a card to its page and back, on a computer: the picture, its tag
    and badge and the label float to their places (view transitions; both
-   pages opt in: grid.html and product.html). */
+   pages opt in: grid.html and product.html; the catalog names only the
+   card opened or come back to: catalog.js). Browsers without
+   cross-document view transitions (Firefox) open the page plainly. */
 ::view-transition-group(*) {
-  animation-duration: 420ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation-duration: 650ms;
+  animation-timing-function: cubic-bezier(0.22, 0.8, 0.2, 1);
 }
 
-::view-transition-old(root),
+/* The page around them: the old one fades out quickly, the new one in
+   more slowly and a little later, so the card leads. */
+::view-transition-old(root) {
+  animation-duration: 260ms;
+}
+
 ::view-transition-new(root) {
-  animation-duration: 220ms;
+  animation-delay: 180ms;
+  animation-duration: 520ms;
+  animation-fill-mode: both;
 }
 
 

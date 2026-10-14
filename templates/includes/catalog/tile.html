@@ -34,26 +34,26 @@
   >
     <a class="tile__media" href="{{ detail_href }}" tabindex="-1" aria-hidden="true">
       {% if card.image_url %}
-        <img class="tile__image" src="{{ card.image_url }}" alt="" loading="lazy" style="view-transition-name: product-{{ card.product_id }}-picture">
+        <img class="tile__image" src="{{ card.image_url }}" alt="" loading="lazy">
       {% else %}
-        <span class="tile__image tile__image--empty" style="view-transition-name: product-{{ card.product_id }}-picture"></span>
+        <span class="tile__image tile__image--empty"></span>
       {% endif %}
 
       {# In the cart already: an active cart and how many, top left. #}
-      <span class="tile__in-cart" data-in-cart {% if not card.in_cart_units %}hidden{% endif %} style="view-transition-name: product-{{ card.product_id }}-in-cart">
+      <span class="tile__in-cart" data-in-cart {% if not card.in_cart_units %}hidden{% endif %}>
         {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__in-cart-icon" only %}
         <b data-in-cart-count>{{ card.in_cart_units }}</b>
       </span>
 
       {% if tag %}
-        <span class="tile__tag" style="view-transition-name: product-{{ card.product_id }}-tag">
+        <span class="tile__tag">
           {% if tag.deal_label %}<small class="tile__tag-deal">{{ tag.deal_label }}</small>{% endif %}
           <span class="tile__tag-price">{{ tag.price_label }}</span>
         </span>
       {% endif %}
     </a>
 
-    <div class="tile__body tile__label" style="view-transition-name: product-{{ card.product_id }}-label">
+    <div class="tile__body tile__label">
       <h2 class="tile__name"><a href="{{ detail_href }}">{{ card.name }}</a></h2>
 
       {# The tag and the badge are on the picture, which screen readers skip. #}

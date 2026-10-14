@@ -337,4 +337,80 @@
       void addToCart(form, reset);
     });
   }
+
+
+  /* From a card to its page and back (a computer, view transitions;
+     catalog.css): only the card that is opened or come back to carries
+     the names its page's picture, tag, badge and label carry, so the
+     browser moves those four and fades the rest, not the whole wall. */
+
+  const PARTS = {
+    picture: ".tile__image",
+    tag: ".tile__tag",
+    "in-cart": ".tile__in-cart",
+    label: ".tile__label",
+  };
+
+  function tileFor(url) {
+    if (!url) {
+      return null;
+    }
+
+    const path = new URL(url, window.location.href).pathname;
+
+    return tiles.find((tile) => {
+      const link = tile.querySelector(".tile__media");
+      return link && new URL(link.href).pathname === path;
+    }) || null;
+  }
+
+  function nameTile(tile, on) {
+    const id = tile.dataset.productId;
+
+    for (const [part, selector] of Object.entries(PARTS)) {
+      const element = tile.querySelector(selector);
+
+      if (element) {
+        element.style.viewTransitionName = on ? `product-${id}-${part}` : "";
+      }
+    }
+  }
+
+  function clearNames() {
+    for (const tile of tiles) {
+      nameTile(tile, false);
+    }
+  }
+
+  // Leaving for a card's page: that card's parts go with the page.
+  window.addEventListener("pageswap", (event) => {
+    if (!event.viewTransition) {
+      return;
+    }
+
+    clearNames();
+    const tile = tileFor(event.activation?.entry?.url);
+
+    if (tile) {
+      nameTile(tile, true);
+    }
+  });
+
+  // Back from a card's page: its parts come back to that card.
+  window.addEventListener("pagereveal", (event) => {
+    clearNames();
+
+    if (!event.viewTransition) {
+      return;
+    }
+
+    const tile = tileFor(window.navigation?.activation?.from?.url);
+
+    if (!tile) {
+      return;
+    }
+
+    nameTile(tile, true);
+    event.viewTransition.finished.finally(() => nameTile(tile, false));
+  });
 })();
