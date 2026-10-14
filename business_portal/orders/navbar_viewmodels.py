@@ -133,6 +133,7 @@ def _build_business_navbar_cart_line(
 
     return NavbarCartLine(
         line_id=line.id,
+        product_id=line.commercial_price.product_id,
         label=presentation.catalog_label,
         product_url=reverse(
             "business_portal:catalog_product",

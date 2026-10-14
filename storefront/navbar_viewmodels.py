@@ -109,6 +109,7 @@ def _build_retail_navbar_cart_line(
 
     return NavbarCartLine(
         line_id=line.id,
+        product_id=line.commercial_price.product_id,
         # "Hoodie — M": the size when the product has several.
         label=variant_display_name(
             product.display_name,

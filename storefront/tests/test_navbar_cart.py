@@ -95,6 +95,9 @@ def test_navbar_cart_fragment_renders_existing_retail_cart(
     # Read-only: the quantity is shown, not an input.
     assert "× 2" in content
     assert "data-quantity-input" not in content
+    # What the catalog's in-cart badges count from.
+    assert f'data-product-id="{retail_price.product_id}"' in content
+    assert 'data-quantity="2"' in content
 
 
 @pytest.mark.django_db

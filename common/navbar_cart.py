@@ -18,6 +18,8 @@ class NavbarCartLine:
     quantity: int
     remove_url: str
     image_url: str | None = None
+    # Its product: the catalog's in-cart badges count from the lines.
+    product_id: int | None = None
 
     @property
     def line_view(self) -> LineView:

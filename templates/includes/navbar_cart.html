@@ -53,6 +53,8 @@
             class="site-nav-cart-line"
             data-navbar-cart-line
             data-line-id="{{ line.line_id }}"
+            data-product-id="{{ line.product_id|default:'' }}"
+            data-quantity="{{ line.quantity }}"
           >
             {# Read-only, like an order's line; the quantity is changed on the cart's page. #}
             {% include "includes/ui/line_product.html" with line=line.line_view only %}

@@ -236,6 +236,19 @@
         html
       );
 
+      // The cart as it is now, for whoever shows it elsewhere (the
+      // catalog's in-cart badges count its lines).
+      document.dispatchEvent(
+        new CustomEvent(
+          "navbar-cart-refreshed",
+          {
+            detail: {
+              container,
+            },
+          }
+        )
+      );
+
       if (wasOpen) {
         const refreshedCart = (
           cartElement()

@@ -283,6 +283,32 @@
     showError(form, message);
   }
 
+  /* After any change to the cart (the navbar's refresh, here or after an
+     add), every badge counts the navbar cart's lines anew: the server's
+     cart, not our sums. */
+  document.addEventListener("navbar-cart-refreshed", (event) => {
+    const lines = (event.detail?.container || document).querySelectorAll(
+      "[data-navbar-cart-line][data-product-id]"
+    );
+    const units = new Map();
+
+    for (const line of lines) {
+      const id = line.dataset.productId;
+      units.set(id, (units.get(id) || 0) + (Number(line.dataset.quantity) || 0));
+    }
+
+    for (const tile of tiles) {
+      const badge = tile.querySelector("[data-in-cart]");
+      const count = badge?.querySelector("[data-in-cart-count]");
+      const held = units.get(tile.dataset.productId) || 0;
+
+      if (badge && count) {
+        count.textContent = String(held);
+        badge.hidden = held === 0;
+      }
+    }
+  });
+
   for (const form of catalog.querySelectorAll("[data-catalog-add-form]")) {
     form.dataset.enhanced = "";
 
