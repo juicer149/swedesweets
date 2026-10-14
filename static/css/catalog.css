@@ -580,8 +580,28 @@
 .product__main {
   display: grid;
   grid-template-columns: minmax(0, clamp(16rem, 32vw, 22rem)) minmax(0, 1fr);
-  align-items: center;
+  align-items: start;
   gap: clamp(var(--space-6), 5vw, var(--space-16));
+}
+
+/* Beside the picture: the label a little down from its top, then
+   Description and Ingredients under it. */
+.product__side {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  padding-top: clamp(var(--space-2), 3dvh, var(--space-6));
+}
+
+/* One size and no offer: less to hold, a narrower label. */
+.product__label--simple {
+  justify-self: start;
+  width: min(100%, 24rem);
+}
+
+/* Back: at the foot on a computer, at the top left on a phone. */
+.product__back-top {
+  display: none;
 }
 
 .product__media {
@@ -788,7 +808,7 @@
 }
 
 .product__tabs {
-  margin-top: clamp(var(--space-10, 2.5rem), 7dvh, var(--space-16));
+  margin-top: clamp(var(--space-10, 2.5rem), 6dvh, var(--space-12));
 }
 
 .product .page__back {
@@ -800,6 +820,19 @@
   max-width: 62ch;
   margin-inline: auto;
   line-height: 1.65;
+}
+
+/* From a card to its page and back, on a computer: the picture, its tag
+   and badge and the label float to their places (view transitions; both
+   pages opt in: grid.html and product.html). */
+::view-transition-group(*) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
 }
 
 
@@ -841,12 +874,29 @@
   }
 
   /* As on a card: straight, over the picture's foot. */
-  .product__label {
+  .product__side {
+    padding-top: 0;
+  }
+
+  .product__label,
+  .product__label--simple {
     position: relative;
     z-index: 1;
+    justify-self: center;
     width: min(100%, 19.5rem);
     margin: -2rem auto 0;
     transform: none;
+  }
+
+  .product__back-top {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-3);
+  }
+
+  .product .page__back {
+    display: none;
   }
 }
 

@@ -6,10 +6,13 @@
   band (the category over it), then one row in two halves (the size as a
   dropdown, "Choose size" until chosen, or the weight; how many, typed),
   the chosen size's special offer when it has one (ticked, it is the one
-  added), the stock, and the round green cart button on the label's foot.
+  added), the stock, and the round green cart button on the label's foot;
+  Description and Ingredients as tabs under the label. A one-size label
+  with no offer is narrower. On a computer the card's picture and label
+  float here from the catalog (view transitions); on a phone the label
+  sits over the picture's foot as on the card, Back at the top.
   Adding is as on a card (catalog_detail.js): the scoop, then the label
-  green with the bag (and on to the catalog) or red with why. Under both,
-  Description and Ingredients as tabs, and the quiet way back.
+  green with the bag (and on to the catalog) or red with why.
 
   Without JavaScript the dropdown is plain and the offer's tick box posts
   its offer in the size's place (the last commercial_price_id wins).
@@ -18,29 +21,43 @@
   image_url, card (ProductCardVM), initial_offer, page_tabs, cancel_url
   From the page: add_url (where the form posts), add_label (its button)
 {% endcomment %}
+{# Cards float to their pages and back on a computer (catalog.css). #}
+<style>
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    @view-transition { navigation: auto; }
+  }
+</style>
 {% with tag=card.price_tag deal=card.only_deal %}
 <section class="page-section" aria-labelledby="product-title">
   <article class="page product">
+    {# On a phone, Back at the top left (the arrow and "Back"); on a computer at the foot. #}
+    <a class="quiet-link product__back-top" href="{{ cancel_url }}">
+      {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+      <span>{% trans "Back" %}</span>
+    </a>
+
     <div class="product__main">
+      {# The card's picture and label carry the same names as on the catalog, so on a computer they float here from the card (catalog.css, view transitions). #}
       <div class="product__media">
         {% if image_url %}
-          <img class="product__image" src="{{ image_url }}" alt="{{ product_name }}">
+          <img class="product__image" src="{{ image_url }}" alt="{{ product_name }}" style="view-transition-name: product-{{ product.id }}-picture">
         {% else %}
-          <span class="product__image product__image--empty" aria-hidden="true"></span>
+          <span class="product__image product__image--empty" aria-hidden="true" style="view-transition-name: product-{{ product.id }}-picture"></span>
         {% endif %}
 
-        <span class="tile__in-cart product__in-cart" aria-hidden="true" data-in-cart {% if not card.in_cart_units %}hidden{% endif %}>
+        <span class="tile__in-cart product__in-cart" aria-hidden="true" data-in-cart {% if not card.in_cart_units %}hidden{% endif %} style="view-transition-name: product-{{ product.id }}-in-cart">
           {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__in-cart-icon" only %}
           <b data-in-cart-count>{{ card.in_cart_units }}</b>
         </span>
 
-        <span class="tile__tag product__tag" aria-hidden="true" data-product-tag {% if not tag %}hidden{% endif %}>
+        <span class="tile__tag product__tag" aria-hidden="true" data-product-tag {% if not tag %}hidden{% endif %} style="view-transition-name: product-{{ product.id }}-tag">
           <small class="tile__tag-deal" data-product-tag-note {% if not tag.deal_label %}hidden{% endif %}>{{ tag.deal_label|default:"" }}</small>
           <span class="tile__tag-price" data-product-price data-initial="{{ tag.price_label|default:'' }}">{{ tag.price_label|default:"" }}</span>
         </span>
       </div>
 
-      <div class="product__label">
+      <div class="product__side">
+      <div class="product__label{% if not card.has_size_choice and not deal %} product__label--simple{% endif %}" style="view-transition-name: product-{{ product.id }}-label">
         <div class="product__band">
           {% if category_label %}
             <p class="product__kicker">{{ category_label }}</p>
@@ -184,15 +201,18 @@
           <p class="visually-hidden" data-product-feedback role="status" aria-live="polite"></p>
         </form>
       </div>
+
+      {# Description and Ingredients, under the label. #}
+      {% if page_tabs %}
+        <div class="product__tabs">
+          {% trans "Product information" as tabs_label %}
+          {# Only its own tabs: no Back or actions of a page around it (page_tabs.html). #}
+          {% include "includes/ui/page_tabs.html" with page_tabs=page_tabs tabs_label=tabs_label tab_actions=None tabs_back_url=None %}
+        </div>
+      {% endif %}
+      </div>
     </div>
 
-    {% if page_tabs %}
-      <div class="product__tabs">
-        {% trans "Product information" as tabs_label %}
-        {# Only its own tabs: no Back or actions of a page around it (page_tabs.html). #}
-        {% include "includes/ui/page_tabs.html" with page_tabs=page_tabs tabs_label=tabs_label tab_actions=None tabs_back_url=None %}
-      </div>
-    {% endif %}
 
     <div class="page-actions__links page__back">
       <a class="quiet-link" href="{{ cancel_url }}">

@@ -199,8 +199,12 @@ started) and `product.html` (a product's page in the card's
 design: the picture with the price tag and in-cart badge, beside it the
 card's label, bigger: the name on the yellow band, size | how many, the
 chosen size's special offer to tick when it has one, the stock, the round
-cart button on its foot; adding as on a card; Description and Ingredients
-as tabs under both). The channel's pages only say where the form posts and what its
+cart button on its foot (narrower for one size and no offer); adding as
+on a card; Description and Ingredients as tabs under the label. On a
+computer the card's picture, tag, badge and label float to their places
+on the page and back (cross-document view transitions, both pages opting
+in); on a phone the label sits over the picture's foot as on the card,
+and Back is at the top left). The channel's pages only say where the form posts and what its
 button says. CSS in `static/css/catalog.css`.
 
 **Status burst:** `includes/ui/status_burst.html`, rendered once in
