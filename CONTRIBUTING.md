@@ -36,6 +36,36 @@ set -a; . ./.env; set +a
 | `make reset-demo` | Wipe and seed the demo data again |
 | `make help` | Everything else |
 
+## Brand artwork and menu themes
+
+The source artwork and its themed previews live in `static/images/`:
+
+| Asset | Purpose |
+| --- | --- |
+| `swedesweets-logo.png` | Original two-line wordmark: blue lettering and yellow crown, transparent PNG. Use this as the reference for the authentic letter shapes. |
+| `swedesweets-logo-cream.webp` | Transparent, cream-colored rendition of the original wordmark. Used by the landing page, shared navbars and entrance pages. |
+| `favicon.svg` | Vector **crown only**, not a complete wordmark; also used for the menu's crown-shaped masks. |
+| `swedesweets-logo-monochrome.svg`, `swedesweets-logo-stacked-day.svg` | **Experimental** two-line wordmarks: lettering is approximated with Fredoka, not traced from the original. |
+| `swedesweets-logo-wide.svg`, `swedesweets-logo-wide-day.svg` | **Experimental** single-line previews, not approved replacements for the original. |
+
+Do not treat the experimental wordmark SVGs as the canonical brand logo.
+For a single-color logo that follows the time-of-day palette, the authentic
+transparent PNG or WebP can be used as a CSS alpha mask; this preserves the
+actual lettering and crown silhouette instead of recreating them with a font.
+
+Theme responsibilities on the design branch:
+
+- `static/js/menu-theme.js` chooses **one** `data-menu-theme` value on
+  `<html>` based on the time in Paris, or leaves a fixed preview alone.
+- `static/css/tokens.css` defines the colors and default fallbacks.
+- `static/css/landing.css`, `static/css/navigation.css` and
+  `static/css/on-blue.css` consume those tokens for the landing page,
+  navbars and entrance pages. Keep visual selection in CSS rather than
+  making JavaScript change each component's colors.
+
+The current design-branch templates still reference some experimental SVG
+previews. Documenting them here does **not** mean they are the approved logo.
+
 ## Branches and merging
 
 - One topic per branch, named in English, kebab-case
