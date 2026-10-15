@@ -689,18 +689,21 @@
   display: none;
 }
 
-/* In the navbar (and on the start page, landing.css): the chosen
-   language in yellow, ring and letters; the other muted. */
+/* Match the landing's quiet language links in the shared navbar.
+   Keep the normal :focus-visible outline for keyboard navigation. */
 .site-header .language-switcher__option {
   color: var(--menu-language-ink);
-  border-color: var(--menu-language-ring);
+  border-color: transparent;
 }
 
 .site-header .language-switcher__option--active,
 .site-header .language-switcher__option[aria-current="true"] {
   color: var(--menu-language-chosen);
   background: transparent;
-  border-color: var(--menu-language-chosen);
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 0.1em;
 }
 
 
