@@ -415,9 +415,9 @@
 }
 
 
-/* Menu theme: menu-theme.js selects the Paris time-of-day palette.
-   Missing or unknown data-menu-theme keeps the night defaults.
-   Menus, logos, crowns and gold borders share these tokens. */
+/* Two menu palettes: night is the default and day overrides it.
+   A fixed day/night preview is supported in base.html; auto uses Paris time.
+   Missing or unknown data-menu-theme keeps the night palette. */
 :root {
   --menu-bg: var(--color-primary-950);
   --menu-ink: var(--color-neutral-200);
@@ -432,16 +432,6 @@
   --menu-cart-bg-hover: var(--menu-chosen);
   --menu-cart-ring-hover: var(--menu-chosen);
   --menu-cart-count-bg: var(--menu-chosen);
-}
-
-:root[data-menu-theme="dawn"] {
-  --menu-bg: var(--color-primary-800);
-  --menu-chosen: var(--color-accent-700);
-}
-
-:root[data-menu-theme="morning"] {
-  --menu-bg: var(--color-primary-700);
-  --menu-chosen: var(--color-accent-700);
 }
 
 :root[data-menu-theme="day"] {

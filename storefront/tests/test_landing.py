@@ -27,14 +27,13 @@ def _landing_html(client) -> str:
 
 
 @pytest.mark.django_db
-def test_landing_uses_traced_stacked_and_wide_logo(client):
+def test_landing_uses_original_stacked_logo_at_all_viewport_sizes(client):
     html = _landing_html(client)
 
-    assert 'class="brand-logo landing__logo-art--stacked"' in html
-    assert 'class="brand-logo brand-logo--wide landing__logo-art--wide"' in html
-    assert html.count('class="brand-logo__wordmark"') == 2
-    assert html.count('class="brand-logo__crown"') == 2
-    assert 'transform="translate(2850 729)"' in html
+    assert 'class="brand-logo landing__logo-art"' in html
+    assert html.count('class="brand-logo__wordmark"') == 1
+    assert html.count('class="brand-logo__crown"') == 1
+    assert 'brand-logo--wide' not in html
     assert "swedesweets-logo-wide.svg" not in html
 
 

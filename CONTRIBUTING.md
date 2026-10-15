@@ -49,21 +49,22 @@ Brand assets live in `static/images/`:
 | `swedesweets-logo-monochrome.svg`, `swedesweets-logo-stacked-day.svg`, `swedesweets-logo-wide*.svg` | Old experimental Fredoka previews, **not** original artwork. |
 
 `templates/includes/ui/logo.html` is the single inline SVG logo component,
-using the paths in `swedesweets-logo.svg`. Its default is the original
-two-row design; `wide=True` rearranges those **same** shapes in one line
-and moves the crown above the final S on desktop landing.
+using the paths in `swedesweets-logo.svg`. It uses the original
+two-row composition at every viewport size, including desktop landing.
 The original letter paths are not replaced by a font. Pass
 `decorative=True` inside an already-labeled home link to avoid duplicate
 screen-reader labels.
 
 The shared styles are in `static/css/brand-logo.css`:
 
-- `static/js/menu-theme.js` selects one `data-menu-theme` by Paris time
-  (`night`, `dawn`, `morning`, `day`) or leaves a fixed preview.
+- `static/js/menu-theme.js` selects `day` (06–22) or `night` (22–06)
+  by Paris time when the HTML attribute is `auto`; a fixed `day` or
+  `night` preview is preserved. An OS-controlled mode could use
+  `prefers-color-scheme` later.
 - `static/css/tokens.css` defines the default/night values and per-theme
   overrides. Unknown theme values retain CSS defaults.
 - `--menu-logo` colors the wordmark; `--menu-chosen` controls active
-  and hovered menu text. In daylight it uses `primary-600` rather than gold.
+  and hovered menu text according to the selected day/night palette.
 - `--brand-crown` defines the sitewide crown hue (`accent-700`); the
   menu-specific `--menu-crown` reads from it, including the logo and
   selected navigation crowns. Product placeholders mix that hue with a
