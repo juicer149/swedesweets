@@ -441,8 +441,8 @@
   --menu-chosen: var(--color-accent-600);
   --menu-crown: var(--brand-crown);
   --menu-crown-shadow: none;
-  --menu-cart-ink: var(--color-accent-600);
-  --menu-cart-ring: var(--color-accent-400);
+  --menu-cart-ink: var(--color-white);
+  --menu-cart-ring: var(--color-white);
   --menu-cart-ink-hover: var(--color-accent-600);
   --menu-cart-bg-hover: var(--color-primary-650);
   --menu-cart-ring-hover: var(--color-accent-600);
