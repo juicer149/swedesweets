@@ -46,7 +46,6 @@ Brand assets live in `static/images/`:
 | `swedesweets-logo.svg` | Authentic traced vector paths, preserving the original letter and crown shapes. |
 | `swedesweets-logo-cream.webp` | Cream version of the original, retained as a reference. |
 | `favicon.svg` | Original crown alone, not the full wordmark. |
-| `swedesweets-logo-monochrome.svg`, `swedesweets-logo-stacked-day.svg`, `swedesweets-logo-wide*.svg` | Old experimental Fredoka previews, **not** original artwork. |
 
 `templates/includes/ui/logo.html` is the single inline SVG logo component,
 using the paths in `swedesweets-logo.svg`. It uses the original
@@ -80,8 +79,8 @@ rules, including responsive sizing and focus visibility, live in
 `static/css/language-switcher.css`. Avoid adding page-specific language
 selector overrides in `landing.css`, `navigation.css` or `on-blue.css`.
 
-The old experimental SVG variants remain for comparison only; new code
-should use the shared traced logo instead.
+The old approximate Fredoka SVG previews were removed before merge.
+The site uses only the authentic traced wordmark.
 
 ## Branches and merging
 
