@@ -20,16 +20,24 @@
 
   /* Blue */
   --color-primary-950: #06163d;
-  --color-primary-900: #0b1f51;
-  --color-primary-800: #0b2a79;
-  --color-primary-700: #0b3bad;
-  --color-primary-600: #0947d7;
-  --color-primary-500: #2669ff;
-  --color-primary-400: #6195f5;
-  --color-primary-300: #98bffb;
-  --color-primary-200: #9fc8ff;
-  --color-primary-100: #f0fafe;
-  --color-primary-50: #fdfefe;
+  --color-primary-900: #0A1233; 
+  --color-primaty-850: #08153F;
+  --color-primary-800: #091B4E; 
+  --color-primary-750: #08205E; 
+  --color-primary-700: #08297D;
+  --color-primary-650: #0934AA;
+  --color-primary-600: #0740CF; 
+  --color-primary-550: #0249ED;
+  --color-primary-500: #0D53F8;
+  --color-primary-450: #1760FD;
+  --color-primary-400: #2669FF;  /* brand color */
+  --color-primary-350: #337AFF;
+  --color-primary-300: #428BFF;
+  --color-primary-250: #5CA0FF;
+  --color-primary-200: #75B1FF;
+  --color-primary-150: #8ABEFF;
+  --color-primary-100: #9EC9FF;
+  --color-primary-50: #B3D5FF;
 
   /* Yellow / gold */
   --color-accent-950: #4a3405;
@@ -440,7 +448,7 @@
   --menu-bg: var(--color-primary-200);
   --menu-ink: var(--color-primary-950);
   /* Chosen links stay blue; the crown stays the brand's warm gold. */
-  --menu-chosen: var(--color-primary-600);
+  --menu-chosen: var(--color-primary-700);
   --menu-crown: var(--brand-crown);
   --menu-crown-shadow: none;
   --menu-cart-ink: var(--color-primary-900);
