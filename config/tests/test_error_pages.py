@@ -17,3 +17,6 @@ def test_404_is_a_calm_page_with_a_way_back(client):
     assert "error-page__code" in content
     assert "page__submit" in content
     assert "error-card" not in content
+    # Error pages use the shared site navbar and its language selector.
+    assert 'class="language-switcher"' in content
+    assert 'language-switcher__option--active' in content

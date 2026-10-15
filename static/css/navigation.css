@@ -618,95 +618,6 @@
 }
 
 
-/* =============================================================================
-   Language selector
-   ============================================================================= */
-
-.language-switcher {
-  display: inline-flex;
-  align-items: center;
-  gap: clamp(0.2rem, 0.5vw, var(--space-1));
-  margin: 0;
-}
-
-.language-switcher__option {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-height: clamp(1.85rem, 2.2vw, 2.1rem);
-  min-width: clamp(2.05rem, 2.6vw, 2.75rem);
-  padding-block: clamp(0.32rem, 0.45vw, 0.45rem);
-  padding-inline: clamp(0.4rem, 0.65vw, 0.7rem);
-
-  color: var(--color-primary-800);
-  background: transparent;
-  border: 1px solid var(--color-primary-800);
-  border-radius: var(--radius-pill);
-
-  font-family: var(--font-body);
-  font-size: clamp(0.72rem, 0.78vw, var(--font-size-14));
-  font-weight: 750;
-  line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
-
-  cursor: pointer;
-
-  transition:
-    background var(--motion-fast),
-    border-color var(--motion-fast),
-    box-shadow var(--motion-fast),
-    color var(--motion-fast),
-    transform var(--motion-fast);
-}
-
-.language-switcher__option:hover,
-.language-switcher__option:focus-visible {
-  box-shadow: var(--shadow-accent-glow);
-  transform: translateY(-1px);
-}
-
-.language-switcher__option:focus-visible {
-  outline: 2px solid var(--color-accent-600);
-  outline-offset: 4px;
-}
-
-.language-switcher__option:active {
-  color: var(--color-white);
-  background: var(--color-primary-900);
-  box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.22);
-  transform: translateY(0);
-}
-
-.language-switcher__option--active,
-.language-switcher__option[aria-current="true"] {
-  color: var(--color-white);
-  background: var(--color-primary-900);
-}
-
-.language-switcher__separator {
-  display: none;
-}
-
-/* Match the landing's quiet language links in the shared navbar.
-   Keep the normal :focus-visible outline for keyboard navigation. */
-.site-header .language-switcher__option {
-  color: var(--menu-language-ink);
-  border-color: transparent;
-}
-
-.site-header .language-switcher__option--active,
-.site-header .language-switcher__option[aria-current="true"] {
-  color: var(--menu-language-chosen);
-  background: transparent;
-  border-color: transparent;
-  text-decoration: underline;
-  text-underline-offset: 0.28em;
-  text-decoration-thickness: 0.1em;
-}
-
-
 /* The account slot (includes/account_menu.html): page links like the
    others at the far right of the navbar (staff: the public/ops switch,
    then My account); the crown when you are on one. On a phone the header
@@ -893,17 +804,6 @@
 
   .site-nav-cart__actions {
     align-items: stretch;
-  }
-
-  .language-switcher {
-    gap: var(--space-1);
-  }
-
-  .language-switcher__option {
-    min-height: 2rem;
-    min-width: 2.45rem;
-    padding: 0.35rem 0.55rem;
-    font-size: var(--font-size-12);
   }
 
   .site-nav__links {

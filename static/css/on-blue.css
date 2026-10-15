@@ -23,21 +23,6 @@ body.on-blue {
 }
 
 
-/* The language buttons ----------------------------------------------------- */
-
-.on-blue .language-switcher__option {
-  color: var(--on-blue-ink);
-  border-color: color-mix(in srgb, var(--on-blue-ink) 70%, transparent);
-}
-
-.on-blue .language-switcher__option--active,
-.on-blue .language-switcher__option[aria-current="true"] {
-  color: var(--color-primary-700);
-  background: var(--on-blue-ink);
-  border-color: var(--on-blue-ink);
-}
-
-
 /* The header of the ways in: the logo in the middle, the language right.
    (The start page has its own, larger logo in the middle of the screen.) */
 

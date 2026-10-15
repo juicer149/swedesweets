@@ -79,24 +79,6 @@
 }
 
 
-/* Quiet language links on landing: selected uses color and underline,
-   without persistent pill outlines. Keyboard focus retains its outline. */
-.landing .language-switcher .language-switcher__option {
-  color: var(--menu-language-ink);
-  border-color: transparent;
-}
-
-.landing .language-switcher .language-switcher__option--active,
-.landing .language-switcher .language-switcher__option[aria-current="true"] {
-  color: var(--menu-language-chosen);
-  background: transparent;
-  border-color: transparent;
-  text-decoration: underline;
-  text-underline-offset: 0.28em;
-  text-decoration-thickness: 0.1em;
-}
-
-
 /* The stage: the logo and the line, then the menu ------------------------- */
 
 .landing__stage {
