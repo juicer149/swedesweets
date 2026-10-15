@@ -53,7 +53,9 @@ def test_the_ways_in_are_blue_and_the_shop_is_not(client):
     for name in ("login", "password_reset", "password_reset_done"):
         html = client.get(reverse(name)).content.decode()
         assert '<body class="on-blue">' in html, name
-        assert "swedesweets-logo-cream" in html, name
+        assert 'class="brand-logo entrance-header__logo"' in html, name
+        assert 'class="brand-logo__wordmark"' in html, name
+        assert 'class="brand-logo__crown"' in html, name
 
     client.force_login(user_factory())
     html = client.get(reverse("password_change")).content.decode()
