@@ -21,12 +21,7 @@ from products.tests.factories import (
 )
 
 
-@pytest.fixture(autouse=True)
-def fast_password_hashing(settings):
-    """These cart view tests use force_login, not password authentication."""
-    settings.PASSWORD_HASHERS = [
-        "django.contrib.auth.hashers.MD5PasswordHasher",
-    ]
+pytestmark = pytest.mark.usefixtures("fast_password_hashing")
 
 
 def _login_customer(

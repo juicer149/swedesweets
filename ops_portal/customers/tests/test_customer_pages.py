@@ -14,6 +14,8 @@ from orders.datatypes import OrderLineInput
 from products.tests.factories import product_factory
 
 
+pytestmark = pytest.mark.usefixtures("fast_password_hashing")
+
 @pytest.fixture
 def staff_client(client):
     client.force_login(full_staff_user_factory())

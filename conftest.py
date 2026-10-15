@@ -32,3 +32,15 @@ def isolated_caches(settings):
     yield
 
     _clear_caches()
+
+
+@pytest.fixture
+def fast_password_hashing(settings):
+    """Opt-in fast hashing for tests that do not exercise hash strength.
+
+    Production password hashing remains unchanged; settings is restored
+    after each test by pytest-django.
+    """
+    settings.PASSWORD_HASHERS = [
+        "django.contrib.auth.hashers.MD5PasswordHasher",
+    ]

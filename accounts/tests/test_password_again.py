@@ -16,6 +16,8 @@ def _try(user, password: str) -> PasswordAgainForm:
     return form
 
 
+pytestmark = pytest.mark.usefixtures("fast_password_hashing")
+
 @pytest.mark.django_db
 def test_the_right_password_confirms():
     user = user_factory()

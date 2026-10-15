@@ -11,6 +11,8 @@ from accounts.tests.factories import (
 from customers.tests.factories import customer_factory
 
 
+pytestmark = pytest.mark.usefixtures("fast_password_hashing")
+
 @pytest.fixture
 def owner_client(client):
     client.force_login(superuser_factory())

@@ -14,6 +14,8 @@ from orders.datatypes import OrderLineInput
 from products.tests.factories import product_factory
 
 
+pytestmark = pytest.mark.usefixtures("fast_password_hashing")
+
 @pytest.fixture
 def placed_order():
     product = product_factory(
