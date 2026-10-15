@@ -19,6 +19,8 @@
     hourCycle: "h23",
   });
 
+  let appliedTheme = null;
+
   function updateTheme() {
     const hour = Number(clock.format(new Date()));
     let theme;
@@ -27,6 +29,7 @@
     else if (hour < 10 || hour >= 18) theme = "morning";
     else theme = "day";
     root.setAttribute("data-menu-theme", theme);
+    appliedTheme = theme;
   }
 
   updateTheme();
@@ -34,7 +37,7 @@
   // Re-check at minute boundaries while the tab remains open.
   // An explicit preview override is never replaced by the clock.
   setInterval(() => {
-    if (root.dataset.menuThemeAuto !== "true") return;
+    if (root.dataset.menuThemeAuto !== "true" || root.dataset.menuTheme !== appliedTheme) return;
     updateTheme();
   }, 60_000);
 })();
