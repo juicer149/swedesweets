@@ -1,3 +1,4 @@
+/* Shared/public entrypoint. Ops-only rules live in ops.css. */
 @import url("./fonts.css");
 @import url("./tokens.css");
 @import url("./base.css");
@@ -14,15 +15,12 @@
 @import url("./buttons.css");
 @import url("./chips.css");
 @import url("./quantity-stepper.css");
-@import url("./dashboard.css");
 @import url("./tables.css");
 @import url("./table-controls.css");
 @import url("./status.css");
 @import url("./ui-cards.css");
 @import url("./forms.css");
 @import url("./orders.css");
-@import url("./inventory.css");
-@import url("./products.css");
 @import url("./variants.css");
 @import url("./catalog.css");
 @import url("./landing.css");
