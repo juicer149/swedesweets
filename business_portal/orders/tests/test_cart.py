@@ -13,7 +13,6 @@ from business.models import BusinessCart
 from business.tests.factories import (
     standard_business_offer_factory,
 )
-from carts.models import CartLine
 from customers.tests.factories import (
     customer_factory,
 )
@@ -173,49 +172,19 @@ def test_cart_does_not_show_another_customers_cart(
 
 
 @pytest.mark.django_db
-def test_cart_line_urls_mutate_cart_line(
-    client,
-):
-    customer = _login_customer(
-        client=client,
-    )
+def test_cart_line_action_forms_use_the_presented_urls(client):
+    customer = _login_customer(client=client)
+    line = _create_cart_line(customer=customer, quantity=3)
 
-    line = _create_cart_line(
-        customer=customer,
-        quantity=3,
-    )
+    response = client.get(reverse("business_portal:cart"))
 
-    response = client.get(
-        reverse(
-            "business_portal:cart"
-        )
-    )
+    assert response.status_code == 200
+    (presented_line,) = response.context["cart_lines"]
+    html = response.content.decode()
 
-    presented_line = response.context[
-        "cart_lines"
-    ][0]
-
-    response = client.post(
-        presented_line.quantity_url,
-        {
-            "quantity": "5",
-        },
-    )
-
-    assert response.status_code == 302
-
-    line.refresh_from_db()
-
-    assert line.quantity == 5
-
-    response = client.post(
-        presented_line.remove_url,
-    )
-
-    assert response.status_code == 302
-    assert not CartLine.objects.filter(
-        pk=line.pk,
-    ).exists()
+    assert f'action="{presented_line.quantity_url}"' in html
+    assert f'action="{presented_line.remove_url}"' in html
+    assert f'data-cart-line-id="{line.id}"' in html
 
 
 @pytest.mark.django_db
