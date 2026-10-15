@@ -1116,7 +1116,3 @@
   }
 }
 
-/* Preview: the navy logo switches to the vector variant in daylight. */
-.site-brand__logo--day { display: none; }
-:root[data-menu-theme="day"] .site-brand__logo--original { display: none; }
-:root[data-menu-theme="day"] .site-brand__logo--day { display: block; }

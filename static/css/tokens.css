@@ -404,12 +404,13 @@
 }
 
 
-/* Menu theme preview: change data-menu-theme on <html> in templates/base.html.
-   Allowed values: night, dawn, morning, day. No scheduling JavaScript yet.
-   All menus, crowns and their gold borders use these shared tokens. */
+/* Menu theme: menu-theme.js selects the Paris time-of-day palette.
+   Missing or unknown data-menu-theme keeps the night defaults.
+   Menus, logos, crowns and gold borders share these tokens. */
 :root {
   --menu-bg: var(--color-primary-900);
   --menu-ink: var(--color-primary-50);
+  --menu-logo: var(--menu-ink);
   --menu-chosen: var(--color-accent-700);
   --menu-crown: var(--menu-chosen);
   --menu-edge: var(--menu-chosen);
@@ -424,12 +425,12 @@
 
 :root[data-menu-theme="dawn"] {
   --menu-bg: var(--color-primary-800);
-  --menu-chosen: var(--color-accent-800);
+  --menu-chosen: var(--color-accent-700);
 }
 
 :root[data-menu-theme="morning"] {
   --menu-bg: var(--color-primary-700);
-  --menu-chosen: var(--color-accent-800);
+  --menu-chosen: var(--color-accent-700);
 }
 
 :root[data-menu-theme="day"] {

@@ -1,0 +1,15 @@
+/* Shared authentic wordmark traced from static/images/swedesweets-logo.svg.
+   The template controls arrangement; menu tokens control its colors. */
+.brand-logo {
+  display: block;
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+.brand-logo__wordmark {
+  fill: var(--menu-logo, var(--menu-ink));
+}
+
+.brand-logo__crown {
+  fill: var(--menu-chosen, var(--color-brand-yellow));
+}

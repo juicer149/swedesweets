@@ -58,7 +58,7 @@ body.on-blue {
   border-radius: var(--radius-md);
 }
 
-.entrance-header__brand img {
+.entrance-header__brand .entrance-header__logo {
   display: block;
   width: clamp(6.5rem, min(32vw, 18dvh), 10rem);
   height: auto;
@@ -76,7 +76,7 @@ body.on-blue {
   justify-self: start;
 }
 
-.entrance-header--aside .entrance-header__brand img {
+.entrance-header--aside .entrance-header__brand .entrance-header__logo {
   width: clamp(4.5rem, min(22vw, 11dvh), 6.5rem);
 }
 
@@ -268,8 +268,5 @@ body.on-blue {
   }
 }
 
-/* Entrance pages share the active menu's accent and daylight logo. */
+/* Entrance pages share the active menu accent and traced wordmark. */
 body.on-blue { --on-blue-mark: var(--menu-chosen); }
-.entrance-header__brand .entrance-header__logo--day { display: none; }
-:root[data-menu-theme="day"] .entrance-header__brand .entrance-header__logo--original { display: none; }
-:root[data-menu-theme="day"] .entrance-header__brand .entrance-header__logo--day { display: block; }
