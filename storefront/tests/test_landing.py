@@ -27,6 +27,29 @@ def _landing_html(client) -> str:
 
 
 @pytest.mark.django_db
+def test_landing_uses_traced_stacked_and_wide_logo(client):
+    html = _landing_html(client)
+
+    assert 'class="brand-logo landing__logo-art--stacked"' in html
+    assert 'class="brand-logo brand-logo--wide landing__logo-art--wide"' in html
+    assert html.count('class="brand-logo__wordmark"') == 2
+    assert html.count('class="brand-logo__crown"') == 2
+    assert 'transform="translate(2850 729)"' in html
+    assert "swedesweets-logo-wide.svg" not in html
+
+
+@pytest.mark.django_db
+def test_navbar_and_login_use_the_traced_logo(client):
+    faq = client.get(reverse("public_site:faq")).content.decode()
+    login = client.get(reverse("login")).content.decode()
+
+    assert 'class="brand-logo site-brand__logo"' in faq
+    assert 'class="brand-logo entrance-header__logo"' in login
+    assert 'class="brand-logo__wordmark"' in faq
+    assert 'class="brand-logo__wordmark"' in login
+
+
+@pytest.mark.django_db
 def test_start_page_is_a_menu_of_the_navbar_links(client):
     html = _landing_html(client)
 
