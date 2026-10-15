@@ -44,4 +44,4 @@ jobs:
         run: python manage.py collectstatic --noinput
 
       - name: Run tests
-        run: python -m pytest
+        run: python -m pytest --durations=30 --durations-min=0.05
