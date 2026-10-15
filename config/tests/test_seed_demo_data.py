@@ -41,7 +41,7 @@ def test_refuses_to_run_without_debug(settings):
 
 @pytest.mark.django_db
 def test_seeds_customers_stock_and_orders_in_every_state(debug):
-    _seed(with_orders=True, )
+    _seed(with_orders=True)
 
     assert Customer.objects.count() == len(demo.CUSTOMERS)
     assert InventoryBatch.objects.exists()
@@ -57,7 +57,7 @@ def test_seeds_customers_stock_and_orders_in_every_state(debug):
 
 @pytest.mark.django_db
 def test_order_timestamps_follow_their_status(debug):
-    _seed(with_orders=True, )
+    _seed(with_orders=True)
 
     for order in Order.objects.all():
         assert order.placed_at is not None
@@ -105,7 +105,7 @@ def test_the_hoodie_and_t_shirt_come_in_sizes(debug):
 
 @pytest.mark.django_db
 def test_refuses_existing_data_and_reset_recreates_it(debug):
-    _seed(with_orders=True, )
+    _seed(with_orders=True)
 
     with pytest.raises(CommandError, match="--reset"):
         _seed(with_orders=True)
