@@ -13,13 +13,7 @@
         href="{{ site_home_href }}"
         aria-label="{% trans 'SwedeSweets home' %}"
       >
-        <img
-          class="site-brand__logo"
-          src="{% static 'images/swedesweets-logo-cream.webp' %}"
-          alt="SwedeSweets"
-          width="960"
-          height="623"
-        >
+        {% include "includes/ui/logo.html" with class_name="site-brand__logo" decorative=True only %}
       </a>
 
       <div class="site-nav__content">

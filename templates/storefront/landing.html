@@ -52,11 +52,8 @@
     <div class="landing__stage">
       <div class="landing__brand">
         <h1 class="landing__logo">
-          <img class="landing__logo-original" src="{% static 'images/swedesweets-logo-cream.webp' %}" alt="SwedeSweets" width="960" height="623">
-          <img class="landing__logo-vector landing__logo-vector--stacked" src="{% static 'images/swedesweets-logo-monochrome.svg' %}" alt="SwedeSweets" width="480" height="312">
-          <img class="landing__logo-vector landing__logo-vector--stacked-day" src="{% static 'images/swedesweets-logo-stacked-day.svg' %}" alt="SwedeSweets" width="480" height="312">
-          <img class="landing__logo-vector landing__logo-vector--wide-day" src="{% static 'images/swedesweets-logo-wide-day.svg' %}" alt="SwedeSweets" width="960" height="160">
-          <img class="landing__logo-vector landing__logo-vector--wide" src="{% static 'images/swedesweets-logo-wide.svg' %}" alt="SwedeSweets" width="960" height="160">
+          {% include "includes/ui/logo.html" with class_name="landing__logo-art--stacked" only %}
+          {% include "includes/ui/logo.html" with wide=True class_name="landing__logo-art--wide" only %}
         </h1>
 
         <p class="landing__tagline">

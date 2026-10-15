@@ -18,15 +18,8 @@ to " entrance-header--aside": the logo smaller, at the left.
     href="{% url 'index' %}"
     aria-label="{% trans 'SwedeSweets home' %}"
   >
-    <img
-      class="entrance-header__logo--original"
-      src="{% static 'images/swedesweets-logo-cream.webp' %}"
-      alt="SwedeSweets"
-      width="960"
-      height="623"
-    >
-    <img class="entrance-header__logo--day" src="{% static 'images/swedesweets-logo-stacked-day.svg' %}" alt="SwedeSweets" width="480" height="312">
-  </a>
+    {% include "includes/ui/logo.html" with class_name="entrance-header__logo" decorative=True only %}
+      </a>
 
   <div class="entrance-header__language">
     {% include "includes/language_switcher.html" %}
