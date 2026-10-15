@@ -31,7 +31,6 @@ from products.tests.factories import (
 )
 
 
-
 @pytest.fixture(autouse=True)
 def fast_password_hashing(settings):
     """These view tests use force_login; password hash strength is not tested."""
