@@ -25,6 +25,13 @@ from products.tests.factories import (
     product_factory,
 )
 
+@pytest.fixture(autouse=True)
+def fast_password_hashing(settings):
+    """These view tests use force_login rather than password authentication."""
+    settings.PASSWORD_HASHERS = [
+        "django.contrib.auth.hashers.MD5PasswordHasher",
+    ]
+
 
 def _login_customer(
     *,
