@@ -73,6 +73,13 @@ The shared styles are in `static/css/brand-logo.css`:
 - `static/css/landing.css`, `static/css/navigation.css`, and
   `static/css/on-blue.css` control placement without hard-coded theme colors.
 
+The shared language selector is rendered with `includes/language_switcher.html`
+throughout the site: public and ops navbars, the landing page, the login /
+password-reset frame, and the error pages' normal navbar. All its visual
+rules, including responsive sizing and focus visibility, live in
+`static/css/language-switcher.css`. Avoid adding page-specific language
+selector overrides in `landing.css`, `navigation.css` or `on-blue.css`.
+
 The old experimental SVG variants remain for comparison only; new code
 should use the shared traced logo instead.
 
