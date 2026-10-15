@@ -18,6 +18,9 @@ def main(path: Path) -> None:
     totals: dict[str, dict[str, float]] = defaultdict(
         lambda: {"setup": 0.0, "call": 0.0, "teardown": 0.0}
     )
+    files: dict[str, dict[str, float]] = defaultdict(
+        lambda: {"setup": 0.0, "call": 0.0, "teardown": 0.0}
+    )
     counts: dict[str, int] = defaultdict(int)
     entries: list[tuple[float, str, str]] = []
 
@@ -29,6 +32,7 @@ def main(path: Path) -> None:
         app = nodeid.split("/", 1)[0]
         duration = float(seconds)
         totals[app][phase] += duration
+        files[nodeid.split("::", 1)[0]][phase] += duration
         if phase == "call":
             counts[app] += 1
         entries.append((duration, phase, nodeid))
@@ -45,6 +49,16 @@ def main(path: Path) -> None:
         print(
             f"{app:28} {phases['setup']:9.2f} {phases['call']:9.2f} "
             f"{phases['teardown']:9.2f} {total:9.2f} {counts[app]:7}"
+        )
+
+    print("\n=== Slowest 25 test files (seconds) ===")
+    for path, phases in sorted(
+        files.items(), key=lambda item: -sum(item[1].values())
+    )[:25]:
+        print(
+            f"{sum(phases.values()):6.2f}s "
+            f"(setup {phases['setup']:.2f}, call {phases['call']:.2f}, "
+            f"teardown {phases['teardown']:.2f}) {path}"
         )
 
     print("\n=== Slowest 20 measured phases ===")
