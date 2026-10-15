@@ -17,6 +17,11 @@ from products.models import Product
 @pytest.fixture
 def debug(settings):
     settings.DEBUG = True
+    # Password strength is not under test here; demo account creation is.
+    # Keep login semantics while avoiding repeated production-strength hashing.
+    settings.PASSWORD_HASHERS = [
+        "django.contrib.auth.hashers.MD5PasswordHasher",
+    ]
 
 
 def _seed(**options):
