@@ -390,14 +390,12 @@
   /* ## Cart */
   /* ### At rest */
   --menu-cart-ink: var(--color-accent-300);
-  --menu-cart-bg: var(--menu-bg);
   --menu-cart-ring: var(--color-accent-300);
-  --menu-cart-ring-width: 1.25px;
+  --menu-cart-ring-width: 1px;
   /* ### Pointed at, or open */
-  --menu-cart-ink-hover: var(--color-primary-900);
-  --menu-cart-bg-hover: var(--color-accent-600);
+  --menu-cart-ink-hover: var(--color-accent-600);
   --menu-cart-ring-hover: var(--color-accent-600);
-  --menu-cart-ring-width-hover: 1.75px;
+  --menu-cart-ring-width-hover: 1px;
   /* ### The count over its corner */
   --menu-cart-count-ink: var(--color-primary-950);
   --menu-cart-count-bg: var(--color-accent-600);
@@ -425,11 +423,9 @@
   --menu-edge: var(--menu-chosen);
   --menu-underline: var(--menu-chosen);
   --menu-language-chosen: var(--menu-chosen);
-  --menu-cart-ink: var(--menu-chosen);
-  --menu-cart-ring: var(--menu-chosen);
-  --menu-cart-bg-hover: var(--menu-chosen);
+  --menu-cart-ink: var(--color-neutral-200); 
+  --menu-cart-ring: var(--color-neutral-200);
   --menu-cart-ring-hover: var(--menu-chosen);
-  --menu-cart-count-bg: var(--menu-chosen);
 }
 
 :root[data-menu-theme="day"] {
@@ -442,7 +438,6 @@
   --menu-cart-ink: var(--color-white);
   --menu-cart-ring: var(--color-white);
   --menu-cart-ink-hover: var(--color-accent-600);
-  --menu-cart-bg-hover: var(--color-primary-650);
   --menu-cart-ring-hover: var(--color-accent-600);
   --menu-language-ink: var(--color-primary-50);
   --menu-language-ring: color-mix(in srgb, var(--color-accent-600) 35%, transparent);
