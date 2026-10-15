@@ -8,6 +8,13 @@ from inventory.tests.conftest import TODAY
 from inventory.tests.factories import batch_factory
 from products.tests.factories import product_factory
 
+@pytest.fixture(autouse=True)
+def fast_password_hashing(settings):
+    """These view tests use force_login rather than password authentication."""
+    settings.PASSWORD_HASHERS = [
+        "django.contrib.auth.hashers.MD5PasswordHasher",
+    ]
+
 
 @pytest.mark.django_db
 def test_product_detail_shows_variants_with_stock_pricing_and_edit(client):
