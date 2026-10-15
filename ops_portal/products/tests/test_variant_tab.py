@@ -18,7 +18,6 @@ from pricing.product_configuration import (
 )
 from products.tests.factories import product_factory, variant_factory
 
-
 pytestmark = pytest.mark.usefixtures("fast_password_hashing")
 
 RETAIL = CommercialPrice.Channel.RETAIL

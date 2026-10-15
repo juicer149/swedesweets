@@ -25,7 +25,6 @@ from products.tests.factories import (
     product_factory,
 )
 
-
 pytestmark = pytest.mark.usefixtures("fast_password_hashing")
 
 
