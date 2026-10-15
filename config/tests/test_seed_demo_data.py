@@ -24,8 +24,9 @@ def debug(settings):
     ]
 
 
-def _seed(**options):
-    call_command("seed_demo_data", with_orders=True, **options)
+def _seed(*, with_orders=False, **options):
+    # Only the order-specific tests need four weeks of generated orders.
+    call_command("seed_demo_data", with_orders=with_orders, **options)
 
 
 @pytest.mark.django_db
@@ -40,7 +41,7 @@ def test_refuses_to_run_without_debug(settings):
 
 @pytest.mark.django_db
 def test_seeds_customers_stock_and_orders_in_every_state(debug):
-    _seed()
+    _seed(with_orders=True, )
 
     assert Customer.objects.count() == len(demo.CUSTOMERS)
     assert InventoryBatch.objects.exists()
@@ -56,7 +57,7 @@ def test_seeds_customers_stock_and_orders_in_every_state(debug):
 
 @pytest.mark.django_db
 def test_order_timestamps_follow_their_status(debug):
-    _seed()
+    _seed(with_orders=True, )
 
     for order in Order.objects.all():
         assert order.placed_at is not None
@@ -104,12 +105,12 @@ def test_the_hoodie_and_t_shirt_come_in_sizes(debug):
 
 @pytest.mark.django_db
 def test_refuses_existing_data_and_reset_recreates_it(debug):
-    _seed()
+    _seed(with_orders=True, )
 
     with pytest.raises(CommandError, match="--reset"):
-        _seed()
+        _seed(with_orders=True)
 
-    _seed(reset=True)
+    _seed(with_orders=True, reset=True)
 
     assert Customer.objects.count() == len(demo.CUSTOMERS)
 
@@ -160,7 +161,7 @@ def test_demo_accounts_have_the_right_roles(debug):
 
     from accounts.roles import StaffAccessLevel
 
-    _seed(with_demo_accounts=True)
+    _seed(with_orders=True, with_demo_accounts=True)
     users = get_user_model().objects
 
     assert (
