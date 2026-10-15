@@ -21,7 +21,7 @@
   /* Blue */
   --color-primary-950: #06163d;
   --color-primary-900: #0A1233; 
-  --color-primaty-850: #08153F;
+  --color-primary-850: #08153F;
   --color-primary-800: #091B4E; 
   --color-primary-750: #08205E; 
   --color-primary-700: #08297D;
@@ -419,8 +419,8 @@
    Missing or unknown data-menu-theme keeps the night defaults.
    Menus, logos, crowns and gold borders share these tokens. */
 :root {
-  --menu-bg: var(--color-primary-900);
-  --menu-ink: var(--color-primary-50);
+  --menu-bg: var(--color-primary-950);
+  --menu-ink: var(--color-neutral-200);
   --menu-logo: var(--menu-ink);
   --menu-chosen: var(--color-accent-700);
   --menu-crown: var(--brand-crown);
@@ -445,19 +445,19 @@
 }
 
 :root[data-menu-theme="day"] {
-  --menu-bg: var(--color-primary-200);
-  --menu-ink: var(--color-primary-950);
+  --menu-bg: var(--color-primary-400);
+  --menu-ink: var(--color-white);
   /* Chosen links stay blue; the crown stays the brand's warm gold. */
-  --menu-chosen: var(--color-primary-700);
+  --menu-chosen: var(--color-accent-600);
   --menu-crown: var(--brand-crown);
   --menu-crown-shadow: none;
-  --menu-cart-ink: var(--color-primary-900);
-  --menu-cart-ring: var(--color-primary-900);
-  --menu-cart-ink-hover: var(--color-primary-50);
-  --menu-cart-bg-hover: var(--color-primary-900);
-  --menu-cart-ring-hover: var(--color-primary-900);
-  --menu-language-ink: var(--color-primary-900);
-  --menu-language-ring: color-mix(in srgb, var(--color-primary-900) 35%, transparent);
+  --menu-cart-ink: var(--color-accent-600);
+  --menu-cart-ring: var(--color-accent-400);
+  --menu-cart-ink-hover: var(--color-accent-600);
+  --menu-cart-bg-hover: var(--color-primary-650);
+  --menu-cart-ring-hover: var(--color-accent-600);
+  --menu-language-ink: var(--color-primary-50);
+  --menu-language-ring: color-mix(in srgb, var(--color-accent-600) 35%, transparent);
 }
 
 /* =============================================================================
