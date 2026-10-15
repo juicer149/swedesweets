@@ -27,7 +27,7 @@
   --color-primary-500: #2669ff;
   --color-primary-400: #6195f5;
   --color-primary-300: #98bffb;
-  --color-primary-200: #cee3fd;
+  --color-primary-200: #9FC8FF; 
   --color-primary-100: #f0fafe;
   --color-primary-50: #fdfefe;
 
@@ -434,9 +434,9 @@
 }
 
 :root[data-menu-theme="day"] {
-  --menu-bg: var(--color-primary-300);
-  --menu-ink: var(--color-primary-900);
-  --menu-chosen: var(--color-accent-900);
+  --menu-bg: var(--color-primary-200);
+  --menu-ink: var(--color-primary-950);
+  --menu-chosen: var(--color-accent-700);
   --menu-crown-shadow: none;
   --menu-cart-ink: var(--color-primary-900);
   --menu-cart-ring: var(--color-primary-900);
