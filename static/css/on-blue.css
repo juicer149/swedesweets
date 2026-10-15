@@ -267,3 +267,9 @@ body.on-blue {
     height: 16%;
   }
 }
+
+/* Entrance pages share the active menu's accent and daylight logo. */
+body.on-blue { --on-blue-mark: var(--menu-chosen); }
+.entrance-header__brand .entrance-header__logo--day { display: none; }
+:root[data-menu-theme="day"] .entrance-header__brand .entrance-header__logo--original { display: none; }
+:root[data-menu-theme="day"] .entrance-header__brand .entrance-header__logo--day { display: block; }
