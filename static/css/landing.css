@@ -79,19 +79,21 @@
 }
 
 
-/* The language as in the navbar (navigation.css): the chosen one in
-   yellow, ring and letters, the other muted. The start page is the
-   navbar's menu, large. */
+/* Quiet language links on landing: selected uses color and underline,
+   without persistent pill outlines. Keyboard focus retains its outline. */
 .landing .language-switcher .language-switcher__option {
   color: var(--menu-language-ink);
-  border-color: var(--menu-language-ring);
+  border-color: transparent;
 }
 
 .landing .language-switcher .language-switcher__option--active,
 .landing .language-switcher .language-switcher__option[aria-current="true"] {
   color: var(--menu-language-chosen);
   background: transparent;
-  border-color: var(--menu-language-chosen);
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 0.1em;
 }
 
 
@@ -105,7 +107,7 @@
   min-height: 0;
   /* a little above the middle: the eye's centre sits higher than the
      screen's */
-  padding-bottom: clamp(var(--space-6), 9dvh, var(--space-16));
+  padding-bottom: clamp(var(--space-8), 12dvh, 6rem);
 }
 
 .landing__brand {
@@ -167,7 +169,7 @@
   align-items: flex-start;
   gap: clamp(0.15rem, 1.2dvh, 0.75rem);
   margin: 0;
-  padding: clamp(var(--space-6), 6dvh, var(--space-12)) 0 0;
+  padding: clamp(var(--space-6), 7.5dvh, 4rem) 0 0;
   list-style: none;
 }
 

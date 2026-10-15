@@ -65,11 +65,11 @@ The shared styles are in `static/css/brand-logo.css`:
   overrides. Unknown theme values retain CSS defaults.
 - `--menu-logo` colors the wordmark; `--menu-chosen` controls active
   and hovered menu text according to the selected day/night palette.
-- `--brand-crown` defines the sitewide crown hue (`accent-700`); the
-  menu-specific `--menu-crown` reads from it, including the logo and
-  selected navigation crowns. Product placeholders mix that hue with a
-  neutral tint; order confirmation and feedback crowns reuse the same
-  hue. This keeps crown identity separate from active-link contrast.
+- `--brand-crown` defines the general sitewide crown hue (`accent-600`)
+  used by product placeholders and order feedback; placeholders mix it with
+  a neutral tint. `--menu-crown` follows `--menu-chosen` in each theme,
+  so logo and active-navigation crowns match the menu's active color
+  (`accent-700` at night and `accent-600` by day).
 - `static/css/landing.css`, `static/css/navigation.css`, and
   `static/css/on-blue.css` control placement without hard-coded theme colors.
 

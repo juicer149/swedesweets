@@ -151,7 +151,7 @@
   --color-brand-yellow: #f9b51a;
   /* One semantic crown color across navigation, artwork and feedback.
      Individual contexts can mute this token without changing its hue. */
-  --brand-crown: var(--color-accent-700);
+  --brand-crown: var(--color-accent-600);
   --color-brand-blue: #2669ff;
 
   /* A place on the map (address rows, Find Sweets): a deep brick red,
@@ -385,9 +385,7 @@
   --menu-underline: var(--color-accent-600);
   /* ### The crown on the page you are on: a dark shadow under it so it
      stands on the blue */
-  --menu-crown-shadow: drop-shadow(
-    0 0.08em 0.06em color-mix(in srgb, var(--color-primary-950) 70%, transparent)
-  );
+  --menu-crown-shadow: none;
 
   /* ## Cart */
   /* ### At rest */
@@ -423,7 +421,7 @@
   --menu-ink: var(--color-neutral-200);
   --menu-logo: var(--menu-ink);
   --menu-chosen: var(--color-accent-700);
-  --menu-crown: var(--brand-crown);
+  --menu-crown: var(--menu-chosen);
   --menu-edge: var(--menu-chosen);
   --menu-underline: var(--menu-chosen);
   --menu-language-chosen: var(--menu-chosen);
@@ -439,7 +437,7 @@
   --menu-ink: var(--color-white);
   /* Chosen links stay blue; the crown stays the brand's warm gold. */
   --menu-chosen: var(--color-accent-600);
-  --menu-crown: var(--brand-crown);
+  --menu-crown: var(--menu-chosen);
   --menu-crown-shadow: none;
   --menu-cart-ink: var(--color-white);
   --menu-cart-ring: var(--color-white);
