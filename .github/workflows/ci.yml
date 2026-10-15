@@ -43,6 +43,9 @@ jobs:
       - name: Collect static files
         run: python manage.py collectstatic --noinput
 
+      - name: Benchmark B2B catalog tests
+        run: python -m pytest business_portal/catalog/tests/test_views.py -q --durations=10
+
       - name: Run tests
         run: |
           set -o pipefail
