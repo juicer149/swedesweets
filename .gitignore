@@ -18,6 +18,7 @@ dist/
 # Test/coverage output
 .coverage
 htmlcov/
+pytest-timings.log
 
 # Django/local database
 db.sqlite3
