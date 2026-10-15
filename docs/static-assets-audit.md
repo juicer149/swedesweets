@@ -52,3 +52,10 @@ A zone-based split is warranted for maintainability and likely avoids unnecessar
 - The shared base template selects `ops.css` for routes beginning `/ops/`, and `main.css` elsewhere. This matches the currently declared ops URL prefix in `config/urls.py`.
 - The remaining shared CSS and global JavaScript are **not** yet separated; in particular, B2B and retail still use the public bundle and ops still receives shared/public styles.
 - Next: verify selector ownership and dependencies before moving more files or changing JS loading. Browser rendering and before/after network metrics have not yet been measured.
+
+## Follow-up (second isolated step)
+
+- Removed `landing.css` and `on-blue.css` from the ops entrypoint; these are entrance/public-only styles in the current templates.
+- Added `config/tests/test_static_asset_loading.py` to assert that ops-only styles are absent from the public entrypoint, entrance styles are absent from the ops entrypoint, and representative URL paths choose the expected bundle.
+- Global JS remains unchanged deliberately: `enhanced_selects.js` publishes `window.enhanceSelects` for dynamic forms and depends on the Tom Select vendor script; `status_burst.js` publishes `window.statusBurst` used by `submit_burst.js`; `line_flash.js` publishes `window.lineFlash` used across cart/order interactions. A safe move requires an explicit consumer map and matching template script ordering.
+- No browser or network benchmark has yet been run. The branch remains a work in progress.
