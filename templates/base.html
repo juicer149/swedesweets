@@ -3,7 +3,7 @@
 {% get_current_language as LANGUAGE_CODE %}
 
 <!doctype html>
-<html lang="{{ LANGUAGE_CODE }}" data-menu-theme="night">
+<html lang="{{ LANGUAGE_CODE }}" data-menu-theme="auto">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -37,6 +37,9 @@
     <link rel="preload" href="{% static 'fonts/fredoka.woff2' %}" as="font" type="font/woff2" crossorigin>
 
     <!-- <link rel="stylesheet" href="{% static 'vendor/tom-select/css/tom-select.css' %}"> -->
+    {# Set a fixed theme here (night, dawn, morning, day) to preview it. #}
+    {# The script runs before CSS loads to avoid flashing the wrong theme. #}
+    <script src="{% static 'js/menu-theme.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
   </head>
 
