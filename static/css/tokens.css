@@ -400,9 +400,8 @@
   --menu-cart-count-ink: var(--color-primary-950);
   --menu-cart-count-bg: var(--color-accent-600);
 
-  /* ## Language: the chosen one a yellow ring and letters, the other muted */
+  /* ## Language: the chosen label uses the menu accent; the other is muted */
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
-  --menu-language-ring: color-mix(in srgb, var(--menu-ink) 30%, transparent);
   --menu-language-chosen: var(--color-accent-600);
 
   /* ## Phone bar: the links at the bottom of a phone's screen */
@@ -411,36 +410,34 @@
 }
 
 
-/* Two menu palettes: night is the default and day overrides it.
-   A fixed day/night preview is supported in base.html; auto uses Paris time.
-   Missing or unknown data-menu-theme keeps the night palette. */
+/* Two menu palettes: day is the default; night changes only its differences.
+   The fixed data-menu-theme="day" in base.html uses daylight. "auto" can
+   follow Paris time, and an explicit "night" selects the night palette.
+   Missing or unknown values safely keep the daylight palette. */
 :root {
-  --menu-bg: var(--color-primary-950);
-  --menu-ink: var(--color-neutral-200);
+  --menu-bg: var(--color-primary-400);
+  --menu-ink: var(--color-white);
   --menu-logo: var(--menu-ink);
-  --menu-chosen: var(--color-accent-700);
+  --menu-chosen: var(--color-accent-600);
   --menu-crown: var(--menu-chosen);
   --menu-edge: var(--menu-chosen);
   --menu-underline: var(--menu-chosen);
   --menu-language-chosen: var(--menu-chosen);
-  --menu-cart-ink: var(--color-neutral-200); 
-  --menu-cart-ring: var(--color-neutral-200);
-  --menu-cart-ring-hover: var(--menu-chosen);
-}
-
-:root[data-menu-theme="day"] {
-  --menu-bg: var(--color-primary-400);
-  --menu-ink: var(--color-white);
-  /* Chosen links stay blue; the crown stays the brand's warm gold. */
-  --menu-chosen: var(--color-accent-600);
-  --menu-crown: var(--menu-chosen);
-  --menu-crown-shadow: none;
+  --menu-language-ink: var(--color-primary-50);
   --menu-cart-ink: var(--color-white);
   --menu-cart-ring: var(--color-white);
   --menu-cart-ink-hover: var(--color-accent-600);
   --menu-cart-ring-hover: var(--color-accent-600);
-  --menu-language-ink: var(--color-primary-50);
-  --menu-language-ring: color-mix(in srgb, var(--color-accent-600) 35%, transparent);
+}
+
+:root[data-menu-theme="night"] {
+  --menu-bg: var(--color-primary-950);
+  --menu-ink: var(--color-neutral-200);
+  --menu-chosen: var(--color-accent-700);
+  --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
+  --menu-cart-ink: var(--color-neutral-200);
+  --menu-cart-ring: var(--color-neutral-200);
+  --menu-cart-ring-hover: var(--menu-chosen);
 }
 
 /* =============================================================================

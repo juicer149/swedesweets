@@ -60,8 +60,8 @@ The shared styles are in `static/css/brand-logo.css`:
   by Paris time when the HTML attribute is `auto`; a fixed `day` or
   `night` preview is preserved. An OS-controlled mode could use
   `prefers-color-scheme` later.
-- `static/css/tokens.css` defines the default/night values and per-theme
-  overrides. Unknown theme values retain CSS defaults.
+- `static/css/tokens.css` defines the Day defaults and explicit Night
+  overrides; missing/unknown theme values fall back to Day.
 - `--menu-logo` colors the wordmark; `--menu-chosen` controls active
   and hovered menu text according to the selected day/night palette.
 - `--brand-crown` defines the general sitewide crown hue (`accent-600`)
