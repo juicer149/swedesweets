@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from django.template.loader import render_to_string
 from django.test import RequestFactory
+from django.template.loader import render_to_string
 
 
 ROOT = Path(__file__).resolve().parents[2]
