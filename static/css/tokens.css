@@ -27,7 +27,7 @@
   --color-primary-500: #2669ff;
   --color-primary-400: #6195f5;
   --color-primary-300: #98bffb;
-  --color-primary-200: #9FC8FF; 
+  --color-primary-200: #9fc8ff;
   --color-primary-100: #f0fafe;
   --color-primary-50: #fdfefe;
 
@@ -141,6 +141,9 @@
 
   /* The logo's own colours (sampled from swedesweets-logo.png). */
   --color-brand-yellow: #f9b51a;
+  /* One semantic crown color across navigation, artwork and feedback.
+     Individual contexts can mute this token without changing its hue. */
+  --brand-crown: var(--color-accent-700);
   --color-brand-blue: #2669ff;
 
   /* A place on the map (address rows, Find Sweets): a deep brick red,
@@ -360,7 +363,7 @@
   --menu-bg: var(--color-primary-800);
   --menu-ink: var(--color-neutral-50);
   --menu-chosen: var(--color-brand-yellow);
-  --menu-crown: var(--menu-chosen);
+  --menu-crown: var(--brand-crown);
   /* outlined buttons on the blue (Login, the account on a phone) */
   --menu-line: color-mix(in srgb, var(--menu-ink) 70%, transparent);
 
@@ -412,7 +415,7 @@
   --menu-ink: var(--color-primary-50);
   --menu-logo: var(--menu-ink);
   --menu-chosen: var(--color-accent-700);
-  --menu-crown: var(--menu-chosen);
+  --menu-crown: var(--brand-crown);
   --menu-edge: var(--menu-chosen);
   --menu-underline: var(--menu-chosen);
   --menu-language-chosen: var(--menu-chosen);
@@ -436,7 +439,9 @@
 :root[data-menu-theme="day"] {
   --menu-bg: var(--color-primary-200);
   --menu-ink: var(--color-primary-950);
-  --menu-chosen: var(--color-accent-700);
+  /* Chosen links stay blue; the crown stays the brand's warm gold. */
+  --menu-chosen: var(--color-primary-600);
+  --menu-crown: var(--brand-crown);
   --menu-crown-shadow: none;
   --menu-cart-ink: var(--color-primary-900);
   --menu-cart-ring: var(--color-primary-900);

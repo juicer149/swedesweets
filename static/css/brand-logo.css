@@ -11,5 +11,5 @@
 }
 
 .brand-logo__crown {
-  fill: var(--menu-chosen, var(--color-brand-yellow));
+  fill: var(--menu-crown, var(--brand-crown));
 }

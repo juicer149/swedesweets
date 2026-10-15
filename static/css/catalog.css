@@ -184,7 +184,7 @@
 .catalog-no-photo__crown.ui-icon-block {
   width: clamp(2rem, 28cqi, 4.5rem);
   height: clamp(2rem, 28cqi, 4.5rem);
-  color: color-mix(in srgb, var(--color-brand-yellow) 45%, var(--color-neutral-200));
+  color: color-mix(in srgb, var(--brand-crown) 45%, var(--color-neutral-200));
 }
 
 .catalog-no-photo__text {

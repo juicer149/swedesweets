@@ -14,8 +14,8 @@
 /* The colours are set on the page, not on the burst, so a place can give
    its burst its own (the end of tokens.css: the catalog's green cart). */
 :root {
-  --status-burst-dot: var(--color-brand-yellow);
-  --status-burst-success: var(--color-brand-yellow);
+  --status-burst-dot: var(--brand-crown);
+  --status-burst-success: var(--brand-crown);
   --status-burst-halo: var(--color-primary-200);
 }
 
@@ -439,7 +439,7 @@
   height: clamp(3.5rem, 12vw, 5rem);
   margin: 0 auto var(--space-4);
 
-  color: var(--color-brand-yellow);
+  color: var(--brand-crown);
 
   animation: crown-hero-in calc(var(--feedback-mark-grow) * 2)
     cubic-bezier(0.3, 1.6, 0.6, 1) 0.15s both;

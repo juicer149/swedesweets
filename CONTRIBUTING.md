@@ -62,8 +62,13 @@ The shared styles are in `static/css/brand-logo.css`:
   (`night`, `dawn`, `morning`, `day`) or leaves a fixed preview.
 - `static/css/tokens.css` defines the default/night values and per-theme
   overrides. Unknown theme values retain CSS defaults.
-- `--menu-logo` colors the wordmark; `--menu-chosen` colors the crown,
-  active menu items, and hover accents.
+- `--menu-logo` colors the wordmark; `--menu-chosen` controls active
+  and hovered menu text. In daylight it uses `primary-600` rather than gold.
+- `--brand-crown` defines the sitewide crown hue (`accent-700`); the
+  menu-specific `--menu-crown` reads from it, including the logo and
+  selected navigation crowns. Product placeholders mix that hue with a
+  neutral tint; order confirmation and feedback crowns reuse the same
+  hue. This keeps crown identity separate from active-link contrast.
 - `static/css/landing.css`, `static/css/navigation.css`, and
   `static/css/on-blue.css` control placement without hard-coded theme colors.
 
