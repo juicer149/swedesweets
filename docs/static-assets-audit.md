@@ -44,3 +44,11 @@ Baseline: `main` (before daylight-menu-theme). This document records an initial 
 ## Initial conclusion
 
 A zone-based split is warranted for maintainability and likely avoids unnecessary CSS/JS on public pages. The exact performance impact and safe ownership of each file require a selector/dependency inventory and runtime measurements before implementation.
+
+## Implementation progress (first isolated CSS step)
+
+- Added `static/css/ops.css` with the previous `main.css` imports in their original order.
+- Removed only `dashboard.css`, `inventory.css`, and `products.css` from the public `main.css` entrypoint.
+- The shared base template selects `ops.css` for routes beginning `/ops/`, and `main.css` elsewhere. This matches the currently declared ops URL prefix in `config/urls.py`.
+- The remaining shared CSS and global JavaScript are **not** yet separated; in particular, B2B and retail still use the public bundle and ops still receives shared/public styles.
+- Next: verify selector ownership and dependencies before moving more files or changing JS loading. Browser rendering and before/after network metrics have not yet been measured.
