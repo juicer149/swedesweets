@@ -44,4 +44,7 @@ jobs:
         run: python manage.py collectstatic --noinput
 
       - name: Run tests
-        run: python -m pytest --durations=30 --durations-min=0.05
+        run: |
+          set -o pipefail
+          python -m pytest --durations=0 -q | tee pytest-timings.log
+          python scripts/report_pytest_timings.py pytest-timings.log
