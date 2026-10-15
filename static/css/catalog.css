@@ -1273,3 +1273,13 @@
     animation: none;
   }
 }
+
+/* Detail placeholder fills the square image and centers its crown and text.
+   Catalog tiles retain their intentionally lower placeholder placement. */
+.product__media .product__image--empty {
+  display: grid;
+  place-items: center;
+}
+.product__media .catalog-no-photo {
+  padding: 0 12%;
+}
