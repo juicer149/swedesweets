@@ -136,8 +136,8 @@
 }
 
 /* The crown marks the page you are on, tilted on the last letter as on
-   the logo and the start page's menu. Drawn from the favicon (the logo's
-   crown), so the links need no extra markup. */
+   the logo and the start page's menu. Masked from the favicon crown silhouette, so its colour follows the menu
+   theme without adding markup. */
 .site-nav__link > span:last-child {
   position: relative;
 }
@@ -151,7 +151,9 @@
   width: 1.15em;
   height: 1.15em;
 
-  background: url("../images/favicon.svg") center / contain no-repeat;
+  background: var(--menu-crown);
+  -webkit-mask: url("../images/favicon.svg") center / contain no-repeat;
+  mask: url("../images/favicon.svg") center / contain no-repeat;
   filter: var(--menu-crown-shadow);
   pointer-events: none;
 }
@@ -794,7 +796,9 @@
     width: 1.5em;
     height: 1.5em;
 
-    background: url("../images/favicon.svg") center / contain no-repeat;
+    background: var(--menu-crown);
+  -webkit-mask: url("../images/favicon.svg") center / contain no-repeat;
+  mask: url("../images/favicon.svg") center / contain no-repeat;
     filter: var(--menu-crown-shadow);
     pointer-events: none;
   }
@@ -1034,7 +1038,9 @@
     width: 115%;
     height: 115%;
 
-    background: url("../images/favicon.svg") center / contain no-repeat;
+    background: var(--menu-crown);
+  -webkit-mask: url("../images/favicon.svg") center / contain no-repeat;
+  mask: url("../images/favicon.svg") center / contain no-repeat;
     filter: var(--menu-crown-shadow);
     pointer-events: none;
   }
@@ -1109,3 +1115,8 @@
     width: 100%;
   }
 }
+
+/* Preview: the navy logo switches to the vector variant in daylight. */
+.site-brand__logo--day { display: none; }
+:root[data-menu-theme="day"] .site-brand__logo--original { display: none; }
+:root[data-menu-theme="day"] .site-brand__logo--day { display: block; }

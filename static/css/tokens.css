@@ -360,6 +360,7 @@
   --menu-bg: var(--color-primary-800);
   --menu-ink: var(--color-neutral-50);
   --menu-chosen: var(--color-brand-yellow);
+  --menu-crown: var(--menu-chosen);
   /* outlined buttons on the blue (Login, the account on a phone) */
   --menu-line: color-mix(in srgb, var(--menu-ink) 70%, transparent);
 
@@ -402,6 +403,48 @@
   --menu-bar-edge: var(--menu-edge);
 }
 
+
+/* Menu theme preview: change data-menu-theme on <html> in templates/base.html.
+   Allowed values: night, dawn, morning, day. No scheduling JavaScript yet.
+   All menus, crowns and their gold borders use these shared tokens. */
+:root {
+  --menu-bg: var(--color-primary-900);
+  --menu-ink: var(--color-primary-50);
+  --menu-chosen: var(--color-accent-700);
+  --menu-crown: var(--menu-chosen);
+  --menu-edge: var(--menu-chosen);
+  --menu-underline: var(--menu-chosen);
+  --menu-language-chosen: var(--menu-chosen);
+  --menu-cart-ink: var(--menu-chosen);
+  --menu-cart-ring: var(--menu-chosen);
+  --menu-cart-bg-hover: var(--menu-chosen);
+  --menu-cart-ring-hover: var(--menu-chosen);
+  --menu-cart-count-bg: var(--menu-chosen);
+}
+
+:root[data-menu-theme="dawn"] {
+  --menu-bg: var(--color-primary-800);
+  --menu-chosen: var(--color-accent-800);
+}
+
+:root[data-menu-theme="morning"] {
+  --menu-bg: var(--color-primary-700);
+  --menu-chosen: var(--color-accent-800);
+}
+
+:root[data-menu-theme="day"] {
+  --menu-bg: var(--color-primary-300);
+  --menu-ink: var(--color-primary-900);
+  --menu-chosen: var(--color-accent-900);
+  --menu-crown-shadow: none;
+  --menu-cart-ink: var(--color-primary-900);
+  --menu-cart-ring: var(--color-primary-900);
+  --menu-cart-ink-hover: var(--color-primary-50);
+  --menu-cart-bg-hover: var(--color-primary-900);
+  --menu-cart-ring-hover: var(--color-primary-900);
+  --menu-language-ink: var(--color-primary-900);
+  --menu-language-ring: color-mix(in srgb, var(--color-primary-900) 35%, transparent);
+}
 
 /* =============================================================================
    Places with their own burst (--feedback-burst-style / -mark above)

@@ -227,7 +227,7 @@
   right: -0.75em;
   width: 0.85em;
   height: 0.85em;
-  color: var(--menu-chosen);
+  color: var(--menu-crown);
   /* a dark shadow under it, so it stands on the page (as in the navbar) */
   filter: var(--menu-crown-shadow);
   opacity: 0;
@@ -336,4 +336,18 @@
 /* The lollipop's drawing is small in its box; even it with the others. */
 .landing-menu__icon .ui-icon-svg--tag {
   --icon-scale: 1.3;
+}
+
+/* Preview wordmarks: desktop is wide; mobile keeps the original stack.
+   The SVG lettering is approximate pending an exact brand trace. */
+.landing__logo-vector { display: none; }
+@media (min-width: 768px) {
+  .landing__logo-original { display: none; }
+  .landing__logo-vector--wide { display: block; width: clamp(18rem, min(55vw, 34dvh), 36rem); }
+  :root[data-menu-theme="day"] .landing__logo-vector--wide { display: none; }
+  :root[data-menu-theme="day"] .landing__logo-vector--wide-day { display: block; width: clamp(18rem, min(55vw, 34dvh), 36rem); }
+}
+@media (max-width: 767px) {
+  :root[data-menu-theme="day"] .landing__logo-original { display: none; }
+  :root[data-menu-theme="day"] .landing__logo-vector--stacked-day { display: block; }
 }
