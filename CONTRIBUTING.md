@@ -49,7 +49,9 @@ Brand assets live in `static/images/`:
 
 `templates/includes/ui/logo.html` is the single inline SVG logo component,
 using the paths in `swedesweets-logo.svg`. It uses the original
-two-row composition at every viewport size, including desktop landing.
+two-row composition at every viewport size, including desktop landing. The
+customer footer passes `layout="wide"` to arrange those same letter paths
+on one line, with the crown above the S in Sweets.
 The original letter paths are not replaced by a font. Pass
 `decorative=True` inside an already-labeled home link to avoid duplicate
 screen-reader labels.

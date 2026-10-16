@@ -101,3 +101,29 @@ keyboard focus. On phones the halo sits behind the label, outside its text
 clipping. The current-page crown and keyboard focus outline remain visible.
 This navbar effect does not change the landing menu's own animation or the
 selected-language marker.
+
+## FAQ, missing product photos and customer footer
+
+These roles are defined in both theme files, next to comments describing where
+only these colours apply:
+
+| Role | Used for |
+| --- | --- |
+| `--faq-question-hover-text` | Closed FAQ question text on hover; separate from general strong text and open questions. |
+| `--catalog-placeholder-bg` | Missing product photo background, in catalog cards and product detail. |
+| `--catalog-placeholder-text` | Translatable “No photo for this product” message, independent of labels and body copy. |
+| `--catalog-placeholder-crown` | Crown above that message. |
+| `--footer-logo` | Customer footer wordmark. |
+| `--footer-crown` | Customer footer logo's crown. |
+| `--footer-link` | Footer social/contact icons and account links. |
+| `--footer-link-hover` | Those links on hover and keyboard focus. |
+
+The missing-photo artwork remains an SVG crown plus translated HTML text,
+so it stays sharp, accessible and themeable without raster image variants.
+Its crown is optically offset to the right; the crown/message group sits a
+little lower in the image area.
+
+The footer uses `includes/ui/logo.html` with `layout="wide"`. The original
+letter paths are reused side by side, with the crown above the S in Sweets.
+Header, landing and login retain the default stacked arrangement. Footer
+colours are scoped locally and do not change the menu logo.

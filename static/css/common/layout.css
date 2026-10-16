@@ -21,22 +21,24 @@
 }
 
 .site-footer__brand {
-  position: relative;
   margin: 0;
-  color: var(--text-strong);
-  font-family: var(--font-heading);
-  font-size: var(--font-size-16);
-  font-weight: var(--font-weight-heading);
+  --menu-logo: var(--footer-logo);
+  --menu-crown: var(--footer-crown);
 }
 
-/* The logo's crown, tilted on the last letter as in the logo. */
-.site-footer__crown.ui-icon-block {
-  position: absolute;
-  top: -0.75em;
-  right: -0.6em;
-  width: 1.15em;
-  height: 1.15em;
-  color: var(--color-brand-yellow);
+.site-footer__brand .brand-logo {
+  width: clamp(10rem, 32vw, 13rem);
+  height: auto;
+}
+
+/* Footer links have their own palette in either theme. */
+.site-footer .quiet-link {
+  color: var(--footer-link);
+}
+
+.site-footer .quiet-link:hover,
+.site-footer .quiet-link:focus-visible {
+  color: var(--footer-link-hover);
 }
 
 /* How to reach us and where they post: the icons alone. */

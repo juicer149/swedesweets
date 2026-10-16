@@ -317,10 +317,25 @@
 
   /* FAQ question headings only; previous-order accordions keep their own roles. */
   --faq-question-text: var(--text-body);
+  --faq-question-hover-text: var(--color-accent-900);
   --faq-question-open-text: var(--text-main);
   --faq-question-hover-bg: var(--surface-muted);
   --faq-question-open-bg: var(--accordion-open-bg);
 
   /* The navbar cart on hover, keyboard focus and while its popover is open. */
   --menu-cart-glow: 0 0 18px 2px rgb(246 181 30 / 0.32), 0 0 30px 4px rgb(246 181 30 / 0.10);
+}
+
+/* Product image placeholder: independent of labels and body text.
+   Applies to catalog cards and the full product detail. */
+:root {
+  --catalog-placeholder-bg: var(--color-neutral-100);
+  --catalog-placeholder-text: var(--color-neutral-600);
+  --catalog-placeholder-crown: color-mix(in srgb, var(--brand-crown) 45%, var(--color-neutral-200));
+
+  /* Customer footer: authentic wide logo, crown, social/account links. */
+  --footer-logo: var(--color-neutral-800);
+  --footer-crown: var(--color-brand-yellow);
+  --footer-link: var(--color-neutral-600);
+  --footer-link-hover: var(--color-accent-900);
 }

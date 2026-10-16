@@ -159,7 +159,7 @@
 }
 
 .tile__image--empty {
-  background: var(--color-neutral-100);
+  background: var(--catalog-placeholder-bg);
 }
 
 /* No picture (includes/catalog/no_photo.html): the logo's crown, muted,
@@ -175,16 +175,18 @@
   place-content: center;
   justify-items: center;
   gap: 0.5rem;
-  padding: 0 12% 22%;
+  padding: 8% 12% 14%;
 
-  color: var(--label-muted);
+  color: var(--catalog-placeholder-text);
   text-align: center;
 }
 
 .catalog-no-photo__crown.ui-icon-block {
   width: clamp(2rem, 28cqi, 4.5rem);
   height: clamp(2rem, 28cqi, 4.5rem);
-  color: color-mix(in srgb, var(--brand-crown) 45%, var(--color-neutral-200));
+  /* Optical centring: the tilted crown carries more weight on its left. */
+  translate: 7% 0;
+  color: var(--catalog-placeholder-crown);
 }
 
 .catalog-no-photo__text {
@@ -769,7 +771,7 @@
 }
 
 .product__image--empty {
-  background: var(--color-neutral-100);
+  background: var(--catalog-placeholder-bg);
 }
 
 /* The card's price tag and in-cart badge, a size up. */
@@ -1281,7 +1283,7 @@
   place-items: center;
 }
 .product__media .catalog-no-photo {
-  padding: 0 12%;
+  padding: 6% 12% 0;
 }
 
 /* Paper labels and their dropdowns keep dark ink in either page theme.

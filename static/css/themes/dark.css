@@ -53,6 +53,7 @@
 
   /* FAQ question headings: closed text, open text, hover background and open background */
   --faq-question-text: var(--color-primary-200);
+  --faq-question-hover-text: var(--color-accent-500);
   --faq-question-open-text: var(--color-accent-100);
   --faq-question-hover-bg: var(--surface-muted);
   --faq-question-open-bg: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
@@ -105,4 +106,14 @@
   --stepper-ink: var(--color-primary-100);
   --stepper-line: var(--color-primary-300);
   --stepper-number-bg: var(--surface-bg);
+  /* Product image placeholder: surface, message and crown (not label colours). */
+  --catalog-placeholder-bg: var(--color-primary-850);
+  --catalog-placeholder-text: var(--color-primary-200);
+  --catalog-placeholder-crown: var(--color-accent-650);
+
+  /* Customer footer: wordmark and crown, then social/account links. */
+  --footer-logo: var(--color-primary-200);
+  --footer-crown: var(--color-accent-600);
+  --footer-link: var(--color-primary-250);
+  --footer-link-hover: var(--color-accent-500);
 }

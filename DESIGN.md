@@ -486,3 +486,9 @@ the brand blue, dark uses deep blue. Component CSS reads the same roles in both.
 - **About and FAQ:** structure done, personality (pictures, the founders'
   own words, their latest posts) to come.
 - **The logo** uses the authentic traced SVG in `includes/ui/logo.html`.
+
+The customer footer uses the authentic vector wordmark on one line, with the
+crown above the S in Sweets. Its wordmark, crown and links have independent
+`--footer-*` theme colours. Missing product photos use a themeable SVG crown
+and translated message, with independent `--catalog-placeholder-*` colours.
+FAQ hover text uses `--faq-question-hover-text`, independent of strong body text.

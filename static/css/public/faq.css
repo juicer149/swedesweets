@@ -25,6 +25,7 @@
 .faq {
   --accordion-summary-text: var(--faq-question-text);
   --accordion-open-text: var(--faq-question-open-text);
+  --accordion-hover-text: var(--faq-question-hover-text);
   --accordion-hover-bg: var(--faq-question-hover-bg);
   --accordion-open-bg: var(--faq-question-open-bg);
   --accordion-answer-text: var(--prose-text);
