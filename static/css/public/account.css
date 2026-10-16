@@ -1,0 +1,27 @@
+/* Customer My account: one text edge for contact details and facts.
+   Icons hang in a reserved gutter, inside the page even on narrow phones. */
+.account-details {
+  --account-icon-gutter: calc(var(--size-icon-sm) + var(--space-3));
+}
+
+.account-details > .page__header {
+  margin-bottom: clamp(var(--space-6), 5dvh, var(--space-10));
+}
+
+.account-details > .icon-rows,
+.account-details > .account-facts {
+  width: calc(100% - var(--account-icon-gutter));
+  margin-inline-start: var(--account-icon-gutter);
+  margin-inline-end: 0;
+}
+
+.account-details .icon-rows__item {
+  position: relative;
+  display: block;
+}
+
+.account-details .icon-rows__icon {
+  position: absolute;
+  inset-inline-start: calc(-1 * var(--account-icon-gutter));
+  top: 0;
+}

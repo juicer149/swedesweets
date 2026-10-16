@@ -192,6 +192,9 @@ Rows divided by hairlines, nothing around them.
 **Facts: `.facts`.** Label left, value right, for dates, counts and
 states. `--small` for a footnote list; `--footer` sets it off under a
 hairline at the end of a page (customer detail, My account).
+On customer My account, contact text and fact labels share one left edge;
+icons hang in a reserved gutter inside the page. The customer name has extra
+space below it. These local rules live in `public/account.css`.
 
 **Contact: `.icon-rows`.** Email, phone and address as rows with coloured
 icons; `--links` when each is one tap away. Use
