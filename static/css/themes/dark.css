@@ -2,8 +2,8 @@
 :root[data-theme="dark"]:not([data-site-zone="ops"]) {
   /* Menu: landing, header and phone bar */
   --menu-bg: var(--color-primary-950);
-  --menu-ink: var(--color-neutral-200);
-  --menu-chosen: var(--color-accent-700);
+  --menu-ink: var(--color-primary-250);
+  --menu-chosen: var(--color-accent-600);
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
   --menu-cart-ink: var(--color-neutral-200);
   --menu-cart-ring: var(--color-neutral-200);
