@@ -9,7 +9,7 @@
   min-height: 34px;
   padding: 6px 14px;
 
-  color: var(--color-primary-800);
+  color: var(--text-blue);
   background: transparent;
   border: 1px solid var(--color-primary-800);
   border-radius: var(--radius-pill);
@@ -35,13 +35,13 @@
 
 .chip:active {
   color: var(--color-white);
-  background: var(--color-primary-900);
+  background: var(--selection-bg);
   box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.22);
 }
 
 .chip[aria-current="page"] {
   color: var(--color-white);
-  background: var(--color-primary-900);
+  background: var(--selection-bg);
 }
 
 .chip input {
@@ -54,7 +54,7 @@
 
 .chip:has(input:checked) {
   color: var(--color-white);
-  background: var(--color-primary-900);
+  background: var(--selection-bg);
 }
 
 .chip:has(input:focus-visible) {
@@ -85,7 +85,7 @@
   min-height: 34px;
   padding: 6px 14px;
 
-  color: var(--color-primary-800);
+  color: var(--text-blue);
   background: transparent;
   border: 1px solid var(--color-primary-800);
   border-radius: var(--radius-pill);
@@ -118,7 +118,7 @@
 
 .radio-chip-group label:has(input:checked) {
   color: var(--color-white);
-  background: var(--color-primary-900);
+  background: var(--selection-bg);
 }
 
 .radio-chip-group label:has(input:focus-visible) {
@@ -270,11 +270,11 @@
    ============================================================================= */
 
 .filter-chips {
-  --filter-chip-text: var(--color-neutral-600);
-  --filter-chip-bg: var(--color-neutral-100);
+  --filter-chip-text: var(--text-muted);
+  --filter-chip-bg: var(--surface-muted);
 
   /* Active: yellow ... */
-  --filter-chip-active-text: var(--color-neutral-900);
+  --filter-chip-active-text: var(--text-main);
   --filter-chip-active-bg: var(--color-accent-600);
   /* ... or blue:
   --filter-chip-active-text: var(--color-white);
@@ -318,7 +318,7 @@
 }
 
 .filter-chips .filter-chip:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -327,7 +327,7 @@
    it comes back up filled. */
 @media (hover: hover) and (pointer: fine) {
   .filter-chips .filter-chip:hover:not([aria-current="page"], [aria-pressed="true"]) {
-    color: var(--color-neutral-800);
+    color: var(--text-strong);
     background: color-mix(in srgb, var(--filter-chip-active-bg) 28%, var(--filter-chip-bg));
     transform: translateY(-1px);
   }

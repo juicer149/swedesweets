@@ -13,7 +13,7 @@
 .about__text {
   display: grid;
   gap: var(--space-4);
-  color: var(--color-neutral-700);
+  color: var(--text-body);
   line-height: 1.65;
   text-align: center;
 }
@@ -30,7 +30,7 @@
   margin: var(--space-4) auto var(--space-3);
   padding: 0.6rem 0.6rem 0;
 
-  background: var(--color-white);
+  background: var(--paper-bg);
   box-shadow:
     0 12px 26px rgb(var(--color-row-shadow) / 0.2),
     0 1px 2px rgb(var(--color-row-shadow) / 0.12);
@@ -57,9 +57,10 @@
 }
 
 .about__polaroid-names {
+  --text-body: var(--paper-text);
   padding: 0.55rem 0 0.75rem;
 
-  color: var(--color-neutral-700);
+  color: var(--text-body);
   font-family: var(--font-display);
   font-size: clamp(1.25rem, 5.5vw, 1.5rem);
   font-weight: 800;

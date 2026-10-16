@@ -6,7 +6,7 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
 
-  color: var(--color-neutral-700);
+  color: var(--text-body);
   font-size: var(--font-size-18);
   font-weight: 600;
   line-height: 1.35;
@@ -25,23 +25,23 @@
    (.disclosure__summary); an open one keeps its yellow. */
 @media (hover: hover) and (pointer: fine) {
   .accordion:not([open]) > .accordion__summary:hover {
-    color: var(--color-neutral-800);
-    background: var(--color-neutral-100);
+    color: var(--text-strong);
+    background: var(--surface-muted);
   }
 }
 
 .accordion__summary:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
 .accordion[open] > .accordion__summary {
-  color: var(--color-neutral-900);
-  background: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
+  color: var(--text-main);
+  background: var(--accordion-open-bg);
 }
 
 .accordion__chevron {
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   transition: transform 200ms ease;
 }
 
@@ -54,7 +54,7 @@
 .accordion__content p {
   margin: 0;
   padding: var(--space-3) var(--space-4) var(--space-4);
-  color: var(--color-neutral-700);
+  color: var(--text-body);
   line-height: 1.55;
 }
 

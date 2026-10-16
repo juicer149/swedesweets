@@ -36,9 +36,6 @@
   width: min(100%, 380px);
   padding: var(--space-4) 0;
 
-  /* The page's cream, much darker: titles blend in rather than standing
-     out in navy. */
-  --page-title-color: #3b3834;
 }
 
 .page::before {
@@ -48,12 +45,7 @@
   inset: 0 calc(var(--space-16) * -1);
   z-index: -1;
 
-  background: radial-gradient(
-    closest-side,
-    rgb(var(--color-row-shadow) / 0.10),
-    rgb(var(--color-row-shadow) / 0.04) 55%,
-    transparent
-  );
+  background: var(--page-glow);
   pointer-events: none;
 }
 
@@ -86,7 +78,7 @@
    short line above content (contact). */
 .page__lead {
   margin: 0 0 clamp(var(--space-5), 4dvh, var(--space-7));
-  color: var(--page-title-color, var(--color-neutral-800));
+  color: var(--page-title-color, var(--text-strong));
   font-family: var(--font-heading);
   font-size: var(--font-size-20);
   font-weight: var(--font-weight-heading);
@@ -103,7 +95,7 @@
 
 .page__heading .page__lead {
   margin-bottom: var(--space-2);
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
 }
 
 /* With a picture (a product): the round picture at the left, the title
@@ -122,8 +114,8 @@
   width: 4rem;
   height: 4rem;
   object-fit: cover;
-  background: var(--color-white);
-  border: 1px solid var(--color-neutral-200);
+  background: var(--surface-bg);
+  border: 1px solid var(--line-soft);
   border-radius: 50%;
 }
 
@@ -148,7 +140,7 @@
 .page__kicker {
   display: block;
   margin-bottom: var(--space-1);
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-family: var(--font-body);
   font-size: var(--font-size-14);
   font-weight: 600;
@@ -158,7 +150,7 @@
 /* Small grey centred line: a count, a status, a description. */
 .page__note {
   margin: 0;
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-size: var(--font-size-14);
   text-align: center;
 }
@@ -166,7 +158,7 @@
 /* A short notice above the content (a payment in progress). */
 .page__notice {
   margin: 0 0 var(--space-4);
-  color: var(--color-neutral-700);
+  color: var(--text-body);
   font-size: var(--font-size-14);
   line-height: 1.5;
   text-align: center;
@@ -175,12 +167,12 @@
 /* A line of plain text on a status page (reset link sent, link expired). */
 .page__text {
   margin: 0;
-  color: var(--color-neutral-700);
+  color: var(--text-body);
 }
 
 /* The one sentence a status page has to say, as its heading. */
 .page__message {
-  color: var(--page-title-color, var(--color-neutral-800));
+  color: var(--page-title-color, var(--text-strong));
   font-family: var(--font-heading);
   font-size: var(--font-size-20);
   font-weight: var(--font-weight-heading);
@@ -192,7 +184,7 @@
 /* Password rules under a new-password field: small and quiet. */
 .page__help {
   margin-top: var(--space-2);
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-size: var(--font-size-14);
   line-height: 1.45;
 }
@@ -215,7 +207,7 @@
 
 .page-part__title {
   margin: 0 0 var(--space-3);
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
   font-size: var(--font-size-16);
   font-weight: 600;
   text-align: center;
@@ -238,12 +230,12 @@
 }
 
 .facts dt {
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
 }
 
 .facts dd {
   margin: 0;
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -251,7 +243,7 @@
 /* A quiet word after a value ("Enabled" after the prices). */
 .facts__aside {
   margin-left: var(--space-2);
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-size: var(--font-size-14);
 }
 
@@ -283,7 +275,7 @@
 .facts--footer {
   margin-top: var(--space-6);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-neutral-300);
+  border-top: 1px solid var(--line-strong);
 }
 
 /* Tabs under the heading (layouts/detail.html): the site's section nav,
@@ -327,13 +319,13 @@
 
 .state--on { color: var(--color-status-success-text); }
 .state--off { color: var(--color-status-danger-text); }
-.state--none { color: var(--color-neutral-600); font-weight: 400; }
+.state--none { color: var(--text-muted); font-weight: 400; }
 
 /* Facts that do not apply right now (a product that cannot be ordered):
    grey, except a state word that says why. */
 .facts--muted dd,
 .facts--muted .quantity-text {
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
 }
 
 /* Fields closer to each other than to anything else. */
@@ -579,7 +571,7 @@ body:has(.screen) .site-footer {
 
 .page__rules {
   margin-bottom: var(--space-3);
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-size: var(--font-size-14);
   line-height: 1.5;
 }
@@ -591,7 +583,7 @@ body:has(.screen) .site-footer {
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
 
-  color: var(--color-neutral-700);
+  color: var(--text-body);
   font-weight: 600;
   list-style: none;
   cursor: pointer;
@@ -603,11 +595,11 @@ body:has(.screen) .site-footer {
 }
 
 .page__rules-summary:hover {
-  color: var(--color-neutral-900);
+  color: var(--text-main);
 }
 
 .page__rules-summary:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

@@ -16,7 +16,7 @@ a page that has a display title.
     <feOffset dx="0" dy="2.5" in="SourceAlpha" result="moved"/>
     <feGaussianBlur stdDeviation="1.4" in="moved" result="blurred"/>
     <feComposite operator="out" in="SourceAlpha" in2="blurred" result="inside"/>
-    <feFlood flood-color="#4a3405" flood-opacity="0.55"/>
+    <feFlood class="display-title-filter__shadow" flood-opacity="0.55"/>
     <feComposite operator="in" in2="inside" result="shadow"/>
     <feComposite operator="over" in="shadow" in2="SourceGraphic"/>
   </filter>
@@ -41,11 +41,11 @@ a page that has a display title.
     <feOffset dx="0" dy="3" in="SourceAlpha" result="moved"/>
     <feGaussianBlur stdDeviation="2" in="moved" result="blurred"/>
     <feComposite operator="out" in="SourceAlpha" in2="blurred" result="inside"/>
-    <feFlood flood-color="#4a3405" flood-opacity="0.4"/>
+    <feFlood class="display-title-filter__shadow" flood-opacity="0.4"/>
     <feComposite operator="in" in2="inside" result="shadow"/>
     <feOffset dx="0" dy="1.5" in="SourceAlpha" result="lipMoved"/>
     <feComposite operator="out" in="lipMoved" in2="SourceAlpha" result="lipOnly"/>
-    <feFlood flood-color="#ffffff" flood-opacity="0.9"/>
+    <feFlood class="display-title-filter__lip"/>
     <feComposite operator="in" in2="lipOnly" result="lip"/>
     <feMerge>
       <feMergeNode in="lip"/>

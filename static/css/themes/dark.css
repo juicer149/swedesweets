@@ -9,3 +9,50 @@
   --menu-cart-ring-hover: var(--menu-chosen);
 }
 
+
+
+/* Customer pages. The ops palette remains light during rollout. */
+:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  --page-bg: var(--color-primary-900);
+  --surface-bg: var(--color-primary-800);
+  --surface-muted: var(--color-primary-850);
+  --text-main: var(--color-neutral-200);
+  --text-strong: var(--color-neutral-100);
+  --text-body: var(--color-neutral-200);
+  --text-muted: #b7b8c4;
+  --text-blue: var(--color-primary-100);
+  --text-blue-strong: var(--color-neutral-200);
+  --text-blue-deep: var(--color-neutral-100);
+  --color-text-heading: var(--color-neutral-100);
+  --color-link: var(--color-primary-150);
+  --line-soft: #2d3650;
+  --line-strong: #4b5369;
+  --page-title-color: var(--color-neutral-100);
+  --page-glow: radial-gradient(closest-side, rgb(66 139 255 / 0.08), rgb(66 139 255 / 0.03) 55%, transparent);
+  --focus-ring: var(--color-primary-150);
+  --field-hover-bg: var(--color-primary-750);
+  --field-active-bg: var(--color-primary-700);
+  --selection-bg: var(--color-primary-600);
+
+  /* Status words sit on the dark page. Filled controls keep their own ink. */
+  --color-status-warning-text: var(--color-accent-300);
+  --color-status-info-text: var(--color-primary-150);
+  --color-status-success-text: #83d9a2;
+  --color-status-danger-text: #ffaaaa;
+  --color-status-muted-text: #b7b8c4;
+  --color-expiry-safe-text: var(--text-body);
+  --contact-mail: var(--color-primary-150);
+  --contact-phone: #83d9a2;
+  --contact-place: #e7a096;
+  --color-action-place-solid: var(--color-accent-600);
+
+  /* Lettering and paper surfaces */
+  --display-stamped: #63718f;
+  --display-shadow: var(--color-primary-950);
+  --display-lip: var(--color-primary-100);
+  --display-lip-opacity: 0.25;
+  --paper-bg: var(--color-neutral-200);
+  --label-bg: var(--color-neutral-200);
+  --label-line: var(--color-neutral-300);
+  --cart-panel-bg: var(--color-primary-800);
+}

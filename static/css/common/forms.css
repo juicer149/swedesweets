@@ -29,7 +29,7 @@
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: var(--letter-spacing-subtle);
-  color: var(--color-primary-900);
+  color: var(--text-blue-strong);
 }
 
 
@@ -68,8 +68,8 @@
   min-height: var(--size-control-lg);
   padding: 0.8rem 0.95rem;
 
-  color: var(--color-primary-900);
-  background: var(--color-white);
+  color: var(--text-blue-strong);
+  background: var(--surface-bg);
   border: var(--border-subtle);
   border-radius: var(--radius-control);
 
@@ -83,7 +83,7 @@
 
 .form-field input::placeholder,
 .form-field textarea::placeholder {
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   opacity: 0.75;
 }
 
@@ -96,7 +96,7 @@
 .form-field select:focus,
 .form-field textarea:focus {
   outline: none;
-  background: var(--color-primary-50);
+  background: var(--field-hover-bg);
   border-color: var(--color-primary-500);
   box-shadow: var(--shadow-focus-info);
 }
@@ -104,8 +104,8 @@
 .form-field input:disabled,
 .form-field select:disabled,
 .form-field textarea:disabled {
-  color: var(--color-neutral-600);
-  background: var(--color-neutral-100);
+  color: var(--text-muted);
+  background: var(--surface-muted);
   cursor: not-allowed;
 }
 
@@ -120,7 +120,7 @@
   font-size: var(--font-size-12);
   font-weight: 600;
   line-height: 1.45;
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
 }
 
 /* A link in a field's help (contact us): the help's own colour, so it
@@ -204,7 +204,7 @@
   font-size: var(--font-size-20);
   font-weight: 800;
   line-height: 1.25;
-  color: var(--color-primary-900);
+  color: var(--text-blue-strong);
 }
 
 
@@ -289,7 +289,7 @@
   height: 2.5rem;
   padding: 0;
 
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   background: transparent;
   border: 0;
   border-radius: var(--radius-control);
@@ -297,7 +297,7 @@
 }
 
 .password-field__toggle:hover {
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
 }
 
 /* Showing the password: the eye turns blue and shines. */
@@ -306,11 +306,11 @@
 }
 
 .password-field__toggle[aria-pressed="true"]:hover {
-  color: var(--color-primary-800);
+  color: var(--text-blue);
 }
 
 .password-field__toggle:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

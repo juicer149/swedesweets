@@ -25,7 +25,7 @@
 .confirm-dialog__card {
   padding: clamp(var(--space-5), 5vw, var(--space-7));
 
-  background: var(--color-neutral-50);
+  background: var(--page-bg);
   border-radius: var(--radius-md);
   text-align: center;
 }
@@ -50,8 +50,8 @@
   height: 100%;
 
   object-fit: cover;
-  background: var(--color-white);
-  border: 1px solid var(--color-neutral-200);
+  background: var(--surface-bg);
+  border: 1px solid var(--line-soft);
   border-radius: 50%;
   filter: saturate(0.6);
   opacity: 0.85;
@@ -67,7 +67,7 @@
 
   background: rgb(var(--color-status-danger));
   border-radius: 999px;
-  box-shadow: 0 0 0 2px var(--color-neutral-50);
+  box-shadow: 0 0 0 2px var(--page-bg);
   transform: translateY(-50%) rotate(-35deg);
 }
 
@@ -75,7 +75,7 @@
   margin: 0 0 var(--space-2);
 
   /* As a page's title (.page__lead). */
-  color: #3b3834;
+  color: var(--page-title-color);
   font-family: var(--font-heading);
   font-size: var(--font-size-20);
   font-weight: var(--font-weight-heading);
@@ -85,7 +85,7 @@
 .confirm-dialog__message {
   margin: 0 0 var(--space-6);
 
-  color: var(--color-neutral-700);
+  color: var(--text-body);
   font-size: var(--font-size-16);
   line-height: 1.5;
 }
@@ -139,7 +139,7 @@
   height: 1.5rem;
   padding: 0;
 
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   background: transparent;
   border: 1.5px solid currentColor;
   border-radius: 50%;
@@ -157,8 +157,8 @@
 
 .help-button:hover,
 .help-button:focus-visible {
-  color: var(--color-primary-800);
-  background: var(--color-primary-50);
+  color: var(--text-blue);
+  background: var(--field-hover-bg);
 }
 
 .help-button:focus-visible {
@@ -178,14 +178,14 @@
   max-height: 60dvh;
   margin-bottom: var(--space-5);
   overflow-y: auto;
-  color: var(--color-neutral-700);
+  color: var(--text-body);
   font-size: var(--font-size-14);
   line-height: 1.55;
 }
 
 .help-dialog__body h3 {
   margin: var(--space-4) 0 var(--space-1);
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
   font-family: var(--font-body);
   font-size: var(--font-size-16);
   font-weight: 800;

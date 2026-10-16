@@ -139,29 +139,29 @@
 
 .button--tone-neutral {
   --button-solid-text: var(--color-primary-900);
-  --button-solid-bg: var(--color-neutral-100);
-  --button-solid-border: var(--color-neutral-300);
+  --button-solid-bg: var(--surface-muted);
+  --button-solid-border: var(--line-strong);
   --button-solid-bg-hover: var(--color-primary-50);
   --button-solid-border-hover: var(--color-primary-500);
   --button-solid-bg-active: var(--color-primary-100);
   --button-solid-shadow-hover: var(--shadow-focus-info);
 
-  --button-soft-text: var(--color-neutral-700);
+  --button-soft-text: var(--text-body);
   --button-soft-bg: transparent;
-  --button-soft-border: var(--color-neutral-300);
+  --button-soft-border: var(--line-strong);
   --button-soft-bg-hover: var(--color-primary-50);
   --button-soft-border-hover: var(--color-primary-500);
   --button-soft-bg-active: var(--color-primary-100);
   --button-soft-shadow-hover: var(--shadow-focus-info);
 
-  --button-outline-text: var(--color-neutral-700);
-  --button-outline-border: var(--color-neutral-300);
+  --button-outline-text: var(--text-body);
+  --button-outline-border: var(--line-strong);
   --button-outline-bg-hover: var(--color-primary-50);
   --button-outline-border-hover: var(--color-primary-500);
   --button-outline-bg-active: var(--color-primary-100);
   --button-outline-shadow-hover: var(--shadow-focus-info);
 
-  --button-text-color: var(--color-neutral-700);
+  --button-text-color: var(--text-body);
   --button-text-color-hover: var(--color-primary-900);
 }
 
@@ -302,9 +302,9 @@
   --button-solid-bg-active: var(--color-accent-700);
   --button-solid-shadow-hover: var(--shadow-accent-glow);
 
-  --button-soft-text: var(--color-neutral-700);
+  --button-soft-text: var(--text-body);
   --button-soft-bg: transparent;
-  --button-soft-border: var(--color-neutral-300);
+  --button-soft-border: var(--line-strong);
   --button-soft-bg-hover: var(--color-primary-50);
   --button-soft-border-hover: var(--color-primary-500);
   --button-soft-bg-active: var(--color-primary-100);
@@ -317,7 +317,7 @@
   --button-outline-bg-active: var(--color-accent-200);
   --button-outline-shadow-hover: var(--shadow-accent-glow);
 
-  --button-text-color: var(--color-neutral-700);
+  --button-text-color: var(--text-body);
   --button-text-color-hover: var(--color-primary-900);
 }
 

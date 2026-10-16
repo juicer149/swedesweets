@@ -38,7 +38,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  color: var(--order-status-color, var(--color-neutral-700));
+  color: var(--order-status-color, var(--text-body));
   font-weight: 600;
 }
 

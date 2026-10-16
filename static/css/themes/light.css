@@ -227,3 +227,56 @@
   --menu-cart-ring-hover: var(--color-accent-600);
 }
 
+
+
+/* Page surfaces and shared text. Primitive scales remain unchanged. */
+:root {
+  --page-bg: var(--color-neutral-50);
+  --surface-bg: var(--color-white);
+  --surface-muted: var(--color-neutral-100);
+  --text-main: var(--color-neutral-900);
+  --text-strong: var(--color-neutral-800);
+  --text-body: var(--color-neutral-700);
+  --text-muted: var(--color-neutral-600);
+  --text-blue: var(--color-primary-800);
+  --text-blue-strong: var(--color-primary-900);
+  --text-blue-deep: var(--color-primary-950);
+  --line-soft: var(--color-neutral-200);
+  --line-strong: var(--color-neutral-300);
+  --border-subtle: 1px solid var(--line-strong);
+  --page-title-color: var(--color-neutral-700);
+  --page-glow: radial-gradient(closest-side, rgb(11 31 81 / 0.10), rgb(11 31 81 / 0.04) 55%, transparent);
+  --focus-ring: var(--color-primary-500);
+  --field-hover-bg: var(--color-primary-50);
+  --field-active-bg: var(--color-primary-100);
+  --selection-bg: var(--color-primary-900);
+
+  /* Contact rows */
+  --contact-mail: var(--color-primary-600);
+  --contact-phone: var(--color-action-deliver);
+  --contact-place: var(--color-place);
+
+  /* Expandable rows */
+  --accordion-open-bg: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
+  --accordion-nested-bg: color-mix(in srgb, var(--color-accent-600) 9%, transparent);
+
+  /* Display lettering: FAQ and About */
+  --display-stamped: color-mix(in srgb, var(--color-accent-200) 40%, var(--color-neutral-200));
+  --display-shadow: var(--color-accent-950);
+  --display-lip: var(--color-white);
+  --display-lip-opacity: 0.9;
+
+  /* Paper objects retain their own dark ink. */
+  --paper-bg: var(--color-white);
+  --paper-text: var(--color-neutral-700);
+  --label-bg: var(--color-white);
+  --label-text: var(--color-neutral-900);
+  --label-muted: var(--color-neutral-600);
+  --label-line: var(--color-neutral-200);
+  --label-band: var(--color-accent-500);
+  --label-band-text: var(--color-accent-950);
+  --label-border: var(--color-accent-600);
+  --label-warning-text: #8a5a00;
+  --label-hover-bg: var(--color-primary-50);
+  --cart-panel-bg: rgb(255 251 241 / 0.995);
+}

@@ -16,12 +16,12 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-2);
 
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-size: var(--font-size-16);
   font-weight: 600;
   list-style: none;
   cursor: pointer;
-  border-bottom: 1px solid var(--color-neutral-200);
+  border-bottom: 1px solid var(--line-soft);
   border-radius: var(--radius-control) var(--radius-control) 0 0;
 
   transition: color var(--motion-fast), background var(--motion-fast);
@@ -33,18 +33,18 @@
 
 @media (hover: hover) and (pointer: fine) {
   .disclosure__summary:hover {
-    color: var(--color-neutral-800);
-    background: var(--color-neutral-100);
+    color: var(--text-strong);
+    background: var(--surface-muted);
   }
 }
 
 .disclosure__summary:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
 .disclosure[open] > .disclosure__summary {
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
 }
 
 .disclosure__chevron {

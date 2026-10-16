@@ -8,9 +8,9 @@
   margin-top: clamp(var(--space-6), 6dvh, var(--space-12));
   padding-block: clamp(var(--space-3), 2.5dvh, var(--space-5));
 
-  color: var(--color-neutral-600);
-  background: var(--color-neutral-50);
-  border-top: 1px solid var(--color-neutral-200);
+  color: var(--text-muted);
+  background: var(--page-bg);
+  border-top: 1px solid var(--line-soft);
 }
 
 .site-footer__inner {
@@ -23,7 +23,7 @@
 .site-footer__brand {
   position: relative;
   margin: 0;
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
   font-family: var(--font-heading);
   font-size: var(--font-size-16);
   font-weight: var(--font-weight-heading);
@@ -72,7 +72,7 @@
 }
 
 .site-footer__account strong {
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
 }
 
 .site-footer__account form {
@@ -113,8 +113,8 @@ body:has(.ops-footer) .site-main {
 .ops-footer {
   padding-block: clamp(var(--space-1), 1dvh, var(--space-2));
 
-  color: var(--color-neutral-600);
-  border-top: 1px solid var(--color-neutral-200);
+  color: var(--text-muted);
+  border-top: 1px solid var(--line-soft);
 
   font-size: var(--font-size-14);
 }
@@ -132,7 +132,7 @@ body:has(.ops-footer) .site-main {
 }
 
 .ops-footer__who strong {
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
   font-weight: 700;
 }
 
@@ -146,7 +146,7 @@ body:has(.ops-footer) .site-main {
 }
 
 .ops-footer .quiet-link[aria-current="page"] {
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
 }
 
 /* The one-screen pages (password change) have no footer. */

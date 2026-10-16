@@ -159,7 +159,7 @@
 }
 
 .line + .line {
-  border-top: 1px solid var(--color-neutral-200);
+  border-top: 1px solid var(--line-soft);
 }
 
 /* A row a script hides (a filter) must stay hidden over display: grid. */
@@ -184,7 +184,7 @@
 }
 
 .line__product:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 4px;
 }
 
@@ -198,13 +198,13 @@
   object-fit: cover;
   object-position: center;
 
-  background: var(--color-white);
-  border: 1px solid var(--color-neutral-200);
+  background: var(--surface-bg);
+  border: 1px solid var(--line-soft);
   border-radius: 50%;
 }
 
 .line__image--empty {
-  background: var(--color-neutral-100);
+  background: var(--surface-muted);
 }
 
 .line__text {
@@ -214,25 +214,25 @@
 }
 
 .line__name {
-  color: var(--color-neutral-900);
+  color: var(--text-main);
   font-weight: 700;
   line-height: 1.35;
   overflow-wrap: anywhere;
 }
 
 .line__meta {
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-size: var(--font-size-14);
   line-height: 1.4;
 }
 
 .line__meta--offer {
-  color: var(--color-neutral-700);
+  color: var(--text-body);
   font-weight: 600;
 }
 
 .line__meta--total {
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
   font-weight: 600;
 }
 
@@ -246,7 +246,7 @@
 
 /* Right side: a quantity or an amount. */
 .line__quantity-label {
-  color: var(--color-neutral-900);
+  color: var(--text-main);
   font-weight: 700;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -265,7 +265,7 @@
   height: 2.5rem;
   padding: 0;
 
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   background: transparent;
   border: 0;
   border-radius: var(--radius-pill);
@@ -285,7 +285,7 @@
 }
 
 .line__remove-button:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -326,7 +326,7 @@
 }
 
 .line__link:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -337,8 +337,8 @@
   width: var(--line-icon-size, 2.5rem);
   height: var(--line-icon-size, 2.5rem);
 
-  color: var(--line-tone-text, var(--color-neutral-700));
-  background: var(--line-tone-bg, var(--color-neutral-100));
+  color: var(--line-tone-text, var(--text-body));
+  background: var(--line-tone-bg, var(--surface-muted));
   border-radius: 50%;
 }
 
@@ -366,7 +366,7 @@
    rows use, no circle. A tinted red circle would read as "danger" in this tone
    scale; a bare pin reads as "on the map". */
 .line__icon--pin {
-  --line-tone-text: var(--color-place);
+  --line-tone-text: var(--contact-place);
   --line-tone-bg: transparent;
 }
 
@@ -376,7 +376,7 @@
 }
 
 .line__aside {
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-size: var(--font-size-14);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
@@ -391,7 +391,7 @@
   }
 
   .line__link:hover .line__aside {
-    color: var(--color-neutral-900);
+    color: var(--text-main);
   }
 }
 
@@ -419,19 +419,19 @@
   gap: var(--space-4);
   padding-top: var(--space-4);
 
-  color: var(--color-neutral-800);
-  border-top: 1px solid var(--color-neutral-300);
+  color: var(--text-strong);
+  border-top: 1px solid var(--line-strong);
 }
 
 .lines-total strong {
-  color: var(--color-neutral-900);
+  color: var(--text-main);
   font-size: var(--font-size-18);
   font-variant-numeric: tabular-nums;
 }
 
 .lines-total__note {
   margin: var(--space-2) 0 0;
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-size: var(--font-size-14);
   text-align: center;
 }

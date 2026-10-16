@@ -12,7 +12,7 @@
   padding: 0;
   list-style: none;
 
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
   line-height: 1.45;
 }
 
@@ -25,14 +25,14 @@
 
 .icon-rows__icon {
   margin-top: 0.1rem;
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
 }
 
 /* Rows that are links (contact): larger, easy to tap. Blue says "tap to
    call / write"; no hover effect. The two colours are variables to try
    other combinations (e.g. text in primary-600 too). */
 .icon-rows--links {
-  --icon-rows-link-icon: var(--color-primary-600);
+  --icon-rows-link-icon: var(--contact-mail);
   --icon-rows-link-text: var(--color-primary-900);
 
   gap: var(--space-2);
@@ -75,25 +75,25 @@
 
 span.icon-rows__link,
 span.icon-rows__link .icon-rows__icon {
-  color: var(--color-neutral-800);
+  color: var(--text-strong);
 }
 
 /* Each kind of contact detail in its own colour, wherever the rows are
    (contact page, my account, an order's customer): mail blue, phone
    green, address in the place red of a map pin. */
 .icon-rows .icon-rows__item .icon-rows__icon--mail {
-  color: var(--color-primary-600);
+  color: var(--contact-mail);
 }
 
 .icon-rows .icon-rows__item .icon-rows__icon--phone {
-  color: var(--color-action-deliver);
+  color: var(--contact-phone);
 }
 
 .icon-rows .icon-rows__item .icon-rows__icon--place {
-  color: var(--color-place);
+  color: var(--contact-place);
 }
 
 .icon-rows__link:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }

@@ -20,7 +20,7 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
 
-  color: var(--color-primary-950);
+  color: var(--text-blue-deep);
 }
 
 .quick-jump-search .ts-wrapper {
@@ -36,7 +36,7 @@
    Tom Select renders it as .item, not as a native input placeholder.
 */
 .quick-jump-search .ts-control .item[data-value=""] {
-  color: var(--color-neutral-600);
+  color: var(--text-muted);
   font-weight: 450;
   opacity: 0.78;
 }
@@ -45,7 +45,7 @@
    Actual selected quick-jump values should be stronger than the hint.
 */
 .quick-jump-search .ts-control .item:not([data-value=""]) {
-  color: var(--color-primary-900);
+  color: var(--text-blue-strong);
   font-weight: 700;
 }
 

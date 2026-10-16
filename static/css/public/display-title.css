@@ -18,7 +18,10 @@
    (the darkest yellow) and the light lip under them draw them. Big: the page's picture as much as its title. */
 .display-title--stamped {
   /* The page's cream, a little warmer: a touch of the yellow scale. */
-  color: color-mix(in srgb, var(--color-accent-200) 40%, var(--color-neutral-200));
+  color: var(--display-stamped);
   text-align: center;
   filter: url("#display-title-stamped");
 }
+
+.display-title-filter__shadow { flood-color: var(--display-shadow); }
+.display-title-filter__lip { flood-color: var(--display-lip); flood-opacity: var(--display-lip-opacity); }
