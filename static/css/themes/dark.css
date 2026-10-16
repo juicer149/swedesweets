@@ -70,12 +70,12 @@
   /* Status words and contact icons on dark page surfaces */
   --color-status-warning-text: var(--color-accent-300);
   --color-status-info-text: var(--color-primary-150);
-  --color-status-success-text: #83d9a2;
+  --color-status-success-text: var(--color-green-400);
   --color-status-danger-text: #ffaaaa;
   --color-status-muted-text: #b7b8c4;
   --color-expiry-safe-text: var(--text-body);
   --contact-mail: var(--color-primary-150);
-  --contact-phone: #83d9a2;
+  --contact-phone: var(--color-green-400);
   --contact-place: #e7a096;
   --color-action-place-solid: var(--color-accent-600);
   --color-accent-text-standard: var(--color-primary-800);
@@ -141,12 +141,12 @@
   --catalog-cart-hover-border: var(--color-primary-200);
   --catalog-cart-active-ink: var(--color-primary-200);
   --catalog-cart-active-border: var(--color-primary-200);
-  --catalog-burst-success: #83d9a2;
+  --catalog-burst-success: var(--color-green-400);
   --catalog-burst-error: #e45f5f;
   --catalog-burst-halo: rgb(36 143 78 / 0.28);
 
   /* Clearer red trash icons and a slightly stronger red row flash. */
   --cart-remove-ink: #dc5a5a;
-  --cart-remove-hover-ink: #ec6c6c;
+  --cart-remove-hover-ink: var(--color-red-400);
   --cart-remove-flash: rgb(210 55 55 / 0.24);
 }

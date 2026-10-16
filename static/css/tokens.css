@@ -61,6 +61,28 @@
   --color-accent-50: #FFF0AD;
   --color-accent-25: #FDF3C4;
 
+  /* Green: existing delivery/success colours, light to dark. */
+  --color-green-900: #082b15;
+  --color-green-800: #0e3f20;
+  --color-green-700: #166534;
+  --color-green-600: #248f4e;
+  --color-green-500: #4bb875;
+  --color-green-400: #83d9a2;
+  --color-green-300: #bce5c9;
+  --color-green-200: #cdeed8;
+  --color-green-100: #ddf4e4;
+
+  /* Red: existing danger/removal colours, light to dark. */
+  --color-red-900: #501010;
+  --color-red-800: #7f1d1d;
+  --color-red-700: #991b1b;
+  --color-red-600: #a62929;
+  --color-red-500: #d94848;
+  --color-red-400: #ec6c6c;
+  --color-red-300: #fca5a5;
+  --color-red-200: #fecaca;
+  --color-red-100: #fee2e2;
+
   /* Warm grays */
   --color-neutral-900: #191715;
   --color-neutral-800: #292622;

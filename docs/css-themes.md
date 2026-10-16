@@ -182,3 +182,30 @@ the final s, at the right end of Sweets; the menu's stacked logo is unchanged.
 The wide footer crown uses the original crown/letter overlap and rightward
 bias as its reference, with the crown enlarged a further 20%. Its viewBox
 includes the full crown so it is not clipped at the wordmark's right edge.
+
+## Green and red primitive scales
+
+`tokens.css` defines `--color-green-100` through `--color-green-900` and
+`--color-red-100` through `--color-red-900`. Low numbers are pale; high numbers
+are dark. Lightness decreases at every step, with saturation adjusted to keep
+a coherent family rather than rotating through unrelated hues.
+
+| Step | Green | Red |
+| --- | --- | --- |
+| 100 | `#ddf4e4` | `#fee2e2` |
+| 200 | `#cdeed8` | `#fecaca` |
+| 300 | `#bce5c9` | `#fca5a5` |
+| 400 | `#83d9a2` | `#ec6c6c` |
+| 500 | `#4bb875` | `#d94848` |
+| 600 | `#248f4e` | `#a62929` |
+| 700 | `#166534` | `#991b1b` |
+| 800 | `#0e3f20` | `#7f1d1d` |
+| 900 | `#082b15` | `#501010` |
+
+Most steps preserve existing delivery, success, danger and removal colours.
+Green 500/900 and red 900 fill gaps. Matching theme hex values now reference
+these primitives without changing their rendered colour. Existing off-scale
+reds and RGB channel triplets remain explicit to preserve current colours and
+alpha-based effects. Themes still own semantic roles: use, for example,
+`--catalog-cart-ink: var(--color-green-300)` to tune one component instead of
+changing the global primitive for every consumer.

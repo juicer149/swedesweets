@@ -43,8 +43,8 @@
 
   --color-status-warning-text: #8a5a00;
   --color-status-info-text: var(--color-primary-800);
-  --color-status-success-text: #166534;
-  --color-status-danger-text: #991b1b;
+  --color-status-success-text: var(--color-green-700);
+  --color-status-danger-text: var(--color-red-700);
   --color-status-muted-text: var(--color-neutral-700);
 
   /* ==========================================================================
@@ -97,14 +97,14 @@
 
   --color-action-place: var(--color-accent-600);
   --color-action-pack: var(--color-primary-500);
-  --color-action-deliver: #248f4e;
-  --color-action-danger: #d94848;
+  --color-action-deliver: var(--color-green-600);
+  --color-action-danger: var(--color-red-500);
 
   /* Action text on light surfaces */
   --color-action-place-on-light: #201c13;
   --color-action-pack-on-light: var(--color-primary-900);
-  --color-action-deliver-on-light: #0e3f20;
-  --color-action-danger-on-light: #7f1d1d;
+  --color-action-deliver-on-light: var(--color-green-800);
+  --color-action-danger-on-light: var(--color-red-800);
 
   /* Action backgrounds on light surfaces */
   --color-action-place-light-bg: var(--color-accent-50);
@@ -121,13 +121,13 @@
   --color-action-pack-light-bg-hover: var(--color-primary-200);
   --color-action-pack-light-bg-active: var(--color-primary-300);
 
-  --color-action-deliver-light-bg: #ddf4e4;
-  --color-action-deliver-light-bg-hover: #cdeed8;
-  --color-action-deliver-light-bg-active: #bce5c9;
+  --color-action-deliver-light-bg: var(--color-green-100);
+  --color-action-deliver-light-bg-hover: var(--color-green-200);
+  --color-action-deliver-light-bg-active: var(--color-green-300);
 
-  --color-action-danger-light-bg: #fee2e2;
-  --color-action-danger-light-bg-hover: #fecaca;
-  --color-action-danger-light-bg-active: #fca5a5;
+  --color-action-danger-light-bg: var(--color-red-100);
+  --color-action-danger-light-bg-hover: var(--color-red-200);
+  --color-action-danger-light-bg-active: var(--color-red-300);
 
   /* ==========================================================================
      Shadows
@@ -294,8 +294,8 @@
 
 
 :root {
-  --label-success-text: #166534;
-  --label-danger-text: #991b1b;
+  --label-success-text: var(--color-green-700);
+  --label-danger-text: var(--color-red-700);
 }
 
 :root {
@@ -370,7 +370,7 @@
   --catalog-burst-halo: color-mix(in srgb, var(--color-action-deliver) 40%, transparent);
 
   /* Cart page and navbar dropdown only; preserve other delete controls. */
-  --cart-remove-ink: #a62929;
+  --cart-remove-ink: var(--color-red-600);
   --cart-remove-hover-ink: #8e1f1f;
   --cart-remove-flash: rgb(185 45 45 / 0.23);
 }
