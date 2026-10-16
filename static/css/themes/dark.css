@@ -54,9 +54,9 @@
   /* FAQ question headings: closed text, open text, hover background and open background */
   --faq-question-text: var(--color-primary-200);
   --faq-question-hover-text: var(--color-accent-500);
-  --faq-question-open-text: var(--color-accent-100);
+  --faq-question-open-text: var(--color-accent-700);
   --faq-question-hover-bg: var(--surface-muted);
-  --faq-question-open-bg: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
+  --faq-question-open-bg: color-mix(in srgb, var(--color-accent-600) 15%, transparent);
 
   /* Other controls: general focus, field states, selection and login focus */
   --focus-ring: var(--color-primary-150);
