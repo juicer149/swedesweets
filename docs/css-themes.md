@@ -209,3 +209,16 @@ reds and RGB channel triplets remain explicit to preserve current colours and
 alpha-based effects. Themes still own semantic roles: use, for example,
 `--catalog-cart-ink: var(--color-green-300)` to tune one component instead of
 changing the global primitive for every consumer.
+
+## Saved credentials and entrance errors
+
+Autofilled `.form-field` inputs (username, password, reset email and other form
+fields) keep the current theme's surface and text colour. The `:autofill` /
+`:-webkit-autofill` rule paints an inset layer over the browser's protected
+background and preserves the normal outer focus/error shadow. On login/reset,
+focused autofill uses `--entrance-field-focus-bg` and the existing yellow ring.
+Autocomplete remains enabled; no timers or JavaScript erase autofilled values.
+
+`--entrance-error-text` and `--entrance-error-mark` control login/reset error
+copy and its left edge separately from links and focus. Dark uses accent-800
+for both, a deeper gold than accent-600; light keeps its previous appearance.

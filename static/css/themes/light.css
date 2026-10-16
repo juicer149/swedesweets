@@ -374,3 +374,9 @@
   --cart-remove-hover-ink: #8e1f1f;
   --cart-remove-flash: rgb(185 45 45 / 0.23);
 }
+
+/* Login/reset error copy and its left marker; separate from ordinary links. */
+:root {
+  --entrance-error-text: var(--menu-ink);
+  --entrance-error-mark: var(--color-accent-600);
+}

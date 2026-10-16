@@ -338,3 +338,35 @@ form:not([data-dirty]) .back-or-cancel__cancel,
 form[data-dirty] .back-or-cancel__back {
   display: none;
 }
+
+/* Browser-filled credentials/email keep the same theme surface as typed input.
+   The inset paint covers the browser's protected autofill background; keep the
+   normal focus/error ring as a separate outer shadow. No delayed transition. */
+.form-field input {
+  --input-fill-bg: var(--surface-bg);
+  --input-fill-shadow: 0 0 0 0 transparent;
+}
+
+.form-field input:focus {
+  --input-fill-bg: var(--field-hover-bg);
+  --input-fill-shadow: var(--shadow-focus-info);
+}
+
+.form-field--error input {
+  --input-fill-shadow: var(--shadow-focus-danger);
+}
+
+.form-field input:disabled {
+  --input-fill-bg: var(--surface-muted);
+}
+
+/* :is() keeps the rule valid when only one autofill spelling is supported.
+   Important is local to this paint workaround so existing focus selectors
+   cannot discard the inset layer and expose the native yellow background. */
+.form-field input:is(:autofill, :-webkit-autofill) {
+  color: var(--text-blue-strong);
+  -webkit-text-fill-color: var(--text-blue-strong);
+  caret-color: var(--text-blue-strong);
+  background-color: var(--input-fill-bg);
+  box-shadow: inset 0 0 0 1000px var(--input-fill-bg), var(--input-fill-shadow) !important;
+}

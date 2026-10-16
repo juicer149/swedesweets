@@ -149,4 +149,8 @@
   --cart-remove-ink: #dc5a5a;
   --cart-remove-hover-ink: var(--color-red-400);
   --cart-remove-flash: rgb(210 55 55 / 0.24);
+
+  /* Login and password-reset errors: deeper gold than the main action. */
+  --entrance-error-text: var(--color-accent-800);
+  --entrance-error-mark: var(--color-accent-800);
 }
