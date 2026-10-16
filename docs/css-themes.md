@@ -1,5 +1,8 @@
 # CSS structure and themes
 
+The visual principles and ownership overview are in [DESIGN.md](../DESIGN.md).
+This file describes loading, previews and the workflow for implementation.
+
 Status: structure, theme selection and a first dark palette for customer pages
 are implemented. FAQ, About, Find Sweets, account pages and the shared catalog
 use semantic colour roles. Labels and polaroids retain dark ink on light paper.
@@ -23,6 +26,8 @@ Both palettes are loaded. Preview `?theme=dark`, `?theme=light` or `?theme=auto`
 the choice lasts for this browser tab. Auto uses Paris time: light 06–22,
 dark 22–06. An unknown choice falls back to light. Ops remains light until its
 work pages have been checked for the dark palette.
+
+## Checks
 
 Validation: `make lint check collectstatic`,
 `DJANGO_DEBUG=True .venv/bin/python -m pytest config/tests/test_static_assets.py`,

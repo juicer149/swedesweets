@@ -45,6 +45,49 @@ navigation already says.
    two pages need it.
 
 
+## Light and dark themes
+
+Light is the default and keeps the cream page with the brand-blue menu.
+Dark is a customer-page preview: deep blue around the content, warm light
+text, and brighter status colours where they sit directly on the page.
+Ops remains light until its work pages have been reviewed.
+
+The theme preserves the same layout, hierarchy and interactions. Objects
+on the page can keep their own surface: catalog labels retain their yellow
+name band and dark ink, with warm light paper in dark mode; About's polaroid
+also stays light with dark lettering. Product photos are not recoloured.
+Do not invert the primitive colour scales to change the whole site.
+
+Review each page in both themes, including focus, hover, disabled, open,
+loading, success and error states. A text colour belongs to its surface:
+light page text must not leak onto a paper label or a light button.
+Shadows, the page glow and the display titles' SVG filters also follow
+the theme. Use the shared roles before introducing page-specific colours.
+
+## CSS ownership
+
+| Location | Owns |
+|---|---|
+| `static/css/tokens.css` | Primitive colour scales, typography, sizes, spacing and motion timings |
+| `static/css/themes/` | The semantic colour choices for light and dark |
+| `static/css/common/` | Shared components: icons, buttons, forms, navigation, rows and dialogs |
+| `static/css/public/` | Customer-page styles, including both retail and B2B |
+| `static/css/ops/` | Staff work-page styles |
+| `static/css/main.css` | The imports shared by both surfaces |
+| `static/css/public.css`, `ops.css` | The shared foundation plus each surface's own styles |
+
+Component files own selectors, layout, typography, responsive behaviour and
+interaction rules. Theme files supply the colours those rules consume.
+For example, `public/catalog.css` places and animates the label;
+`themes/light.css` and `themes/dark.css` choose `--label-bg`.
+A component used by both ops and customer pages belongs in common, even
+when it first appeared on one page (FAQ and previous orders share the
+accordion). A folder name describes ownership, not the logged-in role.
+
+Theme preview URLs, import details and the workflow for changing a page
+are documented in [docs/css-themes.md](docs/css-themes.md).
+
+
 ## Colour
 
 Primitive colour scales are in `static/css/tokens.css`. Semantic colour choices
@@ -57,10 +100,10 @@ uses those roles; see [docs/css-themes.md](docs/css-themes.md).
 | Body text | `--text-main` | |
 | Titles | `--color-text-heading`, `--page-title-color` | theme-dependent |
 | Quiet text and notes | `--text-muted` | |
-| Hairlines | `--color-neutral-200` / `-300` | |
-| The action | `--color-action-place-solid` | accent yellow at 85% |
-| Links, navigation | `--color-link` (primary-700) | |
-| A place (pins, addresses) | `--color-place` (#a3392c) | brick red; deliberately not the danger red |
+| Hairlines | `--line-soft`, `--line-strong` | theme-dependent |
+| The action | `--color-action-place-solid` | softened yellow in light, solid yellow in dark |
+| Links | `--color-link` | dark blue in light, light blue in dark |
+| A place (pins, addresses) | `--contact-place` | brick red in light, lighter red in dark; distinct from danger |
 | Brand (logo, crown) | `--color-brand-yellow`, `--color-brand-blue` | sampled from the logo |
 | Status | `--color-status-{success,warning,info,danger,muted}-text` | |
 
@@ -231,7 +274,7 @@ settle a moment (`--feedback-burst-rest`) and the mark grows, or the crown
 glows, with a
 soft halo of the place's colour behind it (`--status-burst-halo`). A place
 gets its own look by setting the tokens on its element, at the end of
-`tokens.css`: the crown's wave is the default and belongs to orders; the
+`common/status-burst.css`: the crown's wave is the default and belongs to orders; the
 catalog's Add is dots then the cart; login is dots then a tick. The request
 and a minimum time run side by side, so it never slows anything down. The
 times (`--feedback-min-loading`, `--feedback-mark-grow`,
