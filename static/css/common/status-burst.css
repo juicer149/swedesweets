@@ -467,3 +467,63 @@
     animation: none;
   }
 }
+
+/* =============================================================================
+   Places with their own burst (--feedback-burst-style / -mark above)
+   ============================================================================= */
+
+/* The catalog's "Add", on a tile and on a product's page: the scoop
+   spins, then our paper bag pops up over a green burst (green like the
+   tick that was pressed). The base below is the dots and the cart, for a
+   place that leaves the scoop out. */
+.tile__status,
+.product__status,
+.recent-order__status {
+  --feedback-burst-style: dots;
+  --feedback-burst-mark: cart;
+  --status-burst-success: var(--color-action-deliver);
+  --status-burst-halo: var(--color-action-deliver-light-bg);
+  --status-burst-mark-icon: 60%;
+
+  /* the dots at least about one round, hardly a pause; the cart shows
+     a moment, then the navbar's cart catches it (its jump and green
+     flash) */
+  --feedback-min-loading: 600ms;
+  --feedback-burst-rest: 100ms;
+  --feedback-mark-hold: 650ms;
+}
+
+.tile__status,
+.product__status,
+.recent-order__status {
+  --feedback-burst-style: scoop;
+  --feedback-burst-mark: bag;
+  --feedback-burst-rest: 260ms;
+  /* a clearer, wider green burst behind the bag than the cart's halo */
+  --status-burst-halo: color-mix(in srgb, var(--color-action-deliver) 40%, transparent);
+  --status-burst-halo-size: 125%;
+}
+
+/* Login: three dots, then a tick (a cross if it did not work), yellow:
+   green cannot be read on the blue. Its yellow halo is laid on as light
+   (screen); plain see-through yellow turns muddy on blue. Quick: the next
+   page is waiting. */
+.login__burst {
+  --feedback-burst-style: dots;
+  --feedback-burst-mark: check;
+  --status-burst-halo: color-mix(in srgb, var(--color-brand-yellow) 30%, transparent);
+  --status-burst-halo-blend: screen;
+
+  --feedback-min-loading: 600ms;
+  --feedback-burst-rest: 80ms;
+  --feedback-mark-hold: 450ms;
+}
+
+/* The next-step buttons (Review order, Place order, Pay…, submit_burst.js):
+   the crown's wave a moment, then it settles and glows briefly, and the
+   next page comes. */
+.page__submit {
+  --feedback-min-loading: 500ms;
+  --feedback-burst-rest: 120ms;
+  --feedback-mark-hold: 350ms;
+}

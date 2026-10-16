@@ -1,0 +1,229 @@
+/* Default palette. Components consume these semantic colours. */
+:root {
+  --color-link: var(--color-primary-700);
+
+  /* ==========================================================================
+     Standard text-on-tint colors
+
+     The darker anchor shade for each hue, meant for text sitting on a
+     lighter tint of the same hue (buttons, notices, badges). Reused
+     wherever a component wants "dark text, light same-hue background"
+     instead of picking a raw shade number each time.
+     ========================================================================== */
+
+  --color-primary-text-standard: var(--color-primary-900);
+  --color-accent-text-standard: var(--color-accent-950);
+
+  /* ==========================================================================
+     Sitewide heading color
+
+     One switch for every h1/h2/h3 on the site. Defaults to a warm near-black
+     from the neutral scale instead of the cooler primary-900 navy, so
+     headings read closer to the body text's warmth. Revert by pointing this
+     back at var(--color-primary-900).
+     ========================================================================== */
+
+  --color-text-heading: var(--color-neutral-900);
+
+  /* ==========================================================================
+     Semantic status channels
+
+     RGB channels are stored without rgb(...) so they can be reused with
+     different alpha values:
+
+       rgb(var(--color-status-warning) / 0.075)
+       rgb(var(--color-status-warning) / 0.14)
+     ========================================================================== */
+
+  --color-status-warning: 246 181 30;
+  --color-status-info: 38 105 255;
+  --color-status-success: 34 160 90;
+  --color-status-danger: 210 74 74;
+  --color-status-muted: 102 97 92;
+
+  --color-status-warning-text: #8a5a00;
+  --color-status-info-text: var(--color-primary-800);
+  --color-status-success-text: #166534;
+  --color-status-danger-text: #991b1b;
+  --color-status-muted-text: var(--color-neutral-700);
+
+  /* ==========================================================================
+     Domain status aliases
+
+     Orders:
+       placed    -> warning
+       packed    -> info
+       delivered -> success
+       cancelled -> danger
+
+     Inventory:
+       active    -> success
+       depleted  -> warning
+       closed    -> muted
+     ========================================================================== */
+
+  /* Order statuses */
+
+  --color-status-placed-text: var(--color-status-warning-text);
+  --color-status-packed-text: var(--color-status-info-text);
+  --color-status-delivered-text: var(--color-status-success-text);
+  --color-status-cancelled-text: var(--color-status-danger-text);
+
+  /* Expiry risk */
+  --color-expiry-safe-text: var(--color-neutral-700);
+  --color-expiry-soon-text: var(--color-status-warning-text);
+  --color-expiry-critical-text: var(--color-status-danger-text);
+
+  /* ==========================================================================
+     Operation action colors
+
+     These describe actions, not statuses:
+       place   -> create/place an order
+       pack    -> pack an order
+       deliver -> deliver an order
+       danger  -> destructive/unsafe action
+     ========================================================================== */
+
+  /* The logo's own colours (sampled from swedesweets-logo.png). */
+  --color-brand-yellow: #f9b51a;
+  /* One semantic crown color across navigation, artwork and feedback.
+     Individual contexts can mute this token without changing its hue. */
+  --brand-crown: var(--color-accent-600);
+  --color-brand-blue: #2669ff;
+
+  /* A place on the map (address rows, Find Sweets): a deep brick red,
+     darker than the danger red so a pin never reads as a warning. */
+  --color-place: #a3392c;
+
+  --color-action-place: var(--color-accent-600);
+  --color-action-pack: var(--color-primary-500);
+  --color-action-deliver: #248f4e;
+  --color-action-danger: #d94848;
+
+  /* Action text on light surfaces */
+  --color-action-place-on-light: #201c13;
+  --color-action-pack-on-light: var(--color-primary-900);
+  --color-action-deliver-on-light: #0e3f20;
+  --color-action-danger-on-light: #7f1d1d;
+
+  /* Action backgrounds on light surfaces */
+  --color-action-place-light-bg: var(--color-accent-50);
+  --color-action-place-light-bg-hover: var(--color-accent-100);
+  --color-action-place-light-bg-active: var(--color-accent-200);
+
+  /* The filled yellow button (.button--solid.button--tone-place): the
+     place colour a little see-through, so the one primary action on a
+     page is clear without shouting. Hover brings it back to full colour.
+     Turn the percentage up or down to tune it everywhere. */
+  --color-action-place-solid: color-mix(in srgb, var(--color-action-place) 85%, transparent);
+
+  --color-action-pack-light-bg: var(--color-primary-100);
+  --color-action-pack-light-bg-hover: var(--color-primary-200);
+  --color-action-pack-light-bg-active: var(--color-primary-300);
+
+  --color-action-deliver-light-bg: #ddf4e4;
+  --color-action-deliver-light-bg-hover: #cdeed8;
+  --color-action-deliver-light-bg-active: #bce5c9;
+
+  --color-action-danger-light-bg: #fee2e2;
+  --color-action-danger-light-bg-hover: #fecaca;
+  --color-action-danger-light-bg-active: #fca5a5;
+
+  /* ==========================================================================
+     Shadows
+     ========================================================================== */
+
+  --color-row-shadow: 11 31 81;
+
+  --shadow-accent-glow: 0 0 14px 0 rgb(217 145 0 / 0.40);
+  --shadow-pack-glow: 0 0 16px 0 rgb(38 105 255 / 0.50);
+  --shadow-delivery-glow: 0 0 16px 0 rgb(34 143 76 / 0.50);
+  --shadow-danger-glow: 0 0 16px 0 rgb(210 74 74 / 0.42);
+
+  --shadow-action-place-on-light: 0 0 22px rgb(245 180 0 / 0.24);
+  --shadow-action-pack-on-light: 0 0 22px rgb(38 120 255 / 0.28);
+  --shadow-action-deliver-on-light: 0 0 22px rgb(31 142 73 / 0.28);
+  --shadow-action-danger-on-light: 0 0 22px rgb(217 72 72 / 0.24);
+
+  --shadow-pressed: inset 0 2px 4px rgb(0 0 0 / 0.18);
+
+  --shadow-focus-info: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
+  --shadow-focus-danger: 0 0 0 3px rgb(var(--color-status-danger) / 0.10);
+  --shadow-focus-danger-strong: 0 0 0 3px rgb(var(--color-status-danger) / 0.14);
+
+
+  /* ==========================================================================
+     # The menu
+
+     The navbar, the phone's bottom bar, the start page and the other blue
+     pages (login): one menu in different sizes, so they share their
+     colours. Change them here; navigation.css, landing.css and
+     on-blue.css only read them.
+
+     Headings in these comments read as Markdown: # a part of the site,
+     ## a piece of it, ### a detail of that piece.
+     ========================================================================== */
+
+  /* ## Surface: the blue, the letters on it, the yellow of the chosen */
+  --menu-bg: var(--color-primary-800);
+  --menu-ink: var(--color-neutral-50);
+  --menu-chosen: var(--color-brand-yellow);
+  --menu-crown: var(--brand-crown);
+  /* outlined buttons on the blue (Login, the account on a phone) */
+  --menu-line: color-mix(in srgb, var(--menu-ink) 70%, transparent);
+
+  /* ## Edge: the yellow line between the navbar and the page, and round
+     the phone's bottom bar */
+  --menu-edge: var(--color-accent-600);
+  --menu-edge-width: 2px;
+
+  /* ## Links */
+  /* ### The underline that answers the pointer */
+  --menu-underline: var(--color-accent-600);
+  /* ### The crown on the page you are on: a dark shadow under it so it
+     stands on the blue */
+  --menu-crown-shadow: none;
+
+  /* ## Cart */
+  /* ### At rest */
+  --menu-cart-ink: var(--color-accent-300);
+  --menu-cart-ring: var(--color-accent-300);
+  --menu-cart-ring-width: 1px;
+  /* ### Pointed at, or open */
+  --menu-cart-ink-hover: var(--color-accent-600);
+  --menu-cart-ring-hover: var(--color-accent-600);
+  --menu-cart-ring-width-hover: 1px;
+  /* ### The count over its corner */
+  --menu-cart-count-ink: var(--color-primary-950);
+  --menu-cart-count-bg: var(--color-accent-600);
+
+  /* ## Language: the chosen label uses the menu accent; the other is muted */
+  --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
+  --menu-language-chosen: var(--color-accent-600);
+
+  /* ## Phone bar: the links at the bottom of a phone's screen */
+  --menu-bar-bg: var(--menu-bg);
+  --menu-bar-edge: var(--menu-edge);
+}
+
+
+/* Two menu palettes: day is the default; night changes only its differences.
+   The fixed data-theme="light" in base.html uses light. "auto" can
+   follow Paris time, and an explicit "dark" selects the night palette.
+   Missing or unknown values safely keep the light palette. */
+:root {
+  --menu-bg: var(--color-primary-400);
+  --menu-ink: var(--color-white);
+  --menu-logo: var(--menu-ink);
+  --menu-chosen: var(--color-accent-600);
+  --menu-crown: var(--menu-chosen);
+  --menu-edge: var(--menu-chosen);
+  --menu-underline: var(--menu-chosen);
+  --menu-language-chosen: var(--menu-chosen);
+  --menu-language-ink: var(--color-primary-50);
+  --menu-cart-ink: var(--color-white);
+  --menu-cart-ring: var(--color-white);
+  --menu-cart-ink-hover: var(--color-accent-600);
+  --menu-cart-ring-hover: var(--color-accent-600);
+}
+

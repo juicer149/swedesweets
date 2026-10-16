@@ -1,0 +1,11 @@
+/* Night menu; customer-page colours are added page by page. */
+:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  --menu-bg: var(--color-primary-950);
+  --menu-ink: var(--color-neutral-200);
+  --menu-chosen: var(--color-accent-700);
+  --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
+  --menu-cart-ink: var(--color-neutral-200);
+  --menu-cart-ring: var(--color-neutral-200);
+  --menu-cart-ring-hover: var(--menu-chosen);
+}
+
