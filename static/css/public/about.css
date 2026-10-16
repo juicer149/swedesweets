@@ -19,6 +19,7 @@
 }
 
 .about__text p {
+  color: var(--prose-text);
   margin: 0;
 }
 

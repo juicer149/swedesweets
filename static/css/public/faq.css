@@ -20,3 +20,12 @@
   margin: 0;
   padding: var(--space-2) var(--space-2) var(--space-4);
 }
+
+/* Keep FAQ prose and question colours independent of shared order accordions. */
+.faq {
+  --accordion-summary-text: var(--faq-question-text);
+  --accordion-open-text: var(--faq-question-open-text);
+  --accordion-hover-bg: var(--faq-question-hover-bg);
+  --accordion-open-bg: var(--faq-question-open-bg);
+  --accordion-answer-text: var(--prose-text);
+}

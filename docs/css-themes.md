@@ -64,3 +64,27 @@ checks. Browser interactions were also exercised in dark: FAQ open/close,
 focused login fields, a size dropdown with a sold-out option, adding a retail
 variant, the cart quantity field and the B2B product overlay. The overlay's
 paper label kept dark ink on its light background.
+
+## Editing reading text, search and FAQ colours
+
+These roles are grouped and commented in `static/css/themes/dark.css`.
+Their light defaults are in `themes/light.css`.
+
+| Role | Used by |
+|---|---|
+| `--prose-text` | About paragraphs and FAQ answers; excludes question headings and photo captions |
+| `--search-text` | Typed/selected text in catalog search, searchable quick jumps and B2B quick add |
+| `--search-placeholder` | Hints in those search fields, including Tom Select's empty item |
+| `--search-focus-border` | The catalog's inner focus ring and searchable Tom Select's active border |
+| `--search-focus-bg` | Focused/open searchable Tom Select controls |
+| `--search-focus-shadow` | The halo around focused/open searchable Tom Select controls |
+| `--faq-question-text` | A closed FAQ question's heading |
+| `--faq-question-open-text` | An open FAQ question's heading |
+| `--faq-question-hover-bg` | A closed FAQ question under the pointer |
+| `--faq-question-open-bg` | The open FAQ question's heading background |
+| `--menu-cart-glow` | The navbar cart's yellow shadow on hover, keyboard focus or while open |
+
+The FAQ maps its roles onto the common accordion locally, so its colours do not
+change Previous orders. `common/search.css` styles only actual search controls;
+size and sort selects keep their component palette. The generic `--focus-ring`
+continues to control other components, independently of search focus.

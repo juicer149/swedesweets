@@ -6,7 +6,7 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
 
-  color: var(--text-body);
+  color: var(--accordion-summary-text, var(--text-body));
   font-size: var(--font-size-18);
   font-weight: 600;
   line-height: 1.35;
@@ -26,7 +26,7 @@
 @media (hover: hover) and (pointer: fine) {
   .accordion:not([open]) > .accordion__summary:hover {
     color: var(--text-strong);
-    background: var(--surface-muted);
+    background: var(--accordion-hover-bg, var(--surface-muted));
   }
 }
 
@@ -36,7 +36,7 @@
 }
 
 .accordion[open] > .accordion__summary {
-  color: var(--text-main);
+  color: var(--accordion-open-text, var(--text-main));
   background: var(--accordion-open-bg);
 }
 
@@ -54,7 +54,7 @@
 .accordion__content p {
   margin: 0;
   padding: var(--space-3) var(--space-4) var(--space-4);
-  color: var(--text-body);
+  color: var(--accordion-answer-text, var(--text-body));
   line-height: 1.55;
 }
 

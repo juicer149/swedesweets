@@ -293,7 +293,6 @@
   --stepper-number-bg: var(--color-white);
 }
 
-:root { --catalog-search-placeholder: #757575; }
 
 :root {
   --label-success-text: #166534;
@@ -303,4 +302,26 @@
 :root {
   --control-accent: var(--color-primary-600);
   --filter-active-ink: var(--color-neutral-900);
+}
+
+/* Reading, search and FAQ roles. Keep content text independent of controls. */
+:root {
+  /* About paragraphs and FAQ answers, excluding the polaroid caption. */
+  --prose-text: var(--text-body);
+
+  /* Typed/selected text and hints in catalog search, quick jumps and B2B quick add. */
+  --search-text: var(--text-blue-strong);
+  --search-placeholder: var(--text-muted);
+  --search-focus-border: var(--color-primary-500);
+  --search-focus-bg: var(--field-hover-bg);
+  --search-focus-shadow: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
+
+  /* FAQ question headings only; previous-order accordions keep their own roles. */
+  --faq-question-text: var(--text-body);
+  --faq-question-open-text: var(--text-main);
+  --faq-question-hover-bg: var(--surface-muted);
+  --faq-question-open-bg: var(--accordion-open-bg);
+
+  /* The navbar cart on hover, keyboard focus and while its popover is open. */
+  --menu-cart-glow: 0 0 18px 2px rgb(246 181 30 / 0.32), 0 0 30px 4px rgb(246 181 30 / 0.10);
 }

@@ -278,7 +278,8 @@
     color var(--motion-fast),
     background var(--motion-fast),
     border-color var(--motion-fast),
-    transform var(--motion-fast);
+    transform var(--motion-fast),
+    box-shadow var(--motion-fast);
 }
 
 .site-nav-cart__trigger:hover,
@@ -286,7 +287,7 @@
 .site-nav-cart[open] .site-nav-cart__trigger {
   color: var(--menu-cart-ink-hover);
   background: var(--menu-cart-bg-hover);
-  box-shadow: var(--shadow-accent-glow);
+  box-shadow: var(--menu-cart-glow);
   border: var(--menu-cart-ring-width-hover) solid var(--menu-cart-ring-hover);
 }
 

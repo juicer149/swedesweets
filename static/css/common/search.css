@@ -1,0 +1,29 @@
+/* Search controls: native fields and Tom Select searchable fields.
+   Covers catalog search, quick-jump fields and B2B quick add.
+   Plain selects (sizes, sorting) and non-search form fields keep their palette. */
+input[type="search"],
+.enhanced-select--searchable .ts-control,
+.enhanced-select--searchable .ts-control .item,
+.enhanced-select--searchable .ts-control > input,
+.quick-jump-search .ts-control .item:not([data-value=""]) {
+  color: var(--search-text);
+}
+
+input[type="search"]::placeholder,
+.enhanced-select--searchable .ts-control input::placeholder,
+.enhanced-select--searchable .ts-control .item[data-value=""],
+.quick-jump-search .ts-control .item[data-value=""] {
+  color: var(--search-placeholder);
+  opacity: 1;
+}
+
+.enhanced-select--searchable.focus .ts-control,
+.enhanced-select--searchable.dropdown-active .ts-control {
+  border-color: var(--search-focus-border);
+  background: var(--search-focus-bg);
+  box-shadow: var(--search-focus-shadow);
+}
+
+input[type="search"]:focus-visible {
+  outline-color: var(--search-focus-border);
+}

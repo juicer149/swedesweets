@@ -47,7 +47,7 @@
   min-height: var(--size-control-xs);
   padding: 0.45rem 0.95rem;
 
-  color: var(--text-main);
+  color: var(--search-text);
   background: var(--surface-bg);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);
@@ -59,7 +59,7 @@
 /* The focus ring inside the edge: the field reaches the column's edge,
    where an outside ring would be cut off. */
 .catalog__search-input:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--search-focus-border);
   outline-offset: -2px;
 }
 
@@ -1310,5 +1310,5 @@
 
 /* Search is on the page, outside the paper labels. */
 .catalog__search-input::placeholder {
-  color: var(--catalog-search-placeholder);
+  color: var(--search-placeholder);
 }
