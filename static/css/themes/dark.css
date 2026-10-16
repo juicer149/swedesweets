@@ -16,10 +16,10 @@
   --page-bg: var(--color-primary-900);
   --surface-bg: var(--color-primary-800);
   --surface-muted: var(--color-primary-850);
-  --text-main: var(--color-neutral-200);
+  --text-main: var(--color-accent-100);
   --text-strong: var(--color-neutral-100);
   --text-body: var(--color-neutral-200);
-  --text-muted: #b7b8c4;
+  --text-muted: var(--color-primary-100);
   --text-blue: var(--color-primary-100);
   --text-blue-strong: var(--color-neutral-200);
   --text-blue-deep: var(--color-neutral-100);
@@ -51,8 +51,11 @@
   --display-shadow: var(--color-primary-950);
   --display-lip: var(--color-primary-100);
   --display-lip-opacity: 0.25;
+
   --paper-bg: var(--color-neutral-200);
-  --label-bg: var(--color-neutral-200);
+  
+  --label-bg: var(--color-accent-100);
+  --label-band: var(--color-accent-600);
   --label-line: var(--color-neutral-300);
   --cart-panel-bg: var(--color-primary-800);
 }
