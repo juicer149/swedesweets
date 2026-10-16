@@ -178,8 +178,8 @@
   --menu-edge-width: 2px;
 
   /* ## Links */
-  /* ### The underline that answers the pointer */
-  --menu-underline: var(--color-accent-600);
+  /* ### Hover/focus halo: no underline or glow in light. */
+  --menu-link-glow: none;
   /* ### The crown on the page you are on: a dark shadow under it so it
      stands on the blue */
   --menu-crown-shadow: none;
@@ -217,8 +217,7 @@
   --menu-logo: var(--menu-ink);
   --menu-chosen: var(--color-accent-600);
   --menu-crown: var(--menu-chosen);
-  --menu-edge: var(--menu-chosen);
-  --menu-underline: var(--menu-chosen);
+  --menu-edge: var(--color-accent-600);
   --menu-language-chosen: var(--menu-chosen);
   --menu-language-ink: var(--color-primary-50);
   --menu-cart-ink: var(--color-white);

@@ -88,3 +88,16 @@ The FAQ maps its roles onto the common accordion locally, so its colours do not
 change Previous orders. `common/search.css` styles only actual search controls;
 size and sort selects keep their component palette. The generic `--focus-ring`
 continues to control other components, independently of search focus.
+
+## Navbar separator and link hover
+
+`--menu-edge` controls the line between the header and the page. Both palettes
+set it explicitly, independently of `--menu-chosen`. The phone bar's outline
+follows it through `--menu-bar-edge`; override that separately when needed.
+
+Navbar links have no hover underline in either theme. `--menu-link-glow` is
+`none` in light and a soft yellow radial gradient in dark, shown on hover and
+keyboard focus. On phones the halo sits behind the label, outside its text
+clipping. The current-page crown and keyboard focus outline remain visible.
+This navbar effect does not change the landing menu's own animation or the
+selected-language marker.

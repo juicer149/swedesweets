@@ -399,8 +399,11 @@ the brand blue, dark uses deep blue. Component CSS reads the same roles in both.
   bar has a thin yellow edge. The cart's popover stays cream.
 - **Desktop:** links in the top bar, with icons; the page you are on gets
   the crown tilted on its last letter (as on the logo and the start page),
-  and the yellow underline only answers the pointer. On a phone the crown
-  sits on the icon, the labels being too small for it.
+  with no hover underline in either palette. In dark, hover and keyboard
+  focus add a soft yellow halo behind the text (`--menu-link-glow`);
+  light keeps its text-colour feedback. The header's line (`--menu-edge`)
+  is independent of the chosen link colour. On a phone the crown sits
+  on the icon, the labels being too small for it.
 - **Phone:** the same links as a fixed bottom bar, the same blue
   (`--site-nav-count` columns); pages leave room for it.
 - **Customer pages** (shop and business portal): Catalog/Shop, Find

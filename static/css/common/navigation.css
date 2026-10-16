@@ -84,6 +84,7 @@
 
 .site-nav__link {
   position: relative;
+  isolation: isolate;
 
   display: inline-flex;
   align-items: center;
@@ -101,20 +102,18 @@
     transform var(--motion-fast);
 }
 
+/* A halo behind the link, independent of the chosen text colour.
+   Light supplies none; dark supplies a soft yellow radial gradient. */
 .site-nav__link::after {
   content: "";
   position: absolute;
-  left: 50%;
-  bottom: -0.55rem;
-
-  width: 0;
-  height: 2px;
-
-  background: var(--menu-underline);
-  border-radius: 999px;
-
-  transform: translateX(-50%);
-  transition: width var(--motion-fast);
+  inset: -0.4rem -0.65rem;
+  z-index: -1;
+  background: var(--menu-link-glow);
+  border-radius: var(--radius-pill);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-fast);
 }
 
 .site-nav__link:hover,
@@ -129,10 +128,10 @@
   transform: translateY(-1px);
 }
 
-/* The underline answers the pointer; the page you are on gets the crown. */
+/* Hover/focus lights the link; the current page keeps its crown. */
 .site-nav__link:hover::after,
 .site-nav__link:focus-visible::after {
-  width: 100%;
+  opacity: 1;
 }
 
 /* The crown marks the page you are on, tilted on the last letter as on
@@ -728,7 +727,7 @@
 
 /* =============================================================================
    Mobile navigation
-   Variant 1: text-width underline
+   The same hover/focus halo, behind the label rather than the icon
    ============================================================================= */
 
 @media (max-width: 767px) {
@@ -865,8 +864,10 @@
       transform var(--motion-fast);
   }
 
+  /* The halo belongs to the link, outside the label's ellipsis clip. */
   .site-nav__link::after {
-    content: none;
+    inset: auto -0.2rem 0;
+    height: 1.8rem;
   }
 
   .site-nav__link > span:last-child {
@@ -880,21 +881,7 @@
     white-space: nowrap;
   }
 
-  .site-nav__link > span:last-child::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: -0.28rem;
 
-    width: 0;
-    height: 3px;
-
-    background: var(--menu-underline);
-    border-radius: 999px;
-
-    transform: translateX(-50%);
-    transition: width var(--motion-fast);
-  }
 
   .site-nav__link:hover,
   .site-nav__link:focus-visible,
@@ -909,10 +896,7 @@
     transform: translateY(-1px);
   }
 
-  .site-nav__link:hover > span:last-child::after,
-  .site-nav__link:focus-visible > span:last-child::after {
-    width: 100%;
-  }
+
 
   /* The labels are too small to carry the crown: it sits tilted on the
      icon instead. */
