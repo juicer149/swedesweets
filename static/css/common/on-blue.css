@@ -18,7 +18,7 @@ body.on-blue {
   --page-title-color: var(--on-blue-ink);
 
   color: var(--on-blue-ink);
-  /* the menu's blue (tokens.css, "# The menu"), as the start page */
+  /* the menu's blue (themes/light.css and themes/dark.css), as the start page */
   background: var(--menu-bg);
 }
 

@@ -53,3 +53,9 @@ sizes, text, background or border colours in light. The browser loaded all
 CSS/fonts/images without asset errors; no horizontal overflow was found in
 either theme. Dark remains a preview for visual review before making it a
 user-facing default. It is not a claim of a measured loading-speed gain.
+
+The Python suite passed (1329 tests), as did the seven standalone theme-selector
+checks. Browser interactions were also exercised in dark: FAQ open/close,
+focused login fields, a size dropdown with a sold-out option, adding a retail
+variant, the cart quantity field and the B2B product overlay. The overlay's
+paper label kept dark ink on its light background.

@@ -5,9 +5,9 @@
    menu: the header blue with the cream logo, the links cream, the page
    you are on yellow with the crown, which stands on the blue with a dark
    shadow under it. The phone's bottom bar is the same blue. The cart's
-   popover stays cream: it is a sheet of the shop, not the menu.
+   popover uses the page surface rather than the menu palette.
 
-   Its colours are tokens (tokens.css, "# The menu"), shared with the
+   Its colours are tokens (themes/light.css and themes/dark.css), shared with the
    start page and login: change them there.
    ============================================================================= */
 

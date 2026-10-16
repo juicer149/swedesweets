@@ -9,7 +9,7 @@
    The blue, the language buttons and the links on it come from
    on-blue.css, shared with login. The page is exactly one screen: every size is clamped against the
    height (dvh), so a short phone and a tall screen both fit without a
-   scroll. Its colours are the menu's tokens (tokens.css, "# The menu"), shared
+   scroll. Its colours are the menu's tokens (themes/light.css and themes/dark.css), shared
    with the navbar. Cream on the blue is 7:1 or more, the chosen link’s yellow
    4:1 or more, which is enough at this size (large text).
    ============================================================================= */

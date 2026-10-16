@@ -1,4 +1,4 @@
-/* Night menu; customer-page colours are added page by page. */
+/* Dark customer palette. Ops keeps the light palette during rollout. */
 :root[data-theme="dark"]:not([data-site-zone="ops"]) {
   --menu-bg: var(--color-primary-950);
   --menu-ink: var(--color-neutral-200);
