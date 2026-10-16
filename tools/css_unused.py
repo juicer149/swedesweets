@@ -14,7 +14,7 @@ f"button--tone-{tone}" in Python, marks every class starting with
 `order-status--` or `button--tone-` as used.
 
     python tools/css_unused.py                     # all CSS files
-    python tools/css_unused.py page.css            # only these files
+    python tools/css_unused.py common/page.css            # only these files
     python tools/css_unused.py --delete            # and remove them
 """
 

@@ -47,15 +47,16 @@ navigation already says.
 
 ## Colour
 
-All colours are tokens in `static/css/tokens.css`. Templates and page CSS
-use the semantic tokens, not hex values.
+Primitive colour scales are in `static/css/tokens.css`. Semantic colour choices
+live in `static/css/themes/light.css` and `themes/dark.css`. Component CSS
+uses those roles; see [docs/css-themes.md](docs/css-themes.md).
 
 | Use | Token | Notes |
 |---|---|---|
-| Page background | `--color-neutral-50` (#fffaf0) | warm cream |
-| Body text | `--color-neutral-900` | |
-| Titles | `--color-neutral-800`, `--page-title-color` | warm near-black, not navy |
-| Quiet text, notes, links | `--color-neutral-600` | |
+| Page background | `--page-bg` | warm cream in light, deep blue in dark |
+| Body text | `--text-main` | |
+| Titles | `--color-text-heading`, `--page-title-color` | theme-dependent |
+| Quiet text and notes | `--text-muted` | |
 | Hairlines | `--color-neutral-200` / `-300` | |
 | The action | `--color-action-place-solid` | accent yellow at 85% |
 | Links, navigation | `--color-link` (primary-700) | |
@@ -338,9 +339,9 @@ drawing's faded foot (Find Sweets).
 
 ## Navigation and chrome
 
-The menu's colours (navbar, phone bar, start page, login) are tokens in
-`tokens.css` under "# The menu" (`--menu-bg` the blue, now primary-800;
-`--menu-cart-*`, `--menu-language-*`, …); the CSS files only read them.
+The menu's colours (navbar, phone bar, start page, login) live in the theme
+palettes (`--menu-bg`, `--menu-cart-*`, `--menu-language-*`, …). Light uses
+the brand blue, dark uses deep blue. Component CSS reads the same roles in both.
 
 - **The navbar is the start page's menu in a bar:** the menu's blue with the
   cream logo, cream links, the page you are on yellow (brand-yellow) with
@@ -438,5 +439,4 @@ The menu's colours (navbar, phone bar, start page, login) are tokens in
 
 - **About and FAQ:** structure done, personality (pictures, the founders'
   own words, their latest posts) to come.
-- **The logo** on the start page is the PNG recoloured; a cream SVG from
-  them should replace it.
+- **The logo** uses the authentic traced SVG in `includes/ui/logo.html`.

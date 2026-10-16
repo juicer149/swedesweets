@@ -276,7 +276,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .line__remove-button:hover {
-    color: var(--color-action-danger-on-light);
+    color: var(--action-remove-text);
   }
 }
 

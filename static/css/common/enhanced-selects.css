@@ -268,12 +268,12 @@ select.ts-hidden-accessible {
 .ts-wrapper.single .ts-control::after {
   right: 1rem;
 
-  border-color: var(--color-primary-800) transparent transparent transparent;
+  border-color: var(--text-blue) transparent transparent transparent;
   border-width: 5px 5px 0 5px;
 }
 
 .ts-wrapper.single.dropdown-active .ts-control::after {
-  border-color: transparent transparent var(--color-primary-800) transparent;
+  border-color: transparent transparent var(--text-blue) transparent;
   border-width: 0 5px 5px 5px;
 }
 

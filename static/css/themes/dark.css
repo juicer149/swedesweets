@@ -56,3 +56,18 @@
   --label-line: var(--color-neutral-300);
   --cart-panel-bg: var(--color-primary-800);
 }
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  --entrance-field-focus-bg: var(--surface-bg);
+  --action-remove-text: #ffaaaa;
+  --stepper-bg: var(--color-primary-800);
+  --stepper-bg-hover: var(--color-primary-750);
+  --stepper-bg-press: var(--color-primary-700);
+  --stepper-ink: var(--color-primary-100);
+  --stepper-line: var(--color-primary-300);
+  --stepper-number-bg: var(--surface-bg);
+}
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) { --catalog-search-placeholder: var(--text-muted); }
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) { --control-accent: var(--color-primary-150); }

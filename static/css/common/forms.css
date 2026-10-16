@@ -302,7 +302,7 @@
 
 /* Showing the password: the eye turns blue and shines. */
 .password-field__toggle[aria-pressed="true"] {
-  color: var(--color-primary-600);
+  color: var(--control-accent);
 }
 
 .password-field__toggle[aria-pressed="true"]:hover {

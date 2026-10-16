@@ -24,13 +24,7 @@
        --stepper-line-width  their width
        --stepper-number-bg   behind the number */
   --stepper-number: 3rem;
-  --stepper-bg: color-mix(in srgb, var(--color-primary-100) 30%, transparent);
-  --stepper-bg-hover: color-mix(in srgb, var(--color-primary-100) 90%, transparent);
-  --stepper-bg-press: var(--color-primary-200);
-  --stepper-ink: var(--color-primary-800);
-  --stepper-line: var(--color-primary-300);
   --stepper-line-width: 1px;
-  --stepper-number-bg: var(--color-white);
 
   display: grid;
   grid-template-columns:

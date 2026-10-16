@@ -1302,4 +1302,13 @@
   --field-hover-bg: var(--label-hover-bg);
   --field-active-bg: var(--color-primary-100);
   --focus-ring: var(--color-primary-500);
+  --color-status-warning-text: var(--label-warning-text);
+  --color-status-success-text: var(--label-success-text);
+  --color-status-danger-text: var(--label-danger-text);
+  --color-status-info-text: var(--color-primary-800);
+}
+
+/* Search is on the page, outside the paper labels. */
+.catalog__search-input::placeholder {
+  color: var(--catalog-search-placeholder);
 }

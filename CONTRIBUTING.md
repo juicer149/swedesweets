@@ -36,7 +36,7 @@ set -a; . ./.env; set +a
 | `make reset-demo` | Wipe and seed the demo data again |
 | `make help` | Everything else |
 
-## Brand artwork and menu themes
+## Brand artwork and themes
 
 Brand assets live in `static/images/`:
 
@@ -56,12 +56,16 @@ screen-reader labels.
 
 The shared styles are in `static/css/common/brand-logo.css`:
 
-- `static/js/menu-theme.js` selects `day` (06–22) or `night` (22–06)
-  by Paris time when the HTML attribute is `auto`; a fixed `day` or
-  `night` preview is preserved. An OS-controlled mode could use
-  `prefers-color-scheme` later.
-- `static/css/tokens.css` defines the Day defaults and explicit Night
-  overrides; missing/unknown theme values fall back to Day.
+- `static/js/theme.js` runs before CSS. Light is the default; `?theme=dark`,
+  `?theme=light` or `?theme=auto` previews a palette for this browser tab.
+  Auto follows Paris time: light 06–22, dark 22–06. Ops stays light.
+- `static/css/tokens.css` contains the primitive scales, sizes and timings.
+  `static/css/themes/light.css` supplies the default semantic colours;
+  `themes/dark.css` overrides them for the customer pages.
+- CSS is grouped in `common/`, `public/` (retail and B2B) and `ops/`.
+  `main.css` imports the shared foundation, `public.css` and `ops.css`
+  add their own pages. The URL surface chooses the entrypoint.
+  See [docs/css-themes.md](docs/css-themes.md) for the ownership rules.
 - `--menu-logo` colors the wordmark; `--menu-chosen` controls active
   and hovered menu text according to the selected day/night palette.
 - `--brand-crown` defines the general sitewide crown hue (`accent-600`)

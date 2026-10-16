@@ -280,3 +280,27 @@
   --label-hover-bg: var(--color-primary-50);
   --cart-panel-bg: rgb(255 251 241 / 0.995);
 }
+
+/* Shared controls */
+:root {
+  --entrance-field-focus-bg: var(--color-white);
+  --action-remove-text: var(--color-action-danger-on-light);
+  --stepper-bg: color-mix(in srgb, var(--color-primary-100) 30%, transparent);
+  --stepper-bg-hover: color-mix(in srgb, var(--color-primary-100) 90%, transparent);
+  --stepper-bg-press: var(--color-primary-200);
+  --stepper-ink: var(--color-primary-800);
+  --stepper-line: var(--color-primary-300);
+  --stepper-number-bg: var(--color-white);
+}
+
+:root { --catalog-search-placeholder: #757575; }
+
+:root {
+  --label-success-text: #166534;
+  --label-danger-text: #991b1b;
+}
+
+:root {
+  --control-accent: var(--color-primary-600);
+  --filter-active-ink: var(--color-neutral-900);
+}

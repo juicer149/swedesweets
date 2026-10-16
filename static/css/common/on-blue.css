@@ -155,7 +155,7 @@ body.on-blue {
 .on-blue .form-field select:focus,
 .on-blue .form-field textarea:focus,
 .on-blue .form-field--error input:focus {
-  background: var(--color-white);
+  background: var(--entrance-field-focus-bg);
   border-color: var(--on-blue-mark);
   box-shadow: 0 0 0 3px var(--on-blue-mark);
 }

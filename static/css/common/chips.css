@@ -274,7 +274,7 @@
   --filter-chip-bg: var(--surface-muted);
 
   /* Active: yellow ... */
-  --filter-chip-active-text: var(--text-main);
+  --filter-chip-active-text: var(--filter-active-ink);
   --filter-chip-active-bg: var(--color-accent-600);
   /* ... or blue:
   --filter-chip-active-text: var(--color-white);
