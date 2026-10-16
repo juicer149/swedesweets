@@ -1,0 +1,9 @@
+/* Staff work pages. Shared components come from main.css. */
+@import url("./main.css");
+@import url("./ops/dashboard.css");
+@import url("./ops/packing.css");
+@import url("./ops/order-form.css");
+@import url("./ops/inventory.css");
+@import url("./ops/products.css");
+@import url("./ops/variants.css");
+@import url("./ops/accounts.css");

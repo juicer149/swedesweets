@@ -1,0 +1,24 @@
+/* Display titles: Sniglet, chubby and a little seventies, in the yellow
+   scale with a slight inner shadow of the darkest yellow (includes/ui/
+   display_title_filter.html). About's last line. */
+.display-title {
+  margin: 0;
+  color: var(--color-accent-700);
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  /* Sniglet's spaces are wide; closer words read as one title. */
+  word-spacing: -0.12em;
+  filter: url("#display-title-inner-shadow");
+}
+
+/* The page titles (Q & A, Who we are?): stamped into the page, in
+   nearly its own colour, a little warm; the shadow inside the letters
+   (the darkest yellow) and the light lip under them draw them. Big: the page's picture as much as its title. */
+.display-title--stamped {
+  /* The page's cream, a little warmer: a touch of the yellow scale. */
+  color: color-mix(in srgb, var(--color-accent-200) 40%, var(--color-neutral-200));
+  text-align: center;
+  filter: url("#display-title-stamped");
+}

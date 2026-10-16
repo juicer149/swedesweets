@@ -1,0 +1,22 @@
+/* FAQ page layout; expandable rows live in common/accordion.css. */
+.display-title--faq {
+  margin-bottom: clamp(var(--space-4), 3dvh, var(--space-6));
+  font-size: clamp(3.75rem, 20vw, 6rem);
+  word-spacing: -0.25em;
+}
+
+.page.faq {
+  width: min(100%, 600px);
+}
+
+.faq__list {
+  display: grid;
+  gap: var(--space-1);
+  margin-top: clamp(var(--space-2), 4dvh, var(--space-8));
+}
+
+/* The last question opens to the phone and mail rows. */
+.faq-contact .icon-rows {
+  margin: 0;
+  padding: var(--space-2) var(--space-2) var(--space-4);
+}

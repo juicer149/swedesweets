@@ -21,13 +21,13 @@
 
     <div class="faq__list" aria-labelledby="public-faq-title">
       {% for item in faq_items %}
-        <details class="faq__item" data-smooth data-smooth-group="faq">
-          <summary class="faq__question">
+        <details class="accordion" data-smooth data-smooth-group="faq">
+          <summary class="accordion__summary">
             <span>{{ item.question }}</span>
-            {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="faq__chevron" only %}
+            {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="accordion__chevron" only %}
           </summary>
 
-          <div class="faq__answer" data-smooth-content>
+          <div class="accordion__content" data-smooth-content>
             <p>{{ item.answer }}</p>
             {% if item.link %}
               <p><a class="text-link" href="{% url item.link %}">{{ item.link_label }}</a></p>
@@ -39,13 +39,13 @@
         </details>
       {% endfor %}
 
-      <details id="contact" class="faq__item faq__item--contact" data-smooth data-smooth-group="faq">
-        <summary class="faq__question">
+      <details id="contact" class="accordion faq-contact" data-smooth data-smooth-group="faq">
+        <summary class="accordion__summary">
           <span>{% trans "Still have questions? Contact us" %}</span>
-          {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="faq__chevron" only %}
+          {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="accordion__chevron" only %}
         </summary>
 
-        <div class="faq__answer" data-smooth-content>
+        <div class="accordion__content" data-smooth-content>
           {% include "includes/site_contact_rows.html" %}
         </div>
       </details>

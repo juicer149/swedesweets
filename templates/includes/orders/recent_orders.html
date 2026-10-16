@@ -19,25 +19,25 @@
   csrf_token     cart: the page's token
 {% endcomment %}
 {% if recent_orders %}
-  <details class="faq__item recent-orders" data-smooth>
-    <summary class="faq__question recent-orders__summary">
+  <details class="accordion recent-orders" data-smooth>
+    <summary class="accordion__summary recent-orders__summary">
       <span class="recent-orders__title">{% trans "Previous orders" %}</span>
-      {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="faq__chevron" only %}
+      {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="accordion__chevron" only %}
     </summary>
 
     <div class="recent-orders__list" data-smooth-content>
       {% for order in recent_orders %}
         <div class="recent-order" data-recent-order>
-          <details class="faq__item recent-order__details" data-smooth data-smooth-group="recent-orders">
-            <summary class="faq__question recent-order__summary">
+          <details class="accordion recent-order__details" data-smooth data-smooth-group="recent-orders">
+            <summary class="accordion__summary recent-order__summary">
               <span class="recent-order__heading">
                 <span class="recent-order__title">{{ order.title }}</span>
                 <span class="recent-order__meta">{{ order.date_label }} · {{ order.summary }}</span>
               </span>
-              {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="faq__chevron" only %}
+              {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="accordion__chevron" only %}
             </summary>
 
-            <div class="faq__answer" data-smooth-content>
+            <div class="accordion__content" data-smooth-content>
               <ul class="lines recent-order__lines">
                 {% for line in order.lines %}
                   <li class="line">

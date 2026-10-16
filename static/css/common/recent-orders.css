@@ -24,7 +24,7 @@
 }
 
 /* An order open inside the open "Previous orders": a lighter yellow. */
-.recent-order__details[open] > .faq__question {
+.recent-order__details[open] > .accordion__summary {
   background: color-mix(in srgb, var(--color-accent-600) 9%, transparent);
 }
 
@@ -55,7 +55,7 @@
 }
 
 /* room for "Order again" between the heading and the chevron */
-.recent-order__summary .faq__chevron {
+.recent-order__summary .accordion__chevron {
   margin-left: calc(var(--recent-order-button, 7.5rem) + var(--space-2));
 }
 

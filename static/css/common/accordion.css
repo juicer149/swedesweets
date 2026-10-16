@@ -1,0 +1,66 @@
+/* Expandable rows shared by FAQ and previous orders in B2B and ops. */
+.accordion__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+
+  color: var(--color-neutral-700);
+  font-size: var(--font-size-18);
+  font-weight: 600;
+  line-height: 1.35;
+  list-style: none;
+  cursor: pointer;
+  border-radius: var(--radius-control);
+
+  transition: background var(--motion-fast), color var(--motion-fast);
+}
+
+.accordion__summary::-webkit-details-marker {
+  display: none;
+}
+
+/* A closed question lights up under the pointer like a dashboard queue
+   (.disclosure__summary); an open one keeps its yellow. */
+@media (hover: hover) and (pointer: fine) {
+  .accordion:not([open]) > .accordion__summary:hover {
+    color: var(--color-neutral-800);
+    background: var(--color-neutral-100);
+  }
+}
+
+.accordion__summary:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.accordion[open] > .accordion__summary {
+  color: var(--color-neutral-900);
+  background: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
+}
+
+.accordion__chevron {
+  color: var(--color-neutral-600);
+  transition: transform 200ms ease;
+}
+
+/* Its own chevron only: an open item may hold folded items of its own
+   (a shop's previous orders). */
+.accordion[open] > .accordion__summary .accordion__chevron {
+  transform: rotate(180deg);
+}
+
+.accordion__content p {
+  margin: 0;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  color: var(--color-neutral-700);
+  line-height: 1.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion__summary,
+  .accordion__chevron {
+    transition: none;
+  }
+}

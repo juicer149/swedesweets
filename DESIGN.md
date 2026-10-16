@@ -93,7 +93,7 @@ Decoration (the binoculars) uses brand yellow softened with
   (`--font-heading`, weight `--font-weight-heading`, 600): round like the
   logo, so the glad voice sits in headings and everything read or filled
   in stays calm.
-- Both are our own files (`static/fonts/`, `css/fonts.css`), never Google's
+- Both are our own files (`static/fonts/`, `css/common/fonts.css`), never Google's
   servers. Nunito's figures are equal width, so prices and quantities line
   up without `tabular-nums`.
 - Sizes from the scale `--font-size-12 … -64`. Page titles are small and
@@ -115,7 +115,7 @@ Decoration (the binoculars) uses brand yellow softened with
 
 ## Page shells
 
-Every page starts from one of these (`static/css/page.css`).
+Every page starts from one of these (`static/css/common/page.css`).
 
 | Shell | Use |
 |---|---|
@@ -134,7 +134,7 @@ Parts of the column: `.page__heading`, `.page__lead` (the title),
 
 ## Building blocks
 
-**Rows: `.lines`** (`static/css/lines.css`). The list in the calm design.
+**Rows: `.lines`** (`static/css/common/lines.css`). The list in the calm design.
 Rows divided by hairlines, nothing around them.
 
 - `includes/ui/line.html`: a read-only line (product and an amount).
@@ -214,7 +214,7 @@ context), so it covers the footer, and ends with room under it. The wall
 shows 24 cards at a time and the next 24 as one nears its foot (dots, then
 the crown); all cards are in the page, so search and the categories reach
 them. The channel's pages only say where the form posts and what its
-button says. CSS in `static/css/catalog.css`.
+button says. CSS in `static/css/public/catalog.css`.
 
 **Status burst:** `includes/ui/status_burst.html`, rendered once in
 `base.html` as a `<template>`, with `status_burst.js` (also loaded there).

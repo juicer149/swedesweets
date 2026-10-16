@@ -275,3 +275,9 @@ def _uses_shared_site_chrome(
         or resolver_match.view_name
         == "index"
     )
+
+
+def static_assets(request):
+    """CSS follows the URL surface; shared account/error pages use public CSS."""
+    is_ops = request.path_info.startswith("/ops/")
+    return {"site_stylesheet": "css/ops.css" if is_ops else "css/public.css"}

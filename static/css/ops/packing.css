@@ -1,0 +1,85 @@
+/* =============================================================================
+   Pack checklist (calm design)
+
+   One row per batch, divided by hairlines like .lines: checkbox, product
+   with batch and location under it, quantity on the right. A checked row
+   turns the pack colour. The whole row is the label, so it is easy to tap.
+   ============================================================================= */
+
+.pack-list__hint {
+  margin-bottom: var(--space-3);
+}
+
+.pack-list__items {
+  display: grid;
+}
+
+.pack-line {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-2);
+
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: background var(--motion-fast);
+}
+
+.pack-line + .pack-line {
+  border-top: 1px solid var(--color-neutral-200);
+}
+
+.pack-line:has(.pack-line__checkbox:checked) {
+  background: var(--color-action-pack-light-bg);
+}
+
+.pack-line:has(.pack-line__checkbox:focus-visible) {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+.pack-line__checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+
+  accent-color: var(--color-action-pack);
+  cursor: pointer;
+}
+
+.pack-line__content {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pack-line__product {
+  color: var(--color-neutral-900);
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.pack-line__meta {
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-14);
+}
+
+.pack-line__quantity {
+  color: var(--color-neutral-900);
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.pack-line:has(.pack-line__checkbox:checked) .pack-line__product,
+.pack-line:has(.pack-line__checkbox:checked) .pack-line__quantity {
+  color: var(--color-action-pack-on-light);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pack-line {
+    transition: none;
+  }
+}

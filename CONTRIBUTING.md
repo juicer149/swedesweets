@@ -54,7 +54,7 @@ The original letter paths are not replaced by a font. Pass
 `decorative=True` inside an already-labeled home link to avoid duplicate
 screen-reader labels.
 
-The shared styles are in `static/css/brand-logo.css`:
+The shared styles are in `static/css/common/brand-logo.css`:
 
 - `static/js/menu-theme.js` selects `day` (06–22) or `night` (22–06)
   by Paris time when the HTML attribute is `auto`; a fixed `day` or
@@ -69,14 +69,14 @@ The shared styles are in `static/css/brand-logo.css`:
   a neutral tint. `--menu-crown` follows `--menu-chosen` in each theme,
   so logo and active-navigation crowns match the menu's active color
   (`accent-700` at night and `accent-600` by day).
-- `static/css/landing.css`, `static/css/navigation.css`, and
-  `static/css/on-blue.css` control placement without hard-coded theme colors.
+- `static/css/public/landing.css`, `static/css/common/navigation.css`, and
+  `static/css/common/on-blue.css` control placement without hard-coded theme colors.
 
 The shared language selector is rendered with `includes/language_switcher.html`
 throughout the site: public and ops navbars, the landing page, the login /
 password-reset frame, and the error pages' normal navbar. All its visual
 rules, including responsive sizing and focus visibility, live in
-`static/css/language-switcher.css`. Avoid adding page-specific language
+`static/css/common/language-switcher.css`. Avoid adding page-specific language
 selector overrides in `landing.css`, `navigation.css` or `on-blue.css`.
 
 The old approximate Fredoka SVG previews were removed before merge.

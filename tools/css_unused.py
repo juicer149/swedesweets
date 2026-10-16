@@ -150,7 +150,7 @@ def main(argv: list[str]) -> int:
     argv = [arg for arg in argv if arg != "--delete"]
 
     css_files = (
-        [CSS_DIR / name for name in argv] if argv else sorted(CSS_DIR.glob("*.css"))
+        [CSS_DIR / name for name in argv] if argv else sorted(CSS_DIR.rglob("*.css"))
     )
 
     used_tokens: set[str] = set()

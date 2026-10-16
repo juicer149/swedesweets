@@ -3,7 +3,7 @@
   (templates/ops_portal/products/includes/form_section_variants.html).
 
   - The EUR / SEK tabs: the editor shows that currency's prices (its
-    data-currency; css/variants.css hides the other, still sent).
+    data-currency; css/ops/variants.css hides the other, still sent).
   - A card's prices sit beside their sales channels; a channel switched
     off makes its price read-only (muted, still sent).
   - "Use for all variants" copies a card's prices (both currencies) to the
@@ -40,7 +40,7 @@
     }
 
     // A channel switched off: its price stays (and is sent) but is not to
-    // be typed in; css/variants.css mutes it like the switch.
+    // be typed in; css/ops/variants.css mutes it like the switch.
     function syncChannels(row) {
       row.querySelectorAll("[data-price-channel]").forEach((offer) => {
         const toggle = offer.querySelector('input[type="checkbox"]');

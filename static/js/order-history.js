@@ -402,7 +402,7 @@
     }
 
     if (sortDirectionButton) {
-      // The dial shows the direction now (css/table-controls.css).
+      // The dial shows the direction now (css/common/table-controls.css).
       sortDirectionButton.dataset.direction = sortState.direction;
     }
   }

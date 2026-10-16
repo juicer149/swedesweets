@@ -15,7 +15,7 @@
 
 @font-face {
   font-family: "Fredoka";
-  src: url("../fonts/fredoka.woff2") format("woff2");
+  src: url("../../fonts/fredoka.woff2") format("woff2");
   font-weight: 300 700;
   font-style: normal;
   font-display: swap;
@@ -23,7 +23,7 @@
 
 @font-face {
   font-family: "Sniglet";
-  src: url("../fonts/sniglet.woff2") format("woff2");
+  src: url("../../fonts/sniglet.woff2") format("woff2");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -31,7 +31,7 @@
 
 @font-face {
   font-family: "Nunito";
-  src: url("../fonts/nunito.woff2") format("woff2");
+  src: url("../../fonts/nunito.woff2") format("woff2");
   font-weight: 300 900;
   font-style: normal;
   font-display: swap;

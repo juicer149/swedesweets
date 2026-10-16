@@ -233,6 +233,7 @@ TEMPLATES = [
                     "config.context_processors."
                     "navigation"
                 ),
+                "config.context_processors.static_assets",
             ],
         },
     },

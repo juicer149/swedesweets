@@ -1,0 +1,108 @@
+/* About: the story, polaroid and photo. */
+.display-title--about {
+  margin-bottom: clamp(var(--space-5), 4dvh, var(--space-7));
+  font-size: clamp(2.5rem, 11vw, 3.75rem);
+}
+
+.page.about {
+  width: min(100%, 560px);
+}
+
+/* Centred: the title, the story, the last line and the photo all hang on
+   one middle line. */
+.about__text {
+  display: grid;
+  gap: var(--space-4);
+  color: var(--color-neutral-700);
+  line-height: 1.65;
+  text-align: center;
+}
+
+.about__text p {
+  margin: 0;
+}
+
+/* The two of us: a polaroid taped to the page, a little tilted, with
+   our names in the display font under the photo. */
+.about__polaroid {
+  position: relative;
+  width: min(88%, 26rem);
+  margin: var(--space-4) auto var(--space-3);
+  padding: 0.6rem 0.6rem 0;
+
+  background: var(--color-white);
+  box-shadow:
+    0 12px 26px rgb(var(--color-row-shadow) / 0.2),
+    0 1px 2px rgb(var(--color-row-shadow) / 0.12);
+  transform: rotate(1.8deg);
+}
+
+.about__polaroid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* A strip of soft yellow tape over the top edge. */
+.about__polaroid-tape {
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  width: 5.25rem;
+  height: 1.5rem;
+
+  background: color-mix(in srgb, var(--color-accent-200) 85%, transparent);
+  box-shadow: 0 1px 2px rgb(var(--color-row-shadow) / 0.12);
+  transform: translateX(-50%) rotate(-4deg);
+}
+
+.about__polaroid-names {
+  padding: 0.55rem 0 0.75rem;
+
+  color: var(--color-neutral-700);
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 5.5vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+}
+
+/* The photo, with the last line written in its sky like a cloud and the
+   hand with the sweets under it. Its edges dissolve into the page, a
+   little dreamy, so it reads as part of the page, not a framed picture. */
+.about__sky {
+  position: relative;
+  margin: clamp(var(--space-5), 4dvh, var(--space-8)) 0 0;
+}
+
+.about__photo {
+  display: block;
+  width: 100%;
+  height: auto;
+
+  /* Two soft fades (sides, top and foot) laid over each other: a picture
+     with no hard edge anywhere, still mostly a rectangle. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 16%, #000 84%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 84%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 16%, #000 84%, transparent),
+    linear-gradient(to bottom, transparent, #000 12%, #000 84%, transparent);
+  mask-composite: intersect;
+}
+
+/* White and puffy in the deep blue, below the fade at the top. */
+.about__signoff {
+  position: absolute;
+  top: 15%;
+  right: 12%;
+  left: 12%;
+  margin: 0;
+
+  color: var(--color-white);
+  font-size: clamp(1.75rem, 8.5vw, 2.5rem);
+  line-height: 1.1;
+  text-align: center;
+  filter: url("#display-title-cloud");
+}
