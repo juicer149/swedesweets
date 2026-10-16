@@ -1,7 +1,9 @@
 # CSS structure and themes
 
-Status: structure and theme selection are implemented. Customer-page dark
-colours are being migrated next. Light remains the default; ops stays light.
+Status: structure, theme selection and a first dark palette for customer pages
+are implemented. FAQ, About, Find Sweets, account pages and the shared catalog
+use semantic colour roles. Labels and polaroids retain dark ink on light paper.
+Light remains the default; ops stays light. Browser verification is in progress.
 
 - `static/css/tokens.css`: primitive colour scales, sizes, type and timings.
 - `static/css/themes/light.css`: default semantic colours and the day menu.
