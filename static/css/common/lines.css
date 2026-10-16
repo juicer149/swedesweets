@@ -497,3 +497,19 @@
   45% { transform: rotate(9deg); }
   70% { transform: rotate(-5deg); }
 }
+
+/* Cart surfaces share trash colour and a slightly stronger removal flash. */
+[data-current-order] .line__remove-button {
+  color: var(--cart-remove-ink);
+}
+
+[data-current-order] .line__remove-button:hover,
+[data-current-order] .line__remove-button:focus-visible,
+[data-current-order] .line-flash--removed .line__remove-button {
+  color: var(--cart-remove-hover-ink);
+}
+
+[data-current-order] .line-flash--removed::before,
+.site-nav-cart-line.line-flash--removed::before {
+  background: var(--cart-remove-flash);
+}

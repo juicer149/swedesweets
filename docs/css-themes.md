@@ -145,8 +145,8 @@ change delivery action buttons, the navbar cart or the in-cart badge:
 | `--catalog-cart-muted-ink` | Icon before choosing a size. |
 | `--catalog-cart-muted-border` | Outline before choosing a size. |
 
-Light retains a pale green ready button. Dark reverses it: dark green fill,
-light green icon and border. The muted state remains clickable so it can
+Light retains a pale green ready button. Dark uses a primary-750 fill with a light green icon and border,
+changing the icon and border to primary-200 on hover, focus and press. The muted state remains clickable so it can
 prompt the customer to choose a size; it is not a disabled action.
 
 The warm neutral scale in `tokens.css` now includes every whole hundred from
@@ -157,3 +157,28 @@ The previously undefined neutral-150 body-text reference now uses neutral-200.
 
 The footer wordmark is 8–10rem wide. Its crown is enlarged and positioned over
 the final s, at the right end of Sweets; the menu's stacked logo is unchanged.
+
+## Catalog input, close and feedback details
+
+- `--catalog-close-ink`, `--catalog-close-border`, `--catalog-close-bg` own
+  the product-detail close button. `--catalog-close-hover-ink` and
+  `--catalog-close-hover-bg` control hover. Dark uses primary-400 for the
+  normal cross/edge and primary-800 behind it.
+- `--catalog-cart-hover-ink` / `--catalog-cart-hover-border` and
+  `--catalog-cart-active-ink` / `--catalog-cart-active-border` let the cart
+  icon and edge follow interaction independently of its normal green ink.
+- The quantity underline follows its text colour. On focus (including touch)
+  the underline becomes transparent and the rounded ring, halo and background
+  follow `--search-focus-border`, `--search-focus-shadow`, `--search-focus-bg`.
+- Label loading/success/error keep `--label-bg`. The success/error edge and
+  burst use `--catalog-burst-success`, `--catalog-burst-error`, and
+  `--catalog-burst-halo`. The burst bag locally inherits the label's paper
+  colour; other bags and recent-order feedback keep their existing appearance.
+- `--cart-remove-ink`, `--cart-remove-hover-ink` and `--cart-remove-flash`
+  colour the cart page/dropdown trash and row removal flash. Shared ops delete
+  controls, added-row flashes, navbar cart bump and animation timings are
+  unaffected.
+
+The wide footer crown uses the original crown/letter overlap and rightward
+bias as its reference, with the crown enlarged a further 20%. Its viewBox
+includes the full crown so it is not clipped at the wordmark's right edge.

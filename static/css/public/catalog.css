@@ -305,15 +305,15 @@
   transform: none;
 }
 
-/* Added: the white of the label turns green; not added: red. */
+/* Feedback keeps the label surface; only its edge signals the result. */
 .tile__label:has(.tile__order[data-state="done"]) {
-  background: var(--color-action-deliver-light-bg);
-  border-color: var(--color-action-deliver-on-light);
+  background: var(--label-bg);
+  border-color: var(--catalog-burst-success);
 }
 
 .tile__label:has(.tile__order[data-state="failed"]) {
-  background: var(--color-action-danger-light-bg);
-  border-color: var(--color-action-danger-on-light);
+  background: var(--label-bg);
+  border-color: var(--catalog-burst-error);
 }
 
 .tile__name {
@@ -575,7 +575,7 @@
 
   background: transparent;
   border: 0;
-  border-bottom: 1.5px solid var(--color-neutral-200);
+  border-bottom: 1.5px solid currentColor;
   border-radius: 0;
 
   text-align: center;
@@ -589,14 +589,13 @@
   -webkit-appearance: none;
 }
 
-.tile__quantity:hover {
-  border-bottom-color: var(--color-accent-600);
-}
-
-.tile__quantity:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
+/* Focus replaces the underline with the search field's rounded ring. */
+.tile__quantity:focus {
+  border-bottom-color: transparent;
+  outline: none;
   border-radius: 4px;
+  background: var(--search-focus-bg);
+  box-shadow: inset 0 0 0 1.5px var(--search-focus-border), var(--search-focus-shadow);
 }
 
 /* The cart button: round, with theme-owned background, edge and icon
@@ -636,11 +635,16 @@
   transform: translateX(-2px);
 }
 
-.tile__add:hover {
+.tile__add:hover,
+.tile__add:focus-visible {
+  color: var(--catalog-cart-hover-ink);
+  border-color: var(--catalog-cart-hover-border);
   background: var(--catalog-cart-hover-bg);
 }
 
 .tile__add:active {
+  color: var(--catalog-cart-active-ink);
+  border-color: var(--catalog-cart-active-border);
   background: var(--catalog-cart-active-bg);
   transform: translateX(-50%) scale(0.95);
 }
@@ -671,8 +675,9 @@
   display: none;
 }
 
-.tile__status .status-burst__mark--error {
-  color: var(--color-action-danger-on-light);
+.tile__status .status-burst__mark--error,
+.product__status .status-burst__mark--error {
+  color: var(--catalog-burst-error);
 }
 
 /* Why it did not work: in the red, where the row was, until tapped (or a
@@ -685,7 +690,7 @@
   margin: 0;
   padding: 0.35rem var(--space-1) 0;
 
-  color: var(--color-action-danger-on-light);
+  color: var(--catalog-burst-error);
   font-size: var(--font-size-12);
   font-weight: 800;
   line-height: 1.25;
@@ -742,16 +747,16 @@
   width: 2.5rem;
   height: 2.5rem;
 
-  color: var(--color-neutral-700);
-  background: var(--label-bg);
-  border: 1.5px solid var(--color-neutral-300);
+  color: var(--catalog-close-ink);
+  background: var(--catalog-close-bg);
+  border: 1.5px solid var(--catalog-close-border);
   border-radius: var(--radius-pill);
   box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.14);
 }
 
 .product__close:hover {
-  color: var(--label-text);
-  background: var(--color-neutral-100);
+  color: var(--catalog-close-hover-ink);
+  background: var(--catalog-close-hover-bg);
 }
 
 .product__close:focus-visible {
@@ -822,13 +827,13 @@
 }
 
 .product__label:has(.product__form[data-state="done"]) {
-  background: var(--color-action-deliver-light-bg);
-  border-color: var(--color-action-deliver-on-light);
+  background: var(--label-bg);
+  border-color: var(--catalog-burst-success);
 }
 
 .product__label:has(.product__form[data-state="failed"]) {
-  background: var(--color-action-danger-light-bg);
-  border-color: var(--color-action-danger-on-light);
+  background: var(--label-bg);
+  border-color: var(--catalog-burst-error);
 }
 
 .product__band {
@@ -1314,4 +1319,14 @@
 /* Search is on the page, outside the paper labels. */
 .catalog__search-input::placeholder {
   color: var(--search-placeholder);
+}
+
+/* Feedback stays on the current label surface in either theme. */
+.tile__status,
+.product__status {
+  --status-burst-success: var(--catalog-burst-success);
+  --status-burst-halo: var(--catalog-burst-halo);
+  --bag-paper: var(--label-bg);
+  --bag-outline: var(--catalog-burst-success);
+  --bag-fold: var(--label-line);
 }

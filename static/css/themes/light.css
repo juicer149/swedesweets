@@ -353,3 +353,24 @@
   --catalog-cart-muted-ink: var(--color-neutral-500);
   --catalog-cart-muted-border: var(--color-neutral-400);
 }
+
+/* Catalog detail close, label feedback and cart button interaction colours. */
+:root {
+  --catalog-close-ink: var(--color-neutral-700);
+  --catalog-close-border: var(--color-neutral-300);
+  --catalog-close-bg: var(--label-bg);
+  --catalog-close-hover-ink: var(--label-text);
+  --catalog-close-hover-bg: var(--color-neutral-100);
+  --catalog-cart-hover-ink: var(--catalog-cart-ink);
+  --catalog-cart-hover-border: var(--catalog-cart-border);
+  --catalog-cart-active-ink: var(--catalog-cart-hover-ink);
+  --catalog-cart-active-border: var(--catalog-cart-hover-border);
+  --catalog-burst-success: var(--color-action-deliver);
+  --catalog-burst-error: var(--color-action-danger-on-light);
+  --catalog-burst-halo: color-mix(in srgb, var(--color-action-deliver) 40%, transparent);
+
+  /* Cart page and navbar dropdown only; preserve other delete controls. */
+  --cart-remove-ink: #a62929;
+  --cart-remove-hover-ink: #8e1f1f;
+  --cart-remove-flash: rgb(185 45 45 / 0.23);
+}

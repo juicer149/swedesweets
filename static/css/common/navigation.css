@@ -553,7 +553,7 @@
   padding: 0;
 
   /* a muted dark red: it takes something away */
-  color: color-mix(in srgb, var(--action-remove-text) 75%, var(--text-muted));
+  color: var(--cart-remove-ink);
   background: transparent;
   border: 0;
   border-radius: var(--radius-pill);
@@ -570,12 +570,12 @@
    (lines.css); no yellow, which is for going on. */
 @media (hover: hover) and (pointer: fine) {
   .site-nav-cart-line__remove-button:hover {
-    color: var(--action-remove-text);
+    color: var(--cart-remove-hover-ink);
   }
 }
 
 .site-nav-cart-line__remove-button:focus-visible {
-  color: var(--action-remove-text);
+  color: var(--cart-remove-hover-ink);
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
@@ -1004,3 +1004,7 @@
   }
 }
 
+
+.site-nav-cart-line.line-flash--removed .site-nav-cart-line__remove-button {
+  color: var(--cart-remove-hover-ink);
+}
