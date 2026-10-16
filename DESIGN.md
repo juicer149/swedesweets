@@ -238,11 +238,11 @@ button with how many in the other corner when the cart holds some; under the
 name one row,
 never more, in two halves: the size as a small dropdown ("Choose size",
 then the size; sold-out sizes muted in it) or the package, then how many,
-typed, no box; the round light-green cart button on the label's foot,
-44px; while adding the scoop in
-the row's middle, then the label green with our bag, or red with a dark
-red cross and then why, in the red, until tapped; and the row back as it
-started) and `no_photo.html` (in place of a missing picture: the logo's crown,
+typed, no box; the themed round cart button on the label's foot,
+44px. Its cart icon spins while adding, then the whole button disappears
+as a green cart with a halo appears inside the label. Failure keeps the
+cross and reason; the label surface stays in its theme. The row returns
+after feedback, and the navbar cart catches the success after 450ms) and `no_photo.html` (in place of a missing picture: the logo's crown,
 muted, and "No photo for this product") and `product.html` (a product's page in the card's
 design: the picture with the price tag and in-cart badge and a round ×
 above it, beside it the card's label scaled up (the name breaks as on the

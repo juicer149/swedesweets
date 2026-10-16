@@ -1041,7 +1041,7 @@
   box-shadow: none;
 }
 
-.product__form[data-state] .product__add-button {
+.product__form[data-state]:not([data-state="adding"]) .product__add-button {
   visibility: hidden;
 }
 
@@ -1226,59 +1226,11 @@
 }
 
 
-/* =============================================================================
-   The pick & mix shelf over the catalog (includes/ui/pick_and_mix_shelf.html)
-   ============================================================================= */
-
-.pick-shelf {
-  display: flex;
-  justify-content: center;
-  margin: 0 auto clamp(var(--space-3), 2.5dvh, var(--space-6));
-}
-
-/* Smaller on a phone, so the first row of the wall shows without
-   scrolling. */
-.pick-shelf__art {
-  width: clamp(11rem, 48vw, 18rem);
-  height: auto;
-  overflow: visible;
-}
-
-/* The scoops sway in their tub; the bags breathe. */
-.pick-shelf__scoops {
-  transform-box: view-box;
-  transform-origin: 236px 160px;
-  animation: pick-shelf-sway 4.5s ease-in-out infinite;
-}
-
-.pick-shelf__bags {
-  transform-box: view-box;
-  transform-origin: 106px 150px;
-  animation: pick-shelf-breathe 5s ease-in-out infinite;
-}
-
-@keyframes pick-shelf-sway {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(4deg); }
-}
-
-@keyframes pick-shelf-breathe {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-2px) rotate(-1.2deg); }
-}
-
 /* On a phone the tabs' line runs edge to edge, their text keeps off the
    screen's edges. */
 @media (max-width: 767px) {
   .product__tabs .page-tabs__panel {
     padding-inline: var(--space-5);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pick-shelf__scoops,
-  .pick-shelf__bags {
-    animation: none;
   }
 }
 
@@ -1326,7 +1278,44 @@
 .product__status {
   --status-burst-success: var(--catalog-burst-success);
   --status-burst-halo: var(--catalog-burst-halo);
-  --bag-paper: var(--label-bg);
-  --bag-outline: var(--catalog-burst-success);
-  --bag-fold: var(--label-line);
+}
+
+/* Catalog feedback: rotate the real button's cart while loading, settle it,
+   then replace the whole button with the green cart inside the label. */
+.tile__status,
+.product__status {
+  --feedback-burst-style: button;
+  --feedback-burst-mark: cart;
+  --status-burst-mark-icon: 80%;
+}
+
+.tile__order[data-state="adding"] .tile__row {
+  visibility: visible;
+}
+
+.tile__order[data-state="adding"] :is(.tile__size, .tile__quantity) {
+  visibility: hidden;
+}
+
+.tile__add-icon[data-feedback-loading-icon] {
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+:is(.tile__order, .product__form)[data-state="adding"]:has(.status-burst[data-state="loading"]) [data-feedback-loading-icon] {
+  animation: catalog-cart-spin 0.55s linear infinite;
+}
+
+@keyframes catalog-cart-spin {
+  from { transform: translateX(-2px) rotate(0deg); }
+  to { transform: translateX(-2px) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile__add-icon[data-feedback-loading-icon] {
+    transition: none;
+  }
+
+  :is(.tile__order, .product__form)[data-state="adding"]:has(.status-burst[data-state="loading"]) [data-feedback-loading-icon] {
+    animation: none;
+  }
 }

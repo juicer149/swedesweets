@@ -269,7 +269,7 @@
 
 /* With the scoop, a problem also gives a little shake: the cross says
    no, the shake says "try again". */
-.status-burst[data-style="scoop"][data-state="error"] {
+.status-burst:is([data-style="scoop"], [data-style="button"])[data-state="error"] {
   animation: status-burst-shake 0.4s ease-in-out;
 }
 
@@ -283,7 +283,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .status-burst__scoop .scoop,
-  .status-burst[data-style="scoop"][data-state="error"] {
+  .status-burst:is([data-style="scoop"], [data-style="button"])[data-state="error"] {
     animation: none !important;
   }
 }

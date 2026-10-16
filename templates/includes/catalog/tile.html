@@ -128,13 +128,13 @@
                 aria-label="{{ card.primary_action.aria_label }}"
                 data-catalog-add-button
               >
-                {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__add-icon" only %}
+                {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__add-icon" feedback_loading=True only %}
                 <span class="visually-hidden">{{ card.primary_action.text }}</span>
               </button>
             </div>
           </div>
 
-          {# While adding: the scoop, then the bag or the cross (catalog.js); #}
+          {# While adding: the button cart spins, then a green cart or cross (catalog.js); #}
           {# then, when it did not work, why, in the red, until tapped. #}
           <div class="tile__status" data-catalog-status hidden></div>
           <p class="tile__error" data-catalog-error hidden></p>

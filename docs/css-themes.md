@@ -172,8 +172,8 @@ the final s, at the right end of Sweets; the menu's stacked logo is unchanged.
   follow `--search-focus-border`, `--search-focus-shadow`, `--search-focus-bg`.
 - Label loading/success/error keep `--label-bg`. The success/error edge and
   burst use `--catalog-burst-success`, `--catalog-burst-error`, and
-  `--catalog-burst-halo`. The burst bag locally inherits the label's paper
-  colour; other bags and recent-order feedback keep their existing appearance.
+  `--catalog-burst-halo`. Catalog feedback now uses the cart mark; other bags and recent-order
+  feedback keep their existing appearance.
 - `--cart-remove-ink`, `--cart-remove-hover-ink` and `--cart-remove-flash`
   colour the cart page/dropdown trash and row removal flash. Shared ops delete
   controls, added-row flashes, navbar cart bump and animation timings are
@@ -222,3 +222,19 @@ Autocomplete remains enabled; no timers or JavaScript erase autofilled values.
 `--entrance-error-text` and `--entrance-error-mark` control login/reset error
 copy and its left edge separately from links and focus. Dark uses accent-800
 for both, a deeper gold than accent-600; light keeps its previous appearance.
+
+## Catalog feedback with the cart icon
+
+The catalog no longer renders the decorative bag/scoop shelf above its tools.
+During add, the actual submit button's cart icon spins at the former scoop's
+0.55s cycle, then settles from its current angle over the same 260ms rest.
+At the success/error mark the whole button disappears, and a green cart/halo
+or the existing error cross appears inside the label. The minimum loading,
+mark growth and hold times are unchanged; navbar cart refresh/bump still starts
+450ms after the success mark. Product-detail feedback follows the same flow.
+Reduced-motion disables the spin/settle motion while retaining feedback.
+
+This is the local `--feedback-burst-style: button` / `--feedback-burst-mark:
+cart` override. Other burst users keep their current styles and timings.
+Success colour and halo still use `--catalog-burst-success` and
+`--catalog-burst-halo` in the theme files.

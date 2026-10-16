@@ -188,11 +188,11 @@
             aria-label="{{ add_label }}: {{ product_name }}"
             data-product-add-button
           >
-            {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__add-icon" only %}
+            {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__add-icon" feedback_loading=True only %}
             <span class="visually-hidden">{{ add_label }}</span>
           </button>
 
-          {# While adding: the scoop, then the bag or the cross; then why, in the red. #}
+          {# While adding: the button cart spins, then a green cart or cross; then why, in the red. #}
           <div class="tile__status product__status" data-product-status hidden></div>
           <p class="tile__error product__error" data-product-error hidden></p>
 

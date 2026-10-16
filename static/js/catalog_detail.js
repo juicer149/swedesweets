@@ -307,7 +307,7 @@ function initProduct(root, options = {}) {
           }
         };
 
-    // The navbar's cart catches the product while the bag still shows,
+    // The navbar's cart catches the product while the green cart still shows,
     // so the two overlap a little.
     const onMark = (ok) => {
       form.dataset.state = ok ? "done" : "failed";

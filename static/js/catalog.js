@@ -257,11 +257,9 @@
     timer = window.setTimeout(done, 4000);
   }
 
-  /* While the product is added the row gives way to the burst in its
-     middle (the scoop); when the mark comes the label turns green and our
-     bag pops up, or red with a cross; then the row comes back as it
-     started after an add (the badge counting them), and after a failure
-     the reason shows in the red first. */
+  /* The button cart spins while adding, then gives way to a green cart
+     burst (or an error cross) inside the label. The row returns after a
+     success; on failure its reason is shown before trying again. */
   async function addToCart(form, reset) {
     const status = form.querySelector("[data-catalog-status]");
 
@@ -287,7 +285,7 @@
           }
         };
 
-    // The navbar's cart catches the product while the bag still shows on
+    // The navbar's cart catches the product while the green cart still shows on
     // the tile (almost half a second after it appears), so the two overlap
     // a little.
     const onMark = (added) => {
