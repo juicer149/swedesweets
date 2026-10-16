@@ -23,8 +23,8 @@
   --color-primary-900: #0A1233; 
   --color-primary-850: #08153F;
   --color-primary-800: #091B4E; 
-  --color-primary-750: #08205E; 
-  --color-primary-700: #08297D;
+  --color-primary-750: #092263;
+  --color-primary-700: #082B81;
   --color-primary-650: #0934AA;
   --color-primary-600: #0740CF; 
   --color-primary-550: #0249ED;
@@ -40,17 +40,26 @@
   --color-primary-50: #B3D5FF;
 
   /* Yellow / gold */
-  --color-accent-950: #4a3405;
-  --color-accent-900: #6f4e06;
-  --color-accent-800: #a2720b;
-  --color-accent-700: #d99100;
-  --color-accent-600: #f6b51e;
-  --color-accent-500: #ffc445;
-  --color-accent-400: #fcce59;
-  --color-accent-300: #f9dc8b;
-  --color-accent-200: #fdecb9;
-  --color-accent-100: #fff8e0;
-  --color-accent-50: #fffdf2;
+  --color-accent-950: #ED851D;
+  --color-accent-900: #EF8D15; 
+  --color-accent-850: #F2951C;
+  --color-accent-800: #F39912;
+  --color-accent-750: #F69F13;
+  --color-accent-700: #F8A516;
+  --color-accent-650: #F8AD16;
+  --color-accent-600: #F9B51A; /* brand color */
+  --color-accent-550: #FBBA23;
+  --color-accent-500: #FBC02D;
+  --color-accent-450: #FBC737;
+  --color-accent-400: #FBCD41;
+  --color-accent-350: #FCD145;
+  --color-accent-300: #FCD64A;
+  --color-accent-250: #FCD959;
+  --color-accent-200: #FCDF69;
+  --color-accent-150: #FEE67B;
+  --color-accent-100: #FFEB94;
+  --color-accent-50: #FFF0AD;
+  --color-accent-25: #FDF3C4;
 
   /* Warm grays */
   --color-neutral-900: #191715;

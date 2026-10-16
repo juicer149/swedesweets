@@ -7,14 +7,14 @@
 
   /* Header separator; independent of chosen/hovered text.
      The phone bar follows it unless --menu-bar-edge is overridden. */
-  --menu-edge: var(--color-accent-600);
+  --menu-edge: var(--color-accent-750);
 
   /* Navbar links on hover/keyboard focus: yellow light behind the text. */
-  --menu-link-glow: radial-gradient(ellipse at center, rgb(246 181 30 / 0.30), rgb(246 181 30 / 0.12) 45%, transparent 75%);
+  --menu-link-glow: radial-gradient(ellipse at center, rgb(246 181 30 / 0.30), rgb(246 181 30 / 0.12) 58%, transparent 65%);
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
-  --menu-cart-ink: var(--color-neutral-200);
-  --menu-cart-ring: var(--color-neutral-200);
-  --menu-cart-ring-hover: var(--menu-chosen);
+  --menu-cart-ink: var(--color-primary-250);
+  --menu-cart-ring: var(--color-primary-250);
+  --menu-cart-ring-hover: var(--color-accent-550);
 
   /* Cart: wider yellow light on hover, keyboard focus and while open */
   --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / 0.26), 0 0 32px 7px rgb(246 181 30 / 0.10);
@@ -23,10 +23,12 @@
   --page-bg: var(--color-primary-900);
   --surface-bg: var(--color-primary-800);
   --surface-muted: var(--color-primary-850);
-  --text-main: var(--color-accent-100);
+  --text-main: var(--color-accent-50);
   --text-strong: var(--color-neutral-100);
-  --text-body: var(--color-neutral-200);
-  --text-muted: var(--color-primary-100);
+
+  --text-body: var(--color-neutral-150);
+  
+  --text-muted: var(--color-neutral-300);
   --text-blue: var(--color-primary-100);
   --text-blue-strong: var(--color-neutral-200);
   --text-blue-deep: var(--color-neutral-100);
@@ -38,19 +40,19 @@
   --page-glow: radial-gradient(closest-side, rgb(66 139 255 / 0.08), rgb(66 139 255 / 0.03) 55%, transparent);
 
   /* Reading: About paragraphs and FAQ answers (not question headings or photo captions) */
-  --prose-text: var(--color-neutral-200);
+  --prose-text: var(--color-neutral-300);
 
   /* Search: catalog, quick-jump fields and B2B quick add; applies to typed text and hints */
-  --search-text: var(--color-neutral-200);
-  --search-placeholder: var(--color-primary-100);
+  --search-text: var(--color-accent-100);
+  --search-placeholder: var(--color-primary-200);
 
   /* Search focus: border/ring, field background and halo; independent of other controls */
-  --search-focus-border: var(--color-primary-150);
+  --search-focus-border: var(--color-primary-200);
   --search-focus-bg: var(--field-hover-bg);
   --search-focus-shadow: 0 0 0 3px color-mix(in srgb, var(--search-focus-border) 20%, transparent);
 
   /* FAQ question headings: closed text, open text, hover background and open background */
-  --faq-question-text: var(--color-neutral-200);
+  --faq-question-text: var(--color-primary-200);
   --faq-question-open-text: var(--color-accent-100);
   --faq-question-hover-bg: var(--surface-muted);
   --faq-question-open-bg: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
@@ -75,18 +77,23 @@
   --contact-phone: #83d9a2;
   --contact-place: #e7a096;
   --color-action-place-solid: var(--color-accent-600);
+  --color-accent-text-standard: var(--color-primary-800);
 
   /* Display lettering: decorative FAQ and About titles */
   --display-stamped: #63718f;
-  --display-shadow: var(--color-primary-950);
+  --display-shadow: var(--color-primary-750);
   --display-lip: var(--color-primary-100);
   --display-lip-opacity: 0.25;
 
   /* Paper: About polaroid and catalog labels; photos retain their own colours */
   --paper-bg: var(--color-neutral-200);
-  --label-bg: var(--color-accent-100);
-  --label-band: var(--color-accent-600);
-  --label-line: var(--color-neutral-300);
+  --label-bg: var(--color-primary-800);
+  --label-border: var(--color-accent-700);
+  --label-band: var(--color-accent-700);
+  --label-line: var(--color-primary-700);
+  --label-band-text: var(--color-primary-950);
+  --label-text: var(--color-accent-200);
+  --label-muted: var(--color-primary-200);
 
   /* Cart popover surface */
   --cart-panel-bg: var(--color-primary-800);
