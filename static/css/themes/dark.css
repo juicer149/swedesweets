@@ -153,4 +153,19 @@
   /* Login and password-reset errors: deeper gold than the main action. */
   --entrance-error-text: var(--color-accent-800);
   --entrance-error-mark: var(--color-accent-800);
+
+  /* Catalog hover: brighter name, soft blue sheen and glow. */
+  --catalog-card-hover-text: var(--color-primary-700);
+  --catalog-card-hover-sheen: linear-gradient(135deg, rgb(117 177 255 / 0.22), transparent 65%);
+  --catalog-card-hover-shadow: 0 0 20px 3px rgb(66 139 255 / 0.22);
+
+  /* Quantity and variant controls: quiet edges/gold at rest, blue on focus. */
+  --catalog-control-idle-text: var(--color-accent-700);
+  --catalog-control-idle-bg: transparent;
+  --catalog-control-idle-border: color-mix(in srgb, var(--color-primary-200) 22%, transparent);
+  --catalog-control-hover-border: color-mix(in srgb, var(--color-primary-200) 45%, transparent);
+  --catalog-control-focus-text: var(--label-text);
+  --catalog-control-focus-bg: var(--search-focus-bg);
+  --catalog-control-focus-border: var(--search-focus-border);
+  --catalog-control-focus-shadow: var(--search-focus-shadow);
 }

@@ -380,3 +380,18 @@
   --entrance-error-text: var(--menu-ink);
   --entrance-error-mark: var(--color-accent-600);
 }
+
+/* Catalog link affordance and shared quantity/variant states. */
+:root {
+  --catalog-card-hover-text: var(--color-primary-700);
+  --catalog-card-hover-sheen: linear-gradient(135deg, rgb(117 177 255 / 0.18), transparent 65%);
+  --catalog-card-hover-shadow: 0 0 18px 2px rgb(38 105 255 / 0.16);
+  --catalog-control-idle-text: var(--color-neutral-700);
+  --catalog-control-idle-bg: transparent;
+  --catalog-control-idle-border: color-mix(in srgb, var(--color-primary-700) 18%, transparent);
+  --catalog-control-hover-border: color-mix(in srgb, var(--color-primary-600) 40%, transparent);
+  --catalog-control-focus-text: var(--label-text);
+  --catalog-control-focus-bg: var(--search-focus-bg);
+  --catalog-control-focus-border: var(--search-focus-border);
+  --catalog-control-focus-shadow: var(--search-focus-shadow);
+}

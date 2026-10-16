@@ -167,9 +167,10 @@ the final s, at the right end of Sweets; the menu's stacked logo is unchanged.
 - `--catalog-cart-hover-ink` / `--catalog-cart-hover-border` and
   `--catalog-cart-active-ink` / `--catalog-cart-active-border` let the cart
   icon and edge follow interaction independently of its normal green ink.
-- The quantity underline follows its text colour. On focus (including touch)
-  the underline becomes transparent and the rounded ring, halo and background
-  follow `--search-focus-border`, `--search-focus-shadow`, `--search-focus-bg`.
+- Quantity and variant controls share a quiet full outline at rest; there is
+  no quantity underline. On focus (including touch), their stronger ring,
+  background and text follow the `--catalog-control-focus-*` roles, which
+  default to the search focus roles and current label text.
 - Label loading/success/error keep `--label-bg`. The success/error edge and
   burst use `--catalog-burst-success`, `--catalog-burst-error`, and
   `--catalog-burst-halo`. Catalog feedback now uses the cart mark; other bags and recent-order
@@ -238,3 +239,34 @@ This is the local `--feedback-burst-style: button` / `--feedback-burst-mark:
 cart` override. Other burst users keep their current styles and timings.
 Success colour and halo still use `--catalog-burst-success` and
 `--catalog-burst-halo` in the theme files.
+
+## Catalog card hover and quiet controls
+
+The card's picture gets a subtle blue sheen and glow, with a 3px lift on fine
+pointer hover. The product-name text brightens too. The shelf stays still.
+Movement/glow is suppressed over the ordering controls, during add, and while
+the card folds. Keyboard focus on the product-name link gets the same glow.
+Reduced-motion removes the lift and transitions. Colours live in each theme:
+
+| Variable | Purpose |
+| --- | --- |
+| `--catalog-card-hover-text` | Product-name link hover/focus text. |
+| `--catalog-card-hover-sheen` | Overlay gradient over the product picture. |
+| `--catalog-card-hover-shadow` | Soft glow around the picture. |
+| `--catalog-control-idle-text` | Quantity and selected/placeholder variant text at rest. |
+| `--catalog-control-idle-border` | Quiet full outline at rest. |
+| `--catalog-control-idle-bg` | Resting field background. |
+| `--catalog-control-hover-border` | Edge when pointed at. |
+| `--catalog-control-focus-text` | Text when editing/selecting (defaults to label text). |
+| `--catalog-control-focus-border` | Focus/open outline (defaults to search focus border). |
+| `--catalog-control-focus-bg` | Focus/open background (defaults to search focus background). |
+| `--catalog-control-focus-shadow` | Focus/open halo (defaults to search focus halo). |
+
+Dark uses accent-700 for idle quantity/variant text and restores the current
+label text colour on focus. Light uses neutral-700 for legibility on paper.
+The open variant menu retains its existing item colours; only the control
+face shares these states with quantity. Native select fallback is styled too.
+
+Standalone bag/scoop SVG snapshots and the earlier shelf animations are
+preserved in `design/animations_ideas/`. Runtime template originals remain
+available for the other components that use them.

@@ -10,8 +10,8 @@
                        foot (name on a yellow band, then size | how many,
                        the round cart button on its foot), a striped
                        shelf under each row
-     .tile__status     while adding: only the status burst, the label
-                       green when added, red when not (catalog.js)
+     .tile__status     button cart spins while adding; green cart or
+                       error cross inside the themed label (catalog.js)
      .product          a product's page: picture beside what to buy, then
                        Description and Ingredients as tabs
    ============================================================================= */
@@ -340,9 +340,8 @@
   text-decoration: none;
 }
 
-.tile__name a:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
+.tile__name a {
+  transition: color var(--motion-fast), text-shadow var(--motion-fast);
 }
 
 /* The row: the size (or the package) on the left, how many on the right,
@@ -473,14 +472,14 @@
   width: 100%;
 }
 
-.tile__picker .ts-control {
+.tile__picker .ts-wrapper .ts-control {
   justify-content: center;
   min-height: 2.25rem;
   padding: 0 0.95rem 0 0.15rem;
 
-  color: var(--label-text);
-  background: transparent;
-  border: 0;
+  color: var(--catalog-control-idle-text);
+  background: var(--catalog-control-idle-bg);
+  border: 1px solid var(--catalog-control-idle-border);
   border-radius: 6px;
   box-shadow: none;
 
@@ -493,13 +492,14 @@
   flex: 0 1 auto;
   width: auto;
   margin-inline: auto;
-  color: var(--label-text);
+  color: inherit;
   text-align: center;
 }
 
 /* "Choose size" (the empty choice, shown as the value) quieter. */
 .tile__picker .ts-wrapper .ts-control .item[data-value=""] {
-  color: var(--label-muted);
+  color: inherit;
+  opacity: 0.8;
   font-size: 0.8125rem;
 }
 
@@ -512,7 +512,7 @@
   width: 0.35rem;
   height: 0.35rem;
   margin-top: -0.3rem;
-  border: solid var(--color-neutral-600);
+  border: solid currentColor;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
   transition: transform var(--motion-fast);
@@ -520,25 +520,24 @@
 
 .tile__picker .ts-wrapper.single.dropdown-active .ts-control::after {
   margin-top: -0.1rem;
-  border-color: var(--label-muted);
+  border-color: currentColor;
   border-width: 0 2px 2px 0;
   transform: rotate(-135deg);
 }
 
-.tile__picker .ts-wrapper .ts-control,
-.tile__picker .ts-wrapper.focus .ts-control {
-  background: transparent;
-  box-shadow: none;
+.tile__picker .ts-wrapper:hover .ts-control {
+  border-color: var(--catalog-control-hover-border);
 }
 
-.tile__picker .ts-wrapper:hover .ts-control,
-.tile__picker .ts-wrapper.dropdown-active .ts-control {
-  background: var(--color-accent-100);
-}
-
+/* Tom Select puts focus/open state on its wrapper. Match the quantity field. */
+.tile__picker .ts-wrapper.focus .ts-control,
+.tile__picker .ts-wrapper.dropdown-active .ts-control,
 .tile__picker .ts-control:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 1px;
+  color: var(--catalog-control-focus-text);
+  background: var(--catalog-control-focus-bg);
+  border-color: var(--catalog-control-focus-border);
+  box-shadow: var(--catalog-control-focus-shadow);
+  outline: none;
 }
 
 /* Its list: the site's, a little wider than the half, the empty choice
@@ -567,16 +566,18 @@
   z-index: 6;
 }
 
-/* How many: typed, no box (a quiet line under it says it can be). */
+/* Quiet full outline at rest; the same stronger focus as the size picker. */
 .tile__quantity {
   width: min(100%, 3.5rem);
   min-height: 2.25rem;
   padding: 0;
 
-  background: transparent;
-  border: 0;
-  border-bottom: 1.5px solid currentColor;
-  border-radius: 0;
+  color: var(--catalog-control-idle-text);
+  background: var(--catalog-control-idle-bg);
+  border: 1px solid var(--catalog-control-idle-border);
+  border-radius: 6px;
+  box-shadow: none;
+  transition: border-color var(--motion-fast), background var(--motion-fast), color var(--motion-fast), box-shadow var(--motion-fast);
 
   text-align: center;
   appearance: textfield;
@@ -589,13 +590,33 @@
   -webkit-appearance: none;
 }
 
-/* Focus replaces the underline with the search field's rounded ring. */
+.tile__quantity:hover:not(:focus) {
+  border-color: var(--catalog-control-hover-border);
+}
+
 .tile__quantity:focus {
-  border-bottom-color: transparent;
+  color: var(--catalog-control-focus-text);
+  border-color: var(--catalog-control-focus-border);
   outline: none;
-  border-radius: 4px;
-  background: var(--search-focus-bg);
-  box-shadow: inset 0 0 0 1.5px var(--search-focus-border), var(--search-focus-shadow);
+  background: var(--catalog-control-focus-bg);
+  box-shadow: var(--catalog-control-focus-shadow);
+}
+
+/* Native fallback when JavaScript has not enhanced the variant select. */
+.tile__picker > select:not(.tomselected) {
+  min-height: 2.25rem;
+  color: var(--catalog-control-idle-text);
+  background: var(--catalog-control-idle-bg);
+  border: 1px solid var(--catalog-control-idle-border);
+  border-radius: 6px;
+}
+
+.tile__picker > select:not(.tomselected):focus {
+  color: var(--catalog-control-focus-text);
+  background: var(--catalog-control-focus-bg);
+  border-color: var(--catalog-control-focus-border);
+  outline: none;
+  box-shadow: var(--catalog-control-focus-shadow);
 }
 
 /* The cart button: round, with theme-owned background, edge and icon
@@ -662,8 +683,7 @@
   box-shadow: none;
 }
 
-/* While adding: the burst in the middle of the row's place (the scoop,
-   then our bag or a dark red cross). */
+/* Feedback appears in the row's place: a green cart or an error cross. */
 .tile__status {
   position: absolute;
   inset: 0;
@@ -1317,5 +1337,64 @@
 
   :is(.tile__order, .product__form)[data-state="adding"]:has(.status-burst[data-state="loading"]) [data-feedback-loading-icon] {
     animation: none;
+  }
+}
+
+/* Link affordance: sheen over the picture and a small lift. Keep the shelf
+   still, and leave size/quantity/cart interactions free of card movement. */
+.tile__media {
+  border-radius: var(--radius-md);
+  transition: translate var(--motion-fast), box-shadow var(--motion-fast);
+}
+
+.tile__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--catalog-card-hover-sheen);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-fast);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tile:not(.tile--folded):not([data-unfolding]):not(:has(.tile__order:hover, .tile__order[data-state], .ts-wrapper.dropdown-active)):hover .tile__media {
+    translate: 0 -3px;
+    box-shadow: var(--catalog-card-hover-shadow);
+  }
+
+  .tile:not(.tile--folded):not([data-unfolding]):not(:has(.tile__order:hover, .tile__order[data-state], .ts-wrapper.dropdown-active)):hover .tile__media::after {
+    opacity: 1;
+  }
+
+  .tile:not(.tile--folded):not(:has(.tile__order:hover, .tile__order[data-state])):hover .tile__name a {
+    color: var(--catalog-card-hover-text);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--catalog-card-hover-text) 20%, transparent);
+  }
+}
+
+/* The product-name link is the keyboard entry to the same detail page. */
+.tile:not(.tile--folded):has(.tile__name a:focus-visible) .tile__media {
+  box-shadow: var(--catalog-card-hover-shadow);
+}
+
+.tile:has(.tile__name a:focus-visible) .tile__media::after {
+  opacity: 1;
+}
+
+.tile__name a:focus-visible {
+  color: var(--catalog-card-hover-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile__media,
+  .tile__media::after,
+  .tile__name a {
+    transition: none;
+  }
+
+  .tile:not(.tile--folded):not([data-unfolding]):not(:has(.tile__order:hover, .tile__order[data-state], .ts-wrapper.dropdown-active)):hover .tile__media {
+    translate: none;
   }
 }
