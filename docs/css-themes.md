@@ -124,6 +124,36 @@ Its crown is optically offset to the right; the crown/message group sits a
 little lower in the image area.
 
 The footer uses `includes/ui/logo.html` with `layout="wide"`. The original
-letter paths are reused side by side, with the crown above the S in Sweets.
+letter paths are reused side by side, with the crown above the final s in Sweets.
 Header, landing and login retain the default stacked arrangement. Footer
 colours are scoped locally and do not change the menu logo.
+
+## Catalog cart button and neutral steps
+
+Catalog cards and product detail share `--catalog-cart-*` roles. These do not
+change delivery action buttons, the navbar cart or the in-cart badge:
+
+| Role | Used for |
+| --- | --- |
+| `--catalog-cart-bg` | Ready button background. |
+| `--catalog-cart-ink` | Cart icon. |
+| `--catalog-cart-border` | Button outline. |
+| `--catalog-cart-hover-bg` | Background on hover. |
+| `--catalog-cart-active-bg` | Background while pressed. |
+| `--catalog-cart-focus` | Keyboard focus outline. |
+| `--catalog-cart-muted-bg` | Background before choosing a size. |
+| `--catalog-cart-muted-ink` | Icon before choosing a size. |
+| `--catalog-cart-muted-border` | Outline before choosing a size. |
+
+Light retains a pale green ready button. Dark reverses it: dark green fill,
+light green icon and border. The muted state remains clickable so it can
+prompt the customer to choose a size; it is not a disabled action.
+
+The warm neutral scale in `tokens.css` now includes every whole hundred from
+100 to 900. New 400 and 500 steps bridge the existing 300 and 600; existing
+primitive colours are preserved. Dark general `--text-muted` uses 400 for a
+quieter grey. Page-specific text such as `--label-muted` retains its own role.
+The previously undefined neutral-150 body-text reference now uses neutral-200.
+
+The footer wordmark is 8–10rem wide. Its crown is enlarged and positioned over
+the final s, at the right end of Sweets; the menu's stacked logo is unchanged.

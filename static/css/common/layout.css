@@ -27,7 +27,7 @@
 }
 
 .site-footer__brand .brand-logo {
-  width: clamp(10rem, 32vw, 13rem);
+  width: clamp(8rem, 27vw, 10rem);
   height: auto;
 }
 

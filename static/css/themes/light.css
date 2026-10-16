@@ -339,3 +339,17 @@
   --footer-link: var(--color-neutral-600);
   --footer-link-hover: var(--color-accent-900);
 }
+
+/* Catalog label cart button (cards and product detail), separate from
+   delivery actions and the navbar cart. Muted means no size selected yet. */
+:root {
+  --catalog-cart-bg: var(--color-action-deliver-light-bg);
+  --catalog-cart-ink: var(--color-action-deliver-on-light);
+  --catalog-cart-border: var(--color-action-deliver-on-light);
+  --catalog-cart-hover-bg: var(--color-action-deliver-light-bg-hover);
+  --catalog-cart-active-bg: var(--color-action-deliver-light-bg-active);
+  --catalog-cart-focus: var(--color-primary-500);
+  --catalog-cart-muted-bg: var(--color-neutral-200);
+  --catalog-cart-muted-ink: var(--color-neutral-500);
+  --catalog-cart-muted-border: var(--color-neutral-400);
+}

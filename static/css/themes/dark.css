@@ -26,9 +26,9 @@
   --text-main: var(--color-accent-50);
   --text-strong: var(--color-neutral-100);
 
-  --text-body: var(--color-neutral-150);
+  --text-body: var(--color-neutral-200);
   
-  --text-muted: var(--color-neutral-300);
+  --text-muted: var(--color-neutral-400);
   --text-blue: var(--color-primary-100);
   --text-blue-strong: var(--color-neutral-200);
   --text-blue-deep: var(--color-neutral-100);
@@ -116,4 +116,16 @@
   --footer-crown: var(--color-accent-600);
   --footer-link: var(--color-primary-250);
   --footer-link-hover: var(--color-accent-500);
+
+  /* Catalog label cart: dark green button, light green icon and border.
+     Also used on product detail; independent of delivery action buttons. */
+  --catalog-cart-bg: var(--color-action-deliver-on-light);
+  --catalog-cart-ink: var(--color-action-deliver-light-bg);
+  --catalog-cart-border: var(--color-action-deliver-light-bg);
+  --catalog-cart-hover-bg: #17552d;
+  --catalog-cart-active-bg: #1b6335;
+  --catalog-cart-focus: var(--color-action-deliver-light-bg);
+  --catalog-cart-muted-bg: var(--color-primary-750);
+  --catalog-cart-muted-ink: var(--color-neutral-400);
+  --catalog-cart-muted-border: var(--color-neutral-500);
 }

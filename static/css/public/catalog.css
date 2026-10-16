@@ -599,7 +599,7 @@
   border-radius: 4px;
 }
 
-/* The cart button: round, light green with a dark green edge and cart
+/* The cart button: round, with theme-owned background, edge and icon
    (the deliver green, like the tick it replaces), on the label's foot,
    half off it; grey until a size is chosen (pressing it then asks for
    one). 44px, for a thumb. */
@@ -618,9 +618,9 @@
   height: var(--tile-add-size);
   padding: 0;
 
-  color: var(--color-action-deliver-on-light);
-  background: var(--color-action-deliver-light-bg);
-  border: 1.5px solid var(--color-action-deliver-on-light);
+  color: var(--catalog-cart-ink);
+  background: var(--catalog-cart-bg);
+  border: 1.5px solid var(--catalog-cart-border);
   border-radius: var(--radius-pill);
   box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.14);
 
@@ -637,23 +637,24 @@
 }
 
 .tile__add:hover {
-  background: var(--color-action-deliver-light-bg-hover);
+  background: var(--catalog-cart-hover-bg);
 }
 
 .tile__add:active {
+  background: var(--catalog-cart-active-bg);
   transform: translateX(-50%) scale(0.95);
 }
 
 .tile__add:focus-visible {
-  outline: 2px solid var(--color-primary-500);
+  outline: 2px solid var(--catalog-cart-focus);
   outline-offset: 2px;
 }
 
 .tile__order:has([data-size-select]:invalid) .tile__add,
 .tile__order:has(.ts-control .item[data-value=""]) .tile__add {
-  color: color-mix(in srgb, var(--color-neutral-600) 55%, transparent);
-  background: var(--color-neutral-100);
-  border-color: var(--color-neutral-300);
+  color: var(--catalog-cart-muted-ink);
+  background: var(--catalog-cart-muted-bg);
+  border-color: var(--catalog-cart-muted-border);
   box-shadow: none;
 }
 
@@ -1029,9 +1030,9 @@
 
 .product__form:has([data-size-select]:invalid) .product__add-button,
 .product__form:has(.ts-control .item[data-value=""]) .product__add-button {
-  color: color-mix(in srgb, var(--color-neutral-600) 55%, transparent);
-  background: var(--color-neutral-100);
-  border-color: var(--color-neutral-300);
+  color: var(--catalog-cart-muted-ink);
+  background: var(--catalog-cart-muted-bg);
+  border-color: var(--catalog-cart-muted-border);
   box-shadow: none;
 }
 
