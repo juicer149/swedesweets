@@ -1245,13 +1245,10 @@
 
   /* As on a card: straight, over the picture's foot. */
   .product__side {
-    padding-top: 0;
-  }
-
-  .product__side {
     --label-scale: 1.45;
 
     width: 100%;
+    padding-top: 0;
   }
 
   .product__label {

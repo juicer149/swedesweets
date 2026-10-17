@@ -41,7 +41,7 @@
   min-height: var(--size-control-md);
   padding: 0 var(--space-1);
 
-  color: var(--color-link);
+  color: var(--section-nav-text);
   background: transparent;
   border: 0;
 
@@ -68,7 +68,7 @@
   width: 0;
   height: 3px;
 
-  background: var(--color-accent-600);
+  background: var(--section-nav-marker);
   border-radius: var(--radius-pill);
 
   transform: translateX(-50%);
@@ -80,11 +80,14 @@
 }
 
 .section-nav__link:hover,
-.section-nav__link:focus-visible,
+.section-nav__link:focus-visible {
+  color: var(--section-nav-hover-text);
+}
+
 .section-nav__link--active,
 .section-nav__link[aria-current="page"],
 .section-nav__link[aria-selected="true"] {
-  color: var(--text-blue-strong);
+  color: var(--section-nav-active-text);
 }
 
 .section-nav__link:hover,
@@ -144,7 +147,7 @@
 
 @media (hover: none), (pointer: coarse) {
   .section-nav__link:hover {
-    color: var(--color-link);
+    color: var(--section-nav-text);
     transform: none;
   }
 
@@ -155,7 +158,7 @@
   .section-nav__link--active:hover,
   .section-nav__link[aria-current="page"]:hover,
   .section-nav__link[aria-selected="true"]:hover {
-    color: var(--text-blue-strong);
+    color: var(--section-nav-active-text);
   }
 
   .section-nav__link--active:hover::after,

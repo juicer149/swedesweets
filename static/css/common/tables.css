@@ -41,9 +41,8 @@
   vertical-align: middle;
 }
 
-/* Column headers in the calm design: dark grey, the sorted one darker
-   with the site's yellow line under it, over a soft hairline rather than
-   a dark rule. */
+/* Sortable headings have separate available/selected theme roles, above
+   a soft hairline. Static column labels retain ordinary body ink. */
 .data-table thead th {
   padding-bottom: 12px;
   font-size: var(--font-size-data-table-th);
@@ -53,21 +52,29 @@
   border-bottom: 1px solid var(--line-soft);
 }
 
+.data-table thead .text-link--table-sort {
+  color: var(--table-sort-text);
+}
+
 .data-table thead .text-link--table-sort.text-link--active {
-  color: var(--text-main);
+  color: var(--table-sort-active-text);
 }
 
 .data-table thead .text-link--table-sort::after {
-  background: var(--color-accent-600);
+  background: var(--table-sort-marker);
 }
 
 .data-table thead .sort-arrow {
-  color: var(--text-body);
+  color: var(--table-sort-arrow);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .data-table thead .text-link--table-sort:hover {
-    color: var(--text-strong);
+    color: var(--table-sort-hover-text);
+  }
+
+  .data-table thead .text-link--table-sort.text-link--active:hover {
+    color: var(--table-sort-active-hover-text);
   }
 }
 
@@ -198,7 +205,7 @@
 }
 
 .clickable-row:focus-visible {
-  outline: 2px solid var(--color-accent-600);
+  outline: 2px solid var(--table-row-marker);
   outline-offset: 3px;
 }
 
@@ -207,7 +214,7 @@
 }
 
 .data-table tbody tr.clickable-row:hover > *:first-child {
-  box-shadow: inset 3px 0 0 var(--color-accent-600);
+  box-shadow: inset 3px 0 0 var(--table-row-marker);
 }
 
 .empty-cell {

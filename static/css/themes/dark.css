@@ -36,6 +36,7 @@
   --action-primary-bg: var(--color-accent-600);
   --action-primary-text: var(--color-primary-800);
   --selected-accent: var(--color-accent-600);
+  --local-selected-accent: var(--color-accent-700);
 
   /* Status/feedback: shared success, warning and stronger danger ink.
      The existing soft red for general status prose is kept intentionally.
@@ -98,6 +99,20 @@
   --field-active-bg: var(--surface-active);
   --action-remove-text: var(--color-status-danger-text);
   --color-expiry-safe-text: var(--text-body);
+
+  /* Local page tabs and sort headings share a deeper selected gold.
+     Available choices and the row edge use the normal interactive blue. */
+  --section-nav-text: var(--interactive-text);
+  --section-nav-hover-text: var(--interactive-text-hover);
+  --section-nav-active-text: var(--local-selected-accent);
+  --section-nav-marker: var(--local-selected-accent);
+  --table-sort-text: var(--interactive-text);
+  --table-sort-active-text: var(--local-selected-accent);
+  --table-sort-hover-text: var(--interactive-text-hover);
+  --table-sort-active-hover-text: var(--local-selected-accent);
+  --table-sort-marker: var(--local-selected-accent);
+  --table-sort-arrow: currentColor;
+  --table-row-marker: var(--interactive-border);
 
   /* 3. Navigation and landing */
   --menu-bg: var(--color-primary-950);

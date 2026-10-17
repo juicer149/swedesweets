@@ -47,6 +47,19 @@
   --color-status-danger-text: var(--color-red-700);
   --color-status-muted-text: var(--color-neutral-700);
 
+  /* Local tabs, table sorting and row affordances; keep light's current palette. */
+  --section-nav-text: var(--color-link);
+  --section-nav-hover-text: var(--text-blue-strong);
+  --section-nav-active-text: var(--text-blue-strong);
+  --section-nav-marker: var(--color-accent-600);
+  --table-sort-text: var(--text-body);
+  --table-sort-active-text: var(--text-main);
+  --table-sort-hover-text: var(--text-strong);
+  --table-sort-active-hover-text: var(--text-strong);
+  --table-sort-marker: var(--color-accent-600);
+  --table-sort-arrow: var(--text-body);
+  --table-row-marker: var(--color-accent-600);
+
   /* Shared status table rows (orders and other data-tone tables).
      Preserve the existing light surfaces; dark supplies stronger tints. */
   --table-clickable-hover-bg: rgb(var(--color-status-info) / 0.08);

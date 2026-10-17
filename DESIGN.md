@@ -13,8 +13,8 @@ it owns). This file is the map, the rules and the reasons.
 
 No boxes. Content sits on the page itself, in one centred column, with a
 soft glow behind it that holds it together. Rows are divided by hairlines,
-not cards. Each page has **one yellow action**; everything else is a quiet
-grey link. Colour is spent only where it means something (a status, a pin,
+not cards. Each page has **one yellow primary action**; secondary actions are quiet
+text links, coloured by the theme. Colour is spent only where it means something (a status, a pin,
 the action). Mobile first: on a phone the actions sit at the bottom, within
 reach of the thumb. Words are short, and the page does not repeat what the
 navigation already says.
@@ -47,22 +47,35 @@ navigation already says.
 
 ## Light and dark themes
 
-Light is the default and keeps the cream page with the brand-blue menu.
-Dark is a customer-page preview: deep blue around the content, warm light
-text, and brighter status colours where they sit directly on the page.
-Ops remains light until its work pages have been reviewed.
+Light is the default: a cream page and brand-blue menu. The customer dark
+palette uses deep blue surfaces, neutral reading text and light blue available
+interactions. Ops remains light until its work pages have been reviewed.
+Theme selection and implementation details are in [CSS themes](docs/css-themes.md).
 
-The theme preserves the same layout, hierarchy and interactions. Objects
-on the page can keep their own surface: catalog labels retain their yellow
-name band and dark ink, with warm light paper in dark mode; About's polaroid
-also stays light with dark lettering. Product photos are not recoloured.
-Do not invert the primitive colour scales to change the whole site.
+Gold marks the brand, primary actions and selected states. Local section tabs
+and the active sort heading use a slightly deeper gold (accent-700); available
+choices use interactive blue. Hover/focus on an order row marks its edge blue,
+while its background retains its status hue: placed gold, packed blue,
+delivered green, cancelled red. Dark table rows share a tint intensity,
+which increases on hover without changing the status hue. Orange warning prose remains distinct from gold selection surfaces.
 
-Review each page in both themes, including focus, hover, disabled, open,
-loading, success and error states. A text colour belongs to its surface:
-light page text must not leak onto a paper label or a light button.
-Shadows, the page glow and the display titles' SVG filters also follow
-the theme. Use the shared roles before introducing page-specific colours.
+Catalog labels have a palette per theme: light paper in light, blue surfaces
+with a gold name band in dark. Quantity and variant fields are blue when
+available and gold while focused/open. Fixed weight is neutral; price tags
+keep their own gold ink. About's polaroid remains light with dark lettering,
+and product photos retain their original colours.
+
+Layout and behaviour are shared by both themes. The catalog wraps at a readable
+minimum card width, with at most four columns. The detail title scales from
+the source card's text area to retain its proportions. Navigation reserves
+space for its crown and customer pages keep a stable scrollbar gutter.
+
+Review both themes with focus, hover, disabled, open, loading, success and error
+states. Theme files own colour choices; component files own layout and states.
+Shared roles describe meaning, not merely matching colours: ordinary text,
+interaction, action, selection and status remain independently adjustable.
+Use component mappings for deliberate exceptions. Do not invert primitive
+colour scales to switch the theme.
 
 ## CSS ownership
 

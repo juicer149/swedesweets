@@ -428,3 +428,22 @@ hover role instead. Non-status rows retain the blue fallback.
 Light maps the roles to the original RGB/alpha values, preserving current light
 and ops appearances. Ops remains light. Mobile order history keeps its existing
 line layout and coloured status icon circles; this change targets table rows.
+
+## Local selection, sort headings and row edges
+
+In dark, `--local-selected-accent` (accent-700) feeds the active section-tab
+text/marker and active table-sort text/marker. Navbar selection and primary
+actions keep their separate roles. Idle sort headings and section tabs follow
+`--interactive-text`; inactive hover follows `--interactive-text-hover`. Active
+sort headings stay gold on hover, with the arrow inheriting that text colour.
+
+The component mappings are `--section-nav-text`, `--section-nav-hover-text`,
+`--section-nav-active-text`, `--section-nav-marker`, `--table-sort-text`,
+`--table-sort-active-text`, `--table-sort-hover-text`,
+`--table-sort-active-hover-text`, `--table-sort-marker` and `--table-sort-arrow`.
+`--table-row-marker` controls the clickable row's left hover edge and keyboard
+focus outline; dark maps it to `--interactive-border`.
+
+Light defines the same mappings using its previous values, preserving its
+current appearance and ops. [DESIGN.md](../DESIGN.md) owns the visual principles;
+this document owns variable mappings, previews and implementation details.
