@@ -168,6 +168,11 @@
   --catalog-control-focus-border: var(--search-focus-border);
   --catalog-control-focus-shadow: var(--search-focus-shadow);
 
+  /* Variant list: blue on the label surface; dark ink on light active rows. */
+  --catalog-option-text: var(--interactive-text);
+  --catalog-option-active-text: var(--color-primary-900);
+  --catalog-option-muted-text: var(--text-muted);
+
   /* Product-detail close: stronger blue normal icon is a deliberate exception */
   --catalog-close-ink: var(--color-primary-400);
   --catalog-close-border: var(--color-primary-400);

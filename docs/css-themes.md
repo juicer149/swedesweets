@@ -351,9 +351,28 @@ a picker; it does not receive an interactive treatment.
 | --- | --- | --- |
 | `--catalog-control-idle-text` | `--interactive-text` | Editable quantity and variant selector, including its caret and native fallback |
 | `--catalog-control-focus-text` | `--label-text` | Quantity focus and focused/open variant selector |
-| `--catalog-package-text` | `--text-secondary` (neutral-200) | Fixed weight/package when there is no variant choice |
-| `--catalog-price-text` | accent-300 | Price tag text; a slightly deeper gold than the accent-200 label ink |
+| `--catalog-package-text` | neutral-300 | Fixed weight/package when there is no variant choice |
+| `--catalog-price-text` | accent-400 | Price tag text; a deeper gold than the accent-200 label ink |
 
 These roles apply to cards and product detail, in both retail and B2B. Light
 keeps its existing appearance by mapping fixed weight and price to `--label-text`.
-Other label text, status colours and dropdown list options are unchanged.
+Other label text and status colours are unchanged. Variant list options have
+their own roles, described below.
+
+## Catalog desktop layout and variant list contrast
+
+At 1024px and wider the wall uses five equal columns. Below that, auto-fill
+keeps the existing responsive minimum. The explicit desktop count avoids
+different rem-based track counts with different browser font preferences.
+Browser zoom still changes the available CSS viewport and may cross a
+breakpoint; narrower windows are expected to show fewer products.
+
+On desktop the product image and label occupy bounded, centred grid tracks.
+The label fills its track, so unused space no longer collects at its right
+edge. This applies to direct product pages and the catalog overlay.
+
+Variant dropdown rows have separate theme roles: `--catalog-option-text`
+for available rows before hover, `--catalog-option-active-text` for the
+existing light active/selected backgrounds, and `--catalog-option-muted-text`
+for unavailable sizes. These cover both cards and product detail and do not
+change shared ops selects.

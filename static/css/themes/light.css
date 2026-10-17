@@ -272,6 +272,10 @@
   --label-text: var(--color-neutral-900);
   --catalog-price-text: var(--label-text);
   --catalog-package-text: var(--label-text);
+  /* Variant list: normal rows, light active/selected rows, unavailable sizes. */
+  --catalog-option-text: var(--color-primary-900);
+  --catalog-option-active-text: var(--color-primary-900);
+  --catalog-option-muted-text: color-mix(in srgb, var(--color-neutral-600) 55%, transparent);
   --label-muted: var(--color-neutral-600);
   --label-line: var(--color-neutral-200);
   --label-band: var(--color-accent-500);

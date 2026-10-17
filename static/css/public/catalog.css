@@ -105,6 +105,15 @@
   padding-bottom: calc(var(--tile-row-gap) / 2);
 }
 
+/* A stable five-column wall on desktop. Auto-fill above remains useful on
+   smaller screens; its rem-based minimum otherwise changes the desktop
+   count with the browser's preferred font size. */
+@media (min-width: 1024px) {
+  .tiles {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 /* A bin on the candy wall: the picture, the label stuck on its foot, and
    under the row a striped shelf: every tile draws its own piece, from the
    middle of the gap on its left to the middle of the gap on its right,
@@ -550,6 +559,17 @@
   max-width: none;
   translate: -50% 0;
   text-align: left;
+  color: var(--catalog-option-text);
+}
+
+.tile__picker .ts-dropdown .option {
+  color: var(--catalog-option-text);
+}
+
+/* The common selected/active rows have light backgrounds in both themes. */
+.tile__picker .ts-dropdown .option.active,
+.tile__picker .ts-dropdown .option.selected {
+  color: var(--catalog-option-active-text);
 }
 
 .tile__picker .ts-dropdown .option[data-value=""] {
@@ -558,7 +578,7 @@
 
 .tile__picker .ts-dropdown .option.disabled,
 .tile__picker .ts-dropdown .option[aria-disabled="true"] {
-  color: color-mix(in srgb, var(--color-neutral-600) 55%, transparent);
+  color: var(--catalog-option-muted-text);
   cursor: default;
 }
 
@@ -738,21 +758,20 @@
    product, not fill the screen. */
 .product__main {
   display: grid;
-  grid-template-columns: minmax(0, clamp(16rem, 32vw, 22rem)) minmax(0, 1fr);
+  grid-template-columns: minmax(0, clamp(16rem, 32vw, 22rem)) minmax(0, 24rem);
+  justify-content: center;
   align-items: start;
   gap: clamp(var(--space-6), 5vw, var(--space-16));
 }
 
-/* Beside the picture: the label a little down from its top, then
-   Description and Ingredients under it, as wide as it. The label is the
-   card's, bigger: --tile-label-width times --label-scale (catalog.js sets
-   both from the opened card, so the name breaks as it did there). */
+/* Beside the picture: the label and tabs fill their centred grid track.
+   catalog.js scales the label lettering from the opened card to this width. */
 .product__side {
   --label-scale: 1.8;
 
   display: grid;
   align-content: start;
-  width: min(100%, calc(var(--tile-label-width, 12rem) * var(--label-scale)));
+  width: 100%;
   min-width: 0;
   padding-top: clamp(var(--space-2), 3dvh, var(--space-6));
 }
@@ -1265,8 +1284,8 @@
   padding: 6% 12% 0;
 }
 
-/* Paper labels and their dropdowns keep dark ink in either page theme.
-   Local semantic roles reach Tom Select's dynamically inserted markup too. */
+/* Labels own their local roles; variant options override their legacy dark
+   field ink above so normal rows remain legible on a dark label surface. */
 .tile__label,
 .product__label {
   color: var(--label-text);
