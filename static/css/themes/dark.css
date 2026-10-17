@@ -122,7 +122,11 @@
   /* Header/phone edge is independent of the selected text.
      The language and cart keep their menu-specific palette/glow. */
   --menu-edge: var(--color-accent-750);
-  --menu-link-glow: radial-gradient(ellipse at center, rgb(246 181 30 / 0.30), rgb(246 181 30 / 0.12) 58%, transparent 65%);
+  --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.24), rgb(249 181 26 / 0.13) 30%, rgb(249 181 26 / 0.055) 60%, rgb(249 181 26 / 0) 100%);
+  --menu-link-glow-blur: 7px;
+  --menu-link-text-edge: color-mix(in srgb, var(--menu-chosen) 55%, var(--menu-ink));
+  --menu-link-text-glow: linear-gradient(90deg, var(--menu-link-text-edge), var(--menu-chosen) 42%, var(--menu-chosen) 58%, var(--menu-link-text-edge));
+  --menu-link-text-fill: transparent;
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
   --menu-cart-ink: var(--menu-ink);
   --menu-cart-ring: var(--menu-cart-ink);

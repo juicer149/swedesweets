@@ -447,3 +447,22 @@ focus outline; dark maps it to `--interactive-border`.
 Light defines the same mappings using its previous values, preserving its
 current appearance and ops. [DESIGN.md](../DESIGN.md) owns the visual principles;
 this document owns variable mappings, previews and implementation details.
+
+## Soft navbar backlight and illuminated letters
+
+Dark navbar hover/keyboard focus uses a radial `--menu-link-glow` that fades
+fully to transparency, softened by `--menu-link-glow-blur` (7px). The halo
+lives on the link's own pseudo-element, outside the text clipping, so it
+remains diffuse on both desktop and the phone bar.
+
+Only `.site-nav__label` gets the text treatment: `--menu-link-text-glow` is a
+symmetric gradient with full `--menu-chosen` gold in the middle and a softer
+`--menu-link-text-edge` towards the ends. The edge mixes 55% selected gold with
+the normal menu ink. `--menu-link-text-fill` enables the transparent glyph fill
+for clipping the gradient to letters. Icons, crowns, the cart and landing menu
+retain their own colours/effects; resting/current links stay solid until hovered
+or keyboard-focused. No text is duplicated and link geometry is unchanged.
+
+Light defines no halo or text gradient and keeps the ordinary text fill.
+Unsupported text clipping falls back to solid text; forced-colours mode restores
+ordinary visible link text when the browser suppresses gradient backgrounds.

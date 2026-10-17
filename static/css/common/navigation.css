@@ -107,9 +107,10 @@
 .site-nav__link::after {
   content: "";
   position: absolute;
-  inset: -0.4rem -0.65rem;
+  inset: -0.6rem -0.8rem;
   z-index: -1;
   background: var(--menu-link-glow);
+  filter: blur(var(--menu-link-glow-blur));
   border-radius: var(--radius-pill);
   opacity: 0;
   pointer-events: none;
@@ -132,6 +133,29 @@
 .site-nav__link:hover::after,
 .site-nav__link:focus-visible::after {
   opacity: 1;
+}
+
+/* Illuminate the letters nearest the light most strongly. The theme owns
+   the gradient/fill; light keeps ordinary text. Icons and crowns stay solid. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .site-nav__link:hover > .site-nav__label,
+  .site-nav__link:focus-visible > .site-nav__label {
+    background-image: var(--menu-link-text-glow);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: var(--menu-link-text-fill);
+    -webkit-text-fill-color: var(--menu-link-text-fill);
+  }
+}
+
+/* High-contrast modes can suppress gradients; keep their link text visible. */
+@media (forced-colors: active) {
+  .site-nav__link:hover > .site-nav__label,
+  .site-nav__link:focus-visible > .site-nav__label {
+    background-image: none;
+    color: inherit;
+    -webkit-text-fill-color: currentColor;
+  }
 }
 
 /* The crown marks the page you are on, tilted on the last letter as on

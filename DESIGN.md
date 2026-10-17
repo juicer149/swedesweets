@@ -416,8 +416,9 @@ the brand blue, dark uses deep blue. Component CSS reads the same roles in both.
 - **Desktop:** links in the top bar, with icons; the page you are on gets
   the crown tilted on its last letter (as on the logo and the start page),
   with no hover underline in either palette. In dark, hover and keyboard
-  focus add a soft yellow halo behind the text (`--menu-link-glow`);
-  light keeps its text-colour feedback. The header's line (`--menu-edge`)
+  focus add a diffuse yellow backlight (`--menu-link-glow`), with the
+  letters brightest at its centre and softer towards the ends. Icons and
+  crowns retain solid ink; light keeps its text-colour feedback. The header's line (`--menu-edge`)
   is independent of the chosen link colour. On a phone the crown sits
   on the icon, the labels being too small for it.
 - **Phone:** the same links as a fixed bottom bar, the same blue
