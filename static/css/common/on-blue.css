@@ -15,9 +15,9 @@
 body.on-blue {
   --on-blue-ink: var(--menu-ink);
   --on-blue-mark: var(--color-accent-600);
-  --page-title-color: var(--on-blue-ink);
+  --page-title-color: var(--entrance-copy-text);
 
-  color: var(--on-blue-ink);
+  color: var(--entrance-copy-text);
   /* the menu's blue (themes/light.css and themes/dark.css), as the start page */
   background: var(--menu-bg);
 }
@@ -81,26 +81,26 @@ body.on-blue {
 .on-blue .page__text,
 .on-blue .page__help,
 .on-blue .form-label {
-  color: var(--on-blue-ink);
+  color: var(--entrance-copy-text);
 }
 
-/* A field's help reads as the quieter line under it: a light blue
-   (primary-200, about 5.5:1 here) instead of cream. A link in it stays
-   cream, so it stands out. */
+/* Instructions and links have separate roles: neutral copy/blue links
+   in dark, retaining the original cream/blue entrance palette in light. */
 .on-blue .form-help {
-  color: var(--color-primary-200);
+  color: var(--entrance-help-text);
 }
 
 .on-blue .form-help a {
-  color: var(--on-blue-ink);
+  color: var(--entrance-link-text);
 }
 
 .on-blue .quiet-link {
-  color: var(--on-blue-ink);
+  color: var(--entrance-link-text);
 }
 
-.on-blue .quiet-link:hover {
-  color: var(--on-blue-ink);
+.on-blue .quiet-link:hover,
+.on-blue .quiet-link:focus-visible {
+  color: var(--entrance-link-hover-text);
 }
 
 .on-blue .quiet-link:focus-visible,
@@ -109,10 +109,16 @@ body.on-blue {
 }
 
 .on-blue .page__title,
-.on-blue .page__rules,
-.on-blue .page__rules-summary,
+.on-blue .page__rules {
+  color: var(--entrance-copy-text);
+}
+
+.on-blue .page__rules-summary {
+  color: var(--entrance-link-text);
+}
+
 .on-blue .page__rules-summary:hover {
-  color: var(--on-blue-ink);
+  color: var(--entrance-link-hover-text);
 }
 
 .on-blue .page__rules-summary:focus-visible {
@@ -198,7 +204,7 @@ body.on-blue {
 
 
 /* Logging in (login.js): the form fades and the status burst stands where
-   it was, larger; its cross is cream here, red cannot be read on blue. */
+   it was, larger; its cross uses the entrance error-icon role. */
 .page--auth > .login__burst {
   position: absolute;
   inset: 0;
@@ -228,7 +234,7 @@ body.on-blue {
 }
 
 .on-blue .status-burst__mark--error {
-  color: var(--on-blue-ink);
+  color: var(--entrance-error-icon);
 }
 
 /* The ring's dots: see-through yellow turns grey on blue, so here they

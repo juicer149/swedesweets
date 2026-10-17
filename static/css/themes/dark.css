@@ -23,7 +23,7 @@
   --page-bg: var(--color-primary-900);
   --surface-bg: var(--color-primary-800);
   --surface-muted: var(--color-primary-850);
-  --text-main: var(--color-accent-50);
+  --text-main: var(--color-neutral-100);
   --text-strong: var(--color-neutral-100);
 
   --text-body: var(--color-neutral-200);
@@ -68,7 +68,10 @@
   --action-remove-text: #ffaaaa;
 
   /* Status words and contact icons on dark page surfaces */
-  --color-status-warning-text: var(--color-accent-300);
+  /* Legacy RGB-channel role: matches accent-800 (#f39912), including
+     translucent warning backgrounds and order-status icons. */
+  --color-status-warning: 243 153 18;
+  --color-status-warning-text: var(--color-accent-800);
   --color-status-info-text: var(--color-primary-150);
   --color-status-success-text: var(--color-green-400);
   --color-status-danger-text: #ffaaaa;
@@ -168,4 +171,25 @@
   --catalog-control-focus-bg: var(--search-focus-bg);
   --catalog-control-focus-border: var(--search-focus-border);
   --catalog-control-focus-shadow: var(--search-focus-shadow);
+
+  /* Status text on the dark label surface, not the old light-paper ink. */
+  --label-success-text: var(--color-green-400);
+  --label-warning-text: var(--color-accent-800);
+  --label-danger-text: var(--color-red-400);
+
+  /* Available secondary actions and linked list/product names. */
+  --quiet-link-text: var(--color-primary-200);
+  --quiet-link-hover-text: var(--color-primary-100);
+  --quiet-link-focus-text: var(--color-primary-100);
+  --line-link-text: var(--color-primary-200);
+  --line-link-hover-text: var(--color-primary-100);
+  --cart-clear-text: var(--color-primary-200);
+  --cart-clear-hover-text: var(--color-red-400);
+
+  /* Entrance information is neutral; links remain blue, failed burst red. */
+  --entrance-copy-text: var(--color-neutral-200);
+  --entrance-help-text: var(--color-neutral-400);
+  --entrance-link-text: var(--color-primary-200);
+  --entrance-link-hover-text: var(--color-primary-100);
+  --entrance-error-icon: var(--color-red-400);
 }

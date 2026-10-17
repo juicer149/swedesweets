@@ -79,7 +79,7 @@ button.text-link {
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
 
-  color: var(--text-muted);
+  color: var(--quiet-link-text);
   font-size: var(--font-size-16);
   font-weight: 600;
   text-decoration: none;
@@ -94,12 +94,13 @@ button.quiet-link {
 }
 
 .quiet-link:hover {
-  color: var(--text-strong);
+  color: var(--quiet-link-hover-text);
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
 
 .quiet-link:focus-visible {
+  color: var(--quiet-link-focus-text);
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
@@ -110,4 +111,14 @@ button.quiet-link {
   .quiet-link--danger:hover {
     color: var(--color-status-danger-text);
   }
+}
+
+/* Clear cart stays an available secondary action until hover/focus. */
+.quiet-link--clear-cart {
+  color: var(--cart-clear-text);
+}
+
+.quiet-link--clear-cart:hover,
+.quiet-link--clear-cart:focus-visible {
+  color: var(--cart-clear-hover-text);
 }

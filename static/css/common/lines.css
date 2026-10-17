@@ -513,3 +513,17 @@
 .site-nav-cart-line.line-flash--removed::before {
   background: var(--cart-remove-flash);
 }
+
+/* Linked names express an action; plain names retain the normal text colour.
+   Find Sweets addresses and other metadata keep their neutral muted role. */
+.line__link .line__name,
+a.line__product .line__name {
+  color: var(--line-link-text);
+}
+
+.line__link:hover .line__name,
+.line__link:focus-visible .line__name,
+a.line__product:hover .line__name,
+a.line__product:focus-visible .line__name {
+  color: var(--line-link-hover-text);
+}

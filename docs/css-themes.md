@@ -270,3 +270,28 @@ face shares these states with quantity. Native select fallback is styled too.
 Standalone bag/scoop SVG snapshots and the earlier shelf animations are
 preserved in `design/animations_ideas/`. Runtime template originals remain
 available for the other components that use them.
+
+## Dark semantic text roles
+
+Dark uses neutral-100 for `--text-main` (ordinary list/product text and amounts).
+Linked names use `--line-link-text` (primary-200), with primary-100 hover/focus;
+this includes Find Sweets, order-history links and linked cart products.
+Addresses and metadata keep neutral muted text.
+
+Secondary actions use `--quiet-link-text` (primary-200) and
+`--quiet-link-hover-text` / `--quiet-link-focus-text` (primary-100).
+`quiet-link--clear-cart` has independent `--cart-clear-text` and
+`--cart-clear-hover-text` roles: blue normally, red-400 on hover/focus.
+The modifier is applied to both cart pages and the B2B order review.
+
+Warnings use accent-800 text and matching RGB channels `243 153 18` for
+translucent backgrounds/borders. Keep these channels aligned if accent-800
+changes. Catalog label status uses green-400, accent-800 and red-400, giving
+success/warning/failure readable contrast on the dark label surface.
+
+Entrance information uses `--entrance-copy-text` (neutral-200) and
+`--entrance-help-text` (neutral-400). Entrance links use
+`--entrance-link-text` / `--entrance-link-hover-text` (primary-200/100).
+The transient failed-login cross uses `--entrance-error-icon` (red-400);
+the subsequent error message retains its separate accent-800 roles.
+Light supplies the original colours as defaults for these roles.

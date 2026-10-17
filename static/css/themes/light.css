@@ -395,3 +395,19 @@
   --catalog-control-focus-border: var(--search-focus-border);
   --catalog-control-focus-shadow: var(--search-focus-shadow);
 }
+
+/* Secondary actions and readable entrance/list copy. Light keeps its colours. */
+:root {
+  --quiet-link-text: var(--text-muted);
+  --quiet-link-hover-text: var(--text-strong);
+  --quiet-link-focus-text: var(--quiet-link-text);
+  --line-link-text: var(--text-main);
+  --line-link-hover-text: var(--text-main);
+  --cart-clear-text: var(--quiet-link-text);
+  --cart-clear-hover-text: var(--quiet-link-hover-text);
+  --entrance-copy-text: var(--menu-ink);
+  --entrance-help-text: var(--color-primary-200);
+  --entrance-link-text: var(--menu-ink);
+  --entrance-link-hover-text: var(--menu-ink);
+  --entrance-error-icon: var(--menu-ink);
+}
