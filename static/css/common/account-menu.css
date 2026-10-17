@@ -1,0 +1,73 @@
+/* Account destinations are composed by accounts/account_menus.py. */
+.account-menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.account-menu__trigger {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  color: var(--account-menu-trigger);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  list-style: none;
+}
+
+.account-menu__trigger::-webkit-details-marker { display: none; }
+.account-menu__trigger .ui-icon-svg { width: 1.25rem; height: 1.25rem; }
+.account-menu__trigger:is(:hover, :focus-visible),
+.account-menu[open] > .account-menu__trigger {
+  color: var(--menu-chosen);
+}
+.account-menu__trigger:focus-visible {
+  outline: 2px solid var(--menu-chosen);
+  outline-offset: 3px;
+}
+
+.account-menu__panel {
+  position: absolute;
+  z-index: 130;
+  top: calc(100% + var(--space-3));
+  right: 0;
+  width: 17rem;
+  max-width: calc(100vw - 2rem);
+  padding: var(--space-3);
+  background: var(--account-menu-bg);
+  border: 1px solid var(--account-menu-border);
+  border-radius: var(--radius-control);
+  box-shadow: var(--account-menu-shadow);
+}
+
+.account-menu .account-menu__link {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  color: var(--account-menu-text);
+  border-radius: var(--radius-control);
+  text-align: start;
+  font-size: var(--font-size-14);
+}
+.account-menu .account-menu__link:is(:hover, :focus-visible),
+.account-menu .account-menu__link[aria-current="page"] {
+  color: var(--account-menu-selected);
+  text-shadow: var(--interaction-text-shadow);
+  text-decoration: none;
+}
+.account-menu .account-menu__link:focus-visible {
+  outline: 2px solid var(--account-menu-selected);
+  outline-offset: -2px;
+}
+.account-menu__logout {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--account-menu-divider);
+}
+
+@media (forced-colors: active) {
+  .account-menu .account-menu__link[aria-current="page"] { text-decoration: underline; }
+}

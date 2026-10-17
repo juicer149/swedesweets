@@ -149,8 +149,13 @@
   --preferences-selected-glow-filter: var(--interaction-glow-filter);
   --preferences-selected-glow-opacity: var(--interaction-selected-opacity);
   --preferences-hover: var(--selected-accent);
-  --preferences-logout-text: var(--interactive-text);
-  --preferences-logout-hover: var(--selected-accent);
+  --account-menu-trigger: var(--interactive-text);
+  --account-menu-text: var(--interactive-text);
+  --account-menu-selected: var(--selected-accent);
+  --site-switch-track: var(--color-primary-950);
+  --site-switch-border: var(--interactive-border);
+  --site-switch-thumb: var(--color-primary-200);
+  --site-switch-symbol: var(--interactive-text);
   --theme-switch-track: var(--color-primary-950);
   --theme-switch-border: var(--interactive-border);
   --theme-switch-thumb: var(--color-primary-200);

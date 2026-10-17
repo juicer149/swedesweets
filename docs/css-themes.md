@@ -34,9 +34,12 @@ A single wrench opens the same settings disclosure in the customer navbar,
 landing and entrance/error pages, at every screen size. Language uses EN/FR
 text buttons and the existing Django POST endpoint. The selected language is
 gold with a soft glow inside the open panel; no radio circles are drawn.
-Language submission works without JavaScript. Authenticated users also get a
-POST-only Log out button at the bottom, in interactive blue in dark mode.
-Ops shares language/logout settings but has no theme switch and stays light.
+Language submission works without JavaScript. Staff also get a Site pill in
+settings to navigate between public and ops. It uses a native GET form, so it
+also works without JavaScript. Its position reflects the navigation context,
+including the shared staff profile page. Ops has no theme switch and stays light.
+Logout lives in the separate account dropdown, alongside Profile and (for
+business customers) Order history. It remains a CSRF-protected POST action.
 
 The pill-shaped theme button uses `role="switch"`, a stable "Dark theme"
 accessible name and `aria-checked`. In day mode its thumb is on the left and
@@ -64,10 +67,13 @@ At viewport widths of 1200px and above, customer header content can grow to
 1200px. Page/catalog content retains `--width-page` (1040px), its four-column
 maximum and existing card widths. Ops header sizing is unchanged.
 
-Navbar cart and settings triggers are icons with transparent hit areas, no
+Navbar cart, settings and account triggers are icons with transparent hit areas, no
 painted circular border/background. Hover, keyboard focus and the open state
 share gold icon emission and a halo. Keyboard focus retains a visible outline;
 the cart keeps its existing add/remove feedback animation and item count.
+Its navbar artwork is 1.5rem with a 12-unit stroke in its 201-unit viewBox;
+this local override does not change cart icons elsewhere. The account uses
+a single-person SVG and shares the dropdown emission.
 `--menu-dropdown-*` roles tune this light independently of catalog buttons.
 
 ## Checks
@@ -621,9 +627,11 @@ the gold selected text, and `--preferences-selected-shadow` its emission.
 `--preferences-hover` and the shared interaction shadows. These mappings
 locally override the standalone `--menu-language-*` roles inside settings.
 
-`--preferences-logout-text` maps to interactive blue in dark mode, with
-`--preferences-logout-hover` and `--preferences-logout-divider` independent.
 Panel surface/border/wrench remain independent `--preferences-*` roles.
+`--account-menu-*` owns the account panel and links, including the blue Log out.
+`--site-switch-*` owns the staff navigation pill independently of the theme
+pill. `accounts/account_menus.py` composes allowed destinations; templates
+render those destinations and never choose links from user roles.
 
 `--theme-switch-track`, `--theme-switch-border`, `--theme-switch-thumb` and
 `--theme-switch-thumb-shadow` paint the pill. Sun/moon colour and shadow use

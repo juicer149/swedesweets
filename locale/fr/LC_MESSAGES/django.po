@@ -2204,6 +2204,12 @@ msgstr "Jour"
 msgid "Night"
 msgstr "Nuit"
 
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Site"
+msgstr "Site"
+
 #~ msgid "FAQ"
 #~ msgstr "FAQ"
 

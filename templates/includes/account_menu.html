@@ -1,23 +1,20 @@
 {% load i18n %}
-
-{% comment %}
-  The navbar's account slot: links like the page links beside them (the
-  crown when you are on one). Business customers get "My account" (the
-  logout is on that page); staff get the switch between the public site
-  and ops (their account and the logout are in the ops footer).
-
-  The caller supplies an already-composed AccountMenu; this template
-  knows nothing about roles.
-
-  Expects:
-    account_menu.switch   AccountMenuItem | None
-    account_menu.account  AccountMenuItem | None
-{% endcomment %}
-
-{% if account_menu.switch %}
-  {% include "includes/account_menu_link.html" with item=account_menu.switch %}
-{% endif %}
-
 {% if account_menu.account %}
-  {% include "includes/account_menu_link.html" with item=account_menu.account %}
+<details class="account-menu" data-dismiss-on-outside-click>
+  <summary class="account-menu__trigger menu-dropdown-trigger" aria-label="{{ account_menu.account.label }}">
+    {% include "includes/ui/icon.html" with name="user" %}
+  </summary>
+  <div class="account-menu__panel">
+    <a class="quiet-link account-menu__link" href="{{ account_menu.account.href }}"
+      {% if request.resolver_match.view_name == account_menu.account.route_name %}{% if not account_menu.orders or request.GET.tab != 'orders' %}aria-current="page"{% endif %}{% endif %}>{% trans 'Profile' %}</a>
+    {% if account_menu.orders %}
+      <a class="quiet-link account-menu__link" href="{{ account_menu.orders.href }}"
+        {% if request.resolver_match.view_name == account_menu.orders.route_name or request.GET.tab == 'orders' %}aria-current="page"{% endif %}>{{ account_menu.orders.label }}</a>
+    {% endif %}
+    <form class="account-menu__logout" method="post" action="{% url 'logout' %}" data-dirty-ignore="true">
+      {% csrf_token %}
+      <button class="quiet-link account-menu__link" type="submit">{% trans 'Log out' %}</button>
+    </form>
+  </div>
+</details>
 {% endif %}

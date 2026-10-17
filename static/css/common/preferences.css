@@ -83,21 +83,6 @@
   color: var(--preferences-ink);
 }
 
-.site-preferences__logout {
-  margin-top: var(--space-5);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--preferences-logout-divider);
-}
-
-.site-preferences__logout .quiet-link {
-  color: var(--preferences-logout-text);
-}
-
-.site-preferences__logout .quiet-link:is(:hover, :focus-visible) {
-  color: var(--preferences-logout-hover);
-  text-shadow: var(--interaction-text-shadow);
-}
-
 /* More breathing room for desktop chrome; catalog keeps its own page width. */
 @media (min-width: 1200px) {
   :root:not([data-site-zone="ops"]) .site-header > .container {

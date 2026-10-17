@@ -413,8 +413,8 @@
   align-items: center;
   justify-content: center;
 
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1.5rem;
+  height: 1.5rem;
 
   color: currentColor;
 }
@@ -422,6 +422,11 @@
 .site-nav-cart__icon .ui-icon-svg {
   width: 100%;
   height: 100%;
+}
+
+/* The artwork uses a 201-unit viewBox. Strengthen only this navbar instance. */
+.site-nav-cart__icon .cart-cls-1 {
+  stroke-width: 12px;
 }
 
 .site-nav-cart__count {
@@ -652,112 +657,6 @@
   font-size: var(--font-size-14);
 }
 
-
-/* The account slot (includes/account_menu.html): page links like the
-   others at the far right of the navbar (staff: the public/ops switch,
-   then My account); the crown when you are on one. On a phone the header
-   has no room for words: the icons. */
-.site-nav__account-link {
-  margin-left: var(--space-2);
-}
-
-@media (max-width: 767px) {
-  .site-nav__account-link {
-    display: inline-flex;
-    min-height: 2rem;
-    margin-left: var(--space-1);
-    padding: var(--space-1);
-  }
-
-  /* room for the crown tilted on the icon */
-  .site-nav__auth .site-nav__account-link[aria-current="page"] {
-    margin-right: 0.35rem;
-  }
-
-  .site-nav__account-link > .site-nav__account-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
-
-  /* Staff's switch (Public site / Ops) keeps a word beside its icon, so
-     it reads as the way between the two: a small outlined pill, like the
-     language buttons next to it. The full label stays for screen
-     readers. */
-  .site-nav__auth .site-nav__account-link--worded {
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.3rem;
-
-    min-height: 2rem;
-    padding: 0.3rem 0.65rem 0.3rem 0.5rem;
-
-    color: var(--menu-ink);
-    border: 1px solid var(--menu-line);
-    border-radius: var(--radius-pill);
-
-    font-size: var(--font-size-12);
-    font-weight: 800;
-    line-height: 1;
-    white-space: nowrap;
-  }
-
-  .site-nav__account-link--worded > .site-nav__account-label--short {
-    position: static;
-    width: auto;
-    height: auto;
-    overflow: visible;
-    clip: auto;
-  }
-
-  .site-nav__account-link--worded > .site-nav__account-label--short::after {
-    content: none;
-  }
-
-  .site-nav__account-link--worded .site-nav__icon {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  /* A worded link carries the crown as on wide screens: tilted on the
-     word's last letter, to the right, not on the icon. */
-  .site-nav__auth .site-nav__account-link--worded[aria-current="page"] .site-nav__icon::after {
-    content: none;
-  }
-
-  .site-nav__auth .site-nav__account-link--worded[aria-current="page"] {
-    margin-right: 0.6rem;
-  }
-
-  .site-nav__account-link--worded > .site-nav__account-label--short {
-    position: relative;
-  }
-
-  .site-nav__account-link--worded[aria-current="page"] > .site-nav__account-label--short::before {
-    content: "";
-    position: absolute;
-    top: -1.35em;
-    right: -1.55em;
-    width: 1.5em;
-    height: 1.5em;
-
-    background: var(--menu-crown);
-  -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
-  mask: url("../../images/favicon.svg") center / contain no-repeat;
-    pointer-events: none;
-  }
-}
-
-/* Wide screens: the full label; the phone's word is not needed. */
-@media (min-width: 768px) {
-  .site-nav__account-label--short {
-    display: none;
-  }
-}
 
 /* =============================================================================
    Mobile navigation

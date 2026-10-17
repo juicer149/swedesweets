@@ -1,15 +1,7 @@
-"""
-Identity links for the shared navbar account slot.
+"""Navbar account links and staff-only site switching.
 
-No menu, only links, like the page links beside them. A business
-customer gets "My account" (their orders and details, with the logout:
-one rarely logs out, so it needs no place in the navbar). Staff get a
-switch between the public site and ops instead: "Ops dashboard" on the
-public site, "Public site" in ops; their own account and the logout are
-in the ops footer (includes/ops_footer.html).
-
-Logout is a POST action with CSRF protection; the business account tab
-and the ops footer render it.
+Builders choose destinations; shared templates render the account disclosure
+and the settings site switch. Logout stays a CSRF-protected POST action.
 """
 
 from __future__ import annotations
@@ -27,9 +19,6 @@ class AccountMenuItem:
     label: str
     route_name: str
     icon: str = ""
-    # The word a phone has room for, beside the icon (staff's switch);
-    # without it a phone shows the icon alone.
-    short_label: str = ""
 
     @property
     def href(self) -> str:
@@ -40,29 +29,37 @@ class AccountMenuItem:
 class AccountMenu:
     account: AccountMenuItem | None = None
     switch: AccountMenuItem | None = None
+    orders: AccountMenuItem | None = None
+    site_is_ops: bool = False
 
 
 BUSINESS_ACCOUNT_MENU_ITEM = AccountMenuItem(
     label=_("My account"),
     route_name="business_portal:index",
-    icon="users",
-    # A shop finds its orders and details here: a short word beside the
-    # icon on a phone ("Me"), where the header has little room.
-    short_label=_("Me"),
+    icon="user",
+)
+
+STAFF_ACCOUNT_MENU_ITEM = AccountMenuItem(
+    label=_("My account"),
+    route_name="accounts:me",
+    icon="user",
+)
+
+BUSINESS_ORDERS_MENU_ITEM = AccountMenuItem(
+    label=_("Order history"),
+    route_name="business_portal:orders",
 )
 
 OPS_DASHBOARD_MENU_ITEM = AccountMenuItem(
     label=_("Ops dashboard"),
     route_name="ops_dashboard",
     icon="wrench",
-    short_label=_("Ops"),
 )
 
 PUBLIC_SITE_MENU_ITEM = AccountMenuItem(
     label=_("Public site"),
     route_name="storefront:product_list",
     icon="storefront",
-    short_label=_("Public site"),
 )
 
 
@@ -71,10 +68,13 @@ def build_storefront_account_menu(
     account_role: AccountRole,
     role_spec: RoleSpec,
 ) -> AccountMenu | None:
-    """The account links while browsing the public storefront."""
+    """Account destinations and optional staff site switch on the storefront."""
 
     if role_spec.allows(Capability.VIEW_STAFF_OPS):
-        return AccountMenu(switch=OPS_DASHBOARD_MENU_ITEM)
+        return AccountMenu(
+            account=STAFF_ACCOUNT_MENU_ITEM,
+            switch=OPS_DASHBOARD_MENU_ITEM,
+        )
 
     if account_role == AccountRole.BUSINESS_CUSTOMER:
         return build_business_account_menu()
@@ -85,10 +85,17 @@ def build_storefront_account_menu(
 def build_business_account_menu() -> AccountMenu:
     """The account link on the business customer site."""
 
-    return AccountMenu(account=BUSINESS_ACCOUNT_MENU_ITEM)
+    return AccountMenu(
+        account=BUSINESS_ACCOUNT_MENU_ITEM,
+        orders=BUSINESS_ORDERS_MENU_ITEM,
+    )
 
 
 def build_ops_account_menu() -> AccountMenu:
     """The account links inside the operations portal."""
 
-    return AccountMenu(switch=PUBLIC_SITE_MENU_ITEM)
+    return AccountMenu(
+        account=STAFF_ACCOUNT_MENU_ITEM,
+        switch=PUBLIC_SITE_MENU_ITEM,
+        site_is_ops=True,
+    )

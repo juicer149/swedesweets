@@ -244,9 +244,18 @@
   --preferences-selected-glow-filter: blur(6px);
   --preferences-selected-glow-opacity: 1;
   --preferences-hover: var(--color-accent-800);
-  --preferences-logout-text: var(--color-primary-600);
-  --preferences-logout-hover: var(--color-accent-800);
-  --preferences-logout-divider: var(--line-soft);
+  /* Account menu and staff site switch, independent of language/theme choices. */
+  --account-menu-trigger: var(--menu-ink);
+  --account-menu-bg: var(--preferences-bg);
+  --account-menu-border: var(--preferences-border);
+  --account-menu-shadow: var(--preferences-shadow);
+  --account-menu-text: var(--color-primary-700);
+  --account-menu-selected: var(--color-accent-800);
+  --account-menu-divider: var(--line-soft);
+  --site-switch-track: var(--color-primary-100);
+  --site-switch-border: var(--color-primary-400);
+  --site-switch-thumb: var(--color-primary-50);
+  --site-switch-symbol: var(--color-primary-700);
   --theme-switch-track: var(--color-primary-100);
   --theme-switch-border: var(--color-primary-400);
   --theme-switch-thumb: var(--color-primary-50);

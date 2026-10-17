@@ -22,11 +22,8 @@
     {% if site_zone != "ops" %}
       {% include "includes/theme_switch.html" %}
     {% endif %}
-    {% if request.user.is_authenticated %}
-      <form class="site-preferences__logout" method="post" action="{% url 'logout' %}" data-dirty-ignore="true">
-        {% csrf_token %}
-        <button class="quiet-link" type="submit">{% trans 'Log out' %}</button>
-      </form>
+    {% if account_menu.switch %}
+      {% include "includes/site_switch.html" %}
     {% endif %}
   </div>
 </details>
