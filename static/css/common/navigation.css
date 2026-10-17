@@ -135,8 +135,21 @@
   opacity: 1;
 }
 
+/* Give descenders (g, p, y) paint room when the gradient clips to glyphs.
+   Matching negative margins keep the original navigation geometry. */
+.site-nav__label {
+  padding-block: 0.18em;
+  margin-block: -0.18em;
+}
+
+/* Paint the existing SVG strokes, preserving their shapes and widths. */
+.site-nav__link:hover > .site-nav__icon .ui-icon-svg,
+.site-nav__link:focus-visible > .site-nav__icon .ui-icon-svg {
+  stroke: var(--menu-icon-paint, currentColor);
+}
+
 /* Illuminate the letters nearest the light most strongly. The theme owns
-   the gradient/fill; light keeps ordinary text. Icons and crowns stay solid. */
+   the gradient/fill; light keeps ordinary text and crowns keep solid ink. */
 @supports (background-clip: text) or (-webkit-background-clip: text) {
   .site-nav__link:hover > .site-nav__label,
   .site-nav__link:focus-visible > .site-nav__label {
@@ -148,8 +161,13 @@
   }
 }
 
-/* High-contrast modes can suppress gradients; keep their link text visible. */
+/* High-contrast modes can suppress gradients; keep text and strokes visible. */
 @media (forced-colors: active) {
+  .site-nav__link:hover > .site-nav__icon .ui-icon-svg,
+  .site-nav__link:focus-visible > .site-nav__icon .ui-icon-svg {
+    stroke: currentColor;
+  }
+
   .site-nav__link:hover > .site-nav__label,
   .site-nav__link:focus-visible > .site-nav__label {
     background-image: none;

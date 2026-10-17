@@ -417,7 +417,7 @@ the brand blue, dark uses deep blue. Component CSS reads the same roles in both.
   the crown tilted on its last letter (as on the logo and the start page),
   with no hover underline in either palette. In dark, hover and keyboard
   focus add a diffuse yellow backlight (`--menu-link-glow`), with the
-  letters brightest at its centre and softer towards the ends. Icons and
+  letters brightest at its centre and softer towards the ends. Icons share that toning;
   crowns retain solid ink; light keeps its text-colour feedback. The header's line (`--menu-edge`)
   is independent of the chosen link colour. On a phone the crown sits
   on the icon, the labels being too small for it.

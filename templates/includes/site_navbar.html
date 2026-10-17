@@ -19,7 +19,8 @@
 
 {% with namespace=request.resolver_match.namespace %}
 {% with url_name=request.resolver_match.url_name %}
-<header class="site-header">
+<header class="site-header" style="--menu-icon-paint: url('#site-nav-icon-light') currentColor;">
+  {% include "includes/ui/nav_light.html" %}
   <div class="container">
     <nav
       class="site-nav"

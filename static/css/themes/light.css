@@ -206,6 +206,7 @@
   /* ### Hover/focus halo: no underline or glow in light. */
   --menu-link-glow: none;
   --menu-link-glow-blur: 0px;
+  --menu-link-text-edge: var(--menu-chosen);
   --menu-link-text-glow: none;
   --menu-link-text-fill: currentColor;
   /* ### The crown on the page you are on: a dark shadow under it so it

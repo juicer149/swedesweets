@@ -69,3 +69,28 @@
     font-size: var(--font-size-12);
   }
 }
+
+/* Header language choices share the navbar's backlight. Other placements
+   (landing and entrances) retain their own existing presentation. */
+.site-header .language-switcher__option {
+  position: relative;
+  isolation: isolate;
+}
+
+.site-header .language-switcher__option::after {
+  content: "";
+  position: absolute;
+  inset: -0.2rem -0.4rem;
+  z-index: -1;
+  background: var(--menu-link-glow);
+  filter: blur(var(--menu-link-glow-blur));
+  border-radius: var(--radius-pill);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-fast);
+}
+
+.site-header .language-switcher__option:hover::after,
+.site-header .language-switcher__option:focus-visible::after {
+  opacity: 1;
+}

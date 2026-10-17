@@ -459,10 +459,17 @@ Only `.site-nav__label` gets the text treatment: `--menu-link-text-glow` is a
 symmetric gradient with full `--menu-chosen` gold in the middle and a softer
 `--menu-link-text-edge` towards the ends. The edge mixes 55% selected gold with
 the normal menu ink. `--menu-link-text-fill` enables the transparent glyph fill
-for clipping the gradient to letters. Icons, crowns, the cart and landing menu
+for clipping the gradient to letters. The SVG icons use the same centre/edge gold through the header's shared
+`site-nav-icon-light` paint server. Crowns, the cart and landing menu
 retain their own colours/effects; resting/current links stay solid until hovered
 or keyboard-focused. No text is duplicated and link geometry is unchanged.
 
 Light defines no halo or text gradient and keeps the ordinary text fill.
 Unsupported text clipping falls back to solid text; forced-colours mode restores
 ordinary visible link text when the browser suppresses gradient backgrounds.
+
+The label's balanced vertical padding/margins preserve space for descenders
+when clipping the gradient to text. Header language choices reuse the same
+backlight on hover and focus, while their selected-language underline remains.
+Language controls outside the header retain their previous presentation.
+SVG strokes fall back to solid colour in forced-colours mode.
