@@ -376,3 +376,15 @@ for available rows before hover, `--catalog-option-active-text` for the
 existing light active/selected backgrounds, and `--catalog-option-muted-text`
 for unavailable sizes. These cover both cards and product detail and do not
 change shared ops selects.
+
+## Product title proportions and stock messages
+
+When a catalog card opens, its name's actual text width and font size determine
+the detail title size. The band padding scales with the source band. A
+ResizeObserver updates the ratio after viewport/zoom changes and disconnects
+when the overlay closes. Direct links retain the default detail typography.
+
+Product detail only displays the stock line below the existing threshold of
+10 units, including zero stock. Healthy stock is hidden in server-rendered
+HTML as well as after choosing a variant or toggling a special offer. The
+existing availability labels and ordering/stock rules are unchanged.

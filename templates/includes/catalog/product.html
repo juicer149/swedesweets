@@ -172,7 +172,7 @@
               <span data-deal-text>{% if deal %}<b>{{ deal.badge_label }}</b>{% if deal.price_label %} · {{ deal.price_label }}{% endif %}{% endif %}</span>
             </label>
 
-            <p class="product__stock" data-product-stock {% if card.has_size_choice %}hidden{% endif %}>
+            <p class="product__stock" data-product-stock {% if card.has_size_choice or initial_offer.available_units >= 10 %}hidden{% endif %}>
               <span
                 class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %}"
                 data-product-stock-text

@@ -76,6 +76,25 @@ def test_product_detail_is_reachable_by_anonymous_visitors(client):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("quantity, hidden", [(9, False), (10, True), (25, True)])
+def test_product_detail_only_shows_stock_when_low(client, quantity, hidden):
+    product = product_factory(name="Apple")
+    retail_product_price_factory(product=product, enabled=True, price=Decimal("12.50"))
+    retail_inventory_batch_factory(product=product, quantity=quantity)
+
+    response = client.get(
+        reverse("storefront:product_detail", kwargs={"product_id": product.id})
+    )
+
+    assert response.status_code == 200
+    html = response.content.decode()
+    stock_attributes = html.split("data-product-stock", 1)[1].split(">", 1)[0]
+    assert ("hidden" in stock_attributes) is hidden
+    if not hidden:
+        assert f"Only {quantity} left" in html
+
+
+@pytest.mark.django_db
 def test_product_detail_adds_in_place_with_the_burst(client):
     product = product_factory(name="Apple")
     retail_product_price_factory(product=product, enabled=True, price=Decimal("12.50"))

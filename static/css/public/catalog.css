@@ -891,7 +891,7 @@
   margin: 0;
   color: var(--label-band-text);
   font-family: var(--font-body);
-  font-size: calc(var(--font-size-14) * var(--label-scale));
+  font-size: var(--product-name-size, calc(var(--font-size-14) * var(--label-scale)));
   font-weight: 800;
   line-height: 1.2;
   overflow-wrap: anywhere;

@@ -508,29 +508,49 @@
     };
   }
 
-  /* The page's label is the card's, bigger: the same width-to-text ratio,
-     so the name breaks the same way. */
+  let labelResizeObserver = null;
+
+  /* Scale the actual name area, not an estimate of the grid's spare room.
+     Keep it in sync when the viewport, browser zoom or source card changes. */
   function scaleLabel(article, tile) {
-    const tileLabel = tile?.querySelector(".tile__label");
-    const main = article.querySelector(".product__main");
-    const media = article.querySelector(".product__media");
+    labelResizeObserver?.disconnect();
+    labelResizeObserver = null;
+    const tileName = tile?.querySelector(".tile__name");
+    const band = article.querySelector(".product__band");
+    const name = article.querySelector(".product__name");
     const side = article.querySelector(".product__side");
 
-    if (!tileLabel || !main || !media || !side) {
+    if (!tileName || !band || !name || !side) {
       return;
     }
 
-    const gap = parseFloat(getComputedStyle(main).columnGap) || 0;
-    const tileWidth = tileLabel.offsetWidth;
-    // A phone: the label over the picture's foot, as wide as it is there
-    // (catalog.css); a computer: beside the picture, at most 24rem.
-    const room = window.matchMedia("(max-width: 767px)").matches
-      ? (article.querySelector(".product__label")?.offsetWidth || 0)
-      : Math.min(main.clientWidth - media.offsetWidth - gap, 24 * 16);
+    const update = () => {
+      if (!band.isConnected || !tileName.isConnected) {
+        return;
+      }
+      const source = getComputedStyle(tileName);
+      const sourceWidth = parseFloat(source.width);
+      const textWidth = sourceWidth - parseFloat(source.paddingLeft)
+        - parseFloat(source.paddingRight);
+      const bandWidth = parseFloat(getComputedStyle(band).width);
 
-    if (tileWidth > 0 && room > 0) {
-      side.style.setProperty("--tile-label-width", `${tileWidth}px`);
-      side.style.setProperty("--label-scale", String(room / tileWidth));
+      if (textWidth <= 0 || bandWidth <= 0) {
+        return;
+      }
+
+      side.style.setProperty("--label-scale", String(bandWidth / sourceWidth));
+      const available = parseFloat(getComputedStyle(name).width);
+      const fontSize = parseFloat(source.fontSize) * available / textWidth;
+      side.style.setProperty("--product-name-size", `${fontSize}px`);
+    };
+
+    update();
+    if ("ResizeObserver" in window) {
+      // Updating the font can change band height; do it outside observer
+      // delivery so a resize never creates a ResizeObserver loop warning.
+      labelResizeObserver = new ResizeObserver(() => requestAnimationFrame(update));
+      labelResizeObserver.observe(tileName, { box: "border-box" });
+      labelResizeObserver.observe(band, { box: "border-box" });
     }
   }
 
@@ -548,6 +568,8 @@
   }
 
   function hide() {
+    labelResizeObserver?.disconnect();
+    labelResizeObserver = null;
     detail.hidden = true;
     detail.replaceChildren();
     document.documentElement.classList.remove("catalog--detail-open");

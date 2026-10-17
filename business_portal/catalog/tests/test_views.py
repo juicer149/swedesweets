@@ -224,6 +224,26 @@ def test_product_detail_renders_orderable_product(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("quantity, hidden", [(9, False), (10, True), (25, True)])
+def test_product_detail_only_shows_stock_when_low(client, quantity, hidden):
+    _login_customer(client=client)
+    product = product_factory(name="Apple")
+    standard_business_offer_factory(product=product)
+    batch_factory(product=product, today=TODAY, quantity=quantity)
+
+    response = client.get(
+        reverse("business_portal:catalog_product", kwargs={"product_id": product.pk})
+    )
+
+    assert response.status_code == 200
+    html = response.content.decode()
+    stock_attributes = html.split("data-product-stock", 1)[1].split(">", 1)[0]
+    assert ("hidden" in stock_attributes) is hidden
+    if not hidden:
+        assert f"Only {quantity} left" in html
+
+
+@pytest.mark.django_db
 def test_product_detail_returns_404_for_unavailable_product(
     client,
 ):

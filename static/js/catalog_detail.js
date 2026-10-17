@@ -90,7 +90,7 @@ function initProduct(root, options = {}) {
     stockText.textContent = label;
     stockText.classList.toggle("status-text--warning", low);
     stockText.classList.toggle("status-text--success", !low);
-    stock.hidden = !label;
+    stock.hidden = !label || !low;
   }
 
   function setTag(priceLabel, note) {
