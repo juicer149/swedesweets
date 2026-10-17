@@ -1,43 +1,31 @@
 {% load i18n %}
 
-<div class="menu-preferences">
-  {% if site_zone != "ops" %}
-    {% include "includes/theme_switch.html" %}
-  {% endif %}
-
-<form
-  class="language-switcher"
-  action="{% url 'set_language' %}"
-  method="post"
-  aria-label="{% trans 'Language' %}"
-  data-dirty-ignore="true"
->
-  {% csrf_token %}
-
-  <input type="hidden" name="next" value="{{ request.get_full_path }}">
-
-  {% get_current_language as CURRENT_LANGUAGE %}
-
-  <button
-    class="language-switcher__option{% if CURRENT_LANGUAGE == 'en' %} language-switcher__option--active{% endif %}"
-    type="submit"
-    name="language"
-    value="en"
-    {% if CURRENT_LANGUAGE == 'en' %}aria-current="true"{% endif %}
-  >
-    EN
-  </button>
-
-  <span class="language-switcher__separator" aria-hidden="true">/</span>
-
-  <button
-    class="language-switcher__option{% if CURRENT_LANGUAGE == 'fr' %} language-switcher__option--active{% endif %}"
-    type="submit"
-    name="language"
-    value="fr"
-    {% if CURRENT_LANGUAGE == 'fr' %}aria-current="true"{% endif %}
-  >
-    FR
-  </button>
-</form>
-</div>
+<details class="site-preferences" data-dismiss-on-outside-click>
+  <summary class="site-preferences__trigger" aria-label="{% trans 'Settings' %}">
+    {% include "includes/ui/icon.html" with name="wrench" %}
+  </summary>
+  <div class="site-preferences__panel">
+    <form action="{% url 'set_language' %}" method="post" data-language-preferences data-dirty-ignore="true">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      {% get_current_language as CURRENT_LANGUAGE %}
+      <fieldset class="site-preferences__group">
+        <legend>{% trans 'Language' %}</legend>
+        <div class="site-preferences__choices">
+          <label class="site-preferences__choice">
+            <input type="radio" name="language" value="en"{% if CURRENT_LANGUAGE == 'en' %} checked{% endif %}>
+            <span class="language-switcher__option">EN</span>
+          </label>
+          <label class="site-preferences__choice">
+            <input type="radio" name="language" value="fr"{% if CURRENT_LANGUAGE == 'fr' %} checked{% endif %}>
+            <span class="language-switcher__option">FR</span>
+          </label>
+        </div>
+      </fieldset>
+      <noscript><button type="submit">{% trans 'Apply' %}</button></noscript>
+    </form>
+    {% if site_zone != "ops" %}
+      {% include "includes/theme_switch.html" %}
+    {% endif %}
+  </div>
+</details>

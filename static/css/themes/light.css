@@ -226,11 +226,22 @@
   /* ## Language: the chosen label uses the menu accent; the other is muted */
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
   --menu-language-chosen: var(--color-accent-600);
-  /* Temporary manual theme preview control. */
-  --theme-switch-ink: var(--menu-ink);
-  --theme-switch-border: color-mix(in srgb, var(--menu-ink) 35%, transparent);
-  --theme-switch-sun: var(--color-accent-600);
-  --theme-switch-moon: var(--menu-ink);
+  /* Settings panel: blue choices, neutral surface, sun/moon light. */
+  --preferences-trigger-ink: var(--menu-ink);
+  --preferences-trigger-border: color-mix(in srgb, var(--menu-ink) 35%, transparent);
+  --preferences-bg: var(--page-bg);
+  --preferences-ink: var(--text-strong);
+  --preferences-border: var(--line-soft);
+  --preferences-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
+  --preferences-option: var(--color-primary-700);
+  --preferences-selected: var(--color-primary-600);
+  --preferences-selected-shadow: 0 0 8px color-mix(in srgb, var(--color-primary-400) 16%, transparent);
+  --preferences-hover: var(--color-accent-800);
+  --theme-switch-sun: var(--color-primary-400);
+  --theme-switch-sun-glow: drop-shadow(0 0 4px color-mix(in srgb, var(--color-primary-300) 45%, transparent));
+  --theme-switch-moon: var(--color-white);
+  --theme-switch-moon-glow: drop-shadow(0 0 4px rgb(255 255 255 / 0.35));
+
   --menu-language-active-text: var(--menu-language-chosen);
   --menu-language-active-glow: var(--menu-link-glow);
   --menu-language-active-glow-filter: var(--interaction-glow-filter);

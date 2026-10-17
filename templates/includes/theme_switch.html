@@ -1,23 +1,28 @@
 {% load i18n %}
-{% comment %}Temporary customer theme preview. Hidden until its controller is ready.{% endcomment %}
-<button
-  class="theme-switch"
-  type="button"
-  hidden
-  data-theme-switch
-  data-light-label="{% trans 'Switch to light theme' %}"
-  data-dark-label="{% trans 'Switch to dark theme' %}"
-  aria-label="{% trans 'Dark theme' %}"
-  aria-pressed="false"
->
-  <span class="theme-switch__sky" aria-hidden="true">
-    <svg class="theme-switch__orb theme-switch__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
-    </svg>
-    <svg class="theme-switch__orb theme-switch__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M20.5 13.1A8.5 8.5 0 0 1 10.9 3.5 8.5 8.5 0 1 0 20.5 13.1Z" />
-    </svg>
-  </span>
-  <span class="theme-switch__horizon" aria-hidden="true"></span>
-</button>
+<fieldset class="site-preferences__group" data-theme-preferences hidden>
+  <legend>{% trans 'Theme' %}</legend>
+  <div class="site-preferences__theme">
+    <span class="theme-switch" aria-hidden="true">
+      <span class="theme-switch__sky" aria-hidden="true">
+        <svg class="theme-switch__orb theme-switch__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
+        </svg>
+        <svg class="theme-switch__orb theme-switch__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.5 13.1A8.5 8.5 0 0 1 10.9 3.5 8.5 8.5 0 1 0 20.5 13.1Z" />
+        </svg>
+      </span>
+      <span class="theme-switch__horizon" aria-hidden="true"></span>
+    </span>
+    <div class="site-preferences__choices">
+      <label class="site-preferences__choice">
+        <input type="radio" name="preview-theme" value="light" data-theme-choice>
+        <span class="language-switcher__option">{% trans 'Day' %}</span>
+      </label>
+      <label class="site-preferences__choice">
+        <input type="radio" name="preview-theme" value="dark" data-theme-choice>
+        <span class="language-switcher__option">{% trans 'Night' %}</span>
+      </label>
+    </div>
+  </div>
+</fieldset>

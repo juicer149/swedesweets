@@ -28,28 +28,36 @@ the choice lasts for this browser tab. Auto uses Paris time: light 06–22,
 dark 22–06. An unknown choice falls back to light. Ops remains light until its
 work pages have been checked for the dark palette.
 
-## Temporary sun/moon preview switch
+## Shared settings and temporary theme preview
 
-During customer review, a small button beside the language choices switches
-between light and dark immediately. The sun sets along an arc and the moon
-rises into its place; the reverse happens when returning to light. Reduced
-motion disables the transition. The translated button exposes a stable "Dark
-theme" name and `aria-pressed`, plus a tooltip naming the next action.
+A single wrench opens the same settings disclosure in the customer navbar,
+landing and entrance/error pages, at every screen size. Language uses native
+EN/FR radio choices and the existing Django POST endpoint; changing a choice
+submits immediately. Without JavaScript an Apply button submits the language
+form. Ops shares the language panel but has no theme choices and stays light.
 
-The button appears on customer navbar, landing and entrance/error pages. Ops
-has no switch and remains light. Without JavaScript the button stays hidden.
+Day/Night radio choices change the customer palette immediately. The blue sun
+sets along an arc and the white moon rises into its place, each with a soft
+shadow following its shape. Reduced motion disables the transition. The theme
+choices are hidden without JavaScript. Escape closes the panel and restores
+focus to its wrench; clicking outside closes it as well.
+
 The choice uses the existing sessionStorage preview key, survives navigation
 and reload in the current tab, and overrides auto mode until explicitly
-requesting `?theme=auto` again. An existing `theme` query is updated on click;
+requesting `?theme=auto` again. An existing `theme` query is updated on change;
 other query parameters, hashes and catalog history state are preserved.
 
-`theme.js` owns the small `window.siteTheme.set(light|dark)` controller;
-`theme-switch.js` owns the button and keeps its accessible state in sync with
-auto changes. `includes/theme_switch.html` and `common/theme-switch.css` own
-markup/orbit geometry. `--theme-switch-*` colours live in the theme files.
-To remove this temporary control, remove its include from the language group,
-its deferred script in base.html, and the matching CSS import/assets; the
-existing URL preview continues to work.
+`theme.js` owns `window.siteTheme.set(light|dark)`; `theme-switch.js` handles
+radio changes, language submission and synchronization with auto changes.
+`includes/language_switcher.html` owns the shared panel, including
+`includes/theme_switch.html` for customer theme choices. Common
+`preferences.css` owns panel layout and `theme-switch.css` owns the orbit.
+`--preferences-*` and `--theme-switch-*` in the theme files own their colours
+and shadows. `details-popover.js` provides the existing dismissal behaviour.
+
+At viewport widths of 1200px and above, customer header content can grow to
+1200px. Page/catalog content retains `--width-page` (1040px), its four-column
+maximum and existing card widths. Ops header sizing is unchanged.
 
 ## Checks
 
@@ -593,19 +601,16 @@ only glyph/icon emission. `--interaction-text-shadow` and
 `--interaction-icon-filter` independently tune the actual emission. Light keeps
 its existing presentation; active crowns and the landing input handoff remain.
 
-## Selected language light
+## Settings choice colours
 
-All language-switcher placements (header, landing, login/reset and error pages)
-share the same state rules. Dark selected languages use interactive blue text
-and a faint blue halo at rest. Hover/keyboard focus switches text and light to
-the shared gold treatment, then returns to blue when interaction leaves.
+Language and theme now share native radio choices inside the settings panel.
+`--preferences-option` sets their available text, `--preferences-selected` the
+checked radio/text colour, and `--preferences-selected-shadow` its faint blue
+emission. `--preferences-hover` sets hover/keyboard interaction text; shared
+interaction shadows provide the gold light. Dark maps the choices to
+`--interactive-text` (primary-200); light uses darker blue for contrast.
+Native radio markers identify selection even when both labels use blue.
 
-- `--menu-language-active-text`: `--interactive-text` (primary-200).
-- `--menu-language-active-glow`: a soft blue radial gradient.
-- `--menu-language-active-glow-filter`: 6px blur without gold side shadows.
-- `--menu-language-active-glow-opacity`: 0.6.
-- `--menu-language-active-text-shadow`: blue 8px glow at 0.16 opacity.
-- `--menu-language-active-decoration`: none in dark, underline in light.
-
-Light/ops retain their selected colour, underline and no resting glow.
-Forced-colours mode restores the underline and hides the halo.
+Panel surface, border and wrench colours are independent `--preferences-*`
+roles. The old `--menu-language-*` mappings belong to the previous standalone
+language switcher and no longer control the settings panel's choices.

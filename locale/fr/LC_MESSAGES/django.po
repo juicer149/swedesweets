@@ -2189,6 +2189,21 @@ msgstr "Passer au thème sombre"
 msgid "Dark theme"
 msgstr "Thème sombre"
 
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Apply"
+msgstr "Appliquer"
+
+msgid "Theme"
+msgstr "Thème"
+
+msgid "Day"
+msgstr "Jour"
+
+msgid "Night"
+msgstr "Nuit"
+
 #~ msgid "FAQ"
 #~ msgstr "FAQ"
 

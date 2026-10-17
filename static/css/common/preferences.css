@@ -1,0 +1,113 @@
+/* One shared settings disclosure: navigation, landing, entrance and ops.
+   Native radios provide keyboard selection; details-popover handles dismissal. */
+.site-preferences {
+  position: relative;
+  flex: 0 0 auto;
+  text-align: start;
+}
+
+.site-preferences__trigger {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--preferences-trigger-ink);
+  border: 1px solid var(--preferences-trigger-border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  list-style: none;
+}
+
+.site-preferences__trigger::-webkit-details-marker { display: none; }
+.site-preferences__trigger .ui-icon-svg { width: 1.25rem; height: 1.25rem; }
+.site-preferences__trigger:is(:hover, :focus-visible),
+.site-preferences[open] > .site-preferences__trigger {
+  color: var(--menu-chosen);
+  filter: var(--interaction-icon-filter);
+}
+.site-preferences__trigger:focus-visible {
+  outline: 2px solid var(--menu-chosen);
+  outline-offset: 3px;
+}
+
+.site-preferences__panel {
+  position: absolute;
+  z-index: 130;
+  top: calc(100% + var(--space-3));
+  right: 0;
+  width: 17rem;
+  max-width: calc(100vw - 2rem);
+  padding: var(--space-5);
+  color: var(--preferences-ink);
+  background: var(--preferences-bg);
+  border: 1px solid var(--preferences-border);
+  border-radius: var(--radius-control);
+  box-shadow: var(--preferences-shadow);
+}
+
+.site-preferences__group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.site-preferences__group[hidden] { display: none; }
+.site-preferences__group legend {
+  margin-bottom: var(--space-2);
+  padding: 0;
+  font-size: var(--font-size-14);
+  font-weight: 700;
+}
+.site-preferences__panel > .site-preferences__group { margin-top: var(--space-5); }
+.site-preferences__choices,
+.site-preferences__theme {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.site-preferences__choice {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.site-preferences__choice input {
+  margin: 0;
+  accent-color: var(--preferences-selected);
+  cursor: pointer;
+}
+.site-preferences__choice .language-switcher__option {
+  color: var(--preferences-option);
+  font-size: var(--font-size-14);
+  text-decoration: none;
+}
+.site-preferences__choice input:checked + .language-switcher__option {
+  color: var(--preferences-selected);
+  text-shadow: var(--preferences-selected-shadow);
+}
+.site-preferences__choice:is(:hover, :focus-within) .language-switcher__option {
+  color: var(--preferences-hover);
+  text-shadow: var(--interaction-text-shadow);
+}
+.site-preferences__choice input:focus-visible {
+  outline: 2px solid var(--preferences-selected);
+  outline-offset: 3px;
+}
+
+/* More breathing room for desktop chrome; catalog keeps its own page width. */
+@media (min-width: 1200px) {
+  :root:not([data-site-zone="ops"]) .site-header > .container {
+    width: min(100% - 4rem, 1200px);
+  }
+}
+
+@media (forced-colors: active) {
+  .site-preferences__choice input:checked + .language-switcher__option {
+    text-decoration: underline;
+  }
+}
+
+/* On mobile the wrench is left of the account button. Anchor its panel to
+   the whole right-hand control group so the panel stays inside the screen. */
+@media (max-width: 767px) {
+  .site-nav__auth .site-preferences { position: static; }
+}

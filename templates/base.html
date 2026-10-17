@@ -40,9 +40,7 @@
     {# Light is the default. ?theme=dark previews this tab; auto follows Paris time. #}
     {# The script runs before CSS loads to avoid flashing the wrong theme. #}
     <script src="{% static 'js/theme.js' %}"></script>
-    {% if site_zone != "ops" %}
-      <script src="{% static 'js/theme-switch.js' %}" defer></script>
-    {% endif %}
+    <script src="{% static 'js/theme-switch.js' %}" defer></script>
     <link rel="stylesheet" href="{% static site_stylesheet|default:'css/public.css' %}">
   </head>
 
