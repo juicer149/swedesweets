@@ -80,7 +80,7 @@ their title and chevron, without a tinted rectangle. FAQ and Find Sweets lights
 follow the question/name and icon separately, rather than lighting the empty
 middle of the row. Addresses
 and answers stay neutral. The landing menu and its account/cart/language controls
-use the same backlight, as does the navbar Login action. The chosen landing
+use the same backlight, as do the navbar dropdown icons. The chosen landing
 item owns its light even when pointer input follows keyboard focus. Login/password
 page home logos share the navbar logo's gold hover/focus treatment. Ready catalog cart buttons
 are interactive blue, becoming gold with the navbar cart's backlight on hover or
@@ -437,7 +437,7 @@ Theme files own navigation paint (`--menu-*`, `--menu-dropdown-*`,
 interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
 
 - **Desktop:** logo/home at the left, page navigation centred, and cart,
-  account (or Login), settings at the right in that order. The customer header
+  account and settings at the right in that order. The customer header
   can be wider than catalog content on large screens. Normal navigation has
   no hover underline. Dark hover/focus/selection uses gold ink, glyph/icon
   emission and the diffuse halo; only current pages get a crown.
@@ -449,6 +449,7 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   customers, and a CSRF-protected POST Log out at the bottom. It keeps selected
   ink, light and crown on profile/history/order-detail pages even when closed.
   Staff Profile links to their personal account, not customer order history.
+  Guests keep the same person icon, with only Login inside the dropdown.
 - **Settings:** the gear opens language text choices and the sun/moon theme
   pill. Staff also see a normal Public site/Ops dashboard link. Settings has
   no page destination and never receives a current-page crown. Ops stays light
@@ -461,8 +462,9 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   preserves selection. Added items produce the existing green bump/flash;
   removals use red. Empty/open carts hide the count.
 - **Customer footer:** the vector wordmark and crown, phone/mail/social icons,
-  plus the signed-in account and logout or a reseller login. It stays small and
-  centred, at the screen's foot on short pages. Ops uses its own quiet footer
+  with a reseller login for guests. Signed-in identity/logout are omitted;
+  My account offers a quiet Log out below Change password as well as the menu.
+  The footer stays small and centred on short pages. Ops uses its own quiet footer
   with identity, personal profile and logout.
 - **Landing:** the logo and tagline appear, then the menu rises beneath them.
   The crown follows pointer, Tab or arrow-key selection; it stays at the last

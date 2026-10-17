@@ -373,6 +373,7 @@
   --action-primary-icon-filter: none;
   --entrance-action-primary-bg: var(--color-action-place);
 
+  --interaction-glow-strength: 1;
   --interaction-halo-opacity: 1;
   --interaction-selected-opacity: 0;
   --interaction-text-shadow: none;

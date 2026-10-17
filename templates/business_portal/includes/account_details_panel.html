@@ -70,6 +70,11 @@
           {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
           {% trans "Change password" %}
         </a>
+
+        <form class="account-details__logout" method="post" action="{% url 'logout' %}" data-dirty-ignore="true">
+          {% csrf_token %}
+          <button class="quiet-link" type="submit">{% trans "Log out" %}</button>
+        </form>
       </div>
     </div>
   </section>

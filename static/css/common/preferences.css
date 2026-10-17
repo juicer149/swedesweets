@@ -22,7 +22,7 @@
 
 .site-preferences__trigger::-webkit-details-marker { display: none; }
 .site-preferences__trigger .ui-icon-svg { width: 1.25rem; height: 1.25rem; }
-.site-preferences__trigger:is(:hover, :focus-visible),
+.site-preferences__trigger:focus-visible,
 .site-preferences[open] > .site-preferences__trigger {
   color: var(--menu-chosen);
 }
@@ -102,4 +102,8 @@
   color: var(--preferences-site-hover);
   text-shadow: var(--interaction-text-shadow);
   text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-preferences__trigger:hover { color: var(--menu-chosen); }
 }

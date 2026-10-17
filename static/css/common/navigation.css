@@ -318,16 +318,21 @@
     box-shadow var(--motion-fast);
 }
 
-.site-nav-cart__trigger:hover,
 .site-nav-cart__trigger:focus-visible,
 .site-nav-cart[open] .site-nav-cart__trigger {
   color: var(--menu-cart-ink-hover);
   background: transparent;
 }
 
-.site-nav-cart__trigger:hover,
 .site-nav-cart__trigger:focus-visible {
   transform: translateY(-1px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-nav-cart__trigger:hover {
+    color: var(--menu-cart-ink-hover);
+    transform: translateY(-1px);
+  }
 }
 
 .site-nav-cart__trigger:focus-visible {

@@ -128,8 +128,8 @@
   color: var(--faq-question-lit-icon);
 }
 
-/* Small controls use the same emission without duplicating their halo. */
-.site-nav-cart__trigger:is(:hover, :focus-visible) .ui-icon-svg,
+/* The catalog cart keeps its own hover/focus rules. Navbar icons below
+   gate hover to mouse/trackpad so touch cannot leave a stale light behind. */
 .tile__add:is(:hover, :focus-visible) .ui-icon-svg {
   filter: var(--interaction-icon-filter);
 }
@@ -185,13 +185,13 @@
   transition: opacity var(--motion-fast);
 }
 
-.menu-dropdown-trigger:is(:hover, :focus-visible)::before,
+.menu-dropdown-trigger:focus-visible::before,
 details[open] > .menu-dropdown-trigger::before,
 .menu-dropdown-trigger[aria-current="page"]::before {
   opacity: var(--interaction-halo-opacity);
 }
 
-.menu-dropdown-trigger:is(:hover, :focus-visible) .ui-icon-svg,
+.menu-dropdown-trigger:focus-visible .ui-icon-svg,
 details[open] > .menu-dropdown-trigger .ui-icon-svg,
 .menu-dropdown-trigger[aria-current="page"] .ui-icon-svg {
   filter: var(--menu-dropdown-icon-filter);
@@ -236,4 +236,9 @@ details[open] > .menu-dropdown-trigger .ui-icon-svg,
 @media (forced-colors: active) {
   .menu-dropdown-trigger[aria-current="page"] { outline: 1px solid ButtonText; }
   .menu-dropdown-trigger__crown { display: none !important; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-dropdown-trigger:hover::before { opacity: var(--interaction-halo-opacity); }
+  .menu-dropdown-trigger:hover .ui-icon-svg { filter: var(--menu-dropdown-icon-filter); }
 }

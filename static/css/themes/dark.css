@@ -134,7 +134,8 @@
   /* Header/phone edge is independent of the selected text.
      The language and cart keep their menu-specific palette/glow. */
   --menu-edge: var(--color-accent-750);
-  --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.06), rgb(249 181 26 / 0.05) 30%, rgb(249 181 26 / 0.04) 60%, rgb(249 181 26 / 0) 100%);
+  --interaction-glow-strength: 0.85;
+  --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / calc(0.06 * var(--interaction-glow-strength))), rgb(249 181 26 / calc(0.05 * var(--interaction-glow-strength))) 30%, rgb(249 181 26 / calc(0.04 * var(--interaction-glow-strength))) 60%, rgb(249 181 26 / 0) 100%);
   --menu-link-glow-blur: 10px;
 
   --preferences-trigger-ink: var(--interactive-text);
@@ -161,18 +162,18 @@
   --menu-dropdown-icon-filter: var(--interaction-icon-filter);
 
   --menu-cart-ink: var(--menu-ink);
-  --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / 0.26), 0 0 32px 7px rgb(246 181 30 / 0.10);
+  --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / calc(0.26 * var(--interaction-glow-strength))), 0 0 32px 7px rgb(246 181 30 / calc(0.10 * var(--interaction-glow-strength)));
 
   /* Shared local interactions follow the approved navbar light. */
   /* Painted letters/icons emit locally; opacity scales the tuned radial halo. */
   --interaction-halo-opacity: 1;
   --interaction-selected-opacity: var(--interaction-halo-opacity);
   /* Centred shadows follow the glyph shapes, without a directional offset. */
-  --interaction-text-shadow: 0 0 3px rgb(249 181 26 / 0.15), 0 0 9px rgb(249 181 26 / 0.15), 0 0 18px rgb(249 181 26 / 0.15);
+  --interaction-text-shadow: 0 0 3px rgb(249 181 26 / calc(0.15 * var(--interaction-glow-strength))), 0 0 9px rgb(249 181 26 / calc(0.15 * var(--interaction-glow-strength))), 0 0 18px rgb(249 181 26 / calc(0.15 * var(--interaction-glow-strength)));
   /* Widen paint rather than element boxes, avoiding horizontal page overflow. */
-  --interaction-glow-filter: blur(var(--interaction-glow-blur)) drop-shadow(-12px 0 4px rgb(249 181 26 / 0.45)) drop-shadow(12px 0 4px rgb(249 181 26 / 0.45));
-  --menu-crown-shadow: drop-shadow(0 0 4px rgb(249 181 26 / 0.40)) drop-shadow(0 0 8px rgb(249 181 26 / 0.18));
-  --interaction-icon-filter: drop-shadow(0 0 3px rgb(249 181 26 / 0.28)) drop-shadow(0 0 9px rgb(249 181 26 / 0.16));
+  --interaction-glow-filter: blur(var(--interaction-glow-blur)) drop-shadow(-12px 0 4px rgb(249 181 26 / calc(0.45 * var(--interaction-glow-strength)))) drop-shadow(12px 0 4px rgb(249 181 26 / calc(0.45 * var(--interaction-glow-strength))));
+  --menu-crown-shadow: drop-shadow(0 0 4px rgb(249 181 26 / calc(0.40 * var(--interaction-glow-strength)))) drop-shadow(0 0 8px rgb(249 181 26 / calc(0.18 * var(--interaction-glow-strength))));
+  --interaction-icon-filter: drop-shadow(0 0 3px rgb(249 181 26 / calc(0.28 * var(--interaction-glow-strength)))) drop-shadow(0 0 9px rgb(249 181 26 / calc(0.16 * var(--interaction-glow-strength))));
   --menu-logo-hover: var(--selected-accent);
   --section-nav-marker-display: none;
   --find-sweets-hover-text: var(--selected-accent);
@@ -246,7 +247,7 @@
 
   /* Card hover: the name sits on gold; the picture shares the warm light. */
   --catalog-card-hover-text: var(--color-primary-700);
-  --catalog-card-hover-sheen: linear-gradient(135deg, rgb(249 181 26 / 0.22), transparent 65%);
+  --catalog-card-hover-sheen: linear-gradient(135deg, rgb(249 181 26 / calc(0.22 * var(--interaction-glow-strength))), transparent 65%);
   --catalog-card-hover-shadow: var(--menu-cart-glow);
 
   /* Quantity/variant fields: interactive blue at rest; gold while focused/open */

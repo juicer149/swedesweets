@@ -83,16 +83,7 @@
           {% endif %}
 
           {% if url_name != "login" %}
-            {% if account_menu %}
-              {% include "includes/account_menu.html" %}
-            {% else %}
-              <a
-                class="site-nav__auth-action"
-                href="{% url 'login' %}"
-              >
-                <span class="site-nav__label">{% trans "Login" %}</span>
-              </a>
-            {% endif %}
+            {% include "includes/account_menu.html" %}
           {% endif %}
           {% include "includes/language_switcher.html" %}
         </div>

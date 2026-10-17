@@ -25,3 +25,6 @@
   inset-inline-start: calc(-1 * var(--account-icon-gutter));
   top: 0;
 }
+
+/* A quiet final way out below password changes, never a competing primary action. */
+.account-details__logout { margin: 0; }

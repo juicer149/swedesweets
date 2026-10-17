@@ -1199,10 +1199,14 @@
 
   /* The categories in one row that scrolls sideways when the words are
      long (French), instead of pushing the page, and the search with it,
-     past the screen. The line under them is drawn inside (a scroll box
-     clips what is outside), with room for the yellow underline on it. */
+     past the screen. Keep the separator inside the scroll box and leave
+     room above the text for its glow. */
   .catalog__tools .section-nav {
     min-width: 0;
+    /* Bleed room above the letters; reclaim the existing search/nav gap so
+       only half this padding adds to the mobile tools' overall height. */
+    padding-top: var(--space-6);
+    margin-top: calc(-1 * var(--space-3));
     padding-bottom: calc(var(--space-1) + 1px);
     overflow-x: auto;
     overscroll-behavior-x: contain;

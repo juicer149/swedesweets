@@ -14,7 +14,7 @@
     site_home_href   - where the logo links
     primary_nav_items - NavItem-likes (label/href/icon/namespace/active_url_names)
     navbar_cart      - NavbarCart | None
-    account_menu     - AccountMenu | None (None renders the login button)
+    account_menu     - AccountMenu | None (None renders a Login-only account dropdown)
 {% endcomment %}
 
 {% with namespace=request.resolver_match.namespace %}
@@ -99,16 +99,7 @@
             </div>
           {% endif %}
 
-          {% if account_menu %}
-            {% include "includes/account_menu.html" %}
-          {% else %}
-            <a
-              class="site-nav__auth-action"
-              href="{% url 'login' %}"
-            >
-              <span class="site-nav__label">{% trans "Login" %}</span>
-            </a>
-          {% endif %}
+          {% include "includes/account_menu.html" %}
           {% include "includes/language_switcher.html" %}
         </div>
       </div>

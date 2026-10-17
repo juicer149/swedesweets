@@ -77,7 +77,10 @@ this local override does not change cart icons elsewhere. The account uses
 a single-person SVG and shares the dropdown emission.
 `--menu-dropdown-*` roles tune this light independently of catalog buttons.
 
-The right-hand controls appear in this order: cart, account (or Login), settings.
+The right-hand controls appear in this order: cart, account, settings.
+Guests use the same account icon with a Login-only dropdown. Signed-in users
+get Profile/history/logout; My account also has Log out below Change password.
+The customer footer omits signed-in identity/logout; ops keeps its own footer.
 The account and cart icons retain selected ink, halo and a crown on their pages,
 even while their dropdowns are closed. `config.context_processors.navigation`
 selects account/profile/history versus cart/checkout destinations; catalog pages
@@ -514,14 +517,19 @@ The finished dark treatment has three independent layers. Their paint lives in
 | `--selected-accent` | accent-600; solid selected/hover ink |
 | `--menu-link-glow` | Radial gold stops at 0.06, 0.05 and 0.04 opacity, fading to transparent |
 | `--menu-link-glow-blur` | 10px; softens the radial halo |
-| `--interaction-halo-opacity` | 1; scales the halo for hover/focus |
+| `--interaction-glow-strength` | 0.85; shared dark gold emission strength without changing spread |
+| `--interaction-halo-opacity` | 1; additional scaling of the broad halo for hover/focus |
 | `--interaction-selected-opacity` | Follows halo opacity for selected/open states |
 | `--interaction-text-shadow` | Centred 3px, 9px and 18px shadows, each at 0.15 opacity |
 | `--interaction-icon-filter` | Centred 3px/0.28 and 9px/0.16 SVG drop shadows |
 | `--interaction-glow-filter` | Halo blur plus lateral ±12px/4px drop shadows at 0.45 opacity |
 | `--menu-crown-shadow` | Small warm emission around the current-page crown |
 
-To change strength, edit opacity/alpha in the relevant role. To change spread,
+`--interaction-glow-strength` is 0.85 in dark (1 in light), multiplying the
+base alpha values above for gold halos, letters, icons, crowns, catalog sheen
+and the warm cart/action shadows. Set it to 1 to restore the previous strength.
+It does not change selected ink, status feedback, blur radii or halo dimensions.
+For individual changes, edit alpha in the relevant role. To change spread,
 edit blur radii or lateral offsets. Text shadows follow actual glyph shapes,
 including the outside letters; SVG filters follow painted icon shapes. No
 per-character markup, copied text or gradient-filled glyphs is required.
@@ -604,3 +612,18 @@ render those destinations and never choose links from user roles.
 `--theme-switch-thumb-shadow` paint the pill. Sun/moon colour and shadow use
 `--theme-switch-sun`, `--theme-switch-sun-glow`, `--theme-switch-moon` and
 `--theme-switch-moon-glow`. Geometry and motion stay in common CSS.
+
+## Mobile scrollports and dropdown input
+
+The catalog category row scrolls horizontally on phones; that scrollport also
+clips vertical paint. Its top padding now reserves 24px for emitted light, with
+12px of the existing search/category gap reclaimed. Do not use
+`overflow-y: visible` alongside `overflow-x: auto`: browsers compute vertical
+overflow as auto, so the light would remain clipped. Category widths and
+horizontal scrolling are unchanged.
+
+Dropdown triggers apply hover colour, light and movement only under
+`(hover: hover) and (pointer: fine)`. Open, keyboard-focus-visible and current-page
+states remain available everywhere. A touch closing a non-current dropdown
+returns its icon to blue; current account/cart icons keep their gold/crown.
+Keyboard dismissal still restores a visible focus indicator.

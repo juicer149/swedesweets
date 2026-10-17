@@ -1,5 +1,4 @@
-"""The footer under the icons: a login for shops, or who is signed in
-and Log out."""
+"""Customer footer stays quiet; signed-in account controls live on My account."""
 
 from __future__ import annotations
 
@@ -27,11 +26,19 @@ def test_visitors_get_a_reseller_login(client):
 
 @pytest.mark.django_db
 @override_settings(LANGUAGE_CODE="en")
-def test_signed_in_users_see_who_they_are_and_can_log_out(client):
+def test_signed_in_account_controls_move_from_footer_to_profile(client):
     customer = customer_factory(name="Butiken i Chamonix")
     client.force_login(customer_user_factory(customer=customer))
 
     footer = _footer(client, "business_portal:faq")
 
-    assert "Butiken i Chamonix" in footer
-    assert f'action="{reverse("logout")}"' in footer
+    assert "Butiken i Chamonix" not in footer
+    assert "Signed in as" not in footer
+    assert f'action="{reverse("logout")}"' not in footer
+
+    profile = client.get(reverse("business_portal:index")).content.decode()
+    logout = profile.split('class="account-details__logout"', 1)[1].split(
+        "</form>", 1
+    )[0]
+    assert f'method="post" action="{reverse("logout")}"' in logout
+    assert "csrfmiddlewaretoken" in logout

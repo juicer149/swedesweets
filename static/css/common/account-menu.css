@@ -20,7 +20,7 @@
 
 .account-menu__trigger::-webkit-details-marker { display: none; }
 .account-menu__trigger .ui-icon-svg { width: 1.25rem; height: 1.25rem; }
-.account-menu__trigger:is(:hover, :focus-visible),
+.account-menu__trigger:focus-visible,
 .account-menu[open] > .account-menu__trigger {
   color: var(--menu-chosen);
 }
@@ -76,4 +76,8 @@
    the whole control group, keeping its right edge inside the viewport. */
 @media (max-width: 767px) {
   .site-nav__auth .account-menu { position: static; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .account-menu__trigger:hover { color: var(--menu-chosen); }
 }
