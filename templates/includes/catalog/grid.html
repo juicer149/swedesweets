@@ -22,11 +22,11 @@
     {% if product_cards %}
       <div class="catalog__tools">
         <nav class="section-nav catalog__categories" aria-label="{% trans 'Product categories' %}">
-          <button class="section-nav__link section-nav__link--active" type="button" data-catalog-category="all" aria-pressed="true">{% trans "All" %}</button>
-          <button class="section-nav__link" type="button" data-catalog-category="candy" aria-pressed="false">{% trans "Candy" %}</button>
-          <button class="section-nav__link" type="button" data-catalog-category="chips" aria-pressed="false">{% trans "Chips" %}</button>
-          <button class="section-nav__link" type="button" data-catalog-category="dip_mix" aria-pressed="false">{% trans "Dip mix" %}</button>
-          <button class="section-nav__link" type="button" data-catalog-category="other" aria-pressed="false">{% trans "Other" %}</button>
+          <button class="section-nav__link section-nav__link--active" type="button" data-catalog-category="all" aria-pressed="true"><span class="section-nav__label">{% trans "All" %}</span></button>
+          <button class="section-nav__link" type="button" data-catalog-category="candy" aria-pressed="false"><span class="section-nav__label">{% trans "Candy" %}</span></button>
+          <button class="section-nav__link" type="button" data-catalog-category="chips" aria-pressed="false"><span class="section-nav__label">{% trans "Chips" %}</span></button>
+          <button class="section-nav__link" type="button" data-catalog-category="dip_mix" aria-pressed="false"><span class="section-nav__label">{% trans "Dip mix" %}</span></button>
+          <button class="section-nav__link" type="button" data-catalog-category="other" aria-pressed="false"><span class="section-nav__label">{% trans "Other" %}</span></button>
         </nav>
 
         <div class="catalog__search">

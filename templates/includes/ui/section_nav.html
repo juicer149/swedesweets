@@ -25,7 +25,7 @@ Usage:
           href="{{ link.href }}"
           {% if link.is_active %}aria-current="page"{% endif %}
         >
-          {{ link.label }}
+          <span class="section-nav__label">{{ link.label }}</span>
         </a>
       {% endfor %}
     </nav>

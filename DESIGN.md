@@ -59,6 +59,14 @@ while its background retains its status hue: placed gold, packed blue,
 delivered green, cancelled red. Dark table rows share a tint intensity,
 which increases on hover without changing the status hue. Orange warning prose remains distinct from gold selection surfaces.
 
+Dark public section tabs, Find Sweets shop names and FAQ question rows share the
+navbar's diffuse hover/focus light and illuminated lettering. Selected tabs keep
+their gold marker; addresses and answers stay neutral. Ready catalog cart buttons
+are interactive blue, becoming gold with the navbar cart's backlight on hover or
+keyboard focus; success feedback remains green. Dropdown options pair foreground
+and background colours so selected countries and variants remain readable.
+Variable mappings live in [docs/css-themes.md](docs/css-themes.md).
+
 Catalog labels have a palette per theme: light paper in light, blue surfaces
 with a gold name band in dark. Quantity and variant fields are blue when
 available and gold while focused/open. Fixed weight is neutral; price tags
@@ -508,4 +516,5 @@ The customer footer uses the authentic vector wordmark on one line, with the
 crown above the final s in Sweets. Its wordmark, crown and links have independent
 `--footer-*` theme colours. Missing product photos use a themeable SVG crown
 and translated message, with independent `--catalog-placeholder-*` colours.
-FAQ hover text uses `--faq-question-hover-text`, independent of strong body text.
+FAQ question colours remain independent of strong body text; hover/focus uses
+the shared interaction gradient, with `--faq-question-hover-text` as its solid-colour fallback.

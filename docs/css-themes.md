@@ -80,7 +80,7 @@ ops retain their existing definitions.
 | `--text-secondary` | Body/field ink and login/reset information |
 | `--text-reading` | `--prose-text`: About paragraphs and FAQ answers |
 | `--text-muted` | Muted metadata and entrance help |
-| `--interactive-text` | Quiet links, linked names, entrance links, closed FAQ questions and catalog cart hover/press ink |
+| `--interactive-text` | Quiet links, linked names, entrance links, closed FAQ questions and ready/pressed catalog cart ink |
 | `--interactive-text-hover` | Hover/focus for quiet links, linked names and entrance links |
 | `--interactive-text-subtle` | Navbar and footer links |
 | `--interactive-text-strong` | General links, control accents and contact email |
@@ -188,8 +188,8 @@ change delivery action buttons, the navbar cart or the in-cart badge:
 | `--catalog-cart-muted-ink` | Icon before choosing a size. |
 | `--catalog-cart-muted-border` | Outline before choosing a size. |
 
-Light retains a pale green ready button. Dark uses a primary-750 fill with a light green icon and border,
-changing the icon and border to primary-200 on hover, focus and press. The muted state remains clickable so it can
+Light retains a pale green ready button. Dark uses a primary-750 fill with a primary-200 icon and border,
+changing to gold with the navbar cart glow on hover/focus, and blue while pressed. The muted state remains clickable so it can
 prompt the customer to choose a size; it is not a disabled action.
 
 The warm neutral scale in `tokens.css` now includes every whole hundred from
@@ -209,7 +209,7 @@ the final s, at the right end of Sweets; the menu's stacked logo is unchanged.
   normal cross/edge and primary-800 behind it.
 - `--catalog-cart-hover-ink` / `--catalog-cart-hover-border` and
   `--catalog-cart-active-ink` / `--catalog-cart-active-border` let the cart
-  icon and edge follow interaction independently of its normal green ink.
+  icon and edge follow interaction independently of its normal ink.
 - Quantity and variant controls share a quiet full outline at rest; there is
   no quantity underline. On focus (including touch), their stronger ring,
   background and text follow the `--catalog-control-focus-*` roles, which
@@ -434,7 +434,7 @@ line layout and coloured status icon circles; this change targets table rows.
 In dark, `--local-selected-accent` (accent-700) feeds the active section-tab
 text/marker and active table-sort text/marker. Navbar selection and primary
 actions keep their separate roles. Idle sort headings and section tabs follow
-`--interactive-text`; inactive hover follows `--interactive-text-hover`. Active
+`--interactive-text`; section-tab hover uses the shared illuminated-letter effect below. Active
 sort headings stay gold on hover, with the arrow inheriting that text colour.
 
 The component mappings are `--section-nav-text`, `--section-nav-hover-text`,
@@ -473,3 +473,26 @@ when clipping the gradient to text. Header language choices reuse the same
 backlight on hover and focus, while their selected-language underline remains.
 Language controls outside the header retain their previous presentation.
 SVG strokes fall back to solid colour in forced-colours mode.
+
+## Shared local backlight and select contrast
+
+`common/interaction-light.css` applies the navbar-style hover/keyboard light to
+all section navigation, Find Sweets shop names and FAQ question rows. Theme roles
+`--interaction-glow`, `--interaction-glow-blur`, `--interaction-text-glow` and
+`--interaction-text-fill` alias the navbar paint, so adjustments stay consistent.
+Addresses and answers keep their neutral reading colours. Dark tabs retain the
+selected underline; hovering another tab adds light without another underline.
+Light and ops keep their existing colour and underline feedback. Touch hover
+is excluded and forced-colours mode restores solid lettering.
+
+Catalog cart buttons use `--interactive-text` / `--interactive-border` when ready
+in dark. Hover/focus uses `--menu-chosen`, `--menu-cart-ring-hover` and the navbar
+cart's glow through `--catalog-cart-hover-shadow`. Size-required buttons remain
+muted and adding-to-cart success feedback remains green.
+
+Shared enhanced-select dropdowns (including the country field) use
+`--select-option-text`, `--select-option-active-text/bg` and
+`--select-option-selected-text/bg`. Dark active options have dark blue text on
+light blue; selected options have dark blue text on pale gold, matching the
+catalog variant picker. Light/ops retain their previous palette. The catalog's
+`--catalog-option-*` overrides remain available for product-specific tuning.

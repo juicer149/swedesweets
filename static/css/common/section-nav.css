@@ -96,7 +96,10 @@
 }
 
 .section-nav__link:hover::after,
-.section-nav__link:focus-visible::after,
+.section-nav__link:focus-visible::after {
+  width: var(--section-nav-hover-marker);
+}
+
 .section-nav__link--active::after,
 .section-nav__link[aria-current="page"]::after,
 .section-nav__link[aria-selected="true"]::after {
@@ -202,7 +205,10 @@
   }
 
   .section-nav__link:hover::after,
-  .section-nav__link:focus-visible::after,
+  .section-nav__link:focus-visible::after {
+    width: var(--section-nav-mobile-hover-marker);
+  }
+
   .section-nav__link--active::after,
   .section-nav__link[aria-current="page"]::after,
   .section-nav__link[aria-selected="true"]::after {

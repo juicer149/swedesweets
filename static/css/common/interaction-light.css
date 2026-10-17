@@ -1,0 +1,87 @@
+/* Shared local hover/focus light. Themes own its paint; layout stays here.
+   Keep the name/question above the halo and leave secondary prose neutral. */
+:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary) {
+  position: relative;
+  isolation: isolate;
+}
+
+:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary)::before {
+  content: "";
+  position: absolute;
+  inset: -0.6rem 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: var(--radius-pill);
+  background: var(--interaction-glow);
+  filter: blur(var(--interaction-glow-blur));
+  opacity: 0;
+  transition: opacity var(--motion-fast);
+}
+
+/* Glyph backgrounds need room for descenders, without moving the layout. */
+.section-nav__label,
+.faq .accordion__summary > span:first-child {
+  padding-block: 0.18em;
+  margin-block: -0.18em;
+}
+
+.find-sweets .line__name {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.find-sweets .line__link:is(:hover, :focus-visible) .line__name {
+  text-decoration: var(--find-sweets-hover-decoration);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary):hover::before {
+    opacity: 1;
+  }
+}
+
+:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary):focus-visible::before {
+  opacity: 1;
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  @media (hover: hover) and (pointer: fine) {
+    :is(.section-nav__link:hover .section-nav__label,
+        .find-sweets .line__link:hover .line__name,
+        .faq .accordion__summary:hover > span:first-child) {
+      background-image: var(--interaction-text-glow);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: var(--interaction-text-fill);
+      -webkit-text-fill-color: var(--interaction-text-fill);
+    }
+  }
+
+  :is(.section-nav__link:focus-visible .section-nav__label,
+      .find-sweets .line__link:focus-visible .line__name,
+      .faq .accordion__summary:focus-visible > span:first-child) {
+    background-image: var(--interaction-text-glow);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: var(--interaction-text-fill);
+    -webkit-text-fill-color: var(--interaction-text-fill);
+  }
+}
+
+@media (forced-colors: active) {
+  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary)::before {
+    display: none;
+  }
+
+  :is(.section-nav__label, .find-sweets .line__name, .faq .accordion__summary > span:first-child) {
+    background-image: none !important;
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary)::before {
+    transition: none;
+  }
+}

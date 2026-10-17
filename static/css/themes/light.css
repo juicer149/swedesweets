@@ -351,6 +351,21 @@
   --search-focus-shadow: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
 
   /* FAQ question headings only; previous-order accordions keep their own roles. */
+  /* Shared hover light: local tabs, shop links and FAQ questions. */
+  --interaction-glow: var(--menu-link-glow);
+  --interaction-glow-blur: var(--menu-link-glow-blur);
+  --interaction-text-glow: var(--menu-link-text-glow);
+  --interaction-text-fill: var(--menu-link-text-fill);
+  --section-nav-hover-marker: 100%;
+  --section-nav-mobile-hover-marker: min(72%, 9rem);
+  --find-sweets-hover-decoration: underline;
+  --select-option-text: var(--text-blue-strong);
+  --select-option-active-text: var(--text-blue-strong);
+  --select-option-active-bg: var(--field-active-bg);
+  --select-option-selected-text: var(--text-blue-strong);
+  --select-option-selected-bg: var(--color-accent-100);
+  --catalog-cart-hover-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.14);
+
   --faq-question-text: var(--text-body);
   --faq-question-hover-text: var(--color-accent-900);
   --faq-question-open-text: var(--text-main);

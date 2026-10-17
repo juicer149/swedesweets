@@ -133,12 +133,22 @@
   --menu-cart-ring-hover: var(--color-accent-550);
   --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / 0.26), 0 0 32px 7px rgb(246 181 30 / 0.10);
 
+  /* Shared local interactions follow the approved navbar light. */
+  --section-nav-hover-marker: 0%;
+  --section-nav-mobile-hover-marker: 0%;
+  --find-sweets-hover-decoration: none;
+  --select-option-text: var(--interactive-text);
+  --select-option-active-text: var(--color-primary-900);
+  --select-option-active-bg: var(--color-primary-100);
+  --select-option-selected-text: var(--color-primary-900);
+  --catalog-cart-hover-shadow: var(--menu-cart-glow);
+
   /* 4. Reading, FAQ and contact details */
   --prose-text: var(--text-reading);
   --faq-question-text: var(--interactive-text);
   --faq-question-hover-text: var(--color-accent-500);
   --faq-question-open-text: var(--color-accent-700);
-  --faq-question-hover-bg: var(--surface-muted);
+  --faq-question-hover-bg: transparent;
   --faq-question-open-bg: color-mix(in srgb, var(--color-accent-600) 15%, transparent);
 
   /* Decorative lettering, photo paper and category icons retain their own colours */
@@ -227,16 +237,16 @@
   /* Catalog add: green ready ink; blue hover/focus/press; muted until size is chosen.
      Its button background sequence is intentionally different from text links. */
   --catalog-cart-bg: var(--color-primary-750);
-  --catalog-cart-ink: var(--color-action-deliver-light-bg);
-  --catalog-cart-border: var(--color-action-deliver-light-bg);
+  --catalog-cart-ink: var(--interactive-text);
+  --catalog-cart-border: var(--interactive-border);
   --catalog-cart-hover-bg: var(--color-primary-700);
   --catalog-cart-active-bg: var(--surface-bg);
   --catalog-cart-focus: var(--interactive-border);
   --catalog-cart-muted-bg: var(--color-primary-950);
   --catalog-cart-muted-ink: var(--color-neutral-500);
   --catalog-cart-muted-border: var(--color-neutral-500);
-  --catalog-cart-hover-ink: var(--interactive-text);
-  --catalog-cart-hover-border: var(--interactive-text);
+  --catalog-cart-hover-ink: var(--menu-chosen);
+  --catalog-cart-hover-border: var(--menu-cart-ring-hover);
   --catalog-cart-active-ink: var(--interactive-text);
   --catalog-cart-active-border: var(--interactive-text);
 

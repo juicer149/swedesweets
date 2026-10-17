@@ -670,7 +670,7 @@
 
   transform: translateX(-50%);
   cursor: pointer;
-  transition: background var(--motion-fast), transform var(--motion-fast);
+  transition: background var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast), box-shadow var(--motion-fast), transform var(--motion-fast);
 }
 
 /* The cart drawn a little right of its middle: nudged back. */
@@ -685,6 +685,7 @@
   color: var(--catalog-cart-hover-ink);
   border-color: var(--catalog-cart-hover-border);
   background: var(--catalog-cart-hover-bg);
+  box-shadow: var(--catalog-cart-hover-shadow);
 }
 
 .tile__add:active {
