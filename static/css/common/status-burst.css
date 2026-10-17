@@ -472,10 +472,9 @@
    Places with their own burst (--feedback-burst-style / -mark above)
    ============================================================================= */
 
-/* The catalog's "Add", on a tile and on a product's page: the scoop
-   spins, then our paper bag pops up over a green burst (green like the
-   tick that was pressed). The base below is the dots and the cart, for a
-   place that leaves the scoop out. */
+/* Shared feedback defaults for catalog and repeat-order controls. The recent
+   order keeps scoop/bag artwork; public/catalog.css overrides tile/product
+   feedback with the button's spinning cart and a cart success mark. */
 .tile__status,
 .product__status,
 .recent-order__status {

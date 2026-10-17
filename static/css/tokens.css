@@ -8,6 +8,7 @@
      (max-width:  639px)   small phone: one-column forms, tighter spacing
      (max-width:  479px)   very small phone
      (min-width:  768px)   the same line, from the desktop side
+     (min-width: 1200px)   wider customer header, independent of catalog width
 
    A new layout change uses one of these. Sizes that should simply shrink
    (spacing, type) use clamp() instead of another breakpoint.
@@ -200,7 +201,8 @@
        --feedback-burst-mark   after ring or dots, what grows in when it
                                worked: crown, cart or check
      status_burst.js reads them where the burst goes, so a place can have
-     its own: set them on it (the end of this file). The default, the
+     its own: set them on it in common/status-burst.css or its component.
+     The default, the
      crown's wave, is for orders: the crown is an order going through. */
   --feedback-burst-style: wave;
   --feedback-burst-mark: crown;

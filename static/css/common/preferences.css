@@ -67,14 +67,6 @@
   gap: var(--space-3);
 }
 .site-preferences .language-switcher__option {
-  --menu-language-ink: var(--preferences-option);
-  --menu-language-chosen: var(--preferences-hover);
-  --menu-language-active-text: var(--preferences-selected);
-  --menu-language-active-glow: var(--preferences-selected-glow);
-  --menu-language-active-glow-filter: var(--preferences-selected-glow-filter);
-  --menu-language-active-glow-opacity: var(--preferences-selected-glow-opacity);
-  --menu-language-active-text-shadow: var(--preferences-selected-shadow);
-  --menu-language-active-decoration: none;
   font-size: var(--font-size-14);
 }
 

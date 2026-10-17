@@ -189,12 +189,13 @@
      ## a piece of it, ### a detail of that piece.
      ========================================================================== */
 
-  /* ## Surface: the blue, the letters on it, the yellow of the chosen */
-  --menu-bg: var(--color-primary-800);
-  --menu-ink: var(--color-neutral-50);
-  --menu-chosen: var(--color-brand-yellow);
-  --menu-crown: var(--brand-crown);
-  /* outlined buttons on the blue (Login, the account on a phone) */
+  /* ## Light menu: brand blue, white available ink, gold selected ink. */
+  --menu-bg: var(--color-primary-400);
+  --menu-ink: var(--color-white);
+  --menu-logo: var(--menu-ink);
+  --menu-chosen: var(--color-accent-600);
+  --menu-crown: var(--menu-chosen);
+  /* Login retains its outlined action; authenticated dropdowns are icons. */
   --menu-line: color-mix(in srgb, var(--menu-ink) 70%, transparent);
 
   /* ## Edge: the yellow line between the navbar and the page, and round
@@ -206,8 +207,7 @@
   /* ### Hover/focus halo: no underline or glow in light. */
   --menu-link-glow: none;
   --menu-link-glow-blur: 0px;
-  /* ### The crown on the page you are on: a dark shadow under it so it
-     stands on the blue */
+  /* ### The current-page crown has no extra emission in light. */
   --menu-crown-shadow: none;
 
   /* Icon-only cart/settings dropdowns. These colours do not alter catalog buttons. */
@@ -216,22 +216,15 @@
   --menu-dropdown-icon-filter: drop-shadow(0 0 4px rgb(249 181 26 / 0.25));
 
   /* ## Cart */
-  /* ### At rest */
-  --menu-cart-ink: var(--color-accent-300);
-  --menu-cart-ring: var(--color-accent-300);
-  --menu-cart-ring-width: 1px;
+  /* ### Icon-only cart at rest */
+  --menu-cart-ink: var(--color-white);
   /* ### Pointed at, or open */
   --menu-cart-ink-hover: var(--color-accent-600);
-  --menu-cart-ring-hover: var(--color-accent-600);
-  --menu-cart-ring-width-hover: 1px;
   /* ### The count over its corner */
   --menu-cart-count-ink: var(--color-primary-950);
   --menu-cart-count-bg: var(--color-accent-600);
 
-  /* ## Language: the chosen label uses the menu accent; the other is muted */
-  --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
-  --menu-language-chosen: var(--color-accent-600);
-  /* Settings: text-only language choices, pill theme switch and logout. */
+  /* Settings: text-only language choices, pill theme switch and site link. */
   --preferences-trigger-ink: var(--menu-ink);
   --preferences-bg: var(--page-bg);
   --preferences-ink: var(--text-strong);
@@ -264,38 +257,11 @@
   --theme-switch-moon: var(--color-white);
   --theme-switch-moon-glow: drop-shadow(0 0 4px rgb(255 255 255 / 0.35));
 
-  --menu-language-active-text: var(--menu-language-chosen);
-  --menu-language-active-glow: var(--menu-link-glow);
-  --menu-language-active-glow-filter: var(--interaction-glow-filter);
-  --menu-language-active-decoration: underline;
-  --menu-language-active-glow-opacity: 0;
-  --menu-language-active-text-shadow: none;
 
   /* ## Phone bar: the links at the bottom of a phone's screen */
   --menu-bar-bg: var(--menu-bg);
   --menu-bar-edge: var(--menu-edge);
 }
-
-
-/* Two menu palettes: day is the default; night changes only its differences.
-   The fixed data-theme="light" in base.html uses light. "auto" can
-   follow Paris time, and an explicit "dark" selects the night palette.
-   Missing or unknown values safely keep the light palette. */
-:root {
-  --menu-bg: var(--color-primary-400);
-  --menu-ink: var(--color-white);
-  --menu-logo: var(--menu-ink);
-  --menu-chosen: var(--color-accent-600);
-  --menu-crown: var(--menu-chosen);
-  --menu-edge: var(--color-accent-600);
-  --menu-language-chosen: var(--menu-chosen);
-  --menu-language-ink: var(--color-primary-50);
-  --menu-cart-ink: var(--color-white);
-  --menu-cart-ring: var(--color-white);
-  --menu-cart-ink-hover: var(--color-accent-600);
-  --menu-cart-ring-hover: var(--color-accent-600);
-}
-
 
 
 /* Page surfaces and shared text. Primitive scales remain unchanged. */
@@ -391,8 +357,6 @@
   --search-focus-bg: var(--field-hover-bg);
   --search-focus-shadow: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
 
-  /* FAQ question headings only; previous-order accordions keep their own roles. */
-  /* Shared hover light: local tabs, shop links and FAQ questions. */
   /* Main solid actions; light keeps its existing yellow palette. */
   --action-primary-bg: var(--color-action-place-solid);
   --action-primary-text: var(--color-accent-text-standard);

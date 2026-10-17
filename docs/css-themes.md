@@ -3,11 +3,12 @@
 The visual principles and ownership overview are in [DESIGN.md](../DESIGN.md).
 This file describes loading, previews and the workflow for implementation.
 
-Status: structure, theme selection and a first dark palette for customer pages
-are implemented. FAQ, About, Find Sweets, account pages and the shared catalog
-use semantic colour roles. Labels have a separate palette in each theme;
-polaroids retain dark ink on light paper.
-Light remains the default; ops stays light.
+Status (2026-10-18): the public/B2B dark theme is approved and merged into
+main. FAQ, About, Find Sweets, accounts, carts/checkout and catalog share its
+finished semantic palette and interaction rules. Labels have a separate palette
+per theme; photos and About's polaroid retain their own light surfaces.
+Light remains the default. A full light-theme review and the dark ops rollout
+are still separate work; ops is explicitly held in light mode.
 
 - `static/css/tokens.css`: primitive colour scales, sizes, type and timings.
 - `static/css/themes/light.css`: default semantic colours and the day menu.
@@ -28,7 +29,7 @@ the choice lasts for this browser tab. Auto uses Paris time: light 06–22,
 dark 22–06. An unknown choice falls back to light. Ops remains light until its
 work pages have been checked for the dark palette.
 
-## Shared settings and temporary theme preview
+## Theme selection and shared settings
 
 A single gear icon opens the same settings disclosure in the customer navbar,
 landing and entrance/error pages, at every screen size. Language uses EN/FR
@@ -108,28 +109,26 @@ The page glow, display lettering's SVG shadows, contact icons, focus states,
 quantity controls and disabled controls also have theme roles. Review the
 page in both themes, with open/focused/error states, on a phone and desktop.
 
-## Verification
+## Verification and review scope
 
-The initial refactor was compared to main on 26 rendered views at 390px and
-1280px: no differences in the checked element positions, dimensions, font
-sizes, text, background or border colours in light. The browser loaded all
-CSS/fonts/images without asset errors; no horizontal overflow was found in
-either theme. Dark remains a preview for visual review before making it a
-user-facing default. It is not a claim of a measured loading-speed gain.
+The completed public dark theme was reviewed in Chrome and Firefox on mobile
+and desktop, including navigation, open/focused controls, catalog feedback,
+account/history and cart/checkout states. Light shares layout and behaviour,
+but its full palette review is still pending. Ops dark is not enabled.
 
-The Python suite passed (1329 tests), as did the seven standalone theme-selector
-checks. Browser interactions were also exercised in dark: FAQ open/close,
-focused login fields, a size dropdown with a sold-out option, adding a retail
-variant, the cart quantity field and the B2B product overlay. The overlay's
-paper label kept dark ink on its light background.
+The cleanup is intended to preserve rendering: compare component paint,
+geometry and screenshots before/after in both palettes. The initial CSS move
+was also checked against main before the later design changes. Neither check
+is a claim of a loading-speed gain. Use the commands above for current test
+results rather than treating an old test count as a permanent guarantee.
 
 ## Shared roles in the dark theme
 
 `themes/dark.css` defines shared roles first, followed by component mappings.
 Primitive colour scales stay in `tokens.css`. Component CSS continues to use
 its existing variables; the dark theme maps those variables to shared roles.
-This changes organisation without changing the rendered palette. Light and
-ops retain their existing definitions.
+Shared mappings make coordinated changes explicit. Light supplies the defaults;
+ops currently uses those light definitions.
 
 | Shared role | Component mappings / purpose |
 | --- | --- |
@@ -182,7 +181,7 @@ Their light defaults are in `themes/light.css`.
 | `--faq-question-open-text` | An open FAQ question's heading |
 | `--faq-question-hover-bg` | A closed FAQ question under the pointer |
 | `--faq-question-open-bg` | The open FAQ question's heading background |
-| `--menu-cart-glow` | The navbar cart's yellow shadow on hover, keyboard focus or while open |
+| `--menu-cart-glow` | Warm shadow reused by primary actions and catalog cards/controls; navbar dropdown icons use `--menu-dropdown-*` |
 
 The FAQ maps its roles onto the common accordion locally, so its colours do not
 change Previous orders. `common/search.css` styles only actual search controls;
@@ -362,7 +361,7 @@ Reduced-motion removes the lift and transitions. Colours live in each theme:
 | `--catalog-control-focus-shadow` | Focus/open halo (defaults to search focus halo). |
 
 Dark uses `--interactive-text` (primary-200) for idle quantity/variant text
-and restores the current gold label text colour (accent-200) on focus/open. Light uses neutral-700 for legibility on paper.
+and uses `--selected-accent` (accent-600) on focus/open. Light uses neutral-700 for legibility on paper.
 The open variant menu retains its existing item colours; only the control
 face shares these states with quantity. Native select fallback is styled too.
 
@@ -471,7 +470,7 @@ The shared data table uses `--table-tone-warning-bg`, `--table-tone-info-bg`,
 These are shared table roles, so future dark ops tables can use the same
 palette without order-history-specific selectors.
 
-Dark uses `--table-tone-strength: 15%`, matching the open FAQ heading's tint,
+Dark uses `--table-tone-strength: 15%` (FAQ itself now uses only light),
 and `--table-tone-hover-strength: 22%`. Placed uses accent-600 gold, packed
 information blue, delivered success green and cancelled danger red. Warning
 copy remains orange independently of the gold surface. Each hue has its own
@@ -504,78 +503,67 @@ Light defines the same mappings using its previous values, preserving its
 current appearance and ops. [DESIGN.md](../DESIGN.md) owns the visual principles;
 this document owns variable mappings, previews and implementation details.
 
-## Soft backlight and solid gold ink
+## Shared interaction light
 
-Dark navbar hover/keyboard focus uses a radial `--menu-link-glow` that fades
-fully to transparency, softened by `--menu-link-glow-blur` (7px). The halo
-lives outside the label so it stays diffuse on desktop and the phone bar.
-Current links keep the same halo via `--interaction-selected-opacity`; the
-crown distinguishes the current page from another hovered link.
+The finished dark treatment has three independent layers. Their paint lives in
+`themes/dark.css`; geometry and state selectors live in `common/navigation.css`,
+`common/interaction-light.css` and the owning component.
 
-Text and icons use solid `--selected-accent` gold. The previous text gradients
-and SVG paint server have been removed. `--interaction-text-shadow` adds a
-small emission around letters; `--interaction-icon-filter` does the same for
-SVG shapes. These supplement the existing radial halo without changing its
-shape. The navbar logo gets the halo and gold wordmark on hover/focus via
-`--menu-logo-hover`. Header and landing language controls share the effect.
+| Role | Current dark value / control |
+| --- | --- |
+| `--selected-accent` | accent-600; solid selected/hover ink |
+| `--menu-link-glow` | Radial gold stops at 0.06, 0.05 and 0.04 opacity, fading to transparent |
+| `--menu-link-glow-blur` | 10px; softens the radial halo |
+| `--interaction-halo-opacity` | 1; scales the halo for hover/focus |
+| `--interaction-selected-opacity` | Follows halo opacity for selected/open states |
+| `--interaction-text-shadow` | Centred 3px, 9px and 18px shadows, each at 0.15 opacity |
+| `--interaction-icon-filter` | Centred 3px/0.28 and 9px/0.16 SVG drop shadows |
+| `--interaction-glow-filter` | Halo blur plus lateral ±12px/4px drop shadows at 0.45 opacity |
+| `--menu-crown-shadow` | Small warm emission around the current-page crown |
 
-Light has no halo/emission and retains its palette. Forced-colours mode hides
-halos, removes emission and restores the section selection marker. Text stays
-ordinary text in both themes; no clipping or transparent glyph fills are needed.
+To change strength, edit opacity/alpha in the relevant role. To change spread,
+edit blur radii or lateral offsets. Text shadows follow actual glyph shapes,
+including the outside letters; SVG filters follow painted icon shapes. No
+per-character markup, copied text or gradient-filled glyphs is required.
 
-## Shared local backlight and select contrast
+Navbar/section links keep light while current. Open FAQ titles and chevrons
+emit separately, with transparent heading backgrounds. Find Sweets shop names
+and pins emit independently; addresses and FAQ answers stay neutral. The login
+home logo shares the navbar logo's gold hover/focus light. With
+`data-landing-live`, only the chosen landing item emits: moving from keyboard
+to pointer input does not leave a second light behind.
 
-`common/interaction-light.css` applies the navbar-style hover/keyboard light to
-all section navigation, Find Sweets shop names, FAQ question rows, landing menu
-and account/cart links, and the navbar Login action. Theme roles
-`--interaction-glow` and `--interaction-glow-blur` alias the navbar halo.
-Shared emission roles above keep text and icon light consistent.
-Addresses and answers keep their neutral reading colours. Dark tabs use gold
-ink and the light as their selection marker: `--section-nav-marker-display`
-hides the underline. Open FAQ summaries use a transparent background, leaving
-only the soft halo behind the gold question and chevron.
-`--interaction-selected-opacity` keeps the lamp on for selected section tabs,
-open FAQ questions and the landing menu's chosen link (1 in dark, 0 in light).
-This follows actual selection/open state, not leftover pointer or keyboard focus.
-Light and ops keep their existing colour and underline feedback. Touch hover
-is excluded and forced-colours mode restores solid lettering.
+`--interaction-glow` and `--interaction-glow-blur` alias the menu halo for local
+components. `--menu-dropdown-*` separately paints icon-only cart/account/settings
+triggers. Current cart/account pages retain light and a crown while closed;
+settings has no current-page state. Crown shadows are applied to a wrapper
+around the masked silhouette so their outside light is not clipped.
 
-Catalog cart buttons use `--interactive-text` / `--interactive-border` when ready
-in dark. Hover/focus uses `--menu-chosen`, `--menu-cart-ring-hover` and the navbar
-cart's glow through `--catalog-cart-hover-shadow`. Size-required buttons remain
-muted and adding-to-cart success feedback remains green.
+Light has no shared text-link halo/emission, but selected language choices and
+icon dropdowns have their own subtle gold light. Forced colours hides halos
+and crowns, removes emission and keeps explicit selection/focus indicators.
+Reduced motion disables movement without hiding selection or feedback.
 
-Shared enhanced-select dropdowns (including the country field) use
-`--select-option-text`, `--select-option-active-text/bg` and
-`--select-option-selected-text/bg`. Dark active options have dark blue text on
-light blue; selected options have dark blue text on pale gold, matching the
-catalog variant picker. Light/ops retain their previous palette. The catalog's
-`--catalog-option-*` overrides remain available for product-specific tuning.
+## Select contrast and catalog light
 
-Dark catalog card hover uses a warm gold sheen (`--catalog-card-hover-sheen`)
-and the navbar cart glow (`--catalog-card-hover-shadow`). Quantity/size fields
-remain blue when available; focus/open text becomes `--selected-accent`, with
-a softer gold border and `--menu-cart-glow` through the existing
-`--catalog-control-focus-*` mappings. Search fields keep their own blue focus.
+Enhanced selects, including country, use `--select-option-text`,
+`--select-option-active-text/bg` and `--select-option-selected-text/bg`.
+Dark active options have dark blue text on light blue; selected options have
+dark blue text on pale gold. Catalog variants retain their own
+`--catalog-option-*` mappings; light/ops keep the original palette.
 
-The catalog footer's `--feedback-min-loading` is 350ms (previously 550ms), scoped
-to `.catalog__more-status`. Settling/mark timings and add-to-cart feedback are
-unchanged, so only revealing the next group of products becomes faster.
+Ready catalog cart buttons use interactive blue ink/edge. Hover/focus uses
+selected gold and `--catalog-cart-hover-shadow`; success feedback stays green.
+`--catalog-cart-hover-border` maps directly to `--selected-accent` in dark,
+independently of the navbar's icon-only cart. Card hover uses warm gold sheen
+and shadow. Quantity/size fields remain blue at rest; focus/open uses selected
+gold, a soft gold edge and `--catalog-control-focus-shadow`. Search keeps blue
+focus. Catalog pagination has its own 350ms minimum loading time; adding a
+product retains its separate timing.
 
-## Content lights, input switching and main actions
+## Primary action palette
 
-FAQ summary lights are attached to the question span and chevron separately.
-Find Sweets uses the same content-sized pseudo-elements behind each shop name
-and map pin; the row itself has no halo. Neutral addresses/answers do not emit
-light. Opening a question retains both content lights. The login/reset home
-logo (`.entrance-header__brand`) shares the navbar logo's paint and halo.
-
-With `data-landing-live`, only `.landing-menu__link--chosen` emits light. A
-pointer may choose another link while the previous link still has keyboard
-focus; that previous link's halo, text shadow and icon emission are suppressed.
-Focus is preserved so normal Tab/arrow-key navigation still works.
-
-Main solid buttons (place tone and default tone) use shared theme roles:
+Main solid place/default buttons use these shared roles:
 
 | Role | Dark palette / purpose |
 | --- | --- |
@@ -590,42 +578,10 @@ Main solid buttons (place tone and default tone) use shared theme roles:
 | `--action-primary-text-shadow`, `--action-primary-icon-filter` | shared emission |
 | `--entrance-action-primary-bg` | same navy on login/reset pages |
 
-The optional hover text falls back to the normal tone text in light. Light/ops
-retain yellow main buttons; green/red/status button tones keep their palettes.
-Disabled solid buttons keep normal ink/background/edge and do not glow.
 
-## Wider light spill and glowing letters
-
-`--interaction-text-shadow` layers centred close, medium and outer glows. CSS paints these from each glyph, including the outer letters;
-no duplicated text, per-letter markup or JavaScript is needed. FAQ questions,
-shop names, section tabs, navbar and landing labels and main-button hover text
-share this role. Resting text and neutral addresses/answers retain their roles.
-
-`--interaction-glow-filter` adds soft left/right drop shadows to the existing
-blurred radial halo. It widens the painted light without enlarging pseudo-element
-boxes, so mobile navigation cannot introduce horizontal scrolling. The halo's
-vertical inset and radial colour stops are unchanged. Light supplies only its
-existing zero-blur/no-halo treatment.
-
-`--menu-crown-shadow` gives the active crown a small warm emission. Navbar
-crowns are masked pseudo-elements, so their shadow is applied to the label/icon
-wrapper after its children are painted; applying it only to the masked crown
-would clip the outer light. Landing's SVG crown uses the same role directly.
-Forced-colours mode removes both emission and halo filters.
-
-## Glyph-led light preview
-
-Dark now uses centred `0 0` text shadows with 3px, 9px and 18px blur. The icon
-filter layers close 3px and outer 9px drop shadows, so each painted SVG shape
-emits light too. No per-character elements, text copies or JavaScript are used.
-
-`--interaction-halo-opacity: 0.2` reduces the broad radial light to 20% of its
-existing tuned strength for hover, keyboard focus and selected/open states.
-The user's radial stops (0.08 / 0.06 / 0.04) and lateral filter offsets (±12px)
-are preserved. Set this opacity to `1` to restore the broad halo, or `0` to see
-only glyph/icon emission. `--interaction-text-shadow` and
-`--interaction-icon-filter` independently tune the actual emission. Light keeps
-its existing presentation; active crowns and the landing input handoff remain.
+Light/ops retain yellow primary buttons. Green/red/status action tones keep
+their palettes. Disabled solid buttons do not glow. The login/reset primary
+button uses its entrance mapping without changing the action's semantics.
 
 ## Settings colours
 
@@ -633,8 +589,9 @@ its existing presentation; active crowns and the landing input handoff remain.
 the gold selected text, and `--preferences-selected-shadow` its emission.
 `--preferences-selected-glow`, `--preferences-selected-glow-filter` and
 `--preferences-selected-glow-opacity` control the halo. Hover/focus uses
-`--preferences-hover` and the shared interaction shadows. These mappings
-locally override the standalone `--menu-language-*` roles inside settings.
+`--preferences-hover` and the shared interaction shadows.
+`common/language-switcher.css` reads these roles directly; there is no second
+menu-language palette or local alias layer to override them.
 
 Panel surface/border/gear remain independent `--preferences-*` roles.
 `--account-menu-*` owns the account panel and links, including the blue Log out.

@@ -23,8 +23,9 @@ navigation already says.
 
 ## Principles
 
-1. **No boxes.** No white cards, no yellow-topped panels, no borders around
-   groups. Group with space, hairlines and the glow (`.page::before`).
+1. **Ordinary content stays on the page.** Group with space, hairlines and
+   the glow (`.page::before`), rather than enclosing every group in a card.
+   Dropdowns and dialogs are bounded surfaces; catalog labels are paper objects.
    One exception, on ops work pages: **the thing being worked on is a
    card** (a product, each of its variants), the same card on its page
    and on its edit page, so the edit page reads as the page made
@@ -53,10 +54,17 @@ palette uses deep blue surfaces, neutral reading text and light blue available
 interactions. Ops remains light until its work pages have been reviewed.
 Theme selection and implementation details are in [CSS themes](docs/css-themes.md).
 
-For customer review, the public header/landing/login has a small sun/moon
-button beside language choices. It switches the palette directly, with a short
-setting/rising orbit; reduced motion skips animation. The explicit choice lasts
-for the tab. Ops remains light. This preview control is temporary.
+The public/B2B dark theme was approved and merged on 2026-10-18. Its palette
+and interaction rules are the baseline for future pages. The full light-theme
+review and dark ops rollout remain separate work; neither is implied by this
+completion. Light is still the default.
+
+A gear opens shared settings on navbar, landing and entrance/error pages.
+Language is selected through EN/FR text buttons; the chosen language keeps gold
+ink and a soft gold light. A pill switches Day/Night: thumb left and blue sun
+right in day mode; thumb right and white moon left in night mode. The icons
+set/rise along an arc; reduced motion skips the animation. Selection lasts for
+the current tab. Staff get a normal link to the other site beneath these controls.
 
 Gold marks the brand, hovered/focused main actions and selected states. The active sort heading uses a slightly deeper gold (accent-700); section tabs
 share navigation gold (accent-600). Available
@@ -80,9 +88,6 @@ keyboard focus; success feedback remains green. Catalog card hover and focused
 quantity/size fields also use the warm gold light; available controls remain blue.
 Dropdown options pair foreground
 and background colours so selected countries and variants remain readable.
-In dark, the selected language uses interactive blue with a faint blue glow
-instead of an underline; hover/focus switches to the shared gold light. This is consistent on
-navbar, landing and login/reset pages. Light keeps its underline.
 Variable mappings live in [docs/css-themes.md](docs/css-themes.md).
 
 Catalog labels have a palette per theme: light paper in light, blue surfaces
@@ -140,7 +145,7 @@ uses those roles; see [docs/css-themes.md](docs/css-themes.md).
 | Titles | `--color-text-heading`, `--page-title-color` | theme-dependent |
 | Quiet text and notes | `--text-muted` | |
 | Hairlines | `--line-soft`, `--line-strong` | theme-dependent |
-| The action | `--color-action-place-solid` | softened yellow in light, solid yellow in dark |
+| Primary action | `--action-primary-bg`, `--action-primary-text`, `--action-primary-border` | yellow in light; navy/blue in dark, gold on hover/focus |
 | Links | `--color-link` | dark blue in light, light blue in dark |
 | A place (pins, addresses) | `--contact-place` | brick red in light, lighter red in dark; distinct from danger |
 | Brand (logo, crown) | `--color-brand-yellow`, `--color-brand-blue` | sampled from the logo |
@@ -151,7 +156,8 @@ Status colours mean the same everywhere:
 - **Orders:** placed = amber, packed = blue, delivered = green,
   cancelled = red.
 - **Stock** (`quantity-text--*`): plenty = green, running low = amber,
-  low or empty = red.
+  low or empty = red. Catalog product detail hides healthy stock; low/empty
+  stock follows its existing threshold of 10 units.
 - **Yes/no** (`includes/table/bool_icon.html`): green tick, grey cross.
 - **A fact's state** (`.facts__status` with `status-text--*`): Active =
   green, Inactive = red, Listed = green, Not listed = grey.
@@ -191,7 +197,8 @@ Decoration (the binoculars) uses brand yellow softened with
   screens use `clamp(var(--space-x), Ndvh, var(--space-y))`.
 - Breakpoints (the only widths a media query may use): `1023px`, `767px`
   (phone: bottom navigation, actions at the bottom), `639px`, `479px`
-  (and their `min-width` complements, `768px` and so on).
+  (and their `min-width` complements, `768px` and so on). The customer header
+  additionally widens at 1200px; catalog content keeps its own width.
 - Icons: `--size-icon-sm` (1rem) in text and rows, `-md` for pins.
 - The column: `.page` is 380px; `--wide` 640px; FAQ 600px; About 560px.
 
@@ -207,7 +214,7 @@ Every page starts from one of these (`static/css/common/page.css`).
 | `.page`, `--centered`, `--wide` | The column inside either shell. Carries the glow. |
 | `.page--auth` | Login and the password reset pages: title, fields and button kept together as one group a little above the middle, on every screen. |
 | `layouts/detail.html` | A detail page or an edit form: heading (status heading, or a hidden title on ops work pages), tabs (`page_tabs`) and at their foot Back at the left, the open tab's actions at the right. |
-| `layouts/error.html` | 400/403/404/500 and similar: small grey code, title, one line, one yellow way back. |
+| `layouts/error.html` | 400/403/404/500 and similar: small grey code, title, one line, one themed way back. |
 
 Parts of the column: `.page__heading`, `.page__lead` (the title),
 `.page__note` (small grey line), `.page__text`, `.page__message`,
@@ -249,7 +256,7 @@ instead; the card says what it is.
 **Tabs with a foot:** `includes/ui/page_tabs.html` with `tabs_back_url`
 (and `tabs_back_label`) and `tab_actions` (`common.page_tabs.TabAction`):
 under the open tab, Back at the left and that tab's actions at the right
-(the yellow one, and beside it an outline one if a tab needs two).
+(the primary action, plus an outline action if the tab needs two).
 `layouts/detail.html` passes the page's `back_url`, so every detail page
 has the Back. Back leads to the page one came from when it is this
 site's and not the page itself or one under it (`back_link.js`), else to
@@ -277,7 +284,7 @@ button with how many in the other corner when the cart holds some; under the
 name one row,
 never more, in two halves: the size as a small dropdown ("Choose size",
 then the size; sold-out sizes muted in it) or the package, then how many,
-typed, no box; the themed round cart button on the label's foot,
+typed, with a quiet outlined field; the themed round cart button on the label's foot,
 44px. Its cart icon spins while adding, then the whole button disappears
 as a green cart with a halo appears inside the label. Failure keeps the
 cross and reason; the label surface stays in its theme. The row returns
@@ -286,7 +293,7 @@ muted, and "No photo for this product") and `product.html` (a product's page in 
 design: the picture with the price tag and in-cart badge and a round ×
 above it, beside it the card's label scaled up (the name breaks as on the
 card): the name on the yellow band, the category, size | how many, the
-chosen size's special offer to tick, the stock, the round cart button on
+chosen size's special offer to tick, low-stock information when needed, the round cart button on
 its foot; Description and Ingredients under the label, as wide as it). On
 the catalog a card opens its page over the wall, with its own address
 (catalog.js): on a computer the label folds to its band, the picture,
@@ -307,8 +314,7 @@ button says. CSS in `static/css/public/catalog.css`.
 While something is saved something waits in place of the controls; then a
 mark says how it went, or a cross when it did not.
 How it looks is two tokens in `tokens.css`: `--feedback-burst-style`
-(`ring`, `dots`, or `wave`, where the logo's crown waits and its dots
-move) and
+(`ring`, `dots`, `wave`, `scoop` or `button`) and
 `--feedback-burst-mark` (after `ring` or `dots`: `crown`, `cart` or
 `check`). The dots go round at one steady speed (`--feedback-burst-cycle`)
 until the answer is in, but at least `--feedback-min-loading`; then they
@@ -316,19 +322,20 @@ settle a moment (`--feedback-burst-rest`) and the mark grows, or the crown
 glows, with a
 soft halo of the place's colour behind it (`--status-burst-halo`). A place
 gets its own look by setting the tokens on its element, at the end of
-`common/status-burst.css`: the crown's wave is the default and belongs to orders; the
-catalog's Add is dots then the cart; login is dots then a tick. The request
+`common/status-burst.css` and the owning component: the crown's wave is the
+default for orders; catalog Add spins the button's cart and then shows its green
+cart mark; login is dots then a tick. Recent-order feedback retains scoop/bag
+artwork; unused animation ideas are preserved in `design/animations_ideas/`. The request
 and a minimum time run side by side, so it never slows anything down. The
 times (`--feedback-min-loading`, `--feedback-mark-grow`,
-`--feedback-mark-hold`) are tokens too, read by the script. Used by the
-catalog's green tick (the navbar cart then gives a little jump) and login.
+`--feedback-mark-hold`) are tokens too, read by the script. Used by catalog cart feedback (the navbar cart then gives a little jump) and login.
 
 **Submit burst:** a form that leads to the next step (Review order, Place
 order, Continue to review, Pay, Order again) has `data-submit-burst`
-(`submit_burst.js`, loaded on every page). When it is sent its yellow
+(`submit_burst.js`, loaded on every page). When it is sent its primary
 button gives way to the same burst, in its place: the crown's wave for
 `--feedback-min-loading`, then the crown settles and glows a moment, then
-the form goes (the times on `.page__submit` at the end of `tokens.css`); a
+the form goes (timing defaults in `tokens.css`, with component overrides in `common/status-burst.css`); a
 second press does nothing. The next page is the real answer.
 
 **Crown hero:** `includes/ui/crown_hero.html`, the crown large, growing in
@@ -373,10 +380,11 @@ drawing's faded foot (Find Sweets).
 - **The action:** `button button--md button--solid button--tone-place
   page__submit`. One per page or per tab; on a page with tabs, at the
   tabs' foot with its icon (`TabAction`).
-- **Secondary:** `.quiet-link`, grey, underlined on hover, with a small
-  icon (`arrow-return` for Cancel/Back). Works on `<button>` too.
+- **Secondary:** `.quiet-link`, theme-coloured (interactive blue in dark),
+  underlined on hover unless the owning component uses shared light instead,
+  with a small icon (`arrow-return` for Cancel/Back). Works on `<button>` too.
   `.quiet-link--danger` turns red on hover for things that cannot be undone.
-- **Where:** `.page__actions.page-actions`: the yellow button, then
+- **Where:** `.page__actions.page-actions`: the primary button, then
   `.page-actions__links` with the quiet links under it, centred. On a page
   with tabs: Back at the left of the foot, the actions at its right.
 - **Back or Cancel** (`includes/ui/back_or_cancel.html`): an edit form's
@@ -424,65 +432,48 @@ drawing's faded foot (Find Sweets).
 
 ## Navigation and chrome
 
-The menu's colours (navbar, phone bar, start page, login) live in the theme
-palettes (`--menu-bg`, `--menu-cart-*`, `--menu-language-*`, …). Light uses
-the brand blue, dark uses deep blue. Component CSS reads the same roles in both.
+Theme files own navigation paint (`--menu-*`, `--menu-dropdown-*`,
+`--preferences-*`, `--account-menu-*`). Shared component CSS owns geometry and
+interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
 
-- **The navbar is the start page's menu in a bar:** the menu's blue with the
-  cream logo, cream links, the page you are on yellow (brand-yellow) with
-  the crown, which has a dark blue shadow under it as on the start page;
-  a yellow line (accent-600) between it and the page; the chosen language
-  filled yellow, Login outlined cream; the cart blue with a light yellow ring
-  and a yellow cart, filled yellow when pointed at or open; its count
-  yellow (accent-600, primary-950 text), hidden while the cart is open
-  and when it is empty. The chosen language a yellow ring and yellow
-  letters, the other muted (on the start page too). On a phone the
-  account is its icon and a short word ("Me"). On a phone the bottom
-  bar has a thin yellow edge. The cart's popover stays cream.
-- **Desktop:** links in the top bar, with icons; the page you are on gets
-  the crown tilted on its last letter (as on the logo and the start page),
-  with no hover underline in either palette. In dark, hover and keyboard
-  focus add a diffuse yellow backlight (`--menu-link-glow`), with the
-  letters and icons uniformly gold. Centred text/drop shadows let their shapes
-  emit light; a faint broad halo supports them. The active crown glows too. Active links keep the light;
-  crowns retain solid ink; light keeps its text-colour feedback. The header's line (`--menu-edge`)
-  is independent of the chosen link colour. On a phone the crown sits
-  on the icon, the labels being too small for it.
-- **Phone:** the same links as a fixed bottom bar, the same blue
-  (`--site-nav-count` columns); pages leave room for it.
-- **Customer pages** (shop and business portal): Catalog/Shop, Find
-  Sweets, FAQ, About us. **Ops** has its own links and no footer.
-- **Navbar cart** (`includes/navbar_cart.html`): a look, not a place to
-  edit. Its lines are the read-only line (picture, name, grey lines, `× 2`
-  on the right) with only the bin; the quantity is changed on the cart's
-  page, reached by the yellow button. Something added: it jumps and
-  flashes green; something taken out (a bin, in it or on the cart's
-  page): the same in red.
-- **Footer** (customer pages only): the name with the crown, and under
-  it phone, mail, Instagram and TikTok as icons, centred. About us and
-  FAQ are in the navbar, not repeated here. Quiet and small, every size
-  clamped; it sits at the foot of the screen on a short page.
-- **Start page** (`storefront/landing.html`, `landing.css`): the one loud
-  page. Cream on the menu's blue, the logo and "Sweden’s sweetest tradition"
-  alone for a moment, then a menu of the navbar's own links rises under
-  them, like a game's: the crown is the cursor, tilted on the chosen
-  word's last letter as on the logo; pointer, Tab or ↑↓ move it and it
-  stays where it was last put (`landing.js`). Cart at the top once it holds something, login or the
-  account at the bottom; no navbar, no footer, one screen, no scroll. The
-  splash plays once per visit.
-- **On blue** (`<body class="on-blue">`, `on-blue.css`): the ways in, the
-  start page, login and the password reset, are the blue of their posts
-  with cream letters, the cream logo in the middle at the top; blue is the
-  door, cream is the shop. Red cannot be read on it, so problems are cream
-  words with a yellow mark (accent-600). Changing the password from My
-  account stays cream, inside the site.
-- **Logging in** (`login.js`): the form fades, the yellow dots stand in
-  its place while it is sent in the background, then the crown and the
-  next page; a wrong password gives a cream cross and the form back with
-  the problem above the fields.
-- **Head:** favicon (the crown), Open Graph image (logo on cream). Blocks
-  `meta_description`, `og_title`, `og_description`, `og_image` in
-  `base.html` for pages that want their own.
+- **Desktop:** logo/home at the left, page navigation centred, and cart,
+  account (or Login), settings at the right in that order. The customer header
+  can be wider than catalog content on large screens. Normal navigation has
+  no hover underline. Dark hover/focus/selection uses gold ink, glyph/icon
+  emission and the diffuse halo; only current pages get a crown.
+- **Phone:** page links live in a fixed bottom bar; dropdown icons stay at
+  the top. Catalog/Shop, Find Sweets, FAQ and About are customer destinations.
+  Ops has its own page links. Pages leave room under their last content for
+  the bottom bar. The header edge is independent of selection (`--menu-edge`).
+- **Account:** a single-person icon opens Profile, Order history for business
+  customers, and a CSRF-protected POST Log out at the bottom. It keeps selected
+  ink, light and crown on profile/history/order-detail pages even when closed.
+  Staff Profile links to their personal account, not customer order history.
+- **Settings:** the gear opens language text choices and the sun/moon theme
+  pill. Staff also see a normal Public site/Ops dashboard link. Settings has
+  no page destination and never receives a current-page crown. Ops stays light
+  and has no theme switch. Escape closes dropdowns and returns focus to their
+  trigger; clicking another trigger closes the previous dropdown.
+- **Navbar cart:** an icon-only preview with read-only product lines and remove
+  buttons; quantities are edited on the cart page. The icon is 22px with a
+  stronger stroke than the original artwork. Cart/checkout pages retain its
+  selected light and crown; the count moves away from the crown. AJAX refresh
+  preserves selection. Added items produce the existing green bump/flash;
+  removals use red. Empty/open carts hide the count.
+- **Customer footer:** the vector wordmark and crown, phone/mail/social icons,
+  plus the signed-in account and logout or a reseller login. It stays small and
+  centred, at the screen's foot on short pages. Ops uses its own quiet footer
+  with identity, personal profile and logout.
+- **Landing:** the logo and tagline appear, then the menu rises beneath them.
+  The crown follows pointer, Tab or arrow-key selection; it stays at the last
+  chosen item. Settings and a non-empty cart sit above, login/account below.
+  One screen, no navbar/footer or page scroll; the splash runs once per visit.
+- **Entrances:** login/reset share the menu background and centred logo, with
+  settings on the right. Their field, text and error colours have independent
+  entrance roles. Dark errors use orange prose and a red failure cross. Login
+  feedback is dots then a tick on success; it returns the form on failure.
+- **Head:** crown favicon and Open Graph logo on cream. Pages can override
+  `meta_description`, `og_title`, `og_description` and `og_image` in `base.html`.
 
 
 ## Words
@@ -515,7 +506,7 @@ the brand blue, dark uses deep blue. Component CSS reads the same roles in both.
 
 1. Which shell: `.screen` (fits one screen) or `.page-section` (scrolls)?
 2. Does it need a visible title, or does the navigation say it?
-3. What is the one yellow action? What are the quiet links? On an ops work
+3. What is the one primary action? What are the quiet links? On an ops work
    page: what is the card, and what are its tabs and their actions?
 4. Can the content be `.lines`, `.facts` or `.icon-rows` instead of
    something new?
@@ -525,15 +516,12 @@ the brand blue, dark uses deep blue. Component CSS reads the same roles in both.
 7. Strings translated; French added (`make i18n`).
 
 
-## Not calm yet
+## Remaining design work
 
-- **About and FAQ:** structure done, personality (pictures, the founders'
-  own words, their latest posts) to come.
-- **The logo** uses the authentic traced SVG in `includes/ui/logo.html`.
+- Review the full light customer theme using the finished public structure.
+- Review ops work pages before enabling their dark palette; ops remains light.
+- Keep future content and photography changes separate from palette tuning.
 
-The customer footer uses the authentic vector wordmark on one line, with the
-crown above the final s in Sweets. Its wordmark, crown and links have independent
-`--footer-*` theme colours. Missing product photos use a themeable SVG crown
-and translated message, with independent `--catalog-placeholder-*` colours.
-FAQ question colours remain independent of strong body text; hover/focus uses
-solid gold question/chevron ink and the shared interaction light.
+The public/B2B dark theme, authentic vector logo, wide footer wordmark and
+missing-photo treatment are complete. Their colour choices remain in the
+respective theme roles. See [CSS themes](docs/css-themes.md) for implementation.

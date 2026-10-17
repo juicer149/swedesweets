@@ -136,7 +136,6 @@
   --menu-edge: var(--color-accent-750);
   --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.06), rgb(249 181 26 / 0.05) 30%, rgb(249 181 26 / 0.04) 60%, rgb(249 181 26 / 0) 100%);
   --menu-link-glow-blur: 10px;
-  --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
 
   --preferences-trigger-ink: var(--interactive-text);
   --preferences-bg: var(--surface-muted);
@@ -161,21 +160,11 @@
   --menu-dropdown-glow-filter: var(--interaction-glow-filter);
   --menu-dropdown-icon-filter: var(--interaction-icon-filter);
 
-  /* Selected language is quiet blue; pointer/keyboard interaction stays gold. */
-  --menu-language-active-text: var(--interactive-text);
-  --menu-language-active-glow: radial-gradient(ellipse at center, color-mix(in srgb, var(--interactive-text) 8%, transparent), color-mix(in srgb, var(--interactive-text) 3%, transparent) 60%, transparent 100%);
-  --menu-language-active-glow-filter: blur(6px);
-  --menu-language-active-decoration: none;
-  --menu-language-active-glow-opacity: 0.6;
-  --menu-language-active-text-shadow: 0 0 8px color-mix(in srgb, var(--interactive-text) 16%, transparent);
   --menu-cart-ink: var(--menu-ink);
-  --menu-cart-ring: var(--menu-cart-ink);
-  --menu-cart-ring-hover: var(--selected-accent);
   --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / 0.26), 0 0 32px 7px rgb(246 181 30 / 0.10);
 
   /* Shared local interactions follow the approved navbar light. */
-  /* Let the painted letters/icons supply the light; retain a faint broad halo.
-     Set halo opacity to 1 to restore the full tuned radial background. */
+  /* Painted letters/icons emit locally; opacity scales the tuned radial halo. */
   --interaction-halo-opacity: 1;
   --interaction-selected-opacity: var(--interaction-halo-opacity);
   /* Centred shadows follow the glyph shapes, without a directional offset. */
@@ -303,7 +292,7 @@
   --catalog-cart-muted-ink: var(--color-neutral-500);
   --catalog-cart-muted-border: var(--color-neutral-500);
   --catalog-cart-hover-ink: var(--menu-chosen);
-  --catalog-cart-hover-border: var(--menu-cart-ring-hover);
+  --catalog-cart-hover-border: var(--selected-accent);
   --catalog-cart-active-ink: var(--interactive-text);
   --catalog-cart-active-border: var(--interactive-text);
 

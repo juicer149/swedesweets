@@ -1,6 +1,6 @@
 /* Shared language switcher for navigation, landing, entrance and error pages.
-   All instances use includes/language_switcher.html and the same menu tokens.
-   Themes choose an underline or quiet selected light; focus stays visible. */
+   Text-only choices use the settings theme roles. Selected text keeps its
+   gold light; keyboard focus remains explicit in both palettes. */
 .language-switcher {
   display: inline-flex;
   align-items: center;
@@ -9,6 +9,8 @@
 }
 
 .language-switcher__option {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -17,7 +19,7 @@
   padding-block: clamp(0.32rem, 0.45vw, 0.45rem);
   padding-inline: clamp(0.4rem, 0.65vw, 0.7rem);
 
-  color: var(--menu-language-ink);
+  color: var(--preferences-option);
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
@@ -36,26 +38,18 @@
     border-color var(--motion-fast);
 }
 
-.language-switcher__option:hover {
-  color: var(--menu-language-chosen);
-}
-
 .language-switcher__option:focus-visible {
-  outline: 2px solid var(--menu-language-chosen);
+  outline: 2px solid var(--preferences-hover);
   outline-offset: 3px;
 }
 
 .language-switcher__option--active,
 .language-switcher__option[aria-current="true"] {
-  color: var(--menu-language-active-text);
-  text-decoration: var(--menu-language-active-decoration);
+  color: var(--preferences-selected);
+  text-decoration: none;
   text-underline-offset: 0.28em;
   text-decoration-thickness: 0.1em;
-  text-shadow: var(--menu-language-active-text-shadow);
-}
-
-.language-switcher__separator {
-  display: none;
+  text-shadow: var(--preferences-selected-shadow);
 }
 
 @media (max-width: 767px) {
@@ -72,11 +66,6 @@
 }
 
 /* All language placements share the same selected/hover light. */
-.language-switcher__option {
-  position: relative;
-  isolation: isolate;
-}
-
 .language-switcher__option::after {
   content: "";
   position: absolute;
@@ -92,13 +81,13 @@
 
 .language-switcher__option--active::after,
 .language-switcher__option[aria-current="true"]::after {
-  background: var(--menu-language-active-glow);
-  filter: var(--menu-language-active-glow-filter);
-  opacity: var(--menu-language-active-glow-opacity);
+  background: var(--preferences-selected-glow);
+  filter: var(--preferences-selected-glow-filter);
+  opacity: var(--preferences-selected-glow-opacity);
 }
 
 .language-switcher__option:is(:hover, :focus-visible) {
-  color: var(--menu-language-chosen);
+  color: var(--preferences-hover);
   text-shadow: var(--interaction-text-shadow);
 }
 
