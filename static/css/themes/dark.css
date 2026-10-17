@@ -139,14 +139,24 @@
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
 
   --preferences-trigger-ink: var(--interactive-text);
-  --preferences-trigger-border: color-mix(in srgb, var(--interactive-border) 35%, transparent);
   --preferences-bg: var(--surface-muted);
   --preferences-ink: var(--text-strong);
   --preferences-border: var(--interactive-border);
   --preferences-option: var(--interactive-text);
-  --preferences-selected: var(--interactive-text);
-  --preferences-selected-shadow: 0 0 8px color-mix(in srgb, var(--interactive-text) 16%, transparent);
+  --preferences-selected: var(--selected-accent);
+  --preferences-selected-shadow: var(--interaction-text-shadow);
+  --preferences-selected-glow: var(--menu-link-glow);
+  --preferences-selected-glow-filter: var(--interaction-glow-filter);
+  --preferences-selected-glow-opacity: var(--interaction-selected-opacity);
   --preferences-hover: var(--selected-accent);
+  --preferences-logout-text: var(--interactive-text);
+  --preferences-logout-hover: var(--selected-accent);
+  --theme-switch-track: var(--color-primary-950);
+  --theme-switch-border: var(--interactive-border);
+  --theme-switch-thumb: var(--color-primary-200);
+  --menu-dropdown-glow: var(--menu-link-glow);
+  --menu-dropdown-glow-filter: var(--interaction-glow-filter);
+  --menu-dropdown-icon-filter: var(--interaction-icon-filter);
 
   /* Selected language is quiet blue; pointer/keyboard interaction stays gold. */
   --menu-language-active-text: var(--interactive-text);

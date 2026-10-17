@@ -1,32 +1,33 @@
-/* Shared preferences. theme.js owns palette resolution and persistence. */
+/* theme.js owns palette resolution/persistence; this controls its switches. */
 (() => {
   "use strict";
-  for (const form of document.querySelectorAll("[data-language-preferences]")) {
-    form.addEventListener("change", () => form.requestSubmit());
-  }
-
   const controller = window.siteTheme;
-  const choices = [...document.querySelectorAll("[data-theme-choice]")];
-  if (!controller || !choices.length) return;
+  const buttons = [...document.querySelectorAll("[data-theme-switch]")];
+  if (!controller || !buttons.length) return;
   const root = document.documentElement;
 
   function sync() {
-    for (const choice of choices) {
-      choice.checked = choice.value === root.dataset.theme;
+    const dark = root.dataset.theme === "dark";
+    for (const button of buttons) {
+      button.setAttribute("aria-checked", String(dark));
+      button.title = dark ? button.dataset.lightLabel : button.dataset.darkLabel;
+    }
+    for (const name of document.querySelectorAll("[data-theme-name]")) {
+      name.textContent = dark ? name.dataset.darkLabel : name.dataset.lightLabel;
     }
   }
 
-  for (const choice of choices) {
-    choice.addEventListener("change", () => {
-      if (!choice.checked) return;
-      controller.set(choice.value);
+  for (const button of buttons) {
+    button.addEventListener("click", () => {
+      const theme = root.dataset.theme === "dark" ? "light" : "dark";
+      controller.set(theme);
       // Preserve catalog overlay history, unrelated parameters and the hash.
       const url = new URL(window.location.href);
       if (url.searchParams.has("theme")) {
-        url.searchParams.set("theme", choice.value);
+        url.searchParams.set("theme", theme);
         window.history.replaceState(window.history.state, "", url);
       }
-      // Language submission must return to the newly selected preview too.
+      // A language POST must return to the newly selected preview too.
       for (const next of document.querySelectorAll('[data-language-preferences] [name="next"]')) {
         next.value = url.pathname + url.search + url.hash;
       }

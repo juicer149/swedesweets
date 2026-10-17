@@ -164,3 +164,43 @@
     transition: none;
   }
 }
+
+/* Dropdown icons emit the same light when hovered, focused or left open.
+   Keep a generous hit area without painting a circular button around it. */
+.menu-dropdown-trigger {
+  position: relative;
+  isolation: isolate;
+}
+
+.menu-dropdown-trigger::before {
+  content: "";
+  position: absolute;
+  inset: -0.25rem;
+  z-index: -1;
+  border-radius: var(--radius-pill);
+  background: var(--menu-dropdown-glow);
+  filter: var(--menu-dropdown-glow-filter);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-fast);
+}
+
+.menu-dropdown-trigger:is(:hover, :focus-visible)::before,
+details[open] > .menu-dropdown-trigger::before {
+  opacity: var(--interaction-halo-opacity);
+}
+
+.menu-dropdown-trigger:is(:hover, :focus-visible) .ui-icon-svg,
+details[open] > .menu-dropdown-trigger .ui-icon-svg {
+  filter: var(--menu-dropdown-icon-filter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-dropdown-trigger::before { transition: none; }
+}
+
+@media (forced-colors: active) {
+  .menu-dropdown-trigger::before { display: none; }
+  .menu-dropdown-trigger .ui-icon-svg { filter: none !important; }
+  details[open] > .menu-dropdown-trigger { outline: 1px solid ButtonText; }
+}

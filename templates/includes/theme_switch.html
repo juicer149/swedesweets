@@ -2,7 +2,10 @@
 <fieldset class="site-preferences__group" data-theme-preferences hidden>
   <legend>{% trans 'Theme' %}</legend>
   <div class="site-preferences__theme">
-    <span class="theme-switch" aria-hidden="true">
+    <button class="theme-switch" type="button" role="switch" aria-checked="false"
+      aria-label="{% trans 'Dark theme' %}" data-theme-switch
+      data-light-label="{% trans 'Switch to light theme' %}"
+      data-dark-label="{% trans 'Switch to dark theme' %}">
       <span class="theme-switch__sky" aria-hidden="true">
         <svg class="theme-switch__orb theme-switch__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
           <circle cx="12" cy="12" r="4" />
@@ -12,17 +15,10 @@
           <path d="M20.5 13.1A8.5 8.5 0 0 1 10.9 3.5 8.5 8.5 0 1 0 20.5 13.1Z" />
         </svg>
       </span>
-      <span class="theme-switch__horizon" aria-hidden="true"></span>
-    </span>
-    <div class="site-preferences__choices">
-      <label class="site-preferences__choice">
-        <input type="radio" name="preview-theme" value="light" data-theme-choice>
-        <span class="language-switcher__option">{% trans 'Day' %}</span>
-      </label>
-      <label class="site-preferences__choice">
-        <input type="radio" name="preview-theme" value="dark" data-theme-choice>
-        <span class="language-switcher__option">{% trans 'Night' %}</span>
-      </label>
-    </div>
+
+      <span class="theme-switch__thumb" aria-hidden="true"></span>
+    </button>
+    <span class="site-preferences__theme-name" data-theme-name
+      data-light-label="{% trans 'Day' %}" data-dark-label="{% trans 'Night' %}" aria-hidden="true"></span>
   </div>
 </fieldset>

@@ -1,23 +1,50 @@
-/* Sun and moon travel within the settings preview, independent of the radios. */
+/* Day: thumb left, sun right. Night: thumb right, moon left.
+   Only the sky clips the setting/rising orbit; the control keeps its focus ring. */
 .theme-switch {
   position: relative;
-  display: inline-grid;
-  place-items: center;
+  display: inline-block;
   flex: 0 0 auto;
-  color: var(--preferences-ink);
+  width: 4.75rem;
+  height: 2.25rem;
+  padding: 0;
+  background: var(--theme-switch-track);
+  border: 1px solid var(--theme-switch-border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background 350ms ease, border-color var(--motion-fast);
+}
+
+.theme-switch:focus-visible {
+  outline: 2px solid var(--preferences-selected);
+  outline-offset: 3px;
+}
+
+.theme-switch:hover {
+  border-color: var(--preferences-hover);
 }
 
 .theme-switch__sky {
-  position: relative;
-  width: 2.5rem;
-  height: 2.25rem;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
+  border-radius: inherit;
+}
+
+.theme-switch__thumb {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 1.625rem;
+  height: 1.625rem;
+  background: var(--theme-switch-thumb);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--theme-switch-thumb-shadow);
+  transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1), background 350ms ease;
 }
 
 .theme-switch__orb {
   position: absolute;
-  top: 0.5rem;
-  left: 0.625rem;
+  top: 0.4375rem;
   width: 1.25rem;
   height: 1.25rem;
   transform-origin: 50% 1.65rem;
@@ -25,6 +52,7 @@
 }
 
 .theme-switch__sun {
+  right: 0.4375rem;
   color: var(--theme-switch-sun);
   filter: var(--theme-switch-sun-glow);
   transform: rotate(0deg);
@@ -32,36 +60,40 @@
 }
 
 .theme-switch__moon {
+  left: 0.4375rem;
   color: var(--theme-switch-moon);
   filter: var(--theme-switch-moon-glow);
   transform: rotate(-100deg);
   opacity: 0;
 }
 
-:root[data-theme="dark"] .theme-switch__sun {
+.theme-switch[aria-checked="true"] .theme-switch__thumb {
+  transform: translateX(2.5rem);
+}
+
+.theme-switch[aria-checked="true"] .theme-switch__sun {
   transform: rotate(100deg);
   opacity: 0;
 }
 
-:root[data-theme="dark"] .theme-switch__moon {
+.theme-switch[aria-checked="true"] .theme-switch__moon {
   transform: rotate(0deg);
   opacity: 1;
 }
 
-.theme-switch__horizon {
-  position: absolute;
-  bottom: 0.4rem;
-  width: 1.15rem;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.45;
-}
-
-
 @media (prefers-reduced-motion: reduce) {
-  .theme-switch__orb { transition: none; }
+  .theme-switch,
+  .theme-switch__thumb,
+  .theme-switch__orb {
+    transition: none;
+  }
 }
 
 @media (forced-colors: active) {
+  .theme-switch {
+    background: Canvas;
+    border-color: ButtonText;
+  }
+  .theme-switch__thumb { background: ButtonText; box-shadow: none; }
   .theme-switch__orb { color: CanvasText; filter: none; }
 }

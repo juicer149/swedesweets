@@ -31,15 +31,20 @@ work pages have been checked for the dark palette.
 ## Shared settings and temporary theme preview
 
 A single wrench opens the same settings disclosure in the customer navbar,
-landing and entrance/error pages, at every screen size. Language uses native
-EN/FR radio choices and the existing Django POST endpoint; changing a choice
-submits immediately. Without JavaScript an Apply button submits the language
-form. Ops shares the language panel but has no theme choices and stays light.
+landing and entrance/error pages, at every screen size. Language uses EN/FR
+text buttons and the existing Django POST endpoint. The selected language is
+gold with a soft glow inside the open panel; no radio circles are drawn.
+Language submission works without JavaScript. Authenticated users also get a
+POST-only Log out button at the bottom, in interactive blue in dark mode.
+Ops shares language/logout settings but has no theme switch and stays light.
 
-Day/Night radio choices change the customer palette immediately. The blue sun
-sets along an arc and the white moon rises into its place, each with a soft
-shadow following its shape. Reduced motion disables the transition. The theme
-choices are hidden without JavaScript. Escape closes the panel and restores
+The pill-shaped theme button uses `role="switch"`, a stable "Dark theme"
+accessible name and `aria-checked`. In day mode its thumb is on the left and
+the blue sun on the right. In night mode the thumb moves right and the white
+moon appears on the left, against the dark track. The sun sets and the moon
+rises along an arc, each with a soft shadow following its shape. Reduced
+motion disables the transition. The switch is hidden without JavaScript.
+Escape closes the panel and restores
 focus to its wrench; clicking outside closes it as well.
 
 The choice uses the existing sessionStorage preview key, survives navigation
@@ -48,7 +53,7 @@ requesting `?theme=auto` again. An existing `theme` query is updated on change;
 other query parameters, hashes and catalog history state are preserved.
 
 `theme.js` owns `window.siteTheme.set(light|dark)`; `theme-switch.js` handles
-radio changes, language submission and synchronization with auto changes.
+the switch and synchronization with auto changes. Language is a native form.
 `includes/language_switcher.html` owns the shared panel, including
 `includes/theme_switch.html` for customer theme choices. Common
 `preferences.css` owns panel layout and `theme-switch.css` owns the orbit.
@@ -58,6 +63,12 @@ and shadows. `details-popover.js` provides the existing dismissal behaviour.
 At viewport widths of 1200px and above, customer header content can grow to
 1200px. Page/catalog content retains `--width-page` (1040px), its four-column
 maximum and existing card widths. Ops header sizing is unchanged.
+
+Navbar cart and settings triggers are icons with transparent hit areas, no
+painted circular border/background. Hover, keyboard focus and the open state
+share gold icon emission and a halo. Keyboard focus retains a visible outline;
+the cart keeps its existing add/remove feedback animation and item count.
+`--menu-dropdown-*` roles tune this light independently of catalog buttons.
 
 ## Checks
 
@@ -601,16 +612,20 @@ only glyph/icon emission. `--interaction-text-shadow` and
 `--interaction-icon-filter` independently tune the actual emission. Light keeps
 its existing presentation; active crowns and the landing input handoff remain.
 
-## Settings choice colours
+## Settings colours
 
-Language and theme now share native radio choices inside the settings panel.
-`--preferences-option` sets their available text, `--preferences-selected` the
-checked radio/text colour, and `--preferences-selected-shadow` its faint blue
-emission. `--preferences-hover` sets hover/keyboard interaction text; shared
-interaction shadows provide the gold light. Dark maps the choices to
-`--interactive-text` (primary-200); light uses darker blue for contrast.
-Native radio markers identify selection even when both labels use blue.
+`--preferences-option` sets available language text, `--preferences-selected`
+the gold selected text, and `--preferences-selected-shadow` its emission.
+`--preferences-selected-glow`, `--preferences-selected-glow-filter` and
+`--preferences-selected-glow-opacity` control the halo. Hover/focus uses
+`--preferences-hover` and the shared interaction shadows. These mappings
+locally override the standalone `--menu-language-*` roles inside settings.
 
-Panel surface, border and wrench colours are independent `--preferences-*`
-roles. The old `--menu-language-*` mappings belong to the previous standalone
-language switcher and no longer control the settings panel's choices.
+`--preferences-logout-text` maps to interactive blue in dark mode, with
+`--preferences-logout-hover` and `--preferences-logout-divider` independent.
+Panel surface/border/wrench remain independent `--preferences-*` roles.
+
+`--theme-switch-track`, `--theme-switch-border`, `--theme-switch-thumb` and
+`--theme-switch-thumb-shadow` paint the pill. Sun/moon colour and shadow use
+`--theme-switch-sun`, `--theme-switch-sun-glow`, `--theme-switch-moon` and
+`--theme-switch-moon-glow`. Geometry and motion stay in common CSS.

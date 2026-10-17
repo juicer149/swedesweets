@@ -210,6 +210,11 @@
      stands on the blue */
   --menu-crown-shadow: none;
 
+  /* Icon-only cart/settings dropdowns. These colours do not alter catalog buttons. */
+  --menu-dropdown-glow: radial-gradient(ellipse, rgb(249 181 26 / 0.14), transparent 75%);
+  --menu-dropdown-glow-filter: blur(8px);
+  --menu-dropdown-icon-filter: drop-shadow(0 0 4px rgb(249 181 26 / 0.25));
+
   /* ## Cart */
   /* ### At rest */
   --menu-cart-ink: var(--color-accent-300);
@@ -226,18 +231,27 @@
   /* ## Language: the chosen label uses the menu accent; the other is muted */
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
   --menu-language-chosen: var(--color-accent-600);
-  /* Settings panel: blue choices, neutral surface, sun/moon light. */
+  /* Settings: text-only language choices, pill theme switch and logout. */
   --preferences-trigger-ink: var(--menu-ink);
-  --preferences-trigger-border: color-mix(in srgb, var(--menu-ink) 35%, transparent);
   --preferences-bg: var(--page-bg);
   --preferences-ink: var(--text-strong);
   --preferences-border: var(--line-soft);
   --preferences-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
   --preferences-option: var(--color-primary-700);
-  --preferences-selected: var(--color-primary-600);
-  --preferences-selected-shadow: 0 0 8px color-mix(in srgb, var(--color-primary-400) 16%, transparent);
+  --preferences-selected: var(--color-accent-800);
+  --preferences-selected-shadow: 0 0 8px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+  --preferences-selected-glow: radial-gradient(ellipse, rgb(249 181 26 / 0.12), transparent 75%);
+  --preferences-selected-glow-filter: blur(6px);
+  --preferences-selected-glow-opacity: 1;
   --preferences-hover: var(--color-accent-800);
-  --theme-switch-sun: var(--color-primary-400);
+  --preferences-logout-text: var(--color-primary-600);
+  --preferences-logout-hover: var(--color-accent-800);
+  --preferences-logout-divider: var(--line-soft);
+  --theme-switch-track: var(--color-primary-100);
+  --theme-switch-border: var(--color-primary-400);
+  --theme-switch-thumb: var(--color-primary-50);
+  --theme-switch-thumb-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
+  --theme-switch-sun: var(--color-primary-500);
   --theme-switch-sun-glow: drop-shadow(0 0 4px color-mix(in srgb, var(--color-primary-300) 45%, transparent));
   --theme-switch-moon: var(--color-white);
   --theme-switch-moon-glow: drop-shadow(0 0 4px rgb(255 255 255 / 0.35));

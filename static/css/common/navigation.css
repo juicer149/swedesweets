@@ -302,11 +302,10 @@
   height: clamp(2rem, 2.4vw, 2.25rem);
   padding: 0;
 
-  /* the navbar's blue with a light yellow ring and a yellow cart; filled
-     yellow when pointed at or open */
+  /* Icon-only dropdown; its light is shared with the settings wrench. */
   color: var(--menu-cart-ink);
-  background: var(--menu-cart-bg);
-  border: var(--menu-cart-ring-width) solid var(--menu-cart-ring);
+  background: transparent;
+  border: 0;
   border-radius: var(--radius-pill);
 
   cursor: pointer;
@@ -323,9 +322,7 @@
 .site-nav-cart__trigger:focus-visible,
 .site-nav-cart[open] .site-nav-cart__trigger {
   color: var(--menu-cart-ink-hover);
-  background: var(--menu-cart-bg-hover);
-  box-shadow: var(--menu-cart-glow);
-  border: var(--menu-cart-ring-width-hover) solid var(--menu-cart-ring-hover);
+  background: transparent;
 }
 
 .site-nav-cart__trigger:hover,

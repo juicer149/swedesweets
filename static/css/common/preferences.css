@@ -1,5 +1,5 @@
 /* One shared settings disclosure: navigation, landing, entrance and ops.
-   Native radios provide keyboard selection; details-popover handles dismissal. */
+   Text buttons submit language; details-popover handles dismissal. */
 .site-preferences {
   position: relative;
   flex: 0 0 auto;
@@ -12,7 +12,9 @@
   width: 2.25rem;
   height: 2.25rem;
   color: var(--preferences-trigger-ink);
-  border: 1px solid var(--preferences-trigger-border);
+  padding: 0;
+  background: transparent;
+  border: 0;
   border-radius: var(--radius-pill);
   cursor: pointer;
   list-style: none;
@@ -23,7 +25,6 @@
 .site-preferences__trigger:is(:hover, :focus-visible),
 .site-preferences[open] > .site-preferences__trigger {
   color: var(--menu-chosen);
-  filter: var(--interaction-icon-filter);
 }
 .site-preferences__trigger:focus-visible {
   outline: 2px solid var(--menu-chosen);
@@ -65,44 +66,42 @@
   align-items: center;
   gap: var(--space-3);
 }
-.site-preferences__choice {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-}
-.site-preferences__choice input {
-  margin: 0;
-  accent-color: var(--preferences-selected);
-  cursor: pointer;
-}
-.site-preferences__choice .language-switcher__option {
-  color: var(--preferences-option);
+.site-preferences .language-switcher__option {
+  --menu-language-ink: var(--preferences-option);
+  --menu-language-chosen: var(--preferences-hover);
+  --menu-language-active-text: var(--preferences-selected);
+  --menu-language-active-glow: var(--preferences-selected-glow);
+  --menu-language-active-glow-filter: var(--preferences-selected-glow-filter);
+  --menu-language-active-glow-opacity: var(--preferences-selected-glow-opacity);
+  --menu-language-active-text-shadow: var(--preferences-selected-shadow);
+  --menu-language-active-decoration: none;
   font-size: var(--font-size-14);
-  text-decoration: none;
 }
-.site-preferences__choice input:checked + .language-switcher__option {
-  color: var(--preferences-selected);
-  text-shadow: var(--preferences-selected-shadow);
+
+.site-preferences__theme-name {
+  font-size: var(--font-size-14);
+  color: var(--preferences-ink);
 }
-.site-preferences__choice:is(:hover, :focus-within) .language-switcher__option {
-  color: var(--preferences-hover);
+
+.site-preferences__logout {
+  margin-top: var(--space-5);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--preferences-logout-divider);
+}
+
+.site-preferences__logout .quiet-link {
+  color: var(--preferences-logout-text);
+}
+
+.site-preferences__logout .quiet-link:is(:hover, :focus-visible) {
+  color: var(--preferences-logout-hover);
   text-shadow: var(--interaction-text-shadow);
-}
-.site-preferences__choice input:focus-visible {
-  outline: 2px solid var(--preferences-selected);
-  outline-offset: 3px;
 }
 
 /* More breathing room for desktop chrome; catalog keeps its own page width. */
 @media (min-width: 1200px) {
   :root:not([data-site-zone="ops"]) .site-header > .container {
     width: min(100% - 4rem, 1200px);
-  }
-}
-
-@media (forced-colors: active) {
-  .site-preferences__choice input:checked + .language-switcher__option {
-    text-decoration: underline;
   }
 }
 
