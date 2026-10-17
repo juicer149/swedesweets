@@ -44,6 +44,14 @@
 }
 
 .site-brand:hover,
+.site-brand:is(:hover, :focus-visible) .brand-logo__wordmark {
+  fill: var(--menu-logo-hover);
+}
+
+.site-brand:is(:hover, :focus-visible) .site-brand__logo {
+  filter: var(--interaction-icon-filter);
+}
+
 .site-brand:focus-visible {
   transform: translateY(-1px);
 }
@@ -129,51 +137,31 @@
   transform: translateY(-1px);
 }
 
-/* Hover/focus lights the link; the current page keeps its crown. */
+/* Hover/focus and the current page light up; only the current page has a crown. */
 .site-nav__link:hover::after,
 .site-nav__link:focus-visible::after {
   opacity: 1;
 }
 
-/* Give descenders (g, p, y) paint room when the gradient clips to glyphs.
+/* Give descenders (g, p, y) paint room inside tight line heights.
    Matching negative margins keep the original navigation geometry. */
 .site-nav__label {
   padding-block: 0.18em;
   margin-block: -0.18em;
 }
 
-/* Paint the existing SVG strokes, preserving their shapes and widths. */
-.site-nav__link:hover > .site-nav__icon .ui-icon-svg,
-.site-nav__link:focus-visible > .site-nav__icon .ui-icon-svg {
-  stroke: var(--menu-icon-paint, currentColor);
+/* Solid gold ink emits a little light; the diffuse halo stays separate. */
+.site-nav__link:is(:hover, :focus-visible, .site-nav__link--active, [aria-current="page"]) > .site-nav__label {
+  text-shadow: var(--interaction-text-shadow);
 }
 
-/* Illuminate the letters nearest the light most strongly. The theme owns
-   the gradient/fill; light keeps ordinary text and crowns keep solid ink. */
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-  .site-nav__link:hover > .site-nav__label,
-  .site-nav__link:focus-visible > .site-nav__label {
-    background-image: var(--menu-link-text-glow);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: var(--menu-link-text-fill);
-    -webkit-text-fill-color: var(--menu-link-text-fill);
-  }
+.site-nav__link:is(:hover, :focus-visible, .site-nav__link--active, [aria-current="page"]) > .site-nav__icon .ui-icon-svg {
+  filter: var(--interaction-icon-filter);
 }
 
-/* High-contrast modes can suppress gradients; keep text and strokes visible. */
-@media (forced-colors: active) {
-  .site-nav__link:hover > .site-nav__icon .ui-icon-svg,
-  .site-nav__link:focus-visible > .site-nav__icon .ui-icon-svg {
-    stroke: currentColor;
-  }
-
-  .site-nav__link:hover > .site-nav__label,
-  .site-nav__link:focus-visible > .site-nav__label {
-    background-image: none;
-    color: inherit;
-    -webkit-text-fill-color: currentColor;
-  }
+.site-nav__link--active::after,
+.site-nav__link[aria-current="page"]::after {
+  opacity: var(--interaction-selected-opacity);
 }
 
 /* The crown marks the page you are on, tilted on the last letter as on

@@ -139,9 +139,8 @@ set it explicitly, independently of `--menu-chosen`. The phone bar's outline
 follows it through `--menu-bar-edge`; override that separately when needed.
 
 Navbar links have no hover underline in either theme. `--menu-link-glow` is
-`none` in light and a soft yellow radial gradient in dark, shown on hover and
-keyboard focus. On phones the halo sits behind the label, outside its text
-clipping. The current-page crown and keyboard focus outline remain visible.
+`none` in light and a soft yellow radial gradient in dark, shown on hover,
+keyboard focus and the current page. On phones the halo sits behind the label. The current-page crown and keyboard focus outline remain visible.
 This navbar effect does not change the landing menu's own animation or the
 selected-language marker.
 
@@ -431,10 +430,10 @@ line layout and coloured status icon circles; this change targets table rows.
 
 ## Local selection, sort headings and row edges
 
-In dark, `--local-selected-accent` (accent-700) feeds the active section-tab
-text/marker and active table-sort text/marker. Navbar selection and primary
+In dark, `--local-selected-accent` (accent-700) feeds active table-sort text/marker.
+Section tabs instead share `--selected-accent` (accent-600) with navigation. Navbar selection and primary
 actions keep their separate roles. Idle sort headings and section tabs follow
-`--interactive-text`; section-tab hover uses the shared illuminated-letter effect below. Active
+`--interactive-text`; section-tab hover uses the solid gold ink and light below. Active
 sort headings stay gold on hover, with the arrow inheriting that text colour.
 
 The component mappings are `--section-nav-text`, `--section-nav-hover-text`,
@@ -448,41 +447,36 @@ Light defines the same mappings using its previous values, preserving its
 current appearance and ops. [DESIGN.md](../DESIGN.md) owns the visual principles;
 this document owns variable mappings, previews and implementation details.
 
-## Soft navbar backlight and illuminated letters
+## Soft backlight and solid gold ink
 
 Dark navbar hover/keyboard focus uses a radial `--menu-link-glow` that fades
 fully to transparency, softened by `--menu-link-glow-blur` (7px). The halo
-lives on the link's own pseudo-element, outside the text clipping, so it
-remains diffuse on both desktop and the phone bar.
+lives outside the label so it stays diffuse on desktop and the phone bar.
+Current links keep the same halo via `--interaction-selected-opacity`; the
+crown distinguishes the current page from another hovered link.
 
-Only `.site-nav__label` gets the text treatment: `--menu-link-text-glow` is a
-symmetric gradient with full `--menu-chosen` gold in the middle and a softer
-`--menu-link-text-edge` towards the ends. The edge mixes 55% selected gold with
-the normal menu ink. `--menu-link-text-fill` enables the transparent glyph fill
-for clipping the gradient to letters. The SVG icons use the same centre/edge gold through the header's shared
-`site-nav-icon-light` paint server. Crowns and the cart retain their own colours; resting/current navbar links stay solid until hovered
-or keyboard-focused. No text is duplicated and link geometry is unchanged.
+Text and icons use solid `--selected-accent` gold. The previous text gradients
+and SVG paint server have been removed. `--interaction-text-shadow` adds a
+small emission around letters; `--interaction-icon-filter` does the same for
+SVG shapes. These supplement the existing radial halo without changing its
+shape. The navbar logo gets the halo and gold wordmark on hover/focus via
+`--menu-logo-hover`. Header and landing language controls share the effect.
 
-Light defines no halo or text gradient and keeps the ordinary text fill.
-Unsupported text clipping falls back to solid text; forced-colours mode restores
-ordinary visible link text when the browser suppresses gradient backgrounds.
-
-The label's balanced vertical padding/margins preserve space for descenders
-when clipping the gradient to text. Header language choices reuse the same
-backlight on hover and focus, while their selected-language underline remains.
-Landing language controls use the same backlight; entrance-page language controls
-retain their previous presentation.
-SVG strokes fall back to solid colour in forced-colours mode.
+Light has no halo/emission and retains its palette. Forced-colours mode hides
+halos, removes emission and restores the section selection marker. Text stays
+ordinary text in both themes; no clipping or transparent glyph fills are needed.
 
 ## Shared local backlight and select contrast
 
 `common/interaction-light.css` applies the navbar-style hover/keyboard light to
 all section navigation, Find Sweets shop names, FAQ question rows, landing menu
 and account/cart links, and the navbar Login action. Theme roles
-`--interaction-glow`, `--interaction-glow-blur`, `--interaction-text-glow` and
-`--interaction-text-fill` alias the navbar paint, so adjustments stay consistent.
-Addresses and answers keep their neutral reading colours. Dark tabs retain the
-selected underline; hovering another tab adds light without another underline.
+`--interaction-glow` and `--interaction-glow-blur` alias the navbar halo.
+Shared emission roles above keep text and icon light consistent.
+Addresses and answers keep their neutral reading colours. Dark tabs use gold
+ink and the light as their selection marker: `--section-nav-marker-display`
+hides the underline. Open FAQ summaries use a transparent background, leaving
+only the soft halo behind the gold question and chevron.
 `--interaction-selected-opacity` keeps the lamp on for selected section tabs,
 open FAQ questions and the landing menu's chosen link (1 in dark, 0 in light).
 This follows actual selection/open state, not leftover pointer or keyboard focus.

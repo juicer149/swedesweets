@@ -103,8 +103,8 @@
   /* Local page tabs and sort headings share a deeper selected gold.
      Available choices and the row edge use the normal interactive blue. */
   --section-nav-text: var(--interactive-text);
-  --section-nav-hover-text: var(--interactive-text-hover);
-  --section-nav-active-text: var(--local-selected-accent);
+  --section-nav-hover-text: var(--selected-accent);
+  --section-nav-active-text: var(--selected-accent);
   --section-nav-marker: var(--local-selected-accent);
   --table-sort-text: var(--interactive-text);
   --table-sort-active-text: var(--local-selected-accent);
@@ -124,17 +124,21 @@
   --menu-edge: var(--color-accent-750);
   --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.24), rgb(249 181 26 / 0.13) 30%, rgb(249 181 26 / 0.055) 60%, rgb(249 181 26 / 0) 100%);
   --menu-link-glow-blur: 7px;
-  --menu-link-text-edge: color-mix(in srgb, var(--menu-chosen) 55%, var(--menu-ink));
-  --menu-link-text-glow: linear-gradient(90deg, var(--menu-link-text-edge), var(--menu-chosen) 42%, var(--menu-chosen) 58%, var(--menu-link-text-edge));
-  --menu-link-text-fill: transparent;
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
   --menu-cart-ink: var(--menu-ink);
   --menu-cart-ring: var(--menu-cart-ink);
-  --menu-cart-ring-hover: var(--color-accent-550);
+  --menu-cart-ring-hover: var(--selected-accent);
   --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / 0.26), 0 0 32px 7px rgb(246 181 30 / 0.10);
 
   /* Shared local interactions follow the approved navbar light. */
   --interaction-selected-opacity: 1;
+  --interaction-text-shadow: 0 0 7px rgb(249 181 26 / 0.28);
+  --interaction-icon-filter: drop-shadow(0 0 3px rgb(249 181 26 / 0.28));
+  --menu-logo-hover: var(--selected-accent);
+  --section-nav-marker-display: none;
+  --find-sweets-hover-text: var(--selected-accent);
+  --find-sweets-hover-icon: var(--selected-accent);
+  --faq-question-lit-icon: var(--selected-accent);
   --landing-account-hover-decoration: none;
   --landing-control-hover-ink: var(--menu-chosen);
   --section-nav-hover-marker: 0%;
@@ -149,10 +153,10 @@
   /* 4. Reading, FAQ and contact details */
   --prose-text: var(--text-reading);
   --faq-question-text: var(--interactive-text);
-  --faq-question-hover-text: var(--color-accent-500);
-  --faq-question-open-text: var(--color-accent-700);
+  --faq-question-hover-text: var(--selected-accent);
+  --faq-question-open-text: var(--selected-accent);
   --faq-question-hover-bg: transparent;
-  --faq-question-open-bg: color-mix(in srgb, var(--color-accent-600) 15%, transparent);
+  --faq-question-open-bg: transparent;
 
   /* Decorative lettering, photo paper and category icons retain their own colours */
   --display-stamped: #63718f;

@@ -206,9 +206,6 @@
   /* ### Hover/focus halo: no underline or glow in light. */
   --menu-link-glow: none;
   --menu-link-glow-blur: 0px;
-  --menu-link-text-edge: var(--menu-chosen);
-  --menu-link-text-glow: none;
-  --menu-link-text-fill: currentColor;
   /* ### The crown on the page you are on: a dark shadow under it so it
      stands on the blue */
   --menu-crown-shadow: none;
@@ -353,12 +350,17 @@
   /* FAQ question headings only; previous-order accordions keep their own roles. */
   /* Shared hover light: local tabs, shop links and FAQ questions. */
   --interaction-selected-opacity: 0;
+  --interaction-text-shadow: none;
+  --interaction-icon-filter: none;
+  --menu-logo-hover: var(--menu-logo, var(--menu-ink));
+  --section-nav-marker-display: block;
+  --find-sweets-hover-text: var(--line-link-hover-text);
+  --find-sweets-hover-icon: var(--contact-place);
+  --faq-question-lit-icon: var(--text-muted);
   --landing-account-hover-decoration: underline;
   --landing-control-hover-ink: var(--menu-ink);
   --interaction-glow: var(--menu-link-glow);
   --interaction-glow-blur: var(--menu-link-glow-blur);
-  --interaction-text-glow: var(--menu-link-text-glow);
-  --interaction-text-fill: var(--menu-link-text-fill);
   --section-nav-hover-marker: 100%;
   --section-nav-mobile-hover-marker: min(72%, 9rem);
   --find-sweets-hover-decoration: underline;

@@ -52,16 +52,17 @@ palette uses deep blue surfaces, neutral reading text and light blue available
 interactions. Ops remains light until its work pages have been reviewed.
 Theme selection and implementation details are in [CSS themes](docs/css-themes.md).
 
-Gold marks the brand, primary actions and selected states. Local section tabs
-and the active sort heading use a slightly deeper gold (accent-700); available
+Gold marks the brand, primary actions and selected states. The active sort heading uses a slightly deeper gold (accent-700); section tabs
+share navigation gold (accent-600). Available
 choices use interactive blue. Hover/focus on an order row marks its edge blue,
 while its background retains its status hue: placed gold, packed blue,
 delivered green, cancelled red. Dark table rows share a tint intensity,
 which increases on hover without changing the status hue. Orange warning prose remains distinct from gold selection surfaces.
 
 Dark public section tabs, Find Sweets shop names and FAQ question rows share the
-navbar's diffuse hover/focus light and illuminated lettering. Selected tabs keep
-their gold marker and light; open FAQ questions keep their light too. Addresses
+navbar's diffuse hover/focus light and illuminated lettering. Selected tabs use
+light instead of an underline; open FAQ questions keep only the light behind
+their title, without a tinted rectangle. Addresses
 and answers stay neutral. The landing menu and its account/cart/language controls
 use the same backlight, as does the navbar Login action. Ready catalog cart buttons
 are interactive blue, becoming gold with the navbar cart's backlight on hover or
@@ -429,7 +430,7 @@ the brand blue, dark uses deep blue. Component CSS reads the same roles in both.
   the crown tilted on its last letter (as on the logo and the start page),
   with no hover underline in either palette. In dark, hover and keyboard
   focus add a diffuse yellow backlight (`--menu-link-glow`), with the
-  letters brightest at its centre and softer towards the ends. Icons share that toning;
+  letters and icons uniformly gold, with a little emission around their shapes. Active links keep the light;
   crowns retain solid ink; light keeps its text-colour feedback. The header's line (`--menu-edge`)
   is independent of the chosen link colour. On a phone the crown sits
   on the icon, the labels being too small for it.
@@ -521,4 +522,4 @@ crown above the final s in Sweets. Its wordmark, crown and links have independen
 `--footer-*` theme colours. Missing product photos use a themeable SVG crown
 and translated message, with independent `--catalog-placeholder-*` colours.
 FAQ question colours remain independent of strong body text; hover/focus uses
-the shared interaction gradient, with `--faq-question-hover-text` as its solid-colour fallback.
+solid gold question/chevron ink and the shared interaction light.

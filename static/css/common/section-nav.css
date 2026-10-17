@@ -60,6 +60,7 @@
 }
 
 .section-nav__link::after {
+  display: var(--section-nav-marker-display);
   content: "";
   position: absolute;
   left: 50%;
@@ -307,4 +308,10 @@
 
 .tabs-foot__action[hidden] {
   display: none;
+}
+
+@media (forced-colors: active) {
+  .section-nav__link::after {
+    display: block;
+  }
 }
