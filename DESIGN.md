@@ -13,7 +13,8 @@ it owns). This file is the map, the rules and the reasons.
 
 No boxes. Content sits on the page itself, in one centred column, with a
 soft glow behind it that holds it together. Rows are divided by hairlines,
-not cards. Each page has **one yellow primary action**; secondary actions are quiet
+not cards. Each page has **one primary action** (yellow in light; navy with blue text/edge
+and gold hover light in dark); secondary actions are quiet
 text links, coloured by the theme. Colour is spent only where it means something (a status, a pin,
 the action). Mobile first: on a phone the actions sit at the bottom, within
 reach of the thumb. Words are short, and the page does not repeat what the
@@ -28,11 +29,11 @@ navigation already says.
    card** (a product, each of its variants), the same card on its page
    and on its edit page, so the edit page reads as the page made
    editable. See "Ops work pages" below.
-2. **One yellow action per page.** The filled yellow button is "the thing to
-   do here". Cancel, back, decline, remove: quiet links. If a page seems to
-   need two yellow buttons, one of them is a link or belongs on another page.
-3. **Colour means something.** Yellow = the action and the brand. Blue =
-   links and navigation. Brick red = a place on a map. Green, amber, red,
+2. **One primary action per page.** The main button is "the thing to
+   do here"; its palette follows the theme. Cancel, back, decline, remove: quiet links. If a page seems to
+   need two primary buttons, one of them is a link or belongs on another page.
+3. **Colour means something.** Yellow = the brand, selection and action
+   emphasis. Blue = available links, actions and navigation. Brick red = a place on a map. Green, amber, red,
    grey = status. Decoration that is not one of these is neutral or
    brand yellow, softened.
 4. **The navigation already says where you are.** List pages and create
@@ -52,7 +53,7 @@ palette uses deep blue surfaces, neutral reading text and light blue available
 interactions. Ops remains light until its work pages have been reviewed.
 Theme selection and implementation details are in [CSS themes](docs/css-themes.md).
 
-Gold marks the brand, primary actions and selected states. The active sort heading uses a slightly deeper gold (accent-700); section tabs
+Gold marks the brand, hovered/focused main actions and selected states. The active sort heading uses a slightly deeper gold (accent-700); section tabs
 share navigation gold (accent-600). Available
 choices use interactive blue. Hover/focus on an order row marks its edge blue,
 while its background retains its status hue: placed gold, packed blue,
@@ -62,9 +63,13 @@ which increases on hover without changing the status hue. Orange warning prose r
 Dark public section tabs, Find Sweets shop names and FAQ question rows share the
 navbar's diffuse hover/focus light and illuminated lettering. Selected tabs use
 light instead of an underline; open FAQ questions keep only the light behind
-their title, without a tinted rectangle. Addresses
+their title and chevron, without a tinted rectangle. FAQ and Find Sweets lights
+follow the question/name and icon separately, rather than lighting the empty
+middle of the row. Addresses
 and answers stay neutral. The landing menu and its account/cart/language controls
-use the same backlight, as does the navbar Login action. Ready catalog cart buttons
+use the same backlight, as does the navbar Login action. The chosen landing
+item owns its light even when pointer input follows keyboard focus. Login/password
+page home logos share the navbar logo's gold hover/focus treatment. Ready catalog cart buttons
 are interactive blue, becoming gold with the navbar cart's backlight on hover or
 keyboard focus; success feedback remains green. Catalog card hover and focused
 quantity/size fields also use the warm gold light; available controls remain blue.

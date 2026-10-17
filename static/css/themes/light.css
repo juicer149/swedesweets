@@ -349,6 +349,22 @@
 
   /* FAQ question headings only; previous-order accordions keep their own roles. */
   /* Shared hover light: local tabs, shop links and FAQ questions. */
+  /* Main solid actions; light keeps its existing yellow palette. */
+  --action-primary-bg: var(--color-action-place-solid);
+  --action-primary-text: var(--color-accent-text-standard);
+  --action-primary-default-text: var(--color-primary-900);
+  --action-primary-border: transparent;
+  --action-primary-hover-bg: var(--color-accent-500);
+  --action-primary-hover-text: initial;
+  --action-primary-hover-border: var(--color-accent-500);
+  --action-primary-active-bg: var(--color-accent-700);
+  --action-primary-active-border: var(--color-accent-700);
+  --action-primary-shadow: var(--shadow-accent-glow);
+  --action-primary-hover-transform: var(--transform-lift-scale);
+  --action-primary-text-shadow: none;
+  --action-primary-icon-filter: none;
+  --entrance-action-primary-bg: var(--color-action-place);
+
   --interaction-selected-opacity: 0;
   --interaction-text-shadow: none;
   --interaction-icon-filter: none;

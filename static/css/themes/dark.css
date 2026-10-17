@@ -31,10 +31,22 @@
   --interactive-text-strong: var(--color-primary-150);
   --interactive-border: var(--color-primary-200);
 
-  /* Primary action and selection are distinct roles even when both use gold.
-     These action roles own the normal filled-button background and text. */
-  --action-primary-bg: var(--color-accent-600);
-  --action-primary-text: var(--color-primary-800);
+  /* Main actions are available blue at rest, gold while hovered/focused.
+     Selection retains its independent gold role. */
+  --action-primary-bg: var(--color-primary-800);
+  --action-primary-text: var(--interactive-text);
+  --action-primary-default-text: var(--interactive-text);
+  --action-primary-border: var(--interactive-border);
+  --action-primary-hover-bg: var(--action-primary-bg);
+  --action-primary-hover-text: var(--selected-accent);
+  --action-primary-hover-border: var(--selected-accent);
+  --action-primary-active-bg: var(--surface-hover);
+  --action-primary-active-border: var(--selected-accent);
+  --action-primary-shadow: var(--menu-cart-glow);
+  --action-primary-hover-transform: var(--transform-lift);
+  --action-primary-text-shadow: var(--interaction-text-shadow);
+  --action-primary-icon-filter: var(--interaction-icon-filter);
+  --entrance-action-primary-bg: var(--action-primary-bg);
   --selected-accent: var(--color-accent-600);
   --local-selected-accent: var(--color-accent-700);
 

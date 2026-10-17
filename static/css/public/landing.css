@@ -329,3 +329,18 @@
 .landing__cart:is(:hover, :focus-visible) {
   color: var(--landing-control-hover-ink);
 }
+
+/* With live menu selection, only the chosen link emits light. Pointer choice
+   may move while another link still has keyboard focus; do not blur that link
+   or interfere with Tab/arrow-key navigation just to hide its old light. */
+.landing-menu[data-landing-live] .landing-menu__link:not(.landing-menu__link--chosen)::before {
+  opacity: 0;
+}
+
+.landing-menu[data-landing-live] .landing-menu__link:not(.landing-menu__link--chosen) {
+  text-shadow: none;
+}
+
+.landing-menu[data-landing-live] .landing-menu__link:not(.landing-menu__link--chosen) .ui-icon-svg {
+  filter: none;
+}

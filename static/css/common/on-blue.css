@@ -125,10 +125,10 @@ body.on-blue {
   outline-color: var(--on-blue-mark);
 }
 
-/* The yellow button: its usual yellow is a little see-through, which
-   turns mustard on blue; here it is the whole yellow. */
+/* Light uses opaque yellow on blue; dark uses the shared navy main action.
+   The entrance role keeps both choices in the theme files. */
 .on-blue .button--tone-place {
-  --button-solid-bg: var(--color-action-place);
+  --button-solid-bg: var(--entrance-action-primary-bg);
 }
 
 /* Problems have their own theme roles, independent of links and focus. */
@@ -266,4 +266,12 @@ body.on-blue { --on-blue-mark: var(--menu-chosen); }
 .on-blue .form-field input:focus {
   --input-fill-bg: var(--entrance-field-focus-bg);
   --input-fill-shadow: 0 0 0 3px var(--on-blue-mark);
+}
+
+.entrance-header__brand:is(:hover, :focus-visible) .brand-logo__wordmark {
+  fill: var(--menu-logo-hover);
+}
+
+.entrance-header__brand:is(:hover, :focus-visible) .entrance-header__logo {
+  filter: var(--interaction-icon-filter);
 }

@@ -31,7 +31,7 @@
 
      tone:
        .button--tone-place
-         Order creation / place-order actions. Currently yellow/accent.
+         Main submit / order creation actions. Palette comes from the theme.
 
        .button--tone-pack
          Transition-to-packed actions. Currently blue/info.
@@ -166,13 +166,18 @@
 }
 
 .button--tone-place {
-  --button-solid-text: var(--color-accent-text-standard);
-  --button-solid-bg: var(--color-action-place-solid);
-  --button-solid-border: transparent;
-  --button-solid-bg-hover: var(--color-accent-500);
-  --button-solid-border-hover: var(--color-accent-500);
-  --button-solid-bg-active: var(--color-accent-700);
-  --button-solid-shadow-hover: var(--shadow-accent-glow);
+  --button-solid-text: var(--action-primary-text);
+  --button-solid-text-hover: var(--action-primary-hover-text, var(--button-solid-text));
+  --button-solid-bg: var(--action-primary-bg);
+  --button-solid-border: var(--action-primary-border);
+  --button-solid-bg-hover: var(--action-primary-hover-bg);
+  --button-solid-border-hover: var(--action-primary-hover-border);
+  --button-solid-bg-active: var(--action-primary-active-bg);
+  --button-solid-border-active: var(--action-primary-active-border);
+  --button-solid-shadow-hover: var(--action-primary-shadow);
+  --button-solid-transform-hover: var(--action-primary-hover-transform);
+  --button-solid-text-shadow-hover: var(--action-primary-text-shadow);
+  --button-solid-icon-filter-hover: var(--action-primary-icon-filter);
 
   --button-soft-text: var(--color-action-place-on-light);
   --button-soft-bg: var(--color-action-place-light-bg);
@@ -294,13 +299,18 @@
   .button--tone-danger,
   .button--tone-neutral
 ) {
-  --button-solid-text: var(--color-primary-900);
-  --button-solid-bg: var(--color-action-place-solid);
-  --button-solid-border: transparent;
-  --button-solid-bg-hover: var(--color-accent-500);
-  --button-solid-border-hover: var(--color-accent-500);
-  --button-solid-bg-active: var(--color-accent-700);
-  --button-solid-shadow-hover: var(--shadow-accent-glow);
+  --button-solid-text: var(--action-primary-default-text);
+  --button-solid-text-hover: var(--action-primary-hover-text, var(--button-solid-text));
+  --button-solid-bg: var(--action-primary-bg);
+  --button-solid-border: var(--action-primary-border);
+  --button-solid-bg-hover: var(--action-primary-hover-bg);
+  --button-solid-border-hover: var(--action-primary-hover-border);
+  --button-solid-bg-active: var(--action-primary-active-bg);
+  --button-solid-border-active: var(--action-primary-active-border);
+  --button-solid-shadow-hover: var(--action-primary-shadow);
+  --button-solid-transform-hover: var(--action-primary-hover-transform);
+  --button-solid-text-shadow-hover: var(--action-primary-text-shadow);
+  --button-solid-icon-filter-hover: var(--action-primary-icon-filter);
 
   --button-soft-text: var(--text-body);
   --button-soft-bg: transparent;
@@ -334,15 +344,17 @@
 
 .button--solid:hover,
 .button--solid:focus-visible {
+  color: var(--button-solid-text-hover, var(--button-solid-text));
+  text-shadow: var(--button-solid-text-shadow-hover, none);
   background: var(--button-solid-bg-hover);
   border-color: var(--button-solid-border-hover);
   box-shadow: var(--button-solid-shadow-hover);
-  transform: var(--transform-lift-scale);
+  transform: var(--button-solid-transform-hover, var(--transform-lift-scale));
 }
 
 .button--solid:active {
   background: var(--button-solid-bg-active);
-  border-color: var(--button-solid-bg-active);
+  border-color: var(--button-solid-border-active, var(--button-solid-bg-active));
   box-shadow: var(--shadow-pressed);
   transform: translateY(0);
 }
@@ -474,4 +486,19 @@
 .button__label {
   line-height: 1;
   white-space: nowrap;
+}
+
+.button--solid:is(:hover, :focus-visible) .button__icon {
+  filter: var(--button-solid-icon-filter-hover, none);
+}
+
+.button--solid:is(:disabled, [aria-disabled="true"]):is(:hover, :focus-visible) {
+  color: var(--button-solid-text);
+  background: var(--button-solid-bg);
+  border-color: var(--button-solid-border);
+  text-shadow: none;
+}
+
+.button--solid:is(:disabled, [aria-disabled="true"]):is(:hover, :focus-visible) .button__icon {
+  filter: none;
 }

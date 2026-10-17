@@ -1,11 +1,11 @@
 /* Shared local hover/focus light. Themes own its paint; layout stays here.
    Keep the name/question above the halo and leave secondary prose neutral. */
-:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand) {
+:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand) {
   position: relative;
   isolation: isolate;
 }
 
-:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand)::before {
+:is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
   content: "";
   position: absolute;
   inset: -0.6rem 0;
@@ -16,6 +16,44 @@
   filter: blur(var(--interaction-glow-blur));
   opacity: 0;
   transition: opacity var(--motion-fast);
+}
+
+/* Content-sized lights: each question/name and its icon emit independently,
+   rather than putting the brightest part in the empty middle of the row. */
+:is(.faq .accordion__summary > span:first-child, .faq .accordion__chevron,
+    .find-sweets .line__name, .find-sweets .line__icon) {
+  position: relative;
+  isolation: isolate;
+}
+
+:is(.faq .accordion__summary > span:first-child, .faq .accordion__chevron,
+    .find-sweets .line__name, .find-sweets .line__icon)::before {
+  content: "";
+  position: absolute;
+  inset: -0.4rem -0.5rem;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: var(--radius-pill);
+  background: var(--interaction-glow);
+  filter: blur(var(--interaction-glow-blur));
+  opacity: 0;
+  transition: opacity var(--motion-fast);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .faq .accordion__summary:hover > span::before,
+  .find-sweets .line__link:hover :is(.line__name, .line__icon)::before {
+    opacity: 1;
+  }
+}
+
+.faq .accordion__summary:focus-visible > span::before,
+.find-sweets .line__link:focus-visible :is(.line__name, .line__icon)::before {
+  opacity: 1;
+}
+
+.faq .accordion[open] > .accordion__summary > span::before {
+  opacity: var(--interaction-selected-opacity);
 }
 
 /* Keep paint room around tight line heights without moving the layout. */
@@ -37,12 +75,12 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand):hover::before {
+  :is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):hover::before {
     opacity: 1;
   }
 }
 
-:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand):focus-visible::before {
+:is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):focus-visible::before {
   opacity: 1;
 }
 
@@ -52,7 +90,6 @@
     .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"],
     .section-nav__link[aria-pressed="true"],
-    .faq .accordion[open] > .accordion__summary,
     .landing-menu__link--chosen)::before {
   opacity: var(--interaction-selected-opacity);
 }
@@ -103,7 +140,8 @@
 
 @media (forced-colors: active) {
   .site-nav__link::after,
-  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand)::before {
+  :is(.faq .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
+  :is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
     display: none;
   }
 
@@ -114,14 +152,16 @@
 
   :is(.site-nav__icon, .section-nav__link, .faq .accordion__summary,
       .landing-menu__link, .landing__account, .landing__cart, .find-sweets .line__icon, .site-brand, .site-nav-cart__trigger, .tile__add) .ui-icon-svg,
-  .site-brand__logo {
+  .site-brand__logo,
+  .entrance-header__logo {
     filter: none !important;
   }
 
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand)::before {
+  :is(.faq .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
+  :is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
     transition: none;
   }
 }

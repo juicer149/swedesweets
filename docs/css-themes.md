@@ -504,3 +504,35 @@ a softer gold border and `--menu-cart-glow` through the existing
 The catalog footer's `--feedback-min-loading` is 350ms (previously 550ms), scoped
 to `.catalog__more-status`. Settling/mark timings and add-to-cart feedback are
 unchanged, so only revealing the next group of products becomes faster.
+
+## Content lights, input switching and main actions
+
+FAQ summary lights are attached to the question span and chevron separately.
+Find Sweets uses the same content-sized pseudo-elements behind each shop name
+and map pin; the row itself has no halo. Neutral addresses/answers do not emit
+light. Opening a question retains both content lights. The login/reset home
+logo (`.entrance-header__brand`) shares the navbar logo's paint and halo.
+
+With `data-landing-live`, only `.landing-menu__link--chosen` emits light. A
+pointer may choose another link while the previous link still has keyboard
+focus; that previous link's halo, text shadow and icon emission are suppressed.
+Focus is preserved so normal Tab/arrow-key navigation still works.
+
+Main solid buttons (place tone and default tone) use shared theme roles:
+
+| Role | Dark palette / purpose |
+| --- | --- |
+| `--action-primary-bg` | primary-800 background |
+| `--action-primary-text`, `--action-primary-default-text` | interactive blue text |
+| `--action-primary-border` | interactive blue edge |
+| `--action-primary-hover-bg` | same navy background |
+| `--action-primary-hover-text`, `--action-primary-hover-border` | selected gold |
+| `--action-primary-active-bg/border` | pressed navy surface / gold edge |
+| `--action-primary-shadow` | shared warm cart glow |
+| `--action-primary-hover-transform` | small lift; no widening that clips a full-width button's edge |
+| `--action-primary-text-shadow`, `--action-primary-icon-filter` | shared emission |
+| `--entrance-action-primary-bg` | same navy on login/reset pages |
+
+The optional hover text falls back to the normal tone text in light. Light/ops
+retain yellow main buttons; green/red/status button tones keep their palettes.
+Disabled solid buttons keep normal ink/background/edge and do not glow.
