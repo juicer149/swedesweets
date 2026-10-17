@@ -134,7 +134,7 @@
   /* Header/phone edge is independent of the selected text.
      The language and cart keep their menu-specific palette/glow. */
   --menu-edge: var(--color-accent-750);
-  --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.24), rgb(249 181 26 / 0.13) 30%, rgb(249 181 26 / 0.055) 60%, rgb(249 181 26 / 0) 100%);
+  --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.08), rgb(249 181 26 / 0.06) 30%, rgb(249 181 26 / 0.04) 60%, rgb(249 181 26 / 0) 100%);
   --menu-link-glow-blur: 7px;
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
   --menu-cart-ink: var(--menu-ink);
@@ -147,7 +147,7 @@
   /* Light follows every glyph: close emission, soft lateral spill, outer falloff. */
   --interaction-text-shadow: 0 0 3px rgb(249 181 26 / 0.28), -5px 0 11px rgb(249 181 26 / 0.20), 5px 0 11px rgb(249 181 26 / 0.20), 0 0 18px rgb(249 181 26 / 0.12);
   /* Widen paint rather than element boxes, avoiding horizontal page overflow. */
-  --interaction-glow-filter: blur(var(--interaction-glow-blur)) drop-shadow(-8px 0 4px rgb(249 181 26 / 0.45)) drop-shadow(8px 0 4px rgb(249 181 26 / 0.45));
+  --interaction-glow-filter: blur(var(--interaction-glow-blur)) drop-shadow(-12px 0 4px rgb(249 181 26 / 0.45)) drop-shadow(12px 0 4px rgb(249 181 26 / 0.45));
   --menu-crown-shadow: drop-shadow(0 0 4px rgb(249 181 26 / 0.40)) drop-shadow(0 0 8px rgb(249 181 26 / 0.18));
   --interaction-icon-filter: drop-shadow(0 0 3px rgb(249 181 26 / 0.28));
   --menu-logo-hover: var(--selected-accent);
