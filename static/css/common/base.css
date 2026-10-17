@@ -13,6 +13,12 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Short customer pages and long catalogs share the same content width.
+   Entrances without a header keep their full-width background. */
+html[data-site-zone="public"]:has(.site-header) {
+  scrollbar-gutter: stable;
+}
+
 body {
   min-height: 100vh;
   margin: 0;

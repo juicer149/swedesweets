@@ -394,3 +394,15 @@ Product detail only displays the stock line below the existing threshold of
 10 units, including zero stock. Healthy stock is hidden in server-rendered
 HTML as well as after choosing a variant or toggling a special offer. The
 existing availability labels and ordering/stock rules are unchanged.
+
+## Stable navbar geometry
+
+Desktop navigation links always reserve the crown's right margin, including
+inactive links. Selecting Shop, Find Sweets, FAQ or About therefore changes
+colour/crown without moving neighbouring links. Phone links keep zero right
+margin in their fixed grid slots.
+
+Customer pages with a site header reserve a stable root scrollbar gutter so
+the navbar and content stay aligned between short and scrolling pages, and
+when the catalog overlay locks page scrolling. Entrances without a header
+retain their full-width canvas. This layout behaviour is shared by both themes.

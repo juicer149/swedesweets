@@ -157,8 +157,9 @@
   pointer-events: none;
 }
 
-.site-nav__link--active,
-.site-nav__link[aria-current="page"] {
+/* Reserve the crown's breathing room for every link, so changing the
+   current page never changes the width/placement of its neighbours. */
+.site-nav__link {
   margin-right: 0.5em;
 }
 
@@ -843,6 +844,7 @@
     display: grid;
     justify-items: center;
     gap: clamp(0.12rem, 0.5vw, 0.25rem);
+    margin-right: 0;
 
     min-width: 0;
     min-height: clamp(3rem, 12vw, 3.3rem);
