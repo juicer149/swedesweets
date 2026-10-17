@@ -118,7 +118,7 @@
   inset: -0.6rem -0.8rem;
   z-index: -1;
   background: var(--menu-link-glow);
-  filter: blur(var(--menu-link-glow-blur));
+  filter: var(--interaction-glow-filter);
   border-radius: var(--radius-pill);
   opacity: 0;
   pointer-events: none;
@@ -183,8 +183,15 @@
   background: var(--menu-crown);
   -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
   mask: url("../../images/favicon.svg") center / contain no-repeat;
-  filter: var(--menu-crown-shadow);
   pointer-events: none;
+}
+
+/* Filter the wrapper's painted contents: the crown's own mask would clip
+   an outer shadow applied to the masked pseudo-element itself. This also
+   covers the phone crown, which is attached to the icon rather than text.
+   Hover/current share the emission; only the current link has a crown. */
+.site-nav__link:is(:hover, :focus-visible, .site-nav__link--active, [aria-current="page"]) > :is(.site-nav__label, .site-nav__icon) {
+  filter: var(--menu-crown-shadow);
 }
 
 /* Reserve the crown's breathing room for every link, so changing the
@@ -744,7 +751,6 @@
     background: var(--menu-crown);
   -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
   mask: url("../../images/favicon.svg") center / contain no-repeat;
-    filter: var(--menu-crown-shadow);
     pointer-events: none;
   }
 }
@@ -961,7 +967,6 @@
     background: var(--menu-crown);
   -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
   mask: url("../../images/favicon.svg") center / contain no-repeat;
-    filter: var(--menu-crown-shadow);
     pointer-events: none;
   }
 

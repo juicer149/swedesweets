@@ -144,7 +144,11 @@
 
   /* Shared local interactions follow the approved navbar light. */
   --interaction-selected-opacity: 1;
-  --interaction-text-shadow: 0 0 7px rgb(249 181 26 / 0.28);
+  /* Light follows every glyph: close emission, soft lateral spill, outer falloff. */
+  --interaction-text-shadow: 0 0 3px rgb(249 181 26 / 0.28), -5px 0 11px rgb(249 181 26 / 0.20), 5px 0 11px rgb(249 181 26 / 0.20), 0 0 18px rgb(249 181 26 / 0.12);
+  /* Widen paint rather than element boxes, avoiding horizontal page overflow. */
+  --interaction-glow-filter: blur(var(--interaction-glow-blur)) drop-shadow(-8px 0 4px rgb(249 181 26 / 0.45)) drop-shadow(8px 0 4px rgb(249 181 26 / 0.45));
+  --menu-crown-shadow: drop-shadow(0 0 4px rgb(249 181 26 / 0.40)) drop-shadow(0 0 8px rgb(249 181 26 / 0.18));
   --interaction-icon-filter: drop-shadow(0 0 3px rgb(249 181 26 / 0.28));
   --menu-logo-hover: var(--selected-accent);
   --section-nav-marker-display: none;

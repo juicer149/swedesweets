@@ -82,7 +82,7 @@
   inset: -0.2rem -0.4rem;
   z-index: -1;
   background: var(--menu-link-glow);
-  filter: blur(var(--menu-link-glow-blur));
+  filter: var(--interaction-glow-filter);
   border-radius: var(--radius-pill);
   opacity: 0;
   pointer-events: none;

@@ -377,6 +377,7 @@
   --landing-control-hover-ink: var(--menu-ink);
   --interaction-glow: var(--menu-link-glow);
   --interaction-glow-blur: var(--menu-link-glow-blur);
+  --interaction-glow-filter: blur(var(--interaction-glow-blur));
   --section-nav-hover-marker: 100%;
   --section-nav-mobile-hover-marker: min(72%, 9rem);
   --find-sweets-hover-decoration: underline;

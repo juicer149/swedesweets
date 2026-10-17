@@ -13,7 +13,7 @@
   pointer-events: none;
   border-radius: var(--radius-pill);
   background: var(--interaction-glow);
-  filter: blur(var(--interaction-glow-blur));
+  filter: var(--interaction-glow-filter);
   opacity: 0;
   transition: opacity var(--motion-fast);
 }
@@ -35,7 +35,7 @@
   pointer-events: none;
   border-radius: var(--radius-pill);
   background: var(--interaction-glow);
-  filter: blur(var(--interaction-glow-blur));
+  filter: var(--interaction-glow-filter);
   opacity: 0;
   transition: opacity var(--motion-fast);
 }
@@ -153,7 +153,10 @@
   :is(.site-nav__icon, .section-nav__link, .faq .accordion__summary,
       .landing-menu__link, .landing__account, .landing__cart, .find-sweets .line__icon, .site-brand, .site-nav-cart__trigger, .tile__add) .ui-icon-svg,
   .site-brand__logo,
-  .entrance-header__logo {
+  .entrance-header__logo,
+  .site-nav__label,
+  .site-nav__icon,
+  .landing-menu__crown {
     filter: none !important;
   }
 

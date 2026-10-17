@@ -536,3 +536,23 @@ Main solid buttons (place tone and default tone) use shared theme roles:
 The optional hover text falls back to the normal tone text in light. Light/ops
 retain yellow main buttons; green/red/status button tones keep their palettes.
 Disabled solid buttons keep normal ink/background/edge and do not glow.
+
+## Wider light spill and glowing letters
+
+`--interaction-text-shadow` layers a close glow, two soft lateral shadows and
+an outer falloff. CSS paints these from each glyph, including the outer letters;
+no duplicated text, per-letter markup or JavaScript is needed. FAQ questions,
+shop names, section tabs, navbar and landing labels and main-button hover text
+share this role. Resting text and neutral addresses/answers retain their roles.
+
+`--interaction-glow-filter` adds soft left/right drop shadows to the existing
+blurred radial halo. It widens the painted light without enlarging pseudo-element
+boxes, so mobile navigation cannot introduce horizontal scrolling. The halo's
+vertical inset and radial colour stops are unchanged. Light supplies only its
+existing zero-blur/no-halo treatment.
+
+`--menu-crown-shadow` gives the active crown a small warm emission. Navbar
+crowns are masked pseudo-elements, so their shadow is applied to the label/icon
+wrapper after its children are painted; applying it only to the masked crown
+would clip the outer light. Landing's SVG crown uses the same role directly.
+Forced-colours mode removes both emission and halo filters.
