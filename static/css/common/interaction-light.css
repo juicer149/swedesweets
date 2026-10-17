@@ -43,13 +43,13 @@
 @media (hover: hover) and (pointer: fine) {
   .faq .accordion__summary:hover > span::before,
   .find-sweets .line__link:hover :is(.line__name, .line__icon)::before {
-    opacity: 1;
+    opacity: var(--interaction-halo-opacity);
   }
 }
 
 .faq .accordion__summary:focus-visible > span::before,
 .find-sweets .line__link:focus-visible :is(.line__name, .line__icon)::before {
-  opacity: 1;
+  opacity: var(--interaction-halo-opacity);
 }
 
 .faq .accordion[open] > .accordion__summary > span::before {
@@ -76,12 +76,12 @@
 
 @media (hover: hover) and (pointer: fine) {
   :is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):hover::before {
-    opacity: 1;
+    opacity: var(--interaction-halo-opacity);
   }
 }
 
 :is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):focus-visible::before {
-  opacity: 1;
+  opacity: var(--interaction-halo-opacity);
 }
 
 /* A selected tab/open question is a lamp left on, including after a touch.

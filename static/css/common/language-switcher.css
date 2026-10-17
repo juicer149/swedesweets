@@ -91,5 +91,5 @@
 
 :is(.site-header, .landing) .language-switcher__option:hover::after,
 :is(.site-header, .landing) .language-switcher__option:focus-visible::after {
-  opacity: 1;
+  opacity: var(--interaction-halo-opacity);
 }

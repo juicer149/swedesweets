@@ -539,8 +539,7 @@ Disabled solid buttons keep normal ink/background/edge and do not glow.
 
 ## Wider light spill and glowing letters
 
-`--interaction-text-shadow` layers a close glow, two soft lateral shadows and
-an outer falloff. CSS paints these from each glyph, including the outer letters;
+`--interaction-text-shadow` layers centred close, medium and outer glows. CSS paints these from each glyph, including the outer letters;
 no duplicated text, per-letter markup or JavaScript is needed. FAQ questions,
 shop names, section tabs, navbar and landing labels and main-button hover text
 share this role. Resting text and neutral addresses/answers retain their roles.
@@ -556,3 +555,17 @@ crowns are masked pseudo-elements, so their shadow is applied to the label/icon
 wrapper after its children are painted; applying it only to the masked crown
 would clip the outer light. Landing's SVG crown uses the same role directly.
 Forced-colours mode removes both emission and halo filters.
+
+## Glyph-led light preview
+
+Dark now uses centred `0 0` text shadows with 3px, 9px and 18px blur. The icon
+filter layers close 3px and outer 9px drop shadows, so each painted SVG shape
+emits light too. No per-character elements, text copies or JavaScript are used.
+
+`--interaction-halo-opacity: 0.2` reduces the broad radial light to 20% of its
+existing tuned strength for hover, keyboard focus and selected/open states.
+The user's radial stops (0.08 / 0.06 / 0.04) and lateral filter offsets (±12px)
+are preserved. Set this opacity to `1` to restore the broad halo, or `0` to see
+only glyph/icon emission. `--interaction-text-shadow` and
+`--interaction-icon-filter` independently tune the actual emission. Light keeps
+its existing presentation; active crowns and the landing input handoff remain.

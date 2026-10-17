@@ -143,13 +143,16 @@
   --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / 0.26), 0 0 32px 7px rgb(246 181 30 / 0.10);
 
   /* Shared local interactions follow the approved navbar light. */
-  --interaction-selected-opacity: 1;
-  /* Light follows every glyph: close emission, soft lateral spill, outer falloff. */
-  --interaction-text-shadow: 0 0 3px rgb(249 181 26 / 0.28), -5px 0 11px rgb(249 181 26 / 0.20), 5px 0 11px rgb(249 181 26 / 0.20), 0 0 18px rgb(249 181 26 / 0.12);
+  /* Let the painted letters/icons supply the light; retain a faint broad halo.
+     Set halo opacity to 1 to restore the full tuned radial background. */
+  --interaction-halo-opacity: 0.2;
+  --interaction-selected-opacity: var(--interaction-halo-opacity);
+  /* Centred shadows follow the glyph shapes, without a directional offset. */
+  --interaction-text-shadow: 0 0 3px rgb(249 181 26 / 0.28), 0 0 9px rgb(249 181 26 / 0.20), 0 0 18px rgb(249 181 26 / 0.12);
   /* Widen paint rather than element boxes, avoiding horizontal page overflow. */
   --interaction-glow-filter: blur(var(--interaction-glow-blur)) drop-shadow(-12px 0 4px rgb(249 181 26 / 0.45)) drop-shadow(12px 0 4px rgb(249 181 26 / 0.45));
   --menu-crown-shadow: drop-shadow(0 0 4px rgb(249 181 26 / 0.40)) drop-shadow(0 0 8px rgb(249 181 26 / 0.18));
-  --interaction-icon-filter: drop-shadow(0 0 3px rgb(249 181 26 / 0.28));
+  --interaction-icon-filter: drop-shadow(0 0 3px rgb(249 181 26 / 0.28)) drop-shadow(0 0 9px rgb(249 181 26 / 0.16));
   --menu-logo-hover: var(--selected-accent);
   --section-nav-marker-display: none;
   --find-sweets-hover-text: var(--selected-accent);

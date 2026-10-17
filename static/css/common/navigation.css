@@ -140,7 +140,7 @@
 /* Hover/focus and the current page light up; only the current page has a crown. */
 .site-nav__link:hover::after,
 .site-nav__link:focus-visible::after {
-  opacity: 1;
+  opacity: var(--interaction-halo-opacity);
 }
 
 /* Give descenders (g, p, y) paint room inside tight line heights.
