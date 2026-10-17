@@ -53,6 +53,11 @@ palette uses deep blue surfaces, neutral reading text and light blue available
 interactions. Ops remains light until its work pages have been reviewed.
 Theme selection and implementation details are in [CSS themes](docs/css-themes.md).
 
+For customer review, the public header/landing/login has a small sun/moon
+button beside language choices. It switches the palette directly, with a short
+setting/rising orbit; reduced motion skips animation. The explicit choice lasts
+for the tab. Ops remains light. This preview control is temporary.
+
 Gold marks the brand, hovered/focused main actions and selected states. The active sort heading uses a slightly deeper gold (accent-700); section tabs
 share navigation gold (accent-600). Available
 choices use interactive blue. Hover/focus on an order row marks its edge blue,

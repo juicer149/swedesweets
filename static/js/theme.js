@@ -23,6 +23,21 @@
     root.dataset.theme = "light";
     return;
   }
+  // The temporary switch makes an explicit manual choice. Setting themeMode
+  // also stops the existing auto timer from changing it back.
+  window.siteTheme = {
+    set(theme) {
+      if (theme !== "light" && theme !== "dark") return false;
+      root.dataset.themeMode = theme;
+      root.dataset.theme = theme;
+      try {
+        sessionStorage.setItem(storageKey, theme);
+      } catch {
+        // A manual switch still works when browser storage is unavailable.
+      }
+      return true;
+    },
+  };
   root.dataset.themeMode = mode;
   if (mode !== "auto") {
     root.dataset.theme = mode;

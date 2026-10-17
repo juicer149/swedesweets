@@ -28,6 +28,29 @@ the choice lasts for this browser tab. Auto uses Paris time: light 06–22,
 dark 22–06. An unknown choice falls back to light. Ops remains light until its
 work pages have been checked for the dark palette.
 
+## Temporary sun/moon preview switch
+
+During customer review, a small button beside the language choices switches
+between light and dark immediately. The sun sets along an arc and the moon
+rises into its place; the reverse happens when returning to light. Reduced
+motion disables the transition. The translated button exposes a stable "Dark
+theme" name and `aria-pressed`, plus a tooltip naming the next action.
+
+The button appears on customer navbar, landing and entrance/error pages. Ops
+has no switch and remains light. Without JavaScript the button stays hidden.
+The choice uses the existing sessionStorage preview key, survives navigation
+and reload in the current tab, and overrides auto mode until explicitly
+requesting `?theme=auto` again. An existing `theme` query is updated on click;
+other query parameters, hashes and catalog history state are preserved.
+
+`theme.js` owns the small `window.siteTheme.set(light|dark)` controller;
+`theme-switch.js` owns the button and keeps its accessible state in sync with
+auto changes. `includes/theme_switch.html` and `common/theme-switch.css` own
+markup/orbit geometry. `--theme-switch-*` colours live in the theme files.
+To remove this temporary control, remove its include from the language group,
+its deferred script in base.html, and the matching CSS import/assets; the
+existing URL preview continues to work.
+
 ## Checks
 
 Validation: `make lint check collectstatic`,

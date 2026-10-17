@@ -1,5 +1,10 @@
 {% load i18n %}
 
+<div class="menu-preferences">
+  {% if site_zone != "ops" %}
+    {% include "includes/theme_switch.html" %}
+  {% endif %}
+
 <form
   class="language-switcher"
   action="{% url 'set_language' %}"
@@ -35,3 +40,4 @@
     FR
   </button>
 </form>
+</div>

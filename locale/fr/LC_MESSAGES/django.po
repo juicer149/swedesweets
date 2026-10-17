@@ -2177,6 +2177,18 @@ msgstr "Moi"
 msgid "No photo for this product"
 msgstr "Pas de photo pour ce produit"
 
+#: templates/includes/theme_switch.html:9
+msgid "Switch to light theme"
+msgstr "Passer au thème clair"
+
+#: templates/includes/theme_switch.html:10
+msgid "Switch to dark theme"
+msgstr "Passer au thème sombre"
+
+#: templates/includes/theme_switch.html:11
+msgid "Dark theme"
+msgstr "Thème sombre"
+
 #~ msgid "FAQ"
 #~ msgstr "FAQ"
 

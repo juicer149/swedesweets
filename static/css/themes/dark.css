@@ -137,6 +137,9 @@
   --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.06), rgb(249 181 26 / 0.05) 30%, rgb(249 181 26 / 0.04) 60%, rgb(249 181 26 / 0) 100%);
   --menu-link-glow-blur: 10px;
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
+  --theme-switch-ink: var(--interactive-text);
+  --theme-switch-border: color-mix(in srgb, var(--interactive-border) 35%, transparent);
+  --theme-switch-moon: var(--interactive-text);
   /* Selected language is quiet blue; pointer/keyboard interaction stays gold. */
   --menu-language-active-text: var(--interactive-text);
   --menu-language-active-glow: radial-gradient(ellipse at center, color-mix(in srgb, var(--interactive-text) 8%, transparent), color-mix(in srgb, var(--interactive-text) 3%, transparent) 60%, transparent 100%);

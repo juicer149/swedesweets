@@ -1,0 +1,138 @@
+/* Temporary manual preview beside language controls. The sky clips the orbit,
+   while the button itself leaves room for focus and the shared backlight. */
+.menu-preferences {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.theme-switch {
+  position: relative;
+  isolation: isolate;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  color: var(--theme-switch-ink);
+  background: transparent;
+  border: 1px solid var(--theme-switch-border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: color var(--motion-fast), border-color var(--motion-fast);
+}
+
+.theme-switch[hidden] {
+  display: none;
+}
+
+.theme-switch::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -0.2rem -0.4rem;
+  pointer-events: none;
+  background: var(--menu-link-glow);
+  filter: var(--interaction-glow-filter);
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity var(--motion-fast);
+}
+
+.theme-switch:is(:hover, :focus-visible) {
+  color: var(--menu-chosen);
+  border-color: var(--menu-chosen);
+}
+
+.theme-switch:is(:hover, :focus-visible)::before {
+  opacity: var(--interaction-halo-opacity);
+}
+
+.theme-switch:focus-visible {
+  outline: 2px solid var(--menu-chosen);
+  outline-offset: 3px;
+}
+
+.theme-switch__sky {
+  position: relative;
+  width: 1.5rem;
+  height: 1.35rem;
+  overflow: hidden;
+}
+
+.theme-switch__orb {
+  position: absolute;
+  top: 0.05rem;
+  left: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  transform-origin: 50% 1.65rem;
+  transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1), opacity 350ms ease;
+}
+
+.theme-switch__sun {
+  color: var(--theme-switch-sun);
+  transform: rotate(0deg);
+  opacity: 1;
+}
+
+.theme-switch__moon {
+  color: var(--theme-switch-moon);
+  transform: rotate(-100deg);
+  opacity: 0;
+}
+
+:root[data-theme="dark"] .theme-switch__sun {
+  transform: rotate(100deg);
+  opacity: 0;
+}
+
+:root[data-theme="dark"] .theme-switch__moon {
+  transform: rotate(0deg);
+  opacity: 1;
+}
+
+.theme-switch:is(:hover, :focus-visible) .theme-switch__orb {
+  color: var(--menu-chosen);
+}
+
+.theme-switch__horizon {
+  position: absolute;
+  bottom: 0.3rem;
+  width: 1.15rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-switch,
+  .theme-switch::before,
+  .theme-switch__orb {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .theme-switch::before {
+    display: none;
+  }
+
+  .theme-switch__orb {
+    color: ButtonText;
+  }
+}
+
+/* Keep the entrance logo centred on narrow screens. The controls may wrap
+   within the right grid track instead of widening it and pushing the logo. */
+.entrance-header__language {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.entrance-header__language .menu-preferences {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 100%;
+}

@@ -11,9 +11,10 @@ function preview({ query = '', stored = null, attr = 'light', zone = 'public', h
   let timer;
   const clock = { hour };
   const state = { stored };
+  const browserWindow = { location: { search: query } };
   runInNewContext(source, {
     document: { documentElement: root },
-    window: { location: { search: query } }, URLSearchParams, Date,
+    window: browserWindow, URLSearchParams, Date,
     sessionStorage: {
       getItem() { if (blocked) throw Error('blocked'); return state.stored; },
       setItem(key, value) { if (blocked) throw Error('blocked'); state.stored = value; },
@@ -21,7 +22,7 @@ function preview({ query = '', stored = null, attr = 'light', zone = 'public', h
     Intl: { DateTimeFormat: class { format() { return String(clock.hour); } } },
     setInterval(fn, delay) { assert.equal(delay, 60000); timer = fn; },
   });
-  return { root, clock, state, tick() { timer(); } };
+  return { root, clock, state, controller: browserWindow.siteTheme, tick() { timer(); } };
 }
 
 test('light is the default, including unknown values', () => {
@@ -56,4 +57,28 @@ test('ops stays light without discarding the customer-page preview', () => {
   const p = preview({stored:'dark', zone:'ops'});
   assert.equal(p.root.dataset.theme, 'light');
   assert.equal(p.state.stored,'dark');
+});
+
+test('manual switching persists and can replace an automatic preview', () => {
+  const p = preview({query:'?theme=auto', hour:12});
+  assert.equal(p.controller.set('dark'), true);
+  assert.equal(p.root.dataset.theme, 'dark');
+  assert.equal(p.root.dataset.themeMode, 'dark');
+  assert.equal(p.state.stored, 'dark');
+  p.clock.hour = 13; p.tick();
+  assert.equal(p.root.dataset.theme, 'dark');
+  p.controller.set('light');
+  assert.equal(p.state.stored, 'light');
+  assert.equal(p.root.dataset.theme, 'light');
+});
+test('manual choices work with blocked storage and reject unknown modes', () => {
+  const p = preview({blocked:true});
+  assert.equal(p.controller.set('dark'), true);
+  assert.equal(p.root.dataset.theme, 'dark');
+  assert.equal(p.controller.set('invalid'), false);
+  assert.equal(p.controller.set('auto'), false);
+  assert.equal(p.root.dataset.theme, 'dark');
+});
+test('ops does not expose a customer palette switch', () => {
+  assert.equal(preview({zone:'ops'}).controller, undefined);
 });
