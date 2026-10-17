@@ -90,7 +90,7 @@
   }
 }
 
-/* On mobile the wrench is left of the account button. Anchor its panel to
+/* On mobile the gear is left of the account button. Anchor its panel to
    the whole right-hand control group so the panel stays inside the screen. */
 @media (max-width: 767px) {
   .site-nav__auth .site-preferences { position: static; }

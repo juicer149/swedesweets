@@ -234,7 +234,9 @@ def test_product_edit_form_is_one_page_of_sections(client):
         "product",
         "variants",
     ]
-    assert "<details" not in content
+    # Navbar disclosures are independent of the product's open form sections.
+    form_html = content.split('<form class="product-form"', 1)[1].split("</form>", 1)[0]
+    assert "<details" not in form_html
     # The product page's buttons link to the sections by id.
     assert 'id="product"' in content
     assert 'id="variants"' in content

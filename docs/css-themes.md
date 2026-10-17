@@ -30,7 +30,7 @@ work pages have been checked for the dark palette.
 
 ## Shared settings and temporary theme preview
 
-A single wrench opens the same settings disclosure in the customer navbar,
+A single gear icon opens the same settings disclosure in the customer navbar,
 landing and entrance/error pages, at every screen size. Language uses EN/FR
 text buttons and the existing Django POST endpoint. The selected language is
 gold with a soft glow inside the open panel; no radio circles are drawn.
@@ -48,7 +48,7 @@ moon appears on the left, against the dark track. The sun sets and the moon
 rises along an arc, each with a soft shadow following its shape. Reduced
 motion disables the transition. The switch is hidden without JavaScript.
 Escape closes the panel and restores
-focus to its wrench; clicking outside closes it as well.
+focus to its gear button; clicking outside closes it as well.
 
 The choice uses the existing sessionStorage preview key, survives navigation
 and reload in the current tab, and overrides auto mode until explicitly
@@ -627,7 +627,7 @@ the gold selected text, and `--preferences-selected-shadow` its emission.
 `--preferences-hover` and the shared interaction shadows. These mappings
 locally override the standalone `--menu-language-*` roles inside settings.
 
-Panel surface/border/wrench remain independent `--preferences-*` roles.
+Panel surface/border/gear remain independent `--preferences-*` roles.
 `--account-menu-*` owns the account panel and links, including the blue Log out.
 `--site-switch-*` owns the staff navigation pill independently of the theme
 pill. `accounts/account_menus.py` composes allowed destinations; templates

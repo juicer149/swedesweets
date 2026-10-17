@@ -1,7 +1,6 @@
 """
-The navbar's account slot and the ops footer: staff switch between the
-public site and ops in the navbar, and find their own account and the
-logout in the ops footer.
+Staff settings switch between public and ops; the account dropdown and
+ops footer both provide the personal profile and a protected logout.
 """
 
 from __future__ import annotations
@@ -32,17 +31,20 @@ def test_ops_footer_has_my_account_and_logout_for_all_staff(client, make_user):
     footer = _footer(html)
     assert f'href="{reverse("accounts:me")}"' in footer
     assert f'action="{reverse("logout")}"' in footer
-    # Not the customers' footer, and no logout up in the navbar.
+    # The ops footer stays available independently of the account dropdown.
     assert "site-footer" not in html
-    assert html.count(f'action="{reverse("logout")}"') == 1
+    assert footer.count(f'action="{reverse("logout")}"') == 1
 
 
 @pytest.mark.django_db
-def test_staff_navbar_switches_to_the_public_site_in_ops(client):
+def test_staff_settings_switch_to_public_and_account_menu_links_to_profile(client):
     client.force_login(full_staff_user_factory())
 
     html = client.get(reverse("ops_dashboard")).content.decode()
 
-    navbar = html[: html.index('class="ops-footer"')]
-    assert f'href="{reverse("storefront:product_list")}"' in navbar
-    assert f'href="{reverse("accounts:me")}"' not in navbar
+    navbar = html.split("<header", 1)[1].split("</header>", 1)[0]
+    assert 'class="theme-switch site-switch"' in navbar
+    assert 'method="get"' in navbar
+    assert f'action="{reverse("storefront:product_list")}"' in navbar
+    assert 'class="account-menu__panel"' in navbar
+    assert f'href="{reverse("accounts:me")}"' in navbar
