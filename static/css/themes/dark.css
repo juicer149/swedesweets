@@ -134,8 +134,8 @@
   /* Header/phone edge is independent of the selected text.
      The language and cart keep their menu-specific palette/glow. */
   --menu-edge: var(--color-accent-750);
-  --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.08), rgb(249 181 26 / 0.06) 30%, rgb(249 181 26 / 0.04) 60%, rgb(249 181 26 / 0) 100%);
-  --menu-link-glow-blur: 7px;
+  --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.06), rgb(249 181 26 / 0.05) 30%, rgb(249 181 26 / 0.04) 60%, rgb(249 181 26 / 0) 100%);
+  --menu-link-glow-blur: 10px;
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
   --menu-cart-ink: var(--menu-ink);
   --menu-cart-ring: var(--menu-cart-ink);
@@ -145,10 +145,10 @@
   /* Shared local interactions follow the approved navbar light. */
   /* Let the painted letters/icons supply the light; retain a faint broad halo.
      Set halo opacity to 1 to restore the full tuned radial background. */
-  --interaction-halo-opacity: 0.2;
+  --interaction-halo-opacity: 1;
   --interaction-selected-opacity: var(--interaction-halo-opacity);
   /* Centred shadows follow the glyph shapes, without a directional offset. */
-  --interaction-text-shadow: 0 0 3px rgb(249 181 26 / 0.28), 0 0 9px rgb(249 181 26 / 0.20), 0 0 18px rgb(249 181 26 / 0.12);
+  --interaction-text-shadow: 0 0 3px rgb(249 181 26 / 0.15), 0 0 9px rgb(249 181 26 / 0.15), 0 0 18px rgb(249 181 26 / 0.15);
   /* Widen paint rather than element boxes, avoiding horizontal page overflow. */
   --interaction-glow-filter: blur(var(--interaction-glow-blur)) drop-shadow(-12px 0 4px rgb(249 181 26 / 0.45)) drop-shadow(12px 0 4px rgb(249 181 26 / 0.45));
   --menu-crown-shadow: drop-shadow(0 0 4px rgb(249 181 26 / 0.40)) drop-shadow(0 0 8px rgb(249 181 26 / 0.18));
