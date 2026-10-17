@@ -47,7 +47,7 @@
 
 .language-switcher__option--active,
 .language-switcher__option[aria-current="true"] {
-  color: var(--menu-language-chosen);
+  color: var(--menu-language-active-text);
   text-decoration: var(--menu-language-active-decoration);
   text-underline-offset: 0.28em;
   text-decoration-thickness: 0.1em;
@@ -92,15 +92,20 @@
 
 .language-switcher__option--active::after,
 .language-switcher__option[aria-current="true"]::after {
+  background: var(--menu-language-active-glow);
+  filter: var(--menu-language-active-glow-filter);
   opacity: var(--menu-language-active-glow-opacity);
 }
 
 .language-switcher__option:is(:hover, :focus-visible) {
+  color: var(--menu-language-chosen);
   text-shadow: var(--interaction-text-shadow);
 }
 
 .language-switcher__option:hover::after,
 .language-switcher__option:focus-visible::after {
+  background: var(--menu-link-glow);
+  filter: var(--interaction-glow-filter);
   opacity: var(--interaction-halo-opacity);
 }
 

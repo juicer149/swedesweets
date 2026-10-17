@@ -573,13 +573,16 @@ its existing presentation; active crowns and the landing input handoff remain.
 ## Selected language light
 
 All language-switcher placements (header, landing, login/reset and error pages)
-share the same state rules. Dark selected languages retain exactly the same
-halo and text shadow as hover/focus after the pointer/focus leaves, replacing
-the underline. Component roles alias the existing shared light:
+share the same state rules. Dark selected languages use interactive blue text
+and a faint blue halo at rest. Hover/keyboard focus switches text and light to
+the shared gold treatment, then returns to blue when interaction leaves.
 
+- `--menu-language-active-text`: `--interactive-text` (primary-200).
+- `--menu-language-active-glow`: a soft blue radial gradient.
+- `--menu-language-active-glow-filter`: 6px blur without gold side shadows.
+- `--menu-language-active-glow-opacity`: 0.6.
+- `--menu-language-active-text-shadow`: blue 8px glow at 0.16 opacity.
 - `--menu-language-active-decoration`: none in dark, underline in light.
-- `--menu-language-active-glow-opacity`: `--interaction-halo-opacity` in dark.
-- `--menu-language-active-text-shadow`: `--interaction-text-shadow` in dark.
 
-Light/ops retain their underline and no resting glow. Forced-colours mode
-restores the underline as the selected marker and hides the halo.
+Light/ops retain their selected colour, underline and no resting glow.
+Forced-colours mode restores the underline and hides the halo.

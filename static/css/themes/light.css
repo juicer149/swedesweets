@@ -226,6 +226,9 @@
   /* ## Language: the chosen label uses the menu accent; the other is muted */
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
   --menu-language-chosen: var(--color-accent-600);
+  --menu-language-active-text: var(--menu-language-chosen);
+  --menu-language-active-glow: var(--menu-link-glow);
+  --menu-language-active-glow-filter: var(--interaction-glow-filter);
   --menu-language-active-decoration: underline;
   --menu-language-active-glow-opacity: 0;
   --menu-language-active-text-shadow: none;
