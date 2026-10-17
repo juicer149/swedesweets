@@ -75,8 +75,8 @@ keyboard focus; success feedback remains green. Catalog card hover and focused
 quantity/size fields also use the warm gold light; available controls remain blue.
 Dropdown options pair foreground
 and background colours so selected countries and variants remain readable.
-In dark, the selected language keeps a small resting glow instead of an
-underline; hover/focus uses the ordinary shared light. This is consistent on
+In dark, the selected language keeps exactly the hover/focus glow instead of
+an underline. This is consistent on
 navbar, landing and login/reset pages. Light keeps its underline.
 Variable mappings live in [docs/css-themes.md](docs/css-themes.md).
 
