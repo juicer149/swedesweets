@@ -1,7 +1,7 @@
 """Navbar account links and staff-only site switching.
 
 Builders choose destinations; shared templates render the account disclosure
-and the settings site switch. Logout stays a CSRF-protected POST action.
+and the settings site link. Logout stays a CSRF-protected POST action.
 """
 
 from __future__ import annotations
@@ -30,7 +30,6 @@ class AccountMenu:
     account: AccountMenuItem | None = None
     switch: AccountMenuItem | None = None
     orders: AccountMenuItem | None = None
-    site_is_ops: bool = False
 
 
 BUSINESS_ACCOUNT_MENU_ITEM = AccountMenuItem(
@@ -97,5 +96,4 @@ def build_ops_account_menu() -> AccountMenu:
     return AccountMenu(
         account=STAFF_ACCOUNT_MENU_ITEM,
         switch=PUBLIC_SITE_MENU_ITEM,
-        site_is_ops=True,
     )

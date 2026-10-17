@@ -204,6 +204,10 @@
       cartElement()
     );
 
+    // The fragment URL describes the cart, not the page hosting its icon.
+    const isCurrentPage = currentCart?.querySelector("summary")
+      ?.getAttribute("aria-current") === "page";
+
     const wasOpen = Boolean(
       preserveOpenState
       && currentCart?.open
@@ -235,6 +239,10 @@
         container,
         html
       );
+
+      if (isCurrentPage) {
+        cartElement()?.querySelector("summary")?.setAttribute("aria-current", "page");
+      }
 
       // The cart as it is now, for whoever shows it elsewhere (the
       // catalog's in-cart badges count its lines).

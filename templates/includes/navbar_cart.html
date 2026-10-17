@@ -7,6 +7,7 @@
   <summary
     class="site-nav-cart__trigger menu-dropdown-trigger"
     aria-label="{{ navbar_cart.aria_label }}"
+    {% if navbar_cart_current %}aria-current="page"{% endif %}
   >
     <span
       class="site-nav-cart__icon"
@@ -14,6 +15,8 @@
     >
       {% include "includes/ui/icon.html" with name="cart" %}
     </span>
+
+    <span class="menu-dropdown-trigger__crown" aria-hidden="true"></span>
 
     {# How much it holds, at a glance; an empty cart shows none. #}
     {% if navbar_cart.line_count %}

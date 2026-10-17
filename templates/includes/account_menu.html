@@ -1,8 +1,9 @@
 {% load i18n %}
 {% if account_menu.account %}
 <details class="account-menu" data-dismiss-on-outside-click>
-  <summary class="account-menu__trigger menu-dropdown-trigger" aria-label="{{ account_menu.account.label }}">
+  <summary class="account-menu__trigger menu-dropdown-trigger" aria-label="{{ account_menu.account.label }}"{% if navbar_account_current %} aria-current="page"{% endif %}>
     {% include "includes/ui/icon.html" with name="user" %}
+    <span class="menu-dropdown-trigger__crown" aria-hidden="true"></span>
   </summary>
   <div class="account-menu__panel">
     <a class="quiet-link account-menu__link" href="{{ account_menu.account.href }}"

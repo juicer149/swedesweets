@@ -413,8 +413,8 @@
   align-items: center;
   justify-content: center;
 
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.375rem;
+  height: 1.375rem;
 
   color: currentColor;
 }
@@ -940,4 +940,10 @@
 
 .site-nav-cart-line.line-flash--removed .site-nav-cart-line__remove-button {
   color: var(--cart-remove-hover-ink);
+}
+
+/* Keep the item count opposite the current-page crown. */
+.site-nav-cart__trigger[aria-current="page"] .site-nav-cart__count {
+  left: -0.4rem;
+  right: auto;
 }

@@ -99,8 +99,6 @@
             </div>
           {% endif %}
 
-          {% include "includes/language_switcher.html" %}
-
           {% if account_menu %}
             {% include "includes/account_menu.html" %}
           {% else %}
@@ -111,6 +109,7 @@
               <span class="site-nav__label">{% trans "Login" %}</span>
             </a>
           {% endif %}
+          {% include "includes/language_switcher.html" %}
         </div>
       </div>
     </nav>

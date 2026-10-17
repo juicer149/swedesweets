@@ -62,20 +62,35 @@ def navigation(request):
             "account_menu": None,
         }
 
-    if _uses_shared_site_chrome(
-        request
-    ):
-        return _build_site_navigation(
+    if _uses_shared_site_chrome(request):
+        context = _build_site_navigation(
+            request=request,
+            account_role=account_role,
+            role_spec=role_spec,
+        )
+    else:
+        context = _build_portal_navigation(
             request=request,
             account_role=account_role,
             role_spec=role_spec,
         )
 
-    return _build_portal_navigation(
-        request=request,
-        account_role=account_role,
-        role_spec=role_spec,
-    )
+    view_name = getattr(request.resolver_match, "view_name", "")
+    context["navbar_account_current"] = view_name in {
+        "business_portal:index",
+        "business_portal:orders",
+        "business_portal:order_detail",
+        "accounts:me",
+        "password_change",
+    }
+    context["navbar_cart_current"] = view_name in {
+        "business_portal:cart",
+        "business_portal:cart_review",
+        "storefront:cart",
+        "storefront:checkout",
+        "storefront:checkout_review",
+    }
+    return context
 
 
 def _build_site_navigation(

@@ -95,3 +95,19 @@
 @media (max-width: 767px) {
   .site-nav__auth .site-preferences { position: static; }
 }
+
+/* Staff navigate between sites through a normal link, not a palette switch. */
+.site-preferences__site {
+  margin-top: var(--space-5);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--preferences-site-divider);
+}
+.site-preferences__site .quiet-link {
+  color: var(--preferences-site-text);
+  font-size: var(--font-size-14);
+}
+.site-preferences__site .quiet-link:is(:hover, :focus-visible) {
+  color: var(--preferences-site-hover);
+  text-shadow: var(--interaction-text-shadow);
+  text-decoration: none;
+}

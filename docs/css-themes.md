@@ -34,10 +34,10 @@ A single gear icon opens the same settings disclosure in the customer navbar,
 landing and entrance/error pages, at every screen size. Language uses EN/FR
 text buttons and the existing Django POST endpoint. The selected language is
 gold with a soft glow inside the open panel; no radio circles are drawn.
-Language submission works without JavaScript. Staff also get a Site pill in
-settings to navigate between public and ops. It uses a native GET form, so it
-also works without JavaScript. Its position reflects the navigation context,
-including the shared staff profile page. Ops has no theme switch and stays light.
+Language submission works without JavaScript. Staff get a text link at the
+bottom of settings to navigate to Public site or Ops dashboard. The navigation
+builder chooses the opposite destination, including on the shared staff profile
+page. Ops has no theme switch and stays light.
 Logout lives in the separate account dropdown, alongside Profile and (for
 business customers) Order history. It remains a CSRF-protected POST action.
 
@@ -71,10 +71,19 @@ Navbar cart, settings and account triggers are icons with transparent hit areas,
 painted circular border/background. Hover, keyboard focus and the open state
 share gold icon emission and a halo. Keyboard focus retains a visible outline;
 the cart keeps its existing add/remove feedback animation and item count.
-Its navbar artwork is 1.5rem with a 12-unit stroke in its 201-unit viewBox;
+Its navbar artwork is 1.375rem with a 12-unit stroke in its 201-unit viewBox;
 this local override does not change cart icons elsewhere. The account uses
 a single-person SVG and shares the dropdown emission.
 `--menu-dropdown-*` roles tune this light independently of catalog buttons.
+
+The right-hand controls appear in this order: cart, account (or Login), settings.
+The account and cart icons retain selected ink, halo and a crown on their pages,
+even while their dropdowns are closed. `config.context_processors.navigation`
+selects account/profile/history versus cart/checkout destinations; catalog pages
+select neither. Settings is an overlay and never claims a page selection.
+The cart count moves to the opposite corner from the crown. `navbar-cart.js`
+preserves the current-page marker when replacing the cart HTML via AJAX.
+
 
 ## Checks
 
@@ -629,8 +638,9 @@ locally override the standalone `--menu-language-*` roles inside settings.
 
 Panel surface/border/gear remain independent `--preferences-*` roles.
 `--account-menu-*` owns the account panel and links, including the blue Log out.
-`--site-switch-*` owns the staff navigation pill independently of the theme
-pill. `accounts/account_menus.py` composes allowed destinations; templates
+`--preferences-site-text`, `--preferences-site-hover` and
+`--preferences-site-divider` paint the staff site link.
+`accounts/account_menus.py` composes allowed destinations; templates
 render those destinations and never choose links from user roles.
 
 `--theme-switch-track`, `--theme-switch-border`, `--theme-switch-thumb` and

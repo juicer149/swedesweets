@@ -244,7 +244,7 @@
   --preferences-selected-glow-filter: blur(6px);
   --preferences-selected-glow-opacity: 1;
   --preferences-hover: var(--color-accent-800);
-  /* Account menu and staff site switch, independent of language/theme choices. */
+  /* Account menu and staff site link, independent of language/theme choices. */
   --account-menu-trigger: var(--menu-ink);
   --account-menu-bg: var(--preferences-bg);
   --account-menu-border: var(--preferences-border);
@@ -252,10 +252,9 @@
   --account-menu-text: var(--color-primary-700);
   --account-menu-selected: var(--color-accent-800);
   --account-menu-divider: var(--line-soft);
-  --site-switch-track: var(--color-primary-100);
-  --site-switch-border: var(--color-primary-400);
-  --site-switch-thumb: var(--color-primary-50);
-  --site-switch-symbol: var(--color-primary-700);
+  --preferences-site-text: var(--color-primary-700);
+  --preferences-site-hover: var(--color-accent-800);
+  --preferences-site-divider: var(--line-soft);
   --theme-switch-track: var(--color-primary-100);
   --theme-switch-border: var(--color-primary-400);
   --theme-switch-thumb: var(--color-primary-50);

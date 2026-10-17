@@ -186,12 +186,14 @@
 }
 
 .menu-dropdown-trigger:is(:hover, :focus-visible)::before,
-details[open] > .menu-dropdown-trigger::before {
+details[open] > .menu-dropdown-trigger::before,
+.menu-dropdown-trigger[aria-current="page"]::before {
   opacity: var(--interaction-halo-opacity);
 }
 
 .menu-dropdown-trigger:is(:hover, :focus-visible) .ui-icon-svg,
-details[open] > .menu-dropdown-trigger .ui-icon-svg {
+details[open] > .menu-dropdown-trigger .ui-icon-svg,
+.menu-dropdown-trigger[aria-current="page"] .ui-icon-svg {
   filter: var(--menu-dropdown-icon-filter);
 }
 
@@ -203,4 +205,35 @@ details[open] > .menu-dropdown-trigger .ui-icon-svg {
   .menu-dropdown-trigger::before { display: none; }
   .menu-dropdown-trigger .ui-icon-svg { filter: none !important; }
   details[open] > .menu-dropdown-trigger { outline: 1px solid ButtonText; }
+}
+
+/* A closed dropdown still marks its page, just like a normal nav item.
+   The wrapper lets the masked crown emit light beyond its silhouette. */
+.menu-dropdown-trigger[aria-current="page"] { color: var(--menu-chosen); }
+.menu-dropdown-trigger__crown {
+  display: none;
+  position: absolute;
+  top: -0.3rem;
+  right: -0.2rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  pointer-events: none;
+  filter: var(--menu-crown-shadow);
+}
+.menu-dropdown-trigger[aria-current="page"] > .menu-dropdown-trigger__crown {
+  display: block;
+}
+.menu-dropdown-trigger__crown::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--menu-crown);
+  -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
+  mask: url("../../images/favicon.svg") center / contain no-repeat;
+}
+
+@media (forced-colors: active) {
+  .menu-dropdown-trigger[aria-current="page"] { outline: 1px solid ButtonText; }
+  .menu-dropdown-trigger__crown { display: none !important; }
 }

@@ -43,8 +43,7 @@ def test_staff_settings_switch_to_public_and_account_menu_links_to_profile(clien
     html = client.get(reverse("ops_dashboard")).content.decode()
 
     navbar = html.split("<header", 1)[1].split("</header>", 1)[0]
-    assert 'class="theme-switch site-switch"' in navbar
-    assert 'method="get"' in navbar
-    assert f'action="{reverse("storefront:product_list")}"' in navbar
+    assert 'class="site-preferences__site"' in navbar
+    assert f'href="{reverse("storefront:product_list")}"' in navbar
     assert 'class="account-menu__panel"' in navbar
     assert f'href="{reverse("accounts:me")}"' in navbar

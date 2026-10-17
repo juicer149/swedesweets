@@ -71,3 +71,9 @@
 @media (forced-colors: active) {
   .account-menu .account-menu__link[aria-current="page"] { text-decoration: underline; }
 }
+
+/* The account icon now sits left of settings; anchor its mobile panel to
+   the whole control group, keeping its right edge inside the viewport. */
+@media (max-width: 767px) {
+  .site-nav__auth .account-menu { position: static; }
+}

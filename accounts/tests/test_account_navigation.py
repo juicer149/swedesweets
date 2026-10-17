@@ -31,7 +31,7 @@ def test_business_account_dropdown_has_profile_orders_and_post_logout(client):
     assert f'href="{menu.orders.href}"' in panel
     assert f'method="post" action="{reverse("logout")}"' in panel
     assert 'name="csrfmiddlewaretoken"' in panel
-    assert 'class="theme-switch site-switch"' not in response.content.decode()
+    assert 'class="site-preferences__site"' not in response.content.decode()
     assert "site-preferences__logout" not in response.content.decode()
 
 
@@ -39,14 +39,14 @@ def test_business_account_dropdown_has_profile_orders_and_post_logout(client):
 @pytest.mark.parametrize(
     "factory", [full_staff_user_factory, restricted_staff_user_factory]
 )
-def test_staff_site_switch_and_account_destinations_follow_navigation_context(
+def test_staff_site_link_and_account_destinations_follow_navigation_context(
     client, factory
 ):
     client.force_login(factory())
-    for route, is_ops, target in [
-        ("storefront:product_list", False, "ops_dashboard"),
-        ("ops_dashboard", True, "storefront:product_list"),
-        ("accounts:me", True, "storefront:product_list"),
+    for route, target in [
+        ("storefront:product_list", "ops_dashboard"),
+        ("ops_dashboard", "storefront:product_list"),
+        ("accounts:me", "storefront:product_list"),
     ]:
         response = client.get(reverse(route))
         assert response.status_code == 200
@@ -54,21 +54,50 @@ def test_staff_site_switch_and_account_destinations_follow_navigation_context(
         panel = _account_panel(response)
         assert menu.account.href == reverse("accounts:me")
         assert menu.orders is None
-        assert menu.site_is_ops is is_ops
         assert menu.switch.href == reverse(target)
         assert f'href="{reverse("accounts:me")}"' in panel
         assert reverse("business_portal:orders") not in panel
         content = response.content.decode()
-        site_switch = content.split('class="theme-switch site-switch"', 1)[1].split(
-            "</button>", 1
+        site_link = content.split('class="site-preferences__site">', 1)[1].split(
+            "</div>", 1
         )[0]
-        assert f'aria-checked="{str(is_ops).lower()}"' in site_switch
-        assert f'action="{reverse(target)}"' in content
+        assert f'href="{reverse(target)}"' in site_link
+        assert 'role="switch"' not in site_link
         assert "site-preferences__logout" not in content
 
 
 @pytest.mark.django_db
-def test_anonymous_header_has_no_account_dropdown_or_site_switch(client):
+def test_anonymous_header_has_no_account_dropdown_or_site_link(client):
     content = client.get(reverse("storefront:product_list")).content.decode()
     assert 'class="account-menu"' not in content
-    assert 'class="theme-switch site-switch"' not in content
+    assert 'class="site-preferences__site"' not in content
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("route,account_current,cart_current", [
+    ("business_portal:index", True, False),
+    ("business_portal:orders", True, False),
+    ("business_portal:catalog", False, False),
+    ("business_portal:cart", False, True),
+])
+def test_business_header_marks_the_current_destination(
+    client, route, account_current, cart_current
+):
+    client.force_login(customer_user_factory(customer=customer_factory()))
+    response = client.get(reverse(route), follow=True)
+    assert response.status_code == 200
+    html = response.content.decode()
+    account = html.split('class="account-menu__trigger', 1)[1].split("</summary>", 1)[0]
+    cart = html.split('class="site-nav-cart__trigger', 1)[1].split("</summary>", 1)[0]
+    assert ('aria-current="page"' in account) is account_current
+    assert ('aria-current="page"' in cart) is cart_current
+
+
+@pytest.mark.django_db
+def test_retail_cart_marks_its_header_icon_current(client):
+    response = client.get(reverse("storefront:cart"))
+    assert response.status_code == 200
+    cart = response.content.decode().split('class="site-nav-cart__trigger', 1)[1].split(
+        "</summary>", 1
+    )[0]
+    assert 'aria-current="page"' in cart

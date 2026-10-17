@@ -82,8 +82,6 @@
             </div>
           {% endif %}
 
-          {% include "includes/language_switcher.html" %}
-
           {% if url_name != "login" %}
             {% if account_menu %}
               {% include "includes/account_menu.html" %}
@@ -96,6 +94,7 @@
               </a>
             {% endif %}
           {% endif %}
+          {% include "includes/language_switcher.html" %}
         </div>
       </div>
     </nav>

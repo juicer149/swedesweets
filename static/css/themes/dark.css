@@ -152,10 +152,8 @@
   --account-menu-trigger: var(--interactive-text);
   --account-menu-text: var(--interactive-text);
   --account-menu-selected: var(--selected-accent);
-  --site-switch-track: var(--color-primary-950);
-  --site-switch-border: var(--interactive-border);
-  --site-switch-thumb: var(--color-primary-200);
-  --site-switch-symbol: var(--interactive-text);
+  --preferences-site-text: var(--interactive-text);
+  --preferences-site-hover: var(--selected-accent);
   --theme-switch-track: var(--color-primary-950);
   --theme-switch-border: var(--interactive-border);
   --theme-switch-thumb: var(--color-primary-200);

@@ -23,7 +23,9 @@
       {% include "includes/theme_switch.html" %}
     {% endif %}
     {% if account_menu.switch %}
-      {% include "includes/site_switch.html" %}
+      <div class="site-preferences__site">
+        <a class="quiet-link" href="{{ account_menu.switch.href }}">{{ account_menu.switch.label }}</a>
+      </div>
     {% endif %}
   </div>
 </details>
