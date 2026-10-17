@@ -361,11 +361,17 @@ their own roles, described below.
 
 ## Catalog desktop layout and variant list contrast
 
-At 1024px and wider the wall uses five equal columns. Below that, auto-fill
-keeps the existing responsive minimum. The explicit desktop count avoids
-different rem-based track counts with different browser font preferences.
-Browser zoom still changes the available CSS viewport and may cross a
-breakpoint; narrower windows are expected to show fewer products.
+The wall uses auto-fill with a 13.5rem minimum card width. As available space
+shrinks (including browser zoom), it drops columns before making cards narrower
+than that minimum. A quarter-container minimum caps the wall at four columns,
+even with smaller browser font preferences. Cards can grow into spare space.
+At 479px and below, the minimum becomes 9.5rem so ordinary phones retain two
+columns; very narrow viewports use one. The minimum is capped at 100% to avoid
+horizontal overflow when even one full-size card cannot fit.
+
+`--tile-min-width` in `public/catalog.css` owns this layout size. It is not a
+colour role and does not belong in the theme files. Light and dark share the
+same grid. There is no forced desktop column count or JavaScript zoom handler.
 
 On desktop the product image and label occupy bounded, centred grid tracks.
 The label fills its track, so unused space no longer collects at its right

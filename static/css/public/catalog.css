@@ -96,21 +96,24 @@
 }
 
 .tiles {
+  --tile-min-width: 13.5rem;
   --tile-row-gap: clamp(var(--space-12), 7vw, 4rem);
   --tile-column-gap: clamp(var(--space-4), 2.5vw, var(--space-6));
 
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(9.5rem, 40vw, 13.5rem), 1fr));
+  /* Keep a readable card width and wrap before squeezing. The quarter-width
+     floor caps the wall at four columns even with smaller browser fonts.
+     A single track can still fit a viewport narrower than the minimum. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(var(--tile-min-width), calc((100% - 3 * var(--tile-column-gap)) / 4))), 1fr));
   gap: var(--tile-row-gap) var(--tile-column-gap);
   padding-bottom: calc(var(--tile-row-gap) / 2);
 }
 
-/* A stable five-column wall on desktop. Auto-fill above remains useful on
-   smaller screens; its rem-based minimum otherwise changes the desktop
-   count with the browser's preferred font size. */
-@media (min-width: 1024px) {
+/* Only small phones need narrower cards to keep the two-column candy wall.
+   Below that minimum, auto-fill switches to one column instead of clipping. */
+@media (max-width: 479px) {
   .tiles {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    --tile-min-width: 9.5rem;
   }
 }
 
