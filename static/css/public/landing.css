@@ -259,7 +259,7 @@
 }
 
 .landing__account:hover {
-  text-decoration: underline;
+  text-decoration: var(--landing-account-hover-decoration);
   text-underline-offset: 0.2em;
 }
 
@@ -322,3 +322,10 @@
   --icon-scale: 1.3;
 }
 
+
+/* The shared halo lives in common/interaction-light.css. Keep these controls
+   solid, including the cart count and the separate crown above each label. */
+.landing__account:is(:hover, :focus-visible),
+.landing__cart:is(:hover, :focus-visible) {
+  color: var(--landing-control-hover-ink);
+}

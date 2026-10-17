@@ -61,9 +61,13 @@ which increases on hover without changing the status hue. Orange warning prose r
 
 Dark public section tabs, Find Sweets shop names and FAQ question rows share the
 navbar's diffuse hover/focus light and illuminated lettering. Selected tabs keep
-their gold marker; addresses and answers stay neutral. Ready catalog cart buttons
+their gold marker and light; open FAQ questions keep their light too. Addresses
+and answers stay neutral. The landing menu and its account/cart/language controls
+use the same backlight, as does the navbar Login action. Ready catalog cart buttons
 are interactive blue, becoming gold with the navbar cart's backlight on hover or
-keyboard focus; success feedback remains green. Dropdown options pair foreground
+keyboard focus; success feedback remains green. Catalog card hover and focused
+quantity/size fields also use the warm gold light; available controls remain blue.
+Dropdown options pair foreground
 and background colours so selected countries and variants remain readable.
 Variable mappings live in [docs/css-themes.md](docs/css-themes.md).
 

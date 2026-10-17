@@ -1123,7 +1123,7 @@
   --feedback-burst-mark: crown;
   --status-burst-dot: var(--color-accent-500);
   --status-burst-success: var(--color-accent-500);
-  --feedback-min-loading: 550ms;
+  --feedback-min-loading: 350ms;
   --feedback-burst-rest: 80ms;
   --feedback-mark-hold: 350ms;
 

@@ -134,6 +134,9 @@
   --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / 0.26), 0 0 32px 7px rgb(246 181 30 / 0.10);
 
   /* Shared local interactions follow the approved navbar light. */
+  --interaction-selected-opacity: 1;
+  --landing-account-hover-decoration: none;
+  --landing-control-hover-ink: var(--menu-chosen);
   --section-nav-hover-marker: 0%;
   --section-nav-mobile-hover-marker: 0%;
   --find-sweets-hover-decoration: none;
@@ -198,20 +201,20 @@
   --catalog-placeholder-text: var(--color-primary-200);
   --catalog-placeholder-crown: var(--color-accent-650);
 
-  /* Card hover: the name sits on gold; the picture has its own blue sheen/glow */
+  /* Card hover: the name sits on gold; the picture shares the warm light. */
   --catalog-card-hover-text: var(--color-primary-700);
-  --catalog-card-hover-sheen: linear-gradient(135deg, rgb(117 177 255 / 0.22), transparent 65%);
-  --catalog-card-hover-shadow: 0 0 20px 3px rgb(66 139 255 / 0.22);
+  --catalog-card-hover-sheen: linear-gradient(135deg, rgb(249 181 26 / 0.22), transparent 65%);
+  --catalog-card-hover-shadow: var(--menu-cart-glow);
 
   /* Quantity/variant fields: interactive blue at rest; gold while focused/open */
   --catalog-control-idle-text: var(--interactive-text);
   --catalog-control-idle-bg: transparent;
   --catalog-control-idle-border: color-mix(in srgb, var(--color-primary-200) 22%, transparent);
-  --catalog-control-hover-border: color-mix(in srgb, var(--color-primary-200) 45%, transparent);
-  --catalog-control-focus-text: var(--label-text);
+  --catalog-control-hover-border: color-mix(in srgb, var(--selected-accent) 45%, transparent);
+  --catalog-control-focus-text: var(--selected-accent);
   --catalog-control-focus-bg: var(--search-focus-bg);
-  --catalog-control-focus-border: var(--search-focus-border);
-  --catalog-control-focus-shadow: var(--search-focus-shadow);
+  --catalog-control-focus-border: color-mix(in srgb, var(--selected-accent) 60%, transparent);
+  --catalog-control-focus-shadow: var(--menu-cart-glow);
 
   /* Variant list: blue on the label surface; dark ink on light active rows. */
   --catalog-option-text: var(--interactive-text);
@@ -234,7 +237,7 @@
   --stepper-line: var(--color-primary-300);
   --stepper-number-bg: var(--surface-bg);
 
-  /* Catalog add: green ready ink; blue hover/focus/press; muted until size is chosen.
+  /* Catalog add: blue ready/press ink; gold hover/focus; muted until size is chosen.
      Its button background sequence is intentionally different from text links. */
   --catalog-cart-bg: var(--color-primary-750);
   --catalog-cart-ink: var(--interactive-text);

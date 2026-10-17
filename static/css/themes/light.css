@@ -352,6 +352,9 @@
 
   /* FAQ question headings only; previous-order accordions keep their own roles. */
   /* Shared hover light: local tabs, shop links and FAQ questions. */
+  --interaction-selected-opacity: 0;
+  --landing-account-hover-decoration: underline;
+  --landing-control-hover-ink: var(--menu-ink);
   --interaction-glow: var(--menu-link-glow);
   --interaction-glow-blur: var(--menu-link-glow-blur);
   --interaction-text-glow: var(--menu-link-text-glow);

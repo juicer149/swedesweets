@@ -285,7 +285,7 @@ Success colour and halo still use `--catalog-burst-success` and
 
 ## Catalog card hover and quiet controls
 
-The card's picture gets a subtle blue sheen and glow, with a 3px lift on fine
+The card's picture gets a subtle themeable sheen and glow (gold in dark), with a 3px lift on fine
 pointer hover. The product-name text brightens too. The shelf stays still.
 Movement/glow is suppressed over the ordering controls, during add, and while
 the card folds. Keyboard focus on the product-name link gets the same glow.
@@ -343,14 +343,14 @@ Light supplies the original colours as defaults for these roles.
 
 In dark, quantity and the variant picker use `--catalog-control-idle-text`,
 which follows `--interactive-text` (primary-200). Their focus/open state keeps
-`--catalog-control-focus-text` (gold label text), with the existing blue border
-and halo. A product without a variant choice renders fixed weight instead of
+`--catalog-control-focus-text` (`--selected-accent`), with a soft gold border
+and warm outer halo. A product without a variant choice renders fixed weight instead of
 a picker; it does not receive an interactive treatment.
 
 | Role | Dark | Scope |
 | --- | --- | --- |
 | `--catalog-control-idle-text` | `--interactive-text` | Editable quantity and variant selector, including its caret and native fallback |
-| `--catalog-control-focus-text` | `--label-text` | Quantity focus and focused/open variant selector |
+| `--catalog-control-focus-text` | `--selected-accent` | Quantity focus and focused/open variant selector |
 | `--catalog-package-text` | neutral-300 | Fixed weight/package when there is no variant choice |
 | `--catalog-price-text` | accent-400 | Price tag text; a deeper gold than the accent-200 label ink |
 
@@ -460,8 +460,7 @@ symmetric gradient with full `--menu-chosen` gold in the middle and a softer
 `--menu-link-text-edge` towards the ends. The edge mixes 55% selected gold with
 the normal menu ink. `--menu-link-text-fill` enables the transparent glyph fill
 for clipping the gradient to letters. The SVG icons use the same centre/edge gold through the header's shared
-`site-nav-icon-light` paint server. Crowns, the cart and landing menu
-retain their own colours/effects; resting/current links stay solid until hovered
+`site-nav-icon-light` paint server. Crowns and the cart retain their own colours; resting/current navbar links stay solid until hovered
 or keyboard-focused. No text is duplicated and link geometry is unchanged.
 
 Light defines no halo or text gradient and keeps the ordinary text fill.
@@ -471,17 +470,22 @@ ordinary visible link text when the browser suppresses gradient backgrounds.
 The label's balanced vertical padding/margins preserve space for descenders
 when clipping the gradient to text. Header language choices reuse the same
 backlight on hover and focus, while their selected-language underline remains.
-Language controls outside the header retain their previous presentation.
+Landing language controls use the same backlight; entrance-page language controls
+retain their previous presentation.
 SVG strokes fall back to solid colour in forced-colours mode.
 
 ## Shared local backlight and select contrast
 
 `common/interaction-light.css` applies the navbar-style hover/keyboard light to
-all section navigation, Find Sweets shop names and FAQ question rows. Theme roles
+all section navigation, Find Sweets shop names, FAQ question rows, landing menu
+and account/cart links, and the navbar Login action. Theme roles
 `--interaction-glow`, `--interaction-glow-blur`, `--interaction-text-glow` and
 `--interaction-text-fill` alias the navbar paint, so adjustments stay consistent.
 Addresses and answers keep their neutral reading colours. Dark tabs retain the
 selected underline; hovering another tab adds light without another underline.
+`--interaction-selected-opacity` keeps the lamp on for selected section tabs,
+open FAQ questions and the landing menu's chosen link (1 in dark, 0 in light).
+This follows actual selection/open state, not leftover pointer or keyboard focus.
 Light and ops keep their existing colour and underline feedback. Touch hover
 is excluded and forced-colours mode restores solid lettering.
 
@@ -496,3 +500,13 @@ Shared enhanced-select dropdowns (including the country field) use
 light blue; selected options have dark blue text on pale gold, matching the
 catalog variant picker. Light/ops retain their previous palette. The catalog's
 `--catalog-option-*` overrides remain available for product-specific tuning.
+
+Dark catalog card hover uses a warm gold sheen (`--catalog-card-hover-sheen`)
+and the navbar cart glow (`--catalog-card-hover-shadow`). Quantity/size fields
+remain blue when available; focus/open text becomes `--selected-accent`, with
+a softer gold border and `--menu-cart-glow` through the existing
+`--catalog-control-focus-*` mappings. Search fields keep their own blue focus.
+
+The catalog footer's `--feedback-min-loading` is 350ms (previously 550ms), scoped
+to `.catalog__more-status`. Settling/mark timings and add-to-cart feedback are
+unchanged, so only revealing the next group of products becomes faster.

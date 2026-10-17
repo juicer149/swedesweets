@@ -76,7 +76,7 @@
                 >
                   {% include "includes/ui/icon_block.html" with name=item.icon class_name="landing-menu__icon" only %}
                   <span class="landing-menu__label">
-                    {{ item.label }}
+                    <span class="landing-menu__text">{{ item.label }}</span>
                     {% include "includes/ui/icon_block.html" with name="crown" class_name="landing-menu__crown" only %}
                   </span>
                 </a>
@@ -92,13 +92,13 @@
         {% with item=account_menu.switch|default:account_menu.account %}
           <a class="landing__account" href="{{ item.href }}">
             {% include "includes/ui/icon_block.html" with name=item.icon size="sm" only %}
-            {{ item.label }}
+            <span class="landing__account-label">{{ item.label }}</span>
           </a>
         {% endwith %}
       {% else %}
         <a class="landing__account" href="{% url 'login' %}">
           {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
-          {% trans "Login" %}
+          <span class="landing__account-label">{% trans "Login" %}</span>
         </a>
       {% endif %}
     </div>

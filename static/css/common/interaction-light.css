@@ -1,11 +1,11 @@
 /* Shared local hover/focus light. Themes own its paint; layout stays here.
    Keep the name/question above the halo and leave secondary prose neutral. */
-:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary) {
+:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action) {
   position: relative;
   isolation: isolate;
 }
 
-:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary)::before {
+:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action)::before {
   content: "";
   position: absolute;
   inset: -0.6rem 0;
@@ -20,6 +20,8 @@
 
 /* Glyph backgrounds need room for descenders, without moving the layout. */
 .section-nav__label,
+.landing-menu__text,
+.landing__account-label,
 .faq .accordion__summary > span:first-child {
   padding-block: 0.18em;
   margin-block: -0.18em;
@@ -35,20 +37,34 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary):hover::before {
+  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action):hover::before {
     opacity: 1;
   }
 }
 
-:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary):focus-visible::before {
+:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action):focus-visible::before {
   opacity: 1;
+}
+
+/* A selected tab/open question is a lamp left on, including after a touch.
+   Do not use :focus: moving keyboard focus must not leave a false selection. */
+:is(.section-nav__link--active,
+    .section-nav__link[aria-current="page"],
+    .section-nav__link[aria-selected="true"],
+    .section-nav__link[aria-pressed="true"],
+    .faq .accordion[open] > .accordion__summary,
+    .landing-menu__link--chosen)::before {
+  opacity: var(--interaction-selected-opacity);
 }
 
 @supports (background-clip: text) or (-webkit-background-clip: text) {
   @media (hover: hover) and (pointer: fine) {
     :is(.section-nav__link:hover .section-nav__label,
         .find-sweets .line__link:hover .line__name,
-        .faq .accordion__summary:hover > span:first-child) {
+        .faq .accordion__summary:hover > span:first-child,
+        .landing-menu__link:hover .landing-menu__text,
+        .landing__account:hover .landing__account-label,
+        .site-nav__auth-action:hover .site-nav__label) {
       background-image: var(--interaction-text-glow);
       background-clip: text;
       -webkit-background-clip: text;
@@ -59,7 +75,10 @@
 
   :is(.section-nav__link:focus-visible .section-nav__label,
       .find-sweets .line__link:focus-visible .line__name,
-      .faq .accordion__summary:focus-visible > span:first-child) {
+      .faq .accordion__summary:focus-visible > span:first-child,
+      .landing-menu__link:focus-visible .landing-menu__text,
+      .landing__account:focus-visible .landing__account-label,
+      .site-nav__auth-action:focus-visible .site-nav__label) {
     background-image: var(--interaction-text-glow);
     background-clip: text;
     -webkit-background-clip: text;
@@ -69,11 +88,11 @@
 }
 
 @media (forced-colors: active) {
-  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary)::before {
+  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action)::before {
     display: none;
   }
 
-  :is(.section-nav__label, .find-sweets .line__name, .faq .accordion__summary > span:first-child) {
+  :is(.section-nav__label, .find-sweets .line__name, .faq .accordion__summary > span:first-child, .landing-menu__text, .landing__account-label, .site-nav__auth-action .site-nav__label) {
     background-image: none !important;
     color: inherit !important;
     -webkit-text-fill-color: currentColor !important;
@@ -81,7 +100,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary)::before {
+  :is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action)::before {
     transition: none;
   }
 }
