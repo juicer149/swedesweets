@@ -47,6 +47,18 @@
   --color-status-danger-text: var(--color-red-700);
   --color-status-muted-text: var(--color-neutral-700);
 
+  /* Shared status table rows (orders and other data-tone tables).
+     Preserve the existing light surfaces; dark supplies stronger tints. */
+  --table-clickable-hover-bg: rgb(var(--color-status-info) / 0.08);
+  --table-tone-warning-bg: rgb(var(--color-status-warning) / 0.055);
+  --table-tone-warning-hover-bg: rgb(var(--color-status-warning) / 0.13);
+  --table-tone-info-bg: rgb(var(--color-status-info) / 0.06);
+  --table-tone-info-hover-bg: rgb(var(--color-status-info) / 0.13);
+  --table-tone-success-bg: rgb(var(--color-status-success) / 0.045);
+  --table-tone-success-hover-bg: rgb(var(--color-status-success) / 0.09);
+  --table-tone-danger-bg: rgb(var(--color-status-danger) / 0.07);
+  --table-tone-danger-hover-bg: rgb(var(--color-status-danger) / 0.13);
+
   /* ==========================================================================
      Domain status aliases
 

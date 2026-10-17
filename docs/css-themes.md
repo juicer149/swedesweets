@@ -406,3 +406,25 @@ Customer pages with a site header reserve a stable root scrollbar gutter so
 the navbar and content stay aligned between short and scrolling pages, and
 when the catalog overlay locks page scrolling. Entrances without a header
 retain their full-width canvas. This layout behaviour is shared by both themes.
+
+## Status table row surfaces
+
+The shared data table uses `--table-tone-warning-bg`, `--table-tone-info-bg`,
+`--table-tone-success-bg` and `--table-tone-danger-bg`, plus their corresponding
+`-hover-bg` roles. Orders map placed/packed/delivered/cancelled to those tones.
+These are shared table roles, so future dark ops tables can use the same
+palette without order-history-specific selectors.
+
+Dark uses `--table-tone-strength: 15%`, matching the open FAQ heading's tint,
+and `--table-tone-hover-strength: 22%`. Placed uses accent-600 gold, packed
+information blue, delivered success green and cancelled danger red. Warning
+copy remains orange independently of the gold surface. Each hue has its own
+role and can be tuned separately. Touch hover retains the normal background.
+
+`--table-clickable-hover-bg` keeps the existing generic blue hover in light.
+Dark clears that override (`initial`) so a clickable row uses its own status
+hover role instead. Non-status rows retain the blue fallback.
+
+Light maps the roles to the original RGB/alpha values, preserving current light
+and ops appearances. Ops remains light. Mobile order history keeps its existing
+line layout and coloured status icon circles; this change targets table rows.

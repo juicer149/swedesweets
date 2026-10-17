@@ -125,19 +125,23 @@
 }
 
 .data-table tbody tr[data-tone="warning"] > * {
-  background: rgb(var(--color-status-warning) / 0.055);
+  --table-row-hover-bg: var(--table-tone-warning-hover-bg);
+  background: var(--table-tone-warning-bg);
 }
 
 .data-table tbody tr[data-tone="info"] > * {
-  background: rgb(var(--color-status-info) / 0.06);
+  --table-row-hover-bg: var(--table-tone-info-hover-bg);
+  background: var(--table-tone-info-bg);
 }
 
 .data-table tbody tr[data-tone="success"] > * {
-  background: rgb(var(--color-status-success) / 0.045);
+  --table-row-hover-bg: var(--table-tone-success-hover-bg);
+  background: var(--table-tone-success-bg);
 }
 
 .data-table tbody tr[data-tone="danger"] > * {
-  background: rgb(var(--color-status-danger) / 0.07);
+  --table-row-hover-bg: var(--table-tone-danger-hover-bg);
+  background: var(--table-tone-danger-bg);
 }
 
 .data-table tbody tr[data-tone="muted"]:hover > * {
@@ -159,19 +163,19 @@
 }
 
 .data-table tbody tr[data-tone="warning"]:hover > * {
-  background: rgb(var(--color-status-warning) / 0.13);
+  background: var(--table-tone-warning-hover-bg);
 }
 
 .data-table tbody tr[data-tone="info"]:hover > * {
-  background: rgb(var(--color-status-info) / 0.13);
+  background: var(--table-tone-info-hover-bg);
 }
 
 .data-table tbody tr[data-tone="success"]:hover > * {
-  background: rgb(var(--color-status-success) / 0.09);
+  background: var(--table-tone-success-hover-bg);
 }
 
 .data-table tbody tr[data-tone="danger"]:hover > * {
-  background: rgb(var(--color-status-danger) / 0.13);
+  background: var(--table-tone-danger-hover-bg);
 }
 
 /* =============================================================================
@@ -199,7 +203,7 @@
 }
 
 .data-table tbody tr.clickable-row:hover > * {
-  background: rgb(var(--color-status-info) / 0.08);
+  background: var(--table-clickable-hover-bg, var(--table-row-hover-bg, rgb(var(--color-status-info) / 0.08)));
 }
 
 .data-table tbody tr.clickable-row:hover > *:first-child {
@@ -257,18 +261,18 @@
   }
 
   .data-table tbody tr[data-tone="warning"]:hover > * {
-    background: rgb(var(--color-status-warning) / 0.055);
+    background: var(--table-tone-warning-bg);
   }
 
   .data-table tbody tr[data-tone="info"]:hover > * {
-    background: rgb(var(--color-status-info) / 0.06);
+    background: var(--table-tone-info-bg);
   }
 
   .data-table tbody tr[data-tone="success"]:hover > * {
-    background: rgb(var(--color-status-success) / 0.045);
+    background: var(--table-tone-success-bg);
   }
 
   .data-table tbody tr[data-tone="danger"]:hover > * {
-    background: rgb(var(--color-status-danger) / 0.07);
+    background: var(--table-tone-danger-bg);
   }
 }

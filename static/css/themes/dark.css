@@ -48,6 +48,22 @@
   --color-status-info-text: var(--color-primary-150);
   --color-status-muted-text: #b7b8c4;
 
+  /* Shared table row surfaces: same 15% strength as an open FAQ heading.
+     Placed is brand gold here; warning/error prose keeps its orange role.
+     These roles can serve ops tables when their dark palette is enabled. */
+  /* Clear the generic blue clickable-row hover; use each row's tone instead. */
+  --table-clickable-hover-bg: initial;
+  --table-tone-strength: 15%;
+  --table-tone-hover-strength: 22%;
+  --table-tone-warning-bg: color-mix(in srgb, var(--color-accent-600) var(--table-tone-strength), transparent);
+  --table-tone-warning-hover-bg: color-mix(in srgb, var(--color-accent-600) var(--table-tone-hover-strength), transparent);
+  --table-tone-info-bg: color-mix(in srgb, var(--color-status-info-text) var(--table-tone-strength), transparent);
+  --table-tone-info-hover-bg: color-mix(in srgb, var(--color-status-info-text) var(--table-tone-hover-strength), transparent);
+  --table-tone-success-bg: color-mix(in srgb, var(--color-status-success-text) var(--table-tone-strength), transparent);
+  --table-tone-success-hover-bg: color-mix(in srgb, var(--color-status-success-text) var(--table-tone-hover-strength), transparent);
+  --table-tone-danger-bg: color-mix(in srgb, var(--danger-text) var(--table-tone-strength), transparent);
+  --table-tone-danger-hover-bg: color-mix(in srgb, var(--danger-text) var(--table-tone-hover-strength), transparent);
+
   /* General focus and text selection: entrance gold focus is a local exception */
   --focus-ring: var(--color-primary-150);
   --selection-bg: var(--color-primary-600);
