@@ -141,8 +141,8 @@
   --label-band-text: var(--color-primary-950);
   --label-text: var(--color-accent-200);
   /* Price stays gold; fixed weight is ordinary, non-interactive information. */
-  --catalog-price-text: var(--color-accent-300);
-  --catalog-package-text: var(--text-secondary);
+  --catalog-price-text: var(--color-accent-400);
+  --catalog-package-text: var(--color-neutral-300);
   --label-muted: var(--color-primary-200);
   --label-success-text: var(--color-status-success-text);
   --label-warning-text: var(--color-status-warning-text);
