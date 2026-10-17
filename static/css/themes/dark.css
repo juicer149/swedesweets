@@ -140,6 +140,9 @@
   --label-line: var(--color-primary-700);
   --label-band-text: var(--color-primary-950);
   --label-text: var(--color-accent-200);
+  /* Price stays gold; fixed weight is ordinary, non-interactive information. */
+  --catalog-price-text: var(--color-accent-300);
+  --catalog-package-text: var(--text-secondary);
   --label-muted: var(--color-primary-200);
   --label-success-text: var(--color-status-success-text);
   --label-warning-text: var(--color-status-warning-text);
@@ -155,8 +158,8 @@
   --catalog-card-hover-sheen: linear-gradient(135deg, rgb(117 177 255 / 0.22), transparent 65%);
   --catalog-card-hover-shadow: 0 0 20px 3px rgb(66 139 255 / 0.22);
 
-  /* Quantity/variant fields: quiet gold at rest; current label text when focused */
-  --catalog-control-idle-text: var(--color-accent-700);
+  /* Quantity/variant fields: interactive blue at rest; gold while focused/open */
+  --catalog-control-idle-text: var(--interactive-text);
   --catalog-control-idle-bg: transparent;
   --catalog-control-idle-border: color-mix(in srgb, var(--color-primary-200) 22%, transparent);
   --catalog-control-hover-border: color-mix(in srgb, var(--color-primary-200) 45%, transparent);

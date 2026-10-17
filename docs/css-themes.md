@@ -305,8 +305,8 @@ Reduced-motion removes the lift and transitions. Colours live in each theme:
 | `--catalog-control-focus-bg` | Focus/open background (defaults to search focus background). |
 | `--catalog-control-focus-shadow` | Focus/open halo (defaults to search focus halo). |
 
-Dark uses accent-700 for idle quantity/variant text and restores the current
-label text colour on focus. Light uses neutral-700 for legibility on paper.
+Dark uses `--interactive-text` (primary-200) for idle quantity/variant text
+and restores the current gold label text colour (accent-200) on focus/open. Light uses neutral-700 for legibility on paper.
 The open variant menu retains its existing item colours; only the control
 face shares these states with quantity. Native select fallback is styled too.
 
@@ -338,3 +338,22 @@ Entrance information uses `--entrance-copy-text` (neutral-200) and
 The transient failed-login cross uses `--entrance-error-icon` (red-400);
 the subsequent error message retains its separate accent-800 roles.
 Light supplies the original colours as defaults for these roles.
+
+## Catalog values: editable fields, fixed weight and price
+
+In dark, quantity and the variant picker use `--catalog-control-idle-text`,
+which follows `--interactive-text` (primary-200). Their focus/open state keeps
+`--catalog-control-focus-text` (gold label text), with the existing blue border
+and halo. A product without a variant choice renders fixed weight instead of
+a picker; it does not receive an interactive treatment.
+
+| Role | Dark | Scope |
+| --- | --- | --- |
+| `--catalog-control-idle-text` | `--interactive-text` | Editable quantity and variant selector, including its caret and native fallback |
+| `--catalog-control-focus-text` | `--label-text` | Quantity focus and focused/open variant selector |
+| `--catalog-package-text` | `--text-secondary` (neutral-200) | Fixed weight/package when there is no variant choice |
+| `--catalog-price-text` | accent-300 | Price tag text; a slightly deeper gold than the accent-200 label ink |
+
+These roles apply to cards and product detail, in both retail and B2B. Light
+keeps its existing appearance by mapping fixed weight and price to `--label-text`.
+Other label text, status colours and dropdown list options are unchanged.

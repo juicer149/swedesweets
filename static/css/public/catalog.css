@@ -205,7 +205,7 @@
   justify-items: end;
   padding: 0.2rem 0.55rem 0.2rem 1.05rem;
 
-  color: var(--label-text);
+  color: var(--catalog-price-text);
   background: var(--label-bg);
   border: 1.5px solid var(--label-border);
   border-radius: 7px;
@@ -435,6 +435,7 @@
 }
 
 .tile__package {
+  color: var(--catalog-package-text);
   display: flex;
   align-items: center;
   min-height: 2.25rem;
