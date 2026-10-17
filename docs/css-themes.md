@@ -5,7 +5,8 @@ This file describes loading, previews and the workflow for implementation.
 
 Status: structure, theme selection and a first dark palette for customer pages
 are implemented. FAQ, About, Find Sweets, account pages and the shared catalog
-use semantic colour roles. Labels and polaroids retain dark ink on light paper.
+use semantic colour roles. Labels have a separate palette in each theme;
+polaroids retain dark ink on light paper.
 Light remains the default; ops stays light.
 
 - `static/css/tokens.css`: primitive colour scales, sizes, type and timings.
@@ -43,8 +44,8 @@ dark.css. Do not redefine the primitive colour scales to invert the page.
 
 Paper objects are independent surfaces: `--label-*` controls the catalog's
 labels, price tags and dropdowns; `--paper-*` controls the About polaroid.
-Their text stays dark. Status text on the dark page uses brighter colours,
-while light controls and labels keep their own darker ink.
+Polaroid text stays dark. Dark labels use light ink on their blue surface;
+light labels keep darker ink on paper. Each has its own status text roles.
 
 The page glow, display lettering's SVG shadows, contact icons, focus states,
 quantity controls and disabled controls also have theme roles. Review the
@@ -64,6 +65,48 @@ checks. Browser interactions were also exercised in dark: FAQ open/close,
 focused login fields, a size dropdown with a sold-out option, adding a retail
 variant, the cart quantity field and the B2B product overlay. The overlay's
 paper label kept dark ink on its light background.
+
+## Shared roles in the dark theme
+
+`themes/dark.css` defines shared roles first, followed by component mappings.
+Primitive colour scales stay in `tokens.css`. Component CSS continues to use
+its existing variables; the dark theme maps those variables to shared roles.
+This changes organisation without changing the rendered palette. Light and
+ops retain their existing definitions.
+
+| Shared role | Component mappings / purpose |
+| --- | --- |
+| `--text-primary` | Ordinary main text and headings |
+| `--text-secondary` | Body/field ink and login/reset information |
+| `--text-reading` | `--prose-text`: About paragraphs and FAQ answers |
+| `--text-muted` | Muted metadata and entrance help |
+| `--interactive-text` | Quiet links, linked names, entrance links, closed FAQ questions and catalog cart hover/press ink |
+| `--interactive-text-hover` | Hover/focus for quiet links, linked names and entrance links |
+| `--interactive-text-subtle` | Navbar and footer links |
+| `--interactive-text-strong` | General links, control accents and contact email |
+| `--interactive-border` | Search focus border and catalog cart focus outline |
+| `--surface-bg`, `--surface-muted` | Standard and quiet panels, including label and missing-photo backgrounds |
+| `--surface-hover`, `--surface-active` | Shared field and stepper interaction backgrounds |
+| `--action-primary-bg`, `--action-primary-text` | Normal filled primary button background and text |
+| `--selected-accent` | Selected navigation item |
+| `--color-status-success-text`, `--color-status-warning-text` | Shared green success and orange warning text |
+| `--danger-text` | Strong red failure/removal feedback; general status prose retains its softer `--color-status-danger-text` |
+
+Text roles describe importance and purpose, not font size. Gold action,
+selection and decorative roles remain independent even when their primitive
+colour matches. Search ink, label ink, artwork and other deliberate exceptions
+keep their component-specific primitive references.
+
+To change related interactions together, edit `--interactive-text` near the
+top. To change only entrance links, edit `--entrance-link-text` in the entrance
+section instead. The same pattern applies to surfaces and text. Component
+variables remain available for exceptions; shared roles are not a requirement
+to make every similar-looking colour identical.
+
+Legacy names such as `--text-blue-strong` remain compatible mappings (this one
+uses neutral `--text-secondary` in dark). Layout, selectors, sizes and animation
+rules remain in their component files. The new shared names are defined and
+consumed within the dark theme, so light does not need matching declarations.
 
 ## Editing reading text, search and FAQ colours
 

@@ -1,168 +1,161 @@
-/* Dark customer palette. Ops keeps the light palette during rollout. */
+/* Dark customer palette. Ops keeps light.
+   Shared roles come first; component mappings follow below. Change a shared
+   role for a coordinated update, or override one component mapping locally.
+   Explicit primitive/hex values in component sections are intentional palette
+   exceptions, not accidental aliases to an unrelated role of the same colour.
+*/
 :root[data-theme="dark"]:not([data-site-zone="ops"]) {
-  /* Menu: landing, header and phone bar */
-  --menu-bg: var(--color-primary-950);
-  --menu-ink: var(--color-primary-250);
-  --menu-chosen: var(--color-accent-600);
 
-  /* Header separator; independent of chosen/hovered text.
-     The phone bar follows it unless --menu-bar-edge is overridden. */
-  --menu-edge: var(--color-accent-750);
+  /* 1. Shared roles — change these to tune the dark palette across components */
 
-  /* Navbar links on hover/keyboard focus: yellow light behind the text. */
-  --menu-link-glow: radial-gradient(ellipse at center, rgb(246 181 30 / 0.30), rgb(246 181 30 / 0.12) 58%, transparent 65%);
-  --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
-  --menu-cart-ink: var(--color-primary-250);
-  --menu-cart-ring: var(--color-primary-250);
-  --menu-cart-ring-hover: var(--color-accent-550);
-
-  /* Cart: wider yellow light on hover, keyboard focus and while open */
-  --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / 0.26), 0 0 32px 7px rgb(246 181 30 / 0.10);
-
-  /* Page surfaces, general text, links and borders */
+  /* Surfaces: page, standard panels, quiet panels and interaction states */
   --page-bg: var(--color-primary-900);
   --surface-bg: var(--color-primary-800);
   --surface-muted: var(--color-primary-850);
-  --text-main: var(--color-neutral-100);
-  --text-strong: var(--color-neutral-100);
-
-  --text-body: var(--color-neutral-200);
-  
-  --text-muted: var(--color-neutral-400);
-  --text-blue: var(--color-primary-100);
-  --text-blue-strong: var(--color-neutral-200);
-  --text-blue-deep: var(--color-neutral-100);
-  --color-text-heading: var(--color-neutral-100);
-  --color-link: var(--color-primary-150);
+  --surface-hover: var(--color-primary-750);
+  --surface-active: var(--color-primary-700);
   --line-soft: #2d3650;
   --line-strong: #4b5369;
-  --page-title-color: var(--color-neutral-100);
+
+  /* Text hierarchy: importance, not font size */
+  --text-primary: var(--color-neutral-100);
+  --text-secondary: var(--color-neutral-200);
+  --text-reading: var(--color-neutral-300);
+  --text-muted: var(--color-neutral-400);
+
+  /* Available interactions: normal, brighter, quieter and high-contrast blue.
+     Border is independent of text so either can be tuned separately. */
+  --interactive-text: var(--color-primary-200);
+  --interactive-text-hover: var(--color-primary-100);
+  --interactive-text-subtle: var(--color-primary-250);
+  --interactive-text-strong: var(--color-primary-150);
+  --interactive-border: var(--color-primary-200);
+
+  /* Primary action and selection are distinct roles even when both use gold.
+     These action roles own the normal filled-button background and text. */
+  --action-primary-bg: var(--color-accent-600);
+  --action-primary-text: var(--color-primary-800);
+  --selected-accent: var(--color-accent-600);
+
+  /* Status/feedback: shared success, warning and stronger danger ink.
+     The existing soft red for general status prose is kept intentionally.
+     Warning RGB channels match accent-800 (#f39912); keep them in sync. */
+  --color-status-success-text: var(--color-green-400);
+  --color-status-warning-text: var(--color-accent-800);
+  --color-status-warning: 243 153 18;
+  --color-status-danger-text: #ffaaaa;
+  --danger-text: var(--color-red-400);
+  --color-status-info-text: var(--color-primary-150);
+  --color-status-muted-text: #b7b8c4;
+
+  /* General focus and text selection: entrance gold focus is a local exception */
+  --focus-ring: var(--color-primary-150);
+  --selection-bg: var(--color-primary-600);
+  --control-accent: var(--interactive-text-strong);
+
+  /* 2. Shared component mappings — compatible names consumed by existing CSS */
+
+  /* Ordinary copy and headings. Legacy text-blue-* names stay compatible;
+     text-blue-strong is neutral field/header ink, not an interaction role. */
+  --text-main: var(--text-primary);
+  --text-strong: var(--text-primary);
+  --text-body: var(--text-secondary);
+  --text-blue: var(--color-primary-100);
+  --text-blue-strong: var(--text-secondary);
+  --text-blue-deep: var(--text-primary);
+  --color-text-heading: var(--text-primary);
+  --page-title-color: var(--text-primary);
+  --color-link: var(--interactive-text-strong);
   --page-glow: radial-gradient(closest-side, rgb(66 139 255 / 0.08), rgb(66 139 255 / 0.03) 55%, transparent);
 
-  /* Reading: About paragraphs and FAQ answers (not question headings or photo captions) */
-  --prose-text: var(--color-neutral-300);
+  /* Secondary links and linked list/product names */
+  --quiet-link-text: var(--interactive-text);
+  --quiet-link-hover-text: var(--interactive-text-hover);
+  --quiet-link-focus-text: var(--interactive-text-hover);
+  --line-link-text: var(--interactive-text);
+  --line-link-hover-text: var(--interactive-text-hover);
 
-  /* Search: catalog, quick-jump fields and B2B quick add; applies to typed text and hints */
-  --search-text: var(--color-accent-100);
-  --search-placeholder: var(--color-primary-200);
+  /* Primary filled buttons and shared controls */
+  --color-action-place-solid: var(--action-primary-bg);
+  --color-accent-text-standard: var(--action-primary-text);
+  --field-hover-bg: var(--surface-hover);
+  --field-active-bg: var(--surface-active);
+  --action-remove-text: var(--color-status-danger-text);
+  --color-expiry-safe-text: var(--text-body);
 
-  /* Search focus: border/ring, field background and halo; independent of other controls */
-  --search-focus-border: var(--color-primary-200);
-  --search-focus-bg: var(--field-hover-bg);
-  --search-focus-shadow: 0 0 0 3px color-mix(in srgb, var(--search-focus-border) 20%, transparent);
+  /* 3. Navigation and landing */
+  --menu-bg: var(--color-primary-950);
+  --menu-ink: var(--interactive-text-subtle);
+  --menu-chosen: var(--selected-accent);
 
-  /* FAQ question headings: closed text, open text, hover background and open background */
-  --faq-question-text: var(--color-primary-200);
+  /* Header/phone edge is independent of the selected text.
+     The language and cart keep their menu-specific palette/glow. */
+  --menu-edge: var(--color-accent-750);
+  --menu-link-glow: radial-gradient(ellipse at center, rgb(246 181 30 / 0.30), rgb(246 181 30 / 0.12) 58%, transparent 65%);
+  --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
+  --menu-cart-ink: var(--menu-ink);
+  --menu-cart-ring: var(--menu-cart-ink);
+  --menu-cart-ring-hover: var(--color-accent-550);
+  --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / 0.26), 0 0 32px 7px rgb(246 181 30 / 0.10);
+
+  /* 4. Reading, FAQ and contact details */
+  --prose-text: var(--text-reading);
+  --faq-question-text: var(--interactive-text);
   --faq-question-hover-text: var(--color-accent-500);
   --faq-question-open-text: var(--color-accent-700);
   --faq-question-hover-bg: var(--surface-muted);
   --faq-question-open-bg: color-mix(in srgb, var(--color-accent-600) 15%, transparent);
 
-  /* Other controls: general focus, field states, selection and login focus */
-  --focus-ring: var(--color-primary-150);
-  --field-hover-bg: var(--color-primary-750);
-  --field-active-bg: var(--color-primary-700);
-  --selection-bg: var(--color-primary-600);
-  --entrance-field-focus-bg: var(--surface-bg);
-  --control-accent: var(--color-primary-150);
-  --action-remove-text: #ffaaaa;
-
-  /* Status words and contact icons on dark page surfaces */
-  /* Legacy RGB-channel role: matches accent-800 (#f39912), including
-     translucent warning backgrounds and order-status icons. */
-  --color-status-warning: 243 153 18;
-  --color-status-warning-text: var(--color-accent-800);
-  --color-status-info-text: var(--color-primary-150);
-  --color-status-success-text: var(--color-green-400);
-  --color-status-danger-text: #ffaaaa;
-  --color-status-muted-text: #b7b8c4;
-  --color-expiry-safe-text: var(--text-body);
-  --contact-mail: var(--color-primary-150);
-  --contact-phone: var(--color-green-400);
-  --contact-place: #e7a096;
-  --color-action-place-solid: var(--color-accent-600);
-  --color-accent-text-standard: var(--color-primary-800);
-
-  /* Display lettering: decorative FAQ and About titles */
+  /* Decorative lettering, photo paper and category icons retain their own colours */
   --display-stamped: #63718f;
   --display-shadow: var(--color-primary-750);
   --display-lip: var(--color-primary-100);
   --display-lip-opacity: 0.25;
-
-  /* Paper: About polaroid and catalog labels; photos retain their own colours */
   --paper-bg: var(--color-neutral-200);
-  --label-bg: var(--color-primary-800);
+  --contact-mail: var(--interactive-text-strong);
+  --contact-phone: var(--color-green-400);
+  --contact-place: #e7a096;
+
+  /* 5. Forms, search and entrance pages */
+  --search-text: var(--color-accent-100);
+  --search-placeholder: var(--color-primary-200);
+  --search-focus-border: var(--interactive-border);
+  --search-focus-bg: var(--field-hover-bg);
+  --search-focus-shadow: 0 0 0 3px color-mix(in srgb, var(--search-focus-border) 20%, transparent);
+
+  /* Login/reset: neutral copy, blue links, orange validation and a red error icon */
+  --entrance-field-focus-bg: var(--surface-bg);
+  --entrance-copy-text: var(--text-secondary);
+  --entrance-help-text: var(--text-muted);
+  --entrance-link-text: var(--interactive-text);
+  --entrance-link-hover-text: var(--interactive-text-hover);
+  --entrance-error-text: var(--color-status-warning-text);
+  --entrance-error-mark: var(--color-status-warning-text);
+  --entrance-error-icon: var(--danger-text);
+
+  /* 6. Catalog and labels — deliberate gold/blue surface exceptions stay local */
+  --label-bg: var(--surface-bg);
   --label-border: var(--color-accent-700);
   --label-band: var(--color-accent-700);
   --label-line: var(--color-primary-700);
   --label-band-text: var(--color-primary-950);
   --label-text: var(--color-accent-200);
   --label-muted: var(--color-primary-200);
+  --label-success-text: var(--color-status-success-text);
+  --label-warning-text: var(--color-status-warning-text);
+  --label-danger-text: var(--danger-text);
 
-  /* Cart popover surface */
-  --cart-panel-bg: var(--color-primary-800);
-
-  /* Quantity controls: buttons, signs, border and number field */
-  --stepper-bg: var(--color-primary-800);
-  --stepper-bg-hover: var(--color-primary-750);
-  --stepper-bg-press: var(--color-primary-700);
-  --stepper-ink: var(--color-primary-100);
-  --stepper-line: var(--color-primary-300);
-  --stepper-number-bg: var(--surface-bg);
-  /* Product image placeholder: surface, message and crown (not label colours). */
-  --catalog-placeholder-bg: var(--color-primary-850);
+  /* Missing-photo artwork is independent of label ink and normal reading text */
+  --catalog-placeholder-bg: var(--surface-muted);
   --catalog-placeholder-text: var(--color-primary-200);
   --catalog-placeholder-crown: var(--color-accent-650);
 
-  /* Customer footer: wordmark and crown, then social/account links. */
-  --footer-logo: var(--color-primary-200);
-  --footer-crown: var(--color-accent-600);
-  --footer-link: var(--color-primary-250);
-  --footer-link-hover: var(--color-accent-500);
-
-  /* Catalog label cart: dark blue button, light green icon and border.
-     Also used on product detail; independent of delivery action buttons. */
-  --catalog-cart-bg: var(--color-primary-750);
-  --catalog-cart-ink: var(--color-action-deliver-light-bg);
-  --catalog-cart-border: var(--color-action-deliver-light-bg);
-  --catalog-cart-hover-bg: var(--color-primary-700);
-  --catalog-cart-active-bg: var(--color-primary-800);
-  --catalog-cart-focus: var(--color-primary-200);
-  --catalog-cart-muted-bg: var(--color-primary-950);
-  --catalog-cart-muted-ink: var(--color-neutral-500);
-  --catalog-cart-muted-border: var(--color-neutral-500);
-
-  /* Product detail close: blue icon and edge on the current dark surface. */
-  --catalog-close-ink: var(--color-primary-400);
-  --catalog-close-border: var(--color-primary-400);
-  --catalog-close-bg: var(--color-primary-800);
-  --catalog-close-hover-ink: var(--color-primary-200);
-  --catalog-close-hover-bg: var(--color-primary-750);
-
-  /* Ready cart: green; pointed at, focused or pressed: blue like other actions. */
-  --catalog-cart-hover-ink: var(--color-primary-200);
-  --catalog-cart-hover-border: var(--color-primary-200);
-  --catalog-cart-active-ink: var(--color-primary-200);
-  --catalog-cart-active-border: var(--color-primary-200);
-  --catalog-burst-success: var(--color-green-400);
-  --catalog-burst-error: #e45f5f;
-  --catalog-burst-halo: rgb(36 143 78 / 0.28);
-
-  /* Clearer red trash icons and a slightly stronger red row flash. */
-  --cart-remove-ink: #dc5a5a;
-  --cart-remove-hover-ink: var(--color-red-400);
-  --cart-remove-flash: rgb(210 55 55 / 0.24);
-
-  /* Login and password-reset errors: deeper gold than the main action. */
-  --entrance-error-text: var(--color-accent-800);
-  --entrance-error-mark: var(--color-accent-800);
-
-  /* Catalog hover: brighter name, soft blue sheen and glow. */
+  /* Card hover: the name sits on gold; the picture has its own blue sheen/glow */
   --catalog-card-hover-text: var(--color-primary-700);
   --catalog-card-hover-sheen: linear-gradient(135deg, rgb(117 177 255 / 0.22), transparent 65%);
   --catalog-card-hover-shadow: 0 0 20px 3px rgb(66 139 255 / 0.22);
 
-  /* Quantity and variant controls: quiet edges/gold at rest, blue on focus. */
+  /* Quantity/variant fields: quiet gold at rest; current label text when focused */
   --catalog-control-idle-text: var(--color-accent-700);
   --catalog-control-idle-bg: transparent;
   --catalog-control-idle-border: color-mix(in srgb, var(--color-primary-200) 22%, transparent);
@@ -172,24 +165,51 @@
   --catalog-control-focus-border: var(--search-focus-border);
   --catalog-control-focus-shadow: var(--search-focus-shadow);
 
-  /* Status text on the dark label surface, not the old light-paper ink. */
-  --label-success-text: var(--color-green-400);
-  --label-warning-text: var(--color-accent-800);
-  --label-danger-text: var(--color-red-400);
+  /* Product-detail close: stronger blue normal icon is a deliberate exception */
+  --catalog-close-ink: var(--color-primary-400);
+  --catalog-close-border: var(--color-primary-400);
+  --catalog-close-bg: var(--surface-bg);
+  --catalog-close-hover-ink: var(--interactive-text);
+  --catalog-close-hover-bg: var(--surface-hover);
 
-  /* Available secondary actions and linked list/product names. */
-  --quiet-link-text: var(--color-primary-200);
-  --quiet-link-hover-text: var(--color-primary-100);
-  --quiet-link-focus-text: var(--color-primary-100);
-  --line-link-text: var(--color-primary-200);
-  --line-link-hover-text: var(--color-primary-100);
-  --cart-clear-text: var(--color-primary-200);
-  --cart-clear-hover-text: var(--color-red-400);
+  /* 7. Cart and quantity stepper */
+  --cart-panel-bg: var(--surface-bg);
+  --stepper-bg: var(--surface-bg);
+  --stepper-bg-hover: var(--surface-hover);
+  --stepper-bg-press: var(--surface-active);
+  --stepper-ink: var(--color-primary-100);
+  --stepper-line: var(--color-primary-300);
+  --stepper-number-bg: var(--surface-bg);
 
-  /* Entrance information is neutral; links remain blue, failed burst red. */
-  --entrance-copy-text: var(--color-neutral-200);
-  --entrance-help-text: var(--color-neutral-400);
-  --entrance-link-text: var(--color-primary-200);
-  --entrance-link-hover-text: var(--color-primary-100);
-  --entrance-error-icon: var(--color-red-400);
+  /* Catalog add: green ready ink; blue hover/focus/press; muted until size is chosen.
+     Its button background sequence is intentionally different from text links. */
+  --catalog-cart-bg: var(--color-primary-750);
+  --catalog-cart-ink: var(--color-action-deliver-light-bg);
+  --catalog-cart-border: var(--color-action-deliver-light-bg);
+  --catalog-cart-hover-bg: var(--color-primary-700);
+  --catalog-cart-active-bg: var(--surface-bg);
+  --catalog-cart-focus: var(--interactive-border);
+  --catalog-cart-muted-bg: var(--color-primary-950);
+  --catalog-cart-muted-ink: var(--color-neutral-500);
+  --catalog-cart-muted-border: var(--color-neutral-500);
+  --catalog-cart-hover-ink: var(--interactive-text);
+  --catalog-cart-hover-border: var(--interactive-text);
+  --catalog-cart-active-ink: var(--interactive-text);
+  --catalog-cart-active-border: var(--interactive-text);
+
+  /* Success burst and destructive feedback keep their existing shade/intensity */
+  --catalog-burst-success: var(--color-status-success-text);
+  --catalog-burst-error: #e45f5f;
+  --catalog-burst-halo: rgb(36 143 78 / 0.28);
+  --cart-remove-ink: #dc5a5a;
+  --cart-remove-hover-ink: var(--danger-text);
+  --cart-remove-flash: rgb(210 55 55 / 0.24);
+  --cart-clear-text: var(--interactive-text);
+  --cart-clear-hover-text: var(--danger-text);
+
+  /* 8. Footer — brand artwork remains independent of interactive text */
+  --footer-logo: var(--color-primary-200);
+  --footer-crown: var(--color-accent-600);
+  --footer-link: var(--interactive-text-subtle);
+  --footer-link-hover: var(--color-accent-500);
 }
