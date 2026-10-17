@@ -129,10 +129,6 @@
 }
 
 /* Small controls use the same emission without duplicating their halo. */
-:is(.site-header, .landing) .language-switcher__option:is(:hover, :focus-visible) {
-  text-shadow: var(--interaction-text-shadow);
-}
-
 .site-nav-cart__trigger:is(:hover, :focus-visible) .ui-icon-svg,
 .tile__add:is(:hover, :focus-visible) .ui-icon-svg {
   filter: var(--interaction-icon-filter);

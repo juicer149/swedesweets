@@ -137,6 +137,10 @@
   --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / 0.06), rgb(249 181 26 / 0.05) 30%, rgb(249 181 26 / 0.04) 60%, rgb(249 181 26 / 0) 100%);
   --menu-link-glow-blur: 10px;
   --menu-language-ink: color-mix(in srgb, var(--menu-ink) 65%, transparent);
+  /* A quiet selected-language lamp; hover/focus still uses the shared light. */
+  --menu-language-active-decoration: none;
+  --menu-language-active-glow-opacity: calc(var(--interaction-halo-opacity) * 0.4);
+  --menu-language-active-text-shadow: 0 0 8px rgb(249 181 26 / 0.16);
   --menu-cart-ink: var(--menu-ink);
   --menu-cart-ring: var(--menu-cart-ink);
   --menu-cart-ring-hover: var(--selected-accent);

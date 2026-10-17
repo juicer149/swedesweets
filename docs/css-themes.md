@@ -569,3 +569,18 @@ are preserved. Set this opacity to `1` to restore the broad halo, or `0` to see
 only glyph/icon emission. `--interaction-text-shadow` and
 `--interaction-icon-filter` independently tune the actual emission. Light keeps
 its existing presentation; active crowns and the landing input handoff remain.
+
+## Quiet selected language light
+
+All language-switcher placements (header, landing, login/reset and error pages)
+share the same state rules. Dark selected languages keep a subtle lamp after
+hover/focus leaves, replacing the underline. Hover and keyboard focus still
+use the normal shared light. These component roles are independent of approved
+nav/FAQ/account glow tuning:
+
+- `--menu-language-active-decoration`: none in dark, underline in light.
+- `--menu-language-active-glow-opacity`: 40% of `--interaction-halo-opacity` in dark.
+- `--menu-language-active-text-shadow`: a single soft 8px glow at 0.16 opacity.
+
+Light/ops retain their underline and no resting glow. Forced-colours mode
+restores the underline as the selected marker and hides the halo.

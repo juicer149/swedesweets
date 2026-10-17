@@ -1,6 +1,6 @@
 /* Shared language switcher for navigation, landing, entrance and error pages.
    All instances use includes/language_switcher.html and the same menu tokens.
-   The selected language has a quiet underline; focus stays highly visible. */
+   Themes choose an underline or quiet selected light; focus stays visible. */
 .language-switcher {
   display: inline-flex;
   align-items: center;
@@ -48,9 +48,10 @@
 .language-switcher__option--active,
 .language-switcher__option[aria-current="true"] {
   color: var(--menu-language-chosen);
-  text-decoration: underline;
+  text-decoration: var(--menu-language-active-decoration);
   text-underline-offset: 0.28em;
   text-decoration-thickness: 0.1em;
+  text-shadow: var(--menu-language-active-text-shadow);
 }
 
 .language-switcher__separator {
@@ -70,13 +71,13 @@
   }
 }
 
-/* Header and landing language choices share the navbar backlight. */
-:is(.site-header, .landing) .language-switcher__option {
+/* All language placements share the same selected/hover light. */
+.language-switcher__option {
   position: relative;
   isolation: isolate;
 }
 
-:is(.site-header, .landing) .language-switcher__option::after {
+.language-switcher__option::after {
   content: "";
   position: absolute;
   inset: -0.2rem -0.4rem;
@@ -89,7 +90,33 @@
   transition: opacity var(--motion-fast);
 }
 
-:is(.site-header, .landing) .language-switcher__option:hover::after,
-:is(.site-header, .landing) .language-switcher__option:focus-visible::after {
+.language-switcher__option--active::after,
+.language-switcher__option[aria-current="true"]::after {
+  opacity: var(--menu-language-active-glow-opacity);
+}
+
+.language-switcher__option:is(:hover, :focus-visible) {
+  text-shadow: var(--interaction-text-shadow);
+}
+
+.language-switcher__option:hover::after,
+.language-switcher__option:focus-visible::after {
   opacity: var(--interaction-halo-opacity);
+}
+
+@media (forced-colors: active) {
+  .language-switcher__option::after {
+    display: none;
+  }
+
+  .language-switcher__option--active,
+  .language-switcher__option[aria-current="true"] {
+    text-decoration: underline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .language-switcher__option::after {
+    transition: none;
+  }
 }
