@@ -13,10 +13,13 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Short customer pages and long catalogs share the same content width.
-   Entrances without a header keep their full-width background. */
-html[data-site-zone="public"]:has(.site-header) {
-  scrollbar-gutter: stable;
+/* Keep desktop navigation stable between short and scrolling pages.
+   Mobile sheets hide scrolling: reserving a desktop scrollbar gutter there
+   would leave an empty strip along the right edge in desktop mobile previews. */
+@media (min-width: 768px) {
+  html[data-site-zone="public"]:has(.site-header) {
+    scrollbar-gutter: stable;
+  }
 }
 
 body {

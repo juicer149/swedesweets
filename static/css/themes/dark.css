@@ -252,8 +252,8 @@
 
   /* Missing-photo artwork is independent of label ink and normal reading text */
   --catalog-placeholder-bg: var(--surface-muted);
-  --catalog-placeholder-text: var(--color-primary-200);
-  --catalog-placeholder-crown: var(--color-accent-650);
+  --catalog-placeholder-text: var(--display-stamped);
+  --catalog-placeholder-crown: var(--display-stamped);
 
   /* Card hover: the name sits on gold; the picture shares the warm light. */
   --catalog-card-hover-text: var(--color-primary-700);

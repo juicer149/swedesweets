@@ -45,9 +45,10 @@
 
       <p class="page__note catalog__feedback" data-catalog-feedback role="status" aria-live="polite"></p>
 
-      <p class="page__note catalog__no-results" data-catalog-no-results hidden>
-        {% trans "No products match your search." %}
-      </p>
+      <div class="catalog__empty catalog__no-results" data-catalog-no-results role="status" hidden>
+        {% trans "No products match your search." as no_results_message %}
+        {% include "includes/catalog/no_photo.html" with message=no_results_message only %}
+      </div>
 
 
       {# A card's page, opened over the wall (catalog.js). #}

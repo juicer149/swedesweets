@@ -689,3 +689,16 @@ its tabs keep their positions and widths while first/last halos can cross the
 content gutter. Desktop keeps its original clipping. In light, the theme
 switch track follows `--menu-bg`, matching the navbar blue behind the yellow sun;
 dark retains its own track role.
+
+The stable scrollbar gutter is reserved only on desktop (768px and up).
+Mobile sheets hide scrolling, so a reserved classic desktop scrollbar gutter
+would otherwise leave an empty right strip when previewing a phone layout on
+a large monitor. Open mobile sheets now span the full viewport, while desktop
+keeps its existing stable alignment between pages.
+
+Missing photos, empty catalogs and searches with no matches all reuse the
+crown/text illustration in `catalog/no_photo.html`. Search still toggles its
+hidden state as results appear/disappear; `.catalog__empty[hidden]` explicitly
+wins over the illustration's grid layout. Dark crown and caption roles both
+follow `--display-stamped` (currently #63718f), matching FAQ/About titles.
+Light retains its own muted placeholder palette.

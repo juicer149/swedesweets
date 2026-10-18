@@ -1430,7 +1430,7 @@
   }
 }
 
-/* Empty catalog shares the crown illustration and its theme palette. */
+/* Empty catalogs and searches share the crown illustration and its palette. */
 .catalog__empty {
   width: min(100%, 22rem);
   min-height: 16rem;
@@ -1440,4 +1440,5 @@
   background: var(--catalog-placeholder-bg);
   border-radius: var(--radius-md);
 }
+.catalog__empty[hidden] { display: none; }
 .catalog__empty .catalog-no-photo { padding: var(--space-6); }
