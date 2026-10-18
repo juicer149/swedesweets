@@ -1192,7 +1192,7 @@
 @media (max-width: 767px) {
   /* The cart hangs 22px below the label. Leave another 14px before the
      shelf, including when the adjacent product has a longer title. */
-  .tiles { --tile-row-gap: 4.5rem; }
+  .tiles { --tile-row-gap: 5rem; }
 
   .catalog__tools {
     flex-direction: column-reverse;

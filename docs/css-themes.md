@@ -646,7 +646,7 @@ accent-600; the moon keeps its white emission. Guest footers say Login. Landing
 shows a protected POST Log out at the bottom when signed in, with the account
 icon next to settings at the top.
 
-On mobile the catalog row gap is 4.5rem: the hanging cart clears the shelf by
+On mobile the catalog row gap is 5rem: the hanging cart clears the shelf by
 about 14px. Empty catalogs reuse `catalog/no_photo.html` with the empty-catalog
 message and the existing `--catalog-placeholder-*` paint. FAQ records collapse
 at its start so the question/chevron light extinguishes within 100ms, before
