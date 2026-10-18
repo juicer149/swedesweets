@@ -637,7 +637,10 @@ below 768px. `mobile-menu.js` measures the header and fixed bottom navigation,
 locks page scrolling and makes covered content inert; closing restores both.
 The sheet uses the existing preferences/account surface, border and ink roles.
 A two-layer clipped silhouette draws its V edge; the close button stays a normal
-44px focusable button. Reduced motion skips the entry animation. The cart has
+44px focusable button. There is no top border against the header. Mobile sheets
+reveal downward from the header and retract upward when closed. Switching sheets
+retracts the current one before revealing the next; rapid taps keep the latest
+choice. Reduced motion skips both animations. The cart has
 not moved into this sheet system.
 
 The theme pill communicates day/night through its sun/moon and accessible
@@ -701,4 +704,5 @@ crown/text illustration in `catalog/no_photo.html`. Search still toggles its
 hidden state as results appear/disappear; `.catalog__empty[hidden]` explicitly
 wins over the illustration's grid layout. Dark crown and caption roles both
 follow `--display-stamped` (currently #63718f), matching FAQ/About titles.
-Light retains its own muted placeholder palette.
+Light retains its own muted placeholder palette. Empty catalogs/searches paint
+directly on the page; only missing product photos keep a placeholder surface.

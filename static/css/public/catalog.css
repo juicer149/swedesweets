@@ -1437,8 +1437,6 @@
   margin: var(--space-8) auto;
   display: grid;
   container-type: inline-size;
-  background: var(--catalog-placeholder-bg);
-  border-radius: var(--radius-md);
 }
 .catalog__empty[hidden] { display: none; }
 .catalog__empty .catalog-no-photo { padding: var(--space-6); }

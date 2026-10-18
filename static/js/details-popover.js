@@ -36,6 +36,12 @@
       return;
     }
 
+    // Mobile sheets keep their details open until the exit motion finishes.
+    if (!details.dispatchEvent(new CustomEvent("details-request-close", {
+      cancelable: true,
+      detail: { restoreFocus },
+    }))) return;
+
     details.open = false;
 
     if (!restoreFocus) {
