@@ -651,3 +651,23 @@ about 14px. Empty catalogs reuse `catalog/no_photo.html` with the empty-catalog
 message and the existing `--catalog-placeholder-*` paint. FAQ records collapse
 at its start so the question/chevron light extinguishes within 100ms, before
 the answer's 280ms slide ends. A fresh hover/focus can light the closed row again.
+
+## Product close control and navbar cart feedback
+
+The detail view's close control sits diagonally over the image's top-left
+corner. Narrow phones reserve extra image gutter so its button and focus ring
+stay inside the viewport; the label's proportions and type scaling are unchanged.
+
+Navbar feedback keeps its existing jump and 1.6s duration. Light uses
+`--menu-cart-feedback-animation: site-nav-cart-flash` with the original filled
+flash. Dark selects `site-nav-cart-glow`: the icon becomes green-400 when adding
+and red-400 when removing, with no painted circular surface or shadow around the
+hit area. Separate pseudo-element/icon animations emit a blurred light and fade
+back to the normal selected/hover state. The existing animation-end cleanup
+accepts both theme animations, including with reduced motion.
+
+`--menu-cart-feedback-added-ink`, `--menu-cart-feedback-removed-ink` and
+`--menu-cart-feedback-count-ink` own feedback colours. Dark halo/icon emission
+uses `--menu-cart-feedback-halo`, `--menu-cart-feedback-halo-filter` and
+`--menu-cart-feedback-icon-filter`; their animation roles share the same 1.6s
+clock. Other dropdown icons keep their current appearance.

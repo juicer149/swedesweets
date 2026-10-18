@@ -474,9 +474,12 @@
     void trigger.offsetWidth; // restart the animation
     trigger.classList.add("is-bumped");
     trigger.classList.toggle("is-bumped--removed", kind === "removed");
-    // Done when the green flash (the longer of the two) has ended.
+    // The theme selects a filled flash or icon glow; both finish after the jump.
     const done = (event) => {
-      if (event.target !== trigger || event.animationName !== "site-nav-cart-flash") {
+      if (
+        event.target !== trigger
+        || !["site-nav-cart-flash", "site-nav-cart-glow"].includes(event.animationName)
+      ) {
         return;
       }
 

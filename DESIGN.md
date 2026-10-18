@@ -464,8 +464,10 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   buttons; quantities are edited on the cart page. The icon is 22px with a
   stronger stroke than the original artwork. Cart/checkout pages retain its
   selected light and crown; the count moves away from the crown. AJAX refresh
-  preserves selection. Added items produce the existing green bump/flash;
-  removals use red. Empty/open carts hide the count.
+  preserves selection. Added items produce green feedback; removals use red.
+  In dark this is the bouncing icon and a diffuse coloured light, without a
+  circular fill.
+  Light retains the filled flash. Empty/open carts hide the count.
 - **Customer footer:** the vector wordmark and crown, phone/mail/social icons,
   with Login for guests. Signed-in identity/logout are omitted;
   My account offers a quiet Log out below Change password as well as the menu.

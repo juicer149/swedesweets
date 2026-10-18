@@ -780,12 +780,12 @@
   padding-top: clamp(var(--space-2), 3dvh, var(--space-6));
 }
 
-/* Back to the catalog: a round × above the picture, at its left. */
+/* Back to the catalog: the × sits diagonally over the image's top-left corner. */
 .product__close {
   position: absolute;
   z-index: 2;
-  top: -3.1rem;
-  left: 0;
+  top: -1.75rem;
+  left: -1.75rem;
   display: grid;
   place-items: center;
   width: 2.5rem;
@@ -1248,7 +1248,8 @@
   }
 
   .product__media {
-    width: min(100%, 18rem);
+    /* Reserve room for the diagonal close control on the narrowest phones. */
+    width: min(calc(100% - 4rem), 18rem);
     margin-inline: auto;
   }
 
@@ -1267,10 +1268,6 @@
     width: min(100%, 19.5rem);
     margin: -2rem auto 0;
     transform: none;
-  }
-
-  .product__close {
-    top: -2.9rem;
   }
 }
 

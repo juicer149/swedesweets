@@ -162,6 +162,16 @@
   --menu-dropdown-icon-filter: var(--interaction-icon-filter);
 
   --menu-cart-ink: var(--menu-ink);
+  /* Feedback has no circular fill/ring: a coloured icon lights the space behind it. */
+  --menu-cart-feedback-animation: site-nav-cart-glow;
+  --menu-cart-feedback-added-ink: var(--color-green-400);
+  --menu-cart-feedback-removed-ink: var(--color-red-400);
+  --menu-cart-feedback-count-ink: var(--color-primary-950);
+  --menu-cart-feedback-halo-animation: site-nav-cart-glow-halo 1.6s ease-out;
+  --menu-cart-feedback-icon-animation: site-nav-cart-glow-icon 1.6s ease-out;
+  --menu-cart-feedback-halo: radial-gradient(ellipse, color-mix(in srgb, currentColor 28%, transparent), color-mix(in srgb, currentColor 12%, transparent) 40%, transparent 75%);
+  --menu-cart-feedback-halo-filter: blur(10px);
+  --menu-cart-feedback-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, currentColor 40%, transparent)) drop-shadow(0 0 9px color-mix(in srgb, currentColor 25%, transparent));
   --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / calc(0.26 * var(--interaction-glow-strength))), 0 0 32px 7px rgb(246 181 30 / calc(0.10 * var(--interaction-glow-strength)));
 
   /* Shared local interactions follow the approved navbar light. */

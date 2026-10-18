@@ -224,6 +224,12 @@
   --menu-cart-count-ink: var(--color-primary-950);
   --menu-cart-count-bg: var(--color-accent-600);
 
+  /* Added/removed feedback: light keeps the filled flash; dark emits light. */
+  --menu-cart-feedback-animation: site-nav-cart-flash;
+  --menu-cart-feedback-added-ink: var(--color-action-deliver);
+  --menu-cart-feedback-removed-ink: var(--color-action-danger);
+  --menu-cart-feedback-count-ink: var(--color-white);
+
   /* Settings: text-only language choices, pill theme switch and site link. */
   --preferences-trigger-ink: var(--menu-ink);
   --preferences-bg: var(--page-bg);

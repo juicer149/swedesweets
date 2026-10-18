@@ -345,23 +345,51 @@
    green of the tick that was pressed and the cart that grew in. Something
    went out (a bin, here or on the cart's page): the same in red. */
 .site-nav-cart__trigger {
-  --cart-flash: var(--color-action-deliver);
+  --cart-flash: var(--menu-cart-feedback-added-ink);
   --cart-flash-bg: var(--color-action-deliver-light-bg);
 }
 
 .site-nav-cart__trigger.is-bumped--removed {
-  --cart-flash: var(--color-action-danger);
+  --cart-flash: var(--menu-cart-feedback-removed-ink);
   --cart-flash-bg: var(--color-action-danger-light-bg);
 }
 
 .site-nav-cart__trigger.is-bumped {
   animation:
     site-nav-cart-bump 0.45s cubic-bezier(0.3, 1.6, 0.6, 1),
-    site-nav-cart-flash 1.6s ease-out;
+    var(--menu-cart-feedback-animation) 1.6s ease-out;
 }
 
 .site-nav-cart__trigger.is-bumped .site-nav-cart__count {
   animation: site-nav-cart-count-flash 1.6s ease-out;
+}
+
+.site-nav-cart__trigger.is-bumped::before {
+  animation: var(--menu-cart-feedback-halo-animation, none);
+  background: var(--menu-cart-feedback-halo, var(--menu-dropdown-glow));
+  filter: var(--menu-cart-feedback-halo-filter, var(--menu-dropdown-glow-filter));
+}
+
+.site-nav-cart__trigger.is-bumped .ui-icon-svg {
+  animation: var(--menu-cart-feedback-icon-animation, none);
+}
+
+/* Dark feedback paints only the icon and its diffuse light. Keeping colour
+   on the trigger also makes the count follow the same added/removed state. */
+@keyframes site-nav-cart-glow {
+  12%, 35% { color: var(--cart-flash); }
+}
+
+@keyframes site-nav-cart-glow-halo {
+  0%, 100% { opacity: 0; }
+  12%, 35% { opacity: 1; }
+  70% { opacity: 0.35; }
+}
+
+@keyframes site-nav-cart-glow-icon {
+  12%, 35% {
+    filter: var(--menu-cart-feedback-icon-filter);
+  }
 }
 
 @keyframes site-nav-cart-flash {
@@ -394,7 +422,7 @@
   }
 
   12%, 35% {
-    color: var(--color-white);
+    color: var(--menu-cart-feedback-count-ink);
     background: var(--cart-flash);
   }
 }
@@ -409,7 +437,7 @@
 /* Less motion: no jump, the flash only. */
 @media (prefers-reduced-motion: reduce) {
   .site-nav-cart__trigger.is-bumped {
-    animation: site-nav-cart-flash 1.6s ease-out;
+    animation: var(--menu-cart-feedback-animation) 1.6s ease-out;
   }
 }
 
