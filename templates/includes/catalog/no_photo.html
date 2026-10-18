@@ -5,5 +5,5 @@
 {% endcomment %}
 <span class="catalog-no-photo">
   {% include "includes/ui/icon_block.html" with name="crown" class_name="catalog-no-photo__crown" only %}
-  <span class="catalog-no-photo__text">{% trans "No photo for this product" %}</span>
+  <span class="catalog-no-photo__text">{% if message %}{{ message }}{% else %}{% trans "No photo for this product" %}{% endif %}</span>
 </span>

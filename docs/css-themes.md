@@ -44,7 +44,7 @@ business customers) Order history. It remains a CSRF-protected POST action.
 
 The pill-shaped theme button uses `role="switch"`, a stable "Dark theme"
 accessible name and `aria-checked`. In day mode its thumb is on the left and
-the blue sun on the right. In night mode the thumb moves right and the white
+the yellow sun on the right. In night mode the thumb moves right and the white
 moon appears on the left, against the dark track. The sun sets and the moon
 rises along an arc, each with a soft shadow following its shape. Reduced
 motion disables the transition. The switch is hidden without JavaScript.
@@ -627,3 +627,27 @@ Dropdown triggers apply hover colour, light and movement only under
 states remain available everywhere. A touch closing a non-current dropdown
 returns its icon to blue; current account/cart icons keep their gold/crown.
 Keyboard dismissal still restores a visible focus indicator.
+
+
+## Compact dropdowns and mobile sheets
+
+`common/preferences.css` and `common/account-menu.css` keep desktop panels at
+12.5rem. `common/mobile-menu.css` turns only account/settings into a sheet
+below 768px. `mobile-menu.js` measures the header and fixed bottom navigation,
+locks page scrolling and makes covered content inert; closing restores both.
+The sheet uses the existing preferences/account surface, border and ink roles.
+A two-layer clipped silhouette draws its V edge; the close button stays a normal
+44px focusable button. Reduced motion skips the entry animation. The cart has
+not moved into this sheet system.
+
+The theme pill communicates day/night through its sun/moon and accessible
+switch state, without a duplicate Day/Night label. `--theme-switch-sun` uses
+accent-600; the moon keeps its white emission. Guest footers say Login. Landing
+shows a protected POST Log out at the bottom when signed in, with the account
+icon next to settings at the top.
+
+On mobile the catalog row gap is 4.5rem: the hanging cart clears the shelf by
+about 14px. Empty catalogs reuse `catalog/no_photo.html` with the empty-catalog
+message and the existing `--catalog-placeholder-*` paint. FAQ records collapse
+at its start so the question/chevron light extinguishes within 100ms, before
+the answer's 280ms slide ends. A fresh hover/focus can light the closed row again.

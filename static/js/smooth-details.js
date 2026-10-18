@@ -22,6 +22,7 @@
 
     item.animation?.cancel();
     item.expanded = expand;
+    details.toggleAttribute("data-smooth-closing", !expand);
 
     if (expand) {
       details.open = true;
@@ -77,6 +78,14 @@
       animation: null,
     };
     items.set(details, item);
+
+    // A closing question stays unlit under a stationary pointer. A fresh
+    // hover or keyboard visit can light the closed row normally again.
+    for (const eventName of ["pointerenter", "focusin"]) {
+      summary.addEventListener(eventName, () => {
+        if (!details.open) details.removeAttribute("data-smooth-closing");
+      });
+    }
 
     summary.addEventListener("click", (event) => {
       event.preventDefault();

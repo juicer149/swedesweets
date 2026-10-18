@@ -17,10 +17,10 @@ def _footer(client, url_name: str = "public_site:about") -> str:
 
 @pytest.mark.django_db
 @override_settings(LANGUAGE_CODE="en")
-def test_visitors_get_a_reseller_login(client):
+def test_visitors_get_a_login(client):
     footer = _footer(client)
 
-    assert f'href="{reverse("login")}"' in footer
+    assert f'href="{reverse("login")}">Login</a>' in footer
     assert f'action="{reverse("logout")}"' not in footer
 
 

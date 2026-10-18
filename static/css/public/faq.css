@@ -30,3 +30,21 @@
   --accordion-open-bg: var(--faq-question-open-bg);
   --accordion-answer-text: var(--prose-text);
 }
+
+/* Extinguish at the start of closing, before the answer finishes sliding. */
+.faq .accordion[data-smooth-closing] > .accordion__summary {
+  color: var(--faq-question-text);
+  background: transparent;
+  text-shadow: none;
+  transition-duration: 100ms;
+}
+.faq .accordion[data-smooth-closing] > .accordion__summary > span::before {
+  opacity: 0;
+  transition-duration: 100ms;
+}
+.faq .accordion[data-smooth-closing] > .accordion__summary .accordion__chevron {
+  color: var(--text-muted);
+}
+.faq .accordion[data-smooth-closing] > .accordion__summary .ui-icon-svg {
+  filter: none;
+}

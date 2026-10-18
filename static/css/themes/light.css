@@ -252,8 +252,8 @@
   --theme-switch-border: var(--color-primary-400);
   --theme-switch-thumb: var(--color-primary-50);
   --theme-switch-thumb-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
-  --theme-switch-sun: var(--color-primary-500);
-  --theme-switch-sun-glow: drop-shadow(0 0 4px color-mix(in srgb, var(--color-primary-300) 45%, transparent));
+  --theme-switch-sun: var(--color-accent-600);
+  --theme-switch-sun-glow: drop-shadow(0 0 4px color-mix(in srgb, var(--color-accent-500) 45%, transparent));
   --theme-switch-moon: var(--color-white);
   --theme-switch-moon-glow: drop-shadow(0 0 4px rgb(255 255 255 / 0.35));
 

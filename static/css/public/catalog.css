@@ -1190,6 +1190,10 @@
    ----------------------------------------------------------------------------- */
 
 @media (max-width: 767px) {
+  /* The cart hangs 22px below the label. Leave another 14px before the
+     shelf, including when the adjacent product has a longer title. */
+  .tiles { --tile-row-gap: 4.5rem; }
+
   .catalog__tools {
     flex-direction: column-reverse;
     align-items: stretch;
@@ -1423,3 +1427,15 @@
     translate: none;
   }
 }
+
+/* Empty catalog shares the crown illustration and its theme palette. */
+.catalog__empty {
+  width: min(100%, 22rem);
+  min-height: 16rem;
+  margin: var(--space-8) auto;
+  display: grid;
+  container-type: inline-size;
+  background: var(--catalog-placeholder-bg);
+  border-radius: var(--radius-md);
+}
+.catalog__empty .catalog-no-photo { padding: var(--space-6); }

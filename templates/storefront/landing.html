@@ -10,7 +10,7 @@
   (primary_nav_items, so a business customer gets theirs), the crown on
   the last letter of the chosen one, as on the logo. The pointer, Tab or
   the arrow keys move it, and it stays where it was last put (landing.js).
-  Login, or the account, at the bottom; the cart at the top once it holds
+  Login or Log out at the bottom; the cart at the top once it holds
   something. No navbar, no footer, and the page never scrolls.
 
   The splash plays once per visit: coming back within the same tab session,
@@ -46,6 +46,9 @@
         </a>
       {% endif %}
 
+      {% if request.user.is_authenticated %}
+        {% include "includes/account_menu.html" %}
+      {% endif %}
       {% include "includes/language_switcher.html" %}
     </div>
 
@@ -88,13 +91,13 @@
     </div>
 
     <div class="landing__bottom">
-      {% if account_menu %}
-        {% with item=account_menu.account %}
-          <a class="landing__account" href="{{ item.href }}">
-            {% include "includes/ui/icon_block.html" with name=item.icon size="sm" only %}
-            <span class="landing__account-label">{{ item.label }}</span>
-          </a>
-        {% endwith %}
+      {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" data-dirty-ignore="true">
+          {% csrf_token %}
+          <button class="landing__account" type="submit">
+            <span class="landing__account-label">{% trans "Log out" %}</span>
+          </button>
+        </form>
       {% else %}
         <a class="landing__account" href="{% url 'login' %}">
           {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}

@@ -12,9 +12,6 @@
       button.setAttribute("aria-checked", String(dark));
       button.title = dark ? button.dataset.lightLabel : button.dataset.darkLabel;
     }
-    for (const name of document.querySelectorAll("[data-theme-name]")) {
-      name.textContent = dark ? name.dataset.darkLabel : name.dataset.lightLabel;
-    }
   }
 
   for (const button of buttons) {

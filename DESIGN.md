@@ -61,7 +61,7 @@ completion. Light is still the default.
 
 A gear opens shared settings on navbar, landing and entrance/error pages.
 Language is selected through EN/FR text buttons; the chosen language keeps gold
-ink and a soft gold light. A pill switches Day/Night: thumb left and blue sun
+ink and a soft gold light. A pill switches Day/Night: thumb left and yellow sun
 right in day mode; thumb right and white moon left in night mode. The icons
 set/rise along an arc; reduced motion skips the animation. Selection lasts for
 the current tab. Staff get a normal link to the other site beneath these controls.
@@ -445,6 +445,11 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   the top. Catalog/Shop, Find Sweets, FAQ and About are customer destinations.
   Ops has its own page links. Pages leave room under their last content for
   the bottom bar. The header edge is independent of selection (`--menu-edge`).
+  Account/settings open as centred full-height sheets between the two bars,
+  hiding the covered page/footer and keeping the page's scroll position. Their
+  V-shaped lower edge meets a 44px close button. On desktop they stay compact
+  dropdowns. Cart retains its existing layout.
+
 - **Account:** a single-person icon opens Profile, Order history for business
   customers, and a CSRF-protected POST Log out at the bottom. It keeps selected
   ink, light and crown on profile/history/order-detail pages even when closed.
@@ -462,13 +467,13 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   preserves selection. Added items produce the existing green bump/flash;
   removals use red. Empty/open carts hide the count.
 - **Customer footer:** the vector wordmark and crown, phone/mail/social icons,
-  with a reseller login for guests. Signed-in identity/logout are omitted;
+  with Login for guests. Signed-in identity/logout are omitted;
   My account offers a quiet Log out below Change password as well as the menu.
   The footer stays small and centred on short pages. Ops uses its own quiet footer
   with identity, personal profile and logout.
 - **Landing:** the logo and tagline appear, then the menu rises beneath them.
   The crown follows pointer, Tab or arrow-key selection; it stays at the last
-  chosen item. Settings and a non-empty cart sit above, login/account below.
+  chosen item. Settings, the signed-in account icon and a non-empty cart sit above; Login or a protected POST Log out sits below.
   One screen, no navbar/footer or page scroll; the splash runs once per visit.
 - **Entrances:** login/reset share the menu background and centred logo, with
   settings on the right. Their field, text and error colours have independent

@@ -96,5 +96,10 @@ def test_business_customer_gets_their_menu_and_account(client):
 
     menu = html[html.index("data-landing-menu"):]
     assert f'href="{reverse("business_portal:catalog")}"' in menu
-    assert f'class="landing__account" href="{reverse("business_portal:index")}"' in html
+    assert 'class="account-menu__trigger' in html
+    assert f'href="{reverse("business_portal:index")}"' in html
+    bottom = html.split('class="landing__bottom">', 1)[1]
+    assert f'method="post" action="{reverse("logout")}"' in bottom
+    assert "csrfmiddlewaretoken" in bottom
+    assert "My account" not in bottom
     assert f'href="{reverse("login")}"' not in html

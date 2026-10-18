@@ -12,9 +12,9 @@ from customers.tests.factories import customer_factory
 
 
 def _account_panel(response):
-    return response.content.decode().split('class="account-menu__panel">', 1)[1].split(
-        "</details>", 1
-    )[0]
+    return response.content.decode().split(
+        'class="account-menu__panel mobile-menu-panel"', 1
+    )[1].split("</details>", 1)[0]
 
 
 @pytest.mark.django_db
@@ -70,7 +70,7 @@ def test_staff_site_link_and_account_destinations_follow_navigation_context(
 def test_anonymous_account_dropdown_has_only_login_and_no_site_link(client):
     content = client.get(reverse("storefront:product_list")).content.decode()
     assert 'class="account-menu"' in content
-    panel = content.split('class="account-menu__panel">', 1)[1].split(
+    panel = content.split('class="account-menu__panel mobile-menu-panel"', 1)[1].split(
         "</details>", 1
     )[0]
     assert f'href="{reverse("login")}"' in panel

@@ -64,7 +64,10 @@
         <span class="catalog__more-status" data-catalog-more-status></span>
       </div>
     {% else %}
-      <p class="page__note catalog__empty">{% trans "No products are currently available." %}</p>
+      <div class="catalog__empty" role="status">
+        {% trans "No products are currently available." as empty_message %}
+        {% include "includes/catalog/no_photo.html" with message=empty_message only %}
+      </div>
     {% endif %}
   </div>
 </section>
