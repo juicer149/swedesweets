@@ -105,6 +105,10 @@
   --font-heading: Fredoka, Nunito, system-ui, sans-serif;
   --font-display: Sniglet, Fredoka, Nunito, system-ui, sans-serif;
   --font-weight-heading: 600;
+  /* Navigation and its disclosures stay in step at each viewport size. */
+  --font-size-nav-link: clamp(0.8125rem, 0.92vw, var(--font-size-16));
+  --font-weight-nav-link: 700;
+  --font-size-landing-link: clamp(1.35rem, 4.4dvh, 2.1rem);
 
   --font-size-data-table-td: 0.9375rem;
   --font-size-data-table-th: 0.8125rem;

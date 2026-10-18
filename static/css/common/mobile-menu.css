@@ -1,5 +1,19 @@
 /* Account/settings become a page-sized sheet on phones. Cart keeps its own
    disclosure. Themes own the surface/ink; JS measures the two nav edges. */
+.mobile-menu-panel {
+  --panel-link-font: var(--font-body);
+  --panel-link-size: var(--font-size-nav-link);
+  --panel-link-weight: var(--font-weight-nav-link);
+  --panel-link-line-height: 1;
+}
+
+.mobile-menu-panel :is(.menu-panel-link, .language-switcher__option) {
+  font-family: var(--panel-link-font);
+  font-weight: var(--panel-link-weight);
+  line-height: var(--panel-link-line-height);
+  transition: color var(--motion-fast), transform var(--motion-fast);
+}
+
 .mobile-menu-close { display: none; }
 
 @media (max-width: 767px) {
@@ -9,6 +23,10 @@
   }
 
   .mobile-menu-panel {
+    --panel-link-font: var(--font-heading);
+    --panel-link-size: var(--font-size-landing-link);
+    --panel-link-weight: var(--font-weight-heading);
+    --panel-link-line-height: 1.2;
     --mobile-menu-bg: var(--preferences-bg);
     --mobile-menu-edge: var(--preferences-border);
     position: fixed;
@@ -80,7 +98,7 @@
   .mobile-menu-panel .account-menu__logout { margin: 0; }
   .mobile-menu-panel .account-menu__logout { padding: 0; border: 0; width: 100%; }
   .mobile-menu-panel .account-menu__link {
-    font-size: clamp(1.125rem, 3dvh, 1.5rem);
+    font-size: var(--panel-link-size);
     text-align: center;
   }
   .mobile-menu-panel .site-preferences__group legend {
@@ -93,18 +111,17 @@
   .mobile-menu-panel .site-preferences__choices,
   .mobile-menu-panel .site-preferences__theme { justify-content: center; }
   .mobile-menu-panel .site-preferences__choices { gap: var(--space-8); }
-  .mobile-menu-panel .language-switcher__option { font-size: 1.5rem; }
+  .mobile-menu-panel .language-switcher__option { font-size: var(--panel-link-size); }
   .mobile-menu-panel .site-preferences__theme { padding: var(--space-3); }
   .mobile-menu-panel .theme-switch { transform: scale(1.35); }
   .mobile-menu-panel .site-preferences__site { padding-top: var(--space-3); }
 }
 
 @media (max-width: 767px) and (max-height: 500px) {
-  .mobile-menu-panel { gap: var(--space-2); padding-top: var(--space-2); padding-bottom: 3.5rem; }
+  .mobile-menu-panel { --panel-link-size: 1.125rem; gap: var(--space-2); padding-top: var(--space-2); padding-bottom: 3.5rem; }
   .mobile-menu-panel .site-preferences__group legend { font-size: 0.875rem; margin-bottom: 0; }
   .mobile-menu-panel .site-preferences__theme { padding: 0; }
   .mobile-menu-panel .theme-switch { transform: none; }
-  .mobile-menu-panel .language-switcher__option { font-size: 1.125rem; }
   .mobile-menu-panel .account-menu__link { padding-block: var(--space-2); }
 }
 

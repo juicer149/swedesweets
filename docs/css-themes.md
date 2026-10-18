@@ -671,3 +671,12 @@ accepts both theme animations, including with reduced motion.
 uses `--menu-cart-feedback-halo`, `--menu-cart-feedback-halo-filter` and
 `--menu-cart-feedback-icon-filter`; their animation roles share the same 1.6s
 clock. Other dropdown icons keep their current appearance.
+
+Dropdown links extend the navigation: `--font-size-nav-link` and
+`--font-weight-nav-link` are shared with the desktop navbar. Below 768px the
+panels use the landing menu's Fredoka heading family/weight and
+`--font-size-landing-link`, with a compact size on short landscape screens.
+Language and Theme groups are centred in desktop settings too. Account and
+site-switch links use `menu-panel-link` to reuse the existing nav/landing halo,
+glyph emission and selected light. Their surface-specific text colours still
+come from account/preferences theme roles so light dropdowns remain readable.

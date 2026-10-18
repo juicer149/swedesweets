@@ -40,10 +40,17 @@
   max-width: calc(100vw - 2rem);
   padding: var(--space-5);
   color: var(--preferences-ink);
+  text-align: center;
   background: var(--preferences-bg);
   border: 1px solid var(--preferences-border);
   border-radius: var(--radius-control);
   box-shadow: var(--preferences-shadow);
+}
+
+.site-preferences__panel > .language-switcher {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .site-preferences__group {
@@ -54,8 +61,10 @@
 }
 .site-preferences__group[hidden] { display: none; }
 .site-preferences__group legend {
+  width: 100%;
   margin-bottom: var(--space-2);
   padding: 0;
+  text-align: center;
   font-size: var(--font-size-14);
   font-weight: 700;
 }
@@ -64,10 +73,11 @@
 .site-preferences__theme {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-3);
 }
 .site-preferences .language-switcher__option {
-  font-size: var(--font-size-14);
+  font-size: var(--panel-link-size);
 }
 
 /* More breathing room for desktop chrome; catalog keeps its own page width. */
@@ -90,8 +100,9 @@
   border-top: 1px solid var(--preferences-site-divider);
 }
 .site-preferences__site .quiet-link {
+  justify-content: center;
   color: var(--preferences-site-text);
-  font-size: var(--font-size-14);
+  font-size: var(--panel-link-size);
 }
 .site-preferences__site .quiet-link:is(:hover, :focus-visible) {
   color: var(--preferences-site-hover);

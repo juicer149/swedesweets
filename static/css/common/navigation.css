@@ -99,8 +99,8 @@
   gap: clamp(0.2rem, 0.35vw, 0.4rem);
 
   color: var(--menu-ink);
-  font-size: clamp(0.8125rem, 0.92vw, var(--font-size-16));
-  font-weight: 700;
+  font-size: var(--font-size-nav-link);
+  font-weight: var(--font-weight-nav-link);
   line-height: 1;
   text-decoration: none;
   white-space: nowrap;

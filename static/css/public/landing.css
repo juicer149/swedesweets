@@ -173,7 +173,7 @@
   border-radius: var(--radius-md);
 
   font-family: var(--font-heading);
-  font-size: clamp(1.35rem, 4.4dvh, 2.1rem);
+  font-size: var(--font-size-landing-link);
   font-weight: var(--font-weight-heading);
   line-height: 1.2;
   text-decoration: none;

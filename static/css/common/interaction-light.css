@@ -1,11 +1,11 @@
 /* Shared local hover/focus light. Themes own its paint; layout stays here.
    Keep the name/question above the halo and leave secondary prose neutral. */
-:is(.section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand) {
+:is(.menu-panel-link, .section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand) {
   position: relative;
   isolation: isolate;
 }
 
-:is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
+:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
   content: "";
   position: absolute;
   inset: -0.6rem 0;
@@ -75,12 +75,12 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):hover::before {
+  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):hover::before {
     opacity: var(--interaction-halo-opacity);
   }
 }
 
-:is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):focus-visible::before {
+:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):focus-visible::before {
   opacity: var(--interaction-halo-opacity);
 }
 
@@ -90,19 +90,21 @@
     .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"],
     .section-nav__link[aria-pressed="true"],
-    .landing-menu__link--chosen)::before {
+    .landing-menu__link--chosen,
+    .menu-panel-link[aria-current="page"])::before {
   opacity: var(--interaction-selected-opacity);
 }
 
 /* The ink is solid; a small emission follows the actual glyph/icon shape. */
-:is(.section-nav__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action):is(:hover, :focus-visible),
+:is(.menu-panel-link, .section-nav__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action):is(:hover, :focus-visible),
 :is(.section-nav__link--active, .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"], .section-nav__link[aria-pressed="true"],
-    .faq .accordion[open] > .accordion__summary, .landing-menu__link--chosen) {
+    .faq .accordion[open] > .accordion__summary, .landing-menu__link--chosen,
+    .menu-panel-link[aria-current="page"]) {
   text-shadow: var(--interaction-text-shadow);
 }
 
-:is(.section-nav__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart):is(:hover, :focus-visible) .ui-icon-svg,
+:is(.menu-panel-link, .section-nav__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart):is(:hover, :focus-visible) .ui-icon-svg,
 :is(.section-nav__link--active, .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"], .section-nav__link[aria-pressed="true"],
     .faq .accordion[open] > .accordion__summary, .landing-menu__link--chosen) .ui-icon-svg {
@@ -137,7 +139,7 @@
 @media (forced-colors: active) {
   .site-nav__link::after,
   :is(.faq .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
-  :is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
+  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
     display: none;
   }
 
@@ -146,7 +148,7 @@
     text-shadow: none !important;
   }
 
-  :is(.site-nav__icon, .section-nav__link, .faq .accordion__summary,
+  :is(.site-nav__icon, .menu-panel-link, .section-nav__link, .faq .accordion__summary,
       .landing-menu__link, .landing__account, .landing__cart, .find-sweets .line__icon, .site-brand, .site-nav-cart__trigger, .tile__add) .ui-icon-svg,
   .site-brand__logo,
   .entrance-header__logo,
@@ -160,7 +162,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   :is(.faq .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
-  :is(.section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
+  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
     transition: none;
   }
 }
@@ -241,4 +243,13 @@ details[open] > .menu-dropdown-trigger .ui-icon-svg,
 @media (hover: hover) and (pointer: fine) {
   .menu-dropdown-trigger:hover::before { opacity: var(--interaction-halo-opacity); }
   .menu-dropdown-trigger:hover .ui-icon-svg { filter: var(--menu-dropdown-icon-filter); }
+}
+
+/* These links extend desktop navigation; phones use landing typography.
+   Keep touch closure free of a stale hover lift. */
+@media (min-width: 768px) {
+  .menu-panel-link:focus-visible { transform: translateY(-1px); }
+}
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+  .menu-panel-link:hover { transform: translateY(-1px); }
 }

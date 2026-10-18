@@ -45,12 +45,14 @@
 
 .account-menu .account-menu__link {
   display: block;
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
   padding: var(--space-3);
   color: var(--account-menu-text);
   border-radius: var(--radius-control);
-  text-align: start;
-  font-size: var(--font-size-14);
+  text-align: center;
+  font-size: var(--panel-link-size);
 }
 .account-menu .account-menu__link:is(:hover, :focus-visible),
 .account-menu .account-menu__link[aria-current="page"] {
