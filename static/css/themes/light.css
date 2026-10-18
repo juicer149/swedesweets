@@ -254,7 +254,7 @@
   --preferences-site-text: var(--color-primary-700);
   --preferences-site-hover: var(--color-accent-800);
   --preferences-site-divider: var(--line-soft);
-  --theme-switch-track: var(--color-primary-100);
+  --theme-switch-track: var(--menu-bg);
   --theme-switch-border: var(--color-primary-400);
   --theme-switch-thumb: var(--color-primary-50);
   --theme-switch-thumb-shadow: 0 1px 4px rgb(0 0 0 / 0.18);

@@ -7,3 +7,13 @@
 @import url("./public/checkout.css");
 @import url("./public/catalog.css");
 @import url("./public/landing.css");
+
+/* On phones, let local lights reach the screen edge rather than clipping at
+   a narrow content column. The full-width main still prevents sideways page
+   scrolling; desktop and ops retain their current clipping boundaries. */
+@media (max-width: 767px) {
+  .site-main { overflow-x: clip; }
+  .page-section.find-sweets,
+  .page-section:has(> .faq),
+  .page-section.catalog { overflow-x: visible; }
+}

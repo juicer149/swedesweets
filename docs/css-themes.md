@@ -680,3 +680,12 @@ Language and Theme groups are centred in desktop settings too. Account and
 site-switch links use `menu-panel-link` to reuse the existing nav/landing halo,
 glyph emission and selected light. Their surface-specific text colours still
 come from account/preferences theme roles so light dropdowns remain readable.
+
+On phones only (below 768px), Find Sweets, FAQ and catalog let light paint
+past their `.page-section` edges. The full-width `.site-main` clips horizontal
+paint at the screen edge, preventing sideways document scrolling. The catalog
+category scrollport also reserves 32px of padding/negative margin on each side:
+its tabs keep their positions and widths while first/last halos can cross the
+content gutter. Desktop keeps its original clipping. In light, the theme
+switch track follows `--menu-bg`, matching the navbar blue behind the yellow sun;
+dark retains its own track role.
