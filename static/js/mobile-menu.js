@@ -75,6 +75,7 @@
     restoreFocus = focus;
     if (running) return;
     running = true;
+    let focusTarget = null;
     let active = openMenu()?.dataset.mobileMenu || null;
     while (active !== wanted) {
       if (active) {
@@ -86,7 +87,7 @@
         const current = menuFor(active);
         if (current) current.open = false;
         animation?.cancel();
-        if (!wanted && restoreFocus) current?.querySelector("summary").focus({ preventScroll: true });
+        if (!wanted && restoreFocus) focusTarget = current?.querySelector("summary");
         active = null;
       } else if (wanted) {
         active = wanted;
@@ -106,6 +107,8 @@
     motion = null;
     running = false;
     sync();
+    // Mobile triggers become visible again only after sync clears the sheet.
+    if (!openMenu()) focusTarget?.focus({ preventScroll: true });
     document.dispatchEvent(new CustomEvent("mobile-menu-settled", {
       detail: { key: openMenu()?.dataset.mobileMenu || null },
     }));

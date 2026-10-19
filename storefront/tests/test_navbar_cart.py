@@ -95,7 +95,9 @@ def test_navbar_cart_fragment_renders_existing_retail_cart(
     assert 'value="2"' in content
     assert "data-navbar-cart-quantity-form" in content
     assert "data-quantity-input" in content
-    assert 'name="navbar-confirm_email"' in content
+    # The quick preview edits quantities; contact details live on the cart page.
+    assert "data-checkout-details-form" not in content
+    assert f'href="{reverse("storefront:cart")}"' in content
     # What the catalog's in-cart badges count from.
     assert f'data-product-id="{retail_price.product_id}"' in content
     assert 'data-quantity="2"' in content
