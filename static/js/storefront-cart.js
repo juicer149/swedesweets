@@ -1,7 +1,5 @@
 (() => {
-  const subtotal = document.querySelector(
-    "[data-cart-subtotal]"
-  );
+  const subtotals = document.querySelectorAll("[data-cart-subtotal]");
 
   document.addEventListener(
     "cart-changed",
@@ -9,7 +7,7 @@
       const detail = event.detail || {};
 
       if (
-        detail.source !== "current-order"
+        !["current-order", "navbar-cart"].includes(detail.source)
         || !detail.payload
       ) {
         return;
@@ -21,23 +19,20 @@
       } = detail;
 
       if (
-        subtotal
-        && payload.subtotal_label
+        payload.subtotal_label
       ) {
-        subtotal.textContent = payload.subtotal_label;
+        subtotals.forEach(subtotal => { subtotal.textContent = payload.subtotal_label; });
       }
 
       if (
         lineId != null
         && payload.line_total_label
       ) {
-        const lineTotal = document.querySelector(
+        const lineTotals = document.querySelectorAll(
           `[data-cart-line-total="${lineId}"]`
         );
 
-        if (lineTotal) {
-          lineTotal.textContent = payload.line_total_label;
-        }
+        lineTotals.forEach(lineTotal => { lineTotal.textContent = payload.line_total_label; });
       }
     }
   );

@@ -42,6 +42,7 @@
 
   let refreshInProgress = false;
   let refreshPending = false;
+  let quantityRequests = 0;
 
 
   /*
@@ -193,7 +194,7 @@
   async function refreshNavbarCart({
     preserveOpenState = false,
   } = {}) {
-    if (refreshInProgress) {
+    if (refreshInProgress || quantityRequests) {
       refreshPending = true;
       return;
     }
@@ -212,6 +213,11 @@
       preserveOpenState
       && currentCart?.open
     );
+
+    const draftForm = currentCart?.querySelector("[data-checkout-details-form]");
+    const draft = [...(draftForm?.elements || [])].map(field => [field.name, field.value]);
+    const panelScroll = currentCart?.querySelector("[data-cart-panel-scroll]")?.scrollTop || 0;
+    const focusName = draftForm?.contains(document.activeElement) ? document.activeElement.name : null;
 
     try {
       const response = await fetch(
@@ -244,28 +250,20 @@
         cartElement()?.querySelector("summary")?.setAttribute("aria-current", "page");
       }
 
-      // The cart as it is now, for whoever shows it elsewhere (the
-      // catalog's in-cart badges count its lines).
-      document.dispatchEvent(
-        new CustomEvent(
-          "navbar-cart-refreshed",
-          {
-            detail: {
-              container,
-            },
-          }
-        )
-      );
-
-      if (wasOpen) {
-        const refreshedCart = (
-          cartElement()
-        );
-
-        if (refreshedCart) {
-          refreshedCart.open = true;
-        }
+      const refreshedCart = cartElement();
+      const restoredForm = refreshedCart?.querySelector("[data-checkout-details-form]");
+      for (const [name, value] of draft) {
+        const field = restoredForm?.elements.namedItem(name);
+        if (field && field.type !== "hidden") field.value = value;
       }
+      if (wasOpen && refreshedCart) refreshedCart.open = true;
+      document.dispatchEvent(new CustomEvent("navbar-cart-refreshed", {
+        detail: { container },
+      }));
+      const scroll = refreshedCart?.querySelector("[data-cart-panel-scroll]");
+      if (scroll) scroll.scrollTop = panelScroll;
+      if (wasOpen && focusName) restoredForm?.elements.namedItem(focusName)?.focus({ preventScroll: true });
+
     } catch (error) {
       console.error(
         "Navbar cart refresh failed:",
@@ -284,6 +282,66 @@
     }
   }
 
+
+  async function updateNavbarQuantity(form) {
+    const input = form.querySelector("[data-quantity-input]");
+    if (!input || !input.checkValidity()) return;
+    if (form.dataset.updateInProgress === "true") {
+      form.dataset.pendingQuantity = input.value;
+      return;
+    }
+    if (input.value === form.dataset.confirmedQuantity) return;
+    quantityRequests += 1;
+    form.dataset.updateInProgress = "true";
+    document.dispatchEvent(new Event("cart-controls-changed"));
+    let bump = null;
+    try {
+      do {
+        delete form.dataset.pendingQuantity;
+        const previous = Number(form.dataset.confirmedQuantity);
+        const body = new FormData(form);
+        const response = await fetch(form.action, {
+          method: "POST", body, headers: { Accept: "application/json" }, credentials: "same-origin",
+        });
+        const payload = await response.json();
+        if (response.status === 409) { window.location.reload(); return; }
+        if (!response.ok || !payload.ok) throw new Error(payload.message || "Could not update quantity.");
+        form.dataset.confirmedQuantity = String(payload.quantity);
+        const pending = form.dataset.pendingQuantity;
+        input.value = pending || String(payload.quantity);
+        const row = form.closest("[data-navbar-cart-line]");
+        row.dataset.quantity = String(payload.quantity);
+        const status = form.querySelector("[data-current-order-quantity-status]");
+        if (status) status.textContent = payload.message || "";
+        bump = payload.quantity > previous ? "added" : "removed";
+        dispatchCartChanged({ source: "navbar-cart", mutation: "quantity", lineId: Number(row.dataset.lineId), quantity: payload.quantity, payload });
+        refreshPending = true;
+      } while (form.dataset.pendingQuantity && form.dataset.pendingQuantity !== form.dataset.confirmedQuantity);
+    } catch (error) {
+      input.value = form.dataset.confirmedQuantity;
+      const status = form.querySelector("[data-current-order-quantity-status]");
+      if (status) status.textContent = error.message;
+    } finally {
+      form.dataset.updateInProgress = "false";
+      quantityRequests -= 1;
+      document.dispatchEvent(new Event("cart-controls-changed"));
+      if (!quantityRequests && refreshPending) {
+        refreshPending = false;
+        await refreshNavbarCart({ preserveOpenState: true });
+        if (bump) bumpCart(bump);
+      }
+    }
+  }
+
+  document.addEventListener("change", event => {
+    const form = event.target.closest("[data-navbar-cart-quantity-form]");
+    if (form) void updateNavbarQuantity(form);
+  });
+  document.addEventListener("submit", event => {
+    if (!event.target.matches("[data-navbar-cart-quantity-form]")) return;
+    event.preventDefault();
+    void updateNavbarQuantity(event.target);
+  });
 
   /*
    * Remove mutation
@@ -308,6 +366,7 @@
       form
     );
 
+    if (quantityRequests) return;
     if (!line) {
       return;
     }
@@ -366,13 +425,14 @@
     };
 
     try {
+      let payload;
       if (window.lineFlash) {
-        await window.lineFlash.remove(
+        payload = await window.lineFlash.remove(
           line,
           request
         );
       } else {
-        await request();
+        payload = await request();
       }
 
       navbarCartLineRemove(
@@ -383,6 +443,8 @@
         source: "navbar-cart",
         mutation: "remove",
         lineId,
+        quantity: 0,
+        payload,
       });
 
       await refreshNavbarCart({

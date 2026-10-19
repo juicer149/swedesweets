@@ -90,6 +90,8 @@ def navigation(request):
         "storefront:checkout",
         "storefront:checkout_review",
     }
+    if context.get("navbar_cart") and context["navbar_cart"].is_retail:
+        context["navbar_checkout_form"] = navbar_checkout_form(request)
     return context
 
 
@@ -299,3 +301,13 @@ def static_assets(request):
         "site_stylesheet": "css/ops.css" if is_ops else "css/public.css",
         "site_zone": "ops" if is_ops else "public",
     }
+
+
+def navbar_checkout_form(request):
+    from storefront.checkout_forms import RetailCheckoutDetailsForm
+    from storefront.checkout_session import get_remembered_checkout_details
+
+    return RetailCheckoutDetailsForm(
+        prefix="navbar",
+        initial=get_remembered_checkout_details(request),
+    )

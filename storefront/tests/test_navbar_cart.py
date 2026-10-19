@@ -92,9 +92,10 @@ def test_navbar_cart_fragment_renders_existing_retail_cart(
 
     assert response.status_code == 200
     assert retail_price.product.display_name in content
-    # Read-only: the quantity is shown, not an input.
-    assert "× 2" in content
-    assert "data-quantity-input" not in content
+    assert 'value="2"' in content
+    assert "data-navbar-cart-quantity-form" in content
+    assert "data-quantity-input" in content
+    assert 'name="navbar-confirm_email"' in content
     # What the catalog's in-cart badges count from.
     assert f'data-product-id="{retail_price.product_id}"' in content
     assert 'data-quantity="2"' in content

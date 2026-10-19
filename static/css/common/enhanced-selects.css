@@ -88,8 +88,8 @@ select.ts-hidden-accessible {
 .ts-wrapper.focus .ts-control,
 .ts-wrapper.dropdown-active .ts-control {
   background: var(--field-hover-bg);
-  border-color: var(--color-primary-500);
-  box-shadow: 0 0 0 3px rgb(var(--color-status-info) / 0.16);
+  border-color: var(--field-focus-color);
+  box-shadow: var(--field-focus-shadow);
 }
 
 .ts-control .item {

@@ -1,6 +1,10 @@
 (() => {
-  const postalInput = document.querySelector("[data-postal-code-input]");
-  const cityInput = document.querySelector("[data-city-input]");
+  const initialized = new WeakSet();
+  function initialize(form) {
+  if (initialized.has(form)) return;
+  initialized.add(form);
+  const postalInput = form.querySelector("[data-postal-code-input]");
+  const cityInput = form.querySelector("[data-city-input]");
 
   if (!postalInput || !cityInput) {
     return;
@@ -42,6 +46,7 @@
   function useSingleCity(city) {
     useTextInput();
     cityInput.value = city;
+    cityInput.dispatchEvent(new Event("input", { bubbles: true }));
     cityInput.readOnly = true;
   }
 
@@ -70,12 +75,15 @@
     cityInput.after(citySelect);
 
     window.enhanceSelects?.(citySelect.parentElement);
+    citySelect.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   async function lookup() {
     const postalCode = postalInput.value.replace(/\s+/g, "");
 
     if (!/^\d{5}$/.test(postalCode)) {
+      controller?.abort();
+      postalInput.setCustomValidity("");
       lastPostalCode = null;
       status.textContent = "";
       useTextInput();
@@ -86,6 +94,7 @@
       return;
     }
 
+    postalInput.setCustomValidity("");
     lastPostalCode = postalCode;
     controller?.abort();
     controller = new AbortController();
@@ -110,6 +119,7 @@
 
       if (cities.length === 0) {
         useTextInput();
+        postalInput.setCustomValidity(unsupportedMessage);
         status.textContent = unsupportedMessage;
         return;
       }
@@ -126,6 +136,8 @@
         lastPostalCode = null;
         useTextInput();
       }
+    } finally {
+      form.dispatchEvent(new Event("checkout-validate"));
     }
   }
 
@@ -133,4 +145,10 @@
   postalInput.addEventListener("change", lookup);
 
   lookup();
+  }
+  function initializeAll() {
+    document.querySelectorAll("[data-checkout-details-form]").forEach(initialize);
+  }
+  document.addEventListener("navbar-cart-refreshed", initializeAll);
+  initializeAll();
 })();

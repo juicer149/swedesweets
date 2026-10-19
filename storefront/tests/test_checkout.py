@@ -61,6 +61,7 @@ def _details(**overrides: str) -> dict[str, str]:
         "first_name": "Marie",
         "last_name": "Dupont",
         "email": "marie@example.com",
+        "confirm_email": overrides.get("email", "marie@example.com"),
         "phone_number": "+33612345678",
         "address_line": "10 Rue de Test",
         "postal_code": "74000",
@@ -499,7 +500,6 @@ def test_pay_out_of_stock_sends_buyer_to_cart(client, cart, monkeypatch):
     assert response.url == reverse("storefront:cart")
 
 
-
 @pytest.mark.django_db
 def test_failed_payment_offers_retry_to_owning_session(
     client,
@@ -781,9 +781,6 @@ def test_buyer_can_cancel_open_payment_and_check_out_again(
     assert again.url == _review_url(new_checkout)
 
 
-
-
-
 def _open_payment(client) -> RetailCheckoutSession:
     checkout = _created_checkout(client)
 
@@ -953,3 +950,46 @@ def test_expired_checkout_with_open_payment_goes_to_payment_return(
 
     assert response.status_code == 302
     assert response.url == _return_url(checkout)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("confirmation", ["", "someone-else@example.com"])
+def test_checkout_requires_matching_email_confirmation(client, cart, confirmation):
+    response = _submit_details(client, confirm_email=confirmation)
+    assert response.status_code == 200
+    assert response.context["form"].has_error("confirm_email")
+    assert not RetailCheckoutSession.objects.exists()
+
+
+@pytest.mark.django_db
+def test_mobile_panel_can_submit_prefixed_details(client, cart):
+    response = client.post(
+        reverse("storefront:checkout"),
+        {
+            "details_prefix": "navbar",
+            **{f"navbar-{name}": value for name, value in _details().items()},
+        },
+    )
+    assert response.status_code == 302
+    checkout = RetailCheckoutSession.objects.get()
+    assert checkout.order.buyer_email_snapshot == "marie@example.com"
+    assert str(checkout.pk) in client.session[CHECKOUT_IDS_SESSION_KEY]
+
+
+@pytest.mark.django_db
+def test_invalid_panel_details_return_editable_cart_and_keep_values(client, cart):
+    response = client.post(
+        reverse("storefront:checkout"),
+        {
+            "details_prefix": "navbar",
+            **{
+                f"navbar-{name}": value
+                for name, value in _details(confirm_email="typo@example.com").items()
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert response.context["form"]["email"].value() == "marie@example.com"
+    assert response.context["form"].has_error("confirm_email")
+    assert response.context["cart_lines"]
+    assert not RetailCheckoutSession.objects.exists()

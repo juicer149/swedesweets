@@ -133,8 +133,11 @@
     if (decreaseButton) {
       decreaseButton.disabled = (
         quantity === null
-        || quantity <= minimum
+        || (quantity <= minimum && !stepper.hasAttribute("data-remove-at-min"))
       );
+      const removing = quantity !== null && quantity <= minimum && stepper.hasAttribute("data-remove-at-min");
+      stepper.classList.toggle("is-minimum", removing);
+      if (decreaseButton.dataset.removeLabel) decreaseButton.setAttribute("aria-label", removing ? decreaseButton.dataset.removeLabel : decreaseButton.dataset.decreaseLabel);
     }
 
     if (increaseButton) {
@@ -251,6 +254,11 @@
     const step = getStep(
       input
     );
+
+    if (quantity !== null && quantity <= minimum && stepper.hasAttribute("data-remove-at-min")) {
+      stepper.closest(".cart-line")?.querySelector(".line__remove-button, .site-nav-cart-line__remove-button")?.click();
+      return;
+    }
 
     if (
       quantity === null
@@ -407,6 +415,11 @@
     }
   );
 
+
+  document.addEventListener("navbar-cart-refreshed", () => {
+    document.querySelectorAll("[data-quantity-stepper]").forEach(renderState);
+  });
+  document.documentElement.classList.add("cart-controls-ready");
 
   document
     .querySelectorAll(

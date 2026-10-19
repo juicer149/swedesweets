@@ -159,6 +159,7 @@ def checkout_details(
     if request.method == "POST":
         form = RetailCheckoutDetailsForm(
             request.POST,
+            prefix="navbar" if request.POST.get("details_prefix") == "navbar" else None,
         )
 
         if form.is_valid():
@@ -225,15 +226,13 @@ def checkout_details(
 
     return render(
         request,
-        "storefront/checkout/details.html",
+        "storefront/cart.html",
         {
-            "form": form,
-            "cart_summary": build_retail_cart_context(
+            **build_retail_cart_context(
                 cart=cart,
-            ),
-            "cart_url": reverse(
-                "storefront:cart"
-            ),
+                checkout_url=reverse("storefront:checkout"),
+            ).as_dict(),
+            "form": form,
         },
     )
 

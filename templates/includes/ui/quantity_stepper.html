@@ -15,15 +15,18 @@
 <div
   class="quantity-stepper{% if compact %} quantity-stepper--compact{% endif %}"
   aria-label="{% trans 'Quantity' %}"
+  {% if remove_at_min %}data-remove-at-min{% endif %}
   data-quantity-stepper
 >
   <button
     class="quantity-stepper__button quantity-stepper__button--decrease"
     type="button"
     aria-label="{% trans 'Decrease quantity' %}"
+    {% if remove_at_min %}data-remove-label="{% trans 'Remove product' %}" data-decrease-label="{% trans 'Decrease quantity' %}"{% endif %}
     data-quantity-decrease
   >
-    {% include "includes/ui/icon_block.html" with name="minus" size="sm" only %}
+    <span class="quantity-stepper__minus">{% include "includes/ui/icon_block.html" with name="minus" size="sm" only %}</span>
+    {% if remove_at_min %}<span class="quantity-stepper__trash">{% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}</span>{% endif %}
   </button>
 
   {% if field %}

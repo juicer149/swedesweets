@@ -7,9 +7,7 @@ from common.lines import LineMeta, LineView
 
 @dataclass(frozen=True, slots=True)
 class NavbarCartLine:
-    """A line in the navbar's cart: read-only, like an order's line (the
-    picture, the name, its grey lines, the quantity on the right), with
-    only the bin; the quantity is changed on the cart's page."""
+    """Shared cart row presentation for pages and navbar panels."""
 
     line_id: int
     label: str
@@ -20,6 +18,11 @@ class NavbarCartLine:
     image_url: str | None = None
     # Its product: the catalog's in-cart badges count from the lines.
     product_id: int | None = None
+    name: str = ""
+    variant_label: str = ""
+    quantity_url: str = ""
+    unit_price_label: str | None = None
+    line_total_label: str | None = None
 
     @property
     def line_view(self) -> LineView:
@@ -44,6 +47,9 @@ class NavbarCart:
     empty_message: str
     empty_action_label: str
     empty_action_url: str
+    subtotal_label: str | None = None
+    is_retail: bool = False
+    payment_url: str | None = None
 
     @property
     def has_lines(self) -> bool:

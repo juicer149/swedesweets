@@ -323,3 +323,15 @@
   --footer-link: var(--interactive-text-subtle);
   --footer-link-hover: var(--color-accent-500);
 }
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  --cart-name: var(--interactive-text);
+  --cart-amount: var(--text-primary);
+  --cart-row-line: color-mix(in srgb, var(--interactive-border) 16%, transparent);
+  --cart-remove-hover: var(--color-red-400);
+  --cart-disabled-ink: var(--text-muted);
+  --cart-disabled-bg: var(--surface-muted);
+  --cart-disabled-border: color-mix(in srgb, var(--text-muted) 30%, transparent);
+  --menu-backdrop-bg: rgb(0 4 20 / .48);
+  --field-focus-color: var(--interactive-border);
+}

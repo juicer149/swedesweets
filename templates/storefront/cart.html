@@ -10,9 +10,9 @@
   data-current-order
   data-current-order-error-message="{% trans 'Could not update quantity.' %}"
 >
-  <div class="page page--centered page--wide">
+  <div class="page page--centered cart-page">
     <h1 id="storefront-cart-title" class="page__lead">
-      {% trans "Cart" %}
+      {% trans "Your cart" %}
     </h1>
 
     {% if cart_lines %}
@@ -22,44 +22,11 @@
         </p>
       {% endif %}
 
-      <ul class="lines" aria-label="{% trans 'Items' %}">
+      <div class="cart-products" aria-label="{% trans 'Items' %}">
         {% for line in cart_lines %}
-          <li class="line{% if open_payment_url %} line--static{% endif %}" data-cart-line-id="{{ line.cart_line_id }}">
-            {% include "includes/ui/line_product.html" with line=line.view only %}
-
-            {% if open_payment_url %}
-              <span class="line__quantity-label">× {{ line.quantity }}</span>
-            {% else %}
-              <form
-                class="line__quantity"
-                method="post"
-                action="{{ line.quantity_url }}"
-                data-current-order-quantity-form
-                data-confirmed-quantity="{{ line.quantity }}"
-              >
-                {% csrf_token %}
-
-                {% include "includes/ui/quantity_stepper.html" with id_prefix="quantity-" id_suffix=line.cart_line_id value=line.quantity only %}
-
-                <span
-                  class="visually-hidden"
-                  role="status"
-                  aria-live="polite"
-                  data-current-order-quantity-status
-                ></span>
-
-                <noscript>
-                  <button class="quiet-link" type="submit">
-                    {% trans "Update quantity" %}
-                  </button>
-                </noscript>
-              </form>
-
-              {% include "includes/ui/line_remove.html" with url=line.remove_url csrf_token=csrf_token inline=True name=line.view.name image=line.view.image_url only %}
-            {% endif %}
-          </li>
+          {% include "includes/cart/line.html" with line=line.presentation locked=open_payment_url csrf_token=csrf_token only %}
         {% endfor %}
-      </ul>
+      </div>
 
       {% if subtotal_label %}
         <div class="lines-total">
@@ -68,8 +35,12 @@
         </div>
 
         <p class="lines-total__note">
-          {% trans "Delivery details are entered at checkout." %}
+          {% trans "Delivery calculated at the next step." %}
         </p>
+      {% endif %}
+
+      {% if checkout_url and not open_payment_url %}
+        {% include "includes/cart/checkout_details.html" with form=form csrf_token=csrf_token only %}
       {% endif %}
 
       <div class="form-actions page__actions page-actions">
@@ -79,13 +50,6 @@
             href="{{ open_payment_url }}"
           >
             {% trans "Go to payment" %}
-          </a>
-        {% elif checkout_url %}
-          <a
-            class="button button--md button--solid button--tone-place page__submit"
-            href="{{ checkout_url }}"
-          >
-            {% trans "Continue to checkout" %}
           </a>
         {% endif %}
 

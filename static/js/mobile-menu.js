@@ -1,112 +1,124 @@
-/* Desktop keeps native details. Mobile sheets reveal downward and retract
-   upward, finishing a close before opening the latest requested sheet. */
+/* Stable menu keys survive navbar-cart fragment replacement. The viewport
+   clips a real sliding sheet while the original page stays visible beneath. */
 (() => {
   "use strict";
-  const menus = [...document.querySelectorAll("details[data-mobile-menu]")];
-  if (!menus.length) return;
+  const selector = "details[data-mobile-menu]";
+  if (!document.querySelector(selector)) return;
   const mobile = matchMedia("(max-width: 767px)");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const root = document.documentElement;
   const inertBefore = new Map();
-  let active = null;
+  const backdrop = document.createElement("div");
+  backdrop.className = "menu-panel-backdrop";
+  backdrop.setAttribute("aria-hidden", "true");
+  document.body.append(backdrop);
   let wanted = null;
   let running = false;
   let motion = null;
   let restoreFocus = false;
+  const menuFor = key => [...document.querySelectorAll(selector)].find(menu => menu.dataset.mobileMenu === key);
+  const openMenu = () => document.querySelector(`${selector}[open]`);
 
   function sync() {
-    const next = mobile.matches ? menus.find(menu => menu.open) : null;
+    const next = openMenu();
+    const covered = next || (mobile.matches && wanted && menuFor(wanted));
+    root.classList.toggle("menu-panel-open", Boolean(covered));
+    root.classList.toggle("mobile-menu-open", mobile.matches && Boolean(covered));
     for (const [element, inert] of inertBefore) element.inert = inert;
     inertBefore.clear();
-    root.classList.toggle("mobile-menu-open", mobile.matches && Boolean(next || wanted));
+    if (!mobile.matches || !covered) return;
 
-    if (next) {
-      const panel = next.querySelector(".mobile-menu-panel");
-      const top = document.querySelector(".site-header, .entrance-header, .landing__top");
-      const nav = document.querySelector(".site-nav__links:not(.site-nav__links--empty)");
-      const bottom = nav && getComputedStyle(nav).position === "fixed"
-        ? innerHeight - nav.getBoundingClientRect().top + 8 : 12;
-      panel.style.setProperty("--mobile-menu-top", `${Math.max(0, top?.getBoundingClientRect().bottom || 0)}px`);
-      panel.style.setProperty("--mobile-menu-bottom", `${bottom}px`);
-    }
-    if (mobile.matches && (next || wanted)) {
-      for (const element of document.querySelectorAll("main, footer, .landing__stage, .landing__bottom")) {
-        if (!element.contains(next || wanted)) {
-          inertBefore.set(element, element.inert);
-          element.inert = true;
-        }
+    const viewport = covered.querySelector(".mobile-menu-viewport");
+    const top = document.querySelector(".site-header, .entrance-header, .landing__top");
+    const nav = document.querySelector(".site-nav__links:not(.site-nav__links--empty)");
+    const bottom = nav && getComputedStyle(nav).position === "fixed"
+      ? innerHeight - nav.getBoundingClientRect().top + 8 : 12;
+    viewport.style.setProperty("--mobile-menu-top", `${Math.max(0, top?.getBoundingClientRect().bottom || 0)}px`);
+    viewport.style.setProperty("--mobile-menu-bottom", `${bottom}px`);
+    for (const element of document.querySelectorAll("main, footer, .landing__stage, .landing__bottom")) {
+      if (!element.contains(covered) && !covered.contains(element)) {
+        inertBefore.set(element, element.inert);
+        element.inert = true;
       }
     }
   }
 
   async function animate(menu, opening) {
-    if (!mobile.matches || reducedMotion.matches) return;
-    const frames = [{ clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)" }];
-    motion = menu.querySelector(".mobile-menu-panel").animate(
+    if (!mobile.matches || reducedMotion.matches || !menu?.isConnected) return;
+    const frames = [{ transform: "translateY(-102%)" }, { transform: "translateY(0)" }];
+    const animation = menu.querySelector(".mobile-menu-panel").animate(
       opening ? frames : [...frames].reverse(),
-      { duration: opening ? 280 : 220, easing: "cubic-bezier(.2,.7,.2,1)" },
+      { duration: opening ? 320 : 240, easing: "cubic-bezier(.22,.7,.2,1)", fill: "both" },
     );
-    await motion.finished.catch(() => {});
-    motion = null;
+    motion = animation;
+    await animation.finished.catch(() => {});
+    return animation;
   }
 
-  async function request(menu, focus = false) {
-    wanted = menu;
+  async function request(key, focus = false) {
+    wanted = key;
     restoreFocus = focus;
     if (running) return;
     running = true;
-    active = menus.find(item => item.open) || null;
+    let active = openMenu()?.dataset.mobileMenu || null;
     while (active !== wanted && mobile.matches) {
       if (active) {
-        const closing = active;
-        await animate(closing, false);
-        closing.open = false;
+        const closing = menuFor(active);
+        const animation = await animate(closing, false);
+        // Resolve it again: a quantity change may have replaced the fragment.
+        const current = menuFor(active);
+        if (current) current.open = false;
+        animation?.cancel();
+        if (!wanted && restoreFocus) current?.querySelector("summary").focus({ preventScroll: true });
         active = null;
-        if (!wanted && restoreFocus) closing.querySelector("summary").focus({ preventScroll: true });
       } else if (wanted) {
         active = wanted;
-        // Summary clicks are handled here, so close desktop-style popovers
-        // (notably cart) that the document outside-click handler would close.
-        for (const disclosure of document.querySelectorAll("details[data-dismiss-on-outside-click][open]")) {
-          if (!menus.includes(disclosure)) disclosure.open = false;
-        }
-        active.open = true;
+        const opening = menuFor(active);
+        if (!opening) { wanted = null; active = null; break; }
+        opening.open = true;
         sync();
-        await animate(active, true);
+        const animation = await animate(opening, true);
+        animation?.cancel();
         if (active === wanted && mobile.matches) {
-          active.querySelector(".mobile-menu-panel a, .mobile-menu-panel button")?.focus({ preventScroll: true });
+          menuFor(active)?.querySelector(".mobile-menu-panel a, .mobile-menu-panel button")?.focus({ preventScroll: true });
         }
       }
     }
+    motion = null;
     running = false;
     sync();
   }
 
-  for (const menu of menus) {
-    menu.addEventListener("toggle", sync);
-    menu.querySelector("summary").addEventListener("click", event => {
-      if (!mobile.matches) return;
+  document.addEventListener("click", event => {
+    const summary = event.target.closest("summary");
+    const menu = summary?.parentElement;
+    if (mobile.matches && menu?.matches(selector)) {
       event.preventDefault();
-      // The generic outside-click closer must not close the old sheet again
-      // while a deliberate switch to another sheet is already queued.
       event.stopPropagation();
-      request(wanted === menu || (!running && menu.open) ? null : menu, true);
-    });
-    menu.addEventListener("details-request-close", event => {
-      if (!mobile.matches) return;
-      event.preventDefault();
-      request(null, event.detail.restoreFocus);
-    });
-    menu.querySelector("[data-close-details]").addEventListener("click", () => {
+      request(wanted === menu.dataset.mobileMenu || (!running && menu.open) ? null : menu.dataset.mobileMenu, true);
+      return;
+    }
+    const close = event.target.closest("[data-close-details]");
+    if (close) {
+      const details = close.closest(selector);
       if (mobile.matches) request(null, true);
-      else menu.open = false;
-    });
-  }
-  mobile.addEventListener("change", () => {
-    wanted = null;
-    motion?.finish();
-    sync();
+      else if (details) details.open = false;
+    }
+  }, true);
+  document.addEventListener("details-request-close", event => {
+    if (!mobile.matches || !event.target.matches(selector)) return;
+    event.preventDefault();
+    request(null, event.detail.restoreFocus);
+  }, true);
+  document.addEventListener("toggle", event => {
+    if (event.target.matches?.(selector)) sync();
+  }, true);
+  backdrop.addEventListener("click", () => {
+    if (mobile.matches) request(null, true);
+    else { if (openMenu()) openMenu().open = false; sync(); }
   });
+  document.addEventListener("navbar-cart-refreshed", sync);
+  mobile.addEventListener("change", () => { wanted = null; motion?.finish(); sync(); });
   reducedMotion.addEventListener("change", () => { if (reducedMotion.matches) motion?.finish(); });
   window.addEventListener("resize", sync);
   window.visualViewport?.addEventListener("resize", sync);

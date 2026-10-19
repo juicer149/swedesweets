@@ -12,6 +12,7 @@ from common.navbar_cart import (
     NavbarCartLine,
 )
 from products.images import product_image_url
+from products.localization import translated_product_name
 
 
 def build_business_navbar_cart(
@@ -135,6 +136,20 @@ def _build_business_navbar_cart_line(
         line_id=line.id,
         product_id=line.commercial_price.product_id,
         label=presentation.catalog_label,
+        name=translated_product_name(product, language_code=language_code),
+        variant_label=(
+            (
+                f"{line.commercial_price.variant.label} · "
+                if line.commercial_price.variant.label
+                else ""
+            )
+            + _("%(weight)s g")
+            % {"weight": line.commercial_price.variant.weight_per_unit}
+        ),
+        quantity_url=reverse(
+            "business_portal:set_cart_line_quantity",
+            kwargs={"cart_line_id": line.id},
+        ),
         product_url=reverse(
             "business_portal:catalog_product",
             kwargs={

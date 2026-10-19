@@ -97,8 +97,8 @@
 .form-field textarea:focus {
   outline: none;
   background: var(--field-hover-bg);
-  border-color: var(--color-primary-500);
-  box-shadow: var(--shadow-focus-info);
+  border-color: var(--field-focus-color);
+  box-shadow: var(--field-focus-shadow);
 }
 
 .form-field input:disabled,
@@ -349,7 +349,7 @@ form[data-dirty] .back-or-cancel__back {
 
 .form-field input:focus {
   --input-fill-bg: var(--field-hover-bg);
-  --input-fill-shadow: var(--shadow-focus-info);
+  --input-fill-shadow: var(--field-focus-shadow);
 }
 
 .form-field--error input {
@@ -369,4 +369,10 @@ form[data-dirty] .back-or-cancel__back {
   caret-color: var(--text-blue-strong);
   background-color: var(--input-fill-bg);
   box-shadow: inset 0 0 0 1000px var(--input-fill-bg), var(--input-fill-shadow) !important;
+}
+
+/* Keep the active field's emission even while a server error is displayed. */
+.form-field--error :is(input, select, textarea):focus {
+  box-shadow: var(--field-focus-shadow);
+  --input-fill-shadow: var(--field-focus-shadow);
 }

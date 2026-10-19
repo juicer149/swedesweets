@@ -1,9 +1,10 @@
 {% load i18n %}
 
-<details class="site-preferences" data-dismiss-on-outside-click data-mobile-menu>
+<details class="site-preferences" data-dismiss-on-outside-click data-mobile-menu="settings">
   <summary class="site-preferences__trigger menu-dropdown-trigger" aria-label="{% trans 'Settings' %}">
     {% include "includes/ui/icon.html" with name="gear" %}
   </summary>
+  <div class="mobile-menu-viewport">
   <div class="site-preferences__panel mobile-menu-panel" role="region" aria-label="{% trans 'Settings' %}">
     <form class="language-switcher" action="{% url 'set_language' %}" method="post" data-language-preferences data-dirty-ignore="true">
       {% csrf_token %}
@@ -28,5 +29,6 @@
       </div>
     {% endif %}
     {% include "includes/mobile_menu_close.html" %}
+  </div>
   </div>
 </details>

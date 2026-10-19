@@ -1,9 +1,10 @@
 {% load i18n %}
-<details class="account-menu" data-dismiss-on-outside-click data-mobile-menu>
+<details class="account-menu" data-dismiss-on-outside-click data-mobile-menu="account">
   <summary class="account-menu__trigger menu-dropdown-trigger" aria-label="{% if account_menu.account %}{{ account_menu.account.label }}{% else %}{% trans 'My account' %}{% endif %}"{% if navbar_account_current %} aria-current="page"{% endif %}>
     {% include "includes/ui/icon.html" with name="user" %}
     <span class="menu-dropdown-trigger__crown" aria-hidden="true"></span>
   </summary>
+  <div class="mobile-menu-viewport">
   <div class="account-menu__panel mobile-menu-panel" role="region" aria-label="{% trans 'My account' %}">
     {% if account_menu.account %}
     <a class="quiet-link account-menu__link menu-panel-link" href="{{ account_menu.account.href }}"
@@ -20,5 +21,6 @@
       <a class="quiet-link account-menu__link menu-panel-link" href="{% url 'login' %}">{% trans 'Login' %}</a>
     {% endif %}
     {% include "includes/mobile_menu_close.html" %}
+  </div>
   </div>
 </details>

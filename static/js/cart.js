@@ -87,6 +87,7 @@
     }
 
     form.dataset.updateInProgress = "true";
+    document.dispatchEvent(new Event("cart-controls-changed"));
     form.dataset.pendingQuantity = "";
 
     try {
@@ -176,6 +177,7 @@
       }
     } finally {
       form.dataset.updateInProgress = "false";
+      document.dispatchEvent(new Event("cart-controls-changed"));
 
       const pendingQuantity = Number(
         form.dataset.pendingQuantity
@@ -307,6 +309,12 @@
       );
 
       if (!form) {
+        return;
+      }
+
+      if (quantity === 0) {
+        form.closest("[data-cart-line-id]")?.remove();
+        if (!root.querySelector("[data-cart-line-id]")) window.location.reload();
         return;
       }
 

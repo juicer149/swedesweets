@@ -2752,3 +2752,33 @@ msgstr "Site"
 
 #~ msgid "Back home"
 #~ msgstr "Retour à l’accueil"
+
+msgid "Confirm email"
+msgstr "Confirmez votre adresse e-mail"
+
+msgid "Type your email again to avoid typos."
+msgstr "Saisissez à nouveau votre adresse e-mail pour éviter les fautes de frappe."
+
+msgid "Email addresses must match."
+msgstr "Les adresses e-mail doivent être identiques."
+
+msgid "Your details"
+msgstr "Vos coordonnées"
+
+msgid "Where should we send your sweets?"
+msgstr "Où devons-nous envoyer vos friandises ?"
+
+msgid "France"
+msgstr "France"
+
+msgid "Complete all fields with matching email addresses to continue."
+msgstr "Remplissez tous les champs avec des adresses e-mail identiques pour continuer."
+
+msgid "Review your order before payment."
+msgstr "Vérifiez votre commande avant le paiement."
+
+msgid "Your cart"
+msgstr "Votre panier"
+
+msgid "Delivery calculated at the next step."
+msgstr "Les frais de livraison sont calculés à l’étape suivante."

@@ -9,6 +9,7 @@ from django.utils.translation import gettext
 
 from carts.models import Cart, CartLine
 from common.lines import META_OFFER, META_TOTAL, LineView, meta, metas
+from common.navbar_cart import NavbarCartLine
 from pricing.models import PriceAmount
 from products.catalog import variant_display_name
 from products.images import product_image_url
@@ -26,6 +27,27 @@ class RetailCartLine:
     quantity: int
     quantity_url: str
     remove_url: str
+    name: str = ""
+    variant_label: str = ""
+    product_id: int | None = None
+
+    @property
+    def presentation(self) -> NavbarCartLine:
+        return NavbarCartLine(
+            line_id=self.cart_line_id,
+            label=self.product_label,
+            name=self.name,
+            variant_label=self.variant_label,
+            product_id=self.product_id,
+            product_url=self.product_url,
+            image_url=self.image_url,
+            metadata=(self.offer_label,) if self.offer_label else (),
+            quantity=self.quantity,
+            quantity_url=self.quantity_url,
+            remove_url=self.remove_url,
+            unit_price_label=self.unit_price_label,
+            line_total_label=self.line_total_label,
+        )
 
     @property
     def view(self) -> LineView:
@@ -178,6 +200,9 @@ def _build_line(
 
     return RetailCartLine(
         cart_line_id=line.id,
+        name=product.display_name,
+        variant_label=commercial_price.variant.label,
+        product_id=product.id,
         # "Hoodie — M": the size when the product has several.
         product_label=variant_display_name(
             product.display_name,
@@ -193,20 +218,10 @@ def _build_line(
             product,
         ),
         offer_label=(
-            commercial_price.get_reason_display()
-            if commercial_price.reason
-            else None
+            commercial_price.get_reason_display() if commercial_price.reason else None
         ),
-        unit_price_label=(
-            _format_eur(unit_price)
-            if unit_price is not None
-            else None
-        ),
-        line_total_label=(
-            _format_eur(line_total)
-            if line_total is not None
-            else None
-        ),
+        unit_price_label=(_format_eur(unit_price) if unit_price is not None else None),
+        line_total_label=(_format_eur(line_total) if line_total is not None else None),
         quantity=line.quantity,
         quantity_url=reverse(
             "storefront:set_cart_line_quantity",

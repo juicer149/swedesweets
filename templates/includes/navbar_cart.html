@@ -2,6 +2,7 @@
 
 <details
   class="site-nav-cart"
+  data-mobile-menu="cart"
   data-dismiss-on-outside-click
 >
   <summary
@@ -37,7 +38,9 @@
     </span>
   </summary>
 
-  <div class="site-nav-cart__popover">
+  <div class="mobile-menu-viewport">
+  <div class="site-nav-cart__popover mobile-menu-panel">
+    <div class="cart-panel-scroll" data-cart-panel-scroll>
     <header class="site-nav-cart__header">
       <strong class="site-nav-cart__title">
         {{ navbar_cart.title }}
@@ -55,45 +58,17 @@
     {% if navbar_cart.has_lines %}
       <div class="site-nav-cart__lines">
         {% for line in navbar_cart.lines %}
-          <article
-            class="site-nav-cart-line"
-            data-navbar-cart-line
-            data-line-id="{{ line.line_id }}"
-            data-product-id="{{ line.product_id|default:'' }}"
-            data-quantity="{{ line.quantity }}"
-          >
-            {# Read-only, like an order's line; the quantity is changed on the cart's page. #}
-            {% include "includes/ui/line_product.html" with line=line.line_view only %}
-
-            <div class="site-nav-cart-line__controls">
-              <span class="line__quantity-label site-nav-cart-line__quantity">{{ line.line_view.aside }}</span>
-
-              <form
-                class="site-nav-cart-line__remove"
-                method="post"
-                action="{{ line.remove_url }}"
-                data-navbar-cart-remove-form
-              >
-                {% csrf_token %}
-
-                <button
-                  class="site-nav-cart-line__remove-button"
-                  type="submit"
-                  aria-label="{% trans 'Remove product' %}"
-                >
-                  {% include "includes/ui/icon_block.html" with name="trash" size="sm" only %}
-
-                  <span class="visually-hidden">
-                    {% trans "Remove product" %}
-                  </span>
-                </button>
-              </form>
-            </div>
-          </article>
+          {% include "includes/cart/line.html" with line=line navbar=True locked=navbar_cart.payment_url csrf_token=csrf_token only %}
         {% endfor %}
       </div>
 
-      <footer class="site-nav-cart__actions">
+      {% if navbar_cart.subtotal_label %}
+        <div class="lines-total"><span>{% trans "Subtotal" %}</span><strong data-cart-subtotal>{{ navbar_cart.subtotal_label }}</strong></div>
+      {% endif %}
+      {% if navbar_cart.is_retail and not navbar_cart.payment_url %}
+        {% include "includes/cart/checkout_details.html" with form=navbar_checkout_form navbar=True csrf_token=csrf_token only %}
+      {% endif %}
+      <footer class="site-nav-cart__actions{% if navbar_cart.is_retail and not navbar_cart.payment_url %} site-nav-cart__actions--desktop{% endif %}">
         <a
           class="
             button
@@ -101,9 +76,9 @@
             button--solid
             button--tone-place
           "
-          href="{{ navbar_cart.proceed_url }}"
+          href="{{ navbar_cart.payment_url|default:navbar_cart.proceed_url }}"
         >
-          {{ navbar_cart.proceed_label }}
+          {% if navbar_cart.payment_url %}{% trans "Go to payment" %}{% else %}{{ navbar_cart.proceed_label }}{% endif %}
         </a>
       </footer>
     {% else %}
@@ -125,5 +100,8 @@
         </a>
       </div>
     {% endif %}
+    </div>
+    {% include "includes/mobile_menu_close.html" %}
+  </div>
   </div>
 </details>

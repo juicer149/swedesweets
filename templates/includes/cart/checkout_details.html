@@ -1,0 +1,27 @@
+{% load i18n %}
+<section class="cart-details{% if navbar %} cart-details--mobile{% endif %}">
+  <h2>{% trans "Your details" %}</h2>
+  <p class="form-help">{% trans "Where should we send your sweets?" %}</p>
+  <form method="post" action="{% url 'storefront:checkout' %}" class="checkout-form" data-checkout-details-form data-submit-burst novalidate>
+    {% csrf_token %}
+    {% if form.prefix %}<input type="hidden" name="details_prefix" value="{{ form.prefix }}">{% endif %}
+    {% include "registration/includes/form_errors.html" with form=form only %}
+    <div class="form-grid">
+      {% for field in form %}
+        {% include "includes/ui/form_field.html" with field=field only %}
+        {% if field.name == "city" %}
+          <div class="form-field form-field--full">
+            <label class="form-label" for="{{ form.city.auto_id }}-country">{% trans "Country" %}</label>
+            <select id="{{ form.city.auto_id }}-country" disabled><option>{% trans "France" %}</option></select>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="form-actions page__actions">
+      <button class="button button--md button--solid button--tone-place page__submit" type="submit" data-checkout-continue>{% trans "Continue to review" %}</button>
+    </div>
+    <p class="form-help cart-details__help" data-checkout-help
+      data-incomplete="{% trans 'Complete all fields with matching email addresses to continue.' %}"
+      data-ready="{% trans 'Review your order before payment.' %}">{% trans "Review your order before payment." %}</p>
+  </form>
+</section>

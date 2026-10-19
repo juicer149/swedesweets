@@ -129,11 +129,12 @@ def test_navbar_cart_fragment_reads_customer_cart(
     assert "/" not in navbar_line.label
     assert navbar_line.label.endswith(" g")
 
-    # Read-only in the navbar: the quantity shown, changed on the cart's page.
+    # A shared row with a working quantity control and no retail form.
     assert navbar_line.line_view.aside == "× 3"
     html = response.content.decode()
-    assert "data-navbar-cart-quantity-form" not in html
-    assert "× 3" in html
+    assert 'value="3"' in html
+    assert "data-navbar-cart-quantity-form" in html
+    assert "data-checkout-details-form" not in html
 
     assert navbar_line.remove_url == reverse(
         "business_portal:remove_cart_line",

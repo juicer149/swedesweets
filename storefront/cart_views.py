@@ -45,7 +45,9 @@ from storefront.cart import (
 from storefront.cart_viewmodels import (
     build_retail_cart_context,
 )
+from storefront.checkout_forms import RetailCheckoutDetailsForm
 from storefront.checkout_session import (
+    get_remembered_checkout_details,
     remember_checkout,
 )
 from storefront.navbar_viewmodels import (
@@ -243,6 +245,10 @@ def cart(
         ),
     ).as_dict()
 
+    context["form"] = RetailCheckoutDetailsForm(
+        initial=get_remembered_checkout_details(request),
+    )
+
     return render(
         request,
         "storefront/cart.html",
@@ -269,6 +275,10 @@ def navbar_cart_fragment(
         "includes/navbar_cart.html",
         {
             "navbar_cart": navbar_cart,
+            "navbar_checkout_form": RetailCheckoutDetailsForm(
+                prefix="navbar",
+                initial=get_remembered_checkout_details(request),
+            ),
         },
     )
 

@@ -6,10 +6,9 @@ from django.utils.translation import gettext_lazy as _
 from carts.models import Cart
 from common.navbar_cart import (
     NavbarCart,
-    NavbarCartLine,
 )
-from products.catalog import variant_display_name
-from products.images import product_image_url
+from retail.selectors import get_retail_checkout_with_open_payment
+from storefront.cart_viewmodels import build_retail_cart_context
 
 
 def build_retail_navbar_cart(
@@ -19,115 +18,45 @@ def build_retail_navbar_cart(
     if cart is None:
         return _empty_retail_navbar_cart()
 
-    cart_lines = tuple(
-        cart.lines
-        .select_related(
-            "commercial_price__product",
-            "commercial_price__variant",
-            # the line's picture
-            "commercial_price__product__profile",
-        )
-        .order_by("id")
-    )
-
-    if not cart_lines:
+    summary = build_retail_cart_context(cart=cart)
+    if not summary.cart_lines:
         return _empty_retail_navbar_cart()
-
-    lines = tuple(
-        _build_retail_navbar_cart_line(
-            line=line,
-        )
-        for line in cart_lines
+    lines = tuple(line.presentation for line in summary.cart_lines)
+    open_checkout = get_retail_checkout_with_open_payment(cart=cart)
+    payment_url = (
+        reverse("storefront:checkout_review", kwargs={"checkout_id": open_checkout.pk})
+        if open_checkout
+        else None
     )
 
     return NavbarCart(
         aria_label=_("Shopping cart"),
-        title=_("Shopping cart"),
+        title=_("Your cart"),
         line_count=len(lines),
+        subtotal_label=summary.subtotal_label,
+        is_retail=True,
+        payment_url=payment_url,
         lines=lines,
-        fragment_url=reverse(
-            "storefront:navbar_cart_fragment"
-        ),
+        fragment_url=reverse("storefront:navbar_cart_fragment"),
         proceed_label=_("Go to cart"),
-        proceed_url=reverse(
-            "storefront:cart"
-        ),
-        empty_message=_(
-            "Your cart is empty."
-        ),
-        empty_action_label=_(
-            "Browse shop"
-        ),
-        empty_action_url=reverse(
-            "storefront:product_list"
-        ),
+        proceed_url=reverse("storefront:cart"),
+        empty_message=_("Your cart is empty."),
+        empty_action_label=_("Browse shop"),
+        empty_action_url=reverse("storefront:product_list"),
     )
 
 
 def _empty_retail_navbar_cart() -> NavbarCart:
     return NavbarCart(
         aria_label=_("Shopping cart"),
-        title=_("Shopping cart"),
+        title=_("Your cart"),
         line_count=0,
+        is_retail=True,
         lines=(),
-        fragment_url=reverse(
-            "storefront:navbar_cart_fragment"
-        ),
+        fragment_url=reverse("storefront:navbar_cart_fragment"),
         proceed_label=_("Continue shopping"),
-        proceed_url=reverse(
-            "storefront:product_list"
-        ),
-        empty_message=_(
-            "Your cart is empty."
-        ),
-        empty_action_label=_(
-            "Browse shop"
-        ),
-        empty_action_url=reverse(
-            "storefront:product_list"
-        ),
-    )
-
-
-def _build_retail_navbar_cart_line(
-    *,
-    line,
-) -> NavbarCartLine:
-    product = (
-        line.commercial_price.product
-    )
-
-    metadata = tuple(
-        value
-        for value in (
-            line.commercial_price.get_reason_display()
-            if line.commercial_price.reason
-            else None,
-        )
-        if value
-    )
-
-    return NavbarCartLine(
-        line_id=line.id,
-        product_id=line.commercial_price.product_id,
-        # "Hoodie — M": the size when the product has several.
-        label=variant_display_name(
-            product.display_name,
-            line.commercial_price.variant.label,
-        ),
-        product_url=reverse(
-            "storefront:product_detail",
-            kwargs={
-                "product_id": product.id,
-            },
-        ),
-        metadata=metadata,
-        quantity=line.quantity,
-        image_url=product_image_url(product),
-        remove_url=reverse(
-            "storefront:remove_cart_line",
-            kwargs={
-                "cart_line_id": line.id,
-            },
-        ),
+        proceed_url=reverse("storefront:product_list"),
+        empty_message=_("Your cart is empty."),
+        empty_action_label=_("Browse shop"),
+        empty_action_url=reverse("storefront:product_list"),
     )

@@ -163,7 +163,7 @@ body.on-blue {
 .on-blue .form-field--error input:focus {
   background: var(--entrance-field-focus-bg);
   border-color: var(--on-blue-mark);
-  box-shadow: 0 0 0 3px var(--on-blue-mark);
+  box-shadow: var(--field-focus-shadow);
 }
 
 .on-blue .password-field__toggle:focus-visible {
@@ -260,12 +260,12 @@ body.on-blue {
 }
 
 /* Entrance pages share the active menu accent and traced wordmark. */
-body.on-blue { --on-blue-mark: var(--menu-chosen); }
+body.on-blue { --on-blue-mark: var(--menu-chosen); --field-focus-color: var(--on-blue-mark); }
 
 /* Autofill uses the same focused surface and yellow ring on entrance pages. */
 .on-blue .form-field input:focus {
   --input-fill-bg: var(--entrance-field-focus-bg);
-  --input-fill-shadow: 0 0 0 3px var(--on-blue-mark);
+  --input-fill-shadow: var(--field-focus-shadow);
 }
 
 .entrance-header__brand:is(:hover, :focus-visible) .brand-logo__wordmark {

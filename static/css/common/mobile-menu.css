@@ -1,5 +1,4 @@
-/* Account/settings become a page-sized sheet on phones. Cart keeps its own
-   disclosure. Themes own the surface/ink; JS measures the two nav edges. */
+/* Navbar sheets share their frame; the cart scrolls inside it. */
 .mobile-menu-panel {
   --panel-link-font: var(--font-body);
   --panel-link-size: var(--font-size-nav-link);
@@ -15,12 +14,21 @@
 }
 
 .mobile-menu-close { display: none; }
+.mobile-menu-viewport { display: contents; }
+.menu-panel-backdrop { position: fixed; inset: 0; z-index: 90; background: var(--menu-backdrop-bg); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 250ms ease, visibility 250ms; }
+.menu-panel-open .menu-panel-backdrop { opacity: 1; visibility: visible; pointer-events: auto; }
 
 @media (max-width: 767px) {
   html.mobile-menu-open { overflow: hidden; }
-  .mobile-menu-open :is(.site-main, .site-footer, .ops-footer, .landing__stage, .landing__bottom) {
-    visibility: hidden;
+  details[open] > .mobile-menu-viewport {
+    display: block;
+    position: fixed;
+    z-index: 130;
+    inset: var(--mobile-menu-top, 4rem) 0 var(--mobile-menu-bottom, 6rem);
+    overflow: hidden;
+    pointer-events: none;
   }
+  .mobile-menu-viewport > .mobile-menu-panel { position: absolute; inset: 0; pointer-events: auto; }
 
   .mobile-menu-panel {
     --panel-link-font: var(--font-heading);
@@ -127,3 +135,5 @@
 @media (forced-colors: active) {
   .mobile-menu-panel { --mobile-menu-bg: Canvas; --mobile-menu-edge: ButtonText; }
 }
+
+@media (prefers-reduced-motion: reduce) { .menu-panel-backdrop { transition: none; } }

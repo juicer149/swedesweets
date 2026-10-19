@@ -64,6 +64,19 @@ class RetailCheckoutDetailsForm(forms.Form):
         ),
     )
 
+    confirm_email = forms.EmailField(
+        max_length=254,
+        label=_("Confirm email"),
+        help_text=_("Type your email again to avoid typos."),
+        widget=forms.EmailInput(
+            attrs={
+                "autocomplete": "off",
+                "data-confirm-email": "",
+                "data-mismatch-message": _("Email addresses must match."),
+            }
+        ),
+    )
+
     phone_number = forms.CharField(
         max_length=MAX_CUSTOMER_PHONE_LENGTH,
         label=_("Phone number"),
@@ -135,9 +148,22 @@ class RetailCheckoutDetailsForm(forms.Form):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
+        self.order_fields(
+            (
+                "first_name",
+                "last_name",
+                "address_line",
+                "postal_code",
+                "city",
+                "email",
+                "confirm_email",
+                "phone_number",
+            )
+        )
+
         set_form_field_layout(
             self,
-            full=("address_line",),
+            full=("address_line", "email", "confirm_email", "phone_number"),
             half=(
                 "first_name",
                 "last_name",
@@ -159,6 +185,14 @@ class RetailCheckoutDetailsForm(forms.Form):
                 "last_name",
                 _("Your full name is too long."),
             )
+
+        if (
+            cleaned_data.get("email")
+            and cleaned_data.get("confirm_email")
+            and cleaned_data["email"].casefold()
+            != cleaned_data["confirm_email"].casefold()
+        ):
+            self.add_error("confirm_email", _("Email addresses must match."))
 
         self._clean_destination(
             cleaned_data
