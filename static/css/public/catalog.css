@@ -1335,6 +1335,8 @@
    then replace the whole button with the green cart inside the label. */
 .tile__status,
 .product__status {
+  --feedback-min-loading: 0ms;
+  --feedback-burst-rest: 0ms;
   --feedback-burst-style: button;
   --feedback-burst-mark: cart;
   --status-burst-mark-icon: 80%;

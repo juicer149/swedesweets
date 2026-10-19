@@ -48,8 +48,8 @@
 }
 
 .cart-line.line-flash--folding { padding-block: 0; }
-.cart-line .quantity-stepper { --stepper-bg: var(--surface-bg); --stepper-line: color-mix(in srgb, var(--cart-name) 38%, transparent); --stepper-ink: var(--cart-name); }
-.cart-line .quantity-stepper__input { color: var(--cart-name); }
+.cart-line .quantity-stepper { --stepper-bg: var(--surface-bg); --stepper-line: var(--cart-control-border, color-mix(in srgb, var(--cart-name) 38%, transparent)); --stepper-ink: var(--cart-control-ink, var(--cart-name)); }
+.cart-line .quantity-stepper__input { color: var(--cart-quantity-ink, var(--cart-name)); }
 .cart-line .quantity-stepper__button { border: 0; background: transparent; }
 .cart-line .quantity-stepper__button:hover { color: var(--menu-chosen); filter: var(--interaction-icon-filter); }
 .cart-line .quantity-stepper:focus-within { box-shadow: var(--field-focus-shadow); }
@@ -141,3 +141,7 @@
 
 /* All mobile stages reserve the same space above the persistent timeline. */
 .cart-panel-scroll > .order-flow-page > .page.order-flow-surface { padding: var(--space-6) 0 0; }
+
+.cart-line .quantity-stepper__button:active:not(:disabled) { color: var(--cart-control-active, var(--menu-chosen)); }
+.cart-line .quantity-stepper.is-minimum [data-quantity-decrease] { color: var(--cart-remove-ink); }
+.order-flow-page .line__name { color: var(--cart-name); }

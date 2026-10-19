@@ -57,7 +57,7 @@ requesting `?theme=auto` again. An existing `theme` query is updated on change;
 other query parameters, hashes and catalog history state are preserved.
 
 `theme.js` owns `window.siteTheme.set(light|dark)`; `theme-switch.js` handles
-the switch and synchronization with auto changes. Language is a native form.
+the switch and synchronization with auto changes. Language retains a native form fallback; `language-switch.js` enhances it with fetch.
 `includes/language_switcher.html` owns the shared panel, including
 `includes/theme_switch.html` for customer theme choices. Common
 `preferences.css` owns panel layout and `theme-switch.css` owns the orbit.
@@ -246,8 +246,8 @@ change delivery action buttons, the navbar cart or the in-cart badge:
 | `--catalog-cart-muted-ink` | Icon before choosing a size. |
 | `--catalog-cart-muted-border` | Outline before choosing a size. |
 
-Light retains a pale green ready button. Dark uses a primary-750 fill with a primary-200 icon and border,
-changing to gold with the navbar cart glow on hover/focus, and blue while pressed. The muted state remains clickable so it can
+Light retains a pale green ready button. Dark uses a primary-750 fill with a moonlight icon and border,
+changing to gold with the navbar cart glow on hover/focus and gold while pressed. The muted state remains clickable so it can
 prompt the customer to choose a size; it is not a disabled action.
 
 The warm neutral scale in `tokens.css` now includes every whole hundred from
@@ -328,10 +328,10 @@ for both, a deeper gold than accent-600; light keeps its previous appearance.
 
 The catalog no longer renders the decorative bag/scoop shelf above its tools.
 During add, the actual submit button's cart icon spins at the former scoop's
-0.55s cycle, then settles from its current angle over the same 260ms rest.
+0.55s cycle while the request is pending. There is no minimum wait or settle delay.
 At the success/error mark the whole button disappears, and a green cart/halo
-or the existing error cross appears inside the label. The minimum loading,
-mark growth and hold times are unchanged; navbar cart refresh/bump still starts
+or the existing error cross appears inside the label. Mark growth and hold
+times are unchanged; navbar cart refresh/bump still starts
 450ms after the success mark. Product-detail feedback follows the same flow.
 Reduced-motion disables the spin/settle motion while retaining feedback.
 
@@ -375,13 +375,14 @@ available as unused source artwork; live feedback no longer includes them.
 
 Dark uses neutral-100 for `--text-main` (ordinary list/product text and amounts).
 Linked names use `--line-link-text` (primary-200), with primary-100 hover/focus;
-this includes Find Sweets, order-history links and linked cart products.
+order-history links retain this role. Find Sweets and cart/order product names
+use their component moonlight aliases instead.
 Addresses and metadata keep neutral muted text.
 
 Secondary actions use `--quiet-link-text` (primary-200) and
 `--quiet-link-hover-text` / `--quiet-link-focus-text` (primary-100).
 `quiet-link--clear-cart` has independent `--cart-clear-text` and
-`--cart-clear-hover-text` roles: blue normally, red-400 on hover/focus.
+`--cart-clear-hover-text` roles: red-400 normally and on hover/focus in dark.
 The modifier is applied to both cart pages and the B2B order review.
 
 Warnings use accent-800 text and matching RGB channels `243 153 18` for
@@ -559,14 +560,14 @@ Dark active options have dark blue text on light blue; selected options have
 dark blue text on pale gold. Catalog variants retain their own
 `--catalog-option-*` mappings; light/ops keep the original palette.
 
-Ready catalog cart buttons use interactive blue ink/edge. Hover/focus uses
+Ready catalog cart buttons use moonlight ink/edge. Hover/focus uses
 selected gold and `--catalog-cart-hover-shadow`; success feedback stays green.
 `--catalog-cart-hover-border` maps directly to `--selected-accent` in dark,
 independently of the navbar's icon-only cart. Card hover uses warm gold sheen
 and shadow. Quantity/size fields remain blue at rest; focus/open uses selected
 gold, a soft gold edge and `--catalog-control-focus-shadow`. Search keeps blue
 focus. Catalog pagination has its own 350ms minimum loading time; adding a
-product retains its separate timing.
+product has no artificial minimum loading or settle delay.
 
 ## Primary action palette
 
@@ -575,8 +576,8 @@ Main solid place/default buttons use these shared roles:
 | Role | Dark palette / purpose |
 | --- | --- |
 | `--action-primary-bg` | primary-800 background |
-| `--action-primary-text`, `--action-primary-default-text` | interactive blue text |
-| `--action-primary-border` | interactive blue edge |
+| `--action-primary-text`, `--action-primary-default-text` | selected gold text |
+| `--action-primary-border` | selected gold edge |
 | `--action-primary-hover-bg` | same navy background |
 | `--action-primary-hover-text`, `--action-primary-hover-border` | selected gold |
 | `--action-primary-active-bg/border` | pressed navy surface / gold edge |
@@ -924,3 +925,32 @@ available screen height. The close control remains outside that scroll area.
 The inner card padding reserves room for link halos so their pseudo-elements
 do not create a small, premature scroll range. Normal mobile sheets retain
 their full available height and internal scrolling.
+
+## Moonlight and in-place language changes (2026-10-19)
+
+Dark's `--moonlight` mixes white (85%) with primary-100 (15%). Change
+this role to tune the shared cool near-white. Its component aliases are
+`--menu-logo`, `--footer-logo`, `--menu-cart-ink`, `--catalog-cart-ink/border`,
+`--cart-name`, `--cart-control-ink/border`, `--find-sweets-name` and
+`--faq-question-text`. Ordinary navigation remains blue. Hover/selection
+retains gold and its existing glow; success and failure remain green/red.
+`--cart-quantity-ink` and `--cart-control-active` use selected gold.
+`--cart-clear-text` uses red-400. The minimum quantity's trash uses
+`--cart-remove-ink`. Primary buttons use `--action-primary-*` gold ink/edge
+at rest with navy fill; glow is still a hover/focus treatment.
+
+`language-switch.js` compares a current-language server render with the
+response to Django's ordinary CSRF-protected language POST. Matching text,
+accessible labels, placeholders and translated data labels are updated in the
+live document. Nodes, event listeners, input values, open menus, scroll and
+checkout state are retained. It does not replace HTML, execute fetched scripts
+or alter input values/URLs. Different-shaped subtrees and ambiguous translations
+are skipped rather than paired with unrelated content; transient client-only
+messages absent from the server renders are not translated. Subsequent server
+responses use the selected cookie language. Network failures fall back to the
+normal form POST. Theme controls resync their translated tooltip afterwards.
+
+Catalog `.tile__status` and `.product__status` set both
+`--feedback-min-loading` and `--feedback-burst-rest` to `0ms`. Actual network
+requests still finish before success appears. Navbar feedback keeps its 450ms
+delay after that mark; pagination and other submit feedback retain their timings.

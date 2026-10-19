@@ -18,6 +18,8 @@
   --line-strong: #4b5369;
 
   /* Text hierarchy: importance, not font size */
+  /* Cool near-white: brand, product names and available cart controls. */
+  --moonlight: color-mix(in srgb, var(--color-white) 85%, var(--color-primary-100));
   --text-primary: var(--color-neutral-100);
   --text-secondary: var(--color-neutral-200);
   --text-reading: var(--color-neutral-300);
@@ -40,12 +42,11 @@
   --dropdown-title-text-shadow: var(--interaction-text-shadow);
   --dropdown-title-icon-filter: var(--interaction-icon-filter);
 
-  /* Main actions are available blue at rest, gold while hovered/focused.
-     Selection retains its independent gold role. */
+  /* Main actions keep gold ink/edges; hover/focus adds the warm light. */
   --action-primary-bg: var(--color-primary-800);
-  --action-primary-text: var(--interactive-text);
-  --action-primary-default-text: var(--interactive-text);
-  --action-primary-border: var(--interactive-border);
+  --action-primary-text: var(--selected-accent);
+  --action-primary-default-text: var(--action-primary-text);
+  --action-primary-border: var(--action-primary-text);
   --action-primary-hover-bg: var(--action-primary-bg);
   --action-primary-hover-text: var(--selected-accent);
   --action-primary-hover-border: var(--selected-accent);
@@ -187,7 +188,7 @@
   --menu-dropdown-glow-filter: var(--interaction-glow-filter);
   --menu-dropdown-icon-filter: var(--interaction-icon-filter);
 
-  --menu-cart-ink: var(--menu-ink);
+  --menu-cart-ink: var(--moonlight);
   /* Feedback has no circular fill/ring: a coloured icon lights the space behind it. */
   --menu-cart-feedback-animation: site-nav-cart-glow;
   --menu-cart-feedback-added-ink: var(--color-green-400);
@@ -210,6 +211,7 @@
   --interaction-glow-filter: blur(var(--interaction-glow-blur)) drop-shadow(-12px 0 4px rgb(249 181 26 / calc(0.45 * var(--interaction-glow-strength)))) drop-shadow(12px 0 4px rgb(249 181 26 / calc(0.45 * var(--interaction-glow-strength))));
   --menu-crown-shadow: drop-shadow(0 0 4px rgb(249 181 26 / calc(0.40 * var(--interaction-glow-strength)))) drop-shadow(0 0 8px rgb(249 181 26 / calc(0.18 * var(--interaction-glow-strength))));
   --interaction-icon-filter: drop-shadow(0 0 3px rgb(249 181 26 / calc(0.28 * var(--interaction-glow-strength)))) drop-shadow(0 0 9px rgb(249 181 26 / calc(0.16 * var(--interaction-glow-strength))));
+  --menu-logo: var(--moonlight);
   --menu-logo-hover: var(--selected-accent);
   --section-nav-marker-display: none;
   --find-sweets-hover-text: var(--selected-accent);
@@ -228,7 +230,7 @@
 
   /* 4. Reading, FAQ and contact details */
   --prose-text: var(--text-reading);
-  --faq-question-text: var(--dropdown-title-text);
+  --faq-question-text: var(--moonlight);
   --faq-question-hover-text: var(--dropdown-title-hover-text);
   --faq-question-open-text: var(--dropdown-title-active-text);
   --faq-question-hover-bg: transparent;
@@ -318,21 +320,21 @@
   --stepper-line: var(--color-primary-300);
   --stepper-number-bg: var(--surface-bg);
 
-  /* Catalog add: blue ready/press ink; gold hover/focus; muted until size is chosen.
+  /* Catalog add: moonlight ready ink; gold hover/focus/press; muted until size is chosen.
      Its button background sequence is intentionally different from text links. */
   --catalog-cart-bg: var(--color-primary-750);
-  --catalog-cart-ink: var(--interactive-text);
-  --catalog-cart-border: var(--interactive-border);
+  --catalog-cart-ink: var(--moonlight);
+  --catalog-cart-border: var(--moonlight);
   --catalog-cart-hover-bg: var(--color-primary-700);
   --catalog-cart-active-bg: var(--surface-bg);
-  --catalog-cart-focus: var(--interactive-border);
+  --catalog-cart-focus: var(--selected-accent);
   --catalog-cart-muted-bg: var(--color-primary-950);
   --catalog-cart-muted-ink: var(--color-neutral-500);
   --catalog-cart-muted-border: var(--color-neutral-500);
   --catalog-cart-hover-ink: var(--menu-chosen);
   --catalog-cart-hover-border: var(--selected-accent);
-  --catalog-cart-active-ink: var(--interactive-text);
-  --catalog-cart-active-border: var(--interactive-text);
+  --catalog-cart-active-ink: var(--selected-accent);
+  --catalog-cart-active-border: var(--selected-accent);
 
   /* Success burst and destructive feedback keep their existing shade/intensity */
   --catalog-burst-success: var(--color-status-success-text);
@@ -341,11 +343,11 @@
   --cart-remove-ink: #dc5a5a;
   --cart-remove-hover-ink: var(--danger-text);
   --cart-remove-flash: rgb(210 55 55 / 0.24);
-  --cart-clear-text: var(--interactive-text);
+  --cart-clear-text: var(--color-red-400);
   --cart-clear-hover-text: var(--danger-text);
 
   /* 8. Footer — brand artwork remains independent of interactive text */
-  --footer-logo: var(--color-primary-200);
+  --footer-logo: var(--moonlight);
   --footer-crown: var(--color-accent-600);
   --footer-link: var(--interactive-text-subtle);
   --footer-link-hover: var(--color-accent-500);
@@ -353,7 +355,12 @@
 
 :root[data-theme="dark"]:not([data-site-zone="ops"]) {
   --cart-total: var(--catalog-price-text);
-  --cart-name: var(--interactive-text);
+  --cart-control-ink: var(--moonlight);
+  --cart-control-border: var(--moonlight);
+  --cart-control-active: var(--selected-accent);
+  --cart-quantity-ink: var(--selected-accent);
+  --find-sweets-name: var(--moonlight);
+  --cart-name: var(--moonlight);
   --cart-amount: var(--text-primary);
   --cart-row-line: color-mix(in srgb, var(--interactive-border) 16%, transparent);
   --cart-remove-hover: var(--color-red-400);

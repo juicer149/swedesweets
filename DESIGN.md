@@ -13,7 +13,7 @@ it owns). This file is the map, the rules and the reasons.
 
 No boxes. Content sits on the page itself, in one centred column, with a
 soft glow behind it that holds it together. Rows are divided by hairlines,
-not cards. Each page has **one primary action** (yellow in light; navy with blue text/edge
+not cards. Each page has **one primary action** (yellow in light; navy with gold text/edge
 and gold hover light in dark); secondary actions are quiet
 text links, coloured by the theme. Colour is spent only where it means something (a status, a pin,
 the action). Mobile first: on a phone the actions sit at the bottom, within
@@ -51,7 +51,10 @@ navigation already says.
 
 Light is the default: a cream page and brand-blue menu. The customer dark
 palette uses deep blue surfaces, neutral reading text and light blue available
-interactions. Ops remains light until its work pages have been reviewed.
+interactions. A shared cool near-white `--moonlight` lifts the logo above the
+menu and is used for cart product names/controls, FAQ questions and shop names.
+Cart quantities and primary actions use gold; removal actions use red.
+Ops remains light until its work pages have been reviewed.
 Theme selection and implementation details are in [CSS themes](docs/css-themes.md).
 
 The public/B2B dark theme was approved and merged on 2026-10-18. Its palette
@@ -60,7 +63,9 @@ review and dark ops rollout remain separate work; neither is implied by this
 completion. Light is still the default.
 
 A gear opens shared settings on navbar, landing and entrance/error pages.
-Language is selected through EN/FR text buttons; the chosen language keeps gold
+Language is selected through EN/FR text buttons. JavaScript fetches the server
+translations and updates text in place, retaining the open settings panel and
+form values; the native language POST remains the fallback. The chosen language keeps gold
 ink and a soft gold light. A pill switches Day/Night: thumb left and yellow sun
 right in day mode; thumb right and white moon left in night mode. The icons
 set/rise along an arc; reduced motion skips the animation. Selection lasts for
@@ -83,7 +88,7 @@ and answers stay neutral. The landing menu and its account/cart/language control
 use the same backlight, as do the navbar dropdown icons. The chosen landing
 item owns its light even when pointer input follows keyboard focus. Login/password
 page home logos share the navbar logo's gold hover/focus treatment. Ready catalog cart buttons
-are interactive blue, becoming gold with the navbar cart's backlight on hover or
+use cool moonlight ink/edges, becoming gold with the navbar cart's backlight on hover or
 keyboard focus; success feedback remains green. Catalog card hover and focused
 quantity/size fields also use the warm gold light; available controls remain blue.
 Dropdown options pair foreground

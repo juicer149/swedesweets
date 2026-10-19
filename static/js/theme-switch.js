@@ -31,6 +31,7 @@
       sync();
     });
   }
+  document.addEventListener("site-language-changed", sync);
   sync();
   for (const group of document.querySelectorAll("[data-theme-preferences]")) {
     group.hidden = false;

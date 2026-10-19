@@ -17,3 +17,6 @@
   .page-section:has(> .faq),
   .page-section.catalog { overflow-x: visible; }
 }
+
+.find-sweets .line__link .line__name { color: var(--find-sweets-name, var(--line-link-text)); }
+.find-sweets .line__link:is(:hover, :focus-visible) .line__name { color: var(--find-sweets-hover-text); }
