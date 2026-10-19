@@ -145,3 +145,10 @@
 .cart-line .quantity-stepper__button:active:not(:disabled) { color: var(--cart-control-active, var(--menu-chosen)); }
 .cart-line .quantity-stepper.is-minimum [data-quantity-decrease] { color: var(--cart-remove-ink); }
 .order-flow-page .line__name { color: var(--cart-name); }
+
+/* The outer scrollport bounds the sheet. Its inner page must not cut a row's
+   flash at the narrower content edge before it reaches that padding. */
+.cart-panel-scroll > .order-flow-page { overflow-x: visible; }
+.cart-panel-scroll > .order-flow-page .cart-line {
+  --line-flash-room: calc(-1 * var(--space-2));
+}

@@ -57,6 +57,7 @@
   async function advance(progress, step) {
     const items = [...progress.querySelectorAll(".order-progress__step")];
     const to = stages.indexOf(step), from = stages.indexOf(progress.dataset.orderProgress);
+    progress.classList.remove("is-complete");
     if (to > from) for (let index = from + 1; index <= to; index++) {
       const travel = document.createElement("span"); travel.className = "order-progress__travel";
       travel.setAttribute("aria-hidden", "true"); items[index].append(travel);
@@ -79,6 +80,14 @@
       if (index === to) item.setAttribute("aria-current", "step"); else item.removeAttribute("aria-current");
     });
     progress.dataset.orderProgress = step;
+    if (step === "placed") {
+      progress.classList.add("is-complete");
+      // The last point first arrives in gold, then the whole journey confirms
+      // success in green. Keep that verified state on reload as well.
+      if (!reduced.matches) await progress.querySelector(".order-progress__steps").animate([
+        { filter: "brightness(1)" }, { filter: "brightness(1.65)", offset: 0.45 }, { filter: "brightness(1)" },
+      ], { duration: 460, easing: "ease-out" }).finished;
+    }
   }
   function chrome(page) {
     const source = page.querySelector('details[data-mobile-menu="cart"]');

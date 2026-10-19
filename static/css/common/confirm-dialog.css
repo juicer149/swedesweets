@@ -203,3 +203,8 @@
 .help-dialog__body ul {
   padding-left: var(--space-5);
 }
+
+/* Removing a product has its own ink; unsaved-change/help dialogs stay neutral. */
+.confirm-dialog[data-tone="danger"] :is(.confirm-dialog__title, .confirm-dialog__message) {
+  color: var(--confirm-remove-text);
+}

@@ -43,6 +43,7 @@
         confirmLabel: button.dataset.confirmLabel,
         cancelLabel: button.dataset.confirmCancel,
         image: button.dataset.confirmImage,
+        tone: button.dataset.confirmTone,
       });
 
       if (confirmed) {

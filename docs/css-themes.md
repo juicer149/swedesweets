@@ -954,3 +954,24 @@ Catalog `.tile__status` and `.product__status` set both
 `--feedback-min-loading` and `--feedback-burst-rest` to `0ms`. Actual network
 requests still finish before success appears. Navbar feedback keeps its 450ms
 delay after that mark; pagination and other submit feedback retain their timings.
+
+## Completed order and cart row feedback
+
+A verified placed order adds `.is-complete` to its timeline, including on a
+normal page load. During an animated advance the connector still travels in
+gold and the last point lights/blinks in gold first. The entire timeline then
+changes to success green with one 460ms pulse, retaining green afterwards.
+`--order-progress-complete`, `--order-progress-complete-shadow` and
+`--order-progress-complete-dot-shadow` own that colour and emission. Reduced
+motion skips both pulses/travel and shows the final state immediately. Failed
+or uncertain payment responses retain their review state; no success is inferred
+from the animation or return URL.
+
+Product removal sets `data-confirm-tone="danger"`; the dialog uses
+`--confirm-remove-text` for its title/question (red-700 in light, the darker trash ink
+`--cart-remove-ink` in dark). Other confirmation/help text retains its current role.
+
+Inside the cart panel, the inner `.order-flow-page` allows horizontal paint
+overflow so added/removed row flashes reach beyond the content column. The
+outer `.cart-panel-scroll` remains the single scrolling/clipping boundary;
+row widths, panel geometry and the folding removal animation are unchanged.

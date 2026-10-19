@@ -32,6 +32,7 @@
       class="line__remove-button"
       type="submit"
       aria-label="{{ label|default:default_label }}"
+      data-confirm-tone="danger"
       data-confirm="{{ question }}"{% if image %}
       data-confirm-image="{{ image }}"{% endif %}
       data-confirm-title="{% trans 'Remove product' %}"
@@ -48,6 +49,7 @@
       type="button"
       aria-label="{{ label|default:default_label }}"
       data-remove-order-line
+      data-confirm-tone="danger"
       data-confirm="{{ question }}"{% if image %}
       data-confirm-image="{{ image }}"{% endif %}
       data-confirm-named="{% blocktrans with name='%(name)s' %}Remove {{ name }} from the order?{% endblocktrans %}"

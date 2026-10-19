@@ -85,6 +85,7 @@ def test_payment_return_is_public_and_shows_confirmation(
     assert response.context["navbar_cart_current"] is True
     assert response.context["navbar_account_current"] is False
     html = response.content.decode()
+    assert 'class="order-progress is-complete"' in html
     assert 'data-order-progress="placed"' in html
     assert html.count('class="order-progress__step is-lit"') == 3
     assert 'class="crown-hero"' in response.content.decode()
@@ -164,6 +165,7 @@ def test_payment_return_shows_failed_state(
     html = response.content.decode()
     assert 'data-order-progress="review"' in html
     assert 'data-order-progress="placed"' not in html
+    assert 'class="order-progress is-complete"' not in html
 
 
 @pytest.mark.django_db

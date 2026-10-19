@@ -250,6 +250,10 @@
   --cart-notice-border: color-mix(in srgb, var(--color-status-success-text) 45%, transparent);
   --cart-notice-shadow: 0 0 16px color-mix(in srgb, var(--color-status-success-text) 12%, transparent);
   --order-history-row-marker: var(--menu-chosen);
+  --order-progress-complete-shadow: 0 0 3px color-mix(in srgb, var(--order-progress-complete) 28%, transparent), 0 0 9px color-mix(in srgb, var(--order-progress-complete) 20%, transparent), 0 0 18px color-mix(in srgb, var(--order-progress-complete) 12%, transparent);
+  --order-progress-complete-dot-shadow: 0 0 9px color-mix(in srgb, var(--order-progress-complete) 35%, transparent), 0 0 18px color-mix(in srgb, var(--order-progress-complete) 18%, transparent);
+  --order-progress-complete: var(--color-green-700);
+  --confirm-remove-text: var(--color-red-700);
   --order-progress-ready: var(--color-primary-600);
   --order-progress-lit: var(--color-accent-800);
   --order-progress-shadow: var(--interaction-text-shadow);

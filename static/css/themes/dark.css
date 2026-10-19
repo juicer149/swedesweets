@@ -158,6 +158,8 @@
   --cart-notice-border: color-mix(in srgb, var(--color-status-success-text) 45%, transparent);
   --cart-notice-shadow: 0 0 16px color-mix(in srgb, var(--color-status-success-text) 12%, transparent);
   --order-history-row-marker: var(--menu-chosen);
+  --order-progress-complete: var(--color-green-400);
+  --confirm-remove-text: var(--cart-remove-ink);
   --order-progress-ready: var(--interactive-text);
   --order-progress-lit: var(--selected-accent);
   --order-progress-shadow: var(--interaction-text-shadow);

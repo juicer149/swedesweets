@@ -35,3 +35,10 @@
 }
 
 [data-flow-step="placed"] .order-flow-content { padding-top: var(--space-8); }
+
+/* Placed orders keep their success colour after the finishing pulse. */
+.order-progress.is-complete {
+  --order-progress-lit: var(--order-progress-complete);
+  --order-progress-shadow: var(--order-progress-complete-shadow);
+  --order-progress-dot-shadow: var(--order-progress-complete-dot-shadow);
+}

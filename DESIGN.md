@@ -600,6 +600,11 @@ connector from left to right, a brief dot flash and a top-to-bottom content
 reveal. Validation errors do not advance. Network errors offer reload without
 repeating POSTs. Reduced motion skips the decorative sequence.
 
+Completed checkout timelines retain success green. The final connector and point
+arrive in gold, followed by one green confirmation pulse across the full timeline.
+Only verified placed-order responses receive this state; failed/uncertain payment
+returns keep their earlier stage. Reduced motion displays the final state directly.
+
 Retail payment still redirects normally to its hosted provider; only confirmed
 payment lights the final stage on return. Failed/uncertain results stay at
 review. B2B reaches placed only after successful server placement. Historical

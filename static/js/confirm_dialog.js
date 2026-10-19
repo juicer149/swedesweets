@@ -128,6 +128,9 @@
   window.confirmDialog = function confirmDialog(message, options = {}) {
     const dialog = ensureDialog();
 
+    if (options.tone) dialog.dataset.tone = options.tone;
+    else delete dialog.dataset.tone;
+
     // The thing in question (a product being removed), struck through.
     if (options.image) {
       imageElement.src = options.image;
