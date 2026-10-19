@@ -62,9 +62,9 @@ def build_business_navbar_cart(
         fragment_url=reverse(
             "business_portal:navbar_cart_fragment"
         ),
-        proceed_label=_("Review order"),
+        proceed_label=_("Go to cart"),
         proceed_url=reverse(
-            "business_portal:cart_review"
+            "business_portal:cart"
         ),
         empty_message=_(
             "Your order is empty."
@@ -89,9 +89,9 @@ def _empty_business_navbar_cart() -> NavbarCart:
         fragment_url=reverse(
             "business_portal:navbar_cart_fragment"
         ),
-        proceed_label=_("Review order"),
+        proceed_label=_("Go to cart"),
         proceed_url=reverse(
-            "business_portal:cart_review"
+            "business_portal:cart"
         ),
         empty_message=_(
             "Your order is empty."

@@ -2790,3 +2790,15 @@ msgstr "Progression de la commande"
 #: templates/includes/orders/progress.html:14
 msgid "Order placed"
 msgstr "Commande passée"
+
+#: templates/includes/orders/progress.html:2
+msgid "Reload page"
+msgstr "Recharger la page"
+
+#: templates/includes/orders/progress.html:2
+msgid "Loading…"
+msgstr "Chargement…"
+
+#: templates/includes/orders/progress.html:2
+msgid "We could not load the next step. Reload the page to check your order."
+msgstr "Impossible de charger l’étape suivante. Rechargez la page pour vérifier votre commande."

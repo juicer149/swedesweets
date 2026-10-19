@@ -41,7 +41,7 @@
     const viewport = covered.querySelector(".mobile-menu-viewport");
     const top = document.querySelector(".site-header, .entrance-header, .landing__top");
     const nav = document.querySelector(".site-nav__links:not(.site-nav__links--empty)");
-    const bottom = nav && getComputedStyle(nav).position === "fixed"
+    const bottom = nav && nav.getClientRects().length && getComputedStyle(nav).position === "fixed"
       ? innerHeight - nav.getBoundingClientRect().top + 8 : 12;
     viewport.style.setProperty("--mobile-menu-top", `${Math.max(0, top?.getBoundingClientRect().bottom || 0)}px`);
     viewport.style.setProperty("--mobile-menu-bottom", `${bottom}px`);
@@ -66,7 +66,11 @@
   }
 
   async function request(key, focus = false) {
-    if (key === "cart" && menuFor(key)?.dataset.cartLocked === "true") return;
+    if (key === "cart" && menuFor(key)?.dataset.cartLocked === "true" && menuFor(key)?.dataset.flowHost !== "true") return;
+    if (!key && openMenu()) {
+      const intercepted = new CustomEvent("panel-close-request", { cancelable: true, bubbles: true });
+      if (!openMenu().dispatchEvent(intercepted)) return;
+    }
     wanted = key;
     restoreFocus = focus;
     if (running) return;

@@ -445,10 +445,11 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   the top. Catalog/Shop, Find Sweets, FAQ and About are customer destinations.
   Ops has its own page links. Pages leave room under their last content for
   the bottom bar. The header edge is independent of selection (`--menu-edge`).
-  Account/settings open as centred full-height sheets between the two bars,
+  Account/settings open as centred full-height sheets below the top bar,
   hiding the covered page/footer and keeping the page's scroll position. Their
   V-shaped lower edge meets a 44px close button. On desktop they stay compact
-  dropdowns. Cart retains its existing layout.
+  dropdowns. Mobile sheets hide the page links and other header triggers; the
+  logo stays available. The fixed bottom close/back circle returns to the page.
 
 - **Account:** a single-person icon opens Profile, Order history for business
   customers, and a CSRF-protected POST Log out at the bottom. It keeps selected
@@ -462,10 +463,10 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   trigger; clicking another trigger closes the previous dropdown.
 - **Navbar cart:** an icon-only disclosure with editable product rows and a
   quantity stepper. At one item, the minus becomes a trash action. Desktop
-  uses the full cart editor in its panel; mobile uses the same
-  sliding V-shaped sheet as account/settings, with its own scrolling content.
-  Retail contact/delivery fields follow the rows on both screen sizes.
-  B2B includes Previous orders and product search before its current rows. The icon is 22px with a
+  uses a compact preview with Go to cart; the full cart and review use framed
+  pages. Mobile hosts the full flow in the same sliding V-shaped sheet as
+  account/settings, with its own scrolling content. Retail details follow
+  products in the editor. B2B includes Previous orders and product search. The icon is 22px with a
   stronger stroke than the original artwork. Cart/checkout pages retain its
   selected light and crown; the count moves away from the crown. AJAX refresh
   preserves selection, scroll and in-progress contact fields. Added items produce green feedback; removals use red.
@@ -566,14 +567,12 @@ inerts covered content while a sheet slides down over it; changing disclosures
 retracts the old sheet first. The cart scrolls inside its frame, keeping the
 close button and navigation accessible.
 
-The full cart editor lives in its navbar panel on both desktop and mobile.
-`responsive-cart.js` loads the server-rendered cart when needed and preserves
-the live editor through closure, screen-size changes and navbar refreshes.
-Retail includes contact/delivery fields; B2B shows Previous orders, compact
-product search, current products and Review order. Review is a separate page
-with Place order. Landing opens the same cart panel on either screen size.
-The cart URL remains a no-JavaScript fallback; a direct visit opens its editor
-in the panel and returns to the catalog when closed.
+Desktop separates its compact navbar preview from the full cart page. The
+preview contains editable rows and Go to cart. Cart and review retain the
+panel-like surface, with the timeline replacing visible page headings.
+Mobile hosts cart, review and placed in one sheet. `responsive-cart.js` moves
+the same live DOM between sheet and page on viewport changes, preserving
+fields and controls. The server pages/forms remain the no-JavaScript fallback.
 
 Panels round their lower corners, preserving the mobile V-shaped bottom with
 softer joins. Outlines share the navbar's `--menu-edge`; desktop side borders
@@ -583,20 +582,28 @@ its frame with one position marker. Desktop account/settings grow with their
 contents, with clamped spacing on short screens and no internal scrollbars.
 
 In dark mode panel backgrounds match navbar/landing, with a soft light fading
-down from the gold top edge. Cart headings are gold with the shared emission
-and more space above. FAQ, Previous orders and its nested order headings share
+down from the gold top edge. The cumulative timeline owns the flow heading.
+FAQ, Previous orders and its nested order headings share
 `--dropdown-title-*` roles; component aliases remain available in the themes.
 Empty retail carts centre the message and keep Browse shop near the bottom,
 falling back to internal scrolling when the screen is short.
 
-Panel light follows motion: headings start blue while the panel descends, then
-turn gold with their light. Closing extinguishes the light before retraction.
-Settings and My account have their own shared panel heading. Catalog images and
-labels have a separate, quiet external rim light in dark mode.
+Panel light follows motion: the edge and mobile timeline illuminate after the
+sheet arrives, then extinguish before closing. Settings and My account omit
+extra headings. Catalog images and labels keep a quiet external rim in dark.
 
-Order progress is cumulative: Cart → Review order → Order placed, with reached
-points and connecting lines retaining gold light. Review and result pages use
-the same gold heading treatment. The navbar cart cannot open from these later
-steps; explicit edit/back links return to cart. Retail reaches the final step
-only on confirmed payment, leaving failed/uncertain results at review. Historical
-B2B orders keep their ordinary detail view outside the just-placed destination.
+Order progress is cumulative: Cart → Review order → Order placed. While a
+forward request runs, content disappears and the existing status burst appears
+centrally below the persistent timeline. The server response triggers the next
+connector from left to right, a brief dot flash and a top-to-bottom content
+reveal. Validation errors do not advance. Network errors offer reload without
+repeating POSTs. Reduced motion skips the decorative sequence.
+
+Retail payment still redirects normally to its hosted provider; only confirmed
+payment lights the final stage on return. Failed/uncertain results stay at
+review. B2B reaches placed only after successful server placement. Historical
+orders keep their normal detail view. The mobile review close control becomes
+Back, returning to Close after placement. The navbar cart stays locked on later
+pages, while an existing mobile flow stays mounted and open.
+
+See [CSS themes](docs/css-themes.md) for roles, timings and controller ownership.

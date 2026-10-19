@@ -154,9 +154,6 @@
   --order-progress-lit: var(--selected-accent);
   --order-progress-shadow: var(--interaction-text-shadow);
   --order-progress-dot-shadow: 0 0 9px color-mix(in srgb, var(--selected-accent) 25%, transparent);
-  --menu-panel-title-off-text: var(--interactive-text);
-  --menu-panel-title-text: var(--dropdown-title-active-text);
-  --menu-panel-title-shadow: var(--dropdown-title-text-shadow);
   --menu-panel-edge-glow: linear-gradient(to bottom, color-mix(in srgb, var(--menu-edge) 14%, transparent), color-mix(in srgb, var(--menu-edge) 4%, transparent) 40%, transparent);
   --cart-previous-text: var(--dropdown-title-text);
   --cart-previous-active: var(--dropdown-title-active-text);

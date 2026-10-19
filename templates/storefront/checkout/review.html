@@ -6,11 +6,15 @@
 {% block content %}
 <section
   class="page-section"
+  data-order-flow-page
+  data-flow-step="review"
+  data-flow-back-url="{{ cart_url }}"
+  data-flow-close-url="{% url 'storefront:product_list' %}"
   aria-labelledby="storefront-review-title"
 >
   <div class="page page--centered page--wide order-flow">
     {% include "includes/orders/progress.html" with step="review" only %}
-    <h1 id="storefront-review-title" class="page__lead">
+    <h1 id="storefront-review-title" class="page__lead visually-hidden">
       {% trans "Review order" %}
     </h1>
 
@@ -46,7 +50,7 @@
     </section>
 
     <div class="form-actions page__actions page-actions">
-      <form class="page-actions__primary" method="post" action="{{ pay_url }}" data-submit-burst>
+      <form class="page-actions__primary" method="post" action="{{ pay_url }}" data-submit-burst data-order-flow-submit data-order-flow-external>
         {% csrf_token %}
 
         <button
@@ -80,12 +84,12 @@
             </button>
           </form>
         {% else %}
-          <a class="quiet-link" href="{{ cart_url }}">
+          <a class="quiet-link" href="{{ cart_url }}" data-order-flow-back>
             {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
             {% trans "Edit cart" %}
           </a>
 
-          <a class="quiet-link" href="{{ edit_details_url }}">
+          <a class="quiet-link" href="{{ edit_details_url }}" data-order-flow-back>
             {% include "includes/ui/icon_block.html" with name="map-pin" size="sm" only %}
             {% trans "Edit details" %}
           </a>

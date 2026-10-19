@@ -94,7 +94,7 @@
 .site-nav-cart__actions .site-nav-cart__edit { display: flex; justify-content: center; margin-top: var(--space-4); }
 .cart-panel-scroll { scrollbar-color: var(--menu-scroll-thumb) var(--menu-scroll-track); }
 
-/* Full editor on desktop too, with the same fixed close control. */
+/* Desktop quick preview; mobile hosts the full editor in the same frame. */
 .landing__cart-menu { display: block; }
 .cart-panel-scroll[aria-busy="true"] { opacity: .65; }
 .cart-page .cart-quick-add { margin-bottom: var(--space-8); }
@@ -105,7 +105,7 @@
     left: 50%;
     right: auto;
     translate: -50% 0;
-    width: min(60rem, calc(100vw - 2rem));
+    width: min(38rem, calc(100vw - 2rem));
     max-height: calc(100dvh - var(--cart-panel-top, 4.5rem) - 3rem);
     padding-bottom: var(--space-8);
     border-top: 0;
@@ -129,41 +129,17 @@
   .cart-page .recent-orders .accordion__summary:hover .ui-icon-svg { filter: var(--dropdown-title-icon-filter); }
 }
 
-/* More room above the panel heading; gold glyphs emit the shared title light. */
-.cart-panel-scroll .page.cart-page { padding-top: var(--space-6); }
-.cart-panel-scroll .cart-page > .page__lead,
-.site-nav-cart__title { color: var(--menu-panel-title-text); text-shadow: var(--menu-panel-title-shadow); }
-
-/* An empty retail cart fills its frame: message centred, browse action below. */
-.site-nav-cart__popover:has(.cart-page--empty) { height: min(36rem, calc(100dvh - var(--cart-panel-top, 4.5rem) - 3rem)); }
+/* Empty mobile carts keep their browse action near the bottom. */
+.cart-panel-scroll > [data-order-flow-page] { margin: 0; padding: 0; }
+.cart-panel-scroll .order-flow-surface { width: 100%; max-width: none; margin: 0; padding: var(--space-6) 0 0; }
+.cart-panel-scroll .order-flow-surface::before { display: none; }
 .cart-panel-scroll:has(.cart-page--empty) { height: 100%; }
-.cart-panel-scroll > [data-responsive-cart-page]:has(.cart-page--empty) { display: flex; min-height: 100%; }
-.cart-panel-scroll .page.cart-page--empty { display: flex; flex: 1; flex-direction: column; align-items: center; }
-.cart-page--empty > .page__lead { width: 100%; text-align: center; }
-.cart-page--empty > .page__message { margin-block: auto; padding-block: var(--space-8); text-align: center; }
-.cart-panel-scroll .cart-page--empty > .page__actions { margin-top: auto; padding-top: var(--space-6); width: min(100%, 30rem); }
-@media (max-width: 767px) {
-  .site-nav-cart__popover.mobile-menu-panel:has(.cart-page--empty) { height: auto; }
-}
-
-.cart-panel-scroll .cart-page > .page__lead { position: relative; isolation: isolate; width: fit-content; max-width: 100%; margin-inline: auto; }
-.cart-panel-scroll .cart-page > .page__lead::before {
-  content: "";
-  position: absolute;
-  inset: -0.4rem -0.5rem;
-  z-index: -1;
-  pointer-events: none;
-  border-radius: var(--radius-pill);
-  background: var(--dropdown-title-glow);
-  filter: var(--dropdown-title-glow-filter);
-  opacity: var(--interaction-selected-opacity);
-}
-@media (forced-colors: active) {
-  .cart-panel-scroll .cart-page > .page__lead { text-shadow: none; }
-  .cart-panel-scroll .cart-page > .page__lead::before { display: none; }
-}
+.cart-panel-scroll > [data-order-flow-page]:has(.cart-page--empty) { display: flex; min-height: 100%; }
+.cart-panel-scroll .cart-page--empty { display: flex; flex: 1; flex-direction: column; align-items: stretch; }
+.cart-page--empty .order-flow-content { display: flex; flex: 1; flex-direction: column; align-items: center; }
+.cart-page--empty .page__message { margin-block: auto; padding-block: var(--space-8); text-align: center; }
+.cart-page--empty .page__actions { margin-top: auto; padding-top: var(--space-6); width: min(100%, 30rem); }
 
 /* The cart owns its scrolling: let an open product search grow its content
    instead of clipping the result list at the editor's previous height. */
 .cart-quick-add .ts-dropdown { position: static; }
-details[data-mobile-menu]:not([data-panel-lit]) .cart-panel-scroll .cart-page > .page__lead::before { opacity: 0; }

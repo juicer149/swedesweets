@@ -17,7 +17,7 @@
   Where the payment provider sends the buyer back: paid, not paid, or not
   known yet. One screen in the calm design, one yellow way on.
 {% endcomment %}
-<section class="screen screen--in-site payment-result" aria-labelledby="payment-result-title">
+<section data-order-flow-page data-flow-step="{% if result == 'confirmed' %}placed{% else %}review{% endif %}" data-flow-close-url="{{ shop_url }}" data-flow-back-url="{{ cart_url }}" class="screen screen--in-site payment-result" aria-labelledby="payment-result-title">
   <div class="page page--centered order-flow">
     {% if result != "confirmed" %}
       {% include "includes/orders/progress.html" with step="review" only %}

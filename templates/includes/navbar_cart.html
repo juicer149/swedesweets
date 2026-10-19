@@ -47,20 +47,6 @@
     <span class="menu-panel-toplight" aria-hidden="true"></span>
     <div class="cart-panel-scroll" data-cart-panel-scroll data-menu-panel-scroll>
     <noscript><a class="quiet-link" href="{% if navbar_cart.is_retail %}{% url 'storefront:cart' %}{% else %}{% url 'business_portal:cart' %}{% endif %}">{% trans 'Edit cart' %}</a></noscript>
-    <header class="site-nav-cart__header">
-      <strong class="site-nav-cart__title">
-        {{ navbar_cart.title }}
-      </strong>
-
-      <span class="site-nav-cart__item-count">
-        {% blocktrans count count=navbar_cart.line_count %}
-          {{ count }} item
-        {% plural %}
-          {{ count }} items
-        {% endblocktrans %}
-      </span>
-    </header>
-
     {% if navbar_cart.has_lines %}
       <div class="site-nav-cart__lines">
         {% for line in navbar_cart.lines %}
@@ -68,13 +54,7 @@
         {% endfor %}
       </div>
 
-      {% if navbar_cart.subtotal_label %}
-        <div class="lines-total"><span>{% trans "Subtotal" %}</span><strong data-cart-subtotal>{{ navbar_cart.subtotal_label }}</strong></div>
-      {% endif %}
-      {% if navbar_cart.is_retail and not navbar_cart.payment_url %}
-        {% include "includes/cart/checkout_details.html" with form=navbar_checkout_form navbar=True csrf_token=csrf_token only %}
-      {% endif %}
-      <footer class="site-nav-cart__actions{% if navbar_cart.is_retail and not navbar_cart.payment_url %} site-nav-cart__actions--desktop{% endif %}">
+      <footer class="site-nav-cart__actions">
         <a
           class="
             button
@@ -86,9 +66,6 @@
         >
           {% if navbar_cart.payment_url %}{% trans "Go to payment" %}{% else %}{{ navbar_cart.proceed_label }}{% endif %}
         </a>
-        {% if not navbar_cart.is_retail %}
-          <a class="quiet-link site-nav-cart__edit" href="{% url 'business_portal:cart' %}">{% trans 'Edit cart' %}</a>
-        {% endif %}
       </footer>
     {% else %}
       <div class="site-nav-cart__empty">

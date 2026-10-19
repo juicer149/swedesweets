@@ -6,6 +6,7 @@
 {% block content %}
 <section
   class="page-section"
+  {% if just_placed %}data-order-flow-page data-flow-step="placed" data-flow-close-url="{% url 'business_portal:catalog' %}"{% endif %}
   aria-labelledby="portal-order-detail-title"
 >
   <div class="page page--centered page--wide{% if just_placed %} order-flow{% endif %}">

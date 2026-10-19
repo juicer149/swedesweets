@@ -1,125 +1,153 @@
-/* One live cart editor on every screen. Load the existing server-rendered cart
-   when first opened; keep its DOM and draft while navbar fragments change. */
+/* Desktop has a quick cart and a full cart page. Mobile hosts the same live
+   cart/review/result DOM in one sheet; viewport changes preserve its fields. */
 (() => {
   "use strict";
-  let editor = document.querySelector("[data-responsive-cart-page]");
-  const directVisit = Boolean(editor);
-  let stale = false;
-  let loading = null;
-  let focused = null;
-  let scrollTop = 0;
-  let previousScroll = null;
-  const scripts = new Map();
+  const app = window.SwedeSweets = window.SwedeSweets || {};
+  const mobile = matchMedia("(max-width: 767px)");
+  const originUrl = location.href;
   const cartMenu = () => document.querySelector('details[data-mobile-menu="cart"]');
   if (!cartMenu()) return;
+  let root = document.querySelector("[data-order-flow-page]");
+  const directVisit = Boolean(root);
+  let flowUrl = root ? location.href : null;
+  let slot = null;
+  let hosted = false;
+  let preview = null;
+  let scrollBox = null;
+  let scrollTop = 0;
+  let focused = null;
+  let stale = false;
+  let loading = null;
+  const scripts = new Map();
+  if (root) { slot = document.createComment("order flow"); root.before(slot); }
 
   function preserve() {
-    if (editor?.contains(document.activeElement)) focused = document.activeElement;
-    if (previousScroll) scrollTop = previousScroll.scrollTop;
+    if (root?.contains(document.activeElement)) focused = document.activeElement;
+    if (hosted && scrollBox) scrollTop = scrollBox.scrollTop;
   }
-
-  function mount() {
-    const scroll = cartMenu()?.querySelector("[data-cart-panel-scroll]");
-    if (!editor || !scroll) return;
+  function controls() {
+    const menu = cartMenu();
+    if (!menu) return;
+    menu.dataset.flowHost = String(hosted);
+    const button = menu.querySelector("[data-close-details]");
+    const back = hosted && root?.dataset.flowStep === "review" && root.dataset.flowBackUrl;
+    button?.querySelector("[data-panel-close-icon]")?.toggleAttribute("hidden", Boolean(back));
+    button?.querySelector("[data-panel-back-icon]")?.toggleAttribute("hidden", !back);
+    if (button) button.setAttribute("aria-label", back ? button.dataset.backLabel : button.dataset.closeLabel);
+  }
+  function mount({ open = false } = {}) {
+    const menu = cartMenu(), scroll = menu?.querySelector("[data-cart-panel-scroll]");
+    if (!root || !scroll) return;
     preserve();
-    if (editor.parentElement !== scroll) scroll.replaceChildren(editor);
-    previousScroll = scroll;
-    scroll.scrollTop = scrollTop;
-    if (cartMenu()?.open) focused?.focus({ preventScroll: true });
+    if (mobile.matches) {
+      if (root.parentElement !== scroll) {
+        preview = document.createDocumentFragment();
+        preview.append(...scroll.childNodes);
+        scroll.replaceChildren(root);
+      }
+      hosted = true;
+      scrollBox = scroll;
+      scroll.scrollTop = scrollTop;
+      controls();
+      if (open && !menu.open) document.dispatchEvent(new CustomEvent("mobile-menu-request", { detail: { key: "cart" } }));
+    } else {
+      if (!root.closest("main")) {
+        if (!slot?.isConnected) {
+          const main = document.querySelector("main > .container");
+          slot = document.createComment("order flow");
+          main.replaceChildren(slot);
+        }
+        slot.after(root);
+        if (flowUrl && location.href !== flowUrl) history.replaceState({ orderFlow: true }, "", flowUrl);
+      }
+      if (hosted && preview) scroll.replaceChildren(preview);
+      if (hosted) menu.open = false;
+      hosted = false;
+      controls();
+    }
+    if (focused?.isConnected && (menu.open || !mobile.matches)) focused.focus({ preventScroll: true });
   }
-
-  function loadScript(source) {
-    const url = new URL(source, location.href);
-    // Dependencies are explicitly marked on our same-origin cart response.
-    if (url.origin !== location.origin) return Promise.reject(new Error("Invalid cart script"));
-    if ([...document.scripts].some(script => script.src === url.href)) return Promise.resolve();
-    if (!scripts.has(url.href)) scripts.set(url.href, new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = url.href;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.body.append(script);
-    }));
-    return scripts.get(url.href);
+  async function dependencies(page, scope) {
+    for (const source of page.querySelectorAll("script[data-cart-editor-script][src]")) {
+      const url = new URL(source.getAttribute("src"), location.origin);
+      if (url.origin !== location.origin) throw new Error("Invalid flow script");
+      if ([...document.scripts].some(script => script.src === url.href)) continue;
+      if (!scripts.has(url.href)) scripts.set(url.href, new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = url.href; script.onload = resolve; script.onerror = reject;
+        document.body.append(script);
+      }));
+      await scripts.get(url.href);
+    }
+    window.enhanceSelects?.(scope);
+    window.enhanceSmoothDetails?.(scope);
+    document.dispatchEvent(new Event("cart-editor-ready"));
+    document.dispatchEvent(new CustomEvent("navbar-cart-refreshed", { detail: { layoutOnly: true } }));
+    document.dispatchEvent(new Event("order-flow-ready"));
   }
-
-  async function loadEditor() {
+  async function adopt(next, page, url) {
+    preserve();
+    const old = root;
+    root = next;
+    flowUrl = url;
+    focused = null;
+    scrollTop = 0;
+    if (old?.isConnected) old.replaceWith(root);
+    mount({ open: mobile.matches });
+    controls();
+    await dependencies(page, root);
+    return root;
+  }
+  async function loadCart() {
     if (loading) return loading;
-    if (editor && !stale) { mount(); return; }
+    if (root && !stale) { mount({ open: true }); return root; }
     const url = cartMenu()?.dataset.cartPageUrl;
-    if (!url) return;
-    const scroll = cartMenu().querySelector("[data-cart-panel-scroll]");
-    scroll?.setAttribute("aria-busy", "true");
+    if (!url) return null;
     loading = (async () => {
       const response = await fetch(url, { credentials: "same-origin" });
-      if (!response.ok) throw new Error("Could not load cart");
+      if (!response.ok) throw new Error("Cart unavailable");
       const page = new DOMParser().parseFromString(await response.text(), "text/html");
-      const next = page.querySelector("[data-responsive-cart-page]");
-      if (!next) throw new Error("Cart editor missing");
-      const draft = [...(editor?.querySelector("[data-checkout-details-form]")?.elements || [])]
-        .filter(field => field.name && field.type !== "hidden")
-        .map(field => [field.name, field.value]);
-      preserve();
-      editor?.remove();
-      editor = document.importNode(next, true);
+      const next = page.querySelector("[data-order-flow-page]");
+      if (!next) throw new Error("Missing cart");
+      const draft = [...(root?.querySelector("[data-checkout-details-form]")?.elements || [])].filter(e => e.name && e.type !== "hidden").map(e => [e.name, e.value]);
+      const imported = document.importNode(next, true);
       for (const [name, value] of draft) {
-        const field = editor.querySelector("[data-checkout-details-form]")?.elements.namedItem(name);
+        const field = imported.querySelector("[data-checkout-details-form]")?.elements.namedItem(name);
         if (field) field.value = value;
       }
       stale = false;
-      focused = null;
-      mount();
-      for (const script of page.querySelectorAll("script[data-cart-editor-script][src]")) await loadScript(script.src);
-      window.enhanceSelects?.(editor);
-      window.enhanceSmoothDetails?.(editor);
-      document.dispatchEvent(new Event("cart-editor-ready"));
-      document.dispatchEvent(new CustomEvent("navbar-cart-refreshed", { detail: { layoutOnly: true } }));
-    })().catch(() => {
-      // The ordinary cart URL remains a complete server-rendered fallback.
-      if (cartMenu()?.open) window.location.assign(url);
-    }).finally(() => {
-      cartMenu()?.querySelector("[data-cart-panel-scroll]")?.removeAttribute("aria-busy");
-      loading = null;
-    });
+      return adopt(imported, page, response.url);
+    })().catch(() => { if (cartMenu()?.open) location.assign(url); return null; }).finally(() => { loading = null; });
     return loading;
   }
-
-  function open() {
-    const cart = cartMenu();
-    if (!cart || cart.dataset.cartLocked === "true") return;
-    document.dispatchEvent(new CustomEvent("mobile-menu-request", { detail: { key: "cart" } }));
-    void loadEditor();
-  }
-  document.addEventListener("click", event => {
-    const link = event.target.closest("a[href]");
-    if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-    if (cartMenu()?.dataset.cartLocked === "true") return;
-    if (new URL(link.href).pathname !== cartMenu()?.dataset.cartPageUrl) return;
-    event.preventDefault();
-    event.stopPropagation();
-    open();
-  }, true);
   document.addEventListener("toggle", event => {
-    if (event.target !== cartMenu()) return;
-    if (event.target.open) void loadEditor();
-    else if (directVisit && !matchMedia("(max-width: 767px)").matches
-        && !document.querySelector('details[data-mobile-menu][open]')) {
-      window.location.assign(editor?.dataset.cartReturnUrl || "/");
-    }
+    if (event.target === cartMenu() && event.target.open && mobile.matches && !hosted) void loadCart();
   }, true);
   document.addEventListener("navbar-cart-replacing", preserve);
-  document.addEventListener("navbar-cart-refreshed", event => {
-    if (!event.detail?.layoutOnly) mount();
-  });
-  document.addEventListener("cart-changed", event => {
-    if (event.detail?.source !== "current-order") stale = true;
-  });
-  document.addEventListener("cart-editor-invalidated", () => {
-    stale = true;
-    if (cartMenu()?.open) void loadEditor();
+  document.addEventListener("navbar-cart-refreshed", event => { if (!event.detail?.layoutOnly && hosted) mount(); });
+  document.addEventListener("cart-changed", event => { if (event.detail?.source !== "current-order") stale = true; });
+  document.addEventListener("cart-editor-invalidated", () => { stale = true; if (hosted) void loadCart(); });
+  document.addEventListener("click", event => {
+    const link = event.target.closest("a[href]");
+    if (!mobile.matches || !link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    if (cartMenu()?.dataset.cartLocked === "true" && !hosted) return;
+    if (new URL(link.href).pathname !== cartMenu()?.dataset.cartPageUrl) return;
+    event.preventDefault(); event.stopPropagation();
+    if (hosted && root?.dataset.flowStep !== "cart") void app.orderFlow?.visit(link.href);
+    else void loadCart().then(() => mount({ open: true }));
+  }, true);
+  document.addEventListener("panel-close-request", event => {
+    if (event.target !== cartMenu() || !hosted) return;
+    if (app.orderFlow?.busy()) { event.preventDefault(); return; }
+    if (root?.dataset.flowStep === "review" && root.dataset.flowBackUrl) {
+      event.preventDefault(); void app.orderFlow?.visit(root.dataset.flowBackUrl);
+    }
   });
   document.addEventListener("mobile-menu-settled", event => {
-    if (directVisit && !event.detail.key) window.location.assign(editor?.dataset.cartReturnUrl || "/");
+    if (!hosted || event.detail.key) return;
+    if (directVisit || location.href !== originUrl || root?.dataset.flowStep === "placed") location.assign(root?.dataset.flowCloseUrl || originUrl);
   });
-  if (editor) { mount(); open(); }
+  mobile.addEventListener("change", () => mount({ open: mobile.matches && Boolean(root) }));
+  app.cartPanel = { getRoot: () => root, adopt, dependencies, loadCart, mount };
+  if (root) mount({ open: mobile.matches });
 })();

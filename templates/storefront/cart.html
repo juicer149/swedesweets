@@ -6,16 +6,19 @@
 {% block content %}
 <section
   class="page-section"
+  data-order-flow-page
+  data-flow-step="cart"
   aria-labelledby="storefront-cart-title"
   data-current-order
   data-responsive-cart-page
+  data-flow-close-url="{{ continue_shopping_url }}"
   data-cart-return-url="{{ continue_shopping_url }}"
   data-current-order-error-message="{% trans 'Could not update quantity.' %}"
 >
   <div class="page page--centered cart-page{% if not cart_lines %} cart-page--empty{% endif %}">
     {% include "includes/orders/progress.html" with step="cart" only %}
 
-    <h1 id="storefront-cart-title" class="page__lead">
+    <h1 id="storefront-cart-title" class="page__lead visually-hidden">
       {% trans "Your cart" %}
     </h1>
 

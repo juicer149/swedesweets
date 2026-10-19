@@ -247,9 +247,6 @@
   --order-progress-lit: var(--color-accent-800);
   --order-progress-shadow: var(--interaction-text-shadow);
   --order-progress-dot-shadow: none;
-  --menu-panel-title-off-text: var(--color-primary-600);
-  --menu-panel-title-text: var(--text-strong);
-  --menu-panel-title-shadow: var(--dropdown-title-text-shadow);
   --menu-panel-edge-glow: none;
   --cart-previous-text: var(--dropdown-title-text);
   --cart-previous-active: var(--dropdown-title-active-text);

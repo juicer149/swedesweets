@@ -730,23 +730,20 @@ minimum; other quantity controls keep their existing minimum behaviour.
 | `--field-focus-color`, `--field-focus-shadow` | Border and diffuse light for focused form inputs and enhanced selects |
 | `--entrance-field-focus-shadow` | Entrance form emission, following its menu accent |
 
-The cart panel is the complete editor on desktop and mobile. Retail stacks
-Your details beneath products; B2B shows Previous orders, compact product search,
-then its current products and Review order. Review remains a separate page
-with Place order. Desktop panels use up to 60rem, with quantities alongside
-products and amounts. Both email fields span the form; postal code uses one
-of four columns and town uses three. Mobile keeps the two-column form layout.
-Country stays France, following the existing delivery policy.
+Desktop has a compact quick cart (up to 38rem): product rows, quantity
+steppers and Go to cart. This opens the real cart page, with contact details
+below the products for retail, or Previous orders/product search for B2B.
+Cart and review pages keep the panel surface and cumulative timeline. The full
+editor uses up to 60rem. Both email fields share the same width; postal code
+uses one of four columns and town uses three. Country stays France.
 
-`responsive-cart.js` fetches the existing cart URL on first opening and mounts
-its editor in the panel. Only explicitly marked cart scripts are initialized.
-The same DOM survives closure, resizing and navbar fragment replacement,
-including typed contact details, quantity handlers, focus, scroll and B2B search.
-Changes from outside the editor refresh its server data on the next opening.
-Cart URL links, including landing, open the panel at either viewport size.
-A directly visited cart URL mounts its editor there too; closing returns to
-the catalog. Without JavaScript the ordinary server-rendered cart still works.
-Forms use explicit action URLs so they also submit correctly from a catalog.
+On mobile, `responsive-cart.js` hosts cart, review and placed content in the
+same sheet. It fetches server-rendered cart content on first opening, initializes
+only explicitly marked editor scripts, and moves the live DOM between sheet
+and page on viewport changes. Fields, quantity handlers and scroll survive
+navbar refreshes. Mobile cart links (including landing) open the sheet;
+desktop links navigate to the cart page. Without JavaScript these are ordinary
+server pages and POST forms. Forms retain explicit action URLs.
 
 The Continue button requires browser-valid fields and matching emails; Django
 still validates delivery, ownership, stock and payment locks. Only confirmation
@@ -769,8 +766,8 @@ These cart-scoped roles leave the ops version of Previous orders unchanged.
 Dark panel surfaces now map `--preferences-bg` to `--menu-bg`, matching navbar
 and landing; light keeps its existing surface. A decorative top layer uses
 `--menu-panel-edge-glow` to let the gold edge fade down into the panel. Light
-sets this to `none`. `--menu-panel-title-text` and `--menu-panel-title-shadow`
-paint the cart heading, with extra space above it.
+sets this to `none`. Cart and review use their timeline instead of a second
+visible page heading. Settings and account have no extra panel heading.
 
 FAQ and the cart's Previous orders (including each nested order) opt into
 `glow-accordions`. Their common roles are defined near the start of each theme:
@@ -787,7 +784,7 @@ FAQ and cart mappings remain below these shared roles for local overrides.
 The ops Previous orders does not opt into these customer accordion effects.
 An empty retail panel centres its message and holds Browse shop near the lower
 edge; when height is insufficient, its contents scroll above the fixed close
-control. This layout is shared by desktop and mobile.
+control on mobile; the full desktop cart uses the same empty-state layout.
 
 `menu-scroll-ready` suppresses the native scrollbar with sufficient specificity
 to win over the cart's base styles, leaving one custom position marker. Product
@@ -798,31 +795,38 @@ editor so its own scroll area remains reachable instead of being clipped.
 
 ## Panel light sequence and order journey
 
-Panels start with blue headings and no internal emission. Once the downward
-320ms slide finishes, `mobile-menu.js` sets `data-panel-lit`; the title, edge
-light and selected controls illuminate over 140ms. Closing clears that state,
-waits 140ms for extinction, then retracts over 240ms. Reduced motion skips the
-slide/fade waits. Cart fragment refresh preserves both this light state and its
-locked state. Account and Settings headings share `.menu-panel-title` and leave
-additional space before their controls.
+Panels start without internal emission. Once the 320ms downward slide finishes,
+`mobile-menu.js` sets `data-panel-lit`; the edge, selected controls and mobile
+timeline illuminate over 140ms. Closing extinguishes them before retracting
+for 240ms. Reduced motion skips these waits and the flow animations.
 
 `includes/orders/progress.html` and `common/order-progress.css` show Cart →
-Review order → Order placed. Earlier points, labels and connecting lines remain
-lit; future steps stay blue, with `aria-current="step"` on the current stage.
-Cart panels show the first stage, retail/B2B review shows the second, and the
-newly placed B2B order or confirmed retail payment shows the third. Failed or
-uncertain payments remain at review. Historical B2B order detail does not show
-a new checkout journey unless opened as the just-placed destination.
+Review order → Order placed. Reached points, labels and lines remain lit;
+future steps stay blue and the current stage has `aria-current="step"`.
+`order-flow.js` hides content during an opted-in submit and places the existing
+status burst centrally below the persistent timeline. Only after the real
+server response does the next connector illuminate left to right (450ms),
+its dot flash (280ms), and new content reveal top to bottom (350ms).
+Validation errors render the returned form/messages without advancing. Transport
+failures restore the content and offer a GET reload: POSTs are never retried.
+Browser Back/Forward and explicit edit links also fetch authoritative pages.
 
-On review and payment-result/just-placed pages the navbar cart trigger is inert,
-and the panel controller rejects requests to open it. Explicit Edit cart/Back
-links still navigate to the editor, restoring the cart stage. This is navigation
-behaviour; the existing server validation and payment locks remain authoritative.
+Retail payment submits normally to preserve hosted-provider redirects. While
+leaving, the central burst waits for navigation. On verified return the journey
+animates the final connector only for confirmed payment. Failed or uncertain
+payments remain at review. B2B reaches placed after the server creates its
+order; historical order details omit the journey unless just placed.
+
+On mobile the sheet stays open through all stages. The close circle becomes
+Back during review, then Close again after placement. Covered content is inert;
+page links and other header triggers hide, leaving the logo/home link and the
+bottom close/back control. Escape follows the same back/close behavior, and
+cannot interrupt an in-flight submit. On desktop review remains a framed page.
+The navbar cart is locked on later stages; an existing mobile flow host remains
+open rather than opening a second editor. Server payment locks still apply.
 
 | Role | Purpose |
 | --- | --- |
-| `--menu-panel-title-off-text` | Blue title while arriving/leaving |
-| `--menu-panel-title-text`, `--menu-panel-title-shadow` | Lit panel and flow page headings |
 | `--order-progress-ready`, `--order-progress-lit` | Future versus reached steps and lines |
 | `--order-progress-shadow`, `--order-progress-dot-shadow` | Text and point/connector emission |
 | `--catalog-outline-shadow` | Quiet external rim around product image and label, separate from hover |

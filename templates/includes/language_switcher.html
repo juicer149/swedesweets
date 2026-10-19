@@ -8,7 +8,6 @@
   <div class="site-preferences__panel mobile-menu-panel" role="region" aria-label="{% trans 'Settings' %}">
     <span class="menu-panel-toplight" aria-hidden="true"></span>
     <div class="menu-panel-scroll" data-menu-panel-scroll>
-      <h2 class="menu-panel-title">{% trans 'Settings' %}</h2>
     <form class="language-switcher" action="{% url 'set_language' %}" method="post" data-language-preferences data-dirty-ignore="true">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ request.get_full_path }}">

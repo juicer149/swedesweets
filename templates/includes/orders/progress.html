@@ -1,5 +1,5 @@
 {% load i18n %}
-<nav class="order-progress" aria-label="{% trans 'Order progress' %}" data-order-progress="{{ step }}">
+<nav class="order-progress" aria-label="{% trans 'Order progress' %}" data-order-progress="{{ step }}" data-flow-reload="{% trans 'Reload page' %}" data-flow-loading="{% trans 'Loading…' %}" data-flow-error="{% trans 'We could not load the next step. Reload the page to check your order.' %}">
   <ol class="order-progress__steps">
     <li class="order-progress__step is-lit"{% if step == 'cart' %} aria-current="step"{% endif %}>
       <span class="order-progress__dot" aria-hidden="true"></span>

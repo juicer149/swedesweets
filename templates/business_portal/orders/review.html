@@ -6,12 +6,16 @@
 {% block content %}
 <section
   class="page-section"
+  data-order-flow-page
+  data-flow-step="review"
+  data-flow-back-url="{{ back_url }}"
+  data-flow-close-url="{% url 'business_portal:catalog' %}"
   aria-labelledby="portal-review-order-title"
 >
   <div class="page page--centered page--wide order-flow">
     {% include "includes/orders/progress.html" with step="review" only %}
     <header class="page__heading">
-      <h1 id="portal-review-order-title" class="page__lead">
+      <h1 id="portal-review-order-title" class="page__lead visually-hidden">
         {{ title }}
       </h1>
 
@@ -27,7 +31,7 @@
     </ul>
 
     <div class="form-actions page__actions page-actions">
-      <form class="page-actions__primary" method="post" data-submit-burst>
+      <form class="page-actions__primary" method="post" action="{% url 'business_portal:cart_review' %}" data-submit-burst data-order-flow-submit>
         {% csrf_token %}
 
         <button
@@ -41,12 +45,12 @@
       </form>
 
       <div class="page-actions__links">
-        <a class="quiet-link" href="{{ back_url }}">
+        <a class="quiet-link" href="{{ back_url }}" data-order-flow-back>
           {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
           {{ back_label }}
         </a>
 
-        <form method="post">
+        <form method="post" action="{% url 'business_portal:cart_review' %}">
           {% csrf_token %}
 
           <button

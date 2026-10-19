@@ -6,16 +6,19 @@
 {% block content %}
 <section
   class="page-section"
+  data-order-flow-page
+  data-flow-step="cart"
   aria-labelledby="portal-place-order-title"
   data-current-order
   data-responsive-cart-page
+  data-flow-close-url="{{ continue_shopping_url }}"
   data-cart-return-url="{{ continue_shopping_url }}"
   data-current-order-error-message="{% trans 'Could not update quantity.' %}"
 >
   <div class="page page--centered cart-page glow-accordions">
     {% include "includes/orders/progress.html" with step="cart" only %}
 
-    <h1 id="portal-place-order-title" class="page__lead">
+    <h1 id="portal-place-order-title" class="page__lead visually-hidden">
       {% trans "Order" %}
     </h1>
 
@@ -79,7 +82,7 @@
     </ul>
 
     <div class="form-actions page__actions page-actions" data-cart-lines {% if not cart_lines %}hidden{% endif %}>
-      <form class="page-actions__primary" method="post" action="{% url 'business_portal:cart' %}" data-submit-burst>
+      <form class="page-actions__primary" method="post" action="{% url 'business_portal:cart' %}" data-submit-burst data-order-flow-submit>
         {% csrf_token %}
 
         <button
