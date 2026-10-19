@@ -760,3 +760,26 @@ remain the fallback without JavaScript.
 B2B Previous orders uses `--cart-previous-text` for ready text and
 `--cart-previous-active` / `--cart-previous-glow` for open, hover and focus.
 These cart-scoped roles leave the ops version of Previous orders unchanged.
+
+Dark panel surfaces now map `--preferences-bg` to `--menu-bg`, matching navbar
+and landing; light keeps its existing surface. A decorative top layer uses
+`--menu-panel-edge-glow` to let the gold edge fade down into the panel. Light
+sets this to `none`. `--menu-panel-title-text` and `--menu-panel-title-shadow`
+paint the cart heading, with extra space above it.
+
+FAQ and the cart's Previous orders (including each nested order) opt into
+`glow-accordions`. Their common roles are defined near the start of each theme:
+
+| Role | Controls |
+| --- | --- |
+| `--dropdown-title-text` | Closed heading text |
+| `--dropdown-title-hover-text` | Hover/focus heading text |
+| `--dropdown-title-active-text` | Open heading text |
+| `--dropdown-title-glow`, `--dropdown-title-glow-filter` | Diffuse light behind the text and chevron |
+| `--dropdown-title-text-shadow`, `--dropdown-title-icon-filter` | Emission from the actual letters and icon |
+
+FAQ and cart mappings remain below these shared roles for local overrides.
+The ops Previous orders does not opt into these customer accordion effects.
+An empty retail panel centres its message and holds Browse shop near the lower
+edge; when height is insufficient, its contents scroll above the fixed close
+control. This layout is shared by desktop and mobile.

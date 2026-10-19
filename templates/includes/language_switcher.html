@@ -6,6 +6,7 @@
   </summary>
   <div class="mobile-menu-viewport">
   <div class="site-preferences__panel mobile-menu-panel" role="region" aria-label="{% trans 'Settings' %}">
+    <span class="menu-panel-toplight" aria-hidden="true"></span>
     <div class="menu-panel-scroll" data-menu-panel-scroll>
     <form class="language-switcher" action="{% url 'set_language' %}" method="post" data-language-preferences data-dirty-ignore="true">
       {% csrf_token %}

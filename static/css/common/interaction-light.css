@@ -1,6 +1,6 @@
 /* Shared local hover/focus light. Themes own its paint; layout stays here.
    Keep the name/question above the halo and leave secondary prose neutral. */
-:is(.menu-panel-link, .section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand) {
+:is(.menu-panel-link, .section-nav__link, .find-sweets .line__link, .glow-accordions .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand) {
   position: relative;
   isolation: isolate;
 }
@@ -20,13 +20,13 @@
 
 /* Content-sized lights: each question/name and its icon emit independently,
    rather than putting the brightest part in the empty middle of the row. */
-:is(.faq .accordion__summary > span:first-child, .faq .accordion__chevron,
+:is(.glow-accordions .accordion__summary > span:first-child, .glow-accordions .accordion__chevron,
     .find-sweets .line__name, .find-sweets .line__icon) {
   position: relative;
   isolation: isolate;
 }
 
-:is(.faq .accordion__summary > span:first-child, .faq .accordion__chevron,
+:is(.glow-accordions .accordion__summary > span:first-child, .glow-accordions .accordion__chevron,
     .find-sweets .line__name, .find-sweets .line__icon)::before {
   content: "";
   position: absolute;
@@ -41,18 +41,18 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .faq .accordion__summary:hover > span::before,
+  .glow-accordions .accordion__summary:hover > span::before,
   .find-sweets .line__link:hover :is(.line__name, .line__icon)::before {
     opacity: var(--interaction-halo-opacity);
   }
 }
 
-.faq .accordion__summary:focus-visible > span::before,
+.glow-accordions .accordion__summary:focus-visible > span::before,
 .find-sweets .line__link:focus-visible :is(.line__name, .line__icon)::before {
   opacity: var(--interaction-halo-opacity);
 }
 
-.faq .accordion[open] > .accordion__summary > span::before {
+.glow-accordions .accordion[open] > .accordion__summary > span::before {
   opacity: var(--interaction-selected-opacity);
 }
 
@@ -60,7 +60,7 @@
 .section-nav__label,
 .landing-menu__text,
 .landing__account-label,
-.faq .accordion__summary > span:first-child {
+.glow-accordions .accordion__summary > span:first-child {
   padding-block: 0.18em;
   margin-block: -0.18em;
 }
@@ -96,18 +96,18 @@
 }
 
 /* The ink is solid; a small emission follows the actual glyph/icon shape. */
-:is(.menu-panel-link, .section-nav__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action):is(:hover, :focus-visible),
+:is(.menu-panel-link, .section-nav__link, .glow-accordions .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action):is(:hover, :focus-visible),
 :is(.section-nav__link--active, .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"], .section-nav__link[aria-pressed="true"],
-    .faq .accordion[open] > .accordion__summary, .landing-menu__link--chosen,
+    .glow-accordions .accordion[open] > .accordion__summary, .landing-menu__link--chosen,
     .menu-panel-link[aria-current="page"]) {
   text-shadow: var(--interaction-text-shadow);
 }
 
-:is(.menu-panel-link, .section-nav__link, .faq .accordion__summary, .landing-menu__link, .landing__account):is(:hover, :focus-visible) .ui-icon-svg,
+:is(.menu-panel-link, .section-nav__link, .glow-accordions .accordion__summary, .landing-menu__link, .landing__account):is(:hover, :focus-visible) .ui-icon-svg,
 :is(.section-nav__link--active, .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"], .section-nav__link[aria-pressed="true"],
-    .faq .accordion[open] > .accordion__summary, .landing-menu__link--chosen) .ui-icon-svg {
+    .glow-accordions .accordion[open] > .accordion__summary, .landing-menu__link--chosen) .ui-icon-svg {
   filter: var(--interaction-icon-filter);
 }
 
@@ -121,13 +121,13 @@
   filter: var(--interaction-icon-filter);
 }
 
-.faq .accordion__summary:focus-visible {
-  color: var(--faq-question-hover-text);
+.glow-accordions .accordion__summary:focus-visible {
+  color: var(--dropdown-title-hover-text);
 }
 
-.faq .accordion__summary:is(:hover, :focus-visible) .accordion__chevron,
-.faq .accordion[open] > .accordion__summary .accordion__chevron {
-  color: var(--faq-question-lit-icon);
+.glow-accordions .accordion__summary:is(:hover, :focus-visible) .accordion__chevron,
+.glow-accordions .accordion[open] > .accordion__summary .accordion__chevron {
+  color: var(--dropdown-title-active-text);
 }
 
 /* The catalog cart keeps its own hover/focus rules. Navbar icons below
@@ -138,17 +138,17 @@
 
 @media (forced-colors: active) {
   .site-nav__link::after,
-  :is(.faq .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
+  :is(.glow-accordions .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
   :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
     display: none;
   }
 
   :is(.site-nav__label, .section-nav__link, .find-sweets .line__name,
-      .faq .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action, .language-switcher__option) {
+      .glow-accordions .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action, .language-switcher__option) {
     text-shadow: none !important;
   }
 
-  :is(.site-nav__icon, .menu-panel-link, .section-nav__link, .faq .accordion__summary,
+  :is(.site-nav__icon, .menu-panel-link, .section-nav__link, .glow-accordions .accordion__summary,
       .landing-menu__link, .landing__account, .find-sweets .line__icon, .site-brand, .site-nav-cart__trigger, .tile__add) .ui-icon-svg,
   .site-brand__logo,
   .entrance-header__logo,
@@ -161,7 +161,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :is(.faq .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
+  :is(.glow-accordions .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
   :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
     transition: none;
   }
@@ -253,3 +253,13 @@ details[open] > .menu-dropdown-trigger .ui-icon-svg,
 @media (min-width: 768px) and (hover: hover) and (pointer: fine) {
   .menu-panel-link:hover { transform: translateY(-1px); }
 }
+
+/* Accordion headings share their own paint, while other navigation keeps its roles. */
+.glow-accordions .accordion__summary > span::before {
+  background: var(--dropdown-title-glow);
+  filter: var(--dropdown-title-glow-filter);
+}
+.glow-accordions .accordion__summary:is(:hover, :focus-visible),
+.glow-accordions .accordion[open] > .accordion__summary { text-shadow: var(--dropdown-title-text-shadow); }
+.glow-accordions .accordion__summary:is(:hover, :focus-visible) .ui-icon-svg,
+.glow-accordions .accordion[open] > .accordion__summary .ui-icon-svg { filter: var(--dropdown-title-icon-filter); }

@@ -580,3 +580,10 @@ softer joins. Outlines share the navbar's `--menu-edge`. Desktop cart has a clos
 circle too, and outside click/Escape dismiss it. Overflowing content scrolls
 inside the frame with a persistent position marker and an accessible close
 control. Short menus show no marker.
+
+In dark mode panel backgrounds match navbar/landing, with a soft light fading
+down from the gold top edge. Cart headings are gold with the shared emission
+and more space above. FAQ, Previous orders and its nested order headings share
+`--dropdown-title-*` roles; component aliases remain available in the themes.
+Empty retail carts centre the message and keep Browse shop near the bottom,
+falling back to internal scrolling when the screen is short.

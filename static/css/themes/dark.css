@@ -31,6 +31,15 @@
   --interactive-text-strong: var(--color-primary-150);
   --interactive-border: var(--color-primary-200);
 
+  /* Shared expandable titles: FAQ, Previous orders and each nested order. */
+  --dropdown-title-text: var(--interactive-text);
+  --dropdown-title-hover-text: var(--selected-accent);
+  --dropdown-title-active-text: var(--selected-accent);
+  --dropdown-title-glow: var(--interaction-glow);
+  --dropdown-title-glow-filter: var(--interaction-glow-filter);
+  --dropdown-title-text-shadow: var(--interaction-text-shadow);
+  --dropdown-title-icon-filter: var(--interaction-icon-filter);
+
   /* Main actions are available blue at rest, gold while hovered/focused.
      Selection retains its independent gold role. */
   --action-primary-bg: var(--color-primary-800);
@@ -139,11 +148,14 @@
   --menu-link-glow-blur: 10px;
 
   --preferences-trigger-ink: var(--interactive-text);
-  --preferences-bg: var(--surface-muted);
+  --preferences-bg: var(--menu-bg);
   --preferences-ink: var(--text-strong);
-  --cart-previous-text: var(--interactive-text);
-  --cart-previous-active: var(--selected-accent);
-  --cart-previous-glow: var(--interaction-text-shadow);
+  --menu-panel-title-text: var(--dropdown-title-active-text);
+  --menu-panel-title-shadow: var(--dropdown-title-text-shadow);
+  --menu-panel-edge-glow: linear-gradient(to bottom, color-mix(in srgb, var(--menu-edge) 14%, transparent), color-mix(in srgb, var(--menu-edge) 4%, transparent) 40%, transparent);
+  --cart-previous-text: var(--dropdown-title-text);
+  --cart-previous-active: var(--dropdown-title-active-text);
+  --cart-previous-glow: var(--dropdown-title-text-shadow);
   --menu-scroll-thumb: var(--interactive-text);
   --menu-scroll-track: color-mix(in srgb, var(--interactive-text) 12%, transparent);
   --preferences-border: var(--menu-edge);
@@ -207,9 +219,9 @@
 
   /* 4. Reading, FAQ and contact details */
   --prose-text: var(--text-reading);
-  --faq-question-text: var(--interactive-text);
-  --faq-question-hover-text: var(--selected-accent);
-  --faq-question-open-text: var(--selected-accent);
+  --faq-question-text: var(--dropdown-title-text);
+  --faq-question-hover-text: var(--dropdown-title-hover-text);
+  --faq-question-open-text: var(--dropdown-title-active-text);
   --faq-question-hover-bg: transparent;
   --faq-question-open-bg: transparent;
 

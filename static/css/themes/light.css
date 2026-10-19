@@ -2,6 +2,15 @@
 :root {
   --color-link: var(--color-primary-700);
 
+  /* Shared expandable titles: FAQ, Previous orders and each nested order. */
+  --dropdown-title-text: var(--text-body);
+  --dropdown-title-hover-text: var(--color-accent-900);
+  --dropdown-title-active-text: var(--text-main);
+  --dropdown-title-glow: var(--interaction-glow);
+  --dropdown-title-glow-filter: var(--interaction-glow-filter);
+  --dropdown-title-text-shadow: var(--interaction-text-shadow);
+  --dropdown-title-icon-filter: var(--interaction-icon-filter);
+
   /* ==========================================================================
      Standard text-on-tint colors
 
@@ -234,9 +243,12 @@
   --preferences-trigger-ink: var(--menu-ink);
   --preferences-bg: var(--page-bg);
   --preferences-ink: var(--text-strong);
-  --cart-previous-text: var(--color-primary-600);
-  --cart-previous-active: var(--menu-chosen);
-  --cart-previous-glow: var(--interaction-text-shadow);
+  --menu-panel-title-text: var(--text-strong);
+  --menu-panel-title-shadow: var(--dropdown-title-text-shadow);
+  --menu-panel-edge-glow: none;
+  --cart-previous-text: var(--dropdown-title-text);
+  --cart-previous-active: var(--dropdown-title-active-text);
+  --cart-previous-glow: var(--dropdown-title-text-shadow);
   --menu-scroll-thumb: var(--color-primary-600);
   --menu-scroll-track: color-mix(in srgb, var(--color-primary-600) 12%, transparent);
   --preferences-border: var(--menu-edge);
@@ -409,9 +421,9 @@
   --select-option-selected-bg: var(--color-accent-100);
   --catalog-cart-hover-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.14);
 
-  --faq-question-text: var(--text-body);
-  --faq-question-hover-text: var(--color-accent-900);
-  --faq-question-open-text: var(--text-main);
+  --faq-question-text: var(--dropdown-title-text);
+  --faq-question-hover-text: var(--dropdown-title-hover-text);
+  --faq-question-open-text: var(--dropdown-title-active-text);
   --faq-question-hover-bg: var(--surface-muted);
   --faq-question-open-bg: var(--accordion-open-bg);
 

@@ -188,3 +188,19 @@
   .menu-scroll-track { background: Canvas; }
   .menu-scroll-thumb { background: ButtonText; }
 }
+
+/* Light falls from the navbar/panel edge, above the surface and below content. */
+.mobile-menu-panel { isolation: isolate; }
+.menu-panel-toplight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: min(5rem, calc(100% - 4rem));
+  z-index: 0;
+  pointer-events: none;
+  background: var(--menu-panel-edge-glow);
+}
+.mobile-menu-panel > [data-menu-panel-scroll] { position: relative; z-index: 1; }
+.mobile-menu-close, .menu-scroll-track { z-index: 2; }
+@media (forced-colors: active) { .menu-panel-toplight { display: none; } }
