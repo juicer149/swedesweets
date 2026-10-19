@@ -57,3 +57,20 @@
 .checkout-address__body strong {
   color: var(--text-main);
 }
+
+/* A readable form column, even when product rows use the desktop width. */
+.cart-details .form-field:has(input[type="email"]) { max-width: 26rem; width: 100%; }
+.cart-details .cart-details__phone { max-width: 18rem; width: 100%; }
+.order-flow-page .form-actions { justify-content: center; justify-items: center; }
+.order-flow-page .page-actions__primary { display: flex; flex-direction: column; align-items: center; }
+.order-flow-page .form-actions .page__submit {
+  width: fit-content; min-width: min(16rem, 100%); max-width: 100%;
+  margin-inline: auto; justify-self: center;
+}
+.order-flow-page .order-flow-content .page__actions { margin-top: var(--space-12); }
+.payment-confirmation { margin-top: var(--space-10); }
+.payment-confirmation__heading { margin-bottom: var(--space-5); color: var(--text-strong); font: 700 var(--font-size-24) var(--font-heading); }
+.payment-confirmation .checkout-address { margin-top: var(--space-10); }
+.payment-confirmation__contacts { margin-top: var(--space-4); overflow-wrap: anywhere; }
+.cart-details .form-field:has(select[disabled]) { max-width: 18rem; width: 100%; }
+.payment-confirmation > .page__note { text-align: start; }

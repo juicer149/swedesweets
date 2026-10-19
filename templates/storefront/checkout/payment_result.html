@@ -39,6 +39,10 @@
         <p class="page__text page__note">{% trans "We'll contact you when your order is on its way." %}</p>
       </div>
 
+      {% if confirmation %}
+        {% include "includes/orders/retail_confirmation.html" with receipt=confirmation reference=order_reference only %}
+      {% endif %}
+
       <div class="form-actions page__actions">
         <a class="button button--md button--solid button--tone-place page__submit" href="{{ shop_url }}">
           {% trans "Back to shop" %}

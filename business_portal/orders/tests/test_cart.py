@@ -16,6 +16,8 @@ from business.tests.factories import (
 from customers.tests.factories import (
     customer_factory,
 )
+from inventory.tests.conftest import TODAY
+from inventory.tests.factories import batch_factory
 from products.tests.factories import (
     product_factory,
 )
@@ -264,4 +266,19 @@ def test_clear_cart_keeps_destination_with_a_local_confirmation(client, route):
     html = landing.content.decode()
     assert 'class="cart-notice" data-cart-notice role="status"' in html
     assert "Cart cleared." in html
+    assert 'class="message message--success"' not in html
+
+
+@pytest.mark.django_db
+def test_placed_destination_has_no_duplicate_success_banner(client):
+    customer = _login_customer(client=client)
+    line = _create_cart_line(customer=customer, quantity=1)
+    batch_factory(product=line.commercial_price.product, today=TODAY, quantity=10)
+    response = client.post(
+        reverse("business_portal:cart_review"), {"intent": "place_order"},
+        follow=True,
+    )
+    assert response.status_code == 200
+    html = response.content.decode()
+    assert 'data-order-progress="placed"' in html
     assert 'class="message message--success"' not in html

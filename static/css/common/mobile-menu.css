@@ -286,3 +286,26 @@ details[data-mobile-menu]:not([data-panel-lit]) .mobile-menu-panel {
 .order-flow-busy .mobile-menu-close { pointer-events: none; opacity: .45; }
 
 .landing__top .menu-panel-toplight { display: none; }
+
+/* Desktop account/settings use a centred card; the cart keeps its quick view. */
+@media (min-width: 768px) {
+  :is(.account-menu, .site-preferences)[open] > .mobile-menu-viewport {
+    display: grid; inset: 0; place-items: center; padding: 2.5rem 1rem;
+    overflow: visible;
+  }
+  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel {
+    position: relative; inset: auto; translate: none;
+    width: min(38rem, calc(100vw - 2rem)); min-height: min(28rem, calc(100dvh - 5rem));
+    max-height: calc(100dvh - 5rem); padding: clamp(1.5rem, 5dvh, 3rem) clamp(1.25rem, 4vw, 2.5rem) 3rem;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 1px solid var(--menu-edge); border-radius: var(--radius-md);
+  }
+  :is(.account-menu__panel, .site-preferences__panel) .menu-panel-toplight { display: none; }
+  :is(.account-menu__panel, .site-preferences__panel) .menu-panel-scroll {
+    width: 100%; max-height: calc(100dvh - 11rem); overflow-y: auto;
+    gap: clamp(0.75rem, 3dvh, 1.5rem);
+  }
+  .account-menu .account-menu__link { font-size: clamp(1.125rem, 2vw, 1.5rem); padding-block: var(--space-4); }
+  .site-preferences__panel .language-switcher__option { font-size: 1.5rem; }
+  .site-preferences__panel .site-preferences__group legend { font-size: 1rem; margin-bottom: var(--space-4); }
+}

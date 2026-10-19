@@ -1,5 +1,5 @@
 /* A cumulative journey: each completed point and connecting line stays lit. */
-.order-progress { width: 100%; margin: 0 auto var(--space-6); }
+.order-progress { width: 100%; margin: 0 auto var(--space-10); }
 .order-progress__steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
 .order-progress__step { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); min-width: 0; color: var(--order-progress-ready); font-size: clamp(0.7rem, 1.8vw, 0.875rem); font-weight: 700; line-height: 1.3; text-align: center; transition: color 140ms ease, text-shadow 140ms ease; }
 .order-progress__step + .order-progress__step::before,
@@ -34,6 +34,4 @@
   .order-flow-surface::before { display: none; }
 }
 
-@media (max-width: 767px) {
-  [data-flow-step="placed"] .order-flow-content { padding-top: var(--space-6); }
-}
+[data-flow-step="placed"] .order-flow-content { padding-top: var(--space-8); }

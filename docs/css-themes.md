@@ -630,9 +630,9 @@ Keyboard dismissal still restores a visible focus indicator.
 
 ## Compact dropdowns and mobile sheets
 
-`common/mobile-menu.css` gives desktop account/settings panels up to 18rem,
-with height-aware spacing and type via `clamp()`. They grow with their short
-contents and do not scroll on desktop; all three panels have a close circle.
+`common/mobile-menu.css` gives desktop account/settings centred rounded cards
+up to 38rem, with height-aware spacing/type and a 28rem minimum when it fits.
+They scroll only when viewport height requires it; all three panels have a close circle.
 Below 768px they become full sheets. `mobile-menu.js` measures the header and
 fixed bottom navigation. Open panels lock page scrolling on either screen size;
 mobile also makes covered content inert. Closing restores both.
@@ -869,7 +869,7 @@ than full-width banners. `cart-notice.js` follows the icon on resize/scroll and
 removes the notice after about three seconds. Other messages do not expire.
 Paint belongs to `--cart-notice-bg/text/border/shadow` in both themes.
 
-Landing account/settings are centred rectangular popovers at both viewport
+Landing account/settings are large rounded centred popovers at both viewport
 sizes, with a gold `--menu-edge` border and close circle centred on the bottom
 edge. Their viewport covers the screen; the backdrop dismisses on outside
 click, and Escape/close restore the trigger. They fade/scale in rather than
@@ -882,3 +882,22 @@ before the following block. JSON successes only update rows and cart feedback.
 Native quick-add fallback success uses `cart-flow-notice`: a three-second notice
 anchored below the timeline. Other server messages on flow pages also render
 inside the content after the timeline, never before its shell.
+
+Account/settings now use centred rounded desktop popovers throughout the site;
+cart keeps its compact navbar quick view. Cards reach 38rem wide and a 28rem
+minimum height when space permits, clamped to the viewport. Landing also uses
+these larger rounded proportions on mobile. Normal mobile account/settings
+retain their V-shaped sheets. The centre-card transitions use fade/scale;
+cart and ordinary mobile sheets keep their slide. Backdrop/close/Escape remain.
+
+Checkout layout lives in `public/checkout.css` and `common/cart-panel.css`:
+32rem details column, 26rem email fields and 18rem phone. Product rows and the
+persistent timeline keep their wider 60rem cap. Checkout actions use natural
+width with a 16rem minimum and more space above; existing field gaps remain.
+The timeline's normal bottom gap is `--space-10`; placed content adds
+`--space-8` above the crown on both desktop and mobile without moving the timeline.
+
+The payment receipt reuses the line presentation with order snapshots and
+existing text/total roles. Receipt data is supplied only for confirmed payment
+in the owning session; the public return URL alone does not reveal it. The
+server's redundant B2B placed success banner has been removed.

@@ -24,9 +24,9 @@
 .quantity-stepper.is-minimum .quantity-stepper__minus { display: none; }
 .quantity-stepper.is-minimum .quantity-stepper__trash { display: contents; }
 .quantity-stepper.is-minimum [data-quantity-decrease]:hover { color: var(--cart-remove-hover); }
-.cart-details { margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--cart-row-line); text-align: start; }
+.cart-details { width: 100%; max-width: 32rem; margin-inline: auto; margin-top: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--cart-row-line); text-align: start; }
 .cart-details h2 { margin: 0 0 var(--space-2); font-family: var(--font-heading); font-size: var(--font-size-24); }
-.cart-details > .form-help { margin-bottom: var(--space-6); }
+.cart-details > .form-help { margin-bottom: var(--space-10); }
 .cart-details__help { text-align: center; }
 .checkout-form .button:disabled { color: var(--cart-disabled-ink); background: var(--cart-disabled-bg); border-color: var(--cart-disabled-border); opacity: .6; box-shadow: none; text-shadow: none; cursor: default; }
 .checkout-email-status { color: var(--color-status-warning-text); }

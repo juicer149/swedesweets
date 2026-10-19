@@ -7,6 +7,7 @@ from typing import Any
 from django.urls import reverse
 
 from common.lines import LineView, meta, metas
+from orders.models import Order
 from products.catalog import variant_display_name
 from products.images import product_image_url
 from retail.models import RetailCheckoutSession
@@ -150,6 +151,40 @@ def build_checkout_review_context(
         ),
         has_open_payment=has_open_payment,
     )
+
+
+def build_checkout_confirmation_context(*, order: Order) -> dict[str, Any]:
+    """The receipt mirrors the buyer mail, using historical names/prices."""
+    lines = tuple(
+        CheckoutReviewLine(
+            product_label=line.display_name,
+            image_url=product_image_url(line.product),
+            quantity=int(line.quantity_in_units),
+            unit_price_label=(
+                _format_eur(line.unit_price_snapshot)
+                if line.unit_price_snapshot is not None else ""
+            ),
+            line_total_label=(
+                _format_eur(line.line_total) if line.line_total is not None else ""
+            ),
+        )
+        for line in order.lines.select_related("product", "variant", "product__profile")
+    )
+    total = order.total
+    return {
+        "lines": lines,
+        "total_label": _format_eur(total) if total is not None else "",
+        "buyer": CheckoutBuyer(
+            name=order.buyer_name_snapshot,
+            email=order.buyer_email_snapshot,
+            phone_number=order.buyer_phone_snapshot,
+            address_line=order.buyer_address_line_snapshot,
+            postal_code=order.buyer_postal_code_snapshot,
+            city=order.buyer_city_snapshot,
+        ),
+        "placed_at": order.placed_at,
+        "country": order.buyer_country_snapshot,
+    }
 
 
 def _format_eur(

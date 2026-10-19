@@ -30,6 +30,7 @@ from storefront.checkout_session import (
     forget_checkout_details,
     owns_checkout,
 )
+from storefront.checkout_viewmodels import build_checkout_confirmation_context
 from storefront.faq import PUBLIC_FAQ, answered
 from storefront.find_sweets import FindSweetsShop, maps_search_href
 
@@ -136,7 +137,8 @@ def payment_return(
 
     The page is reachable by checkout id alone because the buyer may return
     from the provider in a different session. It therefore shows only the
-    order reference and payment outcome, never buyer details.
+    order reference and payment outcome to visitors. Only the owning checkout
+    session may see the receipt's product and buyer details after confirmation.
     """
 
     checkout = get_object_or_404(
@@ -183,6 +185,12 @@ def payment_return(
         {
             "result": result,
             "order_reference": checkout.order.pk,
+            "confirmation": (
+                build_checkout_confirmation_context(order=checkout.order)
+                if result == PAYMENT_RESULT_CONFIRMED
+                and owns_checkout(request, checkout_id=checkout.pk)
+                else None
+            ),
             "retry_url": _payment_retry_url(
                 request,
                 checkout=checkout,

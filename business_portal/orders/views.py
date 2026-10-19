@@ -535,16 +535,6 @@ def cart_review(request):
                         "business_portal:cart_review"
                     )
 
-                messages.success(
-                    request,
-                    _(
-                        "Order #%(order_id)s placed."
-                    )
-                    % {
-                        "order_id": placed_order.id,
-                    },
-                )
-
                 # ?placed: the order page greets it with the crown.
                 return redirect(
                     reverse(

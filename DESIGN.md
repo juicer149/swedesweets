@@ -209,7 +209,7 @@ Every page starts from one of these (`static/css/common/page.css`).
 
 | Shell | Use |
 |---|---|
-| `.screen` (`--in-site` with the navbar) | One-screen pages: login, password, errors, payment result. Actions at the bottom on phones. |
+| `.screen` (`--in-site` with the navbar) | One-screen pages: login, password and errors. Actions at the bottom on phones. |
 | `.page-section` | Pages that scroll: lists, detail pages, cart, FAQ, Find Sweets, About. `--top` puts work pages close to the navbar. |
 | `.page`, `--centered`, `--wide` | The column inside either shell. Carries the glow. |
 | `.page--auth` | Login and the password reset pages: title, fields and button kept together as one group a little above the middle, on every screen. |
@@ -447,8 +447,8 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   the bottom bar. The header edge is independent of selection (`--menu-edge`).
   Account/settings open as centred full-height sheets below the top bar,
   hiding the covered page/footer and keeping the page's scroll position. Their
-  V-shaped lower edge meets a 44px close button. On desktop they stay compact
-  dropdowns. Mobile sheets hide the page links; the
+  V-shaped lower edge meets a 44px close button. On desktop they use larger centred
+  rounded cards. Mobile sheets hide the page links; the
   logo and header icons stay available, with the open icon gold and glowing.
   The fixed bottom close/back circle returns to the page.
 
@@ -464,8 +464,8 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   trigger; clicking another trigger closes the previous dropdown.
 - **Navbar cart:** an icon-only disclosure with editable product rows and a
   quantity stepper. At one item, the minus becomes a trash action. Desktop
-  uses a compact preview with Go to cart; the full cart and review use framed
-  pages. Mobile hosts the full flow in the same sliding V-shaped sheet as
+  uses a compact preview with Go to cart; the full cart, review and placed
+  share unframed pages. Mobile hosts the full flow in the same sliding V-shaped sheet as
   account/settings, with its own scrolling content. Retail details follow
   products in the editor. B2B includes Previous orders and product search. The icon is 22px with a
   stronger stroke than the original artwork. Cart/checkout pages retain its
@@ -548,8 +548,8 @@ Retail cart and mobile sheet share `includes/cart/checkout_details.html`.
 Cart panels use wider desktop product rows, with quantity controls alongside
 the product. B2B
 search/add options keep their compact product presentation.
-Names and delivery address come first, then full-width email, confirmation and
-phone. On desktop postal code takes a quarter and town three quarters.
+Names and delivery address come first, then email, confirmation and
+phone in a bounded form column. On desktop postal code takes a quarter and town three quarters.
 The country stays France, matching the delivery policy. A focused input uses
 `--field-focus-color` / `--field-focus-shadow`; entrance pages use their own
 `--entrance-field-focus-shadow`. These shared roles apply to ordinary forms,
@@ -632,8 +632,9 @@ Clear cart keeps its existing destination and shows a compact, three-second
 confirmation near the cart icon. Other success/error messages retain their
 normal behavior. Theme roles are documented in [CSS themes](docs/css-themes.md).
 
-On landing, account/settings open centred rectangular boxes on desktop and
-mobile. A close circle meets the middle of the bottom edge; outside click and
+On landing, account/settings open larger, rounded centred cards on desktop and
+mobile. Account/settings use the same centred cards on other desktop pages;
+normal mobile pages retain their sliding sheets. A close circle meets the middle of the bottom edge; outside click and
 Escape dismiss them. These popovers fade/scale instead of using the navbar's
 sliding sheet. Header icons keep their selected gold light.
 
@@ -643,3 +644,17 @@ Normal additions have no success banner. Native fallback confirmation is short
 and anchored below the timeline; all flow messages render after the timeline
 so they cannot move it. Previous orders, search and product rows have larger
 gaps, using `--space-10`.
+
+Checkout now uses a 32rem form column beneath its wider product rows. Email
+and confirmation share a 26rem maximum; phone uses 18rem. Names retain their
+paired layout. The shared timeline leaves 40px before normal content and
+placed content adds another 32px before its crown. Section gaps increase around
+Your details and before actions, while field-to-field spacing stays unchanged.
+Checkout primary actions fit their label with a 16rem minimum, capped by the
+available width, instead of stretching across desktop rows.
+
+Confirmed retail returns show a receipt to the owning checkout session: saved
+product/variant names, quantities, price snapshots, total, delivery address and
+contact details, matching the buyer mail. Other sessions still see only outcome
+and order reference. Failure/uncertain outcomes never expose the receipt.
+B2B placement no longer queues a redundant success banner on its placed page.

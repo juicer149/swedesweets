@@ -1,0 +1,27 @@
+{% load i18n %}
+<section class="payment-confirmation" aria-labelledby="payment-confirmation-title">
+  <h2 id="payment-confirmation-title" class="payment-confirmation__heading">
+    {% blocktrans with number=reference %}Order #{{ number }}{% endblocktrans %}
+  </h2>
+  {% if receipt.placed_at %}
+    <p class="page__note"><time datetime="{{ receipt.placed_at|date:'c' }}">{{ receipt.placed_at|date:"Y-m-d H:i" }}</time></p>
+  {% endif %}
+  <ul class="lines" aria-label="{% trans 'Items' %}">
+    {% for line in receipt.lines %}
+      {% include "includes/ui/line.html" with line=line.view only %}
+    {% endfor %}
+  </ul>
+  {% if receipt.total_label %}
+    <div class="lines-total"><span>{% trans "Total" %}</span><strong>{{ receipt.total_label }}</strong></div>
+  {% endif %}
+  <section class="checkout-address" aria-labelledby="confirmation-delivery-title">
+    <h3 id="confirmation-delivery-title" class="checkout-order__title">{% trans "Delivery details" %}</h3>
+    <address class="checkout-address__body">
+      <strong>{{ receipt.buyer.name }}</strong><br>
+      {{ receipt.buyer.address_line }}<br>
+      {{ receipt.buyer.postal_code }} {{ receipt.buyer.city }}<br>
+      {% if receipt.country == "FR" %}{% trans "France" %}{% else %}{{ receipt.country }}{% endif %}
+      <div class="payment-confirmation__contacts">{{ receipt.buyer.email }}<br>{{ receipt.buyer.phone_number }}</div>
+    </address>
+  </section>
+</section>
