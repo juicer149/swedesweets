@@ -628,22 +628,24 @@ returns its icon to blue; current account/cart icons keep their gold/crown.
 Keyboard dismissal still restores a visible focus indicator.
 
 
-## Compact dropdowns and mobile sheets
+## Centred cards and mobile sheets
 
 `common/mobile-menu.css` gives desktop account/settings centred rounded cards
 up to 38rem, with height-aware spacing/type and a 28rem minimum when it fits.
 They scroll only when viewport height requires it; all three panels have a close circle.
 Below 768px they become full sheets. `mobile-menu.js` measures the header and
 fixed bottom navigation. Open panels lock page scrolling on either screen size;
-mobile also makes covered content inert. Closing restores both.
+centred account/settings cards and mobile sheets make covered content inert.
+Closing restores both.
 The sheet uses the existing preferences/account surface, border and ink roles.
 A two-layer clipped silhouette draws its V edge; the close button stays a normal
 44px focusable button. There is no top border against the header. Mobile sheets
-reveal downward from the header and retract upward when closed. Desktop uses
-the same animation and fixed clipping viewport; its side borders meet the navbar
-without a gap or a duplicate top border. Switching panels
-retracts the current one before revealing the next; rapid taps keep the latest
-choice. Reduced motion skips both animations. A fixed viewport clips the moving
+reveal downward from the header and retract upward when closed. The desktop
+cart uses the same sliding viewport, with its right edge aligned to the cart
+icon and side borders meeting the navbar. Centred account/settings cards use a
+180ms fade/scale opening and 140ms closing instead; landing uses cards on mobile
+too. Switching panels closes the current one before revealing the next; rapid
+taps keep the latest choice. Reduced motion skips both animations. A fixed viewport clips the moving
 sheet at the header; the page beneath remains visible. Cart rows and retail
 contact fields scroll within the frame, above its V and accessible close button.
 
@@ -716,8 +718,8 @@ directly on the page; only missing product photos keep a placeholder surface.
 
 `common/cart-panel.css` owns the shared row geometry, responsive cart frame and
 checkout section. `includes/cart/line.html` is used by both cart pages and
-both navbar carts; B2B quick-add search options retain their compact layout. The existing quantity stepper gains an opt-in trash at its
-minimum; other quantity controls keep their existing minimum behaviour.
+both navbar carts; B2B quick-add search options retain their compact layout.
+The existing quantity stepper gains an opt-in trash at its minimum; other quantity controls keep their existing minimum behaviour.
 
 | Roles | Purpose |
 | --- | --- |
@@ -733,8 +735,7 @@ Desktop has a compact quick cart (up to 38rem): product rows, quantity
 steppers and Go to cart. This opens the real cart page, with contact details
 below the products for retail, or Previous orders/product search for B2B.
 Desktop cart, review and placed share an unframed page surface.
-Both have a cumulative timeline. The full
-editor uses the same 36rem column as its timeline and customer details. Both
+Both have a cumulative timeline. The full editor uses the same 36rem column as its timeline and customer details. Both
 email fields share the same width; postal code uses one of four columns and town uses three. Country stays France.
 
 On mobile, `responsive-cart.js` hosts cart, review and placed content in the
@@ -746,16 +747,23 @@ to the cart page. Landing has no mobile cart icon and its desktop cart icon
 always navigates directly, so no cart panel animates from the landing header. Without JavaScript these are ordinary
 server pages and POST forms. Forms retain explicit action URLs.
 
+There is one live details form, moved between the page and mobile panel.
+Navbar fragments contain only preview rows; they do not construct a second
+form or require field prefixes/synchronisation. `base.html` loads the shared
+quantity-stepper script; public cart/catalog templates add only their own
+controllers.
+
 The Continue button requires browser-valid fields and matching emails; Django
 still validates delivery, ownership, stock and payment locks. Only confirmation
 blocks paste/drop. Ordinary password fields and autofill retain their behaviour.
 
-Panel upper corners are square; the lower corners are softer. Mobile keeps its
-V-shaped bottom, with rounded joins at the left and right. Outlines reuse
+Sliding cart panels have square upper corners and softer lower corners.
+Centred account/settings cards round all four corners. Normal mobile sheets
+keep their V-shaped bottom, with rounded joins at the left and right. Outlines reuse
 `--menu-edge`, the gold line beneath the navbar. Cart has a fixed close circle
 on desktop too, and outside click/Escape still dismiss it. Cart contents scroll
-internally when needed. Desktop account/settings use their natural height and
-clamped spacing; mobile can scroll when its screen is exceptionally short.
+internally when needed. Desktop account/settings use a 28rem minimum height
+clamped to the viewport; their contents scroll only on short screens.
 `menu-scroll.js` shows a position thumb only when contents overflow; its theme
 roles are `--menu-scroll-thumb` and `--menu-scroll-track`. Native scrollbars
 remain the fallback without JavaScript.
@@ -796,10 +804,12 @@ editor so its own scroll area remains reachable instead of being clipped.
 
 ## Panel light sequence and order journey
 
-Panels start without internal emission. Once the 320ms downward slide finishes,
+Panels start without internal emission. Once the slide (320ms) or centred-card
+opening (180ms) finishes,
 `mobile-menu.js` sets `data-panel-lit`; the edge, selected controls and mobile
 timeline illuminate over 140ms. Closing extinguishes them before retracting
-for 240ms. Reduced motion skips these waits and the flow animations.
+for 240ms; centred cards fade/scale out over 140ms instead. Reduced motion
+skips these waits and the flow animations.
 
 `includes/orders/progress.html` and `common/order-progress.css` show Cart →
 Review order → Order placed. Reached points, labels and lines remain lit;
@@ -838,8 +848,8 @@ low-opacity emission based on the label border. Hover keeps its stronger role.
 Customer order-history hover/focus markers use `--order-history-row-marker`,
 scoped through `[data-order-history]`; ops retains its separate table marker.
 The default `--status-burst-halo` is a transparent gold in both themes. Scoped
-cart feedback continues to override it with green. On mobile the placed stage
-adds `--space-6` above the content (after the normal timeline gap) before its crown.
+cart feedback continues to override it with green. The placed stage adds
+`--space-8` above its content after the normal timeline gap, on all viewports.
 
 The checkout shell and timeline keep their DOM identity during forward/back
 transitions. `order-flow-surface` fixes equal width and padding for every stage;

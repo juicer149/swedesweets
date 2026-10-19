@@ -32,25 +32,8 @@
         button.disabled = !complete || !quantitiesValid || Boolean(busy);
         if (help) help.textContent = complete ? help.dataset.ready : help.dataset.incomplete;
       }
-      function changed(event) {
-        const field = event.target;
-        if (field.name && field.type !== "hidden") {
-          const name = field.name.replace(/^navbar-/, "");
-          for (const peer of document.querySelectorAll("[data-checkout-details-form]")) {
-            if (peer === form) continue;
-            const other = [...peer.elements].find(element => !element.disabled && element.name?.replace(/^navbar-/, "") === name);
-            if (other) {
-              if (other.tomselect) other.tomselect.setValue(field.value, true);
-              else other.value = field.value;
-              peer.dispatchEvent(new Event("checkout-fields-synced"));
-              peer.dispatchEvent(new Event("checkout-validate"));
-            }
-          }
-        }
-        validate();
-      }
-      form.addEventListener("input", changed);
-      form.addEventListener("change", changed);
+      form.addEventListener("input", validate);
+      form.addEventListener("change", validate);
       confirm.addEventListener("blur", () => { touched = true; validate(); });
       for (const type of ["paste", "drop"]) confirm.addEventListener(type, event => event.preventDefault());
       form.addEventListener("submit", event => {

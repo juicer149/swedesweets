@@ -141,7 +141,6 @@
       }
     }
 
-    form.addEventListener("checkout-fields-synced", lookup);
     postalInput.addEventListener("input", lookup);
     postalInput.addEventListener("change", lookup);
 

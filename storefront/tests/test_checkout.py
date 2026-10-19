@@ -966,13 +966,10 @@ def test_checkout_requires_matching_email_confirmation(client, cart, confirmatio
 
 
 @pytest.mark.django_db
-def test_mobile_panel_can_submit_prefixed_details(client, cart):
+def test_cart_details_submit_and_record_checkout_ownership(client, cart):
     response = client.post(
         reverse("storefront:checkout"),
-        {
-            "details_prefix": "navbar",
-            **{f"navbar-{name}": value for name, value in _details().items()},
-        },
+        _details(),
     )
     assert response.status_code == 302
     checkout = RetailCheckoutSession.objects.get()
@@ -981,16 +978,10 @@ def test_mobile_panel_can_submit_prefixed_details(client, cart):
 
 
 @pytest.mark.django_db
-def test_invalid_panel_details_return_editable_cart_and_keep_values(client, cart):
+def test_invalid_details_return_editable_cart_and_keep_values(client, cart):
     response = client.post(
         reverse("storefront:checkout"),
-        {
-            "details_prefix": "navbar",
-            **{
-                f"navbar-{name}": value
-                for name, value in _details(confirm_email="typo@example.com").items()
-            },
-        },
+        _details(confirm_email="typo@example.com"),
     )
     assert response.status_code == 200
     assert response.context["form"]["email"].value() == "marie@example.com"
@@ -998,5 +989,4 @@ def test_invalid_panel_details_return_editable_cart_and_keep_values(client, cart
     assert response.context["cart_lines"]
     html = response.content.decode()
     assert html.count('id="id_email"') == 1
-    assert html.count('id="id_navbar-email"') == 0
     assert not RetailCheckoutSession.objects.exists()

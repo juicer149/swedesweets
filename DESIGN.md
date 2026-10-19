@@ -531,18 +531,7 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
 7. Strings translated; French added (`make i18n`).
 
 
-## Remaining design work
-
-- Review the full light customer theme using the finished public structure.
-- Review ops work pages before enabling their dark palette; ops remains light.
-- Keep future content and photography changes separate from palette tuning.
-
-The public/B2B dark theme, authentic vector logo, wide footer wordmark and
-missing-photo treatment are complete. Their colour choices remain in the
-respective theme roles. See [CSS themes](docs/css-themes.md) for implementation.
-
-
-### Cart contact fields and focused inputs
+## Cart and checkout
 
 Retail cart and mobile sheet share `includes/cart/checkout_details.html`.
 Cart panels use wider desktop product rows, with quantity controls alongside
@@ -577,15 +566,18 @@ Mobile hosts cart, review and placed in one sheet. `responsive-cart.js` moves
 the same live DOM between sheet and page on viewport changes, preserving
 fields and controls. The server pages/forms remain the no-JavaScript fallback.
 
-Panels round their lower corners, preserving the mobile V-shaped bottom with
-softer joins. Outlines share the navbar's `--menu-edge`; desktop side borders
-meet its underline directly. Every panel has a close circle, outside click and
-Escape dismissal. Desktop panels slide down/up like mobile. Cart scrolls within
-its frame with one position marker. Desktop account/settings grow with their
-contents, with clamped spacing on short screens and no internal scrollbars.
+Cart panels round their lower corners; mobile sheets preserve their V-shaped
+bottom with softer joins. Outlines share the navbar's `--menu-edge`; the desktop
+cart's side borders meet its underline directly. Account/settings use rounded
+centred cards on desktop and landing, and sliding sheets elsewhere on mobile.
+Every panel has a close circle, outside click and Escape dismissal. Cart scrolls
+within its frame with one position marker; account/settings scroll only when
+viewport height requires it. Covered content is inert behind centred cards and
+mobile sheets.
 
-In dark mode panel backgrounds match navbar/landing, with a soft light fading
-down from the gold top edge. The cumulative timeline owns the flow heading.
+In dark mode panel backgrounds match navbar/landing. Sliding sheets have a soft
+light fading down from the gold top edge; centred cards omit that edge emission.
+The cumulative timeline owns the flow heading.
 FAQ, Previous orders and its nested order headings share
 `--dropdown-title-*` roles; component aliases remain available in the themes.
 Empty retail carts centre the message and keep Browse shop near the bottom,
@@ -662,3 +654,13 @@ B2B placement no longer queues a redundant success banner on its placed page.
 The desktop cart quick view aligns beneath its cart icon rather than the page
 centre. Guests reach Login directly from the account icon; signed-in users
 keep their Profile/orders/logout card.
+
+## Remaining design work
+
+- Review the full light customer theme using the finished public structure.
+- Review ops work pages before enabling their dark palette; ops remains light.
+- Keep future content and photography changes separate from palette tuning.
+
+The public/B2B dark theme, authentic vector logo, wide footer wordmark and
+missing-photo treatment are complete. Their colour choices remain in the
+respective theme roles. See [CSS themes](docs/css-themes.md) for implementation.

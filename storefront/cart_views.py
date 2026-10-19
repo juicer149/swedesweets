@@ -276,10 +276,6 @@ def navbar_cart_fragment(
         "includes/navbar_cart.html",
         {
             "navbar_cart": navbar_cart,
-            "navbar_checkout_form": RetailCheckoutDetailsForm(
-                prefix="navbar",
-                initial=get_remembered_checkout_details(request),
-            ),
         },
     )
 

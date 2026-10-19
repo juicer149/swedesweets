@@ -99,8 +99,6 @@ def navigation(request):
     # Desktop is already in the full editor. Mobile mounts this same flow
     # inside its sheet rather than opening an independent quick preview.
     context["navbar_cart_locked"] = cart_flow
-    if context.get("navbar_cart") and context["navbar_cart"].is_retail:
-        context["navbar_checkout_form"] = navbar_checkout_form(request)
     return context
 
 
@@ -310,13 +308,3 @@ def static_assets(request):
         "site_stylesheet": "css/ops.css" if is_ops else "css/public.css",
         "site_zone": "ops" if is_ops else "public",
     }
-
-
-def navbar_checkout_form(request):
-    from storefront.checkout_forms import RetailCheckoutDetailsForm
-    from storefront.checkout_session import get_remembered_checkout_details
-
-    return RetailCheckoutDetailsForm(
-        prefix="navbar",
-        initial=get_remembered_checkout_details(request),
-    )

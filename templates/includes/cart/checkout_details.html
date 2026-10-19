@@ -1,10 +1,9 @@
 {% load i18n %}
-<section class="cart-details{% if navbar %} cart-details--mobile{% endif %}">
+<section class="cart-details">
   <h2>{% trans "Your details" %}</h2>
   <p class="form-help">{% trans "Where should we send your sweets?" %}</p>
   <form method="post" action="{% url 'storefront:checkout' %}" class="checkout-form" data-checkout-details-form data-submit-burst data-order-flow-submit novalidate>
     {% csrf_token %}
-    {% if form.prefix %}<input type="hidden" name="details_prefix" value="{{ form.prefix }}">{% endif %}
     {% include "registration/includes/form_errors.html" with form=form only %}
     <div class="form-grid">
       {% for field in form %}
