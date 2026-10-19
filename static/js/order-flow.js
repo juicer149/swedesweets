@@ -20,6 +20,8 @@
       surface.append(content);
     }
     const content = surface.querySelector(":scope > .order-flow-content");
+    const messages = root.previousElementSibling;
+    if (messages?.matches(".messages")) content.prepend(messages);
     // Editors initialize against the replaceable content, not the persistent
     // journey shell. Returning to cart gets fresh handlers for its new rows.
     for (const name of ["data-current-order", "data-current-order-error-message"]) {
@@ -100,7 +102,7 @@
     const imported = document.importNode(next, true);
     const nextParts = prepare(imported);
     const messages = page.querySelector(".messages");
-    if (messages) nextParts.content.prepend(document.importNode(messages, true));
+    if (messages && !next.contains(messages)) nextParts.content.prepend(document.importNode(messages, true));
     parts.progress.removeAttribute("inert");
     if (push && location.href !== url) history.pushState({ orderFlow: true }, "", url);
     chrome(page);

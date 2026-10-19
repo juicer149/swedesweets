@@ -36,7 +36,7 @@
       viewport.style.setProperty("--menu-panel-top", `${headerBottom}px`);
       viewport.style.setProperty("--menu-panel-right", `${Math.max(16, innerWidth - trigger.right)}px`);
     }
-    if (!mobile.matches || !covered) return;
+    if ((!mobile.matches && !document.querySelector("[data-landing]")) || !covered) return;
 
     const viewport = covered.querySelector(".mobile-menu-viewport");
     const top = document.querySelector(".site-header, .entrance-header, .landing__top");
@@ -55,10 +55,13 @@
 
   async function animate(menu, opening) {
     if (reducedMotion.matches || !menu?.isConnected) return;
-    const frames = [{ transform: "translateY(-102%)" }, { transform: "translateY(0)" }];
+    const landing = Boolean(menu.closest("[data-landing]"));
+    const frames = landing
+      ? [{ opacity: 0, transform: "scale(.96)" }, { opacity: 1, transform: "scale(1)" }]
+      : [{ transform: "translateY(-102%)" }, { transform: "translateY(0)" }];
     const animation = menu.querySelector(".mobile-menu-panel").animate(
       opening ? frames : [...frames].reverse(),
-      { duration: opening ? 320 : 240, easing: "cubic-bezier(.22,.7,.2,1)", fill: "both" },
+      { duration: landing ? (opening ? 180 : 140) : (opening ? 320 : 240), easing: "cubic-bezier(.22,.7,.2,1)", fill: "both" },
     );
     motion = animation;
     await animation.finished.catch(() => {});

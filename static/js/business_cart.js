@@ -18,6 +18,7 @@
  */
 (() => {
   const initialized = new WeakSet();
+  const quickAddHandlers = new WeakMap();
   function initialize() {
     const root = document.querySelector("[data-current-order]");
 
@@ -139,50 +140,26 @@
       });
     }
 
-    /* Quick add */
-
-    root.querySelectorAll("[data-cart-quick-add]").forEach((form) => {
-      const select = form.querySelector("select");
-
-      if (!select) {
+    /* Resolve the live select when it changes. A journey return replaces the
+       form, so no control keeps a handler attached to an earlier instance. */
+    quickAddHandlers.set(root, async (form, select) => {
+      if (!select.value || form.dataset.submitting) return;
+      form.dataset.submitting = "true";
+      form.classList.add("is-adding");
+      select.tomselect?.close();
+      select.tomselect?.blur();
+      select.tomselect?.lock();
+      if (!(await addOffer(form))) {
+        // Native fallback retains server validation and its local notice.
+        HTMLFormElement.prototype.submit.call(form);
         return;
       }
-
-      function reset() {
-        delete form.dataset.submitting;
-        form.classList.remove("is-adding");
-
-        if (select.tomselect) {
-          select.tomselect.unlock();
-          select.tomselect.clear(true);
-        } else {
-          select.value = "";
-        }
-      }
-
-      select.addEventListener("change", async () => {
-        if (!select.value || form.dataset.submitting) {
-          return;
-        }
-
-        form.dataset.submitting = "true";
-        form.classList.add("is-adding");
-
-        if (select.tomselect) {
-          select.tomselect.close();
-          select.tomselect.blur();
-          select.tomselect.lock();
-        }
-
-        if (!(await addOffer(form))) {
-          // Not added: post it the plain way, so the page comes back with
-          // the reason (the same refusal, as a message).
-          HTMLFormElement.prototype.submit.call(form);
-          return;
-        }
-
-        reset();
-      });
+      delete form.dataset.submitting;
+      form.classList.remove("is-adding");
+      if (select.tomselect) {
+        select.tomselect.unlock();
+        select.tomselect.clear(true);
+      } else select.value = "";
     });
 
     /* Previous-order actions keep their layout while awaiting the server.
@@ -277,6 +254,21 @@
     // order shows if it was the last.
     root.addEventListener("cart-line-removed", updateEmptyState);
   }
+  function quickAdd(select) {
+    if (!select) return;
+    initialize();
+    const root = select.closest("[data-current-order]");
+    const form = select.closest("[data-cart-quick-add]");
+    void quickAddHandlers.get(root)?.(form, select);
+  }
+  document.addEventListener("change", event => {
+    if (event.target.matches?.("[data-cart-quick-add] select")) quickAdd(event.target);
+  });
+  document.addEventListener("submit", event => {
+    if (!event.target.matches?.("[data-cart-quick-add]")) return;
+    event.preventDefault();
+    quickAdd(event.target.querySelector("select"));
+  });
   document.addEventListener("DOMContentLoaded", initialize);
   document.addEventListener("cart-editor-ready", initialize);
   initialize();

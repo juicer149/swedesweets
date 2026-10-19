@@ -96,7 +96,8 @@
 
 /* Desktop quick preview; mobile hosts the full editor in the same frame. */
 .cart-panel-scroll[aria-busy="true"] { opacity: .65; }
-.cart-page .cart-quick-add { margin-bottom: var(--space-8); }
+.cart-page .recent-orders,
+.cart-page .cart-quick-add { margin-bottom: var(--space-10); }
 @media (min-width: 768px) {
   .site-nav-cart__popover.mobile-menu-panel {
     position: absolute;

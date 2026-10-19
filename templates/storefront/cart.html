@@ -17,6 +17,7 @@
 >
   <div class="page page--centered order-flow-surface cart-page{% if not cart_lines %} cart-page--empty{% endif %}">
     {% include "includes/orders/progress.html" with step="cart" only %}
+    {% include "includes/messages.html" %}
 
     <h1 id="storefront-cart-title" class="page__lead visually-hidden">
       {% trans "Your cart" %}

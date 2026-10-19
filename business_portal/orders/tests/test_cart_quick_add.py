@@ -152,6 +152,13 @@ def test_quick_add_puts_one_unit_in_the_cart_and_comes_back(
         (line.commercial_price_id, line.quantity)
         for line in _cart_lines(customer)
     ] == [(offer.pk, 1)]
+    html = client.get(response.url).content.decode()
+    assert 'data-cart-notice data-cart-flow-notice role="status"' in html
+    assert (
+        html.index('data-order-progress="cart"')
+        < html.index("data-cart-flow-notice")
+    )
+    assert 'class="message message--success"' not in html
 
     # Again: the same line, one more.
     client.post(
@@ -262,6 +269,8 @@ def test_quick_add_answers_a_script_with_the_line_drawn(
     assert "data-current-order-quantity-form" in payload["line_html"]
     assert "data-current-order-remove" in payload["line_html"]
     assert "csrfmiddlewaretoken" in payload["line_html"]
+    html = client.get(reverse("business_portal:cart")).content.decode()
+    assert "data-cart-flow-notice" not in html
 
     again = client.post(
         url,

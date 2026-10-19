@@ -12,6 +12,7 @@
   <div class="page page--centered page--wide{% if just_placed %} order-flow order-flow-surface{% endif %}">
     {% if just_placed %}
       {% include "includes/orders/progress.html" with step="placed" only %}
+      {% include "includes/messages.html" %}
       {% include "includes/ui/crown_hero.html" %}
     {% endif %}
 

@@ -437,6 +437,7 @@ def add_cart_offer(request):
         messages.success(
             request,
             message,
+            extra_tags="cart-notice cart-flow-notice",
         )
         return redirect("business_portal:cart")
 

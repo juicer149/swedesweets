@@ -61,7 +61,9 @@
     {% block main %}
       <main class="site-main">
         <div class="container">
-          {% include "includes/messages.html" %}
+          {% if not navbar_cart_current %}
+            {% include "includes/messages.html" %}
+          {% endif %}
 
           {% block content %}{% endblock %}
         </div>

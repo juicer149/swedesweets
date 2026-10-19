@@ -631,3 +631,15 @@ The artwork remains in `design/animations_ideas/` for future experiments.
 Clear cart keeps its existing destination and shows a compact, three-second
 confirmation near the cart icon. Other success/error messages retain their
 normal behavior. Theme roles are documented in [CSS themes](docs/css-themes.md).
+
+On landing, account/settings open centred rectangular boxes on desktop and
+mobile. A close circle meets the middle of the bottom edge; outside click and
+Escape dismiss them. These popovers fade/scale instead of using the navbar's
+sliding sheet. Header icons keep their selected gold light.
+
+B2B quick add resolves its live form on each change/submit, so review/back and
+replaced enhanced selects retain AJAX addition and reset after success.
+Normal additions have no success banner. Native fallback confirmation is short
+and anchored below the timeline; all flow messages render after the timeline
+so they cannot move it. Previous orders, search and product rows have larger
+gaps, using `--space-10`.

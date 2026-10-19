@@ -319,3 +319,31 @@
 
 /* Landing has no navbar frame: desktop navigates directly to the cart page. */
 @media (max-width: 767px) { .landing__cart-link { display: none; } }
+
+/* Landing disclosures are centred rectangular popovers at every width. */
+.landing__top details[open] > .mobile-menu-viewport {
+  display: grid; position: fixed; inset: 0; z-index: 130;
+  place-items: center; padding: 2.5rem 1rem;
+  overflow: visible; pointer-events: none;
+}
+.landing__top :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel {
+  position: relative; inset: auto; translate: none;
+  width: min(26rem, calc(100vw - 2rem)); max-width: none;
+  max-height: calc(100dvh - 5rem);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--space-5); padding: clamp(1.5rem, 5dvh, 3rem) clamp(1.25rem, 4vw, 2.5rem) 3rem;
+  background: var(--preferences-bg); border: 1px solid var(--menu-edge);
+  border-radius: 0; box-shadow: var(--preferences-shadow); pointer-events: auto;
+}
+.landing__top .mobile-menu-panel::before,
+.landing__top .mobile-menu-panel::after { display: none; }
+.landing__top .mobile-menu-panel .menu-panel-scroll {
+  width: 100%; height: auto; max-height: calc(100dvh - 11rem);
+  overflow-y: auto; gap: clamp(0.75rem, 3dvh, 1.5rem);
+}
+.landing__top .mobile-menu-panel .mobile-menu-close {
+  position: absolute; bottom: -1.375rem; left: calc(50% - 1.375rem);
+  display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
+  color: var(--account-menu-text); background: var(--preferences-bg);
+  border: 1px solid var(--menu-edge); border-radius: var(--radius-pill);
+}

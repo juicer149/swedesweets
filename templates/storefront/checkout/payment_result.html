@@ -21,9 +21,11 @@
   <div class="page page--centered order-flow order-flow-surface">
     {% if result != "confirmed" %}
       {% include "includes/orders/progress.html" with step="review" only %}
+      {% include "includes/messages.html" %}
     {% endif %}
     {% if result == "confirmed" %}
       {% include "includes/orders/progress.html" with step="placed" only %}
+      {% include "includes/messages.html" %}
       {% include "includes/ui/crown_hero.html" %}
 
       <header class="page__header">

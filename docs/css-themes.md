@@ -868,3 +868,17 @@ renders these as small confirmations anchored near the navbar cart, rather
 than full-width banners. `cart-notice.js` follows the icon on resize/scroll and
 removes the notice after about three seconds. Other messages do not expire.
 Paint belongs to `--cart-notice-bg/text/border/shadow` in both themes.
+
+Landing account/settings are centred rectangular popovers at both viewport
+sizes, with a gold `--menu-edge` border and close circle centred on the bottom
+edge. Their viewport covers the screen; the backdrop dismisses on outside
+click, and Escape/close restore the trigger. They fade/scale in rather than
+slide from a navbar. Normal site sheets keep their existing geometry.
+
+B2B quick-add events resolve the current form/select through document delegation,
+including keyboard submit. They do not retain listeners on a replaced TomSelect
+input after review/back. Previous orders and quick add each leave `--space-10`
+before the following block. JSON successes only update rows and cart feedback.
+Native quick-add fallback success uses `cart-flow-notice`: a three-second notice
+anchored below the timeline. Other server messages on flow pages also render
+inside the content after the timeline, never before its shell.
