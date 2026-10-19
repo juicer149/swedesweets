@@ -18,6 +18,7 @@
   let focused = null;
   let stale = false;
   let loading = null;
+  let lastMenuKey = null;
   const scripts = new Map();
   if (root) { slot = document.createComment("order flow"); root.before(slot); }
 
@@ -29,6 +30,19 @@
     const menu = cartMenu();
     if (!menu) return;
     menu.dataset.flowHost = String(hosted);
+    const trigger = menu.querySelector("summary");
+    const fullPage = flowUrl && new URL(flowUrl).pathname === location.pathname;
+    if (fullPage) {
+      menu.dataset.cartLocked = "true";
+      trigger?.setAttribute("aria-current", "page");
+      for (const other of document.querySelectorAll('.site-nav__link[aria-current], .account-menu > summary[aria-current]')) {
+        other.removeAttribute("aria-current"); other.classList.remove("site-nav__link--active");
+      }
+    }
+    const locked = menu.dataset.cartLocked === "true" && !hosted;
+    trigger?.toggleAttribute("inert", locked);
+    if (locked) { trigger?.setAttribute("aria-disabled", "true"); trigger?.setAttribute("tabindex", "-1"); }
+    else { trigger?.removeAttribute("aria-disabled"); trigger?.removeAttribute("tabindex"); }
     const button = menu.querySelector("[data-close-details]");
     const back = hosted && root?.dataset.flowStep === "review" && root.dataset.flowBackUrl;
     button?.querySelector("[data-panel-close-icon]")?.toggleAttribute("hidden", Boolean(back));
@@ -85,14 +99,25 @@
     document.dispatchEvent(new CustomEvent("navbar-cart-refreshed", { detail: { layoutOnly: true } }));
     document.dispatchEvent(new Event("order-flow-ready"));
   }
-  async function adopt(next, page, url) {
+  async function adopt(next, page, url, { preserveSurface = false } = {}) {
     preserve();
+    app.orderFlow?.prepare(next);
     const old = root;
-    root = next;
+    const surface = old?.querySelector(":scope > .order-flow-surface");
+    const nextSurface = next.querySelector(":scope > .order-flow-surface");
+    if (preserveSurface && surface && nextSurface && old.isConnected) {
+      // Keep the timeline and its containing geometry mounted throughout.
+      for (const [target, source] of [[old, next], [surface, nextSurface]]) {
+        for (const attr of [...target.attributes]) target.removeAttribute(attr.name);
+        for (const attr of source.attributes) target.setAttribute(attr.name, attr.value);
+      }
+      surface.querySelector(":scope > .order-flow-content").replaceWith(nextSurface.querySelector(":scope > .order-flow-content"));
+      root = old;
+    } else root = next;
     flowUrl = url;
     focused = null;
     scrollTop = 0;
-    if (old?.isConnected) old.replaceWith(root);
+    if (old !== root && old?.isConnected) old.replaceWith(root);
     mount({ open: mobile.matches });
     controls();
     await dependencies(page, root);
@@ -144,7 +169,15 @@
     }
   });
   document.addEventListener("mobile-menu-settled", event => {
+    const previous = lastMenuKey;
+    lastMenuKey = event.detail.key;
     if (!hosted || event.detail.key) return;
+    if (previous && previous !== "cart" && flowUrl && new URL(flowUrl).pathname === location.pathname) {
+      // Settings/account can cover the mobile journey; dismissing them brings
+      // back that journey rather than abandoning its current stage.
+      mount({ open: true });
+      return;
+    }
     if (directVisit || location.href !== originUrl || root?.dataset.flowStep === "placed") location.assign(root?.dataset.flowCloseUrl || originUrl);
   });
   mobile.addEventListener("change", () => mount({ open: mobile.matches && Boolean(root) }));

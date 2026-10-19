@@ -66,6 +66,7 @@
   }
 
   async function request(key, focus = false) {
+    if (openMenu()?.dataset.mobileMenu === "cart" && window.SwedeSweets?.orderFlow?.busy() && key !== "cart") return;
     if (key === "cart" && menuFor(key)?.dataset.cartLocked === "true" && menuFor(key)?.dataset.flowHost !== "true") return;
     if (!key && openMenu()) {
       const intercepted = new CustomEvent("panel-close-request", { cancelable: true, bubbles: true });

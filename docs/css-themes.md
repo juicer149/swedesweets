@@ -733,7 +733,7 @@ minimum; other quantity controls keep their existing minimum behaviour.
 Desktop has a compact quick cart (up to 38rem): product rows, quantity
 steppers and Go to cart. This opens the real cart page, with contact details
 below the products for retail, or Previous orders/product search for B2B.
-The desktop cart sits directly on the page; review retains the panel surface.
+Desktop cart, review and placed share an unframed page surface.
 Both have a cumulative timeline. The full
 editor uses up to 60rem. Both email fields share the same width; postal code
 uses one of four columns and town uses three. Country stays France.
@@ -821,9 +821,9 @@ order; historical order details omit the journey unless just placed.
 
 On mobile the sheet stays open through all stages. The close circle becomes
 Back during review, then Close again after placement. Covered content is inert;
-page links and other header triggers hide, leaving the logo/home link and the
-bottom close/back control. Escape follows the same back/close behavior, and
-cannot interrupt an in-flight submit. On desktop review remains a framed page.
+page links hide, while logo/home and header icons remain visible. The open
+icon keeps gold light; the bottom close/back control remains available. Escape follows the same back/close behavior, and
+cannot interrupt an in-flight submit. On desktop all stages retain the same unframed page geometry.
 The navbar cart is locked on later stages; an existing mobile flow host remains
 open rather than opening a second editor. Server payment locks still apply.
 
@@ -840,4 +840,20 @@ Customer order-history hover/focus markers use `--order-history-row-marker`,
 scoped through `[data-order-history]`; ops retains its separate table marker.
 The default `--status-burst-halo` is a transparent gold in both themes. Scoped
 cart feedback continues to override it with green. On mobile the placed stage
-leaves `--space-12` below the timeline before its crown.
+adds `--space-6` above the content (after the normal timeline gap) before its crown.
+
+The checkout shell and timeline keep their DOM identity during forward/back
+transitions. `order-flow-surface` fixes equal width and padding for every stage;
+only `order-flow-content` is replaced. Editor initialization belongs to the new
+content node so returning to cart binds new product rows correctly. Back shrinks
+the gold connector right-to-left over 450ms after the response, then reveals
+its content. The timeline margin is identical for every step.
+
+`navbar_cart_current` and `navbar_cart_locked` cover the complete journey,
+including cart itself and verified placed destinations. Other header selections
+are cleared. The cart count hides while its crown is current. The mobile host
+can still display the existing journey, while desktop cannot open a second
+quick cart. Header icons remain available when sheets open; switching to settings
+or account from a directly visited mobile flow and dismissing it returns to
+that flow. Requests cannot close/switch away during a pending submit.
+Landing's `.menu-panel-toplight` is hidden because it has no navbar edge.

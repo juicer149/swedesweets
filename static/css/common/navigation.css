@@ -975,8 +975,7 @@
   color: var(--cart-remove-hover-ink);
 }
 
-/* Keep the item count opposite the current-page crown. */
+/* The full cart journey is identified by its crown, without a count badge. */
 .site-nav-cart__trigger[aria-current="page"] .site-nav-cart__count {
-  left: -0.4rem;
-  right: auto;
+  display: none;
 }

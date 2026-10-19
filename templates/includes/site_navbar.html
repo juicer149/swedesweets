@@ -43,7 +43,7 @@
               <a
                 class="
                   site-nav__link
-                  {% if namespace == item.namespace %}
+                  {% if not navbar_cart_current and namespace == item.namespace %}
                     {% if item.active_url_names %}
                       {% if url_name in item.active_url_names %}
                         site-nav__link--active
@@ -54,7 +54,7 @@
                   {% endif %}
                 "
                 href="{{ item.href }}"
-                {% if namespace == item.namespace %}
+                {% if not navbar_cart_current and namespace == item.namespace %}
                   {% if item.active_url_names %}
                     {% if url_name in item.active_url_names %}
                       aria-current="page"

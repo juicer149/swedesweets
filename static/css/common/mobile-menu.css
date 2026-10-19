@@ -277,11 +277,12 @@ details[data-mobile-menu]:not([data-panel-lit]) .mobile-menu-panel {
 .menu-dropdown-trigger[aria-disabled="true"] { cursor: default; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .menu-panel-toplight { transition: none; } }
 
-/* A mobile sheet is a focused view. Keep the brand/home link, then use
-   the fixed close/back control to return to the underlying page. */
+/* Keep the header icons available for switching sheets; page links stay
+   hidden behind the mobile flow. Landing has no navbar edge to emit light. */
 @media (max-width: 767px) {
   html.mobile-menu-open .site-nav__links { display: none; }
-  html.mobile-menu-open :is(.site-nav__auth, .landing__top, .entrance-header) .menu-dropdown-trigger { visibility: hidden; pointer-events: none; }
 }
 .mobile-menu-close [hidden] { display: none; }
 .order-flow-busy .mobile-menu-close { pointer-events: none; opacity: .45; }
+
+.landing__top .menu-panel-toplight { display: none; }

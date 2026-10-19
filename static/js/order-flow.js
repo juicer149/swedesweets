@@ -19,7 +19,13 @@
       for (const node of [...surface.childNodes]) if (node !== progress) content.append(node);
       surface.append(content);
     }
-    return { surface, progress, content: surface.querySelector(":scope > .order-flow-content") };
+    const content = surface.querySelector(":scope > .order-flow-content");
+    // Editors initialize against the replaceable content, not the persistent
+    // journey shell. Returning to cart gets fresh handlers for its new rows.
+    for (const name of ["data-current-order", "data-current-order-error-message"]) {
+      if (root.hasAttribute(name)) { content.setAttribute(name, root.getAttribute(name)); root.removeAttribute(name); }
+    }
+    return { surface, progress, content };
   }
   function loading(root) {
     const parts = prepare(root);
@@ -59,6 +65,13 @@
       travel.remove();
       if (!reduced.matches) await items[index].querySelector(".order-progress__dot").animate([{ filter: "brightness(1)" }, { filter: "brightness(2.2)" }, { filter: "brightness(1)" }], { duration: 280 }).finished;
     }
+    if (to < from) for (let index = from; index > to; index--) {
+      const travel = document.createElement("span"); travel.className = "order-progress__travel";
+      travel.setAttribute("aria-hidden", "true"); items[index].append(travel);
+      items[index].classList.remove("is-lit"); items[index].removeAttribute("aria-current");
+      if (!reduced.matches) await travel.animate([{ transform: "scaleX(1)" }, { transform: "scaleX(0)" }], { duration: 450, easing: "ease-in-out", fill: "forwards" }).finished;
+      travel.remove();
+    }
     items.forEach((item, index) => {
       item.classList.toggle("is-lit", index <= to);
       if (index === to) item.setAttribute("aria-current", "step"); else item.removeAttribute("aria-current");
@@ -75,6 +88,11 @@
         if (original.hasAttribute(attr)) target.setAttribute(attr, original.getAttribute(attr)); else target.removeAttribute(attr);
       }
     }
+    if (source?.querySelector('summary[aria-current="page"]')) {
+      for (const link of document.querySelectorAll('.site-nav__link[aria-current], .account-menu > summary[aria-current]')) {
+        link.removeAttribute("aria-current"); link.classList.remove("site-nav__link--active");
+      }
+    }
     document.title = page.title;
   }
   async function render(envelope, parts, { push = true } = {}) {
@@ -83,18 +101,17 @@
     const nextParts = prepare(imported);
     const messages = page.querySelector(".messages");
     if (messages) nextParts.content.prepend(document.importNode(messages, true));
-    nextParts.progress.replaceWith(parts.progress);
     parts.progress.removeAttribute("inert");
     if (push && location.href !== url) history.pushState({ orderFlow: true }, "", url);
     chrome(page);
     nextParts.content.hidden = true;
-    await app.cartPanel.adopt(imported, page, url);
+    const mounted = await app.cartPanel.adopt(imported, page, url, { preserveSurface: true });
     parts.loader.remove();
     nextParts.content.hidden = false;
     nextParts.content.inert = false;
     if (!reduced.matches) await nextParts.content.animate([{ clipPath: "inset(0 0 100% 0)", opacity: 0 }, { clipPath: "inset(0)", opacity: 1 }], { duration: 350, easing: "ease-out" }).finished;
-    imported.querySelector("h1")?.setAttribute("tabindex", "-1");
-    imported.querySelector("h1")?.focus({ preventScroll: true });
+    mounted.querySelector("h1")?.setAttribute("tabindex", "-1");
+    mounted.querySelector("h1")?.focus({ preventScroll: true });
     void app.navbarCart?.refresh({ preserveOpenState: true });
   }
   async function transition(url, options = {}, historyOptions = {}) {
@@ -170,7 +187,7 @@
   window.addEventListener("popstate", () => { if (current()) { if (busy) location.reload(); else void transition(location.href, {}, { push: false }); } });
   window.addEventListener("pageshow", event => { if (event.persisted) { busy = false; reset(current()); } });
   document.addEventListener("order-flow-ready", () => prepare(current()));
-  app.orderFlow = { visit: url => transition(url), busy: () => busy };
+  app.orderFlow = { visit: url => transition(url), busy: () => busy, prepare };
   const initial = prepare(current());
   if (initial) {
     // Page navigation has no sliding sheet; light its timeline after first paint.

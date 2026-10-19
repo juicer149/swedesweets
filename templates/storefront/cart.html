@@ -5,7 +5,7 @@
 
 {% block content %}
 <section
-  class="page-section"
+  class="page-section order-flow-page"
   data-order-flow-page
   data-flow-step="cart"
   aria-labelledby="storefront-cart-title"
@@ -15,7 +15,7 @@
   data-cart-return-url="{{ continue_shopping_url }}"
   data-current-order-error-message="{% trans 'Could not update quantity.' %}"
 >
-  <div class="page page--centered cart-page{% if not cart_lines %} cart-page--empty{% endif %}">
+  <div class="page page--centered order-flow-surface cart-page{% if not cart_lines %} cart-page--empty{% endif %}">
     {% include "includes/orders/progress.html" with step="cart" only %}
 
     <h1 id="storefront-cart-title" class="page__lead visually-hidden">

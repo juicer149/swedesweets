@@ -142,3 +142,6 @@
 /* The cart owns its scrolling: let an open product search grow its content
    instead of clipping the result list at the editor's previous height. */
 .cart-quick-add .ts-dropdown { position: static; }
+
+/* All mobile stages reserve the same space above the persistent timeline. */
+.cart-panel-scroll > .order-flow-page > .page.order-flow-surface { padding: var(--space-6) 0 0; }

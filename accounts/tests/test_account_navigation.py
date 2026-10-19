@@ -100,10 +100,12 @@ def test_business_header_marks_the_current_destination(
 
 
 @pytest.mark.django_db
-def test_retail_cart_marks_its_header_icon_current(client):
+def test_retail_cart_marks_its_header_icon_current_and_disables_preview(client):
     response = client.get(reverse("storefront:cart"))
     assert response.status_code == 200
     cart = response.content.decode().split('class="site-nav-cart__trigger', 1)[1].split(
         "</summary>", 1
     )[0]
     assert 'aria-current="page"' in cart
+    assert response.context["navbar_cart_locked"] is True
+    assert 'aria-disabled="true"' in cart

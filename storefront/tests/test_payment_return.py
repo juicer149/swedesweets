@@ -79,6 +79,8 @@ def test_payment_return_is_public_and_shows_confirmation(
     assert response.status_code == 200
     assert response.context["result"] == "confirmed"
     assert response.context["navbar_cart_locked"] is True
+    assert response.context["navbar_cart_current"] is True
+    assert response.context["navbar_account_current"] is False
     html = response.content.decode()
     assert 'data-order-progress="placed"' in html
     assert html.count('class="order-progress__step is-lit"') == 3

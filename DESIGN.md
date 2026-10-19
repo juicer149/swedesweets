@@ -448,8 +448,9 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   Account/settings open as centred full-height sheets below the top bar,
   hiding the covered page/footer and keeping the page's scroll position. Their
   V-shaped lower edge meets a 44px close button. On desktop they stay compact
-  dropdowns. Mobile sheets hide the page links and other header triggers; the
-  logo stays available. The fixed bottom close/back circle returns to the page.
+  dropdowns. Mobile sheets hide the page links; the
+  logo and header icons stay available, with the open icon gold and glowing.
+  The fixed bottom close/back circle returns to the page.
 
 - **Account:** a single-person icon opens Profile, Order history for business
   customers, and a CSRF-protected POST Log out at the bottom. It keeps selected
@@ -568,8 +569,8 @@ retracts the old sheet first. The cart scrolls inside its frame, keeping the
 close button and navigation accessible.
 
 Desktop separates its compact navbar preview from the full cart page. The
-preview contains editable rows and Go to cart. The desktop cart sits directly on the
-page; review keeps its panel-like surface. The timeline replaces visible page
+preview contains editable rows and Go to cart. Cart, review and placed sit
+directly on the page with the same width and top spacing. The timeline replaces visible page
 headings. Landing hides cart access on mobile; its desktop icon links to the
 cart page without opening a panel.
 Mobile hosts cart, review and placed in one sheet. `responsive-cart.js` moves
@@ -609,3 +610,16 @@ Back, returning to Close after placement. The navbar cart stays locked on later
 pages, while an existing mobile flow stays mounted and open.
 
 See [CSS themes](docs/css-themes.md) for roles, timings and controller ownership.
+
+The desktop cart icon alone marks every checkout stage, including payment return
+and just-placed B2B order detail. Its count hides; its gold light and crown stay.
+The quick preview is disabled on cart as well as later stages. Mobile mounts the
+existing flow in that slot, without creating another editable cart. Landing
+account/settings show their active icon light but no top-edge panel emission.
+
+`order-flow.js` and `responsive-cart.js` keep the journey section, surface and
+timeline mounted across transitions. Only the editor/content below is replaced;
+editor listeners initialize on that new content. Back waits for its response,
+then extinguishes the connector from right to left before revealing the prior
+step. All stages share the timeline's geometry; mobile placed spacing belongs
+to the content below it rather than shifting the timeline.

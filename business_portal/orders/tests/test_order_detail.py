@@ -114,6 +114,8 @@ def test_order_page_greets_a_just_placed_order_with_the_crown(
     html = response.content.decode()
     assert 'class="crown-hero"' in html
     assert response.context["navbar_cart_locked"] is True
+    assert response.context["navbar_cart_current"] is True
+    assert response.context["navbar_account_current"] is False
     assert 'data-order-progress="placed"' in html
     assert html.count('class="order-progress__step is-lit"') == 3
     assert 'class="crown-hero"' not in client.get(url).content.decode()

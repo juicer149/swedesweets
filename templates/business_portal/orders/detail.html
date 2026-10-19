@@ -5,11 +5,11 @@
 
 {% block content %}
 <section
-  class="page-section"
+  class="page-section{% if just_placed %} order-flow-page{% endif %}"
   {% if just_placed %}data-order-flow-page data-flow-step="placed" data-flow-close-url="{% url 'business_portal:catalog' %}"{% endif %}
   aria-labelledby="portal-order-detail-title"
 >
-  <div class="page page--centered page--wide{% if just_placed %} order-flow{% endif %}">
+  <div class="page page--centered page--wide{% if just_placed %} order-flow order-flow-surface{% endif %}">
     {% if just_placed %}
       {% include "includes/orders/progress.html" with step="placed" only %}
       {% include "includes/ui/crown_hero.html" %}

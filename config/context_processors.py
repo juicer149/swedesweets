@@ -76,22 +76,11 @@ def navigation(request):
         )
 
     view_name = getattr(request.resolver_match, "view_name", "")
-    context["navbar_account_current"] = view_name in {
-        "business_portal:index",
-        "business_portal:orders",
-        "business_portal:order_detail",
-        "accounts:me",
-        "password_change",
-    }
-    context["navbar_cart_current"] = view_name in {
+    cart_flow = view_name in {
         "business_portal:cart",
         "business_portal:cart_review",
         "storefront:cart",
         "storefront:checkout",
-        "storefront:checkout_review",
-    }
-    context["navbar_cart_locked"] = view_name in {
-        "business_portal:cart_review",
         "storefront:checkout_review",
         "storefront:checkout_pay",
         "storefront:payment_return",
@@ -99,6 +88,17 @@ def navigation(request):
         view_name == "business_portal:order_detail"
         and request.GET.get("placed") == "1"
     )
+    context["navbar_account_current"] = not cart_flow and view_name in {
+        "business_portal:index",
+        "business_portal:orders",
+        "business_portal:order_detail",
+        "accounts:me",
+        "password_change",
+    }
+    context["navbar_cart_current"] = cart_flow
+    # Desktop is already in the full editor. Mobile mounts this same flow
+    # inside its sheet rather than opening an independent quick preview.
+    context["navbar_cart_locked"] = cart_flow
     if context.get("navbar_cart") and context["navbar_cart"].is_retail:
         context["navbar_checkout_form"] = navbar_checkout_form(request)
     return context

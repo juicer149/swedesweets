@@ -10,9 +10,12 @@
 .order-progress__step.is-lit::before, .order-progress__step.is-lit .order-progress__dot { box-shadow: var(--order-progress-dot-shadow); }
 .order-progress__step[aria-current="step"] .order-progress__dot { background: currentColor; }
 
-/* Review keeps its panel surface on desktop; cart sits on the page. Mobile moves this same DOM
-   into the navbar sheet; it never creates a second checkout form. */
-.order-flow-surface { width: min(100%, 60rem); max-width: 60rem; }
+/* Every stage shares one unframed geometry; only the content below changes. */
+.order-flow-page > .page.order-flow-surface {
+  width: min(100%, 60rem); max-width: 60rem; margin: 0 auto;
+  padding: var(--space-4) 0; background: transparent; border: 0;
+  border-radius: 0; box-shadow: none;
+}
 .order-flow-content { min-width: 0; }
 .order-flow-page.is-arriving .order-progress { --order-progress-lit: var(--order-progress-ready); --order-progress-shadow: none; --order-progress-dot-shadow: none; }
 .order-flow-content[hidden] { display: none; }
@@ -21,16 +24,6 @@
 .order-flow-spinner { display: grid; place-items: center; width: 8rem; height: 8rem; }
 .order-flow-spinner > .status-burst { width: 100%; height: 100%; }
 .order-flow-page.is-loading .order-flow-surface { min-height: 65dvh; }
-@media (min-width: 768px) {
-  .order-flow-page:not([data-flow-step="cart"]) .order-flow-surface {
-    position: relative; isolation: isolate; margin-inline: auto;
-    padding: clamp(1.25rem, 4vw, 3rem);
-    background: var(--preferences-bg); border: 1px solid var(--menu-edge);
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    box-shadow: var(--preferences-shadow);
-  }
-  .order-flow-page:not([data-flow-step="cart"]) .order-flow-surface::before { content: ""; position: absolute; z-index: -1; inset: 0 0 auto; height: 5rem; pointer-events: none; background: var(--menu-panel-edge-glow); }
-}
 @media (prefers-reduced-motion: reduce) {
   .order-progress__step, .order-progress__dot { transition: none; }
 }
@@ -42,5 +35,5 @@
 }
 
 @media (max-width: 767px) {
-  [data-flow-step="placed"] .order-progress { margin-bottom: var(--space-12); }
+  [data-flow-step="placed"] .order-flow-content { padding-top: var(--space-6); }
 }

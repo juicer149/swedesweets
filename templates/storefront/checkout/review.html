@@ -5,14 +5,14 @@
 
 {% block content %}
 <section
-  class="page-section"
+  class="page-section order-flow-page"
   data-order-flow-page
   data-flow-step="review"
   data-flow-back-url="{{ cart_url }}"
   data-flow-close-url="{% url 'storefront:product_list' %}"
   aria-labelledby="storefront-review-title"
 >
-  <div class="page page--centered page--wide order-flow">
+  <div class="page page--centered order-flow-surface page--wide order-flow">
     {% include "includes/orders/progress.html" with step="review" only %}
     <h1 id="storefront-review-title" class="page__lead visually-hidden">
       {% trans "Review order" %}
