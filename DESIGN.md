@@ -568,8 +568,10 @@ retracts the old sheet first. The cart scrolls inside its frame, keeping the
 close button and navigation accessible.
 
 Desktop separates its compact navbar preview from the full cart page. The
-preview contains editable rows and Go to cart. Cart and review retain the
-panel-like surface, with the timeline replacing visible page headings.
+preview contains editable rows and Go to cart. The desktop cart sits directly on the
+page; review keeps its panel-like surface. The timeline replaces visible page
+headings. Landing hides cart access on mobile; its desktop icon links to the
+cart page without opening a panel.
 Mobile hosts cart, review and placed in one sheet. `responsive-cart.js` moves
 the same live DOM between sheet and page on viewport changes, preserving
 fields and controls. The server pages/forms remain the no-JavaScript fallback.

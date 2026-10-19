@@ -28,3 +28,6 @@
 
 /* A quiet final way out below password changes, never a competing primary action. */
 .account-details__logout { margin: 0; }
+
+/* Customer rows share the navigation gold on hover/focus; ops is independent. */
+[data-order-history] { --table-row-marker: var(--order-history-row-marker); }

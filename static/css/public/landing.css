@@ -316,3 +316,6 @@
 .landing-menu[data-landing-live] .landing-menu__link:not(.landing-menu__link--chosen) .ui-icon-svg {
   filter: none;
 }
+
+/* Landing has no navbar frame: desktop navigates directly to the cart page. */
+@media (max-width: 767px) { .landing__cart-link { display: none; } }

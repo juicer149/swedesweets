@@ -10,8 +10,9 @@
   (primary_nav_items, so a business customer gets theirs), the crown on
   the last letter of the chosen one, as on the logo. The pointer, Tab or
   the arrow keys move it, and it stays where it was last put (landing.js).
-  Login or Log out at the bottom; the cart at the top once it holds
-  something. No navbar, no footer, and the page never scrolls.
+  Login or Log out at the bottom; desktop has a direct cart link once it
+  holds something. Mobile keeps cart access in the shop/catalog.
+  No navbar, no footer, and the page never scrolls.
 
   The splash plays once per visit: coming back within the same tab session,
   the menu is simply there (the class set below, before the first paint).
@@ -36,9 +37,10 @@
 
     <div class="landing__top">
       {% if navbar_cart and navbar_cart.has_lines %}
-        <div class="landing__cart-menu" data-navbar-cart-container data-navbar-cart-url="{{ navbar_cart.fragment_url }}">
-          {% include "includes/navbar_cart.html" %}
-        </div>
+        <a class="site-nav-cart__trigger landing__cart-link" href="{% if navbar_cart.is_retail %}{% url 'storefront:cart' %}{% else %}{% url 'business_portal:cart' %}{% endif %}" aria-label="{{ navbar_cart.aria_label }}">
+          <span class="site-nav-cart__icon" aria-hidden="true">{% include "includes/ui/icon.html" with name="cart" %}</span>
+          <span class="site-nav-cart__count" aria-hidden="true">{{ navbar_cart.line_count }}</span>
+        </a>
       {% endif %}
 
       {% if request.user.is_authenticated %}
@@ -104,10 +106,6 @@
 {% endblock %}
 
 {% block scripts %}
-  {% if navbar_cart and navbar_cart.has_lines %}
-    <script src="{% static 'js/ui-dom.js' %}" defer></script>
-    <script src="{% static 'js/navbar-cart.js' %}" defer></script>
-  {% endif %}
   <script
     src="{% static 'js/landing.js' %}"
     defer

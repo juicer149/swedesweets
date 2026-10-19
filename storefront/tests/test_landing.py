@@ -83,11 +83,10 @@ def test_start_page_shows_the_cart_only_once_it_holds_something(client):
 
     html = _landing_html(client)
     assert 'class="landing__cart"' not in html
-    assert 'class="landing__cart-menu"' in html
-    assert 'data-mobile-menu="cart"' in html
-    assert 'data-retail-cart="true"' in html
-    assert 'data-cart-panel-scroll' in html
-    assert 'js/navbar-cart.' in html
+    assert 'landing__cart-link' in html
+    assert 'data-mobile-menu="cart"' not in html
+    assert 'data-cart-panel-scroll' not in html
+    assert 'js/navbar-cart.' not in html
     assert f'href="{reverse("storefront:cart")}"' in html
 
 

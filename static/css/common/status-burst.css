@@ -16,7 +16,6 @@
 :root {
   --status-burst-dot: var(--brand-crown);
   --status-burst-success: var(--brand-crown);
-  --status-burst-halo: var(--color-primary-200);
 }
 
 .status-burst {

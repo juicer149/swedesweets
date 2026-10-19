@@ -243,6 +243,9 @@
   --preferences-trigger-ink: var(--menu-ink);
   --preferences-bg: var(--page-bg);
   --preferences-ink: var(--text-strong);
+  /* Default crown feedback; cart success keeps its own green override. */
+  --status-burst-halo: color-mix(in srgb, var(--brand-crown) 30%, transparent);
+  --order-history-row-marker: var(--menu-chosen);
   --order-progress-ready: var(--color-primary-600);
   --order-progress-lit: var(--color-accent-800);
   --order-progress-shadow: var(--interaction-text-shadow);

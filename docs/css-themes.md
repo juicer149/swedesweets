@@ -733,7 +733,8 @@ minimum; other quantity controls keep their existing minimum behaviour.
 Desktop has a compact quick cart (up to 38rem): product rows, quantity
 steppers and Go to cart. This opens the real cart page, with contact details
 below the products for retail, or Previous orders/product search for B2B.
-Cart and review pages keep the panel surface and cumulative timeline. The full
+The desktop cart sits directly on the page; review retains the panel surface.
+Both have a cumulative timeline. The full
 editor uses up to 60rem. Both email fields share the same width; postal code
 uses one of four columns and town uses three. Country stays France.
 
@@ -741,8 +742,9 @@ On mobile, `responsive-cart.js` hosts cart, review and placed content in the
 same sheet. It fetches server-rendered cart content on first opening, initializes
 only explicitly marked editor scripts, and moves the live DOM between sheet
 and page on viewport changes. Fields, quantity handlers and scroll survive
-navbar refreshes. Mobile cart links (including landing) open the sheet;
-desktop links navigate to the cart page. Without JavaScript these are ordinary
+navbar refreshes. Mobile cart links in the shop/catalog open the sheet; desktop links navigate
+to the cart page. Landing has no mobile cart icon and its desktop cart icon
+always navigates directly, so no cart panel animates from the landing header. Without JavaScript these are ordinary
 server pages and POST forms. Forms retain explicit action URLs.
 
 The Continue button requires browser-valid fields and matching emails; Django
@@ -833,3 +835,9 @@ open rather than opening a second editor. Server payment locks still apply.
 
 Light defaults the external catalog rim to transparent. Dark uses a small,
 low-opacity emission based on the label border. Hover keeps its stronger role.
+
+Customer order-history hover/focus markers use `--order-history-row-marker`,
+scoped through `[data-order-history]`; ops retains its separate table marker.
+The default `--status-burst-halo` is a transparent gold in both themes. Scoped
+cart feedback continues to override it with green. On mobile the placed stage
+leaves `--space-12` below the timeline before its crown.

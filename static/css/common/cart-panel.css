@@ -95,7 +95,6 @@
 .cart-panel-scroll { scrollbar-color: var(--menu-scroll-thumb) var(--menu-scroll-track); }
 
 /* Desktop quick preview; mobile hosts the full editor in the same frame. */
-.landing__cart-menu { display: block; }
 .cart-panel-scroll[aria-busy="true"] { opacity: .65; }
 .cart-page .cart-quick-add { margin-bottom: var(--space-8); }
 @media (min-width: 768px) {
