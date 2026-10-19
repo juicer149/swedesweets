@@ -47,7 +47,7 @@
   box-shadow: var(--preferences-shadow);
 }
 
-.site-preferences__panel > .language-switcher {
+.site-preferences__panel .language-switcher {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -68,7 +68,6 @@
   font-size: var(--font-size-14);
   font-weight: 700;
 }
-.site-preferences__panel > .site-preferences__group { margin-top: var(--space-5); }
 .site-preferences__choices,
 .site-preferences__theme {
   display: flex;
@@ -95,7 +94,6 @@
 
 /* Staff navigate between sites through a normal link, not a palette switch. */
 .site-preferences__site {
-  margin-top: var(--space-5);
   padding-top: var(--space-3);
   border-top: 1px solid var(--preferences-site-divider);
 }

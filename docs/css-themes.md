@@ -752,3 +752,15 @@ emails, while Django remains responsible for all checkout rules and ownership.
 Only confirmation blocks paste/drop; login and password fields keep normal
 paste/password-manager behaviour. Autofill retains the themed field surface
 and focused glow.
+
+Navbar panels use `--radius-md` for softer corners. Mobile keeps the V-shaped
+bottom and rounds the two top corners. All three disclosures scroll internally
+when their content cannot fit, leaving the mobile close control in place.
+`menu-scroll.js` draws a thin position thumb only when there is overflow; it
+updates after scrolling, resizing and cart fragment replacement. The palette
+lives in `--menu-scroll-thumb` and `--menu-scroll-track` in each theme. Native
+scrollbars remain the fallback without JavaScript.
+
+The B2B navbar cart goes directly to the separate Review order page. Its quiet
+Edit cart link opens the full editor/search; retail still uses Go to cart on
+desktop and its contact form inside the mobile sheet.

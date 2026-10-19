@@ -118,6 +118,8 @@ def test_navbar_cart_fragment_reads_customer_cart(
     ]
 
     assert navbar_cart.line_count == 1
+    assert navbar_cart.proceed_label == "Review order"
+    assert navbar_cart.proceed_url == reverse("business_portal:cart_review")
 
     navbar_line = navbar_cart.lines[0]
 
@@ -135,6 +137,8 @@ def test_navbar_cart_fragment_reads_customer_cart(
     assert 'value="3"' in html
     assert "data-navbar-cart-quantity-form" in html
     assert "data-checkout-details-form" not in html
+    assert f'href="{reverse("business_portal:cart_review")}"' in html
+    assert f'href="{reverse("business_portal:cart")}"' in html
 
     assert navbar_line.remove_url == reverse(
         "business_portal:remove_cart_line",

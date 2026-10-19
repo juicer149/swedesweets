@@ -571,3 +571,7 @@ sheet and back to the desktop page when the viewport changes. Values and
 handlers survive the move and AJAX navbar replacement. Closing that mobile
 sheet returns to the catalog. Landing links to the cart page on desktop and
 opens the cart sheet without navigating on mobile.
+
+B2B cart previews proceed directly to Review order, with a quiet Edit cart link
+for the full editor. Navbar panels have softer corners and a thin, persistent
+position marker when their contents overflow; short menus show no marker.

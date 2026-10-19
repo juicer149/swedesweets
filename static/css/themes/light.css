@@ -234,6 +234,8 @@
   --preferences-trigger-ink: var(--menu-ink);
   --preferences-bg: var(--page-bg);
   --preferences-ink: var(--text-strong);
+  --menu-scroll-thumb: var(--color-primary-600);
+  --menu-scroll-track: color-mix(in srgb, var(--color-primary-600) 12%, transparent);
   --preferences-border: var(--line-soft);
   --preferences-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
   --preferences-option: var(--color-primary-700);

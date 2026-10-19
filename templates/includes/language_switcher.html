@@ -6,6 +6,7 @@
   </summary>
   <div class="mobile-menu-viewport">
   <div class="site-preferences__panel mobile-menu-panel" role="region" aria-label="{% trans 'Settings' %}">
+    <div class="menu-panel-scroll" data-menu-panel-scroll>
     <form class="language-switcher" action="{% url 'set_language' %}" method="post" data-language-preferences data-dirty-ignore="true">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ request.get_full_path }}">
@@ -28,6 +29,7 @@
         <a class="quiet-link menu-panel-link" href="{{ account_menu.switch.href }}">{{ account_menu.switch.label }}</a>
       </div>
     {% endif %}
+    </div>
     {% include "includes/mobile_menu_close.html" %}
   </div>
   </div>

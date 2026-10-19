@@ -31,12 +31,12 @@
 .checkout-form .button:disabled { color: var(--cart-disabled-ink); background: var(--cart-disabled-bg); border-color: var(--cart-disabled-border); opacity: .6; box-shadow: none; text-shadow: none; cursor: default; }
 .checkout-email-status { color: var(--color-status-warning-text); }
 .cart-details--mobile { display: none; }
-.site-nav-cart__popover { width: min(38rem, calc(100vw - 8rem)); padding: var(--space-6); background: var(--preferences-bg); border-color: var(--preferences-border); box-shadow: var(--preferences-shadow); display: block; max-height: calc(100dvh - 6rem); }
+.site-nav-cart__popover { width: min(38rem, calc(100vw - 8rem)); padding: var(--space-6); background: var(--preferences-bg); border-color: var(--preferences-border); box-shadow: var(--preferences-shadow); display: block; max-height: calc(100dvh - 6rem); border-radius: var(--radius-md); }
 .cart-panel-scroll { max-height: calc(100dvh - 10rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding: var(--space-1); }
 .site-nav-cart__lines { overflow: visible; max-height: none; margin: 0; padding: 0; scrollbar-gutter: auto; }
 .site-nav-cart__header { border: 0; padding-bottom: var(--space-2); }
 .site-nav-cart__title { font: 600 var(--font-size-24) var(--font-heading); color: var(--text-strong); }
-.site-nav-cart__actions { margin-top: var(--space-5); }
+.site-nav-cart__actions { flex-direction: column; margin-top: var(--space-5); }
 .site-nav-cart__actions .button { width: 100%; }
 @media (max-width: 767px) {
   .site-nav-cart__popover.mobile-menu-panel { width: 100%; background: transparent; border: 0; border-radius: 0; box-shadow: none; display: block; padding: 0 0 4.75rem; max-height: none; text-align: start; }
@@ -95,3 +95,6 @@
   .landing__top > .landing__cart { display: none; }
   .landing__cart-mobile { display: block; }
 }
+
+.site-nav-cart__actions .site-nav-cart__edit { display: flex; justify-content: center; margin-top: var(--space-4); }
+.cart-panel-scroll { scrollbar-color: var(--menu-scroll-thumb) var(--menu-scroll-track); }

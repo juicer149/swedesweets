@@ -6,6 +6,7 @@
   </summary>
   <div class="mobile-menu-viewport">
   <div class="account-menu__panel mobile-menu-panel" role="region" aria-label="{% trans 'My account' %}">
+    <div class="menu-panel-scroll" data-menu-panel-scroll>
     {% if account_menu.account %}
     <a class="quiet-link account-menu__link menu-panel-link" href="{{ account_menu.account.href }}"
       {% if request.resolver_match.view_name == account_menu.account.route_name %}{% if not account_menu.orders or request.GET.tab != 'orders' %}aria-current="page"{% endif %}{% endif %}>{% trans 'Profile' %}</a>
@@ -20,6 +21,7 @@
     {% else %}
       <a class="quiet-link account-menu__link menu-panel-link" href="{% url 'login' %}">{% trans 'Login' %}</a>
     {% endif %}
+    </div>
     {% include "includes/mobile_menu_close.html" %}
   </div>
   </div>
