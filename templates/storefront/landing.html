@@ -36,15 +36,7 @@
 
     <div class="landing__top">
       {% if navbar_cart and navbar_cart.has_lines %}
-        <a
-          class="landing__cart"
-          href="{{ navbar_cart.proceed_url }}"
-          aria-label="{{ navbar_cart.proceed_label }}"
-        >
-          {% include "includes/ui/icon_block.html" with name="cart" class_name="landing__cart-icon" only %}
-          <span class="landing__cart-count" aria-hidden="true">{{ navbar_cart.line_count }}</span>
-        </a>
-        <div class="landing__cart-mobile" data-navbar-cart-container data-navbar-cart-url="{{ navbar_cart.fragment_url }}">
+        <div class="landing__cart-menu" data-navbar-cart-container data-navbar-cart-url="{{ navbar_cart.fragment_url }}">
           {% include "includes/navbar_cart.html" %}
         </div>
       {% endif %}

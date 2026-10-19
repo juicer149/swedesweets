@@ -141,9 +141,12 @@
   --preferences-trigger-ink: var(--interactive-text);
   --preferences-bg: var(--surface-muted);
   --preferences-ink: var(--text-strong);
+  --cart-previous-text: var(--interactive-text);
+  --cart-previous-active: var(--selected-accent);
+  --cart-previous-glow: var(--interaction-text-shadow);
   --menu-scroll-thumb: var(--interactive-text);
   --menu-scroll-track: color-mix(in srgb, var(--interactive-text) 12%, transparent);
-  --preferences-border: var(--interactive-border);
+  --preferences-border: var(--menu-edge);
   --preferences-option: var(--interactive-text);
   --preferences-selected: var(--selected-accent);
   --preferences-selected-shadow: var(--interaction-text-shadow);

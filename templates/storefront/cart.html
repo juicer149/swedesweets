@@ -62,7 +62,7 @@
           </a>
 
           {% if not open_payment_url %}
-            <form method="post">
+            <form method="post" action="{% url 'storefront:cart' %}">
               {% csrf_token %}
 
               <button
@@ -99,9 +99,9 @@
 {% block scripts %}
   {{ block.super }}
 
-  <script src="{% static 'js/quantity-stepper.js' %}" defer></script>
-  <script src="{% static 'js/cart.js' %}" defer></script>
-  <script src="{% static 'js/confirm_dialog.js' %}" defer></script>
-  <script src="{% static 'js/confirm_action.js' %}" defer></script>
-  <script src="{% static 'js/storefront-cart.js' %}" defer></script>
+  <script data-cart-editor-script src="{% static 'js/quantity-stepper.js' %}" defer></script>
+  <script data-cart-editor-script src="{% static 'js/cart.js' %}" defer></script>
+  <script data-cart-editor-script src="{% static 'js/confirm_dialog.js' %}" defer></script>
+  <script data-cart-editor-script src="{% static 'js/confirm_action.js' %}" defer></script>
+  <script data-cart-editor-script src="{% static 'js/storefront-cart.js' %}" defer></script>
 {% endblock %}

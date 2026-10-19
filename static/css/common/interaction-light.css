@@ -1,11 +1,11 @@
 /* Shared local hover/focus light. Themes own its paint; layout stays here.
    Keep the name/question above the halo and leave secondary prose neutral. */
-:is(.menu-panel-link, .section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand) {
+:is(.menu-panel-link, .section-nav__link, .find-sweets .line__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand) {
   position: relative;
   isolation: isolate;
 }
 
-:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
+:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
   content: "";
   position: absolute;
   inset: -0.6rem 0;
@@ -75,12 +75,12 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):hover::before {
+  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand):hover::before {
     opacity: var(--interaction-halo-opacity);
   }
 }
 
-:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand):focus-visible::before {
+:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand):focus-visible::before {
   opacity: var(--interaction-halo-opacity);
 }
 
@@ -104,7 +104,7 @@
   text-shadow: var(--interaction-text-shadow);
 }
 
-:is(.menu-panel-link, .section-nav__link, .faq .accordion__summary, .landing-menu__link, .landing__account, .landing__cart):is(:hover, :focus-visible) .ui-icon-svg,
+:is(.menu-panel-link, .section-nav__link, .faq .accordion__summary, .landing-menu__link, .landing__account):is(:hover, :focus-visible) .ui-icon-svg,
 :is(.section-nav__link--active, .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"], .section-nav__link[aria-pressed="true"],
     .faq .accordion[open] > .accordion__summary, .landing-menu__link--chosen) .ui-icon-svg {
@@ -139,7 +139,7 @@
 @media (forced-colors: active) {
   .site-nav__link::after,
   :is(.faq .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
-  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
+  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
     display: none;
   }
 
@@ -149,7 +149,7 @@
   }
 
   :is(.site-nav__icon, .menu-panel-link, .section-nav__link, .faq .accordion__summary,
-      .landing-menu__link, .landing__account, .landing__cart, .find-sweets .line__icon, .site-brand, .site-nav-cart__trigger, .tile__add) .ui-icon-svg,
+      .landing-menu__link, .landing__account, .find-sweets .line__icon, .site-brand, .site-nav-cart__trigger, .tile__add) .ui-icon-svg,
   .site-brand__logo,
   .entrance-header__logo,
   .site-nav__label,
@@ -162,7 +162,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   :is(.faq .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
-  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .landing__cart, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
+  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
     transition: none;
   }
 }

@@ -234,9 +234,12 @@
   --preferences-trigger-ink: var(--menu-ink);
   --preferences-bg: var(--page-bg);
   --preferences-ink: var(--text-strong);
+  --cart-previous-text: var(--color-primary-600);
+  --cart-previous-active: var(--menu-chosen);
+  --cart-previous-glow: var(--interaction-text-shadow);
   --menu-scroll-thumb: var(--color-primary-600);
   --menu-scroll-track: color-mix(in srgb, var(--color-primary-600) 12%, transparent);
-  --preferences-border: var(--line-soft);
+  --preferences-border: var(--menu-edge);
   --preferences-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
   --preferences-option: var(--color-primary-700);
   --preferences-selected: var(--color-accent-800);

@@ -462,10 +462,10 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   trigger; clicking another trigger closes the previous dropdown.
 - **Navbar cart:** an icon-only disclosure with editable product rows and a
   quantity stepper. At one item, the minus becomes a trash action. Desktop
-  keeps the compact preview and a link to the cart; mobile uses the same
+  uses the full cart editor in its panel; mobile uses the same
   sliding V-shaped sheet as account/settings, with its own scrolling content.
-  Retail contact/delivery fields follow the rows on mobile and on the desktop
-  cart page; desktop's dropdown contains only the rows and subtotal. The icon is 22px with a
+  Retail contact/delivery fields follow the rows on both screen sizes.
+  B2B includes Previous orders and product search before its current rows. The icon is 22px with a
   stronger stroke than the original artwork. Cart/checkout pages retain its
   selected light and crown; the count moves away from the crown. AJAX refresh
   preserves selection, scroll and in-progress contact fields. Added items produce green feedback; removals use red.
@@ -543,8 +543,8 @@ respective theme roles. See [CSS themes](docs/css-themes.md) for implementation.
 ### Cart contact fields and focused inputs
 
 Retail cart and mobile sheet share `includes/cart/checkout_details.html`.
-Both desktop cart pages use the wider shared product rows, with quantity
-controls alongside the product; the quick dropdown uses smaller images. B2B
+Cart panels use wider desktop product rows, with quantity controls alongside
+the product. B2B
 search/add options keep their compact product presentation.
 Names and delivery address come first, then full-width email, confirmation and
 phone. On desktop postal code takes a quarter and town three quarters.
@@ -566,12 +566,17 @@ inerts covered content while a sheet slides down over it; changing disclosures
 retracts the old sheet first. The cart scrolls inside its frame, keeping the
 close button and navigation accessible.
 
-A cart URL hosts one live editor: `responsive-cart.js` moves it into the mobile
-sheet and back to the desktop page when the viewport changes. Values and
-handlers survive the move and AJAX navbar replacement. Closing that mobile
-sheet returns to the catalog. Landing links to the cart page on desktop and
-opens the cart sheet without navigating on mobile.
+The full cart editor lives in its navbar panel on both desktop and mobile.
+`responsive-cart.js` loads the server-rendered cart when needed and preserves
+the live editor through closure, screen-size changes and navbar refreshes.
+Retail includes contact/delivery fields; B2B shows Previous orders, compact
+product search, current products and Review order. Review is a separate page
+with Place order. Landing opens the same cart panel on either screen size.
+The cart URL remains a no-JavaScript fallback; a direct visit opens its editor
+in the panel and returns to the catalog when closed.
 
-B2B cart previews proceed directly to Review order, with a quiet Edit cart link
-for the full editor. Navbar panels have softer corners and a thin, persistent
-position marker when their contents overflow; short menus show no marker.
+Panels round their lower corners, preserving the mobile V-shaped bottom with
+softer joins. Outlines share the navbar's `--menu-edge`. Desktop cart has a close
+circle too, and outside click/Escape dismiss it. Overflowing content scrolls
+inside the frame with a persistent position marker and an accessible close
+control. Short menus show no marker.

@@ -44,39 +44,7 @@
   min-height: 2.25rem;
 }
 
-.landing__cart {
-  position: relative;
-  display: inline-flex;
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0.4rem;
-  box-sizing: border-box;
-  color: var(--landing-ink);
-  border-radius: var(--radius-pill);
-}
 
-.landing__cart-icon.ui-icon-block {
-  width: 100%;
-  height: 100%;
-}
-
-.landing__cart-count {
-  position: absolute;
-  top: -0.15rem;
-  right: -0.25rem;
-  min-width: 1.15rem;
-  padding: 0 0.25rem;
-  box-sizing: border-box;
-
-  color: var(--menu-cart-count-ink);
-  background: var(--menu-cart-count-bg);
-  border-radius: var(--radius-pill);
-
-  font-size: var(--font-size-12);
-  font-weight: 800;
-  line-height: 1.15rem;
-  text-align: center;
-}
 
 
 /* The stage: the logo and the line, then the menu ------------------------- */
@@ -275,7 +243,6 @@
     calc(var(--landing-splash) + var(--landing-rise)) both;
 }
 
-.landing__cart:focus-visible,
 .landing__account:focus-visible {
   outline: 2px solid var(--landing-ink);
   outline-offset: 2px;
@@ -331,8 +298,7 @@
 
 /* The shared halo lives in common/interaction-light.css. Keep these controls
    solid, including the cart count and the separate crown above each label. */
-.landing__account:is(:hover, :focus-visible),
-.landing__cart:is(:hover, :focus-visible) {
+.landing__account:is(:hover, :focus-visible) {
   color: var(--landing-control-hover-ink);
 }
 

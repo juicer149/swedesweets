@@ -26,6 +26,9 @@
     root.classList.toggle("mobile-menu-open", mobile.matches && Boolean(covered));
     for (const [element, inert] of inertBefore) element.inert = inert;
     inertBefore.clear();
+    const cartPanel = document.querySelector(".site-nav-cart__popover");
+    const header = document.querySelector(".site-header, .entrance-header, .landing__top");
+    cartPanel?.style.setProperty("--cart-panel-top", `${Math.max(0, header?.getBoundingClientRect().bottom || 0) + 8}px`);
     if (!mobile.matches || !covered) return;
 
     const viewport = covered.querySelector(".mobile-menu-viewport");
@@ -99,17 +102,6 @@
       event.preventDefault();
       event.stopPropagation();
       request(wanted === menu.dataset.mobileMenu || (!running && menu.open) ? null : menu.dataset.mobileMenu, true);
-      return;
-    }
-    const link = event.target.closest("a[href]");
-    const cart = menuFor("cart");
-    if (mobile.matches && link && cart?.dataset.retailCart === "true"
-        && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey
-        && event.button === 0
-        && new URL(link.href).pathname === cart.dataset.cartPageUrl) {
-      event.preventDefault();
-      event.stopPropagation();
-      request("cart", true);
       return;
     }
     const close = event.target.closest("[data-close-details]");

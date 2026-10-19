@@ -43,6 +43,7 @@
   <div class="mobile-menu-viewport">
   <div class="site-nav-cart__popover mobile-menu-panel">
     <div class="cart-panel-scroll" data-cart-panel-scroll data-menu-panel-scroll>
+    <noscript><a class="quiet-link" href="{% if navbar_cart.is_retail %}{% url 'storefront:cart' %}{% else %}{% url 'business_portal:cart' %}{% endif %}">{% trans 'Edit cart' %}</a></noscript>
     <header class="site-nav-cart__header">
       <strong class="site-nav-cart__title">
         {{ navbar_cart.title }}

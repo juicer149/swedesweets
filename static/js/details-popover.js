@@ -69,6 +69,10 @@
         return;
       }
 
+      // A confirmation opened by the panel is a separate top-layer dialog,
+      // not an outside click dismissing its underlying cart.
+      if (target instanceof Element && target.closest("dialog")) return;
+
       for (
         const details
         of openDismissableDetails()
@@ -97,6 +101,8 @@
       ) {
         return;
       }
+
+      if (document.querySelector("dialog[open]")) return;
 
       const openDetails = (
         openDismissableDetails()

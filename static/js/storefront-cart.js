@@ -1,5 +1,4 @@
 (() => {
-  const subtotals = document.querySelectorAll("[data-cart-subtotal]");
 
   document.addEventListener(
     "cart-changed",
@@ -21,7 +20,7 @@
       if (
         payload.subtotal_label
       ) {
-        subtotals.forEach(subtotal => { subtotal.textContent = payload.subtotal_label; });
+        document.querySelectorAll("[data-cart-subtotal]").forEach(subtotal => { subtotal.textContent = payload.subtotal_label; });
       }
 
       if (

@@ -726,41 +726,37 @@ minimum; other quantity controls keep their existing minimum behaviour.
 | `--field-focus-color`, `--field-focus-shadow` | Border and diffuse light for focused form inputs and enhanced selects |
 | `--entrance-field-focus-shadow` | Entrance form emission, following its menu accent |
 
-Desktop's cart dropdown contains rows, subtotal and Go to cart. The retail cart
-page stacks Your details beneath its products. Mobile includes those same
-fields in the cart sheet; account/settings stay centred and do not scroll.
-Desktop cart pages use up to 60rem, with 38rem for the quick dropdown. Images
-are smaller there, and quantity controls sit alongside the product and amount.
-Email and confirmation both span the form; postal code takes one of four
-columns and town takes three. Mobile keeps the two-column form layout.
-Country is fixed to France, following the existing retail delivery policy.
+The cart panel is the complete editor on desktop and mobile. Retail stacks
+Your details beneath products; B2B shows Previous orders, compact product search,
+then its current products and Review order. Review remains a separate page
+with Place order. Desktop panels use up to 60rem, with quantities alongside
+products and amounts. Both email fields span the form; postal code uses one
+of four columns and town uses three. Mobile keeps the two-column form layout.
+Country stays France, following the existing delivery policy.
 
-`responsive-cart.js` moves the existing cart editor into the mobile sheet below
-768px and back into the desktop page above it. It preserves the actual DOM,
-including typed details, quantity handlers and B2B quick-add. Navbar fragment
-replacement preserves that editor as well. Closing a directly visited mobile
-cart returns to its catalog; there is no second mobile cart page underneath.
-The landing cart links to the cart page on desktop and opens its sheet in place
-on mobile. Without JavaScript the conventional cart page remains available.
+`responsive-cart.js` fetches the existing cart URL on first opening and mounts
+its editor in the panel. Only explicitly marked cart scripts are initialized.
+The same DOM survives closure, resizing and navbar fragment replacement,
+including typed contact details, quantity handlers, focus, scroll and B2B search.
+Changes from outside the editor refresh its server data on the next opening.
+Cart URL links, including landing, open the panel at either viewport size.
+A directly visited cart URL mounts its editor there too; closing returns to
+the catalog. Without JavaScript the ordinary server-rendered cart still works.
+Forms use explicit action URLs so they also submit correctly from a catalog.
 
-The form uses a separate navbar prefix so page and sheet never duplicate field
-IDs. Page and sheet synchronize draft values in the browser. AJAX cart refresh
-preserves draft values, focus and scroll; it also
-initializes dynamic quantity controls, confirmation and postal/city lookup.
-The continuation button requires browser-valid required fields and matching
-emails, while Django remains responsible for all checkout rules and ownership.
-Only confirmation blocks paste/drop; login and password fields keep normal
-paste/password-manager behaviour. Autofill retains the themed field surface
-and focused glow.
+The Continue button requires browser-valid fields and matching emails; Django
+still validates delivery, ownership, stock and payment locks. Only confirmation
+blocks paste/drop. Ordinary password fields and autofill retain their behaviour.
 
-Navbar panels use `--radius-md` for softer corners. Mobile keeps the V-shaped
-bottom and rounds the two top corners. All three disclosures scroll internally
-when their content cannot fit, leaving the mobile close control in place.
-`menu-scroll.js` draws a thin position thumb only when there is overflow; it
-updates after scrolling, resizing and cart fragment replacement. The palette
-lives in `--menu-scroll-thumb` and `--menu-scroll-track` in each theme. Native
-scrollbars remain the fallback without JavaScript.
+Panel upper corners are square; the lower corners are softer. Mobile keeps its
+V-shaped bottom, with rounded joins at the left and right. Outlines reuse
+`--menu-edge`, the gold line beneath the navbar. Cart has a fixed close circle
+on desktop too, and outside click/Escape still dismiss it. All three panels
+scroll internally when needed, leaving the close control accessible.
+`menu-scroll.js` shows a position thumb only when contents overflow; its theme
+roles are `--menu-scroll-thumb` and `--menu-scroll-track`. Native scrollbars
+remain the fallback without JavaScript.
 
-The B2B navbar cart goes directly to the separate Review order page. Its quiet
-Edit cart link opens the full editor/search; retail still uses Go to cart on
-desktop and its contact form inside the mobile sheet.
+B2B Previous orders uses `--cart-previous-text` for ready text and
+`--cart-previous-active` / `--cart-previous-glow` for open, hover and focus.
+These cart-scoped roles leave the ops version of Previous orders unchanged.
