@@ -185,6 +185,10 @@ def test_review_shows_order_to_owning_session(client, cart):
     assert "Marie Dupont" in content
     assert "€20.00" in content
     assert response.context["lines"][0].image_url is None
+    assert response.context["navbar_cart_locked"] is True
+    assert 'data-order-progress="review"' in content
+    assert content.count('class="order-progress__step is-lit"') == 2
+
 
 
 @pytest.mark.django_db

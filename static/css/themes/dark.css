@@ -150,6 +150,11 @@
   --preferences-trigger-ink: var(--interactive-text);
   --preferences-bg: var(--menu-bg);
   --preferences-ink: var(--text-strong);
+  --order-progress-ready: var(--interactive-text);
+  --order-progress-lit: var(--selected-accent);
+  --order-progress-shadow: var(--interaction-text-shadow);
+  --order-progress-dot-shadow: 0 0 9px color-mix(in srgb, var(--selected-accent) 25%, transparent);
+  --menu-panel-title-off-text: var(--interactive-text);
   --menu-panel-title-text: var(--dropdown-title-active-text);
   --menu-panel-title-shadow: var(--dropdown-title-text-shadow);
   --menu-panel-edge-glow: linear-gradient(to bottom, color-mix(in srgb, var(--menu-edge) 14%, transparent), color-mix(in srgb, var(--menu-edge) 4%, transparent) 40%, transparent);
@@ -275,6 +280,7 @@
   /* Card hover: the name sits on gold; the picture shares the warm light. */
   --catalog-card-hover-text: var(--color-primary-700);
   --catalog-card-hover-sheen: linear-gradient(135deg, rgb(249 181 26 / calc(0.22 * var(--interaction-glow-strength))), transparent 65%);
+  --catalog-outline-shadow: 0 0 10px color-mix(in srgb, var(--label-border) 15%, transparent);
   --catalog-card-hover-shadow: var(--menu-cart-glow);
 
   /* Quantity/variant fields: interactive blue at rest; gold while focused/open */

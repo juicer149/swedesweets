@@ -86,13 +86,14 @@
 
   function open() {
     const cart = cartMenu();
-    if (!cart) return;
+    if (!cart || cart.dataset.cartLocked === "true") return;
     document.dispatchEvent(new CustomEvent("mobile-menu-request", { detail: { key: "cart" } }));
     void loadEditor();
   }
   document.addEventListener("click", event => {
     const link = event.target.closest("a[href]");
     if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    if (cartMenu()?.dataset.cartLocked === "true") return;
     if (new URL(link.href).pathname !== cartMenu()?.dataset.cartPageUrl) return;
     event.preventDefault();
     event.stopPropagation();

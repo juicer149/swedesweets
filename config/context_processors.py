@@ -90,6 +90,15 @@ def navigation(request):
         "storefront:checkout",
         "storefront:checkout_review",
     }
+    context["navbar_cart_locked"] = view_name in {
+        "business_portal:cart_review",
+        "storefront:checkout_review",
+        "storefront:checkout_pay",
+        "storefront:payment_return",
+    } or (
+        view_name == "business_portal:order_detail"
+        and request.GET.get("placed") == "1"
+    )
     if context.get("navbar_cart") and context["navbar_cart"].is_retail:
         context["navbar_checkout_form"] = navbar_checkout_form(request)
     return context

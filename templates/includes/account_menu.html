@@ -8,6 +8,7 @@
   <div class="account-menu__panel mobile-menu-panel" role="region" aria-label="{% trans 'My account' %}">
     <span class="menu-panel-toplight" aria-hidden="true"></span>
     <div class="menu-panel-scroll" data-menu-panel-scroll>
+      <h2 class="menu-panel-title">{% trans 'My account' %}</h2>
     {% if account_menu.account %}
     <a class="quiet-link account-menu__link menu-panel-link" href="{{ account_menu.account.href }}"
       {% if request.resolver_match.view_name == account_menu.account.route_name %}{% if not account_menu.orders or request.GET.tab != 'orders' %}aria-current="page"{% endif %}{% endif %}>{% trans 'Profile' %}</a>

@@ -110,5 +110,10 @@ def test_order_page_greets_a_just_placed_order_with_the_crown(
         kwargs={"order_id": order.id},
     )
 
-    assert 'class="crown-hero"' in client.get(f"{url}?placed=1").content.decode()
+    response = client.get(f"{url}?placed=1")
+    html = response.content.decode()
+    assert 'class="crown-hero"' in html
+    assert response.context["navbar_cart_locked"] is True
+    assert 'data-order-progress="placed"' in html
+    assert html.count('class="order-progress__step is-lit"') == 3
     assert 'class="crown-hero"' not in client.get(url).content.decode()

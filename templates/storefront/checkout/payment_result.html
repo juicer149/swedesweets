@@ -18,8 +18,12 @@
   known yet. One screen in the calm design, one yellow way on.
 {% endcomment %}
 <section class="screen screen--in-site payment-result" aria-labelledby="payment-result-title">
-  <div class="page page--centered">
+  <div class="page page--centered order-flow">
+    {% if result != "confirmed" %}
+      {% include "includes/orders/progress.html" with step="review" only %}
+    {% endif %}
     {% if result == "confirmed" %}
+      {% include "includes/orders/progress.html" with step="placed" only %}
       {% include "includes/ui/crown_hero.html" %}
 
       <header class="page__header">

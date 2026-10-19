@@ -66,6 +66,7 @@
   }
 
   async function request(key, focus = false) {
+    if (key === "cart" && menuFor(key)?.dataset.cartLocked === "true") return;
     wanted = key;
     restoreFocus = focus;
     if (running) return;
@@ -74,7 +75,9 @@
     while (active !== wanted) {
       if (active) {
         const closing = menuFor(active);
-        const animation = await animate(closing, false);
+        closing?.removeAttribute("data-panel-lit");
+        if (!reducedMotion.matches) await new Promise(resolve => setTimeout(resolve, 140));
+        const animation = await animate(menuFor(active), false);
         // Resolve it again: a quantity change may have replaced the fragment.
         const current = menuFor(active);
         if (current) current.open = false;
@@ -85,11 +88,13 @@
         active = wanted;
         const opening = menuFor(active);
         if (!opening) { wanted = null; active = null; break; }
+        opening.removeAttribute("data-panel-lit");
         opening.open = true;
         sync();
         const animation = await animate(opening, true);
         animation?.cancel();
         if (active === wanted) {
+          menuFor(active)?.setAttribute("data-panel-lit", "");
           menuFor(active)?.querySelector(".mobile-menu-panel a, .mobile-menu-panel button")?.focus({ preventScroll: true });
         }
       }

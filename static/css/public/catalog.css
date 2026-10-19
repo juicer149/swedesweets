@@ -1440,3 +1440,7 @@
 }
 .catalog__empty[hidden] { display: none; }
 .catalog__empty .catalog-no-photo { padding: var(--space-6); }
+
+/* A quiet rim where the photograph and label meet the page background. */
+.tile__media, .product__media { box-shadow: var(--catalog-outline-shadow); }
+.tile__label, .product__label { box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15), var(--catalog-outline-shadow); }

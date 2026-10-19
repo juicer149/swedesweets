@@ -795,3 +795,37 @@ search results scroll only inside `.ts-dropdown-content`, not the outer dropdown
 as well. Rich product name/meta/offer labels inherit their active or selected
 row's contrasting text colour. In the cart, the result list flows with the
 editor so its own scroll area remains reachable instead of being clipped.
+
+## Panel light sequence and order journey
+
+Panels start with blue headings and no internal emission. Once the downward
+320ms slide finishes, `mobile-menu.js` sets `data-panel-lit`; the title, edge
+light and selected controls illuminate over 140ms. Closing clears that state,
+waits 140ms for extinction, then retracts over 240ms. Reduced motion skips the
+slide/fade waits. Cart fragment refresh preserves both this light state and its
+locked state. Account and Settings headings share `.menu-panel-title` and leave
+additional space before their controls.
+
+`includes/orders/progress.html` and `common/order-progress.css` show Cart →
+Review order → Order placed. Earlier points, labels and connecting lines remain
+lit; future steps stay blue, with `aria-current="step"` on the current stage.
+Cart panels show the first stage, retail/B2B review shows the second, and the
+newly placed B2B order or confirmed retail payment shows the third. Failed or
+uncertain payments remain at review. Historical B2B order detail does not show
+a new checkout journey unless opened as the just-placed destination.
+
+On review and payment-result/just-placed pages the navbar cart trigger is inert,
+and the panel controller rejects requests to open it. Explicit Edit cart/Back
+links still navigate to the editor, restoring the cart stage. This is navigation
+behaviour; the existing server validation and payment locks remain authoritative.
+
+| Role | Purpose |
+| --- | --- |
+| `--menu-panel-title-off-text` | Blue title while arriving/leaving |
+| `--menu-panel-title-text`, `--menu-panel-title-shadow` | Lit panel and flow page headings |
+| `--order-progress-ready`, `--order-progress-lit` | Future versus reached steps and lines |
+| `--order-progress-shadow`, `--order-progress-dot-shadow` | Text and point/connector emission |
+| `--catalog-outline-shadow` | Quiet external rim around product image and label, separate from hover |
+
+Light defaults the external catalog rim to transparent. Dark uses a small,
+low-opacity emission based on the label border. Hover keeps its stronger role.

@@ -8,7 +8,8 @@
   class="page-section"
   aria-labelledby="storefront-review-title"
 >
-  <div class="page page--centered page--wide">
+  <div class="page page--centered page--wide order-flow">
+    {% include "includes/orders/progress.html" with step="review" only %}
     <h1 id="storefront-review-title" class="page__lead">
       {% trans "Review order" %}
     </h1>

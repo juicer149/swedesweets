@@ -13,6 +13,8 @@
   data-current-order-error-message="{% trans 'Could not update quantity.' %}"
 >
   <div class="page page--centered cart-page glow-accordions">
+    {% include "includes/orders/progress.html" with step="cart" only %}
+
     <h1 id="portal-place-order-title" class="page__lead">
       {% trans "Order" %}
     </h1>

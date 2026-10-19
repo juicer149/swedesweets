@@ -588,3 +588,15 @@ and more space above. FAQ, Previous orders and its nested order headings share
 `--dropdown-title-*` roles; component aliases remain available in the themes.
 Empty retail carts centre the message and keep Browse shop near the bottom,
 falling back to internal scrolling when the screen is short.
+
+Panel light follows motion: headings start blue while the panel descends, then
+turn gold with their light. Closing extinguishes the light before retraction.
+Settings and My account have their own shared panel heading. Catalog images and
+labels have a separate, quiet external rim light in dark mode.
+
+Order progress is cumulative: Cart → Review order → Order placed, with reached
+points and connecting lines retaining gold light. Review and result pages use
+the same gold heading treatment. The navbar cart cannot open from these later
+steps; explicit edit/back links return to cart. Retail reaches the final step
+only on confirmed payment, leaving failed/uncertain results at review. Historical
+B2B orders keep their ordinary detail view outside the just-placed destination.

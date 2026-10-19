@@ -1,0 +1,17 @@
+{% load i18n %}
+<nav class="order-progress" aria-label="{% trans 'Order progress' %}" data-order-progress="{{ step }}">
+  <ol class="order-progress__steps">
+    <li class="order-progress__step is-lit"{% if step == 'cart' %} aria-current="step"{% endif %}>
+      <span class="order-progress__dot" aria-hidden="true"></span>
+      <span>{% trans 'Cart' %}</span>
+    </li>
+    <li class="order-progress__step{% if step != 'cart' %} is-lit{% endif %}"{% if step == 'review' %} aria-current="step"{% endif %}>
+      <span class="order-progress__dot" aria-hidden="true"></span>
+      <span>{% trans 'Review order' %}</span>
+    </li>
+    <li class="order-progress__step{% if step == 'placed' %} is-lit{% endif %}"{% if step == 'placed' %} aria-current="step"{% endif %}>
+      <span class="order-progress__dot" aria-hidden="true"></span>
+      <span>{% trans 'Order placed' %}</span>
+    </li>
+  </ol>
+</nav>

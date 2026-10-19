@@ -8,7 +8,8 @@
   class="page-section"
   aria-labelledby="portal-review-order-title"
 >
-  <div class="page page--centered page--wide">
+  <div class="page page--centered page--wide order-flow">
+    {% include "includes/orders/progress.html" with step="review" only %}
     <header class="page__heading">
       <h1 id="portal-review-order-title" class="page__lead">
         {{ title }}

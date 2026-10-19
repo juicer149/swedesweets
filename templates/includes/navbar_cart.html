@@ -3,6 +3,7 @@
 <details
   class="site-nav-cart"
   data-mobile-menu="cart"
+  data-cart-locked="{{ navbar_cart_locked|yesno:'true,false' }}"
   data-retail-cart="{{ navbar_cart.is_retail|yesno:'true,false' }}"
   data-cart-page-url="{% if navbar_cart.is_retail %}{% url 'storefront:cart' %}{% else %}{% url 'business_portal:cart' %}{% endif %}"
   data-dismiss-on-outside-click
@@ -10,6 +11,7 @@
   <summary
     class="site-nav-cart__trigger menu-dropdown-trigger"
     aria-label="{{ navbar_cart.aria_label }}"
+    {% if navbar_cart_locked %}aria-disabled="true" tabindex="-1" inert{% endif %}
     {% if navbar_cart_current %}aria-current="page"{% endif %}
   >
     <span

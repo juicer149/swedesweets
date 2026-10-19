@@ -2782,3 +2782,11 @@ msgstr "Votre panier"
 
 msgid "Delivery calculated at the next step."
 msgstr "Les frais de livraison sont calculés à l’étape suivante."
+
+#: templates/includes/orders/progress.html:2
+msgid "Order progress"
+msgstr "Progression de la commande"
+
+#: templates/includes/orders/progress.html:14
+msgid "Order placed"
+msgstr "Commande passée"

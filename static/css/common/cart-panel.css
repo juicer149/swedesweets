@@ -166,3 +166,4 @@
 /* The cart owns its scrolling: let an open product search grow its content
    instead of clipping the result list at the editor's previous height. */
 .cart-quick-add .ts-dropdown { position: static; }
+details[data-mobile-menu]:not([data-panel-lit]) .cart-panel-scroll .cart-page > .page__lead::before { opacity: 0; }

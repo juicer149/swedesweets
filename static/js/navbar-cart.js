@@ -235,6 +235,8 @@
       // Read the draft at replacement time: typing and dismissal can happen
       // while this GET is in flight.
       const wasOpen = Boolean(preserveOpenState && currentCart?.open);
+      const wasLit = currentCart?.hasAttribute("data-panel-lit");
+      const wasLocked = currentCart?.dataset.cartLocked === "true";
       const draftForm = currentCart?.querySelector("[data-checkout-details-form]");
       const draft = [...(draftForm?.elements || [])].map(field => [field.name, field.value]);
       const panelScroll = currentCart?.querySelector("[data-cart-panel-scroll]")?.scrollTop || 0;
@@ -251,6 +253,14 @@
       }
 
       const refreshedCart = cartElement();
+      if (wasLit) refreshedCart?.setAttribute("data-panel-lit", "");
+      if (wasLocked && refreshedCart) {
+        refreshedCart.dataset.cartLocked = "true";
+        const trigger = refreshedCart.querySelector("summary");
+        trigger?.setAttribute("aria-disabled", "true");
+        trigger?.setAttribute("tabindex", "-1");
+        trigger?.setAttribute("inert", "");
+      }
       const restoredForm = refreshedCart?.querySelector("[data-checkout-details-form]");
       for (const [name, value] of draft) {
         const field = restoredForm?.elements.namedItem(name);
