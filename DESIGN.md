@@ -645,7 +645,7 @@ and anchored below the timeline; all flow messages render after the timeline
 so they cannot move it. Previous orders, search and product rows have larger
 gaps, using `--space-10`.
 
-Checkout now uses a 32rem form column beneath its wider product rows. Email
+Checkout uses a shared 36rem column for timeline, product rows and details. Email
 and confirmation share a 26rem maximum; phone uses 18rem. Names retain their
 paired layout. The shared timeline leaves 40px before normal content and
 placed content adds another 32px before its crown. Section gaps increase around
@@ -658,3 +658,7 @@ product/variant names, quantities, price snapshots, total, delivery address and
 contact details, matching the buyer mail. Other sessions still see only outcome
 and order reference. Failure/uncertain outcomes never expose the receipt.
 B2B placement no longer queues a redundant success banner on its placed page.
+
+The desktop cart quick view aligns beneath its cart icon rather than the page
+centre. Guests reach Login directly from the account icon; signed-in users
+keep their Profile/orders/logout card.

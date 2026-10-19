@@ -12,7 +12,7 @@
 
 /* Every stage shares one unframed geometry; only the content below changes. */
 .order-flow-page > .page.order-flow-surface {
-  width: min(100%, 60rem); max-width: 60rem; margin: 0 auto;
+  width: min(100%, 36rem); max-width: 36rem; margin: 0 auto;
   padding: var(--space-4) 0; background: transparent; border: 0;
   border-radius: 0; box-shadow: none;
 }

@@ -58,7 +58,7 @@
   color: var(--text-main);
 }
 
-/* A readable form column, even when product rows use the desktop width. */
+/* Field widths stay appropriate inside the shared checkout column. */
 .cart-details .form-field:has(input[type="email"]) { max-width: 26rem; width: 100%; }
 .cart-details .cart-details__phone { max-width: 18rem; width: 100%; }
 .order-flow-page .form-actions { justify-content: center; justify-items: center; }

@@ -67,15 +67,15 @@ def test_staff_site_link_and_account_destinations_follow_navigation_context(
 
 
 @pytest.mark.django_db
-def test_anonymous_account_dropdown_has_only_login_and_no_site_link(client):
+def test_anonymous_account_icon_links_directly_to_login(client):
     content = client.get(reverse("storefront:product_list")).content.decode()
-    assert 'class="account-menu"' in content
-    panel = content.split('class="account-menu__panel mobile-menu-panel"', 1)[1].split(
-        "</details>", 1
-    )[0]
-    assert f'href="{reverse("login")}"' in panel
-    assert 'account-menu__logout' not in panel
-    assert reverse("business_portal:orders") not in panel
+    assert (
+        f'class="account-menu__trigger menu-dropdown-trigger" href="{reverse("login")}"'
+        in content
+    )
+    assert 'data-mobile-menu="account"' not in content
+    assert 'account-menu__panel' not in content
+    assert 'account-menu__logout' not in content
     assert 'class="site-preferences__site"' not in content
 
 

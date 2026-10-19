@@ -78,7 +78,7 @@ a single-person SVG and shares the dropdown emission.
 `--menu-dropdown-*` roles tune this light independently of catalog buttons.
 
 The right-hand controls appear in this order: cart, account, settings.
-Guests use the same account icon with a Login-only dropdown. Signed-in users
+Guests use the same account icon as a direct Login link. Signed-in users
 get Profile/history/logout; My account also has Log out below Change password.
 The customer footer omits signed-in identity/logout; ops keeps its own footer.
 The account and cart icons retain selected ink, halo and a crown on their pages,
@@ -734,8 +734,8 @@ steppers and Go to cart. This opens the real cart page, with contact details
 below the products for retail, or Previous orders/product search for B2B.
 Desktop cart, review and placed share an unframed page surface.
 Both have a cumulative timeline. The full
-editor uses up to 60rem. Both email fields share the same width; postal code
-uses one of four columns and town uses three. Country stays France.
+editor uses the same 36rem column as its timeline and customer details. Both
+email fields share the same width; postal code uses one of four columns and town uses three. Country stays France.
 
 On mobile, `responsive-cart.js` hosts cart, review and placed content in the
 same sheet. It fetches server-rendered cart content on first opening, initializes
@@ -884,15 +884,15 @@ anchored below the timeline. Other server messages on flow pages also render
 inside the content after the timeline, never before its shell.
 
 Account/settings now use centred rounded desktop popovers throughout the site;
-cart keeps its compact navbar quick view. Cards reach 38rem wide and a 28rem
-minimum height when space permits, clamped to the viewport. Landing also uses
+cart keeps its compact navbar quick view, aligned beneath the cart icon.
+Account/settings cards reach 38rem wide and a 28rem minimum height when space permits, clamped to the viewport. Landing also uses
 these larger rounded proportions on mobile. Normal mobile account/settings
 retain their V-shaped sheets. The centre-card transitions use fade/scale;
 cart and ordinary mobile sheets keep their slide. Backdrop/close/Escape remain.
 
 Checkout layout lives in `public/checkout.css` and `common/cart-panel.css`:
-32rem details column, 26rem email fields and 18rem phone. Product rows and the
-persistent timeline keep their wider 60rem cap. Checkout actions use natural
+One 36rem column for the persistent timeline, product rows and details, with
+26rem email fields and 18rem phone. Checkout actions use natural
 width with a 16rem minimum and more space above; existing field gaps remain.
 The timeline's normal bottom gap is `--space-10`; placed content adds
 `--space-8` above the crown on both desktop and mobile without moving the timeline.

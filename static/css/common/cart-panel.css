@@ -1,5 +1,4 @@
 /* One row layout for retail pages and both navbar carts. Theme roles own ink. */
-.page.cart-page { width: min(100%, 60rem); max-width: 60rem; }
 .cart-line {
   display: grid;
   grid-template-columns: 4.25rem minmax(0, 1fr) auto;
@@ -24,7 +23,7 @@
 .quantity-stepper.is-minimum .quantity-stepper__minus { display: none; }
 .quantity-stepper.is-minimum .quantity-stepper__trash { display: contents; }
 .quantity-stepper.is-minimum [data-quantity-decrease]:hover { color: var(--cart-remove-hover); }
-.cart-details { width: 100%; max-width: 32rem; margin-inline: auto; margin-top: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--cart-row-line); text-align: start; }
+.cart-details { width: 100%; max-width: none; margin-inline: auto; margin-top: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--cart-row-line); text-align: start; }
 .cart-details h2 { margin: 0 0 var(--space-2); font-family: var(--font-heading); font-size: var(--font-size-24); }
 .cart-details > .form-help { margin-bottom: var(--space-10); }
 .cart-details__help { text-align: center; }
@@ -102,9 +101,9 @@
   .site-nav-cart__popover.mobile-menu-panel {
     position: absolute;
     top: 0;
-    left: 50%;
-    right: auto;
-    translate: -50% 0;
+    left: auto;
+    right: var(--menu-panel-right, 1rem);
+    translate: none;
     width: min(38rem, calc(100vw - 2rem));
     max-height: calc(100dvh - var(--cart-panel-top, 4.5rem) - 3rem);
     padding-bottom: var(--space-8);
