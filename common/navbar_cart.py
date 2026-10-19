@@ -19,6 +19,7 @@ class NavbarCartLine:
     # Its product: the catalog's in-cart badges count from the lines.
     product_id: int | None = None
     name: str = ""
+    brand: str = ""
     variant_label: str = ""
     quantity_url: str = ""
     unit_price_label: str | None = None

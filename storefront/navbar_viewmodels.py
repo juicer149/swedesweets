@@ -24,7 +24,7 @@ def build_retail_navbar_cart(
     lines = tuple(line.presentation for line in summary.cart_lines)
     open_checkout = get_retail_checkout_with_open_payment(cart=cart)
     payment_url = (
-        reverse("storefront:checkout_review", kwargs={"checkout_id": open_checkout.pk})
+        reverse("storefront:checkout")
         if open_checkout
         else None
     )

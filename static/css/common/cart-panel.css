@@ -61,3 +61,11 @@
 .cart-line .quantity-stepper__button:hover { color: var(--menu-chosen); filter: var(--interaction-icon-filter); }
 .cart-line .quantity-stepper:focus-within { box-shadow: var(--field-focus-shadow); }
 .cart-line .quantity-stepper__input:focus { box-shadow: none; }
+
+.cart-line__brand { color: var(--text-muted); font-size: var(--font-size-12); letter-spacing: var(--letter-spacing-subtle); }
+
+.cart-details .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cart-details .form-field--half { grid-column: span 1; }
+.cart-page .lines-total strong, .site-nav-cart__popover .lines-total strong { color: var(--cart-total); }
+
+.cart-line .quantity-stepper.is-minimum [data-quantity-decrease]:hover { color: var(--cart-remove-hover); }

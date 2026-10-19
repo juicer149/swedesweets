@@ -26,12 +26,31 @@
         if (mismatch && touched) confirm.setAttribute("aria-invalid", "true");
         else confirm.removeAttribute("aria-invalid");
         const complete = [...form.elements].filter(element => element.required && !element.disabled).every(element => element.value.trim() && element.validity.valid);
-        const busy = document.querySelector('[data-update-in-progress="true"], [data-remove-in-progress="true"]');
-        button.disabled = !complete || Boolean(busy);
+        const busy = document.querySelector('[data-update-in-progress="true"], [data-remove-in-progress="true"], [data-removing="true"]');
+        const cart = form.closest(".site-nav-cart, .cart-page");
+        const quantitiesValid = [...(cart?.querySelectorAll("[data-quantity-input]") || [])].every(input => input.validity.valid);
+        button.disabled = !complete || !quantitiesValid || Boolean(busy);
         if (help) help.textContent = complete ? help.dataset.ready : help.dataset.incomplete;
       }
-      form.addEventListener("input", validate);
-      form.addEventListener("change", validate);
+      function changed(event) {
+        const field = event.target;
+        if (field.name && field.type !== "hidden") {
+          const name = field.name.replace(/^navbar-/, "");
+          for (const peer of document.querySelectorAll("[data-checkout-details-form]")) {
+            if (peer === form) continue;
+            const other = [...peer.elements].find(element => !element.disabled && element.name?.replace(/^navbar-/, "") === name);
+            if (other) {
+              if (other.tomselect) other.tomselect.setValue(field.value, true);
+              else other.value = field.value;
+              peer.dispatchEvent(new Event("checkout-fields-synced"));
+              peer.dispatchEvent(new Event("checkout-validate"));
+            }
+          }
+        }
+        validate();
+      }
+      form.addEventListener("input", changed);
+      form.addEventListener("change", changed);
       confirm.addEventListener("blur", () => { touched = true; validate(); });
       for (const type of ["paste", "drop"]) confirm.addEventListener(type, event => event.preventDefault());
       form.addEventListener("submit", event => {
@@ -40,12 +59,17 @@
       });
       form.addEventListener("checkout-validate", validate);
       validate();
+      const invalid = form.querySelector('.form-field--error input, .form-field--error select, .form-field--error textarea');
+      if (invalid && form.offsetParent !== null) requestAnimationFrame(() => invalid.focus());
     });
   }
   document.addEventListener("navbar-cart-refreshed", initialize);
-  document.addEventListener("cart-controls-changed", () => {
+  function revalidate() {
     document.querySelectorAll("[data-checkout-details-form]").forEach(form => form.dispatchEvent(new Event("checkout-validate")));
-  });
+  }
+  document.addEventListener("cart-controls-changed", revalidate);
+  document.addEventListener("cart-changed", revalidate);
+  document.addEventListener("input", event => { if (event.target.matches("[data-quantity-input]")) revalidate(); });
   window.addEventListener("pageshow", () => {
     initialize();
     document.querySelectorAll("[data-checkout-details-form]").forEach(form => form.dispatchEvent(new Event("checkout-validate")));

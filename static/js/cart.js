@@ -64,6 +64,7 @@
       input.value = String(
         confirmedQuantity || 1
       );
+      input.dispatchEvent(new Event("input", { bubbles: true }));
 
       return;
     }
@@ -365,6 +366,7 @@
       }
 
       line.dataset.removing = "true";
+      document.dispatchEvent(new Event("cart-controls-changed"));
 
       const request = async () => {
         const response = await fetch(

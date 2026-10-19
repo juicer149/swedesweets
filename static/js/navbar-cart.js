@@ -209,15 +209,6 @@
     const isCurrentPage = currentCart?.querySelector("summary")
       ?.getAttribute("aria-current") === "page";
 
-    const wasOpen = Boolean(
-      preserveOpenState
-      && currentCart?.open
-    );
-
-    const draftForm = currentCart?.querySelector("[data-checkout-details-form]");
-    const draft = [...(draftForm?.elements || [])].map(field => [field.name, field.value]);
-    const panelScroll = currentCart?.querySelector("[data-cart-panel-scroll]")?.scrollTop || 0;
-    const focusName = draftForm?.contains(document.activeElement) ? document.activeElement.name : null;
 
     try {
       const response = await fetch(
@@ -240,6 +231,14 @@
       }
 
       const html = await response.text();
+
+      // Read the draft at replacement time: typing and dismissal can happen
+      // while this GET is in flight.
+      const wasOpen = Boolean(preserveOpenState && currentCart?.open);
+      const draftForm = currentCart?.querySelector("[data-checkout-details-form]");
+      const draft = [...(draftForm?.elements || [])].map(field => [field.name, field.value]);
+      const panelScroll = currentCart?.querySelector("[data-cart-panel-scroll]")?.scrollTop || 0;
+      const focusName = draftForm?.contains(document.activeElement) ? document.activeElement.name : null;
 
       replaceHtml(
         container,
@@ -285,7 +284,12 @@
 
   async function updateNavbarQuantity(form) {
     const input = form.querySelector("[data-quantity-input]");
-    if (!input || !input.checkValidity()) return;
+    if (!input) return;
+    if (!input.checkValidity()) {
+      input.value = form.dataset.confirmedQuantity || "1";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      return;
+    }
     if (form.dataset.updateInProgress === "true") {
       form.dataset.pendingQuantity = input.value;
       return;
@@ -389,6 +393,7 @@
     );
 
     form.dataset.removeInProgress = "true";
+    document.dispatchEvent(new Event("cart-controls-changed"));
 
     if (submitButton) {
       submitButton.disabled = true;
@@ -458,6 +463,7 @@
       );
 
       form.dataset.removeInProgress = "false";
+      document.dispatchEvent(new Event("cart-controls-changed"));
 
       if (submitButton) {
         submitButton.disabled = false;

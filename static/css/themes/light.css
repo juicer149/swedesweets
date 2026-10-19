@@ -502,6 +502,7 @@
 
 /* Cart surfaces, shared focus emission and the veil behind navbar panels. */
 :root {
+  --cart-total: var(--text-strong);
   --cart-name: var(--color-primary-700);
   --cart-amount: var(--text-strong);
   --cart-row-line: var(--line-soft);
@@ -510,6 +511,7 @@
   --cart-disabled-bg: var(--surface-muted);
   --cart-disabled-border: var(--line-soft);
   --menu-backdrop-bg: rgb(6 22 61 / .25);
+  --entrance-field-focus-shadow: 0 0 0 1px var(--menu-chosen), 0 0 14px color-mix(in srgb, var(--menu-chosen) 16%, transparent), 0 0 28px color-mix(in srgb, var(--menu-chosen) 7%, transparent);
   --field-focus-color: var(--color-primary-500);
   --field-focus-shadow: 0 0 0 1px var(--field-focus-color), 0 0 14px color-mix(in srgb, var(--field-focus-color) 16%, transparent), 0 0 28px color-mix(in srgb, var(--field-focus-color) 7%, transparent);
 }

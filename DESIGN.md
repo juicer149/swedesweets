@@ -460,11 +460,15 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   no page destination and never receives a current-page crown. Ops stays light
   and has no theme switch. Escape closes dropdowns and returns focus to their
   trigger; clicking another trigger closes the previous dropdown.
-- **Navbar cart:** an icon-only preview with read-only product lines and remove
-  buttons; quantities are edited on the cart page. The icon is 22px with a
+- **Navbar cart:** an icon-only disclosure with editable product rows and a
+  quantity stepper. At one item, the minus becomes a trash action. Desktop
+  keeps the compact preview and a link to the cart; mobile uses the same
+  sliding V-shaped sheet as account/settings, with its own scrolling content.
+  Retail contact/delivery fields follow the rows on mobile and on the desktop
+  cart page; desktop's dropdown contains only the rows and subtotal. The icon is 22px with a
   stronger stroke than the original artwork. Cart/checkout pages retain its
   selected light and crown; the count moves away from the crown. AJAX refresh
-  preserves selection. Added items produce green feedback; removals use red.
+  preserves selection, scroll and in-progress contact fields. Added items produce green feedback; removals use red.
   In dark this is the bouncing icon and a diffuse coloured light, without a
   circular fill.
   Light retains the filled flash. Empty/open carts hide the count.
@@ -534,3 +538,26 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
 The public/B2B dark theme, authentic vector logo, wide footer wordmark and
 missing-photo treatment are complete. Their colour choices remain in the
 respective theme roles. See [CSS themes](docs/css-themes.md) for implementation.
+
+
+### Cart contact fields and focused inputs
+
+Retail cart and mobile sheet share `includes/cart/checkout_details.html`.
+Names and delivery address come first, then email, confirmation and phone.
+The country stays France, matching the delivery policy. A focused input uses
+`--field-focus-color` / `--field-focus-shadow`; entrance pages use their own
+`--entrance-field-focus-shadow`. These shared roles apply to ordinary forms,
+password fields, enhanced selects and autofill without changing their surface.
+
+The Continue button is muted until required fields are valid and emails match;
+the confirmation field accepts typing, not paste/drop. Browser feedback is
+progressive enhancement: Django validates confirmation, delivery area, cart
+ownership, stock and payment locks. Invalid submissions return the editable
+cart with submitted values. The checkout endpoint and review/payment flow stay
+in place. With JavaScript disabled the form still submits for server validation.
+
+All three navbar disclosures shade the page beneath with `--menu-backdrop-bg`.
+The page remains visible and preserves its scroll position. Mobile locks and
+inerts covered content while a sheet slides down over it; changing disclosures
+retracts the old sheet first. The cart scrolls inside its frame, keeping the
+close button and navigation accessible.

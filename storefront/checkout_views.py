@@ -157,10 +157,13 @@ def checkout_details(
         )
 
     if request.method == "POST":
-        form = RetailCheckoutDetailsForm(
-            request.POST,
-            prefix="navbar" if request.POST.get("details_prefix") == "navbar" else None,
-        )
+        details = request.POST
+        if request.POST.get("details_prefix") == "navbar":
+            details = {
+                name: request.POST.get(f"navbar-{name}", "")
+                for name in RetailCheckoutDetailsForm.base_fields
+            }
+        form = RetailCheckoutDetailsForm(details)
 
         if form.is_valid():
             try:

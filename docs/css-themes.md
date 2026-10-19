@@ -632,7 +632,7 @@ Keyboard dismissal still restores a visible focus indicator.
 ## Compact dropdowns and mobile sheets
 
 `common/preferences.css` and `common/account-menu.css` keep desktop panels at
-12.5rem. `common/mobile-menu.css` turns only account/settings into a sheet
+12.5rem. `common/mobile-menu.css` turns account/settings/cart into a sheet
 below 768px. `mobile-menu.js` measures the header and fixed bottom navigation,
 locks page scrolling and makes covered content inert; closing restores both.
 The sheet uses the existing preferences/account surface, border and ink roles.
@@ -640,8 +640,9 @@ A two-layer clipped silhouette draws its V edge; the close button stays a normal
 44px focusable button. There is no top border against the header. Mobile sheets
 reveal downward from the header and retract upward when closed. Switching sheets
 retracts the current one before revealing the next; rapid taps keep the latest
-choice. Reduced motion skips both animations. The cart has
-not moved into this sheet system.
+choice. Reduced motion skips both animations. A fixed viewport clips the moving
+sheet at the header; the page beneath remains visible. Cart rows and retail
+contact fields scroll within the frame, above its V and accessible close button.
 
 The theme pill communicates day/night through its sun/moon and accessible
 switch state, without a duplicate Day/Night label. `--theme-switch-sun` uses
@@ -706,3 +707,36 @@ wins over the illustration's grid layout. Dark crown and caption roles both
 follow `--display-stamped` (currently #63718f), matching FAQ/About titles.
 Light retains its own muted placeholder palette. Empty catalogs/searches paint
 directly on the page; only missing product photos keep a placeholder surface.
+
+
+## Editable cart and shared form focus
+
+`common/cart-panel.css` owns the shared row geometry, responsive cart frame and
+checkout section. `includes/cart/line.html` is used by the retail cart page and
+both navbar carts. The existing quantity stepper gains an opt-in trash at its
+minimum; other quantity controls keep their existing minimum behaviour.
+
+| Roles | Purpose |
+| --- | --- |
+| `--cart-name`, `--cart-amount`, `--cart-total` | Clickable product name, ordinary amounts, subtotal |
+| `--cart-row-line` | Quiet separator between cart rows and details |
+| `--cart-remove-hover` | Trash at the stepper's minimum |
+| `--cart-disabled-ink`, `--cart-disabled-bg`, `--cart-disabled-border` | Incomplete checkout action |
+| `--menu-backdrop-bg` | Veil behind any open navbar disclosure, both viewport sizes |
+| `--field-focus-color`, `--field-focus-shadow` | Border and diffuse light for focused form inputs and enhanced selects |
+| `--entrance-field-focus-shadow` | Entrance form emission, following its menu accent |
+
+Desktop's cart dropdown contains rows, subtotal and Go to cart. The retail cart
+page stacks Your details beneath its products. Mobile includes those same
+fields in the cart sheet; account/settings stay centred and do not scroll.
+Country is fixed to France, following the existing retail delivery policy.
+
+The form uses a separate navbar prefix so page and sheet never duplicate field
+IDs. Page and sheet synchronize draft values in the browser. AJAX cart refresh
+preserves draft values, focus and scroll; it also
+initializes dynamic quantity controls, confirmation and postal/city lookup.
+The continuation button requires browser-valid required fields and matching
+emails, while Django remains responsible for all checkout rules and ownership.
+Only confirmation blocks paste/drop; login and password fields keep normal
+paste/password-manager behaviour. Autofill retains the themed field surface
+and focused glow.

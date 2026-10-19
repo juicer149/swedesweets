@@ -15,6 +15,7 @@
 
 .mobile-menu-close { display: none; }
 .mobile-menu-viewport { display: contents; }
+.landing__top, .entrance-header { position: relative; z-index: 100; }
 .menu-panel-backdrop { position: fixed; inset: 0; z-index: 90; background: var(--menu-backdrop-bg); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 250ms ease, visibility 250ms; }
 .menu-panel-open .menu-panel-backdrop { opacity: 1; visibility: visible; pointer-events: auto; }
 

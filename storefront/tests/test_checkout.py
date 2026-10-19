@@ -992,4 +992,7 @@ def test_invalid_panel_details_return_editable_cart_and_keep_values(client, cart
     assert response.context["form"]["email"].value() == "marie@example.com"
     assert response.context["form"].has_error("confirm_email")
     assert response.context["cart_lines"]
+    html = response.content.decode()
+    assert html.count('id="id_email"') == 1
+    assert html.count('id="id_navbar-email"') == 1
     assert not RetailCheckoutSession.objects.exists()

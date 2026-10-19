@@ -325,6 +325,7 @@
 }
 
 :root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  --cart-total: var(--catalog-price-text);
   --cart-name: var(--interactive-text);
   --cart-amount: var(--text-primary);
   --cart-row-line: color-mix(in srgb, var(--interactive-border) 16%, transparent);

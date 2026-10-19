@@ -28,6 +28,7 @@ class RetailCartLine:
     quantity_url: str
     remove_url: str
     name: str = ""
+    brand: str = ""
     variant_label: str = ""
     product_id: int | None = None
 
@@ -37,6 +38,7 @@ class RetailCartLine:
             line_id=self.cart_line_id,
             label=self.product_label,
             name=self.name,
+            brand=self.brand,
             variant_label=self.variant_label,
             product_id=self.product_id,
             product_url=self.product_url,
@@ -200,7 +202,8 @@ def _build_line(
 
     return RetailCartLine(
         cart_line_id=line.id,
-        name=product.display_name,
+        name=product.name,
+        brand=product.brand,
         variant_label=commercial_price.variant.label,
         product_id=product.id,
         # "Hoodie — M": the size when the product has several.

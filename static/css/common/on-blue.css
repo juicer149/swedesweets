@@ -260,7 +260,7 @@ body.on-blue {
 }
 
 /* Entrance pages share the active menu accent and traced wordmark. */
-body.on-blue { --on-blue-mark: var(--menu-chosen); --field-focus-color: var(--on-blue-mark); }
+body.on-blue { --on-blue-mark: var(--menu-chosen); --field-focus-color: var(--on-blue-mark); --field-focus-shadow: var(--entrance-field-focus-shadow); }
 
 /* Autofill uses the same focused surface and yellow ring on entrance pages. */
 .on-blue .form-field input:focus {
