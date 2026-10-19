@@ -87,6 +87,9 @@
     motion = null;
     running = false;
     sync();
+    document.dispatchEvent(new CustomEvent("mobile-menu-settled", {
+      detail: { key: openMenu()?.dataset.mobileMenu || null },
+    }));
   }
 
   document.addEventListener("click", event => {
@@ -96,6 +99,17 @@
       event.preventDefault();
       event.stopPropagation();
       request(wanted === menu.dataset.mobileMenu || (!running && menu.open) ? null : menu.dataset.mobileMenu, true);
+      return;
+    }
+    const link = event.target.closest("a[href]");
+    const cart = menuFor("cart");
+    if (mobile.matches && link && cart?.dataset.retailCart === "true"
+        && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey
+        && event.button === 0
+        && new URL(link.href).pathname === cart.dataset.cartPageUrl) {
+      event.preventDefault();
+      event.stopPropagation();
+      request("cart", true);
       return;
     }
     const close = event.target.closest("[data-close-details]");
@@ -116,6 +130,9 @@
   backdrop.addEventListener("click", () => {
     if (mobile.matches) request(null, true);
     else { if (openMenu()) openMenu().open = false; sync(); }
+  });
+  document.addEventListener("mobile-menu-request", event => {
+    if (mobile.matches) request(event.detail.key, Boolean(event.detail.restoreFocus));
   });
   document.addEventListener("navbar-cart-refreshed", sync);
   mobile.addEventListener("change", () => { wanted = null; motion?.finish(); sync(); });

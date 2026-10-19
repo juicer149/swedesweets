@@ -1,5 +1,5 @@
 {% load i18n %}
-<article class="cart-line{% if navbar %} site-nav-cart-line{% endif %}"
+<{{ tag|default:"article" }} class="cart-line{% if navbar %} site-nav-cart-line{% endif %}"
   data-cart-line-id="{{ line.line_id }}"
   {% if navbar %}data-navbar-cart-line data-line-id="{{ line.line_id }}" data-product-id="{{ line.product_id|default:'' }}" data-quantity="{{ line.quantity }}"{% endif %}>
   <a class="cart-line__product" href="{{ line.product_url }}" aria-label="{{ line.label }}">
@@ -43,4 +43,4 @@
       {% include "includes/ui/line_remove.html" with url=line.remove_url csrf_token=csrf_token inline=True name=line.label image=line.image_url only %}
     {% endif %}
   {% endif %}
-</article>
+</{{ tag|default:"article" }}>

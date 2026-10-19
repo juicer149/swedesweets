@@ -712,8 +712,8 @@ directly on the page; only missing product photos keep a placeholder surface.
 ## Editable cart and shared form focus
 
 `common/cart-panel.css` owns the shared row geometry, responsive cart frame and
-checkout section. `includes/cart/line.html` is used by the retail cart page and
-both navbar carts. The existing quantity stepper gains an opt-in trash at its
+checkout section. `includes/cart/line.html` is used by both cart pages and
+both navbar carts; B2B quick-add search options retain their compact layout. The existing quantity stepper gains an opt-in trash at its
 minimum; other quantity controls keep their existing minimum behaviour.
 
 | Roles | Purpose |
@@ -729,7 +729,19 @@ minimum; other quantity controls keep their existing minimum behaviour.
 Desktop's cart dropdown contains rows, subtotal and Go to cart. The retail cart
 page stacks Your details beneath its products. Mobile includes those same
 fields in the cart sheet; account/settings stay centred and do not scroll.
+Desktop cart pages use up to 60rem, with 38rem for the quick dropdown. Images
+are smaller there, and quantity controls sit alongside the product and amount.
+Email and confirmation both span the form; postal code takes one of four
+columns and town takes three. Mobile keeps the two-column form layout.
 Country is fixed to France, following the existing retail delivery policy.
+
+`responsive-cart.js` moves the existing cart editor into the mobile sheet below
+768px and back into the desktop page above it. It preserves the actual DOM,
+including typed details, quantity handlers and B2B quick-add. Navbar fragment
+replacement preserves that editor as well. Closing a directly visited mobile
+cart returns to its catalog; there is no second mobile cart page underneath.
+The landing cart links to the cart page on desktop and opens its sheet in place
+on mobile. Without JavaScript the conventional cart page remains available.
 
 The form uses a separate navbar prefix so page and sheet never duplicate field
 IDs. Page and sheet synchronize draft values in the browser. AJAX cart refresh

@@ -543,7 +543,11 @@ respective theme roles. See [CSS themes](docs/css-themes.md) for implementation.
 ### Cart contact fields and focused inputs
 
 Retail cart and mobile sheet share `includes/cart/checkout_details.html`.
-Names and delivery address come first, then email, confirmation and phone.
+Both desktop cart pages use the wider shared product rows, with quantity
+controls alongside the product; the quick dropdown uses smaller images. B2B
+search/add options keep their compact product presentation.
+Names and delivery address come first, then full-width email, confirmation and
+phone. On desktop postal code takes a quarter and town three quarters.
 The country stays France, matching the delivery policy. A focused input uses
 `--field-focus-color` / `--field-focus-shadow`; entrance pages use their own
 `--entrance-field-focus-shadow`. These shared roles apply to ordinary forms,
@@ -561,3 +565,9 @@ The page remains visible and preserves its scroll position. Mobile locks and
 inerts covered content while a sheet slides down over it; changing disclosures
 retracts the old sheet first. The cart scrolls inside its frame, keeping the
 close button and navigation accessible.
+
+A cart URL hosts one live editor: `responsive-cart.js` moves it into the mobile
+sheet and back to the desktop page when the viewport changes. Values and
+handlers survive the move and AJAX navbar replacement. Closing that mobile
+sheet returns to the catalog. Landing links to the cart page on desktop and
+opens the cart sheet without navigating on mobile.

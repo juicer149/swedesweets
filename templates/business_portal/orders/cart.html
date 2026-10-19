@@ -8,9 +8,11 @@
   class="page-section"
   aria-labelledby="portal-place-order-title"
   data-current-order
+  data-responsive-cart-page
+  data-cart-return-url="{{ continue_shopping_url }}"
   data-current-order-error-message="{% trans 'Could not update quantity.' %}"
 >
-  <div class="page page--centered page--wide">
+  <div class="page page--centered cart-page">
     <h1 id="portal-place-order-title" class="page__lead">
       {% trans "Order" %}
     </h1>

@@ -167,12 +167,13 @@ class RetailCheckoutDetailsForm(forms.Form):
             half=(
                 "first_name",
                 "last_name",
-                "email",
-                "phone_number",
                 "postal_code",
                 "city",
             ),
         )
+        self.fields["postal_code"].layout_class = "form-field--quarter"
+        self.fields["city"].layout_class = "form-field--three-quarters"
+        self.fields["phone_number"].layout_class += " cart-details__phone"
 
     def clean(self) -> dict[str, str]:
         cleaned_data = super().clean()

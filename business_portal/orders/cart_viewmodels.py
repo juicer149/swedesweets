@@ -11,6 +11,7 @@ from business_portal.orders.product_presentation import (
 )
 from carts.models import Cart
 from common.lines import META_OFFER, LineView, meta, metas
+from common.navbar_cart import NavbarCartLine
 from products.images import product_image_url
 
 
@@ -25,6 +26,21 @@ class PortalCartLine:
     quantity: int
     quantity_url: str
     remove_url: str
+
+    @property
+    def presentation(self) -> NavbarCartLine:
+        return NavbarCartLine(
+            line_id=self.cart_line_id,
+            label=self.product_label,
+            product_url=self.product_url,
+            image_url=self.image_url,
+            metadata=tuple(
+                value for value in (self.offer_label, self.price_label) if value
+            ),
+            quantity=self.quantity,
+            quantity_url=self.quantity_url,
+            remove_url=self.remove_url,
+        )
 
     @property
     def view(self) -> LineView:

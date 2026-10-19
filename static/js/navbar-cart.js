@@ -240,6 +240,7 @@
       const panelScroll = currentCart?.querySelector("[data-cart-panel-scroll]")?.scrollTop || 0;
       const focusName = draftForm?.contains(document.activeElement) ? document.activeElement.name : null;
 
+      document.dispatchEvent(new Event("navbar-cart-replacing"));
       replaceHtml(
         container,
         html

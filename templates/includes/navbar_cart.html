@@ -3,6 +3,8 @@
 <details
   class="site-nav-cart"
   data-mobile-menu="cart"
+  data-retail-cart="{{ navbar_cart.is_retail|yesno:'true,false' }}"
+  data-cart-page-url="{% if navbar_cart.is_retail %}{% url 'storefront:cart' %}{% else %}{% url 'business_portal:cart' %}{% endif %}"
   data-dismiss-on-outside-click
 >
   <summary
