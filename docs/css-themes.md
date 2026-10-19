@@ -631,14 +631,18 @@ Keyboard dismissal still restores a visible focus indicator.
 
 ## Compact dropdowns and mobile sheets
 
-`common/preferences.css` and `common/account-menu.css` keep desktop panels at
-12.5rem. `common/mobile-menu.css` turns account/settings/cart into a sheet
-below 768px. `mobile-menu.js` measures the header and fixed bottom navigation,
-locks page scrolling and makes covered content inert; closing restores both.
+`common/mobile-menu.css` gives desktop account/settings panels up to 18rem,
+with height-aware spacing and type via `clamp()`. They grow with their short
+contents and do not scroll on desktop; all three panels have a close circle.
+Below 768px they become full sheets. `mobile-menu.js` measures the header and
+fixed bottom navigation. Open panels lock page scrolling on either screen size;
+mobile also makes covered content inert. Closing restores both.
 The sheet uses the existing preferences/account surface, border and ink roles.
 A two-layer clipped silhouette draws its V edge; the close button stays a normal
 44px focusable button. There is no top border against the header. Mobile sheets
-reveal downward from the header and retract upward when closed. Switching sheets
+reveal downward from the header and retract upward when closed. Desktop uses
+the same animation and fixed clipping viewport; its side borders meet the navbar
+without a gap or a duplicate top border. Switching panels
 retracts the current one before revealing the next; rapid taps keep the latest
 choice. Reduced motion skips both animations. A fixed viewport clips the moving
 sheet at the header; the page beneath remains visible. Cart rows and retail
@@ -751,8 +755,9 @@ blocks paste/drop. Ordinary password fields and autofill retain their behaviour.
 Panel upper corners are square; the lower corners are softer. Mobile keeps its
 V-shaped bottom, with rounded joins at the left and right. Outlines reuse
 `--menu-edge`, the gold line beneath the navbar. Cart has a fixed close circle
-on desktop too, and outside click/Escape still dismiss it. All three panels
-scroll internally when needed, leaving the close control accessible.
+on desktop too, and outside click/Escape still dismiss it. Cart contents scroll
+internally when needed. Desktop account/settings use their natural height and
+clamped spacing; mobile can scroll when its screen is exceptionally short.
 `menu-scroll.js` shows a position thumb only when contents overflow; its theme
 roles are `--menu-scroll-thumb` and `--menu-scroll-track`. Native scrollbars
 remain the fallback without JavaScript.
@@ -783,3 +788,10 @@ The ops Previous orders does not opt into these customer accordion effects.
 An empty retail panel centres its message and holds Browse shop near the lower
 edge; when height is insufficient, its contents scroll above the fixed close
 control. This layout is shared by desktop and mobile.
+
+`menu-scroll-ready` suppresses the native scrollbar with sufficient specificity
+to win over the cart's base styles, leaving one custom position marker. Product
+search results scroll only inside `.ts-dropdown-content`, not the outer dropdown
+as well. Rich product name/meta/offer labels inherit their active or selected
+row's contrasting text colour. In the cart, the result list flows with the
+editor so its own scroll area remains reachable instead of being clipped.

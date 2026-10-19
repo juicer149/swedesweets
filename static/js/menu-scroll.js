@@ -27,7 +27,8 @@
 
       function update() {
         const overflow = scroll.scrollHeight - scroll.clientHeight;
-        track.hidden = scroll.clientHeight === 0 || overflow <= 1;
+        const scrolls = ["auto", "scroll"].includes(getComputedStyle(scroll).overflowY);
+        track.hidden = !scrolls || scroll.clientHeight === 0 || overflow <= 1;
         if (track.hidden) return;
         const height = track.clientHeight;
         const size = Math.min(height, Math.max(24, height * scroll.clientHeight / scroll.scrollHeight));

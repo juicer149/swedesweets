@@ -87,9 +87,7 @@
   function open() {
     const cart = cartMenu();
     if (!cart) return;
-    if (matchMedia("(max-width: 767px)").matches) {
-      document.dispatchEvent(new CustomEvent("mobile-menu-request", { detail: { key: "cart" } }));
-    } else cart.open = true;
+    document.dispatchEvent(new CustomEvent("mobile-menu-request", { detail: { key: "cart" } }));
     void loadEditor();
   }
   document.addEventListener("click", event => {

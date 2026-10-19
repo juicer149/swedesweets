@@ -576,10 +576,11 @@ The cart URL remains a no-JavaScript fallback; a direct visit opens its editor
 in the panel and returns to the catalog when closed.
 
 Panels round their lower corners, preserving the mobile V-shaped bottom with
-softer joins. Outlines share the navbar's `--menu-edge`. Desktop cart has a close
-circle too, and outside click/Escape dismiss it. Overflowing content scrolls
-inside the frame with a persistent position marker and an accessible close
-control. Short menus show no marker.
+softer joins. Outlines share the navbar's `--menu-edge`; desktop side borders
+meet its underline directly. Every panel has a close circle, outside click and
+Escape dismissal. Desktop panels slide down/up like mobile. Cart scrolls within
+its frame with one position marker. Desktop account/settings grow with their
+contents, with clamped spacing on short screens and no internal scrollbars.
 
 In dark mode panel backgrounds match navbar/landing, with a soft light fading
 down from the gold top edge. Cart headings are gold with the shared emission

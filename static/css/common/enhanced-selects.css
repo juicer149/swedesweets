@@ -202,7 +202,7 @@ select.ts-hidden-accessible {
   margin-top: 0.35rem;
 
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
   overscroll-behavior: contain;
 
   color: var(--select-option-text);
@@ -436,3 +436,6 @@ select.ts-hidden-accessible {
     line-height: 1.25;
   }
 }
+
+/* Rich option labels follow their row's active/selected contrast pair. */
+.ts-dropdown .option:is(.active, .selected) :is(.enhanced-product-option__main, .enhanced-product-option__meta, .enhanced-product-option__offer) { color: inherit; }

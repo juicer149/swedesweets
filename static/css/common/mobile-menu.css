@@ -204,3 +204,54 @@
 .mobile-menu-panel > [data-menu-panel-scroll] { position: relative; z-index: 1; }
 .mobile-menu-close, .menu-scroll-track { z-index: 2; }
 @media (forced-colors: active) { .menu-panel-toplight { display: none; } }
+
+/* The navbar's bottom edge is the panel's top edge on every screen. */
+html.menu-panel-open { overflow: hidden; }
+.menu-scroll-ready.menu-scroll-ready { scrollbar-width: none; }
+.menu-scroll-ready.menu-scroll-ready::-webkit-scrollbar { display: none; }
+@media (min-width: 768px) {
+  details[open] > .mobile-menu-viewport {
+    display: block;
+    position: fixed;
+    inset: var(--menu-panel-top, 4rem) 0 0;
+    z-index: 130;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .mobile-menu-viewport > .mobile-menu-panel { pointer-events: auto; }
+  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel {
+    position: absolute;
+    top: 0;
+    right: var(--menu-panel-right, 1rem);
+    width: min(18rem, calc(100vw - 2rem));
+    max-width: none;
+    padding: clamp(0.75rem, 2dvh, 1.5rem) clamp(0.75rem, 2vw, 1.5rem) clamp(2rem, 5dvh, 3rem);
+    border-top: 0;
+  }
+  :is(.account-menu__panel, .site-preferences__panel) .menu-panel-scroll {
+    max-height: none;
+    overflow: visible;
+    gap: clamp(0.5rem, 2dvh, 1.25rem);
+  }
+  :is(.account-menu__panel, .site-preferences__panel) .menu-scroll-track { display: none; }
+  .account-menu .account-menu__link { padding-block: clamp(0.375rem, 1.2dvh, 0.75rem); font-size: clamp(0.875rem, 2dvh, var(--font-size-nav-link)); }
+  .site-preferences__panel .site-preferences__group legend { font-size: clamp(0.75rem, 1.5dvh, 0.875rem); margin-bottom: clamp(0.125rem, 1dvh, 0.5rem); }
+  .site-preferences__panel .language-switcher__option { font-size: clamp(0.875rem, 2dvh, 1.125rem); }
+  .mobile-menu-panel .mobile-menu-close {
+    position: absolute;
+    bottom: -1.375rem;
+    left: calc(50% - 1.375rem);
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    color: var(--account-menu-text);
+    background: var(--preferences-bg);
+    border: 1px solid var(--menu-edge);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+  }
+  .mobile-menu-panel .mobile-menu-close .ui-icon-svg { width: 1.25rem; height: 1.25rem; }
+  .mobile-menu-panel .mobile-menu-close:is(:hover, :focus-visible) { color: var(--menu-chosen); filter: var(--interaction-icon-filter); }
+}

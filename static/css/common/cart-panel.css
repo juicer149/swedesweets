@@ -100,36 +100,20 @@
 .cart-page .cart-quick-add { margin-bottom: var(--space-8); }
 @media (min-width: 768px) {
   .site-nav-cart__popover.mobile-menu-panel {
-    position: fixed;
-    top: var(--cart-panel-top, 4.5rem);
+    position: absolute;
+    top: 0;
     left: 50%;
     right: auto;
-    transform: translateX(-50%);
+    translate: -50% 0;
     width: min(60rem, calc(100vw - 2rem));
     max-height: calc(100dvh - var(--cart-panel-top, 4.5rem) - 3rem);
     padding-bottom: var(--space-8);
+    border-top: 0;
     border-radius: 0 0 var(--radius-md) var(--radius-md);
   }
   .site-nav-cart__popover .cart-panel-scroll {
     max-height: calc(100dvh - var(--cart-panel-top, 4.5rem) - 7rem);
   }
-  .site-nav-cart__popover .mobile-menu-close {
-    position: absolute;
-    bottom: -1.375rem;
-    left: calc(50% - 1.375rem);
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    padding: 0;
-    color: var(--account-menu-text);
-    background: var(--preferences-bg);
-    border: 1px solid var(--menu-edge);
-    border-radius: var(--radius-pill);
-    cursor: pointer;
-  }
-  .site-nav-cart__popover .mobile-menu-close .ui-icon-svg { width: 1.25rem; height: 1.25rem; }
-  .site-nav-cart__popover .mobile-menu-close:is(:hover, :focus-visible) { color: var(--menu-chosen); filter: var(--interaction-icon-filter); }
   .site-nav-cart__popover .menu-scroll-track { bottom: var(--space-8); }
 }
 
@@ -178,3 +162,7 @@
   .cart-panel-scroll .cart-page > .page__lead { text-shadow: none; }
   .cart-panel-scroll .cart-page > .page__lead::before { display: none; }
 }
+
+/* The cart owns its scrolling: let an open product search grow its content
+   instead of clipping the result list at the editor's previous height. */
+.cart-quick-add .ts-dropdown { position: static; }
