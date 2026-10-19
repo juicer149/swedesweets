@@ -570,10 +570,11 @@ Cart panels round their lower corners; mobile sheets preserve their V-shaped
 bottom with softer joins. Outlines share the navbar's `--menu-edge`; the desktop
 cart's side borders meet its underline directly. Account/settings use rounded
 centred cards on desktop and landing, and sliding sheets elsewhere on mobile.
-Every panel has a close circle, outside click and Escape dismissal. Cart scrolls
-within its frame with one position marker; account/settings scroll only when
-viewport height requires it. Covered content is inert behind centred cards and
-mobile sheets.
+Every panel has a close circle, outside click and Escape dismissal. Desktop
+panels grow naturally with their contents and use clamped spacing.
+They scroll within the frame only after reaching available screen height,
+with one position marker and the close control outside the scroll area.
+Covered content is inert behind centred cards and mobile sheets.
 
 In dark mode panel backgrounds match navbar/landing. Sliding sheets have a soft
 light fading down from the gold top edge; centred cards omit that edge emission.

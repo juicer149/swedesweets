@@ -98,12 +98,16 @@
     translate: none;
     width: min(38rem, calc(100vw - 2rem));
     max-height: calc(100dvh - var(--cart-panel-top, 4.5rem) - 3rem);
-    padding-bottom: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    padding-block: clamp(1rem, 3dvh, 1.5rem) clamp(1.75rem, 4dvh, 2.5rem);
     border-top: 0;
     border-radius: 0 0 var(--radius-md) var(--radius-md);
   }
   .site-nav-cart__popover .cart-panel-scroll {
-    max-height: calc(100dvh - var(--cart-panel-top, 4.5rem) - 7rem);
+    min-height: 0;
+    max-height: none;
+    flex: 0 1 auto;
   }
   .site-nav-cart__popover .menu-scroll-track { bottom: var(--space-8); }
 }

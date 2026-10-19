@@ -631,7 +631,7 @@ Keyboard dismissal still restores a visible focus indicator.
 ## Centred cards and mobile sheets
 
 `common/mobile-menu.css` gives desktop account/settings centred rounded cards
-up to 38rem, with height-aware spacing/type and a 28rem minimum when it fits.
+up to 38rem, with height-aware spacing/type and natural content height.
 They scroll only when viewport height requires it; all three panels have a close circle.
 Below 768px they become full sheets. `mobile-menu.js` measures the header and
 fixed bottom navigation. Open panels lock page scrolling on either screen size;
@@ -762,8 +762,9 @@ Centred account/settings cards round all four corners. Normal mobile sheets
 keep their V-shaped bottom, with rounded joins at the left and right. Outlines reuse
 `--menu-edge`, the gold line beneath the navbar. Cart has a fixed close circle
 on desktop too, and outside click/Escape still dismiss it. Cart contents scroll
-internally when needed. Desktop account/settings use a 28rem minimum height
-clamped to the viewport; their contents scroll only on short screens.
+internally when needed. Desktop account/settings grow with their contents
+until the viewport cap;
+their contents scroll only once that cap is reached.
 `menu-scroll.js` shows a position thumb only when contents overflow; its theme
 roles are `--menu-scroll-thumb` and `--menu-scroll-track`. Native scrollbars
 remain the fallback without JavaScript.
@@ -895,7 +896,8 @@ inside the content after the timeline, never before its shell.
 
 Account/settings now use centred rounded desktop popovers throughout the site;
 cart keeps its compact navbar quick view, aligned beneath the cart icon.
-Account/settings cards reach 38rem wide and a 28rem minimum height when space permits, clamped to the viewport. Landing also uses
+Account/settings cards reach 38rem wide, with natural height capped by the
+viewport. Landing also uses
 these larger rounded proportions on mobile. Normal mobile account/settings
 retain their V-shaped sheets. The centre-card transitions use fade/scale;
 cart and ordinary mobile sheets keep their slide. Backdrop/close/Escape remain.
@@ -911,3 +913,14 @@ The payment receipt reuses the line presentation with order snapshots and
 existing text/total roles. Receipt data is supplied only for confirmed payment
 in the owning session; the public return URL alone does not reveal it. The
 server's redundant B2B placed success banner has been removed.
+
+### Natural panel height
+
+Account/settings cards (including landing on mobile) and the desktop cart use
+content height with `clamp()` spacing. Their outer frame sets the viewport cap;
+the inner flex scroll area has `min-height: 0` and no separate height cap. Extra
+links/rows grow the panel first; scrolling begins only when the frame fills its
+available screen height. The close control remains outside that scroll area.
+The inner card padding reserves room for link halos so their pseudo-elements
+do not create a small, premature scroll range. Normal mobile sheets retain
+their full available height and internal scrolling.

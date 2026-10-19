@@ -329,17 +329,17 @@
 .landing__top :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel {
   position: relative; inset: auto; translate: none;
   width: min(38rem, calc(100vw - 2rem)); max-width: none;
-  min-height: min(28rem, calc(100dvh - 5rem));
+  min-height: 0;
   max-height: calc(100dvh - 5rem);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: var(--space-5); padding: clamp(1.5rem, 5dvh, 3rem) clamp(1.25rem, 4vw, 2.5rem) 3rem;
+  gap: var(--space-5); padding: clamp(1.5rem, 6dvh, 4rem) clamp(1.25rem, 4vw, 2.5rem) clamp(2rem, 6dvh, 4rem);
   background: var(--preferences-bg); border: 1px solid var(--menu-edge);
   border-radius: var(--radius-md); box-shadow: var(--preferences-shadow); pointer-events: auto;
 }
 .landing__top .mobile-menu-panel::before,
 .landing__top .mobile-menu-panel::after { display: none; }
 .landing__top .mobile-menu-panel .menu-panel-scroll {
-  width: 100%; height: auto; max-height: calc(100dvh - 11rem);
+  width: 100%; height: auto; min-height: 0; max-height: none; flex: 0 1 auto; padding-block: var(--space-4);
   overflow-y: auto; gap: clamp(0.75rem, 3dvh, 1.5rem);
 }
 .landing__top .mobile-menu-panel .mobile-menu-close {
