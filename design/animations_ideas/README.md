@@ -11,9 +11,9 @@ These files are not loaded by the live site.
 
 The SVG geometry is preserved from `templates/includes/ui/`. The shelf and
 bag reference `../../static/images/swedesweets-logo.png`, so keep the repo
-layout when opening them. Runtime template originals are retained because
-other feedback components may still use them. Catalog add feedback uses the
-spinning cart button and the green cart mark instead.
+layout when opening them. The old template originals are retained as unused source artwork. No live
+feedback includes the scoop or bag anymore. Catalog feedback uses the spinning
+cart button and green cart mark; previous orders uses row flashes directly.
 
 The former scoop spin was 0.55s per revolution, followed by a 260ms settling
 transition. The shelf animations are 4.5s (scoops) and 5s (bags).

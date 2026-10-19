@@ -168,6 +168,10 @@ def test_clear_cart_removes_all_lines(
     assert response.status_code == 302
     assert response.url == reverse("storefront:cart")
     assert not cart.lines.exists()
+    html = client.get(response.url).content.decode()
+    assert 'class="cart-notice" data-cart-notice role="status"' in html
+    assert "Cart cleared." in html
+    assert 'class="message message--success"' not in html
 
 
 @pytest.mark.django_db

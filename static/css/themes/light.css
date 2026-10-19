@@ -245,6 +245,10 @@
   --preferences-ink: var(--text-strong);
   /* Default crown feedback; cart success keeps its own green override. */
   --status-burst-halo: color-mix(in srgb, var(--brand-crown) 30%, transparent);
+  --cart-notice-bg: var(--preferences-bg);
+  --cart-notice-text: var(--color-status-success-text);
+  --cart-notice-border: color-mix(in srgb, var(--color-status-success-text) 45%, transparent);
+  --cart-notice-shadow: 0 0 16px color-mix(in srgb, var(--color-status-success-text) 12%, transparent);
   --order-history-row-marker: var(--menu-chosen);
   --order-progress-ready: var(--color-primary-600);
   --order-progress-lit: var(--color-accent-800);

@@ -8,7 +8,7 @@
  *   - a previous order's "+" on one of its products does the same, and
  *     its "Order again" puts all the lines it added in place (and says
  *     beside the order which products were left out, and why), both with
- *     the catalog's burst while they run (scoop, then bag);
+ *     their buttons wait for the response, then added rows flash green;
  *   - the empty order shows when the trash (cart.js) took the last
  *     line.
  *
@@ -118,40 +118,25 @@
       }
     }
 
-    // As in the catalog (catalog.js): the navbar's cart catches the product
-    // a moment after the bag appears, so the two overlap a little.
-    const CART_CATCH_DELAY = 450;
+    // Render confirmed server rows immediately; their green flash and the
+    // navbar cart's bump are the feedback, without a separate loading burst.
+    function showAddedLines(lines) {
+      const placed = lines
+        .map((item) => placeLine(item.line_html, item.cart_line_id))
+        .filter(Boolean);
 
-    // Lines the server drew ({cart_line_id, quantity, line_html}) go in
-    // place; each glows, the first scrolled into view, and the navbar cart
-    // catches them. With the burst all of it waits catchDelay ms
-    // (CART_CATCH_DELAY) after the bag appears: spin, bag, then the page
-    // moves, the line glows and the cart jumps together.
-    function showAddedLines(lines, { catchDelay = 0 } = {}) {
-      const show = () => {
-        const placed = lines
-          .map((item) => placeLine(item.line_html, item.cart_line_id))
-          .filter(Boolean);
+      updateEmptyState();
 
-        updateEmptyState();
-
-        if (placed.length) {
-          placed[0].scrollIntoView({ behavior: "smooth", block: "nearest" });
-          placed.forEach(glow);
-        }
-
-        notifyCartChanged({
-          lineId: lines.length === 1 ? lines[0].cart_line_id : null,
-          quantity: lines.length === 1 ? lines[0].quantity : null,
-          bump: true,
-        });
-      };
-
-      if (catchDelay > 0) {
-        window.setTimeout(show, catchDelay);
-      } else {
-        show();
+      if (placed.length) {
+        placed[0].scrollIntoView({ behavior: "smooth", block: "nearest" });
+        placed.forEach(glow);
       }
+
+      notifyCartChanged({
+        lineId: lines.length === 1 ? lines[0].cart_line_id : null,
+        quantity: lines.length === 1 ? lines[0].quantity : null,
+        bump: true,
+      });
     }
 
     /* Quick add */
@@ -200,10 +185,8 @@
       });
     });
 
-    /* A previous order's "+" and "Order again": while the post runs the
-       button gives way to the catalog's burst (the scoop spins, then the
-       bag pops up, or a cross); the lines go in as the bag appears. What
-       was left out, or went wrong, is said beside the order. */
+    /* Previous-order actions keep their layout while awaiting the server.
+       Refusals and unavailable products are reported beside that order. */
 
     function setNote(form, notes) {
       const order = form.closest("[data-recent-order]");
@@ -218,51 +201,20 @@
       note.hidden = text === "";
     }
 
-    async function runWithBurst(form, request, onAdded) {
-      const button = form.querySelector("[data-cart-burst-button]");
-      const status = form.querySelector("[data-cart-burst]");
-      let added = null;
-
-      const tracked = async () => {
-        added = await request();
-        return added;
-      };
-
-      if (!window.statusBurst || !button || !status) {
-        try {
-          await tracked();
-          onAdded(added);
-          return true;
-        } catch (error) {
-          setNote(form, [error instanceof Error ? error.message : ""]);
-          return false;
-        }
-      }
-
-      button.hidden = true;
-      status.hidden = false;
-
-      const { ok, error } = await window.statusBurst.run(
-        status,
-        "default",
-        tracked,
-        {
-          onMark: (worked) => {
-            if (worked) {
-              onAdded(added);
-            }
-          },
-        }
-      );
-
-      status.hidden = true;
-      button.hidden = false;
-
-      if (!ok) {
+    async function runAdd(form, request, onAdded) {
+      const button = form.querySelector("[data-cart-add-button]");
+      if (button) button.disabled = true;
+      form.setAttribute("aria-busy", "true");
+      try {
+        onAdded(await request());
+        return true;
+      } catch (error) {
         setNote(form, [error instanceof Error ? error.message : ""]);
+        return false;
+      } finally {
+        if (button) button.disabled = false;
+        form.removeAttribute("aria-busy");
       }
-
-      return ok;
     }
 
     root.addEventListener("submit", async (event) => {
@@ -284,7 +236,7 @@
       setNote(form, []);
 
       if (form.matches("[data-cart-add-offer]")) {
-        await runWithBurst(
+        await runAdd(
           form,
           async () => {
             const { response, payload } = await postForm(form);
@@ -295,13 +247,10 @@
 
             return payload;
           },
-          (payload) => showAddedLines(
-            [payload],
-            { catchDelay: CART_CATCH_DELAY }
-          )
+          (payload) => showAddedLines([payload])
         );
       } else {
-        await runWithBurst(
+        await runAdd(
           form,
           async () => {
             const { payload } = await postForm(form);
@@ -315,7 +264,7 @@
             return { lines, notes };
           },
           ({ lines, notes }) => {
-            showAddedLines(lines, { catchDelay: CART_CATCH_DELAY });
+            showAddedLines(lines);
             setNote(form, notes);
           }
         );

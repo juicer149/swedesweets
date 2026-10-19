@@ -81,7 +81,7 @@
     // Wherever the wave is, the dots ease back from there rather than
     // jump: hold each one's pose, stop the wave, then let it go.
     const dots = Array.from(burst.querySelectorAll(
-      ".status-burst__beat, .status-burst__crown-dot, .status-burst__scoop .scoop"
+      ".status-burst__beat, .status-burst__crown-dot"
     ));
     // Catalog loading lives in the real submit button. Settle that icon
     // with the same held-pose transition before the success/error mark.

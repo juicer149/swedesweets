@@ -5,7 +5,7 @@
   - a tile's size dropdown shows "Choose size", then the size; how many
     is typed;
   - the cart button posts the form as JSON while only the status burst
-    shows in the row's middle (status_burst.js: the scoop, then our bag,
+    shows in the row's middle (status_burst.js: the spinning cart button, then the cart mark,
     the label green; or a cross, the label red, then why); then the row
     comes back as it started, the picture's in-cart badge counts them,
     and the navbar cart refreshes with a little jump (cart-changed with
@@ -163,7 +163,7 @@
   /* Size, how many, then add ------------------------------------------ */
 
   /* The line under the tools: read out by screen readers every time, seen
-     only when something went wrong (success has the bag). */
+     only when something went wrong (success has the cart mark). */
   function setFeedback(message, { quiet = false } = {}) {
     if (feedback) {
       feedback.textContent = message;

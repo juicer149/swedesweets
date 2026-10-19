@@ -142,18 +142,8 @@
   border-color: var(--color-primary-500);
 }
 
-/* While adding: the button gives way to the catalog's burst (the scoop
-   spins, then the bag pops up). */
-.recent-order__status {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.recent-order__status[hidden],
-[data-cart-burst-button][hidden] {
-  display: none;
-}
+/* Pending additions keep their button visible, without a separate burst. */
+[data-cart-add-button]:disabled { opacity: .55; cursor: wait; }
 
 .recent-order__note {
   margin: var(--space-1) 0 0;

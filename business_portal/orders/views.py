@@ -308,6 +308,7 @@ def cart(request):
                 messages.success(
                     request,
                     _("Cart cleared."),
+                    extra_tags="cart-notice",
                 )
 
                 return redirect(
@@ -510,6 +511,7 @@ def cart_review(request):
                 messages.success(
                     request,
                     _("Cart cleared."),
+                    extra_tags="cart-notice",
                 )
 
                 return redirect(

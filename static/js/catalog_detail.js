@@ -8,8 +8,8 @@
   - ticking the offer sets them to the offer (its tick box posts it in the
     size's place);
   - the cart button sends the form in the background while only the
-    status burst shows in the white (status_burst.js: the scoop, then our
-    bag, the label green; or a cross, the label red, then why until
+    status burst shows in the white (status_burst.js: the spinning cart button, then the
+    cart mark, the label green; or a cross, the label red, then why until
     tapped); once added the badge counts them, the navbar cart jumps and
     the catalog opens (data-done-url), as without JavaScript;
   - the badge follows the navbar cart whenever it refreshes.

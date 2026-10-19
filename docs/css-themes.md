@@ -274,8 +274,7 @@ the final s, at the right end of Sweets; the menu's stacked logo is unchanged.
   default to the search focus roles and current label text.
 - Label loading/success/error keep `--label-bg`. The success/error edge and
   burst use `--catalog-burst-success`, `--catalog-burst-error`, and
-  `--catalog-burst-halo`. Catalog feedback now uses the cart mark; other bags and recent-order
-  feedback keep their existing appearance.
+  `--catalog-burst-halo`. Catalog feedback uses the cart mark; recent-order additions use row flashes.
 - `--cart-remove-ink`, `--cart-remove-hover-ink` and `--cart-remove-flash`
   colour the cart page/dropdown trash and row removal flash. Shared ops delete
   controls, added-row flashes, navbar cart bump and animation timings are
@@ -370,7 +369,7 @@ face shares these states with quantity. Native select fallback is styled too.
 
 Standalone bag/scoop SVG snapshots and the earlier shelf animations are
 preserved in `design/animations_ideas/`. Runtime template originals remain
-available for the other components that use them.
+available as unused source artwork; live feedback no longer includes them.
 
 ## Dark semantic text roles
 
@@ -857,3 +856,15 @@ quick cart. Header icons remain available when sheets open; switching to setting
 or account from a directly visited mobile flow and dismissing it returns to
 that flow. Requests cannot close/switch away during a pending submit.
 Landing's `.menu-panel-toplight` is hidden because it has no navbar edge.
+
+Previous-order repeat and single-line add actions no longer use a status burst
+or minimum loading delay. Their buttons stay visible and disabled while the
+request runs, then confirmed rows flash green and the navbar cart catches the
+change. Refusals remain next to the order. The shared live burst template and
+CSS no longer load scoop/bag artwork; SVG ideas remain archived.
+
+Clear-cart success messages carry the `cart-notice` tag. The messages include
+renders these as small confirmations anchored near the navbar cart, rather
+than full-width banners. `cart-notice.js` follows the icon on resize/scroll and
+removes the notice after about three seconds. Other messages do not expire.
+Paint belongs to `--cart-notice-bg/text/border/shadow` in both themes.

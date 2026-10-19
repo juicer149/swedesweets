@@ -314,7 +314,7 @@ button says. CSS in `static/css/public/catalog.css`.
 While something is saved something waits in place of the controls; then a
 mark says how it went, or a cross when it did not.
 How it looks is two tokens in `tokens.css`: `--feedback-burst-style`
-(`ring`, `dots`, `wave`, `scoop` or `button`) and
+(`ring`, `dots`, `wave` or `button`) and
 `--feedback-burst-mark` (after `ring` or `dots`: `crown`, `cart` or
 `check`). The dots go round at one steady speed (`--feedback-burst-cycle`)
 until the answer is in, but at least `--feedback-min-loading`; then they
@@ -324,8 +324,8 @@ soft halo of the place's colour behind it (`--status-burst-halo`). A place
 gets its own look by setting the tokens on its element, at the end of
 `common/status-burst.css` and the owning component: the crown's wave is the
 default for orders; catalog Add spins the button's cart and then shows its green
-cart mark; login is dots then a tick. Recent-order feedback retains scoop/bag
-artwork; unused animation ideas are preserved in `design/animations_ideas/`. The request
+cart mark; login is dots then a tick. Recent orders uses confirmed row flashes.
+Unused animation ideas are preserved in `design/animations_ideas/`. The request
 and a minimum time run side by side, so it never slows anything down. The
 times (`--feedback-min-loading`, `--feedback-mark-grow`,
 `--feedback-mark-hold`) are tokens too, read by the script. Used by catalog cart feedback (the navbar cart then gives a little jump) and login.
@@ -623,3 +623,11 @@ editor listeners initialize on that new content. Back waits for its response,
 then extinguishes the connector from right to left before revealing the prior
 step. All stages share the timeline's geometry; mobile placed spacing belongs
 to the content below it rather than shifting the timeline.
+
+Previous orders uses immediate row flashes and the navbar cart's green feedback
+for confirmed additions. The add/repeat buttons remain visible but disabled
+while awaiting a response; there is no scoop/bag burst or artificial pause.
+The artwork remains in `design/animations_ideas/` for future experiments.
+Clear cart keeps its existing destination and shows a compact, three-second
+confirmation near the cart icon. Other success/error messages retain their
+normal behavior. Theme roles are documented in [CSS themes](docs/css-themes.md).

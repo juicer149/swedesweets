@@ -11,7 +11,7 @@
                  commercial_price_id (None when it cannot be ordered now)
   mode           "cart": a shop's cart; the buttons post (repeat_url on
                  the order, add_url for "+"; business_cart.js adds in
-                 place, with the catalog's burst)
+                 place, with a green row flash)
                  "form": the ops order form; the buttons add lines to the
                  form in the page (order_lines.js), each "+" carrying its
                  offer (line.offer: name, meta, offer_detail, image_url)
@@ -78,11 +78,10 @@
                           class="recent-order__add-button"
                           type="submit"
                           aria-label="{{ add_label }}"
-                          data-cart-burst-button
+                          data-cart-add-button
                         >
                           {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
                         </button>
-                        <span class="recent-order__status" data-cart-burst hidden></span>
                       </form>
                     {% endif %}
                   </li>
@@ -105,10 +104,9 @@
               data-cart-repeat
             >
               {% csrf_token %}
-              <button class="recent-order__repeat-button" type="submit" data-cart-burst-button>
+              <button class="recent-order__repeat-button" type="submit" data-cart-add-button>
                 {% trans "Order again" %}
               </button>
-              <span class="recent-order__status" data-cart-burst hidden></span>
             </form>
           {% endif %}
 

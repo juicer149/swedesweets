@@ -164,3 +164,18 @@
   --icon-scale: 1.28;
   --icon-translate-y: -0.03em;
 }
+
+/* Short cart confirmations stay near their source, outside page layout. */
+.messages:not(:has(> .message)) { margin: 0; }
+.cart-notice {
+  position: fixed; z-index: 160; top: 4.75rem; right: 1rem;
+  width: max-content; max-width: min(20rem, calc(100vw - 2rem));
+  margin: 0; padding: var(--space-3) var(--space-4);
+  color: var(--cart-notice-text); background: var(--cart-notice-bg);
+  border: 1px solid var(--cart-notice-border); border-radius: var(--radius-control);
+  box-shadow: var(--cart-notice-shadow); font-size: var(--font-size-14);
+  font-weight: 700; line-height: 1.4; pointer-events: none;
+  transition: opacity 180ms ease;
+}
+.cart-notice.is-leaving { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .cart-notice { transition: none; } }

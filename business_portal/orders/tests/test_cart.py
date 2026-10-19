@@ -248,3 +248,20 @@ def test_cart_remove_form_carries_the_csrf_token(
     form = html[html.index(f'action="{remove_url}"'):]
 
     assert 'name="csrfmiddlewaretoken"' in form[: form.index("</form>")]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "route", ["business_portal:cart", "business_portal:cart_review"]
+)
+def test_clear_cart_keeps_destination_with_a_local_confirmation(client, route):
+    customer = _login_customer(client=client)
+    _create_cart_line(customer=customer)
+    response = client.post(reverse(route), {"intent": "clear_cart"})
+    assert response.status_code == 302
+    assert response.url == reverse("after_login")
+    landing = client.get(response.url, follow=True)
+    html = landing.content.decode()
+    assert 'class="cart-notice" data-cart-notice role="status"' in html
+    assert "Cart cleared." in html
+    assert 'class="message message--success"' not in html

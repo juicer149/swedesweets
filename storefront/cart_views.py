@@ -225,6 +225,7 @@ def cart(
                 messages.success(
                     request,
                     _("Cart cleared."),
+                    extra_tags="cart-notice",
                 )
         elif intent != CLEAR_CART_INTENT:
             messages.error(
