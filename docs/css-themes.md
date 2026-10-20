@@ -875,6 +875,11 @@ request runs, then confirmed rows flash green and the navbar cart catches the
 change. Refusals remain next to the order. The shared live burst template and
 CSS no longer load scoop/bag artwork; SVG ideas remain archived.
 
+Clear cart uses the shared confirmation dialog on retail cart, B2B cart and B2B
+review, including when review is opened directly. Cancel sends no mutation;
+confirmation submits the normal CSRF-protected POST once. Successful clear
+redirects to the corresponding catalog; retail payment-lock errors stay on cart.
+The confirmation question is translated into French.
 Clear-cart success messages carry the `cart-notice` tag. The messages include
 renders these as small confirmations anchored near the navbar cart, rather
 than full-width banners. `cart-notice.js` follows the icon on resize/scroll and

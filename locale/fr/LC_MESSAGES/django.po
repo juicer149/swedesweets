@@ -2802,3 +2802,8 @@ msgstr "Chargement…"
 #: templates/includes/orders/progress.html:2
 msgid "We could not load the next step. Reload the page to check your order."
 msgstr "Impossible de charger l’étape suivante. Rechargez la page pour vérifier votre commande."
+
+#: templates/storefront/cart.html templates/business_portal/orders/cart.html
+#: templates/business_portal/orders/review.html
+msgid "Remove all products from your cart?"
+msgstr "Retirer tous les produits de votre panier ?"

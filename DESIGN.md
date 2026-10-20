@@ -631,7 +631,8 @@ Previous orders uses immediate row flashes and the navbar cart's green feedback
 for confirmed additions. The add/repeat buttons remain visible but disabled
 while awaiting a response; there is no scoop/bag burst or artificial pause.
 The artwork remains in `design/animations_ideas/` for future experiments.
-Clear cart keeps its existing destination and shows a compact, three-second
+Clear cart asks for confirmation before its POST, then returns to the retail or
+B2B catalog and shows a compact, three-second
 confirmation near the cart icon. Other success/error messages retain their
 normal behavior. Theme roles are documented in [CSS themes](docs/css-themes.md).
 

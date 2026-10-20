@@ -256,12 +256,16 @@ def test_cart_remove_form_carries_the_csrf_token(
 @pytest.mark.parametrize(
     "route", ["business_portal:cart", "business_portal:cart_review"]
 )
-def test_clear_cart_keeps_destination_with_a_local_confirmation(client, route):
+def test_clear_cart_redirects_to_catalog_with_a_local_confirmation(client, route):
     customer = _login_customer(client=client)
     _create_cart_line(customer=customer)
+    cart_html = client.get(reverse(route)).content.decode()
+    assert 'data-confirm="Remove all products from your cart?"' in cart_html
+    assert "js/confirm_action." in cart_html
     response = client.post(reverse(route), {"intent": "clear_cart"})
     assert response.status_code == 302
-    assert response.url == reverse("after_login")
+    assert response.url == reverse("business_portal:catalog")
+    assert not BusinessCart.objects.get(customer=customer).cart.lines.exists()
     landing = client.get(response.url, follow=True)
     html = landing.content.decode()
     assert 'class="cart-notice" data-cart-notice role="status"' in html

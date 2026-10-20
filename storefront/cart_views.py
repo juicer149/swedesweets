@@ -227,7 +227,10 @@ def cart(
                     _("Cart cleared."),
                     extra_tags="cart-notice",
                 )
-        elif intent != CLEAR_CART_INTENT:
+                return redirect("storefront:product_list")
+        elif intent == CLEAR_CART_INTENT:
+            return redirect("storefront:product_list")
+        else:
             messages.error(
                 request,
                 _("Unknown cart action."),

@@ -158,6 +158,10 @@ def test_clear_cart_removes_all_lines(
 ):
     cart, _line = cart_with_line
 
+    cart_html = client.get(reverse("storefront:cart")).content.decode()
+    assert 'data-confirm="Remove all products from your cart?"' in cart_html
+    assert "js/confirm_action." in cart_html
+
     response = client.post(
         reverse("storefront:cart"),
         {
@@ -166,7 +170,7 @@ def test_clear_cart_removes_all_lines(
     )
 
     assert response.status_code == 302
-    assert response.url == reverse("storefront:cart")
+    assert response.url == reverse("storefront:product_list")
     assert not cart.lines.exists()
     html = client.get(response.url).content.decode()
     assert 'class="cart-notice" data-cart-notice role="status"' in html
