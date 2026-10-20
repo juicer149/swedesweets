@@ -240,7 +240,9 @@
   --faq-question-open-bg: transparent;
 
   /* Decorative lettering, photo paper and category icons retain their own colours */
-  --display-stamped: #63718f;
+  /* The page titles (Q & A, Who we are?): decoration, muted moonlight,
+     a soft blue rather than grey, which would read as switched off. */
+  --display-stamped: color-mix(in srgb, var(--moonlight) 50%, var(--color-primary-700));
   --display-shadow: var(--color-primary-750);
   --display-lip: var(--color-primary-100);
   --display-lip-opacity: 0.25;
@@ -283,8 +285,8 @@
 
   /* Missing-photo artwork is independent of label ink and normal reading text */
   --catalog-placeholder-bg: var(--surface-muted);
-  --catalog-placeholder-text: var(--display-stamped);
-  --catalog-placeholder-crown: var(--display-stamped);
+  --catalog-placeholder-text: #63718f;
+  --catalog-placeholder-crown: #63718f;
 
   /* Card hover: the name sits on gold; the picture shares the warm light. */
   --catalog-card-hover-text: var(--color-primary-700);

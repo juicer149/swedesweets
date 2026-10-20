@@ -455,7 +455,8 @@
   --catalog-placeholder-crown: color-mix(in srgb, var(--brand-crown) 45%, var(--color-neutral-200));
 
   /* Customer footer: authentic wide logo, crown, social/account links. */
-  --footer-logo: var(--color-primary-200);
+  /* The logo in its own colours: brand blue under the gold crown. */
+  --footer-logo: var(--color-primary-400);
   --footer-crown: var(--color-brand-yellow);
   --footer-link: var(--color-neutral-600);
   --footer-link-hover: var(--color-primary-900);
