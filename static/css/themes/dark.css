@@ -310,7 +310,7 @@
     0 0 40px 6px color-mix(in srgb, var(--color-accent-600) 14%, transparent),
     0 0 90px 20px color-mix(in srgb, var(--color-accent-600) 7%, transparent);
   /* The start page's logo is the moon: a soft halo round it. */
-  --landing-moon-halo: radial-gradient(closest-side, color-mix(in srgb, var(--moonlight) 18%, transparent), color-mix(in srgb, var(--moonlight) 6%, transparent) 55%, transparent);
+  --landing-moon-halo: radial-gradient(closest-side, color-mix(in srgb, var(--moonlight) 15%, transparent), color-mix(in srgb, var(--moonlight) 6%, transparent) 55%, transparent);
   --catalog-card-hover-shadow: var(--menu-cart-glow);
 
   /* Quantity/variant fields: interactive blue at rest; gold while focused/open */
