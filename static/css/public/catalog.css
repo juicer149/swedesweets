@@ -140,9 +140,11 @@
 
   background: repeating-linear-gradient(
     90deg,
-    var(--color-accent-500) 0 18px,
-    var(--color-accent-200) 18px 36px
+    var(--catalog-shelf-stripe) 0 18px,
+    var(--catalog-shelf-stripe-alt) 18px 36px
   );
+  /* By night the shelf is lit along its edge (themes/dark.css). */
+  box-shadow: var(--catalog-shelf-glow);
   /* The stripes counted from the window, not from each piece, so the
      pieces of a row meet without a seam (the stripes are vertical, so
      scrolling up and down does not move them). */
@@ -1445,4 +1447,7 @@
 
 /* A quiet rim where the photograph and label meet the page background. */
 .tile__media, .product__media { box-shadow: var(--catalog-outline-shadow); }
-.tile__label, .product__label { box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15), var(--catalog-outline-shadow); }
+.tile__label { box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15), var(--catalog-outline-shadow); }
+/* The opened product's label stands in a faint light by night (outside
+   its edge only; themes/dark.css). */
+.product__label { box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15), var(--catalog-outline-shadow), var(--product-label-glow); }

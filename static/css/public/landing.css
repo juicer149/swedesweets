@@ -69,8 +69,25 @@
 }
 
 .landing__logo {
+  position: relative;
+  isolation: isolate;
   margin: 0;
   line-height: 0;
+}
+
+/* By night the logo is the moon: a soft halo round it (themes/dark.css). */
+.landing__logo::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 52%;
+  width: 165%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--landing-moon-halo);
+  pointer-events: none;
 }
 
 .landing__logo .landing__logo-art {

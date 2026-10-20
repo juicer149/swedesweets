@@ -211,6 +211,16 @@ keyboard focus and the current page. On phones the halo sits behind the label. T
 This navbar effect does not change the landing menu's own animation or the
 selected-language marker.
 
+## Night lights
+
+By night three sources light the dark palette, each a role in
+`themes/dark.css` (none by day): `--landing-moon-halo`, a soft moonlight
+halo round the start page's logo (the logo is the moon);
+`--catalog-shelf-glow`, a faint warm light along the catalog's shelf, whose
+stripes are blue at night (`--catalog-shelf-stripe`, `-alt`; yellow by day);
+and `--product-label-glow`, a faint lantern light behind an opened
+product's label, outside its edge only.
+
 ## Product photos and product text
 
 `--photo-filter` (none by day; slightly dimmer and less saturated by night)
