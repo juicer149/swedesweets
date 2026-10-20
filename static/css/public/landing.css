@@ -327,24 +327,41 @@
   overflow: visible; pointer-events: none;
 }
 .landing__top :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel {
+  --dialog-bg: var(--preferences-bg);
+  --dialog-edge: var(--menu-edge);
   position: relative; inset: auto; translate: none;
   width: min(38rem, calc(100vw - 2rem)); max-width: none;
   min-height: 0;
   max-height: calc(100dvh - 5rem);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: var(--space-5); padding: clamp(1.5rem, 6dvh, 4rem) clamp(1.25rem, 4vw, 2.5rem) clamp(2rem, 6dvh, 4rem);
-  background: var(--preferences-bg); border: 1px solid var(--menu-edge);
-  border-radius: var(--radius-md); box-shadow: var(--preferences-shadow); pointer-events: auto;
+  gap: var(--space-5); padding: clamp(1.5rem, 6dvh, 4rem) clamp(1.25rem, 4vw, 2.5rem) calc(clamp(2rem, 6dvh, 4rem) + 3rem);
+  isolation: isolate;
+  background: transparent; border: 0; border-radius: 0; box-shadow: none;
+  filter: drop-shadow(0 22px 40px rgb(0 0 0 / 0.35));
+  pointer-events: auto;
 }
-.landing__top .mobile-menu-panel::before,
-.landing__top .mobile-menu-panel::after { display: none; }
+.landing__top .account-menu__panel.mobile-menu-panel { --dialog-bg: var(--account-menu-bg); }
+/* The navbar's pennant (common/mobile-menu.css): edge, then fill, the close
+   circle at the tip of the V. */
+.landing__top :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel::before,
+.landing__top :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel::after {
+  content: ""; display: block;
+  position: absolute; inset: 0 0 1.375rem; z-index: -1; pointer-events: none;
+  background: var(--dialog-edge);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4rem), calc(100% - 1px) calc(100% - 3.5rem), calc(100% - 5px) calc(100% - 3.0625rem), calc(100% - 12px) calc(100% - 2.75rem), 50% 100%, 12px calc(100% - 2.75rem), 5px calc(100% - 3.0625rem), 1px calc(100% - 3.5rem), 0 calc(100% - 4rem));
+}
+.landing__top :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel::after {
+  inset: 1px 1px calc(1.375rem + 1px);
+  background: var(--dialog-bg);
+}
 .landing__top .mobile-menu-panel .menu-panel-scroll {
   width: 100%; height: auto; min-height: 0; max-height: none; flex: 0 1 auto; padding-block: var(--space-4);
   overflow-y: auto; gap: clamp(0.75rem, 3dvh, 1.5rem);
 }
 .landing__top .mobile-menu-panel .mobile-menu-close {
-  position: absolute; bottom: -1.375rem; left: calc(50% - 1.375rem);
+  position: absolute; bottom: 0; left: calc(50% - 1.375rem);
   display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
-  color: var(--account-menu-text); background: var(--preferences-bg);
-  border: 1px solid var(--menu-edge); border-radius: var(--radius-pill);
+  color: var(--account-menu-text); background: var(--dialog-bg, var(--preferences-bg));
+  border: 1px solid var(--dialog-edge, var(--menu-edge)); border-radius: var(--radius-pill);
 }

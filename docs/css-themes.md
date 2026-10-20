@@ -211,6 +211,15 @@ keyboard focus and the current page. On phones the halo sits behind the label. T
 This navbar effect does not change the landing menu's own animation or the
 selected-language marker.
 
+## Product photos and product text
+
+`--photo-filter` (none by day; slightly dimmer and less saturated by night)
+applies to product photos on cards, the product page and cart lines, so
+their white backgrounds do not glare on the night palette; About's photos
+keep theirs. `--product-prose-text` colours a product's Description and
+Ingredients (light: body text; dark: moonlight). Catalog cards no longer
+lift on hover; their shadow, sheen and name light show they open.
+
 ## FAQ, missing product photos and customer footer
 
 These roles are defined in both theme files, next to comments describing where

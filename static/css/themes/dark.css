@@ -235,6 +235,10 @@
 
   /* 4. Reading, FAQ and contact details */
   --prose-text: var(--text-reading);
+  /* A product's Description and Ingredients: moonlight, as the logo. */
+  --product-prose-text: var(--moonlight);
+  /* Product photos a little dimmer, so their white does not glare at night. */
+  --photo-filter: brightness(0.86) saturate(0.95);
   --faq-question-text: var(--moonlight);
   --faq-question-hover-text: var(--dropdown-title-hover-text);
   --faq-question-open-text: var(--dropdown-title-active-text);

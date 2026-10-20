@@ -22,6 +22,11 @@ html {
   }
 }
 
+/* Product photos follow the theme (dimmer at night, themes/dark.css). */
+img:is(.tile__image, .product__image, .line__image) {
+  filter: var(--photo-filter, none);
+}
+
 body {
   min-height: 100vh;
   margin: 0;

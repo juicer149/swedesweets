@@ -388,6 +388,10 @@
 :root {
   /* About paragraphs and FAQ answers, excluding the polaroid caption. */
   --prose-text: var(--text-body);
+  /* A product's Description and Ingredients (catalog product page). */
+  --product-prose-text: var(--text-body);
+  /* Product photos (cards, product page, cart lines): as they are by day. */
+  --photo-filter: none;
 
   /* Typed/selected text and hints in catalog search, quick jumps and B2B quick add. */
   --search-text: var(--text-blue-strong);

@@ -15,10 +15,15 @@
   margin-top: clamp(var(--space-2), 4dvh, var(--space-8));
 }
 
-/* The last question opens to the phone and mail rows. */
+/* The answers sit a little in from their questions. */
+.faq .accordion__content p {
+  padding-left: calc(var(--space-4) + var(--space-5));
+}
+
+/* The last question opens to the phone and mail rows, indented the same. */
 .faq-contact .icon-rows {
   margin: 0;
-  padding: var(--space-2) var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-2) var(--space-4) calc(var(--space-4) + var(--space-5));
 }
 
 /* Keep FAQ prose and question colours independent of shared order accordions. */
