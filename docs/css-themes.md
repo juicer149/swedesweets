@@ -34,7 +34,7 @@ work pages have been checked for the dark palette.
 A single gear icon opens the same settings disclosure in the customer navbar,
 landing and entrance/error pages, at every screen size. Language uses EN/FR
 text buttons and the existing Django POST endpoint. The selected language is
-gold with a soft glow inside the open panel; no radio circles are drawn.
+navy in light and gold with a soft glow in dark; no radio circles are drawn.
 Language submission works without JavaScript. Staff get a text link at the
 bottom of settings to navigate to Public site or Ops dashboard. The navigation
 builder chooses the opposite destination, including on the shared staff profile
@@ -935,7 +935,7 @@ their full available height and internal scrolling.
 
 Dark's `--moonlight` mixes white (85%) with primary-100 (15%). Change
 this role to tune the shared cool near-white. Its component aliases are
-`--menu-logo`, `--footer-logo`, `--menu-cart-ink`, `--catalog-cart-ink/border`,
+`--menu-logo`, `--menu-cart-ink`, `--catalog-cart-ink/border`,
 `--cart-name`, `--cart-control-ink/border`, `--find-sweets-name` and
 `--faq-question-text`. Ordinary navigation remains blue. Hover/selection
 retains gold and its existing glow; success and failure remain green/red.
@@ -980,3 +980,25 @@ Inside the cart panel, the inner `.order-flow-page` allows horizontal paint
 overflow so added/removed row flashes reach beyond the content column. The
 outer `.cart-panel-scroll` remains the single scrolling/clipping boundary;
 row widths, panel geometry and the folding removal animation are unchanged.
+
+## Light text after the accent scale update
+
+Accent-800–950 are now luminous orange/gold, so their index no longer implies
+sufficient contrast for text on pale or yellow surfaces. The scales themselves
+stay intact. Light's `--color-accent-text-standard` uses primary-900; label band
+names and primary action text map to that role. Default/hover action text also
+aliases `--action-primary-text`, retaining navy while the fill changes.
+
+FAQ/previous-order hover titles, selected/hovered language choices, account
+links, the staff site link and footer link hover use primary-900 in light.
+`--display-shadow` uses neutral-600 to retain the stamped lettering's dark
+inner shading without an orange cast. Dark's intentional gold selections and
+orange warnings retain their roles.
+
+`--order-progress-lit-label` separates text contrast from the gold connectors
+and dots: navy on light, gold on dark; the completed state uses success green
+for both. It does not change the travel/pulse sequence.
+
+The footer wordmark uses `--footer-logo: var(--color-primary-200)` in both
+themes. This is independent of the navbar/landing moonlight wordmark in dark;
+the footer crown stays gold and footer link roles remain separate.

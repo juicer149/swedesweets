@@ -54,6 +54,7 @@ palette uses deep blue surfaces, neutral reading text and light blue available
 interactions. A shared cool near-white `--moonlight` lifts the logo above the
 menu and is used for cart product names/controls, FAQ questions and shop names.
 Cart quantities and primary actions use gold; removal actions use red.
+The footer wordmark uses light blue (primary-200) in both themes.
 Ops remains light until its work pages have been reviewed.
 Theme selection and implementation details are in [CSS themes](docs/css-themes.md).
 
@@ -65,8 +66,8 @@ completion. Light is still the default.
 A gear opens shared settings on navbar, landing and entrance/error pages.
 Language is selected through EN/FR text buttons. JavaScript fetches the server
 translations and updates text in place, retaining the open settings panel and
-form values; the native language POST remains the fallback. The chosen language keeps gold
-ink and a soft gold light. A pill switches Day/Night: thumb left and yellow sun
+form values; the native language POST remains the fallback. The chosen language uses navy ink in light and gold
+ink with a soft gold light in dark. A pill switches Day/Night: thumb left and yellow sun
 right in day mode; thumb right and white moon left in night mode. The icons
 set/rise along an arc; reduced motion skips the animation. Selection lasts for
 the current tab. Staff get a normal link to the other site beneath these controls.
@@ -676,3 +677,9 @@ keep their Profile/orders/logout card.
 The public/B2B dark theme, authentic vector logo, wide footer wordmark and
 missing-photo treatment are complete. Their colour choices remain in the
 respective theme roles. See [CSS themes](docs/css-themes.md) for implementation.
+
+Light-theme text on yellow buttons and catalog name bands uses dark navy.
+The accent scale's orange end is decorative/selection colour, not dark text
+ink. FAQ/account/settings/footer hover text uses dark navy on pale surfaces.
+Order-progress text is navy in light while its connectors/dots retain gold;
+completed progress remains green in both themes.

@@ -7,6 +7,7 @@
 .order-progress__travel { color: var(--order-progress-lit); box-shadow: var(--order-progress-dot-shadow); transform-origin: left center; pointer-events: none; }
 .order-progress__dot { z-index: 1; width: 0.75rem; height: 0.75rem; border: 1px solid currentColor; border-radius: 50%; background: var(--preferences-bg); transition: box-shadow 140ms ease; }
 .order-progress__step.is-lit { color: var(--order-progress-lit); text-shadow: var(--order-progress-shadow); }
+.order-progress__step.is-lit .order-progress__label { color: var(--order-progress-lit-label); }
 .order-progress__step.is-lit::before, .order-progress__step.is-lit .order-progress__dot { box-shadow: var(--order-progress-dot-shadow); }
 .order-progress__step[aria-current="step"] .order-progress__dot { background: currentColor; }
 
@@ -39,6 +40,7 @@
 /* Placed orders keep their success colour after the finishing pulse. */
 .order-progress.is-complete {
   --order-progress-lit: var(--order-progress-complete);
+  --order-progress-lit-label: var(--order-progress-complete);
   --order-progress-shadow: var(--order-progress-complete-shadow);
   --order-progress-dot-shadow: var(--order-progress-complete-dot-shadow);
 }

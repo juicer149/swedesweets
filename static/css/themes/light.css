@@ -4,7 +4,7 @@
 
   /* Shared expandable titles: FAQ, Previous orders and each nested order. */
   --dropdown-title-text: var(--text-body);
-  --dropdown-title-hover-text: var(--color-accent-900);
+  --dropdown-title-hover-text: var(--color-primary-900);
   --dropdown-title-active-text: var(--text-main);
   --dropdown-title-glow: var(--interaction-glow);
   --dropdown-title-glow-filter: var(--interaction-glow-filter);
@@ -21,7 +21,9 @@
      ========================================================================== */
 
   --color-primary-text-standard: var(--color-primary-900);
-  --color-accent-text-standard: var(--color-accent-950);
+  /* The accent scale contains luminous gold/orange, not dark brown ink.
+     Text on gold surfaces therefore uses navy rather than its highest step. */
+  --color-accent-text-standard: var(--color-primary-900);
 
   /* ==========================================================================
      Sitewide heading color
@@ -256,6 +258,7 @@
   --confirm-remove-text: var(--color-red-700);
   --order-progress-ready: var(--color-primary-600);
   --order-progress-lit: var(--color-accent-800);
+  --order-progress-lit-label: var(--color-primary-900);
   --order-progress-shadow: var(--interaction-text-shadow);
   --order-progress-dot-shadow: none;
   --menu-panel-edge-glow: none;
@@ -267,22 +270,22 @@
   --preferences-border: var(--menu-edge);
   --preferences-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
   --preferences-option: var(--color-primary-700);
-  --preferences-selected: var(--color-accent-800);
+  --preferences-selected: var(--color-primary-900);
   --preferences-selected-shadow: 0 0 8px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
   --preferences-selected-glow: radial-gradient(ellipse, rgb(249 181 26 / 0.12), transparent 75%);
   --preferences-selected-glow-filter: blur(6px);
   --preferences-selected-glow-opacity: 1;
-  --preferences-hover: var(--color-accent-800);
+  --preferences-hover: var(--color-primary-900);
   /* Account menu and staff site link, independent of language/theme choices. */
   --account-menu-trigger: var(--menu-ink);
   --account-menu-bg: var(--preferences-bg);
   --account-menu-border: var(--preferences-border);
   --account-menu-shadow: var(--preferences-shadow);
   --account-menu-text: var(--color-primary-700);
-  --account-menu-selected: var(--color-accent-800);
+  --account-menu-selected: var(--color-primary-900);
   --account-menu-divider: var(--line-soft);
   --preferences-site-text: var(--color-primary-700);
-  --preferences-site-hover: var(--color-accent-800);
+  --preferences-site-hover: var(--color-primary-900);
   --preferences-site-divider: var(--line-soft);
   --theme-switch-track: var(--menu-bg);
   --theme-switch-border: var(--color-primary-400);
@@ -333,7 +336,7 @@
 
   /* Display lettering: FAQ and About */
   --display-stamped: color-mix(in srgb, var(--color-accent-200) 40%, var(--color-neutral-200));
-  --display-shadow: var(--color-accent-950);
+  --display-shadow: var(--color-neutral-600);
   --display-lip: var(--color-white);
   --display-lip-opacity: 0.9;
 
@@ -351,7 +354,7 @@
   --label-muted: var(--color-neutral-600);
   --label-line: var(--color-neutral-200);
   --label-band: var(--color-accent-500);
-  --label-band-text: var(--color-accent-950);
+  --label-band-text: var(--color-accent-text-standard);
   --label-border: var(--color-accent-600);
   --label-warning-text: #8a5a00;
   --label-hover-bg: var(--color-primary-50);
@@ -396,10 +399,10 @@
   /* Main solid actions; light keeps its existing yellow palette. */
   --action-primary-bg: var(--color-action-place-solid);
   --action-primary-text: var(--color-accent-text-standard);
-  --action-primary-default-text: var(--color-primary-900);
+  --action-primary-default-text: var(--action-primary-text);
   --action-primary-border: transparent;
   --action-primary-hover-bg: var(--color-accent-500);
-  --action-primary-hover-text: initial;
+  --action-primary-hover-text: var(--action-primary-text);
   --action-primary-hover-border: var(--color-accent-500);
   --action-primary-active-bg: var(--color-accent-700);
   --action-primary-active-border: var(--color-accent-700);
@@ -452,10 +455,10 @@
   --catalog-placeholder-crown: color-mix(in srgb, var(--brand-crown) 45%, var(--color-neutral-200));
 
   /* Customer footer: authentic wide logo, crown, social/account links. */
-  --footer-logo: var(--color-neutral-800);
+  --footer-logo: var(--color-primary-200);
   --footer-crown: var(--color-brand-yellow);
   --footer-link: var(--color-neutral-600);
-  --footer-link-hover: var(--color-accent-900);
+  --footer-link-hover: var(--color-primary-900);
 }
 
 /* Catalog label cart button (cards and product detail), separate from

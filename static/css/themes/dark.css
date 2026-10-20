@@ -162,6 +162,7 @@
   --confirm-remove-text: var(--cart-remove-ink);
   --order-progress-ready: var(--interactive-text);
   --order-progress-lit: var(--selected-accent);
+  --order-progress-lit-label: var(--order-progress-lit);
   --order-progress-shadow: var(--interaction-text-shadow);
   --order-progress-dot-shadow: 0 0 9px color-mix(in srgb, var(--selected-accent) 25%, transparent);
   --menu-panel-edge-glow: linear-gradient(to bottom, color-mix(in srgb, var(--menu-edge) 14%, transparent), color-mix(in srgb, var(--menu-edge) 4%, transparent) 40%, transparent);
@@ -349,7 +350,7 @@
   --cart-clear-hover-text: var(--danger-text);
 
   /* 8. Footer — brand artwork remains independent of interactive text */
-  --footer-logo: var(--moonlight);
+  --footer-logo: var(--color-primary-200);
   --footer-crown: var(--color-accent-600);
   --footer-link: var(--interactive-text-subtle);
   --footer-link-hover: var(--color-accent-500);
