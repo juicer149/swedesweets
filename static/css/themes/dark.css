@@ -143,7 +143,9 @@
 
   /* Header/phone edge is independent of the selected text.
      The language and cart keep their menu-specific palette/glow. */
-  --menu-edge: var(--color-accent-750);
+  /* Muted gold: the edges (navbar, phone bar, panels) frame quietly, so
+     what is lit (the chosen, the open icon) is the gold that shines. */
+  --menu-edge: color-mix(in srgb, var(--color-accent-750) 45%, var(--menu-bg));
   --interaction-glow-strength: 0.85;
   --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / calc(0.06 * var(--interaction-glow-strength))), rgb(249 181 26 / calc(0.05 * var(--interaction-glow-strength))) 30%, rgb(249 181 26 / calc(0.04 * var(--interaction-glow-strength))) 60%, rgb(249 181 26 / 0) 100%);
   --menu-link-glow-blur: 10px;
@@ -165,7 +167,7 @@
   --order-progress-lit-label: var(--order-progress-lit);
   --order-progress-shadow: var(--interaction-text-shadow);
   --order-progress-dot-shadow: 0 0 9px color-mix(in srgb, var(--selected-accent) 25%, transparent);
-  --menu-panel-edge-glow: linear-gradient(to bottom, color-mix(in srgb, var(--menu-edge) 14%, transparent), color-mix(in srgb, var(--menu-edge) 4%, transparent) 40%, transparent);
+  --menu-panel-edge-glow: linear-gradient(to bottom, color-mix(in srgb, var(--color-accent-750) 14%, transparent), color-mix(in srgb, var(--color-accent-750) 4%, transparent) 40%, transparent);
   --cart-previous-text: var(--dropdown-title-text);
   --cart-previous-active: var(--dropdown-title-active-text);
   --cart-previous-glow: var(--dropdown-title-text-shadow);

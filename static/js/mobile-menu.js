@@ -111,11 +111,40 @@
     motion = null;
     running = false;
     sync();
+    syncHistory();
     // Mobile triggers become visible again only after sync clears the sheet.
     if (!openMenu()) focusTarget?.focus({ preventScroll: true });
     document.dispatchEvent(new CustomEvent("mobile-menu-settled", {
       detail: { key: openMenu()?.dataset.mobileMenu || null },
     }));
+  }
+
+  /* Back closes the open panel, as it closes a product opened over the
+     catalog: opening one adds a step to the history (switching between
+     panels replaces it), and closing it another way takes that step back.
+     The page's own state (catalog.js's open product) is kept in it. */
+  const panelState = () => window.history.state?.menuPanel || null;
+  function syncHistory() {
+    const key = openMenu()?.dataset.mobileMenu || null;
+    const current = panelState();
+    if (key === current) return;
+    if (key && !current) {
+      window.history.pushState({ ...(window.history.state || {}), menuPanel: key }, "", window.location.href);
+    } else if (key) {
+      window.history.replaceState({ ...window.history.state, menuPanel: key }, "", window.location.href);
+    } else {
+      window.history.back();
+    }
+  }
+  window.addEventListener("popstate", () => {
+    const key = panelState();
+    if (openMenu() && !key) request(null, true);
+    else if (key && !openMenu() && menuFor(key)) request(key, false);
+  });
+  // Back here from a page a panel led to: the panel is closed, so is its step.
+  if (panelState()) {
+    const { menuPanel, ...rest } = window.history.state;
+    window.history.replaceState(Object.keys(rest).length ? rest : null, "", window.location.href);
   }
 
   document.addEventListener("click", event => {

@@ -50,6 +50,11 @@ rises along an arc, each with a soft shadow following its shape. Reduced
 motion disables the transition. The switch is hidden without JavaScript.
 Escape closes the panel and restores
 focus to its gear button; clicking outside closes it as well.
+Back closes an open panel, as it closes a product opened over the catalog:
+opening one adds a history step (switching panels replaces it), and closing
+it another way takes that step back (`mobile-menu.js`). On desktop,
+account and settings are centred dialogs in the phone's pennant shape, with
+the close circle at the tip of the V (`common/mobile-menu.css`).
 
 The choice uses the existing sessionStorage preview key, survives navigation
 and reload in the current tab, and overrides auto mode until explicitly
@@ -193,7 +198,10 @@ continues to control other components, independently of search focus.
 
 ## Navbar separator and link hover
 
-`--menu-edge` controls the line between the header and the page. Both palettes
+`--menu-edge` controls the line between the header and the page. Dark
+mixes it to a muted gold (45% accent-750 into the menu blue), so the edges
+frame quietly and only what is lit shines; the panels' top light keeps
+accent-750 itself. Both palettes
 set it explicitly, independently of `--menu-chosen`. The phone bar's outline
 follows it through `--menu-bar-edge`; override that separately when needed.
 

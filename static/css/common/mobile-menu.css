@@ -282,6 +282,40 @@ details[data-mobile-menu]:not([data-panel-lit]) .mobile-menu-panel {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     border: 1px solid var(--menu-edge); border-radius: var(--radius-md);
   }
+  /* The phone's pennant, as a centred dialog: the same V with the close
+     circle at its tip, drawn by two silhouettes (edge, then fill). */
+  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel {
+    --dialog-bg: var(--preferences-bg);
+    --dialog-edge: var(--preferences-border);
+    isolation: isolate;
+    padding-bottom: calc(clamp(2rem, 6dvh, 4rem) + 3rem);
+    background: transparent; border: 0; border-radius: 0; box-shadow: none;
+    filter: drop-shadow(0 22px 40px rgb(0 0 0 / 0.35));
+  }
+  .account-menu__panel.mobile-menu-panel {
+    --dialog-bg: var(--account-menu-bg);
+    --dialog-edge: var(--account-menu-border);
+  }
+  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel::before,
+  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 1.375rem;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--dialog-edge);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4rem), calc(100% - 1px) calc(100% - 3.5rem), calc(100% - 5px) calc(100% - 3.0625rem), calc(100% - 12px) calc(100% - 2.75rem), 50% 100%, 12px calc(100% - 2.75rem), 5px calc(100% - 3.0625rem), 1px calc(100% - 3.5rem), 0 calc(100% - 4rem));
+  }
+  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel::after {
+    inset: 1px 1px calc(1.375rem + 1px);
+    background: var(--dialog-bg);
+  }
+  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel .mobile-menu-close {
+    bottom: 0;
+    background: var(--dialog-bg);
+    border-color: var(--dialog-edge);
+  }
   :is(.account-menu__panel, .site-preferences__panel) .menu-panel-toplight { display: none; }
   :is(.account-menu__panel, .site-preferences__panel) .menu-panel-scroll {
     width: 100%; min-height: 0; max-height: none; flex: 0 1 auto; padding-block: var(--space-4); overflow-y: auto;
