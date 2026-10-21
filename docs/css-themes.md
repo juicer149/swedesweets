@@ -67,8 +67,10 @@ light.css's "Here, pointer and rest" block, and `--menu-ink`, `--menu-chosen`,
 the cart's and Settings' hover colours and the gold glows are made from them.
 Change those three lines and the whole navigation follows: navbar, Menu,
 Settings, the Menu and cart buttons, the view switch, the start page's menu,
-and the light behind the filter chips. (By day the logo and Login / Log out
-keep the rest colour when pointed at.) The page's own parts sit on the cream,
+and the light behind the filter chips. The logo follows the same rules by
+day as by night: resting without its crown in the navbar, the pointer's
+colour when pointed at, "here" with its crown on the start page and login.
+The page's own parts sit on the cream,
 where those colours would not read, so their words have their own three:
 `--state-page-rest-ink`, `--state-page-here-ink`, `--state-page-pointer-ink`. `common/states.css` is loaded last (public.css,
 ops.css) and maps the parts onto their variables. The catalog's category

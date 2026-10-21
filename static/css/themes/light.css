@@ -648,13 +648,13 @@
   /* The logo: at rest in the navbar, pointed at, and "here" on the brand's
      own pages (the start page, login and the other entrance pages) */
   --logo-rest-ink: var(--state-rest-ink);
-  --logo-rest-crown-opacity: 1;
-  /* by day the logo keeps its colour when pointed at */
-  --logo-pointer-ink: var(--state-rest-ink);
+  /* the crown is on the page's link in the navbar, not on the logo */
+  --logo-rest-crown-opacity: 0;
+  --logo-pointer-ink: var(--state-pointer-ink);
   --logo-pointer-filter: var(--interaction-icon-filter);
-  --logo-here-ink: var(--state-rest-ink);
+  --logo-here-ink: var(--state-here-ink);
   --logo-here-filter: none;
-  --logo-here-pointer-ink: var(--state-rest-ink);
+  --logo-here-pointer-ink: var(--state-here-ink);
   --landing-logo-halo: var(--landing-moon-halo);
 
   /* The Menu's links */
@@ -683,8 +683,7 @@
   --landing-pointer-text-shadow: var(--interaction-text-shadow);
   --landing-pointer-icon-filter: var(--interaction-icon-filter);
   --landing-pointer-crown-opacity: var(--state-pointer-crown-opacity);
-  /* by day Login / Log out keep their colour when pointed at */
-  --landing-account-pointer-ink: var(--state-rest-ink);
+  --landing-account-pointer-ink: var(--state-pointer-ink);
 
   /* The Menu's box on wider screens: the navbar's colour, no edge */
   --site-menu-box-bg: var(--menu-bg);
