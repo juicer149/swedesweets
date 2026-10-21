@@ -737,7 +737,8 @@ Keyboard dismissal still restores a visible focus indicator.
 ## Centred cards and mobile sheets
 
 From 768px up the Menu and the cart open as centred rounded boxes (38rem
-wide) over the dimmed, softly blurred page (`--menu-backdrop-bg`,
+wide; the Menu at least `--site-menu-min-height`, 31rem, so every level and
+account has the same height and going into Settings does not resize it) over the dimmed, softly blurred page (`--menu-backdrop-bg`,
 `--menu-backdrop-filter`), each with its title fixed at the top and a quiet
 cross in its corner; they fade and scale in (180ms) and out (140ms). The Menu
 takes its natural height, scrolling only on a short window; the cart stays
