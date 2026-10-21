@@ -42,22 +42,22 @@
         </button>
 
         {% if account_menu.switch %}
-          {# Staff: the two sites as two choices, the one you are on lit. #}
+          {# Staff: the two sites as two choices, the one you are on lit; switching keeps the Menu open (site-menu.js). #}
           <div class="site-menu__group site-menu__site" role="group" aria-labelledby="site-menu-site">
             <p class="site-menu__legend" id="site-menu-site">{% trans "Site" %}</p>
             <div class="site-menu__choices">
               {% if site_zone == "ops" %}
-                <a class="language-switcher__option site-menu__choice" href="{{ account_menu.switch.href }}" title="{{ account_menu.switch.label }}" aria-label="{{ account_menu.switch.label }}">
+                <a class="language-switcher__option site-menu__choice" href="{{ account_menu.switch.href }}" data-site-menu-stay title="{{ account_menu.switch.label }}" aria-label="{{ account_menu.switch.label }}">
                   {% include "includes/ui/icon.html" with name="house" %}
                 </a>
-                <span class="language-switcher__option language-switcher__option--active site-menu__choice" aria-current="true" title="{% trans 'Ops dashboard' %}" aria-label="{% trans 'Ops dashboard' %}">
+                <span class="language-switcher__option language-switcher__option--active site-menu__choice" tabindex="-1" aria-current="true" title="{% trans 'Ops dashboard' %}" aria-label="{% trans 'Ops dashboard' %}">
                   {% include "includes/ui/icon.html" with name="wrench" %}
                 </span>
               {% else %}
-                <span class="language-switcher__option language-switcher__option--active site-menu__choice" aria-current="true" title="{% trans 'Public site' %}" aria-label="{% trans 'Public site' %}">
+                <span class="language-switcher__option language-switcher__option--active site-menu__choice" tabindex="-1" aria-current="true" title="{% trans 'Public site' %}" aria-label="{% trans 'Public site' %}">
                   {% include "includes/ui/icon.html" with name="house" %}
                 </span>
-                <a class="language-switcher__option site-menu__choice" href="{{ account_menu.switch.href }}" title="{{ account_menu.switch.label }}" aria-label="{{ account_menu.switch.label }}">
+                <a class="language-switcher__option site-menu__choice" href="{{ account_menu.switch.href }}" data-site-menu-stay title="{{ account_menu.switch.label }}" aria-label="{{ account_menu.switch.label }}">
                   {% include "includes/ui/icon.html" with name="wrench" %}
                 </a>
               {% endif %}
@@ -88,9 +88,9 @@
             <legend class="site-menu__legend">{% trans 'Language' %}</legend>
             <div class="site-menu__choices">
               <button class="language-switcher__option{% if CURRENT_LANGUAGE == 'en' %} language-switcher__option--active{% endif %}"
-                type="submit" name="language" value="en"{% if CURRENT_LANGUAGE == 'en' %} aria-current="true"{% endif %}>EN</button>
+                type="submit" name="language" value="en" lang="en"{% if CURRENT_LANGUAGE == 'en' %} aria-current="true"{% endif %}>English</button>
               <button class="language-switcher__option{% if CURRENT_LANGUAGE == 'fr' %} language-switcher__option--active{% endif %}"
-                type="submit" name="language" value="fr"{% if CURRENT_LANGUAGE == 'fr' %} aria-current="true"{% endif %}>FR</button>
+                type="submit" name="language" value="fr" lang="fr"{% if CURRENT_LANGUAGE == 'fr' %} aria-current="true"{% endif %}>Français</button>
             </div>
           </fieldset>
         </form>

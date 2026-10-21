@@ -65,7 +65,8 @@ completion. Light is still the default.
 
 The Menu (three lines; Escape opens it) holds the settings on navbar, landing
 and entrance/error pages.
-Language is selected through EN/FR text buttons. JavaScript fetches the server
+Language is selected through text buttons naming each language in itself
+(English, Français). JavaScript fetches the server
 translations and updates text in place, retaining the open Menu and
 form values; the native language POST remains the fallback. The chosen language uses navy ink in light and gold
 ink with a soft gold light in dark. The theme is two choices, a sun and a
@@ -462,11 +463,12 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   with a fixed title. The Menu level: Profile, Order history for business
   customers, Settings ›, the staff's site switch (house = public, wrench =
   ops, the current one filled), Log out (CSRF-protected POST) or Login, and
-  a quieter Return. The Settings level: EN/FR and the sun/moon theme (the
+  a quieter Return. The Settings level: English/Français and the sun/moon theme (the
   chosen icon filled); ops has no theme choice. The button keeps selected
   ink, light and crown on profile/history/order-detail pages even when
   closed. Escape opens the Menu when nothing else is open, goes back from
-  Settings and closes it, returning focus to the button. Phone: the pennant
+  Settings and closes it, returning focus to the button. The arrow keys move the
+  crown as on the start page; no focus box. Switching sites keeps it open. Phone: the pennant
   sheet with its close circle at the tip; desktop: a centred rectangle with
   a small × in the corner. The FAQ tells customers how to find it.
 - **Navbar cart:** an icon-only disclosure with editable product rows and a

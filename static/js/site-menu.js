@@ -1,15 +1,64 @@
-/* The navbar's Menu (includes/site_menu.html): its levels, its Return and
+/* The navbar's Menu (includes/site_menu.html): its levels, its keys and
    Escape. mobile-menu.js opens, closes and animates the panel itself (and
-   Back closes it); this only chooses which level shows and its title.
+   Back closes it); this chooses which level shows, its title, and which
+   choice is the chosen one.
+
+   Played like the start page's menu (landing.js): the chosen choice has
+   the gold and the crown, no box around it. Pointing at a choice, or
+   focusing it, makes it the chosen one. ↓ and ↑ go from row to row (round
+   from the last to the first), ← and → between the choices of a row
+   (Language, Theme, Site), Home and End to the ends; Enter takes it.
 
    Escape: on Settings it returns to the menu; otherwise, with a panel or a
    sheet open, mobile-menu.js and details-popover.js close it; with nothing
    open (no dialog, no product opened over the catalog, no dropdown, not
-   typing) it opens the menu. */
+   typing) it opens the menu.
+
+   A staff member switching sites keeps the Menu in front: the new site
+   opens with it already there, on the site just chosen. */
 (() => {
   "use strict";
   const menus = [...document.querySelectorAll("[data-site-menu]")];
   if (!menus.length) return;
+
+  const CHOSEN = "is-chosen";
+  const STAY = "site-menu-stay";
+  const ITEMS = ".site-menu__link, .language-switcher__option";
+
+  const activeLevel = (menu) => menu.querySelector("[data-menu-level][data-menu-active]");
+  const visible = (element) => !element.hidden && element.getClientRects().length > 0;
+  const items = (menu) => [...(activeLevel(menu)?.querySelectorAll(ITEMS) || [])].filter(visible);
+
+  // Rows: a link on its own, or a group's choices side by side.
+  function rows(menu) {
+    const result = [];
+    for (const item of items(menu)) {
+      const group = item.closest(".site-menu__choices");
+      const last = result.at(-1);
+      if (group && last?.group === group) last.items.push(item);
+      else result.push({ group, items: [item] });
+    }
+    return result;
+  }
+
+  function choose(menu, item) {
+    for (const other of menu.querySelectorAll(`.${CHOSEN}`)) {
+      if (other !== item) other.classList.remove(CHOSEN);
+    }
+    item?.classList.add(CHOSEN);
+  }
+
+  function take(menu, item) {
+    if (!item) return;
+    choose(menu, item);
+    item.focus({ preventScroll: true });
+  }
+
+  // Into a row: on the choice in use (the language, the theme, the site you
+  // are on), or its first.
+  const entry = (row) => row.items.find((item) =>
+    item.matches('[aria-current="true"], [aria-pressed="true"], .language-switcher__option--active')
+  ) || row.items[0];
 
   function show(menu, level, focus = true) {
     const title = menu.querySelector("[data-site-menu-title]");
@@ -21,9 +70,11 @@
       title.textContent = level === "settings" ? title.dataset.titleSettings : title.dataset.titleMain;
     }
     if (focus) {
-      menu.querySelector(`[data-menu-level="${level}"]`)
-        ?.querySelector("a, button:not([hidden]), [aria-pressed]")
-        ?.focus({ preventScroll: true });
+      // Back from Settings, the crown waits on Settings; elsewhere on the
+      // first row.
+      const from = level === "main" && menu.querySelector('[data-menu-go="settings"]');
+      const first = rows(menu)[0];
+      take(menu, from && visible(from) ? from : first && entry(first));
     }
   }
 
@@ -36,13 +87,83 @@
     }
     // Back to the first level whenever it closes.
     menu.addEventListener("toggle", () => {
-      if (!menu.open) show(menu, "main", false);
+      if (!menu.open) {
+        choose(menu, null);
+        show(menu, "main", false);
+      }
+    });
+    // The chosen one follows the focus and the pointer, and stays.
+    menu.addEventListener("focusin", (event) => {
+      if (event.target.matches?.(ITEMS)) choose(menu, event.target);
+    });
+    menu.addEventListener("pointerover", (event) => {
+      const item = event.target.closest?.(ITEMS);
+      if (item && menu.contains(item) && event.pointerType === "mouse") take(menu, item);
+    });
+    // Switching sites: open the Menu again, at once, on the new site.
+    for (const link of menu.querySelectorAll("[data-site-menu-stay]")) {
+      link.addEventListener("click", () => {
+        try { sessionStorage.setItem(STAY, "1"); } catch (error) {}
+      });
+    }
+    menu.addEventListener("keydown", (event) => {
+      if (!menu.open || event.altKey || event.ctrlKey || event.metaKey) return;
+      const all = rows(menu);
+      if (!all.length) return;
+      const current = document.activeElement;
+      let index = all.findIndex((row) => row.items.includes(current));
+      const row = all[index];
+      let target = null;
+      switch (event.key) {
+        case "ArrowDown":
+          target = entry(all[index < 0 || index === all.length - 1 ? 0 : index + 1]);
+          break;
+        case "ArrowUp":
+          target = entry(all[index <= 0 ? all.length - 1 : index - 1]);
+          break;
+        case "Home":
+          target = entry(all[0]);
+          break;
+        case "End":
+          target = entry(all.at(-1));
+          break;
+        case "ArrowRight":
+        case "ArrowLeft": {
+          if (!row || row.items.length < 2) return;
+          const at = row.items.indexOf(current);
+          const step = event.key === "ArrowRight" ? 1 : -1;
+          target = row.items[(at + step + row.items.length) % row.items.length];
+          break;
+        }
+        default:
+          return;
+      }
+      event.preventDefault();
+      take(menu, target);
     });
   }
 
-  const request = (key) => document.dispatchEvent(
-    new CustomEvent("mobile-menu-request", { detail: { key, restoreFocus: true } })
+  const request = (key, detail = {}) => document.dispatchEvent(
+    new CustomEvent("mobile-menu-request", { detail: { key, restoreFocus: true, ...detail } })
   );
+
+  // Arrived from a site switch: the Menu is already in front, on the site.
+  let stay = false;
+  try {
+    stay = sessionStorage.getItem(STAY) === "1";
+    sessionStorage.removeItem(STAY);
+  } catch (error) {}
+  if (stay) {
+    const menu = menus[0];
+    document.addEventListener("mobile-menu-settled", function settled() {
+      document.removeEventListener("mobile-menu-settled", settled);
+      take(menu, menu.querySelector('.site-menu__site [aria-current="true"]'));
+    });
+    // After the other deferred scripts: mobile-menu.js must be listening.
+    const open = () => request(menu.dataset.mobileMenu, { instant: true });
+    if (document.readyState === "complete") open();
+    else document.addEventListener("DOMContentLoaded", open, { once: true });
+  }
 
   window.addEventListener("keydown", (event) => {
     if (event.key !== "Escape" || event.defaultPrevented) return;

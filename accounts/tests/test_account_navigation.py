@@ -62,6 +62,9 @@ def test_staff_site_link_and_account_destinations_follow_navigation_context(
         assert f'href="{reverse(target)}"' in site
         assert site.count('aria-current="true"') == 1
         assert 'role="switch"' not in site
+        # The other site keeps the Menu open; the current one can be chosen.
+        assert "data-site-menu-stay" in site
+        assert 'tabindex="-1" aria-current="true"' in site
         assert f'action="{reverse("logout")}"' in panel
 
 
@@ -79,6 +82,9 @@ def test_guest_menu_has_login_and_settings_but_no_account(client):
     assert 'data-menu-level="settings"' in panel
     assert f'action="{reverse("set_language")}"' in panel
     assert 'data-theme-choice="dark"' in panel
+    # Each language named in itself.
+    assert 'lang="en"' in panel and '>English</button>' in panel
+    assert 'lang="fr"' in panel and '>Français</button>' in panel
 
 
 @pytest.mark.django_db

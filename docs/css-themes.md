@@ -46,13 +46,23 @@ levels below it, which take turns:
   icons, a house (public site) and a wrench (ops dashboard), the one you are
   on filled and lit; then a divider, Log out (a CSRF-protected POST) or
   Login for guests; and Return, quieter, at the bottom.
-- **Settings:** the language (EN/FR text buttons, the existing Django POST)
+- **Settings:** the language (English/Français, each in its own language;
+  the existing Django POST)
   and the theme, a sun (light) and a moon (dark) as `aria-pressed` buttons,
   the chosen one filled and in the selected colour with its light. Ops has
   no theme choice and stays light. Return goes back to the Menu level.
 
 Escape on Settings goes back to the Menu level; on the Menu level it closes
-and gives focus back to the button. Return, the cross and Back do the same.
+and gives focus back to the button.
+
+Played like the start page's menu: the chosen choice has the gold and the
+crown (on a language, theme or site the crown sits on its top right corner),
+with no focus box around it. Pointing at a choice or focusing it makes it the
+chosen one, and it stays. ↓/↑ go from row to row, ←/→ between the choices of
+a row (Language, Theme, Site), Home/End to the ends; Enter takes it. Opening
+the Menu chooses its first row; back from Settings, Settings. A staff member
+switching sites keeps the Menu in front: the new site opens with it already
+there, without its motion, on the site just chosen. Return, the cross and Back do the same.
 On a phone the panel is the pennant sheet under the header, its close circle
 at the tip of the V; from 768px up it is a centred rectangle with a small
 quiet × in its corner. Without JavaScript the panel opens as a plain

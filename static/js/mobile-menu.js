@@ -16,6 +16,8 @@
   let running = false;
   let motion = null;
   let restoreFocus = false;
+  // Opened without its motion: the Menu staying in front across a site switch.
+  let instant = false;
   const menuFor = key => [...document.querySelectorAll(selector)].find(menu => menu.dataset.mobileMenu === key);
   const openMenu = () => document.querySelector(`${selector}[open]`);
 
@@ -54,7 +56,7 @@
   }
 
   async function animate(menu, opening) {
-    if (reducedMotion.matches || !menu?.isConnected) return;
+    if (instant || reducedMotion.matches || !menu?.isConnected) return;
     const centered = Boolean(menu.closest("[data-landing]")) || (!mobile.matches && menu.dataset.mobileMenu !== "cart");
     const frames = centered
       ? [{ opacity: 0, transform: "scale(.96)" }, { opacity: 1, transform: "scale(1)" }]
@@ -68,7 +70,7 @@
     return animation;
   }
 
-  async function request(key, focus = false) {
+  async function request(key, focus = false, still = false) {
     if (openMenu()?.dataset.mobileMenu === "cart" && window.SwedeSweets?.orderFlow?.busy() && key !== "cart") return;
     if (key === "cart" && menuFor(key)?.dataset.cartLocked === "true" && menuFor(key)?.dataset.flowHost !== "true") return;
     if (!key && openMenu()) {
@@ -77,6 +79,7 @@
     }
     wanted = key;
     restoreFocus = focus;
+    instant = still;
     if (running) return;
     running = true;
     let focusTarget = null;
@@ -110,6 +113,7 @@
     }
     motion = null;
     running = false;
+    instant = false;
     sync();
     syncHistory();
     // Mobile triggers become visible again only after sync clears the sheet.
@@ -174,7 +178,7 @@
     request(null, true);
   });
   document.addEventListener("mobile-menu-request", event => {
-    request(event.detail.key, Boolean(event.detail.restoreFocus));
+    request(event.detail.key, Boolean(event.detail.restoreFocus), Boolean(event.detail.instant));
   });
   document.addEventListener("navbar-cart-refreshed", sync);
   mobile.addEventListener("change", () => { motion?.finish(); sync(); });

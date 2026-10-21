@@ -124,13 +124,17 @@
   text-align: center;
   cursor: pointer;
 }
-.site-menu .site-menu__link:is(:hover, :focus-visible),
+/* The chosen one (site-menu.js: pointed at, or reached with the keys) has
+   the gold and the crown, as on the start page; no box around it. Without
+   the script, hover and focus show it. */
+.site-menu:not([data-menu-ready]) .site-menu__link:is(:hover, :focus-visible),
+.site-menu .site-menu__link.is-chosen,
 .site-menu .site-menu__link[aria-current="page"] {
   color: var(--account-menu-selected);
   text-shadow: var(--interaction-text-shadow);
   text-decoration: none;
 }
-.site-menu .site-menu__link:focus-visible {
+.site-menu:not([data-menu-ready]) .site-menu__link:focus-visible {
   outline: 2px solid var(--account-menu-selected);
   outline-offset: -2px;
 }
@@ -155,7 +159,8 @@
   transition: opacity var(--motion-fast), transform var(--motion-fast);
   pointer-events: none;
 }
-.site-menu .site-menu__link:not(.site-menu__return):is(:hover, :focus-visible)::after,
+.site-menu:not([data-menu-ready]) .site-menu__link:not(.site-menu__return):is(:hover, :focus-visible)::after,
+.site-menu .site-menu__link:not(.site-menu__return).is-chosen::after,
 .site-menu .site-menu__link[aria-current="page"]::after {
   opacity: 1;
   transform: rotate(12deg);
@@ -168,7 +173,8 @@
   margin-top: var(--space-2);
   color: color-mix(in srgb, var(--account-menu-text) 62%, transparent);
 }
-.site-menu .site-menu__link.site-menu__return:is(:hover, :focus-visible) {
+.site-menu:not([data-menu-ready]) .site-menu__link.site-menu__return:is(:hover, :focus-visible),
+.site-menu .site-menu__link.site-menu__return.is-chosen {
   color: var(--account-menu-selected);
 }
 
@@ -225,4 +231,58 @@
   :root:not([data-site-zone="ops"]) .site-header > .container {
     width: min(100% - 4rem, 1200px);
   }
+}
+
+/* ## Only the chosen one shines (as on the start page): a link or choice the
+   pointer left, or that only has the focus, goes quiet again. */
+.site-menu[data-menu-ready] .menu-panel-link:not(.is-chosen, [aria-current="page"])::before {
+  opacity: 0;
+}
+.site-menu[data-menu-ready] .menu-panel-link:not(.is-chosen, [aria-current="page"]) {
+  text-shadow: none;
+}
+.site-menu[data-menu-ready] .menu-panel-link.is-chosen::before {
+  opacity: var(--interaction-halo-opacity);
+}
+.site-menu[data-menu-ready] :is(.site-menu__link, .language-switcher__option):focus-visible {
+  outline: none;
+}
+.site-menu[data-menu-ready] .language-switcher__option:not(.is-chosen, .language-switcher__option--active, [aria-current="true"]):is(:hover, :focus-visible) {
+  color: var(--preferences-option);
+  text-shadow: none;
+}
+.site-menu[data-menu-ready] .language-switcher__option:not(.is-chosen, .language-switcher__option--active):is(:hover, :focus-visible)::after {
+  opacity: 0;
+}
+.site-menu[data-menu-ready] .language-switcher__option.is-chosen {
+  color: var(--preferences-hover);
+  text-shadow: var(--interaction-text-shadow);
+}
+.site-menu[data-menu-ready] .language-switcher__option.is-chosen::after {
+  background: var(--menu-link-glow);
+  filter: var(--interaction-glow-filter);
+  opacity: var(--interaction-halo-opacity);
+}
+/* The crown is the cursor here too: on the chosen language, theme or site,
+   tilted on its top right corner, so it reads apart from the one in use. */
+.site-menu[data-menu-ready] .language-switcher__option::before {
+  content: "";
+  position: absolute;
+  top: -0.35em;
+  right: -0.3em;
+  width: 0.7em;
+  height: 0.7em;
+  background: var(--menu-crown);
+  -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
+  mask: url("../../images/favicon.svg") center / contain no-repeat;
+  filter: var(--menu-crown-shadow);
+  opacity: 0;
+  transform: scale(0.4) rotate(12deg);
+  transform-origin: bottom left;
+  transition: opacity var(--motion-fast), transform var(--motion-fast);
+  pointer-events: none;
+}
+.site-menu[data-menu-ready] .language-switcher__option.is-chosen::before {
+  opacity: 1;
+  transform: rotate(12deg);
 }
