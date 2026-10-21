@@ -93,10 +93,12 @@
 }
 /* The chosen one (site-menu.js: pointed at, or reached with the keys) has
    the gold and the crown, as on the start page; no box around it. Without
-   the script, hover and focus show it. */
+   the script, hover and focus show it. (.menu-panel-link: one class more
+   than on-blue.css's .quiet-link:hover, so the start page and login keep
+   the gold too.) */
 .site-menu:not([data-menu-ready]) .site-menu__link:is(:hover, :focus-visible),
-.site-menu .site-menu__link.is-chosen,
-.site-menu .site-menu__link[aria-current="page"] {
+.site-menu .site-menu__link.menu-panel-link.is-chosen,
+.site-menu .site-menu__link.menu-panel-link[aria-current="page"] {
   color: var(--account-menu-selected);
   text-shadow: var(--interaction-text-shadow);
   text-decoration: none;
@@ -180,9 +182,61 @@
 .site-menu .language-switcher { display: flex; justify-content: center; width: 100%; }
 .site-menu .language-switcher__option { font-size: var(--panel-link-size); }
 
-/* ### The site switch's icons, filled on the site you are on */
-.site-menu__choice .ui-icon-svg { width: 1.5em; height: 1.5em; }
-.site-menu__choice[aria-current="true"] .ui-icon-svg { fill: currentColor; }
+/* ## The staff's view switch, in the top left corner opposite the cross:
+   "View" over a small pill with the house (the public view) and the wrench
+   (operations), the one they are in filled and lit; the other's name shows
+   beside the pill on hover or focus. */
+.site-menu__site {
+  position: absolute;
+  z-index: 2;
+  top: 0.55rem;
+  left: 0.8rem;
+  margin: 0;
+}
+.site-menu__site-caption {
+  margin: 0 0 0.3rem 0.35rem;
+  color: color-mix(in srgb, var(--panel-chrome-ink) 60%, transparent);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.site-menu__site-row { display: flex; align-items: center; gap: 0.6rem; }
+.site-menu__site-choices {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--account-menu-divider);
+  border-radius: var(--radius-pill);
+}
+.site-menu__site-choice {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 1.75rem;
+  color: color-mix(in srgb, var(--panel-chrome-ink) 75%, transparent);
+  border-radius: var(--radius-pill);
+  transition: color var(--motion-fast), background var(--motion-fast);
+}
+.site-menu__site-choice .ui-icon-svg { width: 1rem; height: 1rem; }
+.site-menu__site-choice[aria-current="true"] {
+  color: var(--menu-chosen);
+  background: color-mix(in srgb, var(--panel-chrome-ink) 12%, transparent);
+}
+.site-menu__site-choice[aria-current="true"] .ui-icon-svg { fill: currentColor; }
+a.site-menu__site-choice:is(:hover, :focus-visible) { color: var(--panel-chrome-hover); }
+.site-menu__site-choice:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
+.site-menu__site-name {
+  display: none;
+  color: color-mix(in srgb, var(--panel-chrome-ink) 80%, transparent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.site-menu__site:has(a.site-menu__site-choice--public:is(:hover, :focus-visible)) .site-menu__site-name--public,
+.site-menu__site:has(a.site-menu__site-choice--ops:is(:hover, :focus-visible)) .site-menu__site-name--ops {
+  display: inline;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .site-menu .site-menu__link::after,
@@ -252,4 +306,22 @@
 .site-menu[data-menu-ready] .language-switcher__option.is-chosen::before {
   opacity: 1;
   transform: rotate(12deg);
+}
+
+/* ## In use and chosen, told apart (Settings): the language or theme in use
+   shines in moonlight (white by day), the others rest dimmed; the chosen one
+   (pointed at, or reached with the keys) has the gold and the crown
+   (--menu-choice-active-ink, --menu-choice-active-glow,
+   --menu-choice-idle-opacity in the theme files). */
+.site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"]):not(.is-chosen) {
+  color: var(--menu-choice-active-ink);
+  text-shadow: 0 0 14px var(--menu-choice-active-glow);
+}
+.site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"]):not(.is-chosen)::after {
+  background: radial-gradient(ellipse, var(--menu-choice-active-glow), transparent 70%);
+  filter: blur(6px);
+  opacity: 0.8;
+}
+.site-menu[data-menu-ready] .language-switcher__option:not(.language-switcher__option--active, [aria-current="true"], .is-chosen) {
+  opacity: var(--menu-choice-idle-opacity);
 }

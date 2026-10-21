@@ -194,6 +194,9 @@
   --preferences-hover: var(--selected-accent);
   --account-menu-text: var(--interactive-text);
   --account-menu-selected: var(--selected-accent);
+  /* in Settings: the choice in use in moonlight, as the logo by night */
+  --menu-choice-active-ink: var(--moonlight);
+  --menu-choice-active-glow: color-mix(in srgb, var(--moonlight) 35%, transparent);
   --menu-dropdown-glow: var(--menu-link-glow);
   --menu-dropdown-glow-filter: var(--interaction-glow-filter);
   --menu-dropdown-icon-filter: var(--interaction-icon-filter);
@@ -396,6 +399,6 @@
   --cart-disabled-ink: var(--text-muted);
   --cart-disabled-bg: var(--surface-muted);
   --cart-disabled-border: color-mix(in srgb, var(--text-muted) 30%, transparent);
-  --menu-backdrop-bg: rgb(0 4 20 / .48);
+  --menu-backdrop-bg: rgb(0 4 20 / .65);
   --field-focus-color: var(--interactive-border);
 }

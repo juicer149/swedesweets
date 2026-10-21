@@ -8,28 +8,36 @@
   const translatedAttribute = name => /^(title|alt|placeholder|aria-label|aria-description)$/.test(name)
     || /^data-.*(label|message|text|title)$/.test(name);
   const normalize = value => value.replace(/\s+/g, " ").trim();
+  // Where a text sits: its element's tag and first class, and the attribute
+  // it is in. Two texts that read alike in one language (French "Retour" is
+  // both "Back" and "Return") then still go back to their own.
+  const contextOf = (element, attribute = "") => `${element.tagName}.${element.classList?.[0] || ""}@${attribute}\u0000`;
 
   function translations(before, after) {
     const pairs = new Map();
-    function add(oldValue, newValue) {
+    function put(key, value) {
+      // Ambiguous text is left alone, never assigned an arbitrary translation.
+      if (pairs.has(key) && pairs.get(key) !== value) pairs.set(key, null);
+      else if (!pairs.has(key)) pairs.set(key, value);
+    }
+    function add(oldValue, newValue, context) {
       const key = normalize(oldValue);
       const value = normalize(newValue);
       if (!key || key === value || !/\p{L}/u.test(key)) return;
       // A concurrent quantity/price update is data, not a translation.
       if (JSON.stringify(key.match(/\d+/g)) !== JSON.stringify(value.match(/\d+/g))) return;
-      // Ambiguous text is left alone, never assigned an arbitrary translation.
-      if (pairs.has(key) && pairs.get(key) !== value) pairs.set(key, null);
-      else if (!pairs.has(key)) pairs.set(key, value);
+      put(key, value);
+      put(context + key, value);
     }
     function compare(a, b) {
       if (!b || a.nodeType !== b.nodeType) return;
-      if (a.nodeType === Node.TEXT_NODE) { add(a.data, b.data); return; }
+      if (a.nodeType === Node.TEXT_NODE) { add(a.data, b.data, contextOf(a.parentElement || a.parentNode.host || { tagName: "" })); return; }
       if (a.nodeType !== Node.ELEMENT_NODE || a.tagName !== b.tagName || a.matches(skip)) return;
       for (const attr of a.attributes) {
         if (/^(id|data-.*-id)$/.test(attr.name) && b.getAttribute(attr.name) !== attr.value) return;
       }
       for (const attr of a.attributes) {
-        if (translatedAttribute(attr.name) && b.hasAttribute(attr.name)) add(attr.value, b.getAttribute(attr.name));
+        if (translatedAttribute(attr.name) && b.hasAttribute(attr.name)) add(attr.value, b.getAttribute(attr.name), contextOf(a, attr.name));
       }
       const left = a.tagName === "TEMPLATE" ? a.content : a;
       const right = b.tagName === "TEMPLATE" ? b.content : b;
@@ -42,8 +50,10 @@
   }
 
   function apply(root, pairs) {
-    function translate(value) {
-      const replacement = pairs.get(normalize(value));
+    function translate(value, context) {
+      const key = normalize(value);
+      // Its own place first; the text alone when that is unambiguous.
+      const replacement = pairs.get(context + key) || pairs.get(key);
       return replacement ? value.replace(/\S[\s\S]*\S|\S/, () => replacement) : value;
     }
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
@@ -54,10 +64,10 @@
     });
     while (walker.nextNode()) {
       const node = walker.currentNode;
-      if (node.nodeType === Node.TEXT_NODE) node.data = translate(node.data);
+      if (node.nodeType === Node.TEXT_NODE) node.data = translate(node.data, contextOf(node.parentElement || { tagName: "" }));
       else {
         for (const attr of [...node.attributes]) {
-          if (translatedAttribute(attr.name)) node.setAttribute(attr.name, translate(attr.value));
+          if (translatedAttribute(attr.name)) node.setAttribute(attr.name, translate(attr.value, contextOf(node, attr.name)));
         }
         if (node.tagName === "TEMPLATE") apply(node.content, pairs);
       }

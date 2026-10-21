@@ -2,8 +2,9 @@
 {% comment %}
   The navbar's Menu, like a game's pause menu: one button (three lines; the
   word too on wide screens) opens a panel over the page, with its title fixed
-  at the top. The first level holds the account's links (or Login), Settings,
-  the staff's site switch and Log out; Settings opens a second level in the
+  at the top, the staff's view switch in its top left corner. The first level
+  holds the account's links (or Login), Settings and Log out; Settings opens
+  a second level in the
   same panel with the language and the theme. "Return" goes back a level, or
   closes; so do the cross, Back and Escape (site-menu.js, mobile-menu.js).
 
@@ -41,30 +42,6 @@
           {% trans "Settings" %}<span class="site-menu__chevron" aria-hidden="true">›</span>
         </button>
 
-        {% if account_menu.switch %}
-          {# Staff: the two sites as two choices, the one you are on lit; switching keeps the Menu open (site-menu.js). #}
-          <div class="site-menu__group site-menu__site" role="group" aria-labelledby="site-menu-site">
-            <p class="site-menu__legend" id="site-menu-site">{% trans "Site" %}</p>
-            <div class="site-menu__choices">
-              {% if site_zone == "ops" %}
-                <a class="language-switcher__option site-menu__choice" href="{{ account_menu.switch.href }}" data-site-menu-stay title="{{ account_menu.switch.label }}" aria-label="{{ account_menu.switch.label }}">
-                  {% include "includes/ui/icon.html" with name="house" %}
-                </a>
-                <span class="language-switcher__option language-switcher__option--active site-menu__choice" tabindex="-1" aria-current="true" title="{% trans 'Ops dashboard' %}" aria-label="{% trans 'Ops dashboard' %}">
-                  {% include "includes/ui/icon.html" with name="wrench" %}
-                </span>
-              {% else %}
-                <span class="language-switcher__option language-switcher__option--active site-menu__choice" tabindex="-1" aria-current="true" title="{% trans 'Public site' %}" aria-label="{% trans 'Public site' %}">
-                  {% include "includes/ui/icon.html" with name="house" %}
-                </span>
-                <a class="language-switcher__option site-menu__choice" href="{{ account_menu.switch.href }}" data-site-menu-stay title="{{ account_menu.switch.label }}" aria-label="{{ account_menu.switch.label }}">
-                  {% include "includes/ui/icon.html" with name="wrench" %}
-                </a>
-              {% endif %}
-            </div>
-          </div>
-        {% endif %}
-
         <hr class="site-menu__divider">
 
         {% if account_menu %}
@@ -100,6 +77,33 @@
         <button class="quiet-link site-menu__link site-menu__return menu-panel-link" type="button" data-menu-go="main" hidden>{% trans "Return" %}</button>
       </div>
     </div>
+    {% if account_menu.switch %}
+      {% comment %}
+        Staff: which view they are in, in the top left corner opposite the
+        cross: "View" over the public view (the house) and operations (the
+        wrench), the one they are in filled and lit; the other's name shows
+        beside them on hover or focus. Switching keeps the Menu open on the
+        new site (site-menu.js). After the levels, so opening the Menu
+        still focuses its first choice.
+      {% endcomment %}
+      {% trans "Public view" as public_label %}{% trans "Operations" as ops_label %}
+      <div class="site-menu__site" role="group" aria-labelledby="site-menu-site">
+        <p class="site-menu__site-caption" id="site-menu-site">{% trans "View" %}</p>
+        <div class="site-menu__site-row">
+          <div class="site-menu__site-choices">
+            {% if site_zone == "ops" %}
+              <a class="site-menu__site-choice site-menu__site-choice--public" href="{{ account_menu.switch.href }}" data-site-menu-stay aria-label="{{ public_label }}">{% include "includes/ui/icon.html" with name="house" %}</a>
+              <span class="site-menu__site-choice site-menu__site-choice--ops" tabindex="-1" aria-current="true" aria-label="{{ ops_label }}">{% include "includes/ui/icon.html" with name="wrench" %}</span>
+            {% else %}
+              <span class="site-menu__site-choice site-menu__site-choice--public" tabindex="-1" aria-current="true" aria-label="{{ public_label }}">{% include "includes/ui/icon.html" with name="house" %}</span>
+              <a class="site-menu__site-choice site-menu__site-choice--ops" href="{{ account_menu.switch.href }}" data-site-menu-stay aria-label="{{ ops_label }}">{% include "includes/ui/icon.html" with name="wrench" %}</a>
+            {% endif %}
+          </div>
+          <span class="site-menu__site-name site-menu__site-name--public" aria-hidden="true">{{ public_label }}</span>
+          <span class="site-menu__site-name site-menu__site-name--ops" aria-hidden="true">{{ ops_label }}</span>
+        </div>
+      </div>
+    {% endif %}
     {# After the levels, so opening focuses the first choice, not the cross. #}
     <button class="panel-corner-close" type="button" data-close-details aria-label="{% trans 'Close' %}">
       {% include "includes/ui/icon.html" with name="x" %}

@@ -461,9 +461,11 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
 
 - **Menu:** three lines (and "Menu" from 768px up) open a pause-menu panel
   with a fixed title. The Menu level: Profile, Order history for business
-  customers, Settings ›, the staff's site switch (house = public, wrench =
-  ops, the current one filled), Log out (CSRF-protected POST) or Login, and
-  a quieter Return. The Settings level: English/Français and the sun/moon theme (the
+  customers, Settings ›, Log out (CSRF-protected POST) or Login, and a
+  quieter Return; staff switch views in the top left corner ("View" over
+  the house and the wrench, the current one filled). In Settings the choice
+  in use shines in moonlight and the chosen one has the gold and the crown.
+  The page behind is dimmed and softly blurred. The Settings level: English/Français and the sun/moon theme (the
   chosen icon filled); ops has no theme choice. The button keeps selected
   ink, light and crown on profile/history/order-detail pages even when
   closed. Escape opens the Menu when nothing else is open, goes back from

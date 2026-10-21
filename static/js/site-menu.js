@@ -5,17 +5,19 @@
 
    Played like the start page's menu (landing.js): the chosen choice has
    the gold and the crown, no box around it. Pointing at a choice, or
-   focusing it, makes it the chosen one. ↓ and ↑ go from row to row (round
-   from the last to the first), ← and → between the choices of a row
-   (Language, Theme, Site), Home and End to the ends; Enter takes it.
+   focusing it with the keys, makes it the chosen one; on the menu's links it stays when
+   the pointer moves on, while a language or theme the pointer leaves lets
+   go (the one in use keeps its moonlight). ↓ and ↑ go from row to row
+   (round from the last to the first), ← and → between the choices of a row
+   (Language, Theme), Home and End to the ends; Enter takes it.
 
    Escape: on Settings it returns to the menu; otherwise, with a panel or a
    sheet open, mobile-menu.js and details-popover.js close it; with nothing
    open (no dialog, no product opened over the catalog, no dropdown, not
    typing) it opens the menu.
 
-   A staff member switching sites keeps the Menu in front: the new site
-   opens with it already there, on the site just chosen. */
+   A staff member switching views (the corner's house and wrench) keeps the
+   Menu in front: the new site opens with it already there. */
 (() => {
   "use strict";
   const menus = [...document.querySelectorAll("[data-site-menu]")];
@@ -48,9 +50,17 @@
     item?.classList.add(CHOSEN);
   }
 
-  function take(menu, item) {
+  // Whether the visitor is using the keys: then the focus is the chosen
+  // one. With the mouse the pointer chooses, and a focus set for it (opening
+  // the Menu, going into Settings) puts no gold on the choice in use.
+  let viaKeys = false;
+  window.addEventListener("keydown", () => { viaKeys = true; }, true);
+  window.addEventListener("pointerdown", () => { viaKeys = false; }, true);
+
+  function take(menu, item, mark = viaKeys) {
     if (!item) return;
-    choose(menu, item);
+    if (mark) choose(menu, item);
+    else choose(menu, null);
     item.focus({ preventScroll: true });
   }
 
@@ -94,11 +104,18 @@
     });
     // The chosen one follows the focus and the pointer, and stays.
     menu.addEventListener("focusin", (event) => {
-      if (event.target.matches?.(ITEMS)) choose(menu, event.target);
+      if (viaKeys && event.target.matches?.(ITEMS)) choose(menu, event.target);
     });
     menu.addEventListener("pointerover", (event) => {
       const item = event.target.closest?.(ITEMS);
-      if (item && menu.contains(item) && event.pointerType === "mouse") take(menu, item);
+      if (item && menu.contains(item) && event.pointerType === "mouse") take(menu, item, true);
+    });
+    // A language or theme the pointer leaves lets go of the gold and the
+    // crown; the keys still find it where the focus is.
+    menu.addEventListener("pointerout", (event) => {
+      const item = event.target.closest?.(".site-menu__choices .language-switcher__option");
+      if (!item || event.pointerType !== "mouse" || item.contains(event.relatedTarget)) return;
+      item.classList.remove(CHOSEN);
     });
     // Switching sites: open the Menu again, at once, on the new site.
     for (const link of menu.querySelectorAll("[data-site-menu-stay]")) {
@@ -147,7 +164,7 @@
     new CustomEvent("mobile-menu-request", { detail: { key, restoreFocus: true, ...detail } })
   );
 
-  // Arrived from a site switch: the Menu is already in front, on the site.
+  // Arrived from a view switch: the Menu is already in front.
   let stay = false;
   try {
     stay = sessionStorage.getItem(STAY) === "1";
@@ -155,10 +172,6 @@
   } catch (error) {}
   if (stay) {
     const menu = menus[0];
-    document.addEventListener("mobile-menu-settled", function settled() {
-      document.removeEventListener("mobile-menu-settled", settled);
-      take(menu, menu.querySelector('.site-menu__site [aria-current="true"]'));
-    });
     // After the other deferred scripts: mobile-menu.js must be listening.
     const open = () => request(menu.dataset.mobileMenu, { instant: true });
     if (document.readyState === "complete") open();

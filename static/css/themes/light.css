@@ -307,6 +307,10 @@
   --account-menu-shadow: 0 22px 40px rgb(0 0 0 / 0.35);
   --account-menu-text: var(--menu-ink);
   --account-menu-selected: var(--menu-chosen);
+  /* in Settings: the choice in use (white on the sky), the others dimmed */
+  --menu-choice-active-ink: var(--color-white);
+  --menu-choice-active-glow: rgb(255 255 255 / 0.5);
+  --menu-choice-idle-opacity: 0.6;
   --account-menu-divider: color-mix(in srgb, var(--menu-ink) 30%, transparent);
 
 
@@ -569,7 +573,9 @@
   --cart-disabled-ink: var(--text-muted);
   --cart-disabled-bg: var(--surface-muted);
   --cart-disabled-border: var(--line-soft);
-  --menu-backdrop-bg: rgb(6 22 61 / .25);
+  /* behind an open Menu or cart: the page dimmed and softly blurred */
+  --menu-backdrop-bg: rgb(6 22 61 / .45);
+  --menu-backdrop-filter: blur(5px) saturate(.7);
   --entrance-field-focus-shadow: 0 0 0 1px var(--menu-chosen), 0 0 14px color-mix(in srgb, var(--menu-chosen) 16%, transparent), 0 0 28px color-mix(in srgb, var(--menu-chosen) 7%, transparent);
   --field-focus-color: var(--color-primary-500);
   --field-focus-shadow: 0 0 0 1px var(--field-focus-color), 0 0 14px color-mix(in srgb, var(--field-focus-color) 16%, transparent), 0 0 28px color-mix(in srgb, var(--field-focus-color) 7%, transparent);

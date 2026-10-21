@@ -106,6 +106,10 @@
     }
     document.title = page.title;
   }
+  // The address of the step shown. A panel's history step (the Menu, the
+  // cart: mobile-menu.js) keeps the address, so Back past it is not a step
+  // of the flow and must not reload it.
+  let shownUrl = location.href;
   async function render(envelope, parts, { push = true } = {}) {
     const { page, next, url } = envelope;
     const imported = document.importNode(next, true);
@@ -114,6 +118,7 @@
     if (messages && !next.contains(messages)) nextParts.content.prepend(document.importNode(messages, true));
     parts.progress.removeAttribute("inert");
     if (push && location.href !== url) history.pushState({ orderFlow: true }, "", url);
+    shownUrl = location.href;
     chrome(page);
     nextParts.content.hidden = true;
     const mounted = await app.cartPanel.adopt(imported, page, url, { preserveSurface: true });
@@ -197,7 +202,10 @@
     if (!link || !current()?.contains(link) || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     event.preventDefault(); event.stopImmediatePropagation(); void transition(link.href);
   }, true);
-  window.addEventListener("popstate", () => { if (current()) { if (busy) location.reload(); else void transition(location.href, {}, { push: false }); } });
+  window.addEventListener("popstate", () => {
+    if (!current() || location.href === shownUrl) return;
+    if (busy) location.reload(); else void transition(location.href, {}, { push: false });
+  });
   window.addEventListener("pageshow", event => { if (event.persisted) { busy = false; reset(current()); } });
   document.addEventListener("order-flow-ready", () => prepare(current()));
   app.orderFlow = { visit: url => transition(url), busy: () => busy, prepare };

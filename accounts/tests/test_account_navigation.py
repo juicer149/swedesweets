@@ -57,14 +57,20 @@ def test_staff_site_link_and_account_destinations_follow_navigation_context(
         assert menu.switch.href == reverse(target)
         assert f'href="{reverse("accounts:me")}"' in panel
         assert reverse("business_portal:orders") not in panel
-        site = panel.split("site-menu__site", 1)[1].split("site-menu__divider", 1)[0]
-        # The two sites as two choices: a link to the other, the current lit.
+        # The view switch in the corner, after the levels (opening the Menu
+        # still focuses its first choice): "View" over the two views, a
+        # link to the other and the one they are in lit.
+        levels, corner = panel.split('class="site-menu__site"', 1)
+        site = corner.split("panel-corner-close", 1)[0]
+        assert 'data-menu-level="main"' in levels
+        assert ">View<" in site
         assert f'href="{reverse(target)}"' in site
         assert site.count('aria-current="true"') == 1
         assert 'role="switch"' not in site
-        # The other site keeps the Menu open; the current one can be chosen.
+        # The other view keeps the Menu open.
         assert "data-site-menu-stay" in site
-        assert 'tabindex="-1" aria-current="true"' in site
+        assert 'aria-label="Public view"' in site
+        assert 'aria-label="Operations"' in site
         assert f'action="{reverse("logout")}"' in panel
 
 

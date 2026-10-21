@@ -42,10 +42,12 @@ The panel has a fixed title at the top ("MENU", or "SETTINGS") and two
 levels below it, which take turns:
 
 - **Menu:** Profile and, for business customers, Order history (with the
-  crown on the one you are on); Settings ›; for staff, the two sites as two
-  icons, a house (public site) and a wrench (ops dashboard), the one you are
-  on filled and lit; then a divider, Log out (a CSRF-protected POST) or
-  Login for guests; and Return, quieter, at the bottom.
+  crown on the one you are on); Settings ›; then a divider, Log out (a
+  CSRF-protected POST) or Login for guests; and Return, quieter, at the
+  bottom. Staff have their view switch in the top left corner, opposite the
+  cross: "View" over a small pill with the house (public view) and the
+  wrench (operations), the one they are in filled and lit; the other's name
+  shows beside it on hover or focus.
 - **Settings:** the language (English/Français, each in its own language;
   the existing Django POST)
   and the theme, a sun (light) and a moon (dark) as `aria-pressed` buttons,
@@ -59,10 +61,19 @@ Played like the start page's menu: the chosen choice has the gold and the
 crown (on a language, theme or site the crown sits on its top right corner),
 with no focus box around it. Pointing at a choice or focusing it makes it the
 chosen one, and it stays. ↓/↑ go from row to row, ←/→ between the choices of
-a row (Language, Theme, Site), Home/End to the ends; Enter takes it. Opening
-the Menu chooses its first row; back from Settings, Settings. A staff member
-switching sites keeps the Menu in front: the new site opens with it already
-there, without its motion, on the site just chosen. Return, the cross and Back do the same.
+a row (Language, Theme), Home/End to the ends; Enter takes it. Opening
+the Menu chooses its first row; back from Settings, Settings. Only the keys
+put the gold on the focus: with the mouse the pointer chooses, and a
+language or theme it leaves lets go. In Settings the language and theme in
+use shine in moonlight (white by day; `--menu-choice-active-ink`,
+`--menu-choice-active-glow`), the others rest dimmed
+(`--menu-choice-idle-opacity`), so the gold and the crown mean only "chosen".
+Behind an open Menu or cart the page is dimmed and softly blurred
+(`--menu-backdrop-bg`, `--menu-backdrop-filter`). A staff member
+switching views keeps the Menu in front: the new site opens with it already
+there, without its motion. Return, the cross and Back close it; closing it
+on a cart page leaves the order flow as it was (its history step keeps the
+address, so order-flow.js does not reload the step).
 On a phone the panel is the pennant sheet under the header, its close circle
 at the tip of the V; from 768px up it is a centred rectangle with a small
 quiet × in its corner. Without JavaScript the panel opens as a plain
