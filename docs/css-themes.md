@@ -49,7 +49,10 @@ The navigation has three states, set once per theme and read by every part:
 
 Each part has its own variables pointing at these, so one part can be tuned
 without touching the rest: `--nav-link-*` (the navbar's links),
-`--nav-trigger-*` (the Menu and cart buttons), `--logo-*` (the logo: rest,
+`--nav-trigger-*` (the Menu and cart buttons), `--nav-cart-*` (the cart
+button: at rest, and lit while its box or sheet is open, by night gold with
+its count still beside it and no crown; on the cart page it is "here", the
+count steps aside for the crown), `--logo-*` (the logo: rest,
 pointer, here; `--logo-rest-crown-opacity` hides its crown in the navbar by
 night, where the crown is on the page's link instead), `--menu-link-*` (the
 Menu's links), `--menu-choice-*` (Settings: `-active-*` for the one in use,

@@ -490,11 +490,9 @@
     transform var(--motion-fast);
 }
 
-/* Open, the cart shows its lines: the count steps aside. */
-.site-nav-cart[open] .site-nav-cart__count {
-  opacity: 0;
-  transform: scale(0.5);
-}
+/* Open, the count stays: the cart is lit (common/states.css) but you are
+   not on its page yet. On the cart page itself the count steps aside for
+   the crown (below). */
 
 .site-nav-cart__popover {
   position: absolute;

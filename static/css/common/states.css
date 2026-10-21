@@ -88,6 +88,29 @@ details[open] > .menu-dropdown-trigger:not([aria-current="page"]) .ui-icon-svg {
 }
 
 
+/* ### The cart button: at rest like the rest (by night light blue), the
+   pointer's colour when pointed at, lit like "here" when its box or sheet
+   is open (by night gold, its count still beside it, no crown: you are not
+   on its page), and "here" with the crown on the cart page itself. */
+.site-nav-cart__trigger {
+  color: var(--nav-cart-rest-ink);
+}
+
+.site-nav-cart[open] > .site-nav-cart__trigger:not([aria-current="page"]),
+.site-nav-cart[open] > .site-nav-cart__trigger:not([aria-current="page"]):hover {
+  color: var(--nav-cart-open-ink);
+}
+
+.site-nav-cart[open] > .site-nav-cart__trigger:not([aria-current="page"])::before {
+  background: var(--nav-cart-open-glow);
+  filter: var(--nav-cart-open-glow-filter);
+}
+
+.site-nav-cart[open] > .site-nav-cart__trigger:not([aria-current="page"]) .ui-icon-svg {
+  filter: var(--nav-cart-open-icon-filter);
+}
+
+
 /* ## The logo --------------------------------------------------------------- */
 
 /* In the navbar it rests (by night light blue, without its crown: the crown
