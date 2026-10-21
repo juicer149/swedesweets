@@ -110,6 +110,19 @@
     flex: 0 1 auto;
   }
   .site-nav-cart__popover .menu-scroll-track { bottom: var(--space-8); }
+  /* A removed line's red runs edge to edge, to the gold borders: the
+     scroll box (which clips) spans the popover's full width, and its
+     padding puts the lines back where they were. */
+  .site-nav-cart__popover .cart-panel-scroll {
+    margin-inline: calc(-1 * var(--space-6));
+    padding-inline: calc(var(--space-6) + var(--space-1));
+  }
+  .site-nav-cart__popover .site-nav-cart-line {
+    --line-flash-room: calc(-1 * (var(--space-6) + var(--space-1)));
+  }
+  .site-nav-cart__popover .site-nav-cart-line.line-flash--removed::before {
+    border-radius: 0;
+  }
 }
 
 .cart-page .recent-orders .accordion__summary { color: var(--cart-previous-text); background: transparent; }
