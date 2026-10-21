@@ -65,7 +65,7 @@ a row (Language, Theme), Home/End to the ends; Enter takes it. Opening
 the Menu chooses its first row; back from Settings, Settings. Only the keys
 put the gold on the focus: with the mouse the pointer chooses, and a
 language or theme it leaves lets go. In Settings the language and theme in
-use shine in moonlight (white by day; `--menu-choice-active-ink`,
+use shine in moonlight by night and gold by day (`--menu-choice-active-ink`,
 `--menu-choice-active-glow`), the others rest dimmed
 (`--menu-choice-idle-opacity`), so the gold and the crown mean only "chosen".
 Behind an open Menu or cart the page is dimmed and softly blurred

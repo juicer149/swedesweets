@@ -307,9 +307,10 @@
   --account-menu-shadow: 0 22px 40px rgb(0 0 0 / 0.35);
   --account-menu-text: var(--menu-ink);
   --account-menu-selected: var(--menu-chosen);
-  /* in Settings: the choice in use (white on the sky), the others dimmed */
-  --menu-choice-active-ink: var(--color-white);
-  --menu-choice-active-glow: rgb(255 255 255 / 0.5);
+  /* in Settings: the choice in use in gold by day (the sun), the others
+     dimmed; dark.css gives it moonlight */
+  --menu-choice-active-ink: var(--menu-chosen);
+  --menu-choice-active-glow: rgb(249 181 26 / 0.35);
   --menu-choice-idle-opacity: 0.6;
   --account-menu-divider: color-mix(in srgb, var(--menu-ink) 30%, transparent);
 

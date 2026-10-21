@@ -194,14 +194,17 @@
   margin: 0;
 }
 .site-menu__site-caption {
-  margin: 0 0 0.3rem 0.35rem;
+  margin: 0 0 0.3rem;
+  text-align: center;
   color: color-mix(in srgb, var(--panel-chrome-ink) 60%, transparent);
   font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
-.site-menu__site-row { display: flex; align-items: center; gap: 0.6rem; }
+/* (the name sits beside the pill without widening the row, so "View" stays
+   centred over the pill) */
+.site-menu__site-row { position: relative; display: flex; align-items: center; }
 .site-menu__site-choices {
   display: inline-flex;
   gap: 2px;
@@ -227,6 +230,10 @@
 a.site-menu__site-choice:is(:hover, :focus-visible) { color: var(--panel-chrome-hover); }
 .site-menu__site-choice:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
 .site-menu__site-name {
+  position: absolute;
+  left: calc(100% + 0.6rem);
+  top: 50%;
+  translate: 0 -50%;
   display: none;
   color: color-mix(in srgb, var(--panel-chrome-ink) 80%, transparent);
   font-size: 0.78rem;
@@ -309,7 +316,7 @@ a.site-menu__site-choice:is(:hover, :focus-visible) { color: var(--panel-chrome-
 }
 
 /* ## In use and chosen, told apart (Settings): the language or theme in use
-   shines in moonlight (white by day), the others rest dimmed; the chosen one
+   shines in moonlight by night and gold by day, the others rest dimmed; the chosen one
    (pointed at, or reached with the keys) has the gold and the crown
    (--menu-choice-active-ink, --menu-choice-active-glow,
    --menu-choice-idle-opacity in the theme files). */
@@ -324,4 +331,14 @@ a.site-menu__site-choice:is(:hover, :focus-visible) { color: var(--panel-chrome-
 }
 .site-menu[data-menu-ready] .language-switcher__option:not(.language-switcher__option--active, [aria-current="true"], .is-chosen) {
   opacity: var(--menu-choice-idle-opacity);
+}
+
+/* A focus the browser shows as from the keys without the visitor having
+   used them (the Menu opened on arrival after a view switch) keeps the
+   link's own colour: only the chosen one (and the page you are on) light. */
+.site-menu[data-menu-ready] .site-menu__link.menu-panel-link:not(.is-chosen, [aria-current="page"], .site-menu__return):focus-visible {
+  color: var(--account-menu-text);
+}
+.site-menu[data-menu-ready] .site-menu__link.menu-panel-link.site-menu__return:not(.is-chosen):focus-visible {
+  color: color-mix(in srgb, var(--account-menu-text) 62%, transparent);
 }
