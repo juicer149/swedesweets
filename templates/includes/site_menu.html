@@ -23,7 +23,7 @@
   <div class="mobile-menu-viewport">
   <div class="site-menu__panel mobile-menu-panel" role="region" aria-labelledby="site-menu-title">
     <span class="menu-panel-toplight" aria-hidden="true"></span>
-    <p class="site-menu__title" id="site-menu-title" data-site-menu-title
+    <p class="panel-title site-menu__title" id="site-menu-title" data-site-menu-title
       data-title-main="{% trans 'Menu' %}" data-title-settings="{% trans 'Settings' %}">{% trans "Menu" %}</p>
 
     <div class="menu-panel-scroll" data-menu-panel-scroll>
@@ -101,7 +101,7 @@
       </div>
     </div>
     {# After the levels, so opening focuses the first choice, not the cross. #}
-    <button class="site-menu__corner-close" type="button" data-close-details aria-label="{% trans 'Close' %}">
+    <button class="panel-corner-close" type="button" data-close-details aria-label="{% trans 'Close' %}">
       {% include "includes/ui/icon.html" with name="x" %}
     </button>
     {% include "includes/mobile_menu_close.html" %}

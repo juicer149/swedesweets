@@ -28,17 +28,12 @@
     root.classList.toggle("mobile-menu-open", mobile.matches && Boolean(covered));
     for (const [element, inert] of inertBefore) element.inert = inert;
     inertBefore.clear();
-    const cartPanel = document.querySelector(".site-nav-cart__popover");
     const header = document.querySelector(".site-header, .entrance-header, .landing__top");
     const headerBottom = Math.max(0, header?.getBoundingClientRect().bottom || 0);
-    cartPanel?.style.setProperty("--cart-panel-top", `${headerBottom}px`);
     for (const menu of document.querySelectorAll(selector)) {
-      const viewport = menu.querySelector(".mobile-menu-viewport");
-      const trigger = menu.querySelector("summary").getBoundingClientRect();
-      viewport.style.setProperty("--menu-panel-top", `${headerBottom}px`);
-      viewport.style.setProperty("--menu-panel-right", `${Math.max(16, innerWidth - trigger.right)}px`);
+      menu.querySelector(".mobile-menu-viewport").style.setProperty("--menu-panel-top", `${headerBottom}px`);
     }
-    if (!covered || (!mobile.matches && covered.dataset.mobileMenu === "cart")) return;
+    if (!covered) return;
 
     const viewport = covered.querySelector(".mobile-menu-viewport");
     const top = document.querySelector(".site-header, .entrance-header, .landing__top");
@@ -57,7 +52,8 @@
 
   async function animate(menu, opening) {
     if (instant || reducedMotion.matches || !menu?.isConnected) return;
-    const centered = Boolean(menu.closest("[data-landing]")) || (!mobile.matches && menu.dataset.mobileMenu !== "cart");
+    // Wider screens open every panel as a centred box (the Menu, the cart).
+    const centered = Boolean(menu.closest("[data-landing]")) || !mobile.matches;
     const frames = centered
       ? [{ opacity: 0, transform: "scale(.96)" }, { opacity: 1, transform: "scale(1)" }]
       : [{ transform: "translateY(-102%)" }, { transform: "translateY(0)" }];

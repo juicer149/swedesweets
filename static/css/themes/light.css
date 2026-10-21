@@ -256,6 +256,9 @@
   --preferences-ink: var(--menu-ink);
   --cart-sheet-bg: var(--page-bg);
   --cart-sheet-close-ink: var(--color-primary-700);
+  /* its cross hovered, and the shadow of its centred box on wider screens */
+  --cart-sheet-close-hover: var(--color-primary-900);
+  --cart-sheet-shadow: 0 22px 40px rgb(0 0 0 / 0.3);
   /* Default crown feedback; cart success keeps its own green override. */
   --status-burst-halo: color-mix(in srgb, var(--brand-crown) 30%, transparent);
   --cart-notice-bg: var(--page-bg);

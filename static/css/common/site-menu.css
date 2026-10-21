@@ -54,45 +54,12 @@
   .site-nav__auth .site-menu { position: static; }
 }
 
-/* ## The panel's title, fixed at its top */
-.site-menu__panel { color: var(--preferences-ink); }
-.site-menu__title {
-  position: absolute;
-  z-index: 2;
-  top: clamp(1rem, 3dvh, 1.5rem);
-  left: 3rem;
-  right: 3rem;
-  margin: 0;
-  color: color-mix(in srgb, var(--account-menu-text) 62%, transparent);
-  font-size: var(--font-size-12);
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-/* ## The quiet cross in the corner (wider screens; phones close at the tip) */
-.site-menu__corner-close {
-  position: absolute;
-  z-index: 2;
-  top: 0.75rem;
-  right: 0.75rem;
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0.55rem;
-  color: color-mix(in srgb, var(--account-menu-text) 55%, transparent);
-  background: transparent;
-  border: 0;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  transition: color var(--motion-fast);
-}
-.site-menu__corner-close:is(:hover, :focus-visible) { color: var(--account-menu-selected); }
-.site-menu__corner-close:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
-@media (max-width: 767px) {
-  .site-menu__corner-close { display: none; }
+/* The title and the quiet cross in the corner are the panels' shared
+   .panel-title and .panel-corner-close (mobile-menu.css). */
+.site-menu__panel {
+  color: var(--preferences-ink);
+  --panel-chrome-ink: var(--account-menu-text);
+  --panel-chrome-hover: var(--account-menu-selected);
 }
 
 /* ## Levels: the menu and Settings take turns (once the script runs;
@@ -219,7 +186,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .site-menu .site-menu__link::after,
-  .site-menu__corner-close { transition: none; }
+  .panel-corner-close { transition: none; }
 }
 @media (forced-colors: active) {
   .site-menu .site-menu__link[aria-current="page"] { text-decoration: underline; }

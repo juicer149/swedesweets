@@ -89,27 +89,55 @@
 .cart-panel-scroll[aria-busy="true"] { opacity: .65; }
 .cart-page .recent-orders,
 .cart-page .cart-quick-add { margin-bottom: var(--space-10); }
+/* The cart's title and corner cross (mobile-menu.css's .panel-title and
+   .panel-corner-close) in the sheet's own ink. On a phone the sheet keeps
+   its circle at the bottom and needs no title. */
+.site-nav-cart__popover {
+  --panel-chrome-ink: var(--cart-sheet-close-ink, var(--account-menu-text));
+  --panel-chrome-hover: var(--cart-sheet-close-hover, var(--account-menu-selected));
+}
+@media (max-width: 767px) {
+  .site-nav-cart__panel-title { display: none; }
+}
+
+/* Wider screens: a centred box like the Menu's, over the dimmed page, with
+   its title fixed at the top and its quiet cross in the corner. A long cart
+   scrolls inside it, under the title, with the panels' own scroll marker
+   (menu-scroll.js) in place of the browser's scrollbar. */
 @media (min-width: 768px) {
+  .site-nav-cart[open] > .mobile-menu-viewport {
+    display: grid;
+    inset: 0;
+    place-items: center;
+    padding: 2.5rem 1rem;
+    overflow: visible;
+  }
   .site-nav-cart__popover.mobile-menu-panel {
-    position: absolute;
-    top: 0;
-    left: auto;
-    right: var(--menu-panel-right, 1rem);
+    position: relative;
+    inset: auto;
     translate: none;
     width: min(38rem, calc(100vw - 2rem));
-    max-height: calc(100dvh - var(--cart-panel-top, 4.5rem) - 3rem);
+    min-height: 0;
+    max-height: calc(100dvh - 5rem);
     display: flex;
     flex-direction: column;
-    padding-block: clamp(1rem, 3dvh, 1.5rem) clamp(1.75rem, 4dvh, 2.5rem);
-    border-top: 0;
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    padding-block: calc(clamp(1rem, 3dvh, 1.5rem) + 2.25rem) clamp(1.5rem, 4dvh, 2.5rem);
+    border: 1px solid var(--preferences-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--cart-sheet-shadow, var(--account-menu-shadow));
   }
+  .site-nav-cart__popover .mobile-menu-close,
+  .site-nav-cart__popover .menu-panel-toplight { display: none; }
   .site-nav-cart__popover .cart-panel-scroll {
     min-height: 0;
     max-height: none;
     flex: 0 1 auto;
   }
-  .site-nav-cart__popover .menu-scroll-track { bottom: var(--space-8); }
+  .site-nav-cart__popover .menu-scroll-track {
+    top: calc(clamp(1rem, 3dvh, 1.5rem) + 2.25rem);
+    bottom: clamp(1.5rem, 4dvh, 2.5rem);
+    right: 6px;
+  }
   /* A removed line's red runs edge to edge, to the gold borders: the
      scroll box (which clips) spans the popover's full width, and its
      padding puts the lines back where they were. */

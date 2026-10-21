@@ -473,7 +473,7 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   a small × in the corner. The FAQ tells customers how to find it.
 - **Navbar cart:** an icon-only disclosure with editable product rows and a
   quantity stepper. At one item, the minus becomes a trash action. Desktop
-  uses a compact preview with Go to cart; the full cart, review and placed
+  uses a compact preview with Go to cart in a centred box like the Menu's; the full cart, review and placed
   share unframed pages. Mobile hosts the full flow in the same sliding V-shaped sheet as
   account/settings, with its own scrolling content. Retail details follow
   products in the editor. B2B includes Previous orders and product search. The icon is 22px with a
@@ -667,9 +667,9 @@ contact details, matching the buyer mail. Other sessions still see only outcome
 and order reference. Failure/uncertain outcomes never expose the receipt.
 B2B placement no longer queues a redundant success banner on its placed page.
 
-The desktop cart quick view aligns beneath its cart icon rather than the page
-centre. Guests reach Login directly from the account icon; signed-in users
-keep their Profile/orders/logout card.
+The desktop cart quick view opens as a centred box like the Menu's, titled
+"Cart", with a quiet cross in the corner; a long cart scrolls inside it with
+the panels' own scroll marker.
 
 ## Remaining design work
 

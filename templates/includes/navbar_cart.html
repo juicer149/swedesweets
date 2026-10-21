@@ -43,8 +43,10 @@
   </summary>
 
   <div class="mobile-menu-viewport">
-  <div class="site-nav-cart__popover mobile-menu-panel">
+  <div class="site-nav-cart__popover mobile-menu-panel" role="region" aria-labelledby="site-nav-cart-title">
     <span class="menu-panel-toplight" aria-hidden="true"></span>
+    {# Wider screens: a centred box like the Menu's, titled, with its quiet cross. #}
+    <p class="panel-title site-nav-cart__panel-title" id="site-nav-cart-title">{% trans "Cart" %}</p>
     <div class="cart-panel-scroll" data-cart-panel-scroll data-menu-panel-scroll>
     <noscript><a class="quiet-link" href="{% if navbar_cart.is_retail %}{% url 'storefront:cart' %}{% else %}{% url 'business_portal:cart' %}{% endif %}">{% trans 'Edit cart' %}</a></noscript>
     {% if navbar_cart.has_lines %}
@@ -87,6 +89,9 @@
       </div>
     {% endif %}
     </div>
+    <button class="panel-corner-close" type="button" data-close-details aria-label="{% trans 'Close' %}">
+      {% include "includes/ui/icon.html" with name="x" %}
+    </button>
     {% include "includes/mobile_menu_close.html" %}
   </div>
   </div>

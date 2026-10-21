@@ -948,8 +948,12 @@ Native quick-add fallback success uses `cart-flow-notice`: a three-second notice
 anchored below the timeline. Other server messages on flow pages also render
 inside the content after the timeline, never before its shell.
 
-Account/settings now use centred rounded desktop popovers throughout the site;
-cart keeps its compact navbar quick view, aligned beneath the cart icon.
+The Menu and the cart use centred rounded desktop boxes throughout the site:
+a fixed title at the top (`.panel-title`), a quiet cross in the corner
+(`.panel-corner-close`), each in its panel's `--panel-chrome-ink` and
+`--panel-chrome-hover` (the cart's from `--cart-sheet-close-ink`,
+`--cart-sheet-close-hover`; its shadow `--cart-sheet-shadow`). A long cart
+scrolls inside its box with the panels' own scroll marker (menu-scroll.js).
 Account/settings cards reach 38rem wide, with natural height capped by the
 viewport. Landing also uses
 these larger rounded proportions on mobile. Normal mobile account/settings
