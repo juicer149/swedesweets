@@ -152,6 +152,7 @@
 
   --preferences-trigger-ink: var(--interactive-text);
   --preferences-bg: var(--menu-bg);
+  --cart-sheet-bg: var(--preferences-bg);
   --preferences-ink: var(--text-strong);
   /* Default crown feedback; cart success keeps its own green override. */
   --status-burst-halo: color-mix(in srgb, var(--selected-accent) 30%, transparent);
@@ -186,9 +187,6 @@
   --account-menu-selected: var(--selected-accent);
   --preferences-site-text: var(--interactive-text);
   --preferences-site-hover: var(--selected-accent);
-  --theme-switch-track: var(--color-primary-950);
-  --theme-switch-border: var(--interactive-border);
-  --theme-switch-thumb: var(--color-primary-200);
   --menu-dropdown-glow: var(--menu-link-glow);
   --menu-dropdown-glow-filter: var(--interaction-glow-filter);
   --menu-dropdown-icon-filter: var(--interaction-icon-filter);

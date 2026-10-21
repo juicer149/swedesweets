@@ -2189,6 +2189,10 @@ msgstr "Passer au thème sombre"
 msgid "Dark theme"
 msgstr "Thème sombre"
 
+#: templates/includes/theme_switch.html
+msgid "Light theme"
+msgstr "Thème clair"
+
 msgid "Settings"
 msgstr "Paramètres"
 

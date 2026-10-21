@@ -5,7 +5,7 @@
 .order-progress__step + .order-progress__step::before,
 .order-progress__travel { content: ""; position: absolute; top: 0.375rem; right: 50%; width: 100%; height: 1px; background: currentColor; }
 .order-progress__travel { color: var(--order-progress-lit); box-shadow: var(--order-progress-dot-shadow); transform-origin: left center; pointer-events: none; }
-.order-progress__dot { z-index: 1; width: 0.75rem; height: 0.75rem; border: 1px solid currentColor; border-radius: 50%; background: var(--preferences-bg); transition: box-shadow 140ms ease; }
+.order-progress__dot { z-index: 1; width: 0.75rem; height: 0.75rem; border: 1px solid currentColor; border-radius: 50%; background: var(--cart-sheet-bg); transition: box-shadow 140ms ease; }
 .order-progress__step.is-lit { color: var(--order-progress-lit); text-shadow: var(--order-progress-shadow); }
 .order-progress__step.is-lit .order-progress__label { color: var(--order-progress-lit-label); }
 .order-progress__step.is-lit::before, .order-progress__step.is-lit .order-progress__dot { box-shadow: var(--order-progress-dot-shadow); }

@@ -42,19 +42,20 @@ page. Ops has no theme switch and stays light.
 Logout lives in the separate account dropdown, alongside Profile and (for
 business customers) Order history. It remains a CSRF-protected POST action.
 
-The pill-shaped theme button uses `role="switch"`, a stable "Dark theme"
-accessible name and `aria-checked`. In day mode its thumb is on the left and
-the yellow sun on the right. In night mode the thumb moves right and the white
-moon appears on the left, against the dark track. The sun sets and the moon
-rises along an arc, each with a soft shadow following its shape. Reduced
-motion disables the transition. The switch is hidden without JavaScript.
-Escape closes the panel and restores
-focus to its gear button; clicking outside closes it as well.
-Back closes an open panel, as it closes a product opened over the catalog:
-opening one adds a history step (switching panels replaces it), and closing
-it another way takes that step back (`mobile-menu.js`). On desktop,
-account and settings are centred dialogs in the phone's pennant shape, with
-the close circle at the tip of the V (`common/mobile-menu.css`).
+The theme is two choices beside the languages: the sun (light) and the
+moon (dark), buttons with `aria-pressed` and their own accessible names,
+drawn like the language options: the one in use in the selected colour
+with its light, the other in the panel's ordinary ink (white by day, the
+interactive blue by night). The choices are hidden without JavaScript.
+Escape closes the panel and restores focus to its gear button; clicking
+outside closes it as well.
+
+By day the settings and account panels (dialogs on desktop, sheets on a
+phone) take the menu's sky: `--preferences-bg` and `--account-menu-bg` are
+the menu blue, their ink white and the chosen gold, as in the navbar. The
+cart keeps the shop's paper (`--cart-sheet-bg`, `--cart-sheet-close-ink`).
+Account links show the crown, tilted on the last letter as on the start
+page's menu, on the link pointed at and the page you are on.
 
 The choice uses the existing sessionStorage preview key, survives navigation
 and reload in the current tab, and overrides auto mode until explicitly
@@ -66,8 +67,7 @@ the switch and synchronization with auto changes. Language retains a native form
 `includes/language_switcher.html` owns the shared panel, including
 `includes/theme_switch.html` for customer theme choices. Common
 `preferences.css` owns panel layout and `theme-switch.css` owns the orbit.
-`--preferences-*` and `--theme-switch-*` in the theme files own their colours
-and shadows. `details-popover.js` provides the existing dismissal behaviour.
+`--preferences-*` in the theme files own their colours and shadows. `details-popover.js` provides the existing dismissal behaviour.
 
 At viewport widths of 1200px and above, customer header content can grow to
 1200px. Page/catalog content retains `--width-page` (1040px), its four-column
@@ -635,10 +635,9 @@ Panel surface/border/gear remain independent `--preferences-*` roles.
 `accounts/account_menus.py` composes allowed destinations; templates
 render those destinations and never choose links from user roles.
 
-`--theme-switch-track`, `--theme-switch-border`, `--theme-switch-thumb` and
-`--theme-switch-thumb-shadow` paint the pill. Sun/moon colour and shadow use
-`--theme-switch-sun`, `--theme-switch-sun-glow`, `--theme-switch-moon` and
-`--theme-switch-moon-glow`. Geometry and motion stay in common CSS.
+The theme choices (sun and moon) are language options in their colours and
+light (`--preferences-option`, `--preferences-selected`); only the icons'
+size lives in `common/theme-switch.css`.
 
 ## Mobile scrollports and dropdown input
 
@@ -677,9 +676,9 @@ taps keep the latest choice. Reduced motion skips both animations. A fixed viewp
 sheet at the header; the page beneath remains visible. Cart rows and retail
 contact fields scroll within the frame, above its V and accessible close button.
 
-The theme pill communicates day/night through its sun/moon and accessible
-switch state, without a duplicate Day/Night label. `--theme-switch-sun` uses
-accent-600; the moon keeps its white emission. Guest footers say Login. Landing
+The sun and moon say day and night through their icons and accessible
+names, without a duplicate Day/Night label; the one in use is pressed and
+lit. Guest footers say Login. Landing
 shows a protected POST Log out at the bottom when signed in, with the account
 icon next to settings at the top.
 

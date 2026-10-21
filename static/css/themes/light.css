@@ -236,18 +236,29 @@
   --menu-cart-count-bg: var(--color-accent-600);
 
   /* Added/removed feedback: light keeps the filled flash; dark emits light. */
-  --menu-cart-feedback-animation: site-nav-cart-flash;
-  --menu-cart-feedback-added-ink: var(--color-action-deliver);
-  --menu-cart-feedback-removed-ink: var(--color-action-danger);
-  --menu-cart-feedback-count-ink: var(--color-white);
+  /* Added/removed: the icon lights up green or red with a soft light round
+     it, as by night; the lighter greens and reds show on the blue. */
+  --menu-cart-feedback-animation: site-nav-cart-glow;
+  --menu-cart-feedback-added-ink: var(--color-green-300);
+  --menu-cart-feedback-removed-ink: var(--color-red-300);
+  --menu-cart-feedback-count-ink: var(--color-primary-950);
+  --menu-cart-feedback-halo-animation: site-nav-cart-glow-halo 1.6s ease-out;
+  --menu-cart-feedback-icon-animation: site-nav-cart-glow-icon 1.6s ease-out;
+  --menu-cart-feedback-halo: radial-gradient(ellipse, color-mix(in srgb, currentColor 26%, transparent), color-mix(in srgb, currentColor 10%, transparent) 40%, transparent 75%);
+  --menu-cart-feedback-halo-filter: blur(10px);
+  --menu-cart-feedback-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, currentColor 40%, transparent)) drop-shadow(0 0 8px color-mix(in srgb, currentColor 22%, transparent));
 
-  /* Settings: text-only language choices, pill theme switch and site link. */
+  /* Settings and account panels: the menu's own sky (as the navbar and the
+     start page), white for what is not chosen, gold for the chosen; the
+     cart keeps the shop's paper (--cart-sheet-bg). */
   --preferences-trigger-ink: var(--menu-ink);
-  --preferences-bg: var(--page-bg);
-  --preferences-ink: var(--text-strong);
+  --preferences-bg: var(--menu-bg);
+  --preferences-ink: var(--menu-ink);
+  --cart-sheet-bg: var(--page-bg);
+  --cart-sheet-close-ink: var(--color-primary-700);
   /* Default crown feedback; cart success keeps its own green override. */
   --status-burst-halo: color-mix(in srgb, var(--brand-crown) 30%, transparent);
-  --cart-notice-bg: var(--preferences-bg);
+  --cart-notice-bg: var(--page-bg);
   --cart-notice-text: var(--color-status-success-text);
   --cart-notice-border: color-mix(in srgb, var(--color-status-success-text) 45%, transparent);
   --cart-notice-shadow: 0 0 16px color-mix(in srgb, var(--color-status-success-text) 12%, transparent);
@@ -269,32 +280,24 @@
   --menu-scroll-track: color-mix(in srgb, var(--color-primary-600) 12%, transparent);
   --preferences-border: var(--menu-edge);
   --preferences-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
-  --preferences-option: var(--color-primary-700);
-  --preferences-selected: var(--color-primary-900);
+  --preferences-option: var(--menu-ink);
+  --preferences-selected: var(--menu-chosen);
   --preferences-selected-shadow: 0 0 8px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
   --preferences-selected-glow: radial-gradient(ellipse, rgb(249 181 26 / 0.12), transparent 75%);
   --preferences-selected-glow-filter: blur(6px);
   --preferences-selected-glow-opacity: 1;
-  --preferences-hover: var(--color-primary-900);
+  --preferences-hover: var(--menu-chosen);
   /* Account menu and staff site link, independent of language/theme choices. */
   --account-menu-trigger: var(--menu-ink);
   --account-menu-bg: var(--preferences-bg);
   --account-menu-border: var(--preferences-border);
   --account-menu-shadow: var(--preferences-shadow);
-  --account-menu-text: var(--color-primary-700);
-  --account-menu-selected: var(--color-primary-900);
-  --account-menu-divider: var(--line-soft);
-  --preferences-site-text: var(--color-primary-700);
-  --preferences-site-hover: var(--color-primary-900);
-  --preferences-site-divider: var(--line-soft);
-  --theme-switch-track: var(--menu-bg);
-  --theme-switch-border: var(--color-primary-400);
-  --theme-switch-thumb: var(--color-primary-50);
-  --theme-switch-thumb-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
-  --theme-switch-sun: var(--color-accent-600);
-  --theme-switch-sun-glow: drop-shadow(0 0 4px color-mix(in srgb, var(--color-accent-500) 45%, transparent));
-  --theme-switch-moon: var(--color-white);
-  --theme-switch-moon-glow: drop-shadow(0 0 4px rgb(255 255 255 / 0.35));
+  --account-menu-text: var(--menu-ink);
+  --account-menu-selected: var(--menu-chosen);
+  --account-menu-divider: color-mix(in srgb, var(--menu-ink) 30%, transparent);
+  --preferences-site-text: var(--menu-ink);
+  --preferences-site-hover: var(--menu-chosen);
+  --preferences-site-divider: color-mix(in srgb, var(--menu-ink) 30%, transparent);
 
 
   /* ## Phone bar: the links at the bottom of a phone's screen */
@@ -510,7 +513,7 @@
 /* Catalog link affordance and shared quantity/variant states. */
 :root {
   --catalog-card-hover-text: var(--color-primary-700);
-  --catalog-card-hover-sheen: linear-gradient(135deg, rgb(117 177 255 / 0.18), transparent 65%);
+  --catalog-card-hover-sheen: linear-gradient(135deg, rgb(117 177 255 / 0.11), transparent 65%);
   --catalog-outline-shadow: 0 0 0 transparent;
   /* The shelf under each row of cards: yellow stripes, unlit by day. */
   --catalog-shelf-stripe: var(--color-accent-500);
@@ -519,7 +522,7 @@
   /* The opened product's label, and the start page's logo: no light by day. */
   --product-label-glow: 0 0 0 transparent;
   --landing-moon-halo: none;
-  --catalog-card-hover-shadow: 0 0 18px 2px rgb(38 105 255 / 0.16);
+  --catalog-card-hover-shadow: 0 0 14px 1px rgb(38 105 255 / 0.1);
   --catalog-control-idle-text: var(--color-neutral-700);
   --catalog-control-idle-bg: transparent;
   --catalog-control-idle-border: color-mix(in srgb, var(--color-primary-700) 18%, transparent);

@@ -57,6 +57,15 @@
     text-align: center;
   }
 
+  .site-nav-cart__popover.mobile-menu-panel {
+    --mobile-menu-bg: var(--cart-sheet-bg);
+  }
+  /* The cart keeps the shop's paper by day: its close cross in the
+     paper's ink, not the menu's white. */
+  .site-nav-cart__popover .mobile-menu-close {
+    color: var(--cart-sheet-close-ink, var(--account-menu-text));
+  }
+
   .account-menu__panel {
     --mobile-menu-bg: var(--account-menu-bg);
     --mobile-menu-edge: var(--account-menu-border);
@@ -116,20 +125,15 @@
     font-size: 1rem;
     margin-bottom: var(--space-3);
   }
-  .mobile-menu-panel .site-preferences__choices,
-  .mobile-menu-panel .site-preferences__theme { justify-content: center; }
+  .mobile-menu-panel .site-preferences__choices { justify-content: center; }
   .mobile-menu-panel .site-preferences__choices { gap: var(--space-8); }
   .mobile-menu-panel .language-switcher__option { font-size: var(--panel-link-size); }
-  .mobile-menu-panel .site-preferences__theme { padding: var(--space-3); }
-  .mobile-menu-panel .theme-switch { transform: scale(1.35); }
   .mobile-menu-panel .site-preferences__site { padding-top: var(--space-3); }
 }
 
 @media (max-width: 767px) and (max-height: 500px) {
   .mobile-menu-panel { --panel-link-size: 1.125rem; gap: var(--space-2); padding-top: var(--space-2); padding-bottom: 3.5rem; }
   .mobile-menu-panel .site-preferences__group legend { font-size: 0.875rem; margin-bottom: 0; }
-  .mobile-menu-panel .site-preferences__theme { padding: 0; }
-  .mobile-menu-panel .theme-switch { transform: none; }
   .mobile-menu-panel .account-menu__link { padding-block: var(--space-2); }
 }
 
@@ -236,6 +240,10 @@ html.menu-panel-open { overflow: hidden; }
   }
   .mobile-menu-panel .mobile-menu-close .ui-icon-svg { width: 1.25rem; height: 1.25rem; }
   .mobile-menu-panel .mobile-menu-close:is(:hover, :focus-visible) { color: var(--menu-chosen); filter: var(--interaction-icon-filter); }
+  .site-nav-cart__popover.mobile-menu-panel .mobile-menu-close {
+    color: var(--cart-sheet-close-ink, var(--account-menu-text));
+    background: var(--cart-sheet-bg);
+  }
 }
 
 /* The panel edge and timeline light up after the sheet arrives. */

@@ -1,22 +1,24 @@
 {% load i18n %}
+{% comment %}
+  The theme as two choices, like the languages beside it: the sun (day)
+  and the moon (night); the one in use is lit (theme-switch.js). Hidden
+  without JavaScript, which the palette needs.
+{% endcomment %}
 <fieldset class="site-preferences__group" data-theme-preferences hidden>
   <legend>{% trans 'Theme' %}</legend>
-  <div class="site-preferences__theme">
-    <button class="theme-switch" type="button" role="switch" aria-checked="false"
-      aria-label="{% trans 'Dark theme' %}" data-theme-switch
-      data-light-label="{% trans 'Switch to light theme' %}"
-      data-dark-label="{% trans 'Switch to dark theme' %}">
-      <span class="theme-switch__sky" aria-hidden="true">
-        <svg class="theme-switch__orb theme-switch__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
-        </svg>
-        <svg class="theme-switch__orb theme-switch__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20.5 13.1A8.5 8.5 0 0 1 10.9 3.5 8.5 8.5 0 1 0 20.5 13.1Z" />
-        </svg>
-      </span>
-
-      <span class="theme-switch__thumb" aria-hidden="true"></span>
+  <div class="site-preferences__choices theme-choices">
+    <button class="language-switcher__option theme-choice" type="button" data-theme-choice="light"
+      aria-pressed="false" aria-label="{% trans 'Light theme' %}" title="{% trans 'Light theme' %}">
+      <svg class="theme-choice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
+      </svg>
+    </button>
+    <button class="language-switcher__option theme-choice" type="button" data-theme-choice="dark"
+      aria-pressed="false" aria-label="{% trans 'Dark theme' %}" title="{% trans 'Dark theme' %}">
+      <svg class="theme-choice__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M20.5 13.1A8.5 8.5 0 0 1 10.9 3.5 8.5 8.5 0 1 0 20.5 13.1Z" />
+      </svg>
     </button>
   </div>
 </fieldset>
