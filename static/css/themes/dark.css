@@ -157,6 +157,12 @@
      would vanish) */
   --cart-sheet-close-ink: var(--interactive-text);
   --cart-sheet-close-hover: var(--selected-accent);
+  /* the summary row's edge by night: a fade, no line */
+  --cart-summary-label: color-mix(in srgb, var(--interactive-text) 70%, transparent);
+  --cart-summary-value: var(--text-strong);
+  --cart-summary-border: transparent;
+  --cart-summary-shadow: none;
+  --cart-summary-fade: 2.5rem;
   --preferences-ink: var(--text-strong);
   /* Default crown feedback; cart success keeps its own green override. */
   --status-burst-halo: color-mix(in srgb, var(--selected-accent) 30%, transparent);

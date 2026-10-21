@@ -1,0 +1,21 @@
+{% load i18n %}
+{% comment %}
+  An empty cart: the logo's crown in the placeholder colours (as for a
+  product without a photo), "Cart is empty", and the way on below it.
+  Used by the cart box and the cart pages (so the phone's sheet too).
+
+  Expects: action_url, action_label; optional quiet (the way on as a quiet
+  link, when the page offers another way in above), extra_attrs.
+{% endcomment %}
+<div class="cart-empty">
+  {% include "includes/ui/icon_block.html" with name="crown" class_name="cart-empty__crown" only %}
+  <p class="cart-empty__text">{% trans "Cart is empty" %}</p>
+  {% if quiet %}
+    <a class="quiet-link" href="{{ action_url }}">
+      {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
+      {{ action_label }}
+    </a>
+  {% else %}
+    <a class="button button--md button--solid button--tone-place page__submit cart-empty__action" href="{{ action_url }}">{{ action_label }}</a>
+  {% endif %}
+</div>

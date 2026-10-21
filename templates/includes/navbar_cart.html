@@ -56,7 +56,9 @@
         {% endfor %}
       </div>
 
+      {# The summary and the way on, held at the bottom of the box. #}
       <footer class="site-nav-cart__actions">
+        {% include "includes/cart/summary.html" with subtotal_label=navbar_cart.subtotal_label count=navbar_cart.line_count only %}
         <a
           class="
             button
@@ -71,21 +73,7 @@
       </footer>
     {% else %}
       <div class="site-nav-cart__empty">
-        <p>
-          {{ navbar_cart.empty_message }}
-        </p>
-
-        <a
-          class="
-            button
-            button--sm
-            button--solid
-            button--tone-place
-          "
-          href="{{ navbar_cart.empty_action_url }}"
-        >
-          {{ navbar_cart.empty_action_label }}
-        </a>
+        {% include "includes/cart/empty.html" with action_url=navbar_cart.empty_action_url action_label=navbar_cart.empty_action_label only %}
       </div>
     {% endif %}
     </div>

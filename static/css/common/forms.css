@@ -61,6 +61,30 @@
   transform: translateY(-50%);
 }
 
+/* The same dot for a field still to fill in after a press on an unfinished
+   form (checkout-details.js): yellow for empty, red for filled in but
+   wrong (--field-missing-dot, --field-invalid-dot). */
+form[data-attempted] :is(.form-field--missing, .form-field--invalid) .form-label {
+  position: relative;
+  padding-left: var(--space-3);
+}
+
+form[data-attempted] :is(.form-field--missing, .form-field--invalid) .form-label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background: var(--field-missing-dot);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+form[data-attempted] .form-field--invalid .form-label::before {
+  background: var(--field-invalid-dot);
+}
+
 .form-field input,
 .form-field select,
 .form-field textarea {

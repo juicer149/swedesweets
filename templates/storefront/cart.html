@@ -89,19 +89,20 @@
           {% endif %}
         </div>
       </div>
-    {% else %}
-      <p class="page__text page__message">
-        {% trans "Your cart is empty." %}
-      </p>
 
-      <div class="form-actions page__actions">
-        <a
-          class="button button--md button--solid button--tone-place page__submit"
-          href="{{ continue_shopping_url }}"
-        >
-          {% trans "Browse shop" %}
-        </a>
+      {# The phone's sheet: the subtotal and the way on, held at its bottom #}
+      {# (cart-panel.css); the button submits the details form above. #}
+      <div class="order-flow-summary">
+        {% include "includes/cart/summary.html" with subtotal_label=subtotal_label count=cart_lines|length only %}
+        {% if open_payment_url %}
+          <a class="button button--sm button--solid button--tone-place" href="{{ open_payment_url }}">{% trans "Go to payment" %}</a>
+        {% elif checkout_url %}
+          <button class="button button--sm button--solid button--tone-place" type="submit" form="checkout-details-form">{% trans "Continue to review" %}</button>
+        {% endif %}
       </div>
+    {% else %}
+      {% trans "Browse shop" as browse_label %}
+      {% include "includes/cart/empty.html" with action_url=continue_shopping_url action_label=browse_label only %}
     {% endif %}
   </div>
 </section>
@@ -114,4 +115,5 @@
   <script data-cart-editor-script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script data-cart-editor-script src="{% static 'js/confirm_action.js' %}" defer></script>
   <script data-cart-editor-script src="{% static 'js/storefront-cart.js' %}" defer></script>
+  <script data-cart-editor-script src="{% static 'js/order-flow-summary.js' %}" defer></script>
 {% endblock %}

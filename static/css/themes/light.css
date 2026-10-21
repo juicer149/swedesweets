@@ -259,6 +259,16 @@
   /* its cross hovered, and the shadow of its centred box on wider screens */
   --cart-sheet-close-hover: var(--color-primary-900);
   --cart-sheet-shadow: 0 22px 40px rgb(0 0 0 / 0.3);
+  /* the cart's summary row: its label and value, and its edge with more
+     below (a line and a soft shadow by day) */
+  --cart-summary-label: color-mix(in srgb, var(--text-blue-deep) 65%, transparent);
+  --cart-summary-value: var(--text-blue-deep);
+  --cart-summary-border: var(--preferences-border);
+  --cart-summary-shadow: 0 -10px 20px -12px rgb(0 0 0 / 0.3);
+  --cart-summary-fade: 0rem;
+  /* a field still to fill in (checkout): yellow when empty, red when wrong */
+  --field-missing-dot: var(--color-accent-600);
+  --field-invalid-dot: rgb(var(--color-status-danger));
   /* Default crown feedback; cart success keeps its own green override. */
   --status-burst-halo: color-mix(in srgb, var(--brand-crown) 30%, transparent);
   --cart-notice-bg: var(--page-bg);

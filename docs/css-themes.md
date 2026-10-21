@@ -954,6 +954,29 @@ a fixed title at the top (`.panel-title`), a quiet cross in the corner
 `--panel-chrome-hover` (the cart's from `--cart-sheet-close-ink`,
 `--cart-sheet-close-hover`; its shadow `--cart-sheet-shadow`). A long cart
 scrolls inside its box with the panels' own scroll marker (menu-scroll.js).
+
+The cart box stays between 26rem and 44rem high (less on a short window);
+then its list scrolls. Its summary row is held at the bottom: the subtotal
+for a retail cart, "Your order · N products" for a business order
+(includes/cart/summary.html), beside a smaller Go to cart. With more below
+(menu-scroll.js sets `data-more-below`), the row's edge shows:
+`--cart-summary-fade` (a fade, by night), `--cart-summary-border` and
+`--cart-summary-shadow` (a line and a soft shadow, by day);
+`--cart-summary-label` and `--cart-summary-value` colour its text. The
+phone's sheet has the same row for the order flow's cart step
+(`.order-flow-summary` in the cart pages), and the page's own button for
+that step steps aside there.
+
+An empty cart (includes/cart/empty.html), in the box, the sheet and on the
+cart pages, shows the crown in `--catalog-placeholder-crown` (as for a
+product without a photo), "Cart is empty" in `--catalog-placeholder-text`,
+and its way on below.
+
+The retail details form keeps "Continue to review" pressable while fields
+are missing (muted, `.is-incomplete`): a press marks each empty field with
+a yellow dot (`--field-missing-dot`) and each filled in but wrong one with a
+red dot (`--field-invalid-dot`), the same dot as ops's changed fields, and
+takes the visitor to the first.
 Account/settings cards reach 38rem wide, with natural height capped by the
 viewport. Landing also uses
 these larger rounded proportions on mobile. Normal mobile account/settings

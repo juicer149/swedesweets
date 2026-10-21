@@ -101,6 +101,20 @@ def test_navbar_cart_fragment_renders_existing_retail_cart(
     # What the catalog's in-cart badges count from.
     assert f'data-product-id="{retail_price.product_id}"' in content
     assert 'data-quantity="2"' in content
+    # The summary row beside the button: the subtotal (2 × €10.00).
+    summary = content.split('class="cart-summary"', 1)[1].split("</span>\n", 1)[0]
+    assert "Subtotal" in summary
+    assert "20.00" in summary
+
+
+@pytest.mark.django_db
+def test_empty_navbar_cart_shows_the_crown_and_the_way_to_the_shop(client):
+    content = client.get(reverse("storefront:navbar_cart_fragment")).content.decode()
+
+    assert 'class="cart-empty"' in content
+    assert "cart-empty__crown" in content
+    assert "Cart is empty" in content
+    assert "Browse shop" in content
 
 
 @pytest.mark.django_db

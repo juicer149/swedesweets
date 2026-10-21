@@ -675,19 +675,11 @@
   padding-top: var(--space-4);
 }
 
+/* The empty cart is includes/cart/empty.html (cart-panel.css). */
 .site-nav-cart__empty {
   display: grid;
-  justify-items: start;
-  gap: var(--space-3);
-
-  padding-top: var(--space-3);
-}
-
-.site-nav-cart__empty p {
-  margin: 0;
-
-  color: var(--text-muted);
-  font-size: var(--font-size-14);
+  flex: 1 1 auto;
+  align-content: center;
 }
 
 

@@ -1,0 +1,20 @@
+{% load i18n %}
+{% comment %}
+  The cart's summary beside its button (the cart box on wider screens, the
+  order flow's row in the phone's sheet): the subtotal for a retail cart,
+  how many products for a business order (order-flow-summary.js keeps the
+  count up to date as lines come and go).
+
+  Expects: subtotal_label (or none), count.
+{% endcomment %}
+<span class="cart-summary">
+  {% if subtotal_label %}
+    <small class="cart-summary__label">{% trans "Subtotal" %}</small>
+    <strong class="cart-summary__value" data-cart-subtotal>{{ subtotal_label }}</strong>
+  {% else %}
+    <small class="cart-summary__label">{% trans "Your order" %}</small>
+    <strong class="cart-summary__value" data-cart-summary-count
+      data-one="{% blocktrans count count=1 %}{{ count }} product{% plural %}{{ count }} products{% endblocktrans %}"
+      data-many="{% blocktrans count count=2 %}{{ count }} product{% plural %}{{ count }} products{% endblocktrans %}">{% blocktrans count count=count %}{{ count }} product{% plural %}{{ count }} products{% endblocktrans %}</strong>
+  {% endif %}
+</span>

@@ -669,7 +669,14 @@ B2B placement no longer queues a redundant success banner on its placed page.
 
 The desktop cart quick view opens as a centred box like the Menu's, titled
 "Cart", with a quiet cross in the corner; a long cart scrolls inside it with
-the panels' own scroll marker.
+the panels' own scroll marker. It stays between 26rem and 44rem high, with a
+summary row held at its bottom: the subtotal (retail) or how many products
+(business) beside a smaller Go to cart; by night a fade marks the edge when
+more lies below, by day a line and a soft shadow. The phone's sheet holds
+the same row for the order flow's cart step. An empty cart shows the crown
+in placeholder colours, "Cart is empty", and the way on. Unfinished retail
+details keep their button pressable: a press dots what is missing (yellow)
+or wrong (red), like ops's changed fields, and goes to the first.
 
 ## Remaining design work
 

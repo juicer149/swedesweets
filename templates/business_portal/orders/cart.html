@@ -83,7 +83,7 @@
     </ul>
 
     <div class="form-actions page__actions page-actions" data-cart-lines {% if not cart_lines %}hidden{% endif %}>
-      <form class="page-actions__primary" method="post" action="{% url 'business_portal:cart' %}" data-submit-burst data-order-flow-submit>
+      <form class="page-actions__primary" id="order-flow-review-form" method="post" action="{% url 'business_portal:cart' %}" data-submit-burst data-order-flow-submit>
         {% csrf_token %}
 
         <button
@@ -123,25 +123,21 @@
       </div>
     </div>
 
+    {# The phone's sheet: how many products and the way on, held at its #}
+    {# bottom (cart-panel.css); the button submits the review form above. #}
+    <div class="order-flow-summary" data-cart-lines {% if not cart_lines %}hidden{% endif %}>
+      {% include "includes/cart/summary.html" with count=cart_lines|length only %}
+      <button class="button button--sm button--solid button--tone-place" type="submit" form="order-flow-review-form" name="intent" value="review_order">{{ submit_label }}</button>
+    </div>
+
     {# Empty: the quick add above is the way in; the catalog stays a #}
     {# quiet link (the whole button when there is nothing to search). #}
-    <p class="page__text page__message" data-cart-empty {% if cart_lines %}hidden{% endif %}>
-      {% trans "Your order is empty." %}
-    </p>
-
-    <div class="form-actions page__actions" data-cart-empty {% if cart_lines %}hidden{% endif %}>
+    <div data-cart-empty {% if cart_lines %}hidden{% endif %}>
+      {% trans "Browse catalog" as browse_label %}
       {% if quick_add_options %}
-        <a class="quiet-link" href="{{ continue_shopping_url }}">
-          {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
-          {% trans "Browse catalog" %}
-        </a>
+        {% include "includes/cart/empty.html" with action_url=continue_shopping_url action_label=browse_label quiet=True only %}
       {% else %}
-        <a
-          class="button button--md button--solid button--tone-place page__submit"
-          href="{{ continue_shopping_url }}"
-        >
-          {{ continue_shopping_label }}
-        </a>
+        {% include "includes/cart/empty.html" with action_url=continue_shopping_url action_label=continue_shopping_label only %}
       {% endif %}
     </div>
   </div>
@@ -153,6 +149,7 @@
 
   <script data-cart-editor-script src="{% static 'js/cart.js' %}" defer></script>
   <script data-cart-editor-script src="{% static 'js/business_cart.js' %}" defer></script>
+  <script data-cart-editor-script src="{% static 'js/order-flow-summary.js' %}" defer></script>
   <script data-cart-editor-script src="{% static 'js/smooth-details.js' %}" defer></script>
   <script data-cart-editor-script src="{% static 'js/confirm_dialog.js' %}" defer></script>
   <script data-cart-editor-script src="{% static 'js/confirm_action.js' %}" defer></script>

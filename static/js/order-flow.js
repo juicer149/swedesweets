@@ -173,6 +173,8 @@
     event.preventDefault(); event.stopImmediatePropagation();
     if (busy) return;
     form.dispatchEvent(new Event("checkout-validate"));
+    // Details still to fill in: checkout-details.js shows which, and where.
+    if (form.dataset.checkoutIncomplete === "true") { form.dispatchEvent(new Event("checkout-reveal")); return; }
     if (!form.reportValidity() || form.querySelector("[data-checkout-continue]")?.disabled) return;
     const button = event.submitter;
     if (form.hasAttribute("data-order-flow-external")) {

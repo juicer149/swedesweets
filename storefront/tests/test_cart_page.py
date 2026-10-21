@@ -72,7 +72,7 @@ def test_cart_page_is_reachable_without_a_cart(client):
     )
 
     assert response.status_code == 200
-    assert "Your cart is empty." in response.content.decode()
+    assert "Cart is empty" in response.content.decode()
     assert Cart.objects.count() == 0
 
 
@@ -99,6 +99,11 @@ def test_cart_page_shows_lines_and_subtotal(
     assert f'href="{line.product_url}"' in content
     assert "data-cart-subtotal" in content
     assert f'data-cart-line-total="{line.cart_line_id}"' in content
+    # The phone sheet's summary row: its button submits the details form.
+    summary = content.split('class="order-flow-summary"', 1)[1].split("</div>", 1)[0]
+    assert "data-cart-subtotal" in summary
+    assert 'form="checkout-details-form"' in summary
+    assert 'id="checkout-details-form"' in content
 
 
 @pytest.mark.django_db

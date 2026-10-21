@@ -2839,3 +2839,7 @@ msgstr ""
 "un ordinateur. Choisissez Paramètres, puis English ou Français pour la "
 "langue, et le soleil ou la lune pour un thème clair ou sombre. Appuyez de "
 "nouveau sur Échap, ou sur Retour, pour le fermer."
+
+#: templates/includes/cart/empty.html
+msgid "Cart is empty"
+msgstr "Le panier est vide"

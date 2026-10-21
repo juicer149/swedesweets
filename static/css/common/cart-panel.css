@@ -27,6 +27,9 @@
 .cart-details > .form-help { margin-bottom: var(--space-10); }
 .cart-details__help { text-align: center; }
 .checkout-form .button:disabled { color: var(--cart-disabled-ink); background: var(--cart-disabled-bg); border-color: var(--cart-disabled-border); opacity: .6; box-shadow: none; text-shadow: none; cursor: default; }
+/* Details still missing: it looks the same, but a press shows what is
+   left to fill in (checkout-details.js), so it keeps its pointer. */
+.button.is-incomplete:not(:disabled) { color: var(--cart-disabled-ink); background: var(--cart-disabled-bg); border-color: var(--cart-disabled-border); opacity: .6; box-shadow: none; text-shadow: none; }
 .checkout-email-status { color: var(--color-status-warning-text); }
 .site-nav-cart__popover { width: min(38rem, calc(100vw - 8rem)); padding: var(--space-6); background: var(--cart-sheet-bg); border-color: var(--preferences-border); box-shadow: var(--preferences-shadow); display: block; max-height: calc(100dvh - 6rem); border-radius: var(--radius-md); }
 .cart-panel-scroll { max-height: calc(100dvh - 10rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding: var(--space-1); }
@@ -89,6 +92,97 @@
 .cart-panel-scroll[aria-busy="true"] { opacity: .65; }
 .cart-page .recent-orders,
 .cart-page .cart-quick-add { margin-bottom: var(--space-10); }
+/* An empty cart (includes/cart/empty.html), in the box, the sheet and on
+   the cart pages: the crown in the placeholder colours of a product without
+   a photo, "Cart is empty", and the way on below. */
+.cart-empty {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--space-4);
+  padding-block: var(--space-8);
+  text-align: center;
+}
+.cart-empty__crown.ui-icon-block {
+  width: 5rem;
+  height: 5rem;
+  /* Optical centring, as in the catalog: the tilted crown leans left. */
+  translate: 7% 0;
+  color: var(--catalog-placeholder-crown);
+}
+.cart-empty__text {
+  margin: 0;
+  color: var(--catalog-placeholder-text);
+  font-size: var(--font-size-16);
+  font-weight: 700;
+}
+.cart-empty .cart-empty__action { margin-top: var(--space-2); }
+
+/* The summary beside the cart's button (includes/cart/summary.html): a
+   small label over the subtotal, or over how many products. */
+.cart-summary {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  line-height: 1.2;
+  text-align: start;
+}
+.cart-summary__label {
+  color: var(--cart-summary-label);
+  font-size: var(--font-size-12);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cart-summary__value {
+  color: var(--cart-summary-value);
+  font-size: var(--font-size-18, 1.125rem);
+  font-weight: 800;
+}
+
+/* The order flow's summary row (the cart pages' .order-flow-summary): only
+   in the phone's sheet, where it is held at the bottom while the cart
+   scrolls under it, with the same edge as the box's row on wider screens.
+   The page's own button for the same step then steps aside. */
+.order-flow-summary { display: none; }
+@media (max-width: 767px) {
+  .site-nav-cart .order-flow-summary:not([hidden]) {
+    position: sticky;
+    bottom: calc(-1 * var(--space-4));
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: var(--space-6) calc(-1 * var(--space-5)) calc(-1 * var(--space-4));
+    padding: var(--space-3) var(--space-5) var(--space-4);
+    background: var(--cart-sheet-bg);
+    border-top: 1px solid transparent;
+    transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+  }
+  .site-nav-cart .order-flow-summary::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: var(--cart-summary-fade);
+    background: linear-gradient(to bottom, transparent, var(--cart-sheet-bg));
+    opacity: 0;
+    transition: opacity var(--motion-fast);
+    pointer-events: none;
+  }
+  .site-nav-cart [data-more-below] .order-flow-summary {
+    border-top-color: var(--cart-summary-border);
+    box-shadow: var(--cart-summary-shadow);
+  }
+  .site-nav-cart [data-more-below] .order-flow-summary::before { opacity: 1; }
+  .site-nav-cart .order-flow-summary .button { width: auto; flex: 0 0 auto; padding-inline: var(--space-6); }
+  .site-nav-cart .order-flow-page[data-flow-step="cart"] :is(.page-actions__primary, .page-actions > .page__submit, .checkout-form .form-actions) {
+    display: none;
+  }
+}
+
 /* The cart's title and corner cross (mobile-menu.css's .panel-title and
    .panel-corner-close) in the sheet's own ink. On a phone the sheet keeps
    its circle at the bottom and needs no title. */
@@ -117,8 +211,9 @@
     inset: auto;
     translate: none;
     width: min(38rem, calc(100vw - 2rem));
-    min-height: 0;
-    max-height: calc(100dvh - 5rem);
+    /* Between a least and a most height, then the list scrolls. */
+    min-height: min(26rem, calc(100dvh - 5rem));
+    max-height: min(44rem, calc(100dvh - 5rem));
     display: flex;
     flex-direction: column;
     padding-block: calc(clamp(1rem, 3dvh, 1.5rem) + 2.25rem) clamp(1.5rem, 4dvh, 2.5rem);
@@ -129,14 +224,59 @@
   .site-nav-cart__popover .mobile-menu-close,
   .site-nav-cart__popover .menu-panel-toplight { display: none; }
   .site-nav-cart__popover .cart-panel-scroll {
+    display: flex;
+    flex-direction: column;
     min-height: 0;
     max-height: none;
-    flex: 0 1 auto;
+    flex: 1 1 auto;
+    padding-bottom: 0;
   }
+  /* (the list keeps its height and scrolls; it must not shrink to fit) */
+  .site-nav-cart__popover .cart-panel-scroll > * { flex-shrink: 0; }
   .site-nav-cart__popover .menu-scroll-track {
     top: calc(clamp(1rem, 3dvh, 1.5rem) + 2.25rem);
-    bottom: clamp(1.5rem, 4dvh, 2.5rem);
+    bottom: calc(clamp(1.5rem, 4dvh, 2.5rem) + 4.5rem);
     right: 6px;
+  }
+
+  /* The summary row: the subtotal (or how many products) and a smaller
+     button, held at the bottom of the box while the list scrolls under
+     it. With more below, its edge shows: a fade by night, a line and a
+     soft shadow by day (--cart-summary-* in the theme files). */
+  .site-nav-cart__popover .site-nav-cart__actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: auto calc(-1 * (var(--space-6) + var(--space-1))) 0;
+    padding: var(--space-4) calc(var(--space-6) + var(--space-1)) var(--space-1);
+    background: var(--cart-sheet-bg);
+    border-top: 1px solid transparent;
+    transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+  }
+  .site-nav-cart__popover .site-nav-cart__actions::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: var(--cart-summary-fade);
+    background: linear-gradient(to bottom, transparent, var(--cart-sheet-bg));
+    opacity: 0;
+    transition: opacity var(--motion-fast);
+    pointer-events: none;
+  }
+  .site-nav-cart__popover [data-more-below] .site-nav-cart__actions {
+    border-top-color: var(--cart-summary-border);
+    box-shadow: var(--cart-summary-shadow);
+  }
+  .site-nav-cart__popover [data-more-below] .site-nav-cart__actions::before { opacity: 1; }
+  .site-nav-cart__popover .site-nav-cart__actions .button {
+    width: auto;
+    padding-inline: var(--space-8);
   }
   /* A removed line's red runs edge to edge, to the gold borders: the
      scroll box (which clips) spans the popover's full width, and its

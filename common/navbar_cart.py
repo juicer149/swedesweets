@@ -45,7 +45,6 @@ class NavbarCart:
     fragment_url: str
     proceed_label: str
     proceed_url: str
-    empty_message: str
     empty_action_label: str
     empty_action_url: str
     subtotal_label: str | None = None
