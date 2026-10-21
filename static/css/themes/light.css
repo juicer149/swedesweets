@@ -581,3 +581,86 @@
   --field-focus-color: var(--color-primary-500);
   --field-focus-shadow: 0 0 0 1px var(--field-focus-color), 0 0 14px color-mix(in srgb, var(--field-focus-color) 16%, transparent), 0 0 28px color-mix(in srgb, var(--field-focus-color) 7%, transparent);
 }
+
+/* =============================================================================
+   Here, pointer and rest (common/states.css)
+
+   The navigation has three states: where you are ("here"), what you point at
+   or reach with the keys ("pointer"), and the rest. The --state-* roles set
+   them; every part below reads its own variables, which point at those (or,
+   by day, at the very roles it used before, so the day looks as it did).
+   Change a --state-* role to change them all; tune one part on its own by
+   pointing its variable elsewhere. themes/dark.css sets the night: here in
+   gold with its light and the crown, the pointer in moonlight.
+   ============================================================================= */
+:root {
+  --state-rest-ink: var(--menu-ink);
+  --state-here-ink: var(--menu-chosen);
+  --state-here-glow: var(--menu-link-glow);
+  --state-here-glow-filter: var(--interaction-glow-filter);
+  --state-here-text-shadow: var(--interaction-text-shadow);
+  --state-here-icon-filter: var(--interaction-icon-filter);
+  --state-pointer-ink: var(--menu-chosen);
+  --state-pointer-glow: var(--menu-link-glow);
+  --state-pointer-glow-filter: var(--interaction-glow-filter);
+  --state-pointer-text-shadow: var(--interaction-text-shadow);
+  --state-pointer-icon-filter: var(--interaction-icon-filter);
+  /* the crown follows the pointer by day; by night it marks only "here" */
+  --state-pointer-crown-opacity: 1;
+
+  /* The navbar's links */
+  --nav-link-here-ink: var(--state-here-ink);
+  --nav-link-pointer-ink: var(--state-pointer-ink);
+  --nav-link-pointer-glow: var(--state-pointer-glow);
+  --nav-link-pointer-glow-filter: var(--state-pointer-glow-filter);
+  --nav-link-pointer-text-shadow: var(--state-pointer-text-shadow);
+  --nav-link-pointer-icon-filter: var(--state-pointer-icon-filter);
+  --nav-link-pointer-label-filter: var(--menu-crown-shadow);
+
+  /* The Menu and cart buttons */
+  --nav-trigger-here-ink: var(--state-here-ink);
+  --nav-trigger-pointer-ink: var(--state-pointer-ink);
+  --nav-trigger-pointer-glow: var(--menu-dropdown-glow);
+  --nav-trigger-pointer-glow-filter: var(--menu-dropdown-glow-filter);
+  --nav-trigger-pointer-icon-filter: var(--menu-dropdown-icon-filter);
+
+  /* The logo: at rest in the navbar, pointed at, and "here" on the brand's
+     own pages (the start page, login and the other entrance pages) */
+  --logo-rest-ink: var(--menu-logo);
+  --logo-rest-crown-opacity: 1;
+  --logo-pointer-ink: var(--menu-logo-hover);
+  --logo-pointer-filter: var(--interaction-icon-filter);
+  --logo-here-ink: var(--menu-logo);
+  --logo-here-filter: none;
+  --logo-here-pointer-ink: var(--menu-logo-hover);
+  --landing-logo-halo: var(--landing-moon-halo);
+
+  /* The Menu's links */
+  --menu-link-here-ink: var(--account-menu-selected);
+  --menu-link-pointer-ink: var(--account-menu-selected);
+  --menu-link-pointer-glow: var(--interaction-glow);
+  --menu-link-pointer-glow-filter: var(--interaction-glow-filter);
+  --menu-link-pointer-text-shadow: var(--interaction-text-shadow);
+  --menu-link-pointer-crown-opacity: var(--state-pointer-crown-opacity);
+
+  /* Settings: the language and theme pointed at (in use: --menu-choice-active-*) */
+  --menu-choice-pointer-ink: var(--preferences-hover);
+  --menu-choice-pointer-text-shadow: var(--interaction-text-shadow);
+  --menu-choice-pointer-glow: var(--menu-link-glow);
+  --menu-choice-pointer-glow-filter: var(--interaction-glow-filter);
+  --menu-choice-pointer-crown-opacity: var(--state-pointer-crown-opacity);
+
+  /* The staff's view switch */
+  --site-switch-here-ink: var(--menu-chosen);
+  --site-switch-pointer-ink: var(--account-menu-selected);
+
+  /* The start page's menu and its Login / Log out */
+  --landing-pointer-ink: var(--menu-chosen);
+  --landing-pointer-glow: var(--interaction-glow);
+  --landing-pointer-glow-filter: var(--interaction-glow-filter);
+  --landing-pointer-text-shadow: var(--interaction-text-shadow);
+  --landing-pointer-icon-filter: var(--interaction-icon-filter);
+  --landing-pointer-crown-opacity: var(--state-pointer-crown-opacity);
+  --landing-account-pointer-ink: var(--landing-control-hover-ink);
+}
+

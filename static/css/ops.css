@@ -7,3 +7,5 @@
 @import url("./ops/products.css");
 @import url("./ops/variants.css");
 @import url("./ops/accounts.css");
+/* Here, pointer and rest: after the parts above, over their shared rules (common/states.css). */
+@import url("./common/states.css");

@@ -29,6 +29,39 @@ the choice lasts for this browser tab. Auto uses Paris time: light 06–22,
 dark 22–06. An unknown choice falls back to light. Ops remains light until its
 work pages have been checked for the dark palette.
 
+## Here, pointer and rest (common/states.css)
+
+The navigation has three states, set once per theme and read by every part:
+
+- **Here**: where you are. The navbar's link for the page, the Menu or
+  cart button on its own page, the Menu's link for the page, the language
+  and theme in use, the view you are in, and the logo on the brand's own
+  pages (the start page, login and the other entrance pages).
+- **Pointer**: what you point at, or reach with the keys.
+- **Rest**: everything else.
+
+| Role | By day (light.css) | By night (dark.css) |
+|---|---|---|
+| `--state-rest-ink` | `--menu-ink` (white) | `--interactive-text` (light blue) |
+| `--state-here-ink`, `-glow`, `-glow-filter`, `-text-shadow`, `-icon-filter` | gold (as before) | gold with its light |
+| `--state-pointer-ink`, `-glow`, `-glow-filter`, `-text-shadow`, `-icon-filter` | gold (as before) | moonlight with a moonlit glow |
+| `--state-pointer-crown-opacity` | 1: the crown follows the pointer | 0: the crown marks only "here" |
+
+Each part has its own variables pointing at these, so one part can be tuned
+without touching the rest: `--nav-link-*` (the navbar's links),
+`--nav-trigger-*` (the Menu and cart buttons), `--logo-*` (the logo: rest,
+pointer, here; `--logo-rest-crown-opacity` hides its crown in the navbar by
+night, where the crown is on the page's link instead), `--menu-link-*` (the
+Menu's links), `--menu-choice-*` (Settings: `-active-*` for the one in use,
+`-pointer-*` for the one pointed at), `--site-switch-*` (the view switch),
+`--landing-*` (the start page's menu, its Login / Log out and the logo's
+halo). By day every part variable points at the role it used before, so the
+day looks exactly as it did; change the `--state-*` roles in light.css to
+give the day the same split. `common/states.css` is loaded last (public.css,
+ops.css) and maps the parts onto their variables. The catalog's category
+tabs, buttons, cards, open questions and the order timeline keep their own
+states.
+
 ## The Menu: account, settings and the staff site switch
 
 One button, three lines (with the word "Menu" from 768px up), opens the Menu

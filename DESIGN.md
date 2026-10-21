@@ -73,7 +73,12 @@ ink with a soft gold light in dark. The theme is two choices, a sun and a
 moon, the chosen one filled and gold. Selection lasts for the current tab.
 Staff switch sites with a house and a wrench on the Menu's first level.
 
-Gold marks the brand, hovered/focused main actions and selected states. The active sort heading uses a slightly deeper gold (accent-700); section tabs
+Gold marks the brand, hovered/focused main actions and selected states. In the navigation (common/states.css) three
+states are set per theme: by night "here" (the page you are on, what is in
+use, the logo on the start page and login) is gold with its light and the
+crown, the pointer (hover, focus, the choice in the Menu) is moonlight, and
+the rest light blue; the navbar's logo rests light blue without its crown,
+which moves to the page's link. By day both are gold, as before. The active sort heading uses a slightly deeper gold (accent-700); section tabs
 share navigation gold (accent-600). Available
 choices use interactive blue. Hover/focus on an order row marks its edge blue,
 while its background retains its status hue: placed gold, packed blue,

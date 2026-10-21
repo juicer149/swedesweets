@@ -1,0 +1,228 @@
+/* =============================================================================
+   Here, pointer and rest: the navigation's three states
+
+   "Here" is where you are: the navbar's link for the page, the Menu or cart
+   button on its own page, the Menu's link for the page, the language and
+   theme in use, the view you are in, and the logo on the brand's own pages
+   (start page, login). The "pointer" is what you point at or reach with
+   the keys. The rest is everything else.
+
+   Each part reads its own variables (--nav-link-*, --nav-trigger-*,
+   --logo-*, --menu-link-*, --menu-choice-*, --site-switch-*, --landing-*),
+   which point at the --state-* roles in the theme files: by day they keep
+   what the site had (gold for both), by night here is gold with its light
+   and the crown, the pointer moonlight. Loaded last, after the parts' own
+   files, so these mappings win over their older shared rules. The catalog's
+   category tabs, buttons and cards keep their own states.
+   ============================================================================= */
+
+
+/* ## The navbar's links ----------------------------------------------------- */
+
+:is(.site-nav__link--active, .site-nav__link[aria-current="page"]) {
+  color: var(--nav-link-here-ink);
+}
+
+.site-nav__link:not(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible) {
+  color: var(--nav-link-pointer-ink);
+}
+
+.site-nav__link:not(.site-nav__link--active, [aria-current="page"])::after {
+  background: var(--nav-link-pointer-glow);
+  filter: var(--nav-link-pointer-glow-filter);
+}
+
+.site-nav__link:not(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible) > .site-nav__label {
+  text-shadow: var(--nav-link-pointer-text-shadow);
+}
+
+.site-nav__link:not(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible) > .site-nav__icon .ui-icon-svg {
+  filter: var(--nav-link-pointer-icon-filter);
+}
+
+.site-nav__link:not(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible) > :is(.site-nav__label, .site-nav__icon) {
+  filter: var(--nav-link-pointer-label-filter);
+}
+
+@media (max-width: 767px) {
+  :is(.site-nav__link--active, .site-nav__link[aria-current="page"]) {
+    color: var(--nav-link-here-ink);
+  }
+  .site-nav__link:not(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible) {
+    color: var(--nav-link-pointer-ink);
+  }
+}
+
+
+/* ## The Menu and cart buttons (.menu-dropdown-trigger) --------------------- */
+
+.menu-dropdown-trigger[aria-current="page"] {
+  color: var(--nav-trigger-here-ink);
+}
+
+.menu-dropdown-trigger:not([aria-current="page"]):focus-visible,
+details[open] > .menu-dropdown-trigger:not([aria-current="page"]) {
+  color: var(--nav-trigger-pointer-ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-dropdown-trigger:not([aria-current="page"]):hover {
+    color: var(--nav-trigger-pointer-ink);
+  }
+}
+
+.menu-dropdown-trigger:not([aria-current="page"])::before {
+  background: var(--nav-trigger-pointer-glow);
+  filter: var(--nav-trigger-pointer-glow-filter);
+}
+
+.menu-dropdown-trigger:not([aria-current="page"]):focus-visible .ui-icon-svg,
+details[open] > .menu-dropdown-trigger:not([aria-current="page"]) .ui-icon-svg {
+  filter: var(--nav-trigger-pointer-icon-filter);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .menu-dropdown-trigger:not([aria-current="page"]):hover .ui-icon-svg {
+    filter: var(--nav-trigger-pointer-icon-filter);
+  }
+}
+
+
+/* ## The logo --------------------------------------------------------------- */
+
+/* In the navbar it rests (by night light blue, without its crown: the crown
+   is on the link for the page you are on), and lights when pointed at. */
+.site-brand .brand-logo__wordmark {
+  fill: var(--logo-rest-ink);
+}
+
+.site-brand .brand-logo__crown {
+  opacity: var(--logo-rest-crown-opacity);
+}
+
+.site-brand:is(:hover, :focus-visible) .brand-logo__wordmark {
+  fill: var(--logo-pointer-ink);
+}
+
+.site-brand:is(:hover, :focus-visible) .site-brand__logo {
+  filter: var(--logo-pointer-filter);
+}
+
+.site-brand::before {
+  background: var(--state-pointer-glow);
+  filter: var(--state-pointer-glow-filter);
+}
+
+/* On the brand's own pages (the start page, login and the other entrance
+   pages) it is "here": by night gold with its crown and its light. */
+:is(.entrance-header__brand, .landing__logo) .brand-logo__wordmark,
+.entrance-header__brand:is(:hover, :focus-visible) .brand-logo__wordmark {
+  fill: var(--logo-here-ink);
+}
+
+.entrance-header__brand:is(:hover, :focus-visible) .brand-logo__wordmark {
+  fill: var(--logo-here-pointer-ink);
+}
+
+:is(.entrance-header__logo, .landing__logo-art) {
+  filter: var(--logo-here-filter);
+}
+
+.landing__logo::before {
+  background: var(--landing-logo-halo);
+}
+
+
+/* ## The Menu's links (includes/site_menu.html) ------------------------------ */
+
+.site-menu .site-menu__link.menu-panel-link[aria-current="page"] {
+  color: var(--menu-link-here-ink);
+}
+
+.site-menu .site-menu__link.menu-panel-link.is-chosen:not([aria-current="page"]),
+.site-menu .site-menu__link.menu-panel-link.site-menu__return.is-chosen,
+.site-menu:not([data-menu-ready]) .site-menu__link.menu-panel-link:not([aria-current="page"]):is(:hover, :focus-visible) {
+  color: var(--menu-link-pointer-ink);
+  text-shadow: var(--menu-link-pointer-text-shadow);
+}
+
+.site-menu .menu-panel-link:not([aria-current="page"])::before {
+  background: var(--menu-link-pointer-glow);
+  filter: var(--menu-link-pointer-glow-filter);
+}
+
+/* The crown: on the Menu's link for the page you are on; on the one
+   pointed at only where the theme lets it follow the pointer (by day). */
+.site-menu .site-menu__link:not(.site-menu__return, [aria-current="page"]).is-chosen::after {
+  opacity: var(--menu-link-pointer-crown-opacity);
+}
+
+/* The quiet cross takes the pointer's colour too. */
+.site-menu__panel { --panel-chrome-hover: var(--menu-link-pointer-ink); }
+
+
+/* ## Settings: the language and theme in use, and the one pointed at ------- */
+
+.site-menu[data-menu-ready] .language-switcher__option.is-chosen {
+  color: var(--menu-choice-pointer-ink);
+  text-shadow: var(--menu-choice-pointer-text-shadow);
+}
+
+.site-menu[data-menu-ready] .language-switcher__option.is-chosen::after {
+  background: var(--menu-choice-pointer-glow);
+  filter: var(--menu-choice-pointer-glow-filter);
+}
+
+.site-menu[data-menu-ready] .language-switcher__option.is-chosen::before {
+  opacity: var(--menu-choice-pointer-crown-opacity);
+}
+
+
+/* ## The staff's view switch ------------------------------------------------ */
+
+.site-menu__site-choice[aria-current="true"] {
+  color: var(--site-switch-here-ink);
+}
+
+a.site-menu__site-choice:is(:hover, :focus-visible) {
+  color: var(--site-switch-pointer-ink);
+}
+
+
+/* ## The start page's menu and its Login / Log out -------------------------- */
+
+.landing-menu__link--chosen,
+.landing-menu:not([data-landing-live]) .landing-menu__link:hover {
+  color: var(--landing-pointer-ink);
+}
+
+.landing-menu__link--chosen,
+.landing-menu:not([data-landing-live]) .landing-menu__link:is(:hover, :focus-visible) {
+  text-shadow: var(--landing-pointer-text-shadow);
+}
+
+.landing-menu__link::before {
+  background: var(--landing-pointer-glow);
+  filter: var(--landing-pointer-glow-filter);
+}
+
+.landing-menu__link--chosen .ui-icon-svg {
+  filter: var(--landing-pointer-icon-filter);
+}
+
+.landing-menu__link--chosen .landing-menu__crown {
+  opacity: var(--landing-pointer-crown-opacity);
+}
+
+.landing__account:is(:hover, :focus-visible) {
+  color: var(--landing-account-pointer-ink);
+}
+
+.landing__account::before {
+  background: var(--landing-pointer-glow);
+  filter: var(--landing-pointer-glow-filter);
+}
+
+@media (forced-colors: active) {
+  .site-brand .brand-logo__crown { opacity: 1; }
+}

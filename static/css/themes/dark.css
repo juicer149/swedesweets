@@ -194,9 +194,6 @@
   --preferences-hover: var(--selected-accent);
   --account-menu-text: var(--interactive-text);
   --account-menu-selected: var(--selected-accent);
-  /* in Settings: the choice in use in moonlight, as the logo by night */
-  --menu-choice-active-ink: var(--moonlight);
-  --menu-choice-active-glow: color-mix(in srgb, var(--moonlight) 35%, transparent);
   --menu-dropdown-glow: var(--menu-link-glow);
   --menu-dropdown-glow-filter: var(--interaction-glow-filter);
   --menu-dropdown-icon-filter: var(--interaction-icon-filter);
@@ -402,3 +399,58 @@
   --menu-backdrop-bg: rgb(0 4 20 / .65);
   --field-focus-color: var(--interactive-border);
 }
+
+/* Here, pointer and rest by night (themes/light.css explains the parts):
+   here is gold with its light and the crown; the pointer is moonlight, with
+   a moonlit glow and no crown; the rest light blue, the logo too. */
+:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  --state-rest-ink: var(--interactive-text);
+  --state-here-ink: var(--selected-accent);
+  --state-pointer-ink: var(--moonlight);
+  --state-pointer-glow: radial-gradient(ellipse at center, color-mix(in srgb, var(--moonlight) calc(11% * var(--interaction-glow-strength)), transparent), color-mix(in srgb, var(--moonlight) calc(8% * var(--interaction-glow-strength)), transparent) 30%, color-mix(in srgb, var(--moonlight) calc(5% * var(--interaction-glow-strength)), transparent) 60%, transparent 100%);
+  --state-pointer-glow-filter: blur(var(--interaction-glow-blur));
+  --state-pointer-text-shadow: 0 0 3px color-mix(in srgb, var(--moonlight) 30%, transparent), 0 0 9px color-mix(in srgb, var(--moonlight) 20%, transparent), 0 0 18px color-mix(in srgb, var(--moonlight) 12%, transparent);
+  --state-pointer-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, var(--moonlight) 35%, transparent)) drop-shadow(0 0 9px color-mix(in srgb, var(--moonlight) 18%, transparent));
+  --state-pointer-crown-opacity: 0;
+
+  --nav-link-pointer-label-filter: none;
+  --nav-trigger-pointer-glow: var(--state-pointer-glow);
+  --nav-trigger-pointer-glow-filter: var(--state-pointer-glow-filter);
+  --nav-trigger-pointer-icon-filter: var(--state-pointer-icon-filter);
+
+  --logo-rest-ink: var(--state-rest-ink);
+  --logo-rest-crown-opacity: 0;
+  --logo-pointer-ink: var(--state-pointer-ink);
+  --logo-pointer-filter: var(--state-pointer-icon-filter);
+  --logo-here-ink: var(--state-here-ink);
+  --logo-here-filter: drop-shadow(0 0 10px color-mix(in srgb, var(--selected-accent) 35%, transparent));
+  --logo-here-pointer-ink: var(--state-here-ink);
+  --landing-logo-halo: none;
+
+  --menu-link-here-ink: var(--state-here-ink);
+  --menu-link-pointer-ink: var(--state-pointer-ink);
+  --menu-link-pointer-glow: var(--state-pointer-glow);
+  --menu-link-pointer-glow-filter: var(--state-pointer-glow-filter);
+  --menu-link-pointer-text-shadow: var(--state-pointer-text-shadow);
+
+  /* Settings: the choice in use is "here" (gold), the one pointed at the pointer */
+  --menu-choice-active-ink: var(--state-here-ink);
+  --menu-choice-active-glow: color-mix(in srgb, var(--selected-accent) 30%, transparent);
+  --menu-choice-pointer-ink: var(--state-pointer-ink);
+  --menu-choice-pointer-text-shadow: var(--state-pointer-text-shadow);
+  --menu-choice-pointer-glow: var(--state-pointer-glow);
+  --menu-choice-pointer-glow-filter: var(--state-pointer-glow-filter);
+
+  --site-switch-here-ink: var(--state-here-ink);
+  --site-switch-pointer-ink: var(--state-pointer-ink);
+
+  --landing-pointer-ink: var(--state-pointer-ink);
+  --landing-pointer-glow: var(--state-pointer-glow);
+  --landing-pointer-glow-filter: var(--state-pointer-glow-filter);
+  --landing-pointer-text-shadow: var(--state-pointer-text-shadow);
+  --landing-pointer-icon-filter: var(--state-pointer-icon-filter);
+  --landing-account-pointer-ink: var(--state-pointer-ink);
+
+  --cart-sheet-close-hover: var(--state-pointer-ink);
+}
+
