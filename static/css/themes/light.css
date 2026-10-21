@@ -624,12 +624,14 @@
   --nav-trigger-pointer-glow-filter: var(--menu-dropdown-glow-filter);
   --nav-trigger-pointer-icon-filter: var(--menu-dropdown-icon-filter);
 
-  /* The cart button: at rest, and lit while its box or sheet is open */
+  /* The Menu and cart buttons while their panel is open */
+  --nav-trigger-open-ink: var(--menu-chosen);
+  --nav-trigger-open-glow: var(--menu-dropdown-glow);
+  --nav-trigger-open-glow-filter: var(--menu-dropdown-glow-filter);
+  --nav-trigger-open-icon-filter: var(--menu-dropdown-icon-filter);
+
+  /* The cart button at rest */
   --nav-cart-rest-ink: var(--menu-cart-ink);
-  --nav-cart-open-ink: var(--menu-cart-ink-hover);
-  --nav-cart-open-glow: var(--menu-dropdown-glow);
-  --nav-cart-open-glow-filter: var(--menu-dropdown-glow-filter);
-  --nav-cart-open-icon-filter: var(--menu-dropdown-icon-filter);
 
   /* The logo: at rest in the navbar, pointed at, and "here" on the brand's
      own pages (the start page, login and the other entrance pages) */

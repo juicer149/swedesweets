@@ -91,10 +91,11 @@ light instead of an underline; open FAQ questions keep only the light behind
 their title and chevron, without a tinted rectangle. FAQ and Find Sweets lights
 follow the question/name and icon separately, rather than lighting the empty
 middle of the row. Addresses
-and answers stay neutral. The landing menu and its account/cart/language controls
-use the same backlight, as do the navbar dropdown icons. The chosen landing
-item owns its light even when pointer input follows keyboard focus. Login/password
-page home logos share the navbar logo's gold hover/focus treatment. Ready catalog cart buttons
+and answers stay neutral. In the navigation (navbar, Menu, cart button and
+the start page's menu) three states are set per theme in common/states.css:
+by night "here" is gold with its light and the crown, the pointer moonlight,
+the rest light blue (see Navigation and chrome). The chosen landing item owns
+its light even when pointer input follows keyboard focus. Ready catalog cart buttons
 use cool moonlight ink/edges, becoming gold with the navbar cart's backlight on hover or
 keyboard focus; success feedback remains green. Catalog card hover and focused
 quantity/size fields also use the warm gold light; available controls remain blue.
@@ -445,62 +446,79 @@ drawing's faded foot (Find Sweets).
 ## Navigation and chrome
 
 Theme files own navigation paint (`--menu-*`, `--menu-dropdown-*`,
-`--preferences-*`, `--account-menu-*`). Shared component CSS owns geometry and
-interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
+`--preferences-*`, `--account-menu-*`, and the `--state-*` roles with each
+part's own variables). Shared component CSS owns geometry and interaction.
+Detailed mappings are in [CSS themes](docs/css-themes.md).
 
-- **Desktop:** logo/home at the left, page navigation centred, and cart,
-  account and settings at the right in that order. The customer header
-  can be wider than catalog content on large screens. Normal navigation has
-  no hover underline. Dark hover/focus/selection uses gold ink, glyph/icon
-  emission and the diffuse halo; only current pages get a crown.
+- **Here, pointer and rest:** where you are ("here": the page's link, the
+  Menu or cart on its own page, what is in use in Settings, the view you are
+  in, the logo on the start page and login) is gold with its light and the
+  crown; what you point at or reach with the keys is moonlight, by night
+  without a crown; everything else rests light blue. The navbar's logo rests
+  light blue without its crown, which moves to the page's link. An open Menu
+  or cart lights its button gold without a crown (the cart keeps its count).
+  By day both "here" and the pointer stay gold, as before, until the light
+  theme's review; the `--state-*` roles in light.css change that in one
+  place.
+
+- **Desktop:** logo/home at the left, page navigation centred, and the cart
+  and the Menu at the right in that order. The customer header can be wider
+  than catalog content on large screens. Normal navigation has no hover
+  underline; by night "here" is gold with glyph/icon emission and the diffuse
+  halo, the pointer moonlight; only "here" gets a crown.
 - **Phone:** page links live in a fixed bottom bar; dropdown icons stay at
   the top. Catalog/Shop, Find Sweets, FAQ and About are customer destinations.
   Ops has its own page links. Pages leave room under their last content for
   the bottom bar. The header edge is independent of selection (`--menu-edge`).
-  Account/settings open as centred full-height sheets below the top bar,
-  hiding the covered page/footer and keeping the page's scroll position. Their
-  V-shaped lower edge meets a 44px close button. On desktop they use larger centred
-  rounded cards. Mobile sheets hide the page links; the
-  logo and header icons stay available, with the open icon gold and glowing.
-  The fixed bottom close/back circle returns to the page.
+  The Menu and the cart open as full-height sheets below the top bar, hiding
+  the covered page/footer and keeping the page's scroll position. Their
+  V-shaped lower edge meets a 44px close circle. On desktop they are centred
+  rounded boxes over the dimmed, softly blurred page. Mobile sheets hide the
+  page links; the logo and header buttons stay available, the open one lit
+  gold. The close/back circle returns to the page.
 
 - **Menu:** three lines (and "Menu" from 768px up) open a pause-menu panel
   with a fixed title. The Menu level: Profile, Order history for business
   customers, Settings ›, Log out (CSRF-protected POST) or Login, and a
   quieter Return; staff switch views in the top left corner ("View" over
   the house and the wrench, the current one filled). In Settings the choice
-  in use shines in moonlight by night (gold by day); the chosen one has the gold and the crown.
+  in use is gold ("here"); the one pointed at is moonlight by night (gold with the crown by day).
   The page behind is dimmed and softly blurred. The Settings level: English/Français and the sun/moon theme (the
   chosen icon filled); ops has no theme choice. The button keeps selected
   ink, light and crown on profile/history/order-detail pages even when
   closed. Escape opens the Menu when nothing else is open, goes back from
   Settings and closes it, returning focus to the button. The arrow keys move the
-  crown as on the start page; no focus box. Switching sites keeps it open. Phone: the pennant
+  pointer as on the start page (by day the crown follows it); no focus box.
+  Switching views keeps it open. Phone: the pennant
   sheet with its close circle at the tip; desktop: a centred rectangle with
   a small × in the corner. The FAQ tells customers how to find it.
 - **Navbar cart:** an icon-only disclosure with editable product rows and a
   quantity stepper. At one item, the minus becomes a trash action. Desktop
   uses a compact preview with Go to cart in a centred box like the Menu's; the full cart, review and placed
   share unframed pages. Mobile hosts the full flow in the same sliding V-shaped sheet as
-  account/settings, with its own scrolling content. Retail details follow
+  the Menu, with its own scrolling content. Retail details follow
   products in the editor. B2B includes Previous orders and product search. The icon is 22px with a
   stronger stroke than the original artwork. Cart/checkout pages retain its
   selected light and crown; the count moves away from the crown. AJAX refresh
   preserves selection, scroll and in-progress contact fields. Added items produce green feedback; removals use red.
   In dark this is the bouncing icon and a diffuse coloured light, without a
   circular fill.
-  Light retains the filled flash. Empty/open carts hide the count.
+  Light retains the filled flash. An empty cart has no count; an open one
+  keeps it; on the cart page it steps aside for the crown.
 - **Customer footer:** the vector wordmark and crown, phone/mail/social icons,
   with Login for guests. Signed-in identity/logout are omitted;
   My account offers a quiet Log out below Change password as well as the menu.
   The footer stays small and centred on short pages. Ops uses its own quiet footer
   with identity, personal profile and logout.
 - **Landing:** the logo and tagline appear, then the menu rises beneath them.
-  The crown follows pointer, Tab or arrow-key selection; it stays at the last
-  chosen item. Settings, the signed-in account icon and a non-empty cart sit above; Login or a protected POST Log out sits below.
+  The chosen item follows pointer, Tab or arrow-key selection and stays at the
+  last one: by night it is moonlight and the crown is on the gold logo (you
+  are home); by day the crown marks the chosen item. The Menu button (and on
+  wider screens a non-empty cart) sit above; Login or a protected POST Log out
+  sits below.
   One screen, no navbar/footer or page scroll; the splash runs once per visit.
-- **Entrances:** login/reset share the menu background and centred logo, with
-  settings on the right. Their field, text and error colours have independent
+- **Entrances:** login/reset share the menu background and centred logo (by
+  night gold with its crown: you are home), with the Menu on the right. Their field, text and error colours have independent
   entrance roles. Dark errors use orange prose and a red failure cross. Login
   feedback is dots then a tick on success; it returns the form on failure.
 - **Head:** crown favicon and Open Graph logo on cream. Pages can override
@@ -582,12 +600,12 @@ Mobile hosts cart, review and placed in one sheet. `responsive-cart.js` moves
 the same live DOM between sheet and page on viewport changes, preserving
 fields and controls. The server pages/forms remain the no-JavaScript fallback.
 
-Cart panels round their lower corners; mobile sheets preserve their V-shaped
-bottom with softer joins. Outlines share the navbar's `--menu-edge`; the desktop
-cart's side borders meet its underline directly. Account/settings use rounded
-centred cards on desktop and landing, and sliding sheets elsewhere on mobile.
-Every panel has a close circle, outside click and Escape dismissal. Desktop
-panels grow naturally with their contents and use clamped spacing.
+Mobile sheets preserve their V-shaped bottom with softer joins; outlines
+share the navbar's `--menu-edge`. On desktop the Menu and the cart are
+rounded centred boxes with a quiet cross in the corner; on phones sliding
+sheets with a close circle at the tip (the start page's Menu a centred
+pennant). Outside click and Escape dismiss every panel. Desktop panels grow
+naturally with their contents and use clamped spacing.
 They scroll within the frame only after reaching available screen height,
 with one position marker and the close control outside the scroll area.
 Covered content is inert behind centred cards and mobile sheets.
@@ -626,10 +644,10 @@ pages, while an existing mobile flow stays mounted and open.
 See [CSS themes](docs/css-themes.md) for roles, timings and controller ownership.
 
 The desktop cart icon alone marks every checkout stage, including payment return
-and just-placed B2B order detail. Its count hides; its gold light and crown stay.
+and just-placed B2B order detail. Its count steps aside; its gold light and crown stay.
 The quick preview is disabled on cart as well as later stages. Mobile mounts the
-existing flow in that slot, without creating another editable cart. Landing
-account/settings show their active icon light but no top-edge panel emission.
+existing flow in that slot, without creating another editable cart. The start
+page's Menu shows its button's light but no top-edge panel emission.
 
 `order-flow.js` and `responsive-cart.js` keep the journey section, surface and
 timeline mounted across transitions. Only the editor/content below is replaced;
@@ -647,11 +665,11 @@ B2B catalog and shows a compact, three-second
 confirmation near the cart icon. Other success/error messages retain their
 normal behavior. Theme roles are documented in [CSS themes](docs/css-themes.md).
 
-On landing, account/settings open larger, rounded centred cards on desktop and
-mobile. Account/settings use the same centred cards on other desktop pages;
-normal mobile pages retain their sliding sheets. A close circle meets the middle of the bottom edge; outside click and
-Escape dismiss them. These popovers fade/scale instead of using the navbar's
-sliding sheet. Header icons keep their selected gold light.
+On the start page the Menu opens centred on desktop and mobile (a pennant on
+phones). The Menu and the cart use centred boxes on every desktop page;
+normal mobile pages keep their sliding sheets. Outside click and Escape
+dismiss them. The centred panels fade/scale instead of sliding from the
+navbar. An open panel lights its header button gold.
 
 B2B quick add resolves its live form on each change/submit, so review/back and
 replaced enhanced selects retain AJAX addition and reset after success.
@@ -697,6 +715,7 @@ respective theme roles. See [CSS themes](docs/css-themes.md) for implementation.
 
 Light-theme text on yellow buttons and catalog name bands uses dark navy.
 The accent scale's orange end is decorative/selection colour, not dark text
-ink. FAQ/account/settings/footer hover text uses dark navy on pale surfaces.
+ink. FAQ and footer hover text uses dark navy on pale surfaces; the Menu is
+white and gold on the navbar's blue.
 Order-progress text is navy in light while its connectors/dots retain gold;
 completed progress remains green in both themes.

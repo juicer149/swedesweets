@@ -49,10 +49,11 @@ The navigation has three states, set once per theme and read by every part:
 
 Each part has its own variables pointing at these, so one part can be tuned
 without touching the rest: `--nav-link-*` (the navbar's links),
-`--nav-trigger-*` (the Menu and cart buttons), `--nav-cart-*` (the cart
-button: at rest, and lit while its box or sheet is open, by night gold with
-its count still beside it and no crown; on the cart page it is "here", the
-count steps aside for the crown), `--logo-*` (the logo: rest,
+`--nav-trigger-*` (the Menu and cart buttons; `--nav-trigger-open-*` while
+their panel is open: by night gold with its light but no crown, the cart's
+count still beside it; on their own page they are "here" with the crown,
+the cart's count stepping aside), `--nav-cart-rest-ink` (the cart button at
+rest), `--logo-*` (the logo: rest,
 pointer, here; `--logo-rest-crown-opacity` hides its crown in the navbar by
 night, where the crown is on the page's link instead), `--menu-link-*` (the
 Menu's links), `--menu-choice-*` (Settings: `-active-*` for the one in use,
@@ -141,25 +142,22 @@ At viewport widths of 1200px and above, customer header content can grow to
 1200px. Page/catalog content retains `--width-page` (1040px), its four-column
 maximum and existing card widths. Ops header sizing is unchanged.
 
-Navbar cart, settings and account triggers are icons with transparent hit areas, no
-painted circular border/background. Hover, keyboard focus and the open state
-share gold icon emission and a halo. Keyboard focus retains a visible outline;
-the cart keeps its existing add/remove feedback animation and item count.
-Its navbar artwork is 1.375rem with a 12-unit stroke in its 201-unit viewBox;
-this local override does not change cart icons elsewhere. The account uses
-a single-person SVG and shares the dropdown emission.
-`--menu-dropdown-*` roles tune this light independently of catalog buttons.
-
-The right-hand controls appear in this order: cart, account, settings.
-Guests use the same account icon as a direct Login link. Signed-in users
-get Profile/history/logout; My account also has Log out below Change password.
-The customer footer omits signed-in identity/logout; ops keeps its own footer.
-The account and cart icons retain selected ink, halo and a crown on their pages,
-even while their dropdowns are closed. `config.context_processors.navigation`
-selects account/profile/history versus cart/checkout destinations; catalog pages
-select neither. Settings is an overlay and never claims a page selection.
-The cart count moves to the opposite corner from the crown. `navbar-cart.js`
-preserves the current-page marker when replacing the cart HTML via AJAX.
+The navbar's right-hand buttons are the cart and the Menu (three lines, the
+word "Menu" from 768px up), in that order: icons with transparent hit areas,
+no painted circular border or background. Keyboard focus keeps a visible
+outline. The cart's navbar artwork is 1.375rem with a 12-unit stroke in its
+201-unit viewBox; this local override does not change cart icons elsewhere.
+Both follow here, pointer and rest (above): at rest like the rest of the
+navbar, the pointer's colour when pointed at, lit like "here" without a
+crown while their panel is open (the cart keeps its count beside it), and
+"here" with the crown on their own pages: the cart on the cart and checkout
+pages (its count then steps aside), the Menu on My account, the order
+history and an order's page. `config.context_processors.navigation` selects
+account/profile/history versus cart/checkout destinations; catalog pages
+select neither. `navbar-cart.js` keeps the current-page marker when it
+replaces the cart's HTML. The customer footer omits signed-in identity and
+Log out; My account has Log out below Change password; ops keeps its own
+footer.
 
 
 ## Checks
@@ -274,8 +272,10 @@ set it explicitly, independently of `--menu-chosen`. The phone bar's outline
 follows it through `--menu-bar-edge`; override that separately when needed.
 
 Navbar links have no hover underline in either theme. `--menu-link-glow` is
-`none` in light and a soft yellow radial gradient in dark, shown on hover,
-keyboard focus and the current page. On phones the halo sits behind the label. The current-page crown and keyboard focus outline remain visible.
+`none` in light and a soft yellow radial gradient in dark; by night it lights
+the current page, while hover and keyboard focus take the pointer's moonlit
+glow (`--state-pointer-glow`, Here, pointer and rest). On phones the halo sits
+behind the label. The current-page crown and keyboard focus outline remain visible.
 This navbar effect does not change the landing menu's own animation or the
 selected-language marker.
 
@@ -629,17 +629,20 @@ edit blur radii or lateral offsets. Text shadows follow actual glyph shapes,
 including the outside letters; SVG filters follow painted icon shapes. No
 per-character markup, copied text or gradient-filled glyphs is required.
 
-Navbar/section links keep light while current. Open FAQ titles and chevrons
-emit separately, with transparent heading backgrounds. Find Sweets shop names
-and pins emit independently; addresses and FAQ answers stay neutral. The login
-home logo shares the navbar logo's gold hover/focus light. With
-`data-landing-live`, only the chosen landing item emits: moving from keyboard
-to pointer input does not leave a second light behind.
+Navbar and section links keep their light while current. Open FAQ titles and
+chevrons emit separately, with transparent heading backgrounds. Find Sweets
+shop names and pins emit independently; addresses and FAQ answers stay
+neutral. The navigation's light for "here" and for the pointer is set in
+`common/states.css` (Here, pointer and rest): by night the logo on the start
+page and login is gold with its crown and light, and the pointer (hover,
+focus, the chosen item on the start page and in the Menu) moonlight. With
+`data-landing-live`, only the chosen landing item emits: moving from
+keyboard to pointer input does not leave a second light behind.
 
 `--interaction-glow` and `--interaction-glow-blur` alias the menu halo for local
-components. `--menu-dropdown-*` separately paints icon-only cart/account/settings
-triggers. Current cart/account pages retain light and a crown while closed;
-settings has no current-page state. Crown shadows are applied to a wrapper
+components. `--menu-dropdown-*` is the day's light for the icon-only cart and
+Menu buttons (`--nav-trigger-*` point at it by day). The cart and the Menu
+keep their light and a crown on their own pages while closed. Crown shadows are applied to a wrapper
 around the masked silhouette so their outside light is not clipped.
 
 Light has no shared text-link halo/emission, but selected language choices and
@@ -693,20 +696,26 @@ the gold selected text, and `--preferences-selected-shadow` its emission.
 `--preferences-selected-glow`, `--preferences-selected-glow-filter` and
 `--preferences-selected-glow-opacity` control the halo. Hover/focus uses
 `--preferences-hover` and the shared interaction shadows.
-`common/language-switcher.css` reads these roles directly; there is no second
-menu-language palette or local alias layer to override them.
+`common/language-switcher.css` reads these roles directly. In the Menu the
+choice in use and the one pointed at read `--menu-choice-active-*` and
+`--menu-choice-pointer-*` on top (Here, pointer and rest).
 
 The Menu's surface, border, links, title, divider and Return read
 `--account-menu-*` (`-bg`, `-border`, `-shadow` for the desktop rectangle,
 `-text`, `-selected`, `-divider`); its button reads
-`--preferences-trigger-ink`. The staff's house and wrench are language
-options, so they read the same `--preferences-option`/`-selected` roles.
+`--preferences-trigger-ink`. The staff's view switch (the house and the
+wrench in the corner) reads `--panel-chrome-ink` at rest and
+`--site-switch-here-ink` / `--site-switch-pointer-ink` for the view they are
+in and the one pointed at.
 `accounts/account_menus.py` composes allowed destinations; templates
 render those destinations and never choose links from user roles.
 
 The theme choices (sun and moon) are language options in their colours and
 light (`--preferences-option`, `--preferences-selected`); only the icons'
-size lives in `common/theme-switch.css`.
+size lives in `common/theme-switch.css`. The language and theme in use read
+`--menu-choice-active-*` ("here": gold, the others dimmed by
+`--menu-choice-idle-opacity`), the one pointed at `--menu-choice-pointer-*`
+(by night moonlight).
 
 ## Mobile scrollports and dropdown input
 
@@ -719,37 +728,35 @@ horizontal scrolling are unchanged.
 
 Dropdown triggers apply hover colour, light and movement only under
 `(hover: hover) and (pointer: fine)`. Open, keyboard-focus-visible and current-page
-states remain available everywhere. A touch closing a non-current dropdown
-returns its icon to blue; current account/cart icons keep their gold/crown.
+states remain available everywhere. A touch closing a panel that is not on
+its own page returns its button to rest; the Menu or cart on its own page
+keeps its gold and crown.
 Keyboard dismissal still restores a visible focus indicator.
 
 
 ## Centred cards and mobile sheets
 
-`common/mobile-menu.css` gives desktop account/settings centred rounded cards
-up to 38rem, with height-aware spacing/type and natural content height.
-They scroll only when viewport height requires it; all three panels have a close circle.
-Below 768px they become full sheets. `mobile-menu.js` measures the header and
-fixed bottom navigation. Open panels lock page scrolling on either screen size;
-centred account/settings cards and mobile sheets make covered content inert.
-Closing restores both.
-The sheet uses the existing preferences/account surface, border and ink roles.
-A two-layer clipped silhouette draws its V edge; the close button stays a normal
-44px focusable button. There is no top border against the header. Mobile sheets
-reveal downward from the header and retract upward when closed. The desktop
-cart uses the same sliding viewport, with its right edge aligned to the cart
-icon and side borders meeting the navbar. Centred account/settings cards use a
-180ms fade/scale opening and 140ms closing instead; landing uses cards on mobile
-too. Switching panels closes the current one before revealing the next; rapid
-taps keep the latest choice. Reduced motion skips both animations. A fixed viewport clips the moving
-sheet at the header; the page beneath remains visible. Cart rows and retail
-contact fields scroll within the frame, above its V and accessible close button.
+From 768px up the Menu and the cart open as centred rounded boxes (38rem
+wide) over the dimmed, softly blurred page (`--menu-backdrop-bg`,
+`--menu-backdrop-filter`), each with its title fixed at the top and a quiet
+cross in its corner; they fade and scale in (180ms) and out (140ms). The Menu
+takes its natural height, scrolling only on a short window; the cart stays
+between 26rem and 44rem high and its list scrolls inside. Below 768px they
+become full sheets under the header: `mobile-menu.js` measures the header and
+the fixed bottom navigation, and the sheets reveal downward from the header
+and retract upward. A two-layer clipped silhouette draws their V edge and the
+close circle sits at its tip as a normal 44px focusable button; there is no
+top border against the header. Open panels lock page scrolling and make the
+covered content inert; closing restores both. Switching panels closes the
+current one before revealing the next; rapid taps keep the latest choice.
+Reduced motion skips the animations. Cart rows and retail contact fields
+scroll within the frame, above its V and close circle.
 
 The sun and moon say day and night through their icons and accessible
 names, without a duplicate Day/Night label; the one in use is pressed and
-lit. Guest footers say Login. Landing
-shows a protected POST Log out at the bottom when signed in, with the account
-icon next to settings at the top.
+lit. Guest footers say Login. The start page shows Login, or a protected
+POST Log out when signed in, at the bottom, and the Menu button at the top
+(with the cart beside it on wider screens once it holds something).
 
 On mobile the catalog row gap is 5rem: the hanging cart clears the shelf by
 about 14px. Empty catalogs reuse `catalog/no_photo.html` with the empty-catalog
@@ -781,10 +788,10 @@ Dropdown links extend the navigation: `--font-size-nav-link` and
 `--font-weight-nav-link` are shared with the desktop navbar. Below 768px the
 panels use the landing menu's Fredoka heading family/weight and
 `--font-size-landing-link`, with a compact size on short landscape screens.
-Language and Theme groups are centred in desktop settings too. Account and
-site-switch links use `menu-panel-link` to reuse the existing nav/landing halo,
-glyph emission and selected light. Their surface-specific text colours still
-come from account/preferences theme roles so light dropdowns remain readable.
+Language and Theme are centred groups in Settings at every width. The
+Menu's links use `menu-panel-link` to reuse the nav/landing halo, glyph
+emission and selected light; their colours come from `--account-menu-*`
+(the panel's ink) and `--menu-link-*` (here and pointer).
 
 On phones only (below 768px), Find Sweets, FAQ and catalog let light paint
 past their `.page-section` edges. The full-width `.site-main` clips horizontal
@@ -853,14 +860,12 @@ The Continue button requires browser-valid fields and matching emails; Django
 still validates delivery, ownership, stock and payment locks. Only confirmation
 blocks paste/drop. Ordinary password fields and autofill retain their behaviour.
 
-Sliding cart panels have square upper corners and softer lower corners.
-Centred account/settings cards round all four corners. Normal mobile sheets
-keep their V-shaped bottom, with rounded joins at the left and right. Outlines reuse
-`--menu-edge`, the gold line beneath the navbar. Cart has a fixed close circle
-on desktop too, and outside click/Escape still dismiss it. Cart contents scroll
-internally when needed. Desktop account/settings grow with their contents
-until the viewport cap;
-their contents scroll only once that cap is reached.
+The centred desktop boxes (the Menu, the cart) round all four corners.
+Mobile sheets keep their V-shaped bottom, with rounded joins at the left and
+right. Outlines reuse `--menu-edge`, the gold line beneath the navbar.
+Outside click and Escape dismiss every panel. The cart's list scrolls inside
+its box; the Menu grows with its contents until the viewport cap, and scrolls
+only once that cap is reached.
 `menu-scroll.js` shows a position thumb only when contents overflow; its theme
 roles are `--menu-scroll-thumb` and `--menu-scroll-track`. Native scrollbars
 remain the fallback without JavaScript.
@@ -981,11 +986,11 @@ than full-width banners. `cart-notice.js` follows the icon on resize/scroll and
 removes the notice after about three seconds. Other messages do not expire.
 Paint belongs to `--cart-notice-bg/text/border/shadow` in both themes.
 
-Landing account/settings are large rounded centred popovers at both viewport
-sizes, with a gold `--menu-edge` border and close circle centred on the bottom
-edge. Their viewport covers the screen; the backdrop dismisses on outside
-click, and Escape/close restore the trigger. They fade/scale in rather than
-slide from a navbar. Normal site sheets keep their existing geometry.
+The start page's Menu opens centred at every width: on a phone in the
+pennant shape with its close circle at the tip, from 768px up as the
+navbar's rectangle (`public/landing.css`). Its viewport covers the screen;
+the backdrop dismisses on outside click, and Escape or the cross restore the
+button. It fades and scales in rather than sliding from a navbar.
 
 B2B quick-add events resolve the current form/select through document delegation,
 including keyboard submit. They do not retain listeners on a replaced TomSelect
@@ -1024,11 +1029,10 @@ are missing (muted, `.is-incomplete`): a press marks each empty field with
 a yellow dot (`--field-missing-dot`) and each filled in but wrong one with a
 red dot (`--field-invalid-dot`), the same dot as ops's changed fields, and
 takes the visitor to the first.
-Account/settings cards reach 38rem wide, with natural height capped by the
-viewport. Landing also uses
-these larger rounded proportions on mobile. Normal mobile account/settings
-retain their V-shaped sheets. The centre-card transitions use fade/scale;
-cart and ordinary mobile sheets keep their slide. Backdrop/close/Escape remain.
+The centred boxes reach 38rem wide. The start page's Menu is centred on
+mobile too (a pennant); other mobile panels keep their V-shaped sheets. The
+centred boxes fade/scale; mobile sheets slide. Backdrop, close and Escape
+remain.
 
 Checkout layout lives in `public/checkout.css` and `common/cart-panel.css`:
 One 36rem column for the persistent timeline, product rows and details, with
@@ -1044,11 +1048,11 @@ server's redundant B2B placed success banner has been removed.
 
 ### Natural panel height
 
-Account/settings cards (including landing on mobile) and the desktop cart use
-content height with `clamp()` spacing. Their outer frame sets the viewport cap;
-the inner flex scroll area has `min-height: 0` and no separate height cap. Extra
-links/rows grow the panel first; scrolling begins only when the frame fills its
-available screen height. The close control remains outside that scroll area.
+The Menu (including the start page's on mobile) uses content height with
+`clamp()` spacing; its frame sets the viewport cap and it scrolls only when
+it fills the available screen height. The desktop cart stays between 26rem
+and 44rem high and its list scrolls inside, under its title and above its
+summary row. The close control remains outside the scroll area.
 The inner card padding reserves room for link halos so their pseudo-elements
 do not create a small, premature scroll range. Normal mobile sheets retain
 their full available height and internal scrolling.
@@ -1057,10 +1061,13 @@ their full available height and internal scrolling.
 
 Dark's `--moonlight` mixes white (85%) with primary-100 (15%). Change
 this role to tune the shared cool near-white. Its component aliases are
-`--menu-logo`, `--menu-cart-ink`, `--catalog-cart-ink/border`,
+`--menu-logo` (the navbar logo now rests light blue: `--logo-rest-ink`),
+`--state-pointer-ink`, `--menu-cart-ink`, `--catalog-cart-ink/border`,
 `--cart-name`, `--cart-control-ink/border`, `--find-sweets-name` and
-`--faq-question-text`. Ordinary navigation remains blue. Hover/selection
-retains gold and its existing glow; success and failure remain green/red.
+`--faq-question-text`. Ordinary navigation remains blue. In the navigation
+the pointer is moonlight and "here" gold (Here, pointer and rest); on the
+page, hover and selection keep gold and its glow; success and failure remain
+green/red.
 `--cart-quantity-ink` and `--cart-control-active` use selected gold.
 `--cart-clear-text` uses red-400. The minimum quantity's trash uses
 `--cart-remove-ink`. Primary buttons use `--action-primary-*` gold ink/edge
@@ -1111,8 +1118,9 @@ stay intact. Light's `--color-accent-text-standard` uses primary-900; label band
 names and primary action text map to that role. Default/hover action text also
 aliases `--action-primary-text`, retaining navy while the fill changes.
 
-FAQ/previous-order hover titles, selected/hovered language choices, account
-links, the staff site link and footer link hover use primary-900 in light.
+FAQ/previous-order hover titles and footer link hover use primary-900 in
+light; the Menu's links and choices are white and gold on its blue (Here,
+pointer and rest).
 `--display-shadow` uses neutral-600 to retain the stamped lettering's dark
 inner shading without an orange cast. Dark's intentional gold selections and
 orange warnings retain their roles.

@@ -60,8 +60,7 @@
   color: var(--nav-trigger-here-ink);
 }
 
-.menu-dropdown-trigger:not([aria-current="page"]):focus-visible,
-details[open] > .menu-dropdown-trigger:not([aria-current="page"]) {
+.menu-dropdown-trigger:not([aria-current="page"]):focus-visible {
   color: var(--nav-trigger-pointer-ink);
 }
 
@@ -76,8 +75,7 @@ details[open] > .menu-dropdown-trigger:not([aria-current="page"]) {
   filter: var(--nav-trigger-pointer-glow-filter);
 }
 
-.menu-dropdown-trigger:not([aria-current="page"]):focus-visible .ui-icon-svg,
-details[open] > .menu-dropdown-trigger:not([aria-current="page"]) .ui-icon-svg {
+.menu-dropdown-trigger:not([aria-current="page"]):focus-visible .ui-icon-svg {
   filter: var(--nav-trigger-pointer-icon-filter);
 }
 
@@ -88,26 +86,28 @@ details[open] > .menu-dropdown-trigger:not([aria-current="page"]) .ui-icon-svg {
 }
 
 
-/* ### The cart button: at rest like the rest (by night light blue), the
-   pointer's colour when pointed at, lit like "here" when its box or sheet
-   is open (by night gold, its count still beside it, no crown: you are not
-   on its page), and "here" with the crown on the cart page itself. */
+/* ### Open: the Menu or the cart with its panel open is lit like "here"
+   (by night gold with its light), but without the crown, since you are not
+   on its page; the cart keeps its count beside it. On its own page the
+   button is "here" with the crown (above). */
+details[open] > .menu-dropdown-trigger:not([aria-current="page"]),
+details[open] > .menu-dropdown-trigger:not([aria-current="page"]):hover {
+  color: var(--nav-trigger-open-ink);
+}
+
+details[open] > .menu-dropdown-trigger:not([aria-current="page"])::before {
+  background: var(--nav-trigger-open-glow);
+  filter: var(--nav-trigger-open-glow-filter);
+}
+
+details[open] > .menu-dropdown-trigger:not([aria-current="page"]) .ui-icon-svg {
+  filter: var(--nav-trigger-open-icon-filter);
+}
+
+/* ### The cart button at rest: like the rest of the navbar (by night light
+   blue), with its count. */
 .site-nav-cart__trigger {
   color: var(--nav-cart-rest-ink);
-}
-
-.site-nav-cart[open] > .site-nav-cart__trigger:not([aria-current="page"]),
-.site-nav-cart[open] > .site-nav-cart__trigger:not([aria-current="page"]):hover {
-  color: var(--nav-cart-open-ink);
-}
-
-.site-nav-cart[open] > .site-nav-cart__trigger:not([aria-current="page"])::before {
-  background: var(--nav-cart-open-glow);
-  filter: var(--nav-cart-open-glow-filter);
-}
-
-.site-nav-cart[open] > .site-nav-cart__trigger:not([aria-current="page"]) .ui-icon-svg {
-  filter: var(--nav-cart-open-icon-filter);
 }
 
 

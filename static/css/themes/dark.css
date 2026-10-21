@@ -419,10 +419,10 @@
   --nav-trigger-pointer-icon-filter: var(--state-pointer-icon-filter);
 
   --nav-cart-rest-ink: var(--state-rest-ink);
-  --nav-cart-open-ink: var(--state-here-ink);
-  --nav-cart-open-glow: var(--state-here-glow);
-  --nav-cart-open-glow-filter: var(--state-here-glow-filter);
-  --nav-cart-open-icon-filter: var(--state-here-icon-filter);
+  --nav-trigger-open-ink: var(--state-here-ink);
+  --nav-trigger-open-glow: var(--state-here-glow);
+  --nav-trigger-open-glow-filter: var(--state-here-glow-filter);
+  --nav-trigger-open-icon-filter: var(--state-here-icon-filter);
 
   --logo-rest-ink: var(--state-rest-ink);
   --logo-rest-crown-opacity: 0;
