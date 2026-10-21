@@ -457,9 +457,9 @@ Detailed mappings are in [CSS themes](docs/css-themes.md).
   without a crown; everything else rests light blue. The navbar's logo rests
   light blue without its crown, which moves to the page's link. An open Menu
   or cart lights its button gold without a crown (the cart keeps its count).
-  By day both "here" and the pointer stay gold, as before, until the light
-  theme's review; the `--state-*` roles in light.css change that in one
-  place.
+  By day both "here" and the pointer stay gold, as before; three lines in
+  light.css (`--state-rest-ink`, `--state-here-ink`, `--state-pointer-ink`)
+  change the whole navigation at once.
 
 - **Desktop:** logo/home at the left, page navigation centred, and the cart
   and the Menu at the right in that order. The customer header can be wider

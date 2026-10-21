@@ -458,6 +458,9 @@
   --landing-account-pointer-ink: var(--state-pointer-ink);
 
   --cart-sheet-close-hover: var(--state-pointer-ink);
+
+  /* The Menu's box on wider screens: the night sky, no edge */
+  --site-menu-box-bg: var(--color-primary-1000);
 }
 
 

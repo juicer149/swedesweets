@@ -42,7 +42,7 @@ The navigation has three states, set once per theme and read by every part:
 
 | Role | By day (light.css) | By night (dark.css) |
 |---|---|---|
-| `--state-rest-ink` | `--menu-ink` (white) | `--interactive-text` (light blue) |
+| `--state-rest-ink` | white | `--interactive-text` (light blue) |
 | `--state-here-ink`, `-glow`, `-glow-filter`, `-text-shadow`, `-icon-filter` | gold (as before) | gold with its light |
 | `--state-pointer-ink`, `-glow`, `-glow-filter`, `-text-shadow`, `-icon-filter` | gold (as before) | moonlight with a moonlit glow |
 | `--state-pointer-crown-opacity` | 1: the crown follows the pointer | 0: the crown marks only "here" |
@@ -59,9 +59,18 @@ night, where the crown is on the page's link instead), `--menu-link-*` (the
 Menu's links), `--menu-choice-*` (Settings: `-active-*` for the one in use,
 `-pointer-*` for the one pointed at), `--site-switch-*` (the view switch),
 `--landing-*` (the start page's menu, its Login / Log out and the logo's
-halo). By day every part variable points at the role it used before, so the
-day looks exactly as it did; change the `--state-*` roles in light.css to
-give the day the same split. `common/states.css` is loaded last (public.css,
+halo).
+
+By day the three inks are the source: `--state-rest-ink` (white),
+`--state-here-ink` and `--state-pointer-ink` (both gold) are set at the top of
+light.css's "Here, pointer and rest" block, and `--menu-ink`, `--menu-chosen`,
+the cart's and Settings' hover colours and the gold glows are made from them.
+Change those three lines and the whole navigation follows: navbar, Menu,
+Settings, the Menu and cart buttons, the view switch, the start page's menu,
+and the light behind the filter chips. (By day the logo and Login / Log out
+keep the rest colour when pointed at.) The page's own parts sit on the cream,
+where those colours would not read, so their words have their own three:
+`--state-page-rest-ink`, `--state-page-here-ink`, `--state-page-pointer-ink`. `common/states.css` is loaded last (public.css,
 ops.css) and maps the parts onto their variables. The catalog's category
 tabs, buttons, cards, open questions and the order timeline keep their own
 states.
@@ -738,7 +747,9 @@ Keyboard dismissal still restores a visible focus indicator.
 
 From 768px up the Menu and the cart open as centred rounded boxes (38rem
 wide; the Menu at least `--site-menu-min-height`, 31rem, so every level and
-account has the same height and going into Settings does not resize it) over the dimmed, softly blurred page (`--menu-backdrop-bg`,
+account has the same height and going into Settings does not resize it; no
+edge, `--site-menu-box-bg`: by day the navbar's blue, by night the night sky
+`--color-primary-1000`) over the dimmed, softly blurred page (`--menu-backdrop-bg`,
 `--menu-backdrop-filter`), each with its title fixed at the top and a quiet
 cross in its corner; they fade and scale in (180ms) and out (140ms). The Menu
 takes its natural height, scrolling only on a short window; the cart stays

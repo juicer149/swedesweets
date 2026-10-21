@@ -317,8 +317,8 @@ details[data-mobile-menu]:not([data-panel-lit]) .mobile-menu-panel {
     max-height: calc(100dvh - 5rem);
     padding: calc(clamp(1rem, 3dvh, 1.5rem) + 2.5rem) clamp(1.25rem, 4vw, 2.5rem) clamp(1.5rem, 5dvh, 3rem);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: var(--account-menu-bg);
-    border: 1px solid var(--account-menu-border); border-radius: var(--radius-md);
+    background: var(--site-menu-box-bg, var(--account-menu-bg));
+    border: 1px solid var(--site-menu-box-border, var(--account-menu-border)); border-radius: var(--radius-md);
     box-shadow: var(--account-menu-shadow);
   }
   .site-menu__panel .mobile-menu-close,

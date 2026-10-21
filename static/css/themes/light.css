@@ -202,9 +202,9 @@
 
   /* ## Light menu: brand blue, white available ink, gold selected ink. */
   --menu-bg: var(--color-primary-400);
-  --menu-ink: var(--color-white);
+  --menu-ink: var(--state-rest-ink);
   --menu-logo: var(--menu-ink);
-  --menu-chosen: var(--color-accent-600);
+  --menu-chosen: var(--state-here-ink);
   --menu-crown: var(--menu-chosen);
   /* Login retains its outlined action; authenticated dropdowns are icons. */
   --menu-line: color-mix(in srgb, var(--menu-ink) 70%, transparent);
@@ -222,15 +222,15 @@
   --menu-crown-shadow: none;
 
   /* Icon-only cart/settings dropdowns. These colours do not alter catalog buttons. */
-  --menu-dropdown-glow: radial-gradient(ellipse, rgb(249 181 26 / 0.14), transparent 75%);
+  --menu-dropdown-glow: radial-gradient(ellipse, color-mix(in srgb, var(--state-pointer-ink) 14%, transparent), transparent 75%);
   --menu-dropdown-glow-filter: blur(8px);
-  --menu-dropdown-icon-filter: drop-shadow(0 0 4px rgb(249 181 26 / 0.25));
+  --menu-dropdown-icon-filter: drop-shadow(0 0 4px color-mix(in srgb, var(--state-pointer-ink) 25%, transparent));
 
   /* ## Cart */
   /* ### Icon-only cart at rest */
-  --menu-cart-ink: var(--color-white);
+  --menu-cart-ink: var(--state-rest-ink);
   /* ### Pointed at, or open */
-  --menu-cart-ink-hover: var(--color-accent-600);
+  --menu-cart-ink-hover: var(--state-pointer-ink);
   /* ### The count over its corner */
   --menu-cart-count-ink: var(--color-primary-950);
   --menu-cart-count-bg: var(--color-accent-600);
@@ -295,22 +295,22 @@
   --preferences-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
   --preferences-option: var(--menu-ink);
   --preferences-selected: var(--menu-chosen);
-  --preferences-selected-shadow: 0 0 8px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
-  --preferences-selected-glow: radial-gradient(ellipse, rgb(249 181 26 / 0.12), transparent 75%);
+  --preferences-selected-shadow: 0 0 8px color-mix(in srgb, var(--state-here-ink) 20%, transparent);
+  --preferences-selected-glow: radial-gradient(ellipse, color-mix(in srgb, var(--state-here-ink) 12%, transparent), transparent 75%);
   --preferences-selected-glow-filter: blur(6px);
   --preferences-selected-glow-opacity: 1;
-  --preferences-hover: var(--menu-chosen);
+  --preferences-hover: var(--state-pointer-ink);
   /* The Menu (includes/site_menu.html): its panel, links, title and Return. */
   --account-menu-bg: var(--preferences-bg);
   --account-menu-border: var(--preferences-border);
   /* the Menu's rectangle on wider screens, lifted off the page */
   --account-menu-shadow: 0 22px 40px rgb(0 0 0 / 0.35);
   --account-menu-text: var(--menu-ink);
-  --account-menu-selected: var(--menu-chosen);
+  --account-menu-selected: var(--state-pointer-ink);
   /* in Settings: the choice in use in gold by day (the sun), the others
      dimmed; dark.css gives it moonlight */
   --menu-choice-active-ink: var(--menu-chosen);
-  --menu-choice-active-glow: rgb(249 181 26 / 0.35);
+  --menu-choice-active-glow: color-mix(in srgb, var(--state-here-ink) 35%, transparent);
   --menu-choice-idle-opacity: 0.6;
   --account-menu-divider: color-mix(in srgb, var(--menu-ink) 30%, transparent);
 
@@ -586,21 +586,33 @@
    Here, pointer and rest (common/states.css)
 
    The navigation has three states: where you are ("here"), what you point at
-   or reach with the keys ("pointer"), and the rest. The --state-* roles set
-   them; every part below reads its own variables, which point at those (or,
-   by day, at the very roles it used before, so the day looks as it did).
-   Change a --state-* role to change them all; tune one part on its own by
-   pointing its variable elsewhere. themes/dark.css sets the night: here in
-   gold with its light and the crown, the pointer in moonlight.
+   or reach with the keys ("pointer"), and the rest. Three colours set them,
+   the first three lines below: the navbar, the Menu and Settings, the cart
+   and Menu buttons, the view switch, the logo, the start page's menu, and
+   the light behind the filter chips all follow them (--menu-ink and
+   --menu-chosen above are these too). Every part reads its own variable,
+   which points at a --state-* role: tune one part on its own by pointing its
+   variable elsewhere. themes/dark.css sets the night: here in gold with its
+   light and the crown, the pointer in moonlight, the rest light blue.
+
+   The page's own parts (the filter chips' words, on the cream) need ink that
+   reads on the page rather than on the blue: --state-page-*.
    ============================================================================= */
 :root {
-  --state-rest-ink: var(--menu-ink);
-  --state-here-ink: var(--menu-chosen);
+  /* ## The three */
+  --state-rest-ink: var(--color-white);
+  --state-here-ink: var(--color-accent-600);
+  --state-pointer-ink: var(--color-accent-600);
+
+  /* ## On the page (the cream), where the three would not read */
+  --state-page-rest-ink: var(--text-blue);
+  --state-page-here-ink: var(--filter-active-ink);
+  --state-page-pointer-ink: var(--color-primary-600);
+
   --state-here-glow: var(--menu-link-glow);
   --state-here-glow-filter: var(--interaction-glow-filter);
   --state-here-text-shadow: var(--interaction-text-shadow);
   --state-here-icon-filter: var(--interaction-icon-filter);
-  --state-pointer-ink: var(--menu-chosen);
   --state-pointer-glow: var(--menu-link-glow);
   --state-pointer-glow-filter: var(--interaction-glow-filter);
   --state-pointer-text-shadow: var(--interaction-text-shadow);
@@ -625,52 +637,58 @@
   --nav-trigger-pointer-icon-filter: var(--menu-dropdown-icon-filter);
 
   /* The Menu and cart buttons while their panel is open */
-  --nav-trigger-open-ink: var(--menu-chosen);
+  --nav-trigger-open-ink: var(--state-here-ink);
   --nav-trigger-open-glow: var(--menu-dropdown-glow);
   --nav-trigger-open-glow-filter: var(--menu-dropdown-glow-filter);
   --nav-trigger-open-icon-filter: var(--menu-dropdown-icon-filter);
 
   /* The cart button at rest */
-  --nav-cart-rest-ink: var(--menu-cart-ink);
+  --nav-cart-rest-ink: var(--state-rest-ink);
 
   /* The logo: at rest in the navbar, pointed at, and "here" on the brand's
      own pages (the start page, login and the other entrance pages) */
-  --logo-rest-ink: var(--menu-logo);
+  --logo-rest-ink: var(--state-rest-ink);
   --logo-rest-crown-opacity: 1;
-  --logo-pointer-ink: var(--menu-logo-hover);
+  /* by day the logo keeps its colour when pointed at */
+  --logo-pointer-ink: var(--state-rest-ink);
   --logo-pointer-filter: var(--interaction-icon-filter);
-  --logo-here-ink: var(--menu-logo);
+  --logo-here-ink: var(--state-rest-ink);
   --logo-here-filter: none;
-  --logo-here-pointer-ink: var(--menu-logo-hover);
+  --logo-here-pointer-ink: var(--state-rest-ink);
   --landing-logo-halo: var(--landing-moon-halo);
 
   /* The Menu's links */
-  --menu-link-here-ink: var(--account-menu-selected);
-  --menu-link-pointer-ink: var(--account-menu-selected);
+  --menu-link-here-ink: var(--state-here-ink);
+  --menu-link-pointer-ink: var(--state-pointer-ink);
   --menu-link-pointer-glow: var(--interaction-glow);
   --menu-link-pointer-glow-filter: var(--interaction-glow-filter);
   --menu-link-pointer-text-shadow: var(--interaction-text-shadow);
   --menu-link-pointer-crown-opacity: var(--state-pointer-crown-opacity);
 
   /* Settings: the language and theme pointed at (in use: --menu-choice-active-*) */
-  --menu-choice-pointer-ink: var(--preferences-hover);
+  --menu-choice-pointer-ink: var(--state-pointer-ink);
   --menu-choice-pointer-text-shadow: var(--interaction-text-shadow);
   --menu-choice-pointer-glow: var(--menu-link-glow);
   --menu-choice-pointer-glow-filter: var(--interaction-glow-filter);
   --menu-choice-pointer-crown-opacity: var(--state-pointer-crown-opacity);
 
   /* The staff's view switch */
-  --site-switch-here-ink: var(--menu-chosen);
-  --site-switch-pointer-ink: var(--account-menu-selected);
+  --site-switch-here-ink: var(--state-here-ink);
+  --site-switch-pointer-ink: var(--state-pointer-ink);
 
   /* The start page's menu and its Login / Log out */
-  --landing-pointer-ink: var(--menu-chosen);
+  --landing-pointer-ink: var(--state-pointer-ink);
   --landing-pointer-glow: var(--interaction-glow);
   --landing-pointer-glow-filter: var(--interaction-glow-filter);
   --landing-pointer-text-shadow: var(--interaction-text-shadow);
   --landing-pointer-icon-filter: var(--interaction-icon-filter);
   --landing-pointer-crown-opacity: var(--state-pointer-crown-opacity);
-  --landing-account-pointer-ink: var(--landing-control-hover-ink);
+  /* by day Login / Log out keep their colour when pointed at */
+  --landing-account-pointer-ink: var(--state-rest-ink);
+
+  /* The Menu's box on wider screens: the navbar's colour, no edge */
+  --site-menu-box-bg: var(--menu-bg);
+  --site-menu-box-border: transparent;
 }
 
 
@@ -681,12 +699,12 @@
 :root:not([data-site-zone="ops"]) {
   --chip-pill-bg: transparent;
   --chip-pill-border: transparent;
-  --chip-rest-ink: var(--text-blue);
-  --chip-here-ink: var(--filter-active-ink);
+  --chip-rest-ink: var(--state-page-rest-ink);
+  --chip-here-ink: var(--state-page-here-ink);
   --chip-here-bg: transparent;
-  --chip-here-glow: color-mix(in srgb, var(--color-accent-600) 45%, transparent);
-  --chip-pointer-ink: var(--color-primary-600);
+  --chip-here-glow: color-mix(in srgb, var(--state-here-ink) 45%, transparent);
+  --chip-pointer-ink: var(--state-page-pointer-ink);
   --chip-pointer-bg: transparent;
   --chip-pointer-shadow: none;
-  --chip-pointer-glow: color-mix(in srgb, var(--text-blue) 18%, transparent);
+  --chip-pointer-glow: color-mix(in srgb, var(--state-page-rest-ink) 18%, transparent);
 }
