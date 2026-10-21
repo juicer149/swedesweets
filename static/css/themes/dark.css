@@ -460,3 +460,13 @@
   --cart-sheet-close-hover: var(--state-pointer-ink);
 }
 
+
+/* Filter chips and the status toggles: the word only, "here" gold with its
+   light behind it, the pointer moonlight, the rest light blue. */
+:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  --chip-rest-ink: var(--state-rest-ink);
+  --chip-here-ink: var(--state-here-ink);
+  --chip-here-glow: color-mix(in srgb, var(--state-here-ink) 28%, transparent);
+  --chip-pointer-ink: var(--state-pointer-ink);
+  --chip-pointer-glow: color-mix(in srgb, var(--state-pointer-ink) 18%, transparent);
+}

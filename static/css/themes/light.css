@@ -673,3 +673,20 @@
   --landing-account-pointer-ink: var(--landing-control-hover-ink);
 }
 
+
+/* Filter chips and the status toggles (chips.css): on the public and
+   business sites no pills, only the word: the one on dark and lit by a
+   warm light behind it, the one pointed at blue with a cool one. Ops keeps
+   its pills (none of these set there). */
+:root:not([data-site-zone="ops"]) {
+  --chip-pill-bg: transparent;
+  --chip-pill-border: transparent;
+  --chip-rest-ink: var(--text-blue);
+  --chip-here-ink: var(--filter-active-ink);
+  --chip-here-bg: transparent;
+  --chip-here-glow: color-mix(in srgb, var(--color-accent-600) 45%, transparent);
+  --chip-pointer-ink: var(--color-primary-600);
+  --chip-pointer-bg: transparent;
+  --chip-pointer-shadow: none;
+  --chip-pointer-glow: color-mix(in srgb, var(--text-blue) 18%, transparent);
+}

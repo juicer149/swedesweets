@@ -1133,3 +1133,15 @@ for both. It does not change the travel/pulse sequence.
 The footer wordmark uses `--footer-logo: var(--color-primary-200)` in both
 themes. This is independent of the navbar/landing moonlight wordmark in dark;
 the footer crown stays gold and footer link roles remain separate.
+
+### Filter chips and status toggles
+
+On the public and business sites the filter chips (the orders' statuses
+on /my/) and the status toggles (Listed / Not listed) have no pills: only
+the word. The one on is lit by a soft light behind it (by night gold,
+by day dark ink with a warm light), the one pointed at by a cooler one
+(by night moonlight), the rest are plain. The themes set `--chip-rest-ink`,
+`--chip-here-ink`, `--chip-here-glow`, `--chip-pointer-ink`,
+`--chip-pointer-glow` and take the pill away with `--chip-pill-bg`,
+`--chip-pill-border` and `--chip-here-bg`; ops sets none of them and keeps
+its pills.
