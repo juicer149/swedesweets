@@ -90,7 +90,7 @@
       }
       apply(document.documentElement, translations(source, target));
       document.documentElement.lang = button.value;
-      for (const option of document.querySelectorAll(".language-switcher__option")) {
+      for (const option of document.querySelectorAll("[data-language-preferences] .language-switcher__option")) {
         const active = option.value === button.value;
         option.classList.toggle("language-switcher__option--active", active);
         if (active) option.setAttribute("aria-current", "true");

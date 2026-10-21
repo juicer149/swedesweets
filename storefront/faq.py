@@ -29,6 +29,17 @@ class FaqItem:
     link_label: str | Promise = ""
 
 
+CHANGE_LANGUAGE = FaqItem(
+    _("How do I change the language or the theme?"),
+    _(
+        "Open the menu: the three lines at the top right, or press Esc "
+        "on a computer. Choose Settings, then EN or FR for the language, "
+        "and the sun or the moon for a light or a dark theme. Press Esc "
+        "again, or Return, to close it."
+    ),
+)
+
+
 BECOME_A_RESELLER = FaqItem(
     _("How do I become a reseller?"),
     _("Get in touch and we will set up an account for your shop."),
@@ -71,6 +82,7 @@ PUBLIC_FAQ: tuple[FaqItem, ...] = (
         link="password_reset",
         link_label=_("Reset your password"),
     ),
+    CHANGE_LANGUAGE,
     # Waiting for answers:
     FaqItem(_("How long does delivery take, and what does it cost?")),
     FaqItem(_("Can I return or exchange merch?")),
@@ -96,6 +108,7 @@ BUSINESS_FAQ: tuple[FaqItem, ...] = (
         ),
         contact=True,
     ),
+    CHANGE_LANGUAGE,
     # Waiting for answers:
     FaqItem(_("Is there a minimum order?")),
     FaqItem(_("Which days do you deliver?")),

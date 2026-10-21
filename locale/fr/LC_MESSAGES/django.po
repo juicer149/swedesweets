@@ -2811,3 +2811,31 @@ msgstr "Impossible de charger l’étape suivante. Rechargez la page pour vérif
 #: templates/business_portal/orders/review.html
 msgid "Remove all products from your cart?"
 msgstr "Retirer tous les produits de votre panier ?"
+
+#: templates/includes/site_menu.html
+msgid "Menu"
+msgstr "Menu"
+
+#: templates/includes/site_menu.html
+msgid "Return"
+msgstr "Retour"
+
+#: templates/includes/site_menu.html templates/includes/mobile_menu_close.html
+msgid "Close"
+msgstr "Fermer"
+
+#: storefront/faq.py
+msgid "How do I change the language or the theme?"
+msgstr "Comment changer de langue ou de thème ?"
+
+#: storefront/faq.py
+msgid ""
+"Open the menu: the three lines at the top right, or press Esc on a "
+"computer. Choose Settings, then EN or FR for the language, and the sun or "
+"the moon for a light or a dark theme. Press Esc again, or Return, to close "
+"it."
+msgstr ""
+"Ouvrez le menu : les trois traits en haut à droite, ou la touche Échap sur "
+"un ordinateur. Choisissez Paramètres, puis EN ou FR pour la langue, et le "
+"soleil ou la lune pour un thème clair ou sombre. Appuyez de nouveau sur "
+"Échap, ou sur Retour, pour le fermer."

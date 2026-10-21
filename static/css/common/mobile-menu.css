@@ -66,9 +66,11 @@
     color: var(--cart-sheet-close-ink, var(--account-menu-text));
   }
 
-  .account-menu__panel {
+  .site-menu__panel {
     --mobile-menu-bg: var(--account-menu-bg);
     --mobile-menu-edge: var(--account-menu-border);
+    /* room under the menu's fixed title */
+    padding-top: calc(clamp(1rem, 3dvh, 1.5rem) + 2rem);
   }
 
   /* Two nested silhouettes draw a continuous edge around the V. The close
@@ -110,31 +112,13 @@
   }
   .mobile-menu-close:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 
-  .mobile-menu-panel .site-preferences__group,
-  .mobile-menu-panel .site-preferences__site,
-  .mobile-menu-panel .account-menu__logout { margin: 0; }
-  .mobile-menu-panel .account-menu__logout { padding: 0; border: 0; width: 100%; }
-  .mobile-menu-panel .account-menu__link {
-    font-size: var(--panel-link-size);
-    text-align: center;
-  }
-  .mobile-menu-panel .site-preferences__group legend {
-    float: none;
-    width: 100%;
-    text-align: center;
-    font-size: 1rem;
-    margin-bottom: var(--space-3);
-  }
-  .mobile-menu-panel .site-preferences__choices { justify-content: center; }
-  .mobile-menu-panel .site-preferences__choices { gap: var(--space-8); }
   .mobile-menu-panel .language-switcher__option { font-size: var(--panel-link-size); }
-  .mobile-menu-panel .site-preferences__site { padding-top: var(--space-3); }
 }
 
 @media (max-width: 767px) and (max-height: 500px) {
   .mobile-menu-panel { --panel-link-size: 1.125rem; gap: var(--space-2); padding-top: var(--space-2); padding-bottom: 3.5rem; }
-  .mobile-menu-panel .site-preferences__group legend { font-size: 0.875rem; margin-bottom: 0; }
-  .mobile-menu-panel .account-menu__link { padding-block: var(--space-2); }
+  .site-menu__legend { font-size: 0.875rem; margin-bottom: 0; }
+  .site-menu .site-menu__link { padding-block: var(--space-1); }
 }
 
 @media (forced-colors: active) {
@@ -156,7 +140,7 @@
   scrollbar-color: var(--menu-scroll-thumb) var(--menu-scroll-track);
 }
 .menu-panel-scroll > * { flex-shrink: 0; }
-.account-menu__panel .menu-panel-scroll { gap: 0; }
+.site-menu__panel .menu-panel-scroll { gap: 0; }
 .menu-scroll-track {
   position: absolute;
   top: var(--space-5);
@@ -277,59 +261,32 @@ details[data-mobile-menu]:not([data-panel-lit]) .mobile-menu-panel {
 
 .landing__top .menu-panel-toplight { display: none; }
 
-/* Desktop account/settings use a centred card; the cart keeps its quick view. */
+/* Wider screens: the Menu is a centred rectangle with its quiet cross in
+   the corner (site-menu.css); the cart keeps its quick view. */
 @media (min-width: 768px) {
-  :is(.account-menu, .site-preferences)[open] > .mobile-menu-viewport {
+  .site-menu[open] > .mobile-menu-viewport {
     display: grid; inset: 0; place-items: center; padding: 2.5rem 1rem;
     overflow: visible;
   }
-  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel {
+  .site-menu__panel.mobile-menu-panel {
     position: relative; inset: auto; translate: none;
     width: min(38rem, calc(100vw - 2rem)); min-height: 0;
-    max-height: calc(100dvh - 5rem); padding: clamp(1.5rem, 6dvh, 4rem) clamp(1.25rem, 4vw, 2.5rem) clamp(2rem, 6dvh, 4rem);
+    max-height: calc(100dvh - 5rem);
+    padding: calc(clamp(1rem, 3dvh, 1.5rem) + 2.5rem) clamp(1.25rem, 4vw, 2.5rem) clamp(1.5rem, 5dvh, 3rem);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    border: 1px solid var(--menu-edge); border-radius: var(--radius-md);
+    background: var(--account-menu-bg);
+    border: 1px solid var(--account-menu-border); border-radius: var(--radius-md);
+    box-shadow: var(--account-menu-shadow);
   }
-  /* The phone's pennant, as a centred dialog: the same V with the close
-     circle at its tip, drawn by two silhouettes (edge, then fill). */
-  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel {
-    --dialog-bg: var(--preferences-bg);
-    --dialog-edge: var(--preferences-border);
-    isolation: isolate;
-    padding-bottom: calc(clamp(2rem, 6dvh, 4rem) + 3rem);
-    background: transparent; border: 0; border-radius: 0; box-shadow: none;
-    filter: drop-shadow(0 22px 40px rgb(0 0 0 / 0.35));
+  .site-menu__panel .mobile-menu-close,
+  .site-menu__panel .menu-panel-toplight { display: none; }
+  .site-menu__panel .menu-panel-scroll {
+    width: 100%; min-height: 0; max-height: none; flex: 0 0 auto; padding-block: var(--space-2); overflow: visible;
   }
-  .account-menu__panel.mobile-menu-panel {
-    --dialog-bg: var(--account-menu-bg);
-    --dialog-edge: var(--account-menu-border);
-  }
-  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel::before,
-  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 1.375rem;
-    z-index: -1;
-    pointer-events: none;
-    background: var(--dialog-edge);
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4rem), calc(100% - 1px) calc(100% - 3.5rem), calc(100% - 5px) calc(100% - 3.0625rem), calc(100% - 12px) calc(100% - 2.75rem), 50% 100%, 12px calc(100% - 2.75rem), 5px calc(100% - 3.0625rem), 1px calc(100% - 3.5rem), 0 calc(100% - 4rem));
-  }
-  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel::after {
-    inset: 1px 1px calc(1.375rem + 1px);
-    background: var(--dialog-bg);
-  }
-  :is(.account-menu__panel, .site-preferences__panel).mobile-menu-panel .mobile-menu-close {
-    bottom: 0;
-    background: var(--dialog-bg);
-    border-color: var(--dialog-edge);
-  }
-  :is(.account-menu__panel, .site-preferences__panel) .menu-panel-toplight { display: none; }
-  :is(.account-menu__panel, .site-preferences__panel) .menu-panel-scroll {
-    width: 100%; min-height: 0; max-height: none; flex: 0 1 auto; padding-block: var(--space-4); overflow-y: auto;
-    gap: clamp(0.75rem, 3dvh, 1.5rem);
-  }
-  .account-menu .account-menu__link { font-size: clamp(1.125rem, 2vw, 1.5rem); padding-block: var(--space-4); }
-  .site-preferences__panel .language-switcher__option { font-size: 1.5rem; }
-  .site-preferences__panel .site-preferences__group legend { font-size: 1rem; margin-bottom: var(--space-4); }
+  /* The panel itself scrolls on a short window: a crown poking out under
+     the last link then stays in its padding, with no stray scrollbar. */
+  .site-menu__panel.mobile-menu-panel { overflow-y: auto; justify-content: safe center; }
+  .site-menu .site-menu__link { font-size: clamp(1.125rem, 2vw, 1.5rem); padding-block: var(--space-3); }
+  .site-menu__panel .language-switcher__option { font-size: 1.5rem; }
+  .site-menu__legend { margin-bottom: var(--space-4); }
 }

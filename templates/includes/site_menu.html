@@ -1,0 +1,111 @@
+{% load i18n %}
+{% comment %}
+  The navbar's Menu, like a game's pause menu: one button (three lines; the
+  word too on wide screens) opens a panel over the page, with its title fixed
+  at the top. The first level holds the account's links (or Login), Settings,
+  the staff's site switch and Log out; Settings opens a second level in the
+  same panel with the language and the theme. "Return" goes back a level, or
+  closes; so do the cross, Back and Escape (site-menu.js, mobile-menu.js).
+
+  Without JavaScript the panel opens as a plain disclosure and shows both
+  levels at once (no Settings button); the language still posts.
+
+  Expects in context: account_menu (AccountMenu | None), request, site_zone,
+  navbar_account_current.
+{% endcomment %}
+{% with url_name=request.resolver_match.url_name view_name=request.resolver_match.view_name %}
+<details class="site-menu" data-dismiss-on-outside-click data-mobile-menu="menu" data-site-menu>
+  <summary class="site-menu__trigger menu-dropdown-trigger" aria-label="{% trans 'Menu' %}"{% if navbar_account_current %} aria-current="page"{% endif %}>
+    {% include "includes/ui/icon.html" with name="menu" %}
+    <span class="site-menu__trigger-label" aria-hidden="true">{% trans "Menu" %}</span>
+    <span class="menu-dropdown-trigger__crown" aria-hidden="true"></span>
+  </summary>
+  <div class="mobile-menu-viewport">
+  <div class="site-menu__panel mobile-menu-panel" role="region" aria-labelledby="site-menu-title">
+    <span class="menu-panel-toplight" aria-hidden="true"></span>
+    <p class="site-menu__title" id="site-menu-title" data-site-menu-title
+      data-title-main="{% trans 'Menu' %}" data-title-settings="{% trans 'Settings' %}">{% trans "Menu" %}</p>
+
+    <div class="menu-panel-scroll" data-menu-panel-scroll>
+      <div class="site-menu__level" data-menu-level="main">
+        {% if account_menu.account %}
+          <a class="quiet-link site-menu__link menu-panel-link" href="{{ account_menu.account.href }}"
+            {% if view_name == account_menu.account.route_name %}{% if not account_menu.orders or request.GET.tab != 'orders' %}aria-current="page"{% endif %}{% endif %}>{% trans "Profile" %}</a>
+          {% if account_menu.orders %}
+            <a class="quiet-link site-menu__link menu-panel-link" href="{{ account_menu.orders.href }}"
+              {% if view_name == account_menu.orders.route_name or request.GET.tab == 'orders' %}aria-current="page"{% endif %}>{{ account_menu.orders.label }}</a>
+          {% endif %}
+        {% endif %}
+
+        <button class="quiet-link site-menu__link menu-panel-link" type="button" data-menu-go="settings" hidden>
+          {% trans "Settings" %}<span class="site-menu__chevron" aria-hidden="true">›</span>
+        </button>
+
+        {% if account_menu.switch %}
+          {# Staff: the two sites as two choices, the one you are on lit. #}
+          <div class="site-menu__group site-menu__site" role="group" aria-labelledby="site-menu-site">
+            <p class="site-menu__legend" id="site-menu-site">{% trans "Site" %}</p>
+            <div class="site-menu__choices">
+              {% if site_zone == "ops" %}
+                <a class="language-switcher__option site-menu__choice" href="{{ account_menu.switch.href }}" title="{{ account_menu.switch.label }}" aria-label="{{ account_menu.switch.label }}">
+                  {% include "includes/ui/icon.html" with name="house" %}
+                </a>
+                <span class="language-switcher__option language-switcher__option--active site-menu__choice" aria-current="true" title="{% trans 'Ops dashboard' %}" aria-label="{% trans 'Ops dashboard' %}">
+                  {% include "includes/ui/icon.html" with name="wrench" %}
+                </span>
+              {% else %}
+                <span class="language-switcher__option language-switcher__option--active site-menu__choice" aria-current="true" title="{% trans 'Public site' %}" aria-label="{% trans 'Public site' %}">
+                  {% include "includes/ui/icon.html" with name="house" %}
+                </span>
+                <a class="language-switcher__option site-menu__choice" href="{{ account_menu.switch.href }}" title="{{ account_menu.switch.label }}" aria-label="{{ account_menu.switch.label }}">
+                  {% include "includes/ui/icon.html" with name="wrench" %}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+
+        <hr class="site-menu__divider">
+
+        {% if account_menu %}
+          <form class="site-menu__logout" method="post" action="{% url 'logout' %}" data-dirty-ignore="true">
+            {% csrf_token %}
+            <button class="quiet-link site-menu__link menu-panel-link" type="submit">{% trans "Log out" %}</button>
+          </form>
+        {% elif url_name != "login" %}
+          <a class="quiet-link site-menu__link menu-panel-link" href="{% url 'login' %}">{% trans "Login" %}</a>
+        {% endif %}
+
+        <button class="quiet-link site-menu__link site-menu__return menu-panel-link" type="button" data-close-details hidden>{% trans "Return" %}</button>
+      </div>
+
+      <div class="site-menu__level" data-menu-level="settings">
+        <form class="language-switcher" action="{% url 'set_language' %}" method="post" data-language-preferences data-dirty-ignore="true">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          {% get_current_language as CURRENT_LANGUAGE %}
+          <fieldset class="site-menu__group">
+            <legend class="site-menu__legend">{% trans 'Language' %}</legend>
+            <div class="site-menu__choices">
+              <button class="language-switcher__option{% if CURRENT_LANGUAGE == 'en' %} language-switcher__option--active{% endif %}"
+                type="submit" name="language" value="en"{% if CURRENT_LANGUAGE == 'en' %} aria-current="true"{% endif %}>EN</button>
+              <button class="language-switcher__option{% if CURRENT_LANGUAGE == 'fr' %} language-switcher__option--active{% endif %}"
+                type="submit" name="language" value="fr"{% if CURRENT_LANGUAGE == 'fr' %} aria-current="true"{% endif %}>FR</button>
+            </div>
+          </fieldset>
+        </form>
+        {% if site_zone != "ops" %}
+          {% include "includes/theme_switch.html" %}
+        {% endif %}
+        <button class="quiet-link site-menu__link site-menu__return menu-panel-link" type="button" data-menu-go="main" hidden>{% trans "Return" %}</button>
+      </div>
+    </div>
+    {# After the levels, so opening focuses the first choice, not the cross. #}
+    <button class="site-menu__corner-close" type="button" data-close-details aria-label="{% trans 'Close' %}">
+      {% include "includes/ui/icon.html" with name="x" %}
+    </button>
+    {% include "includes/mobile_menu_close.html" %}
+  </div>
+  </div>
+</details>
+{% endwith %}

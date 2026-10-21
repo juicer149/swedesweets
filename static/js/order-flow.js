@@ -100,7 +100,7 @@
       }
     }
     if (source?.querySelector('summary[aria-current="page"]')) {
-      for (const link of document.querySelectorAll('.site-nav__link[aria-current], .account-menu > summary[aria-current]')) {
+      for (const link of document.querySelectorAll('.site-nav__link[aria-current], .site-menu > summary[aria-current]')) {
         link.removeAttribute("aria-current"); link.classList.remove("site-nav__link--active");
       }
     }

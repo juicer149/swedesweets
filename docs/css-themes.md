@@ -29,33 +29,39 @@ the choice lasts for this browser tab. Auto uses Paris time: light 06–22,
 dark 22–06. An unknown choice falls back to light. Ops remains light until its
 work pages have been checked for the dark palette.
 
-## Theme selection and shared settings
+## The Menu: account, settings and the staff site switch
 
-A single gear icon opens the same settings disclosure in the customer navbar,
-landing and entrance/error pages, at every screen size. Language uses EN/FR
-text buttons and the existing Django POST endpoint. The selected language is
-navy in light and gold with a soft glow in dark; no radio circles are drawn.
-Language submission works without JavaScript. Staff get a text link at the
-bottom of settings to navigate to Public site or Ops dashboard. The navigation
-builder chooses the opposite destination, including on the shared staff profile
-page. Ops has no theme switch and stays light.
-Logout lives in the separate account dropdown, alongside Profile and (for
-business customers) Order history. It remains a CSRF-protected POST action.
+One button, three lines (with the word "Menu" from 768px up), opens the Menu
+in the customer navbar, the start page, entrance/error pages and ops. It
+replaced the gear and the person icon; the cart stays its own icon. Like a
+game's pause menu, Escape opens it from anywhere nothing else is open (no
+sheet, dialog, product opened over the catalog, dropdown, and not typing in
+a field), and Escape closes it again.
 
-The theme is two choices beside the languages: the sun (light) and the
-moon (dark), buttons with `aria-pressed` and their own accessible names,
-drawn like the language options: the one in use in the selected colour
-with its light, the other in the panel's ordinary ink (white by day, the
-interactive blue by night). The choices are hidden without JavaScript.
-Escape closes the panel and restores focus to its gear button; clicking
-outside closes it as well.
+The panel has a fixed title at the top ("MENU", or "SETTINGS") and two
+levels below it, which take turns:
 
-By day the settings and account panels (dialogs on desktop, sheets on a
-phone) take the menu's sky: `--preferences-bg` and `--account-menu-bg` are
-the menu blue, their ink white and the chosen gold, as in the navbar. The
-cart keeps the shop's paper (`--cart-sheet-bg`, `--cart-sheet-close-ink`).
-Account links show the crown, tilted on the last letter as on the start
-page's menu, on the link pointed at and the page you are on.
+- **Menu:** Profile and, for business customers, Order history (with the
+  crown on the one you are on); Settings ›; for staff, the two sites as two
+  icons, a house (public site) and a wrench (ops dashboard), the one you are
+  on filled and lit; then a divider, Log out (a CSRF-protected POST) or
+  Login for guests; and Return, quieter, at the bottom.
+- **Settings:** the language (EN/FR text buttons, the existing Django POST)
+  and the theme, a sun (light) and a moon (dark) as `aria-pressed` buttons,
+  the chosen one filled and in the selected colour with its light. Ops has
+  no theme choice and stays light. Return goes back to the Menu level.
+
+Escape on Settings goes back to the Menu level; on the Menu level it closes
+and gives focus back to the button. Return, the cross and Back do the same.
+On a phone the panel is the pennant sheet under the header, its close circle
+at the tip of the V; from 768px up it is a centred rectangle with a small
+quiet × in its corner. Without JavaScript the panel opens as a plain
+disclosure showing both levels at once; the language still posts.
+
+By day the panel takes the menu's sky (`--account-menu-bg`, from
+`--preferences-bg`), its ink white and the chosen gold, as in the navbar; by
+night the dark panel roles. The cart keeps the shop's paper
+(`--cart-sheet-bg`, `--cart-sheet-close-ink`).
 
 The choice uses the existing sessionStorage preview key, survives navigation
 and reload in the current tab, and overrides auto mode until explicitly
@@ -64,10 +70,15 @@ other query parameters, hashes and catalog history state are preserved.
 
 `theme.js` owns `window.siteTheme.set(light|dark)`; `theme-switch.js` handles
 the switch and synchronization with auto changes. Language retains a native form fallback; `language-switch.js` enhances it with fetch.
-`includes/language_switcher.html` owns the shared panel, including
-`includes/theme_switch.html` for customer theme choices. Common
-`preferences.css` owns panel layout and `theme-switch.css` owns the orbit.
-`--preferences-*` in the theme files own their colours and shadows. `details-popover.js` provides the existing dismissal behaviour.
+`includes/site_menu.html` owns the Menu, including
+`includes/theme_switch.html` for customer theme choices. `common/site-menu.css`
+owns the button, title, levels and links; `common/mobile-menu.css` the
+sheet and the desktop rectangle (`public/landing.css` the start page's
+pennant); `theme-switch.css` the theme icons. `site-menu.js` switches the
+levels, the title and handles Escape; `mobile-menu.js` opens, closes and
+animates; `details-popover.js` closes it on an outside click.
+`--preferences-*` and `--account-menu-*` in the theme files own the colours
+and shadows.
 
 At viewport widths of 1200px and above, customer header content can grow to
 1200px. Page/catalog content retains `--width-page` (1040px), its four-column
@@ -628,10 +639,11 @@ the gold selected text, and `--preferences-selected-shadow` its emission.
 `common/language-switcher.css` reads these roles directly; there is no second
 menu-language palette or local alias layer to override them.
 
-Panel surface/border/gear remain independent `--preferences-*` roles.
-`--account-menu-*` owns the account panel and links, including the blue Log out.
-`--preferences-site-text`, `--preferences-site-hover` and
-`--preferences-site-divider` paint the staff site link.
+The Menu's surface, border, links, title, divider and Return read
+`--account-menu-*` (`-bg`, `-border`, `-shadow` for the desktop rectangle,
+`-text`, `-selected`, `-divider`); its button reads
+`--preferences-trigger-ink`. The staff's house and wrench are language
+options, so they read the same `--preferences-option`/`-selected` roles.
 `accounts/account_menus.py` composes allowed destinations; templates
 render those destinations and never choose links from user roles.
 

@@ -63,14 +63,14 @@ and interaction rules are the baseline for future pages. The full light-theme
 review and dark ops rollout remain separate work; neither is implied by this
 completion. Light is still the default.
 
-A gear opens shared settings on navbar, landing and entrance/error pages.
+The Menu (three lines; Escape opens it) holds the settings on navbar, landing
+and entrance/error pages.
 Language is selected through EN/FR text buttons. JavaScript fetches the server
-translations and updates text in place, retaining the open settings panel and
+translations and updates text in place, retaining the open Menu and
 form values; the native language POST remains the fallback. The chosen language uses navy ink in light and gold
-ink with a soft gold light in dark. A pill switches Day/Night: thumb left and yellow sun
-right in day mode; thumb right and white moon left in night mode. The icons
-set/rise along an arc; reduced motion skips the animation. Selection lasts for
-the current tab. Staff get a normal link to the other site beneath these controls.
+ink with a soft gold light in dark. The theme is two choices, a sun and a
+moon, the chosen one filled and gold. Selection lasts for the current tab.
+Staff switch sites with a house and a wrench on the Menu's first level.
 
 Gold marks the brand, hovered/focused main actions and selected states. The active sort heading uses a slightly deeper gold (accent-700); section tabs
 share navigation gold (accent-600). Available
@@ -458,16 +458,17 @@ interaction. Detailed mappings are in [CSS themes](docs/css-themes.md).
   logo and header icons stay available, with the open icon gold and glowing.
   The fixed bottom close/back circle returns to the page.
 
-- **Account:** a single-person icon opens Profile, Order history for business
-  customers, and a CSRF-protected POST Log out at the bottom. It keeps selected
-  ink, light and crown on profile/history/order-detail pages even when closed.
-  Staff Profile links to their personal account, not customer order history.
-  Guests keep the same person icon, with only Login inside the dropdown.
-- **Settings:** the gear opens language text choices and the sun/moon theme
-  pill. Staff also see a normal Public site/Ops dashboard link. Settings has
-  no page destination and never receives a current-page crown. Ops stays light
-  and has no theme switch. Escape closes dropdowns and returns focus to their
-  trigger; clicking another trigger closes the previous dropdown.
+- **Menu:** three lines (and "Menu" from 768px up) open a pause-menu panel
+  with a fixed title. The Menu level: Profile, Order history for business
+  customers, Settings ›, the staff's site switch (house = public, wrench =
+  ops, the current one filled), Log out (CSRF-protected POST) or Login, and
+  a quieter Return. The Settings level: EN/FR and the sun/moon theme (the
+  chosen icon filled); ops has no theme choice. The button keeps selected
+  ink, light and crown on profile/history/order-detail pages even when
+  closed. Escape opens the Menu when nothing else is open, goes back from
+  Settings and closes it, returning focus to the button. Phone: the pennant
+  sheet with its close circle at the tip; desktop: a centred rectangle with
+  a small × in the corner. The FAQ tells customers how to find it.
 - **Navbar cart:** an icon-only disclosure with editable product rows and a
   quantity stepper. At one item, the minus becomes a trash action. Desktop
   uses a compact preview with Go to cart; the full cart, review and placed

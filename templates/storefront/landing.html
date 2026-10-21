@@ -43,10 +43,7 @@
         </a>
       {% endif %}
 
-      {% if request.user.is_authenticated %}
-        {% include "includes/account_menu.html" %}
-      {% endif %}
-      {% include "includes/language_switcher.html" %}
+      {% include "includes/site_menu.html" %}
     </div>
 
     <div class="landing__stage">

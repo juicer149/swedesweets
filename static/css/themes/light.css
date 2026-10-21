@@ -287,17 +287,14 @@
   --preferences-selected-glow-filter: blur(6px);
   --preferences-selected-glow-opacity: 1;
   --preferences-hover: var(--menu-chosen);
-  /* Account menu and staff site link, independent of language/theme choices. */
-  --account-menu-trigger: var(--menu-ink);
+  /* The Menu (includes/site_menu.html): its panel, links, title and Return. */
   --account-menu-bg: var(--preferences-bg);
   --account-menu-border: var(--preferences-border);
-  --account-menu-shadow: var(--preferences-shadow);
+  /* the Menu's rectangle on wider screens, lifted off the page */
+  --account-menu-shadow: 0 22px 40px rgb(0 0 0 / 0.35);
   --account-menu-text: var(--menu-ink);
   --account-menu-selected: var(--menu-chosen);
   --account-menu-divider: color-mix(in srgb, var(--menu-ink) 30%, transparent);
-  --preferences-site-text: var(--menu-ink);
-  --preferences-site-hover: var(--menu-chosen);
-  --preferences-site-divider: color-mix(in srgb, var(--menu-ink) 30%, transparent);
 
 
   /* ## Phone bar: the links at the bottom of a phone's screen */

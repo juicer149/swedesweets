@@ -1,0 +1,228 @@
+/* =============================================================================
+   # The navbar's Menu (includes/site_menu.html, js/site-menu.js)
+
+   A game's pause menu: one button opens a panel over the page. On a phone
+   the panel is the pennant sheet with its close circle at the tip
+   (mobile-menu.css); on wider screens a centred rectangle with a quiet
+   cross in its corner. Its title is fixed at the top; the levels (the
+   menu, Settings) take turns below it. Colours: --preferences-* and
+   --account-menu-* in the theme files.
+   ============================================================================= */
+
+.site-menu {
+  position: relative;
+  flex: 0 0 auto;
+  text-align: start;
+}
+
+/* ## The button: three lines, and the word on wider screens */
+.site-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.35rem;
+  color: var(--preferences-trigger-ink);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  list-style: none;
+}
+.site-menu__trigger::-webkit-details-marker { display: none; }
+.site-menu__trigger .ui-icon-svg { width: 1.375rem; height: 1.375rem; flex: 0 0 auto; }
+.site-menu__trigger-label {
+  font-size: var(--font-size-nav-link);
+  font-weight: var(--font-weight-nav-link);
+  line-height: 1;
+}
+.site-menu__trigger:focus-visible,
+.site-menu[open] > .site-menu__trigger {
+  color: var(--menu-chosen);
+}
+.site-menu__trigger:focus-visible {
+  outline: 2px solid var(--menu-chosen);
+  outline-offset: 3px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .site-menu__trigger:hover { color: var(--menu-chosen); }
+}
+@media (max-width: 767px) {
+  .site-menu__trigger-label { display: none; }
+  /* Its sheet spans the screen: anchor it to the header, not the button. */
+  .site-nav__auth .site-menu { position: static; }
+}
+
+/* ## The panel's title, fixed at its top */
+.site-menu__panel { color: var(--preferences-ink); }
+.site-menu__title {
+  position: absolute;
+  z-index: 2;
+  top: clamp(1rem, 3dvh, 1.5rem);
+  left: 3rem;
+  right: 3rem;
+  margin: 0;
+  color: color-mix(in srgb, var(--account-menu-text) 62%, transparent);
+  font-size: var(--font-size-12);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* ## The quiet cross in the corner (wider screens; phones close at the tip) */
+.site-menu__corner-close {
+  position: absolute;
+  z-index: 2;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0.55rem;
+  color: color-mix(in srgb, var(--account-menu-text) 55%, transparent);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: color var(--motion-fast);
+}
+.site-menu__corner-close:is(:hover, :focus-visible) { color: var(--account-menu-selected); }
+.site-menu__corner-close:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
+@media (max-width: 767px) {
+  .site-menu__corner-close { display: none; }
+}
+
+/* ## Levels: the menu and Settings take turns (once the script runs;
+   without it both show) */
+.site-menu__level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.5rem, 2.5dvh, 1.25rem);
+  width: 100%;
+}
+.site-menu[data-menu-ready] .site-menu__level:not([data-menu-active]) { display: none; }
+
+/* ## Links: account, Settings, Log out/Login, Return */
+.site-menu .site-menu__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: var(--space-2) var(--space-3);
+  color: var(--account-menu-text);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-control);
+  font-size: var(--panel-link-size);
+  text-align: center;
+  cursor: pointer;
+}
+.site-menu .site-menu__link:is(:hover, :focus-visible),
+.site-menu .site-menu__link[aria-current="page"] {
+  color: var(--account-menu-selected);
+  text-shadow: var(--interaction-text-shadow);
+  text-decoration: none;
+}
+.site-menu .site-menu__link:focus-visible {
+  outline: 2px solid var(--account-menu-selected);
+  outline-offset: -2px;
+}
+.site-menu__chevron { opacity: 0.6; font-size: 0.85em; }
+
+/* ### The crown, tilted on the last letter as on the start page's menu, on
+   the link pointed at and the page you are on (not on Return). */
+.site-menu .site-menu__link:not(.site-menu__return)::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--space-2) - 0.5em);
+  right: calc(var(--space-3) - 0.8em);
+  width: 0.8em;
+  height: 0.8em;
+  background: var(--menu-crown);
+  -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
+  mask: url("../../images/favicon.svg") center / contain no-repeat;
+  filter: var(--menu-crown-shadow);
+  opacity: 0;
+  transform: scale(0.4) rotate(12deg);
+  transform-origin: bottom left;
+  transition: opacity var(--motion-fast), transform var(--motion-fast);
+  pointer-events: none;
+}
+.site-menu .site-menu__link:not(.site-menu__return):is(:hover, :focus-visible)::after,
+.site-menu .site-menu__link[aria-current="page"]::after {
+  opacity: 1;
+  transform: rotate(12deg);
+}
+
+/* ### Return: the way back, quieter than the choices */
+/* (one class more than on-blue.css's .quiet-link, so the start page and
+   login keep it quiet too) */
+.site-menu .site-menu__link.site-menu__return {
+  margin-top: var(--space-2);
+  color: color-mix(in srgb, var(--account-menu-text) 62%, transparent);
+}
+.site-menu .site-menu__link.site-menu__return:is(:hover, :focus-visible) {
+  color: var(--account-menu-selected);
+}
+
+.site-menu__divider {
+  width: min(40%, 10rem);
+  margin: var(--space-1) auto;
+  border: 0;
+  border-top: 1px solid var(--account-menu-divider);
+}
+.site-menu__logout { margin: 0; }
+
+/* ## Groups of choices: Language, Theme and the staff's Site */
+.site-menu__group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.site-menu__group[hidden] { display: none; }
+.site-menu__legend {
+  float: none;
+  width: 100%;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  color: var(--preferences-ink);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+.site-menu__choices {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+}
+.site-menu .language-switcher { display: flex; justify-content: center; width: 100%; }
+.site-menu .language-switcher__option { font-size: var(--panel-link-size); }
+
+/* ### The site switch's icons, filled on the site you are on */
+.site-menu__choice .ui-icon-svg { width: 1.5em; height: 1.5em; }
+.site-menu__choice[aria-current="true"] .ui-icon-svg { fill: currentColor; }
+
+@media (prefers-reduced-motion: reduce) {
+  .site-menu .site-menu__link::after,
+  .site-menu__corner-close { transition: none; }
+}
+@media (forced-colors: active) {
+  .site-menu .site-menu__link[aria-current="page"] { text-decoration: underline; }
+  .site-menu .site-menu__link::after { display: none; }
+}
+
+/* More breathing room for desktop chrome; catalog keeps its own page width. */
+@media (min-width: 1200px) {
+  :root:not([data-site-zone="ops"]) .site-header > .container {
+    width: min(100% - 4rem, 1200px);
+  }
+}

@@ -35,7 +35,7 @@
     if (fullPage) {
       menu.dataset.cartLocked = "true";
       trigger?.setAttribute("aria-current", "page");
-      for (const other of document.querySelectorAll('.site-nav__link[aria-current], .account-menu > summary[aria-current]')) {
+      for (const other of document.querySelectorAll('.site-nav__link[aria-current], .site-menu > summary[aria-current]')) {
         other.removeAttribute("aria-current"); other.classList.remove("site-nav__link--active");
       }
     }

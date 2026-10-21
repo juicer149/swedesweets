@@ -13,12 +13,12 @@ from customers.tests.factories import customer_factory
 
 def _account_panel(response):
     return response.content.decode().split(
-        'class="account-menu__panel mobile-menu-panel"', 1
+        'class="site-menu__panel mobile-menu-panel"', 1
     )[1].split("</details>", 1)[0]
 
 
 @pytest.mark.django_db
-def test_business_account_dropdown_has_profile_orders_and_post_logout(client):
+def test_business_menu_has_profile_orders_and_post_logout(client):
     client.force_login(customer_user_factory(customer=customer_factory()))
     response = client.get(reverse("business_portal:index"))
     menu = response.context["account_menu"]
@@ -31,8 +31,8 @@ def test_business_account_dropdown_has_profile_orders_and_post_logout(client):
     assert f'href="{menu.orders.href}"' in panel
     assert f'method="post" action="{reverse("logout")}"' in panel
     assert 'name="csrfmiddlewaretoken"' in panel
-    assert 'class="site-preferences__site"' not in response.content.decode()
-    assert "site-preferences__logout" not in response.content.decode()
+    assert "site-menu__site" not in response.content.decode()
+    assert f'href="{reverse("login")}"' not in panel
 
 
 @pytest.mark.django_db
@@ -57,26 +57,28 @@ def test_staff_site_link_and_account_destinations_follow_navigation_context(
         assert menu.switch.href == reverse(target)
         assert f'href="{reverse("accounts:me")}"' in panel
         assert reverse("business_portal:orders") not in panel
-        content = response.content.decode()
-        site_link = content.split('class="site-preferences__site">', 1)[1].split(
-            "</div>", 1
-        )[0]
-        assert f'href="{reverse(target)}"' in site_link
-        assert 'role="switch"' not in site_link
-        assert "site-preferences__logout" not in content
+        site = panel.split("site-menu__site", 1)[1].split("site-menu__divider", 1)[0]
+        # The two sites as two choices: a link to the other, the current lit.
+        assert f'href="{reverse(target)}"' in site
+        assert site.count('aria-current="true"') == 1
+        assert 'role="switch"' not in site
+        assert f'action="{reverse("logout")}"' in panel
 
 
 @pytest.mark.django_db
-def test_anonymous_account_icon_links_directly_to_login(client):
-    content = client.get(reverse("storefront:product_list")).content.decode()
-    assert (
-        f'class="account-menu__trigger menu-dropdown-trigger" href="{reverse("login")}"'
-        in content
-    )
-    assert 'data-mobile-menu="account"' not in content
-    assert 'account-menu__panel' not in content
-    assert 'account-menu__logout' not in content
-    assert 'class="site-preferences__site"' not in content
+def test_guest_menu_has_login_and_settings_but_no_account(client):
+    response = client.get(reverse("storefront:product_list"))
+    content = response.content.decode()
+    panel = _account_panel(response)
+
+    assert 'data-mobile-menu="menu"' in content
+    assert f'href="{reverse("login")}"' in panel
+    assert reverse("accounts:me") not in panel
+    assert "site-menu__logout" not in panel
+    assert "site-menu__site" not in panel
+    assert 'data-menu-level="settings"' in panel
+    assert f'action="{reverse("set_language")}"' in panel
+    assert 'data-theme-choice="dark"' in panel
 
 
 @pytest.mark.django_db
@@ -93,7 +95,7 @@ def test_business_header_marks_the_current_destination(
     response = client.get(reverse(route), follow=True)
     assert response.status_code == 200
     html = response.content.decode()
-    account = html.split('class="account-menu__trigger', 1)[1].split("</summary>", 1)[0]
+    account = html.split('class="site-menu__trigger', 1)[1].split("</summary>", 1)[0]
     cart = html.split('class="site-nav-cart__trigger', 1)[1].split("</summary>", 1)[0]
     assert ('aria-current="page"' in account) is account_current
     assert ('aria-current="page"' in cart) is cart_current

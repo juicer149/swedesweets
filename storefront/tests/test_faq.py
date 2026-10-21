@@ -41,6 +41,18 @@ def test_public_faq_shows_only_answered_questions(client):
     assert html.count('data-smooth-group="faq"') == len(answered(PUBLIC_FAQ)) + 1
 
 
+@pytest.mark.django_db
+@override_settings(LANGUAGE_CODE="en")
+@pytest.mark.parametrize("faq", [PUBLIC_FAQ, BUSINESS_FAQ])
+def test_both_faqs_tell_how_to_open_the_menu_for_language_and_theme(faq):
+    item = next(
+        item for item in answered(faq)
+        if str(item.question) == "How do I change the language or the theme?"
+    )
+
+    assert "three lines at the top right" in str(item.answer)
+    assert "Esc" in str(item.answer)
+
 
 @pytest.mark.django_db
 def test_contact_is_the_last_question(client):

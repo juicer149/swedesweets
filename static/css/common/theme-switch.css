@@ -8,9 +8,12 @@
   height: 1.5em;
 }
 
-.site-preferences .theme-choice {
+.site-menu .theme-choice {
   font-size: var(--panel-link-size);
 }
+
+/* The one in use is filled, the other drawn in outline. */
+.theme-choice[aria-pressed="true"] .theme-choice__icon :is(circle, path) { fill: currentColor; }
 
 @media (forced-colors: active) {
   .theme-choice[aria-pressed="true"] { outline: 2px solid ButtonText; }
