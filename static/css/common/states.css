@@ -347,6 +347,64 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
 }
 
 
+/* ## Clouds that open (by day on the blue: themes/light.css) ------------- */
+
+/* The light behind the navbar's links, the Menu's and the start page's
+   opens from small, like the tabs' sky (--chrome-cloud-closed), and the
+   one for the page you are on stays open (--*-here-glow). */
+.site-nav__link::after,
+.site-menu .menu-panel-link::before,
+.landing-menu__link::before {
+  transform: var(--chrome-cloud-closed, none);
+  transition: opacity var(--sky-open-time, var(--motion-fast)) ease, transform var(--sky-open-time, var(--motion-fast)) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.site-nav__link:is(:hover, :focus-visible, .site-nav__link--active, [aria-current="page"])::after,
+.site-menu .menu-panel-link:is(.is-chosen, [aria-current="page"])::before,
+.site-menu:not([data-menu-ready]) .menu-panel-link:is(:hover, :focus-visible)::before,
+.landing-menu__link:is(.landing-menu__link--chosen, :hover, :focus-visible)::before {
+  transform: none;
+}
+
+:is(.site-nav__link--active, .site-nav__link[aria-current="page"])::after {
+  background: var(--nav-link-here-glow, var(--menu-link-glow));
+  filter: var(--nav-link-here-glow-filter, var(--interaction-glow-filter));
+  opacity: var(--nav-link-here-glow-opacity, var(--interaction-selected-opacity));
+}
+
+.landing-menu .landing-menu__link.landing-menu__link--chosen::before {
+  opacity: var(--landing-chosen-glow-opacity, var(--interaction-selected-opacity));
+}
+
+.site-menu .menu-panel-link[aria-current="page"]::before {
+  background: var(--menu-link-here-glow, var(--interaction-glow));
+  filter: var(--menu-link-here-glow-filter, var(--interaction-glow-filter));
+  opacity: var(--menu-link-here-glow-opacity, var(--interaction-selected-opacity));
+}
+
+/* The start page's logo on its cloud, drifting a little with it. */
+.landing__logo::before {
+  filter: var(--landing-logo-halo-filter, none);
+}
+
+.landing__logo {
+  animation: var(--landing-logo-drift, none);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing__logo { animation: none; }
+  .site-nav__link::after,
+  .site-menu .menu-panel-link::before,
+  .landing-menu__link::before { transition: none; }
+}
+
+@keyframes landing-cloud-drift {
+  0%, 100% { translate: 0 0; }
+  30% { translate: 4px -5px; }
+  65% { translate: -3px 3px; }
+}
+
+
 @media (forced-colors: active) {
   .site-brand .brand-logo__crown { opacity: 1; }
 }

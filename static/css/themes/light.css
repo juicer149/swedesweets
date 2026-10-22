@@ -25,10 +25,16 @@
   /* # The navbar's surface */
   --theme-chrome-bg: var(--color-primary-350);
 
-  /* # What you can click on it: rest, here, pointer (text, edge and light) */
-  --state-rest-ink: var(--color-white);
+  /* # What you can click on it: rest, here, pointer (text, edge and light).
+     Pointed at and "here", a white cloud forms behind the word
+     (--theme-cloud), so the dark blue and the gold read against it. */
+  --state-rest-ink: var(--color-primary-950);
   --state-here-ink: var(--color-accent-600);
   --state-pointer-ink: var(--color-primary-950);
+  --theme-cloud: var(--color-white);
+  /* the navbar's logo: white, gold when pointed at */
+  --theme-logo-ink: var(--color-white);
+  --theme-logo-pointer-ink: var(--color-accent-600);
   /* the crown marks only "here" */
   --state-pointer-crown-opacity: 0;
 
@@ -53,7 +59,7 @@
   /* closed it is this small, and it opens in this long when pointed at */
   --theme-sky-closed: scale(0.35, 0.6);
   /* pointed at, it opens only this far: a peek at the chosen one's sky */
-  --theme-sky-peek: scale(0.72, 0.45);
+  --theme-sky-peek: scale(0.55, 0.45);
   --sky-open-time: 280ms;
 
   /* # How strongly the lights shine */
@@ -843,4 +849,66 @@
   --dropdown-title-text: var(--text-body);
   --dropdown-title-hover-text: var(--color-primary-900);
   --dropdown-title-active-text: var(--text-main);
+}
+
+
+/* =============================================================================
+   Clouds on the blue (the day's customer pages)
+
+   On the navbar, the Menu and the start page, what you point at and where
+   you are get a white cloud behind them that opens like the tabs' sky
+   (--theme-cloud, --theme-sky-blur, --theme-sky-closed); the start page's
+   logo floats, gold, on a cloud of its own that drifts a little. Only by
+   day on the customer pages: the night and ops keep their own lights.
+   ============================================================================= */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --chrome-cloud-filter: blur(var(--theme-sky-blur));
+  --chrome-cloud-closed: var(--theme-sky-closed);
+
+  --nav-link-pointer-glow: var(--theme-cloud);
+  --nav-link-pointer-glow-filter: var(--chrome-cloud-filter);
+  --nav-link-here-glow: var(--theme-cloud);
+  --nav-link-here-glow-filter: var(--chrome-cloud-filter);
+  --nav-link-here-glow-opacity: 1;
+
+  --nav-trigger-pointer-glow: var(--theme-cloud);
+  --nav-trigger-pointer-glow-filter: var(--chrome-cloud-filter);
+  --nav-trigger-open-glow: var(--theme-cloud);
+  --nav-trigger-open-glow-filter: var(--chrome-cloud-filter);
+  --nav-trigger-pointer-icon-filter: none;
+  --nav-trigger-open-icon-filter: none;
+
+  --menu-link-pointer-glow: var(--theme-cloud);
+  --menu-link-pointer-glow-filter: var(--chrome-cloud-filter);
+  --menu-link-here-glow: var(--theme-cloud);
+  --menu-link-here-glow-filter: var(--chrome-cloud-filter);
+  --menu-link-here-glow-opacity: 1;
+  --menu-choice-pointer-glow: var(--theme-cloud);
+  --menu-choice-pointer-glow-filter: var(--chrome-cloud-filter);
+
+  --landing-pointer-glow: var(--theme-cloud);
+  --landing-pointer-glow-filter: var(--chrome-cloud-filter);
+  --landing-chosen-glow-opacity: 1;
+
+  /* the Menu and cart buttons' light (open, on their page, pointed at) */
+  --menu-dropdown-glow: var(--theme-cloud);
+  --menu-dropdown-glow-filter: var(--chrome-cloud-filter);
+  --menu-dropdown-icon-filter: none;
+
+  /* Settings: the language and theme in use, gold on a cloud */
+  --menu-choice-active-bg: var(--theme-cloud);
+  --menu-choice-active-filter: var(--chrome-cloud-filter);
+  --menu-choice-active-opacity: 1;
+  --menu-choice-active-text-shadow: none;
+
+  --logo-rest-ink: var(--theme-logo-ink);
+  --logo-pointer-ink: var(--theme-logo-pointer-ink);
+  --logo-pointer-filter: none;
+  --landing-logo-halo: radial-gradient(ellipse 46% 30% at 50% 52%, var(--theme-cloud) 0%, var(--theme-cloud) 55%, color-mix(in srgb, var(--theme-cloud) 0%, transparent) 100%);
+  --landing-logo-halo-filter: blur(10px);
+  --landing-logo-drift: landing-cloud-drift 9s ease-in-out infinite;
+
+  /* The catalog's cards pointed at: the sky's blue round them, outside
+     the picture's edge */
+  --catalog-card-hover-shadow: 0 0 22px 4px color-mix(in srgb, var(--theme-chrome-bg) 42%, transparent), 0 0 42px 12px color-mix(in srgb, var(--theme-chrome-bg) 16%, transparent);
 }

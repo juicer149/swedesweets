@@ -305,12 +305,12 @@
    --menu-choice-idle-opacity in the theme files). */
 .site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"]):not(.is-chosen) {
   color: var(--menu-choice-active-ink);
-  text-shadow: 0 0 14px var(--menu-choice-active-glow);
+  text-shadow: var(--menu-choice-active-text-shadow, 0 0 14px var(--menu-choice-active-glow));
 }
 .site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"]):not(.is-chosen)::after {
-  background: radial-gradient(ellipse, var(--menu-choice-active-glow), transparent 70%);
-  filter: blur(6px);
-  opacity: 0.8;
+  background: var(--menu-choice-active-bg, radial-gradient(ellipse, var(--menu-choice-active-glow), transparent 70%));
+  filter: var(--menu-choice-active-filter, blur(6px));
+  opacity: var(--menu-choice-active-opacity, 0.8);
 }
 .site-menu[data-menu-ready] .language-switcher__option:not(.language-switcher__option--active, [aria-current="true"], .is-chosen) {
   opacity: var(--menu-choice-idle-opacity);
