@@ -259,9 +259,22 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
 /* The one chosen keeps its light (by night gold); the one pointed at takes
    the pointer's (by night moonlight). */
 /* The light's shape (by day a soft cloud round the word, by night the
-   shared halo). */
+   shared halo). By day it opens when pointed at, like clouds parting
+   (--section-nav-glow-closed: its size while closed), and stays open on
+   the one chosen. */
 .section-nav__link::before {
   inset: var(--section-nav-glow-inset, -0.6rem 0);
+  transform: var(--section-nav-glow-closed, none);
+  transition: opacity var(--sky-open-time, var(--motion-fast)) ease, transform var(--sky-open-time, var(--motion-fast)) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.section-nav__link:is(:hover, :focus-visible, .section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"])::before {
+  transform: none;
+}
+
+/* The chosen one keeps its colour when pointed at too. */
+.section-nav__link:is(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]):is(:hover, :focus-visible) {
+  color: var(--section-nav-active-text);
 }
 
 .section-nav__link:not(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"])::before {

@@ -349,6 +349,8 @@
 .radio-chip-group label {
   position: relative;
   isolation: isolate;
+  /* by day the light opens like clouds parting (--chip-glow-closed) */
+  --chip-glow-transform: var(--chip-glow-closed, none);
 }
 
 .filter-chips .filter-chip::before,
@@ -360,19 +362,22 @@
   border-radius: var(--chip-glow-radius, 50%);
   background: var(--chip-glow, transparent);
   filter: blur(var(--chip-glow-blur, 9px));
+  transform: var(--chip-glow-transform, none);
   pointer-events: none;
-  transition: background var(--motion-fast);
+  transition: background var(--sky-open-time, var(--motion-fast)) ease, transform var(--sky-open-time, var(--motion-fast)) cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .filter-chips .filter-chip:is([aria-current="page"], [aria-pressed="true"]),
 .radio-chip-group label:has(input:checked) {
   --chip-glow: var(--chip-here-glow, transparent);
+  --chip-glow-transform: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .filter-chips .filter-chip:hover:not([aria-current="page"], [aria-pressed="true"]),
   .radio-chip-group label:hover:not(:has(input:checked)) {
     --chip-glow: var(--chip-pointer-glow, transparent);
+    --chip-glow-transform: none;
   }
 }
 

@@ -47,6 +47,12 @@
   --theme-sky-here-ink: var(--color-accent-600);
   /* how soft the cloud's edge is (larger: softer) */
   --theme-sky-blur: 6.5px;
+  /* how far it reaches beside the word; the row keeps room at its ends
+     for it, so it is not cut */
+  --theme-sky-reach: 16px;
+  /* closed it is this small, and it opens in this long when pointed at */
+  --theme-sky-closed: scale(0.35, 0.6);
+  --sky-open-time: 280ms;
 
   /* # How strongly the lights shine */
   --interaction-glow-strength: 1;
@@ -742,7 +748,9 @@
   --site-menu-box-border: transparent;
 
   /* The page's own parts (common/states.css): by day as before */
-  --section-nav-glow-inset: -5px -9px;
+  --section-nav-glow-inset: -5px calc(-1 * var(--theme-sky-reach));
+  --section-nav-glow-room: calc(var(--theme-sky-reach) + var(--theme-sky-blur));
+  --section-nav-glow-closed: var(--theme-sky-closed);
   --section-nav-pointer-glow: var(--theme-sky-pointer-bg);
   --section-nav-pointer-glow-filter: blur(var(--theme-sky-blur));
   --section-nav-here-glow: var(--theme-sky-here-bg);
@@ -782,7 +790,8 @@
   --chip-pointer-bg: transparent;
   --chip-pointer-shadow: none;
   --chip-pointer-glow: var(--theme-sky-pointer-bg);
-  --chip-glow-inset: -5px -9px;
+  --chip-glow-inset: -5px calc(-1 * var(--theme-sky-reach));
+  --chip-glow-closed: var(--theme-sky-closed);
   --chip-glow-radius: 999px;
   --chip-glow-blur: var(--theme-sky-blur);
 }
@@ -818,6 +827,9 @@
   --section-nav-active-text: var(--text-blue-strong);
   --section-nav-marker-display: block;
   --section-nav-glow-inset: -0.6rem 0;
+  --section-nav-glow-room: 0px;
+  --section-nav-glow-closed: none;
+  --sky-open-time: var(--motion-fast);
   --section-nav-pointer-glow: var(--interaction-glow);
   --section-nav-pointer-glow-filter: var(--interaction-glow-filter);
   --section-nav-here-glow: var(--interaction-glow);

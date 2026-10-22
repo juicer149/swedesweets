@@ -25,6 +25,9 @@
   gap: var(--space-6);
 
   margin-block: var(--space-5) var(--space-4);
+  /* room at the sides for the first and last word's light
+     (--section-nav-glow-room in the theme files) */
+  padding-inline: var(--section-nav-glow-room, 0);
   padding-bottom: var(--space-1);
 
   border-bottom: 1px solid var(--line-soft);
@@ -183,7 +186,7 @@
     gap: var(--space-3);
 
     margin-block: var(--space-3);
-    padding-inline: 0;
+    padding-inline: var(--section-nav-glow-room, 0);
     padding-bottom: var(--space-1);
   }
 

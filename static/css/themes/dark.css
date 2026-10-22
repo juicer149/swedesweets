@@ -513,6 +513,11 @@
   /* the shared halo's shape, and the chips' soft light (not the day's
      cloud) */
   --section-nav-glow-inset: -0.6rem 0;
+  /* room at the row's ends for the halo, so it is not cut there */
+  --section-nav-glow-room: 1.25rem;
+  --section-nav-glow-closed: none;
+  --chip-glow-closed: none;
+  --sky-open-time: var(--motion-fast);
   --chip-glow-inset: -4px 0;
   --chip-glow-radius: 50%;
   --chip-glow-blur: 9px;

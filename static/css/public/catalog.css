@@ -1218,7 +1218,7 @@
     /* Extend the scrollport's paint area past the content column without
        moving its tabs or changing their available width. Main clips only
        at the screen edge, so the first/last halo can fade into the gutter. */
-    padding-inline: var(--space-8);
+    padding-inline: calc(var(--space-8) + var(--section-nav-glow-room, 0px));
     margin-inline: calc(-1 * var(--space-8));
     padding-bottom: calc(var(--space-1) + 1px);
     overflow-x: auto;
