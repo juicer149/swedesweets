@@ -73,8 +73,23 @@ colour when pointed at, "here" with its crown on the start page and login.
 The page's own parts sit on the cream,
 where those colours would not read, so their words have their own three:
 `--state-page-rest-ink`, `--state-page-here-ink`, `--state-page-pointer-ink`. `common/states.css` is loaded last (public.css,
-ops.css) and maps the parts onto their variables. The catalog's category
-tabs, buttons, cards, open questions and the order timeline keep their own
+ops.css) and maps the parts onto their variables.
+
+The page's own parts follow the same three states by night: the tabs (the
+catalog's categories, /my/: `--section-nav-*`, `--section-nav-pointer-*`),
+the questions (FAQ, Previous orders: rest light blue, open gold, pointed at
+moonlight, `--dropdown-title-pointer-*`; the FAQ's answers moonlight without
+light, `--faq-answer-text`), Find Sweets (`--find-sweets-pointer-*`), the
+catalog's cards (a moonlit sheen and edge, `--catalog-card-hover-*` from
+`--state-pointer-sheen` and `--state-pointer-box-glow`) and their cart
+buttons (light blue, moonlight pointed at). The primary buttons are gold ink
+and edge on the night sky (`--action-primary-bg`: primary-1000), and
+pointed at take moonlight ink, edge and light (`--action-primary-hover-*`,
+`--action-primary-shadow`). The quantity steppers have a light blue edge and
+signs, moonlit signs when pointed at, a moonlit blink when pressed, and a
+gold edge while in use (`--stepper-active-line`, `--stepper-pointer-ink`,
+`--stepper-press-*`; the cart's own: `--cart-control-*`). By day all of
+these point at what the parts had before. The order timeline keeps its own
 states.
 
 ## The Menu: account, settings and the staff site switch

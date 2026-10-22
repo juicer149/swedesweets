@@ -688,6 +688,26 @@
   /* The Menu's box on wider screens: the navbar's colour, no edge */
   --site-menu-box-bg: var(--menu-bg);
   --site-menu-box-border: transparent;
+
+  /* The page's own parts (common/states.css): by day as before */
+  --section-nav-pointer-glow: var(--interaction-glow);
+  --section-nav-pointer-glow-filter: var(--interaction-glow-filter);
+  --section-nav-pointer-text-shadow: var(--interaction-text-shadow);
+  --section-nav-pointer-icon-filter: var(--interaction-icon-filter);
+  --dropdown-title-pointer-glow: var(--dropdown-title-glow);
+  --dropdown-title-pointer-glow-filter: var(--dropdown-title-glow-filter);
+  --dropdown-title-pointer-text-shadow: var(--dropdown-title-text-shadow);
+  --dropdown-title-pointer-icon-filter: var(--dropdown-title-icon-filter);
+  --dropdown-title-pointer-chevron: var(--dropdown-title-active-text);
+  --find-sweets-pointer-glow: var(--interaction-glow);
+  --find-sweets-pointer-glow-filter: var(--interaction-glow-filter);
+  --find-sweets-pointer-text-shadow: var(--interaction-text-shadow);
+  --find-sweets-pointer-icon-filter: var(--interaction-icon-filter);
+  --catalog-cart-hover-icon-filter: var(--interaction-icon-filter);
+  --stepper-active-line: var(--stepper-line);
+  --stepper-pointer-ink: var(--stepper-ink);
+  --stepper-press-ink: var(--stepper-ink);
+  --stepper-press-glow: none;
 }
 
 

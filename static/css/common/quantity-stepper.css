@@ -88,7 +88,7 @@
 }
 
 .quantity-stepper__button:hover:not(:disabled) {
-  color: var(--stepper-ink);
+  color: var(--stepper-pointer-ink, var(--stepper-ink));
   background: var(--stepper-bg-hover);
 }
 
@@ -106,8 +106,17 @@
 /* Pressed: only darker. The button's grey runs to the stepper's rounded
    edge, so a shrinking or shadowed square would show its corners. */
 .quantity-stepper__button:active:not(:disabled) {
-  color: var(--stepper-ink);
+  color: var(--stepper-press-ink, var(--stepper-ink));
   background: var(--stepper-bg-press);
+  box-shadow: var(--stepper-press-glow, none);
+  /* at once when pressed; it fades back on release: a short blink */
+  transition: none;
+}
+
+/* In use (a sign or the number has the focus): the edge takes the theme's
+   "here" colour (by night gold). */
+.quantity-stepper:focus-within {
+  border-color: var(--stepper-active-line, var(--stepper-line));
 }
 
 /* The − and + are drawn icons (not text), so they sit in the middle. */

@@ -12,8 +12,11 @@
    which point at the --state-* roles in the theme files: by day they keep
    what the site had (gold for both), by night here is gold with its light
    and the crown, the pointer moonlight. Loaded last, after the parts' own
-   files, so these mappings win over their older shared rules. The catalog's
-   category tabs, buttons and cards keep their own states.
+   files, so these mappings win over their older shared rules. The page's
+   own parts follow at the end: the tabs (the catalog's categories, /my/),
+   the questions, Find Sweets, the catalog's cards and cart buttons; the
+   primary buttons and the quantity stepper read their --action-primary-*
+   and --stepper-* roles directly.
    ============================================================================= */
 
 
@@ -245,6 +248,70 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
   background: var(--landing-pointer-glow);
   filter: var(--landing-pointer-glow-filter);
 }
+
+
+
+/* ## The page's tabs (.section-nav: the catalog's categories, /my/) -------- */
+
+/* The one chosen keeps its light (by night gold); the one pointed at takes
+   the pointer's (by night moonlight). */
+.section-nav__link:not(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"])::before {
+  background: var(--section-nav-pointer-glow);
+  filter: var(--section-nav-pointer-glow-filter);
+}
+
+.section-nav__link:not(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]):is(:hover, :focus-visible) {
+  text-shadow: var(--section-nav-pointer-text-shadow);
+}
+
+.section-nav__link:not(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]):is(:hover, :focus-visible) .ui-icon-svg {
+  filter: var(--section-nav-pointer-icon-filter);
+}
+
+
+/* ## The questions (FAQ, Previous orders): open is "here", the closed one
+   pointed at the pointer ------------------------------------------------ */
+
+.glow-accordions .accordion:not([open]) > .accordion__summary > span::before {
+  background: var(--dropdown-title-pointer-glow);
+  filter: var(--dropdown-title-pointer-glow-filter);
+}
+
+.glow-accordions .accordion:not([open]) > .accordion__summary:is(:hover, :focus-visible) {
+  text-shadow: var(--dropdown-title-pointer-text-shadow);
+}
+
+.glow-accordions .accordion:not([open]) > .accordion__summary:is(:hover, :focus-visible) .ui-icon-svg {
+  filter: var(--dropdown-title-pointer-icon-filter);
+}
+
+.glow-accordions .accordion:not([open]) > .accordion__summary:is(:hover, :focus-visible) .accordion__chevron {
+  color: var(--dropdown-title-pointer-chevron);
+}
+
+
+/* ## Find Sweets: the shop pointed at --------------------------------------- */
+
+.find-sweets .line__link :is(.line__name, .line__icon)::before {
+  background: var(--find-sweets-pointer-glow);
+  filter: var(--find-sweets-pointer-glow-filter);
+}
+
+.find-sweets .line__link:is(:hover, :focus-visible) .line__name {
+  text-shadow: var(--find-sweets-pointer-text-shadow);
+}
+
+.find-sweets .line__link:is(:hover, :focus-visible) .line__icon {
+  filter: var(--find-sweets-pointer-icon-filter);
+}
+
+
+/* ## The catalog's cart buttons (their colours: --catalog-cart-* ) ---------- */
+
+.tile__add:is(:hover, :focus-visible) .ui-icon-svg {
+  filter: var(--catalog-cart-hover-icon-filter);
+}
+
 
 @media (forced-colors: active) {
   .site-brand .brand-logo__crown { opacity: 1; }

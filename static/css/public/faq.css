@@ -33,7 +33,7 @@
   --accordion-hover-text: var(--faq-question-hover-text);
   --accordion-hover-bg: var(--faq-question-hover-bg);
   --accordion-open-bg: var(--faq-question-open-bg);
-  --accordion-answer-text: var(--prose-text);
+  --accordion-answer-text: var(--faq-answer-text, var(--prose-text));
 }
 
 /* Extinguish at the start of closing, before the answer finishes sliding. */

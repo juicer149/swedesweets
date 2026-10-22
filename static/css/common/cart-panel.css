@@ -54,7 +54,7 @@
 .cart-line .quantity-stepper { --stepper-bg: var(--surface-bg); --stepper-line: var(--cart-control-border, color-mix(in srgb, var(--cart-name) 38%, transparent)); --stepper-ink: var(--cart-control-ink, var(--cart-name)); }
 .cart-line .quantity-stepper__input { color: var(--cart-quantity-ink, var(--cart-name)); }
 .cart-line .quantity-stepper__button { border: 0; background: transparent; }
-.cart-line .quantity-stepper__button:hover { color: var(--menu-chosen); filter: var(--interaction-icon-filter); }
+.cart-line .quantity-stepper__button:hover { color: var(--cart-control-hover, var(--menu-chosen)); filter: var(--cart-control-hover-filter, var(--interaction-icon-filter)); }
 .cart-line .quantity-stepper:focus-within { box-shadow: var(--field-focus-shadow); }
 .cart-line .quantity-stepper__input:focus { box-shadow: none; }
 
@@ -216,7 +216,7 @@
     max-height: min(44rem, calc(100dvh - 5rem));
     display: flex;
     flex-direction: column;
-    padding-block: calc(clamp(1rem, 3dvh, 1.5rem) + 2.25rem) clamp(1.5rem, 4dvh, 2.5rem);
+    padding-block: calc(clamp(1rem, 3dvh, 1.5rem) + 2.25rem) 0;
     border: 1px solid var(--preferences-border);
     border-radius: var(--radius-md);
     box-shadow: var(--cart-sheet-shadow, var(--account-menu-shadow));
@@ -252,7 +252,11 @@
     justify-content: space-between;
     gap: var(--space-4);
     margin: auto calc(-1 * (var(--space-6) + var(--space-1))) 0;
-    padding: var(--space-4) calc(var(--space-6) + var(--space-1)) var(--space-1);
+    /* the box's bottom padding is in here, so the button's light has room
+       inside the scrolling list rather than being cut at its edge */
+    padding: var(--space-4) calc(var(--space-6) + var(--space-1)) calc(var(--space-1) + clamp(1.5rem, 4dvh, 2.5rem));
+    /* it now reaches the box's bottom: round with it */
+    border-radius: 0 0 calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px);
     background: var(--cart-sheet-bg);
     border-top: 1px solid transparent;
     transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
@@ -274,6 +278,8 @@
     box-shadow: var(--cart-summary-shadow);
   }
   .site-nav-cart__popover [data-more-below] .site-nav-cart__actions::before { opacity: 1; }
+  /* An empty cart has no summary row: the box's bottom padding is here. */
+  .site-nav-cart__popover .site-nav-cart__empty { padding-bottom: clamp(1.5rem, 4dvh, 2.5rem); }
   .site-nav-cart__popover .site-nav-cart__actions .button {
     width: auto;
     padding-inline: var(--space-8);

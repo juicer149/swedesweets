@@ -97,8 +97,9 @@ by night "here" is gold with its light and the crown, the pointer moonlight,
 the rest light blue (see Navigation and chrome). The chosen landing item owns
 its light even when pointer input follows keyboard focus. Ready catalog cart buttons
 use cool moonlight ink/edges, becoming gold with the navbar cart's backlight on hover or
-keyboard focus; success feedback remains green. Catalog card hover and focused
-quantity/size fields also use the warm gold light; available controls remain blue.
+keyboard focus; success feedback remains green. Catalog card hover is a cool
+moonlit light by night; focused quantity/size fields are gold; available
+controls remain blue.
 Dropdown options pair foreground
 and background colours so selected countries and variants remain readable.
 Variable mappings live in [docs/css-themes.md](docs/css-themes.md).
@@ -462,6 +463,12 @@ Detailed mappings are in [CSS themes](docs/css-themes.md).
   on the start page and login); three lines in
   light.css (`--state-rest-ink`, `--state-here-ink`, `--state-pointer-ink`)
   change the whole navigation at once.
+- **The page's parts by night** follow the same three: tabs, questions, Find
+  Sweets, the catalog's cards and cart buttons, and the quantity steppers
+  rest light blue, are gold where chosen, open or in use, and moonlit where
+  pointed at (a stepper blinks moonlight when pressed). Primary buttons are
+  gold ink and edge on the night sky; pointed at, their ink, edge and light
+  turn moonlight. The FAQ's answers read in moonlight.
 
 - **Desktop:** logo/home at the left, page navigation centred, and the cart
   and the Menu at the right in that order. The customer header can be wider
