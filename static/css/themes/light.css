@@ -63,7 +63,12 @@
   --theme-sky-blur: 6.5px;
   /* how far it reaches beside the word; the row keeps room at its ends
      for it, so it is not cut */
-  --theme-sky-reach: 16px;
+  --theme-sky-reach: 1.35rem;
+  /* its shape: a cloud like the navbar's (a wide body with a small round
+     top), in the sky's blue */
+  --theme-sky-cloud:
+    radial-gradient(circle 0.62em at 44% 24%, var(--theme-sky-here-bg) 96%, transparent),
+    radial-gradient(ellipse 50% 40% at 50% 54%, var(--theme-sky-here-bg) 96%, transparent);
   /* closed it is this small, and it opens in this long when pointed at */
   --theme-sky-closed: scale(0.35, 0.6);
   /* pointed at, it opens only this far: a peek at the chosen one's sky */
@@ -764,13 +769,13 @@
   --site-menu-box-border: transparent;
 
   /* The page's own parts (common/states.css): by day as before */
-  --section-nav-glow-inset: -5px calc(-1 * var(--theme-sky-reach));
+  --section-nav-glow-inset: -0.75rem calc(-1 * var(--theme-sky-reach));
   --section-nav-glow-room: calc(var(--theme-sky-reach) + var(--theme-sky-blur));
   --section-nav-glow-closed: var(--theme-sky-closed);
   --section-nav-glow-peek: var(--theme-sky-peek);
-  --section-nav-pointer-glow: var(--theme-sky-pointer-bg);
+  --section-nav-pointer-glow: var(--theme-sky-cloud);
   --section-nav-pointer-glow-filter: blur(var(--theme-sky-blur));
-  --section-nav-here-glow: var(--theme-sky-here-bg);
+  --section-nav-here-glow: var(--theme-sky-cloud);
   --section-nav-here-glow-filter: blur(var(--theme-sky-blur));
   --section-nav-here-glow-opacity: 1;
   --section-nav-pointer-text-shadow: var(--interaction-text-shadow);
@@ -802,15 +807,15 @@
   --chip-rest-ink: var(--theme-sky-rest-ink);
   --chip-here-ink: var(--theme-sky-here-ink);
   --chip-here-bg: transparent;
-  --chip-here-glow: var(--theme-sky-here-bg);
+  --chip-here-glow: var(--theme-sky-cloud);
   --chip-pointer-ink: var(--theme-sky-pointer-ink);
   --chip-pointer-bg: transparent;
   --chip-pointer-shadow: none;
-  --chip-pointer-glow: var(--theme-sky-pointer-bg);
-  --chip-glow-inset: -5px calc(-1 * var(--theme-sky-reach));
+  --chip-pointer-glow: var(--theme-sky-cloud);
+  --chip-glow-inset: -0.75rem calc(-1 * var(--theme-sky-reach));
   --chip-glow-closed: var(--theme-sky-closed);
   --chip-glow-peek: var(--theme-sky-peek);
-  --chip-glow-radius: 999px;
+  --chip-glow-radius: 0;
   --chip-glow-blur: var(--theme-sky-blur);
 }
 
