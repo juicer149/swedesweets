@@ -925,3 +925,64 @@
     --nav-trigger-cloud-inset: -0.5rem -0.35rem;
   }
 }
+
+
+/* =============================================================================
+   A product's Description and Ingredients on a sky (the day's customer pages)
+
+   The chosen tab's text opens on a patch of the navbar's blue, the page's
+   cream in uneven puffs round its edge (catalog.css: the panel's ::before),
+   growing down out of the tabs each time one is chosen; the text in white.
+   Soft-edged gradients, no blur filter: drawn once, cheap to move.
+   ============================================================================= */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --product-tabs-sky: var(--theme-chrome-bg);
+  --product-tabs-sky-inset: -5rem calc(-2.25rem - 70px) -6.25rem;
+  --product-tabs-sky-open: product-tabs-sky-open 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --product-tabs-text-open: product-tabs-text-open 300ms ease 160ms both;
+  --theme-sky-puff: var(--theme-page-bg) 60%, transparent 100%;
+  --product-tabs-clouds:
+    radial-gradient(ellipse 64px 44px at calc(60px + (100% - 120px) * 0.000) 50px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 54px 42px at calc(60px + (100% - 120px) * 0.000) calc(100% - 47px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 68px 37px at calc(60px + (100% - 120px) * 0.079) 47px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 54px 40px at calc(60px + (100% - 120px) * 0.079) calc(100% - 47px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 54px 42px at calc(60px + (100% - 120px) * 0.179) 53px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 53px 43px at calc(60px + (100% - 120px) * 0.179) calc(100% - 59px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 72px 44px at calc(60px + (100% - 120px) * 0.261) 53px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 70px 43px at calc(60px + (100% - 120px) * 0.261) calc(100% - 47px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 53px 42px at calc(60px + (100% - 120px) * 0.361) 53px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 61px 40px at calc(60px + (100% - 120px) * 0.361) calc(100% - 50px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 70px 38px at calc(60px + (100% - 120px) * 0.444) 49px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 55px 43px at calc(60px + (100% - 120px) * 0.444) calc(100% - 51px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 63px 35px at calc(60px + (100% - 120px) * 0.548) 52px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 70px 34px at calc(60px + (100% - 120px) * 0.548) calc(100% - 48px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 73px 42px at calc(60px + (100% - 120px) * 0.640) 61px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 76px 39px at calc(60px + (100% - 120px) * 0.640) calc(100% - 59px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 63px 38px at calc(60px + (100% - 120px) * 0.726) 60px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 77px 36px at calc(60px + (100% - 120px) * 0.726) calc(100% - 53px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 54px 43px at calc(60px + (100% - 120px) * 0.824) 53px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 68px 41px at calc(60px + (100% - 120px) * 0.824) calc(100% - 55px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 61px 43px at calc(60px + (100% - 120px) * 0.920) 60px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 55px 42px at calc(60px + (100% - 120px) * 0.920) calc(100% - 48px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 56px 41px at calc(60px + (100% - 120px) * 0.998) 56px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 53px 44px at calc(60px + (100% - 120px) * 0.998) calc(100% - 59px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 43px 54px at 54px calc(60px + (100% - 120px) * 0.291), var(--theme-sky-puff)),
+    radial-gradient(ellipse 39px 59px at calc(100% - 51px) calc(60px + (100% - 120px) * 0.291), var(--theme-sky-puff)),
+    radial-gradient(ellipse 35px 46px at 53px calc(60px + (100% - 120px) * 0.675), var(--theme-sky-puff)),
+    radial-gradient(ellipse 41px 46px at calc(100% - 50px) calc(60px + (100% - 120px) * 0.675), var(--theme-sky-puff)),
+    radial-gradient(ellipse 46px 44px at 64px 64px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 56px 49px at 64px calc(100% - 64px), var(--theme-sky-puff)),
+    radial-gradient(ellipse 56px 47px at calc(100% - 64px) 64px, var(--theme-sky-puff)),
+    radial-gradient(ellipse 50px 46px at calc(100% - 64px) calc(100% - 64px), var(--theme-sky-puff)),
+    linear-gradient(var(--product-tabs-sky), var(--product-tabs-sky)) 50% 50% / calc(100% - 140px) calc(100% - 140px) no-repeat;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .product__tabs .section-nav {
+  /* (the sky's clouds pass under the tabs, so no line between them) */
+  border-bottom-color: transparent;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .product__tabs .page-tabs__panel {
+  --product-prose-text: var(--color-white);
+  --prose-text: var(--color-white);
+}
