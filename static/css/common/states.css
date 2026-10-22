@@ -222,7 +222,9 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
   color: var(--landing-pointer-ink);
 }
 
-.landing-menu__link--chosen,
+/* (as strong as interaction-light.css's shared hover rule, so the pointer's
+   light wins over its gold) */
+.landing-menu .landing-menu__link.landing-menu__link--chosen,
 .landing-menu:not([data-landing-live]) .landing-menu__link:is(:hover, :focus-visible) {
   text-shadow: var(--landing-pointer-text-shadow);
 }
@@ -232,7 +234,7 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
   filter: var(--landing-pointer-glow-filter);
 }
 
-.landing-menu__link--chosen .ui-icon-svg {
+.landing-menu .landing-menu__link.landing-menu__link--chosen .ui-icon-svg {
   filter: var(--landing-pointer-icon-filter);
 }
 

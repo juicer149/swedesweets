@@ -99,7 +99,7 @@
 :is(.menu-panel-link, .section-nav__link, .glow-accordions .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action):is(:hover, :focus-visible),
 :is(.section-nav__link--active, .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"], .section-nav__link[aria-pressed="true"],
-    .glow-accordions .accordion[open] > .accordion__summary, .landing-menu__link--chosen,
+    .glow-accordions .accordion[open] > .accordion__summary,
     .menu-panel-link[aria-current="page"]) {
   text-shadow: var(--interaction-text-shadow);
 }
@@ -107,7 +107,7 @@
 :is(.menu-panel-link, .section-nav__link, .glow-accordions .accordion__summary, .landing-menu__link, .landing__account):is(:hover, :focus-visible) .ui-icon-svg,
 :is(.section-nav__link--active, .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"], .section-nav__link[aria-pressed="true"],
-    .glow-accordions .accordion[open] > .accordion__summary, .landing-menu__link--chosen) .ui-icon-svg {
+    .glow-accordions .accordion[open] > .accordion__summary) .ui-icon-svg {
   filter: var(--interaction-icon-filter);
 }
 
