@@ -34,8 +34,8 @@
   --theme-cloud: var(--color-white);
   /* its shape: a wide body with a small round top, softened by the blur */
   --theme-cloud-shape:
-    radial-gradient(circle 0.62em at 44% 34%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 50% 40% at 50% 64%, var(--theme-cloud) 96%, transparent);
+    radial-gradient(circle 0.62em at 44% 29%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 50% 40% at 50% 58%, var(--theme-cloud) 96%, transparent);
   /* how far it reaches round the word (on phones a little less to the
      sides, where the Menu's words reach the screen's edges) */
   --theme-cloud-inset: -0.75rem -1.35rem;
@@ -69,8 +69,8 @@
   /* its shape: the navbar's cloud (a wide body with a small round top),
      in the sky's blue: a hole in the page's cream cloud */
   --theme-sky-cloud:
-    radial-gradient(circle 0.62em at 44% 34%, var(--theme-sky-here-bg) 96%, transparent),
-    radial-gradient(ellipse 50% 40% at 50% 64%, var(--theme-sky-here-bg) 96%, transparent);
+    radial-gradient(circle 0.62em at 44% 24%, var(--theme-sky-here-bg) 96%, transparent),
+    radial-gradient(ellipse 50% 40% at 50% 52%, var(--theme-sky-here-bg) 96%, transparent);
   /* closed it is this small, and it opens in this long when pointed at */
   --theme-sky-closed: scale(0.35, 0.6);
   /* pointed at, it opens only this far: a peek at the chosen one's sky */
@@ -931,15 +931,15 @@
    A product's Description and Ingredients on a sky (the day's customer pages)
 
    The chosen tab's text opens on a box of the navbar's blue, its straight
-   edges fading softly into the page's cream (catalog.css: the panel's
+   edges soft like the clouds', into the page's cream (catalog.css: the panel's
    ::before, a mask, no blur filter), growing down out of the tabs each time
    one is chosen; the text in white.
    ============================================================================= */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
   --product-tabs-sky: var(--theme-chrome-bg);
   /* how far it reaches round the text, and how wide its fading edge is */
-  --product-tabs-sky-inset: -1rem -4.5rem -3.75rem;
-  --product-tabs-sky-fade: 3.25rem;
+  --product-tabs-sky-inset: -0.25rem -2rem -1.5rem;
+  --product-tabs-sky-fade: 0.85rem;
   --product-tabs-sky-open: product-tabs-sky-open 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --product-tabs-text-open: product-tabs-text-open 300ms ease 160ms both;
 }
