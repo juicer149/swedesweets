@@ -125,7 +125,6 @@
   /* One semantic crown color across navigation, artwork and feedback.
      Individual contexts can mute this token without changing its hue. */
   --brand-crown: var(--color-accent-600);
-  --color-brand-blue: #2669ff;
 
   /* A place on the map (address rows, Find Sweets): a deep brick red,
      darker than the danger red so a pin never reads as a warning. */
@@ -443,7 +442,6 @@
   --section-nav-marker-display: block;
   --find-sweets-hover-text: var(--line-link-hover-text);
   --find-sweets-hover-icon: var(--contact-place);
-  --faq-question-lit-icon: var(--text-muted);
   --landing-account-hover-decoration: underline;
   --landing-control-hover-ink: var(--menu-ink);
   --interaction-glow: var(--menu-link-glow);
@@ -611,7 +609,6 @@
 
   --state-here-glow: var(--menu-link-glow);
   --state-here-glow-filter: var(--interaction-glow-filter);
-  --state-here-text-shadow: var(--interaction-text-shadow);
   --state-here-icon-filter: var(--interaction-icon-filter);
   --state-pointer-glow: var(--menu-link-glow);
   --state-pointer-glow-filter: var(--interaction-glow-filter);

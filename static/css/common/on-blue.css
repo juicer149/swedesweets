@@ -13,7 +13,6 @@
    ============================================================================= */
 
 body.on-blue {
-  --on-blue-ink: var(--menu-ink);
   --on-blue-mark: var(--color-accent-600);
   --page-title-color: var(--entrance-copy-text);
 

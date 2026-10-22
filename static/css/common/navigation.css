@@ -43,15 +43,6 @@
     transform var(--motion-fast);
 }
 
-.site-brand:hover,
-.site-brand:is(:hover, :focus-visible) .brand-logo__wordmark {
-  fill: var(--menu-logo-hover);
-}
-
-.site-brand:is(:hover, :focus-visible) .site-brand__logo {
-  filter: var(--interaction-icon-filter);
-}
-
 .site-brand:focus-visible {
   transform: translateY(-1px);
 }
@@ -123,13 +114,6 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--motion-fast);
-}
-
-.site-nav__link:hover,
-.site-nav__link:focus-visible,
-.site-nav__link--active,
-.site-nav__link[aria-current="page"] {
-  color: var(--menu-chosen);
 }
 
 .site-nav__link:hover,
@@ -844,7 +828,6 @@
   .site-nav__link:focus-visible,
   .site-nav__link--active,
   .site-nav__link[aria-current="page"] {
-    color: var(--menu-chosen);
     background: transparent;
   }
 

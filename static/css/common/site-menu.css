@@ -59,7 +59,6 @@
 .site-menu__panel {
   color: var(--preferences-ink);
   --panel-chrome-ink: var(--account-menu-text);
-  --panel-chrome-hover: var(--account-menu-selected);
 }
 
 /* ## Levels: the menu and Settings take turns (once the script runs;
@@ -91,16 +90,12 @@
   text-align: center;
   cursor: pointer;
 }
-/* The chosen one (site-menu.js: pointed at, or reached with the keys) has
-   the gold and the crown, as on the start page; no box around it. Without
-   the script, hover and focus show it. (.menu-panel-link: one class more
-   than on-blue.css's .quiet-link:hover, so the start page and login keep
-   the gold too.) */
+/* The chosen one (site-menu.js: pointed at, or reached with the keys) and
+   the page's own link: no underline, no box (their colours and light are
+   in common/states.css). Without the script, hover and focus choose. */
 .site-menu:not([data-menu-ready]) .site-menu__link:is(:hover, :focus-visible),
 .site-menu .site-menu__link.menu-panel-link.is-chosen,
 .site-menu .site-menu__link.menu-panel-link[aria-current="page"] {
-  color: var(--account-menu-selected);
-  text-shadow: var(--interaction-text-shadow);
   text-decoration: none;
 }
 .site-menu:not([data-menu-ready]) .site-menu__link:focus-visible {
@@ -141,10 +136,6 @@
 .site-menu .site-menu__link.site-menu__return {
   margin-top: var(--space-2);
   color: color-mix(in srgb, var(--account-menu-text) 62%, transparent);
-}
-.site-menu:not([data-menu-ready]) .site-menu__link.site-menu__return:is(:hover, :focus-visible),
-.site-menu .site-menu__link.site-menu__return.is-chosen {
-  color: var(--account-menu-selected);
 }
 
 .site-menu__divider {
@@ -223,11 +214,9 @@
 }
 .site-menu__site-choice .ui-icon-svg { width: 1rem; height: 1rem; }
 .site-menu__site-choice[aria-current="true"] {
-  color: var(--menu-chosen);
   background: color-mix(in srgb, var(--panel-chrome-ink) 12%, transparent);
 }
 .site-menu__site-choice[aria-current="true"] .ui-icon-svg { fill: currentColor; }
-a.site-menu__site-choice:is(:hover, :focus-visible) { color: var(--panel-chrome-hover); }
 .site-menu__site-choice:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
 .site-menu__site-name {
   position: absolute;
@@ -282,13 +271,7 @@ a.site-menu__site-choice:is(:hover, :focus-visible) { color: var(--panel-chrome-
 .site-menu[data-menu-ready] .language-switcher__option:not(.is-chosen, .language-switcher__option--active):is(:hover, :focus-visible)::after {
   opacity: 0;
 }
-.site-menu[data-menu-ready] .language-switcher__option.is-chosen {
-  color: var(--preferences-hover);
-  text-shadow: var(--interaction-text-shadow);
-}
 .site-menu[data-menu-ready] .language-switcher__option.is-chosen::after {
-  background: var(--menu-link-glow);
-  filter: var(--interaction-glow-filter);
   opacity: var(--interaction-halo-opacity);
 }
 /* The crown is the cursor here too: on the chosen language, theme or site,

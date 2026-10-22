@@ -211,7 +211,6 @@ details[open] > .menu-dropdown-trigger .ui-icon-svg,
 
 /* A closed dropdown still marks its page, just like a normal nav item.
    The wrapper lets the masked crown emit light beyond its silhouette. */
-.menu-dropdown-trigger[aria-current="page"] { color: var(--menu-chosen); }
 .menu-dropdown-trigger__crown {
   display: none;
   position: absolute;
