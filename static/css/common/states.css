@@ -258,9 +258,21 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
 
 /* The one chosen keeps its light (by night gold); the one pointed at takes
    the pointer's (by night moonlight). */
+/* The light's shape (by day a soft cloud round the word, by night the
+   shared halo). */
+.section-nav__link::before {
+  inset: var(--section-nav-glow-inset, -0.6rem 0);
+}
+
 .section-nav__link:not(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"])::before {
   background: var(--section-nav-pointer-glow);
   filter: var(--section-nav-pointer-glow-filter);
+}
+
+.section-nav__link:is(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"])::before {
+  background: var(--section-nav-here-glow);
+  filter: var(--section-nav-here-glow-filter);
+  opacity: var(--section-nav-here-glow-opacity);
 }
 
 .section-nav__link:not(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]):is(:hover, :focus-visible) {

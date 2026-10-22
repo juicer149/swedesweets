@@ -26,9 +26,9 @@
   --theme-chrome-bg: var(--color-primary-350);
 
   /* # What you can click on it: rest, here, pointer (text, edge and light) */
-  --state-rest-ink: var(--color-primary-950);
+  --state-rest-ink: var(--color-white);
   --state-here-ink: var(--color-accent-600);
-  --state-pointer-ink: var(--color-neutral-50);
+  --state-pointer-ink: var(--color-primary-950);
   /* the crown marks only "here" */
   --state-pointer-crown-opacity: 0;
 
@@ -38,15 +38,29 @@
   --state-page-here-ink: var(--color-primary-900);
   --state-page-pointer-ink: var(--color-primary-600);
 
+  /* # Tabs and filter chips: a word in the dark blue; pointed at, a light
+     blue cloud behind it and white; chosen, the navbar's blue and gold */
+  --theme-sky-rest-ink: var(--color-primary-950);
+  --theme-sky-pointer-bg: var(--color-primary-250);
+  --theme-sky-pointer-ink: var(--color-white);
+  --theme-sky-here-bg: var(--theme-chrome-bg);
+  --theme-sky-here-ink: var(--color-accent-600);
+  /* how soft the cloud's edge is (larger: softer) */
+  --theme-sky-blur: 6.5px;
+
   /* # How strongly the lights shine */
   --interaction-glow-strength: 1;
 
-  /* # Primary buttons: the navbar's blue, with the ink of "here"; the
-     pointer's ink and light when pointed at */
+  /* # Primary buttons: the navbar's blue with white ink (no visible edge);
+     pointed at, gold ink and a gold light */
   --theme-action-bg: var(--theme-chrome-bg);
-  --theme-action-ink: var(--state-here-ink);
-  --theme-action-pointer-ink: var(--state-pointer-ink);
-  --theme-action-pressed-ink: var(--state-here-ink);
+  --theme-action-edge: var(--theme-action-bg);
+  --theme-action-ink: var(--color-white);
+  --theme-action-pointer-ink: var(--color-accent-600);
+  --theme-action-pressed-ink: var(--color-accent-600);
+  /* on the blue pages (login, password): a deeper blue, so the button
+     stands apart from the page */
+  --theme-entrance-action-bg: var(--color-primary-450);
 }
 
 
@@ -111,9 +125,9 @@
   --color-status-muted-text: var(--color-neutral-700);
 
   /* Local tabs, table sorting and row affordances; keep light's current palette. */
-  --section-nav-text: var(--state-page-rest-ink);
-  --section-nav-hover-text: var(--state-page-pointer-ink);
-  --section-nav-active-text: var(--state-page-here-ink);
+  --section-nav-text: var(--theme-sky-rest-ink);
+  --section-nav-hover-text: var(--theme-sky-pointer-ink);
+  --section-nav-active-text: var(--theme-sky-here-ink);
   --section-nav-marker: var(--color-accent-600);
   --table-sort-text: var(--text-body);
   --table-sort-active-text: var(--text-main);
@@ -474,23 +488,23 @@
   --action-primary-bg: var(--theme-action-bg);
   --action-primary-text: var(--theme-action-ink);
   --action-primary-default-text: var(--action-primary-text);
-  --action-primary-border: var(--theme-action-ink);
+  --action-primary-border: var(--theme-action-edge);
   --action-primary-hover-bg: var(--theme-action-bg);
   --action-primary-hover-text: var(--theme-action-pointer-ink);
-  --action-primary-hover-border: var(--theme-action-pointer-ink);
+  --action-primary-hover-border: var(--theme-action-edge);
   --action-primary-active-bg: var(--theme-action-bg);
-  --action-primary-active-border: var(--theme-action-pressed-ink);
-  --action-primary-shadow: 0 0 18px 2px color-mix(in srgb, var(--theme-action-pointer-ink) calc(32% * var(--interaction-glow-strength)), transparent), 0 0 30px 4px color-mix(in srgb, var(--theme-action-pointer-ink) calc(10% * var(--interaction-glow-strength)), transparent);
+  --action-primary-active-border: var(--theme-action-edge);
+  --action-primary-shadow: 0 0 18px 3px color-mix(in srgb, var(--theme-action-pointer-ink) calc(45% * var(--interaction-glow-strength)), transparent), 0 0 34px 8px color-mix(in srgb, var(--theme-action-pointer-ink) calc(18% * var(--interaction-glow-strength)), transparent);
   --action-primary-hover-transform: var(--transform-lift-scale);
   --action-primary-text-shadow: none;
   --action-primary-icon-filter: none;
-  --entrance-action-primary-bg: var(--theme-action-bg);
+  --entrance-action-primary-bg: var(--theme-entrance-action-bg);
   --interaction-halo-opacity: 1;
   --interaction-selected-opacity: 0;
   --interaction-text-shadow: none;
   --interaction-icon-filter: none;
   --menu-logo-hover: var(--menu-logo, var(--menu-ink));
-  --section-nav-marker-display: block;
+  --section-nav-marker-display: none;
   --find-sweets-hover-text: var(--state-page-pointer-ink);
   --find-sweets-hover-icon: var(--contact-place);
   --landing-account-hover-decoration: underline;
@@ -728,8 +742,12 @@
   --site-menu-box-border: transparent;
 
   /* The page's own parts (common/states.css): by day as before */
-  --section-nav-pointer-glow: var(--interaction-glow);
-  --section-nav-pointer-glow-filter: var(--interaction-glow-filter);
+  --section-nav-glow-inset: -5px -9px;
+  --section-nav-pointer-glow: var(--theme-sky-pointer-bg);
+  --section-nav-pointer-glow-filter: blur(var(--theme-sky-blur));
+  --section-nav-here-glow: var(--theme-sky-here-bg);
+  --section-nav-here-glow-filter: blur(var(--theme-sky-blur));
+  --section-nav-here-glow-opacity: 1;
   --section-nav-pointer-text-shadow: var(--interaction-text-shadow);
   --section-nav-pointer-icon-filter: var(--interaction-icon-filter);
   --dropdown-title-pointer-glow: var(--dropdown-title-glow);
@@ -756,14 +774,17 @@
 :root:not([data-site-zone="ops"]) {
   --chip-pill-bg: transparent;
   --chip-pill-border: transparent;
-  --chip-rest-ink: var(--state-page-rest-ink);
-  --chip-here-ink: var(--state-page-here-ink);
+  --chip-rest-ink: var(--theme-sky-rest-ink);
+  --chip-here-ink: var(--theme-sky-here-ink);
   --chip-here-bg: transparent;
-  --chip-here-glow: color-mix(in srgb, var(--color-accent-600) 45%, transparent);
-  --chip-pointer-ink: var(--state-page-pointer-ink);
+  --chip-here-glow: var(--theme-sky-here-bg);
+  --chip-pointer-ink: var(--theme-sky-pointer-ink);
   --chip-pointer-bg: transparent;
   --chip-pointer-shadow: none;
-  --chip-pointer-glow: color-mix(in srgb, var(--state-page-rest-ink) 18%, transparent);
+  --chip-pointer-glow: var(--theme-sky-pointer-bg);
+  --chip-glow-inset: -5px -9px;
+  --chip-glow-radius: 999px;
+  --chip-glow-blur: var(--theme-sky-blur);
 }
 
 
@@ -790,4 +811,19 @@
   --action-primary-active-border: var(--color-accent-700);
   --action-primary-shadow: var(--shadow-accent-glow);
   --entrance-action-primary-bg: var(--color-action-place);
+
+  /* tabs and expandable titles as before */
+  --section-nav-text: var(--color-link);
+  --section-nav-hover-text: var(--text-blue-strong);
+  --section-nav-active-text: var(--text-blue-strong);
+  --section-nav-marker-display: block;
+  --section-nav-glow-inset: -0.6rem 0;
+  --section-nav-pointer-glow: var(--interaction-glow);
+  --section-nav-pointer-glow-filter: var(--interaction-glow-filter);
+  --section-nav-here-glow: var(--interaction-glow);
+  --section-nav-here-glow-filter: var(--interaction-glow-filter);
+  --section-nav-here-glow-opacity: var(--interaction-selected-opacity);
+  --dropdown-title-text: var(--text-body);
+  --dropdown-title-hover-text: var(--color-primary-900);
+  --dropdown-title-active-text: var(--text-main);
 }

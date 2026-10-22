@@ -510,6 +510,15 @@
   /* The page's own parts (common/states.css) */
   --state-pointer-box-glow: 0 0 18px 3px color-mix(in srgb, var(--state-pointer-ink) calc(22% * var(--interaction-glow-strength)), transparent), 0 0 32px 7px color-mix(in srgb, var(--state-pointer-ink) calc(8% * var(--interaction-glow-strength)), transparent);
   --state-pointer-sheen: linear-gradient(135deg, color-mix(in srgb, var(--state-pointer-ink) calc(16% * var(--interaction-glow-strength)), transparent), transparent 65%);
+  /* the shared halo's shape, and the chips' soft light (not the day's
+     cloud) */
+  --section-nav-glow-inset: -0.6rem 0;
+  --chip-glow-inset: -4px 0;
+  --chip-glow-radius: 50%;
+  --chip-glow-blur: 9px;
+  --section-nav-here-glow: var(--interaction-glow);
+  --section-nav-here-glow-filter: var(--interaction-glow-filter);
+  --section-nav-here-glow-opacity: var(--interaction-selected-opacity);
   --section-nav-pointer-glow: var(--state-pointer-glow);
   --section-nav-pointer-glow-filter: var(--state-pointer-glow-filter);
   --section-nav-pointer-text-shadow: var(--state-pointer-text-shadow);

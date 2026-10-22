@@ -355,11 +355,11 @@
 .radio-chip-group label::before {
   content: "";
   position: absolute;
-  inset: -4px 0;
+  inset: var(--chip-glow-inset, -4px 0);
   z-index: -1;
-  border-radius: 50%;
+  border-radius: var(--chip-glow-radius, 50%);
   background: var(--chip-glow, transparent);
-  filter: blur(9px);
+  filter: blur(var(--chip-glow-blur, 9px));
   pointer-events: none;
   transition: background var(--motion-fast);
 }

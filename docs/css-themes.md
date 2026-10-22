@@ -18,14 +18,16 @@ it must differ:
 
 | Control | What it sets | Day (light.css) | Night (dark.css) |
 |---|---|---|---|
-| `--theme-chrome-bg` | the navbar's surface, and the Menu's, start page's and login pages' around it | primary-450 | primary-950 |
-| `--state-rest-ink` | everything clickable on it, at rest: text, edge and light | primary-1000 | light blue (`--interactive-text`) |
-| `--state-here-ink` | where you are (with the crown) | white | gold |
-| `--state-pointer-ink` | what you point at or reach with the keys | gold | moonlight |
+| `--theme-chrome-bg` | the navbar's surface, and the Menu's, start page's and login pages' around it | primary-350 | primary-950 |
+| `--state-rest-ink` | everything clickable on it, at rest: text, edge and light | white | light blue (`--interactive-text`) |
+| `--state-here-ink` | where you are (with the crown) | gold | gold |
+| `--state-pointer-ink` | what you point at or reach with the keys | primary-950 | moonlight |
 | `--theme-page-bg` | the page | cream (neutral-50) | primary-900 |
 | `--state-page-rest/here/pointer-ink` | the same three on the page (tabs, questions, Find Sweets, chips) | primary-700 / 900 / 600 | as the three above |
+| `--theme-sky-*` | tabs and filter chips: the word at rest, a cloud behind it and its ink pointed at and chosen, the cloud's softness (`--theme-sky-blur`) | primary-950; primary-250 + white; the navbar's blue + gold; 6.5px | (not used: the night keeps its halo) |
 | `--interaction-glow-strength` | how strongly the lights shine | 1 | 0.85 |
-| `--theme-action-bg`, `-ink`, `-pointer-ink`, `-pressed-ink` | the primary buttons' fill, and the ink of their text, edge and light | the navbar's blue; here; pointer; here | the night sky; here; pointer; here |
+| `--theme-action-bg`, `-edge`, `-ink`, `-pointer-ink`, `-pressed-ink` | the primary buttons' fill and edge, and the ink of their text and light | the navbar's blue, edge the same (unseen); white; gold with a gold light; gold | the night sky; gold; moonlight; gold |
+| `--theme-entrance-action-bg` | the button on the blue login pages | primary-450 | (the night sky) |
 
 The inks colour text, edges and the lights alike (a pointer's glow is made
 from `--state-pointer-ink`). The crown keeps its gold (`--menu-crown`:
