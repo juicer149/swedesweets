@@ -52,11 +52,13 @@
   --state-page-here-ink: var(--color-primary-900);
   --state-page-pointer-ink: var(--color-primary-600);
 
-  /* # Tabs and filter chips: a word in the dark blue; pointed at, a light
-     blue cloud behind it and white; chosen, the navbar's blue and gold */
-  --theme-sky-rest-ink: var(--color-primary-950);
+  /* # Tabs and filter chips: a word in the dark blue; pointed at, a peek
+     of the navbar's blue opens behind it, the word keeping its colour;
+     chosen, the whole cloud and gold */
+  --theme-sky-rest-ink: var(--color-primary-750);
   --theme-sky-pointer-bg: var(--theme-sky-here-bg);
-  --theme-sky-pointer-ink: var(--color-white);
+  /* pointed at, the word keeps its colour and the blue opens behind it */
+  --theme-sky-pointer-ink: var(--theme-sky-rest-ink);
   --theme-sky-here-bg: var(--theme-chrome-bg);
   --theme-sky-here-ink: var(--color-accent-600);
   /* how soft the cloud's edge is (larger: softer) */
