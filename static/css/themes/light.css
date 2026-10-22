@@ -53,7 +53,7 @@
   /* closed it is this small, and it opens in this long when pointed at */
   --theme-sky-closed: scale(0.35, 0.6);
   /* pointed at, it opens only this far: a peek at the chosen one's sky */
-  --theme-sky-peek: scale(0.72, 0.82);
+  --theme-sky-peek: scale(0.72, 0.6);
   --sky-open-time: 280ms;
 
   /* # How strongly the lights shine */
