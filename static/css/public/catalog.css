@@ -997,7 +997,7 @@
 }
 
 /* The chosen tab's text on its sky (by day: --product-tabs-sky,
-   --product-tabs-clouds in themes/light.css; none by night): it grows down
+   --product-tabs-sky-fade in themes/light.css; none by night): it grows down
    out of the tabs each time a tab is chosen (the panel shown again), and
    as the page unfolds; the text comes just after it. */
 .product__tabs .page-tabs__panel {
@@ -1005,7 +1005,7 @@
   isolation: isolate;
 }
 
-/* (the tabs and their light above the sky's clouds) */
+/* (the tabs and their light above the sky) */
 .product__tabs .section-nav {
   position: relative;
   z-index: 1;
@@ -1016,7 +1016,13 @@
   position: absolute;
   inset: var(--product-tabs-sky-inset, 0);
   z-index: -1;
-  background: var(--product-tabs-clouds, none);
+  background: var(--product-tabs-sky, none);
+  /* its edges fade into the page (--product-tabs-sky-fade) */
+  --fade: var(--product-tabs-sky-fade, 0px);
+  mask:
+    linear-gradient(to right, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent),
+    linear-gradient(transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+  mask-composite: intersect;
   transform-origin: 50% 0;
   pointer-events: none;
   animation: var(--product-tabs-sky-open, none);
