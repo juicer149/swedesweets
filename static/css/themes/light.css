@@ -204,7 +204,8 @@
   --menu-ink: var(--state-rest-ink);
   --menu-logo: var(--menu-ink);
   --menu-chosen: var(--state-here-ink);
-  --menu-crown: var(--menu-chosen);
+  /* the crown stays gold whatever colour marks "here" */
+  --menu-crown: var(--brand-crown);
   /* Login retains its outlined action; authenticated dropdowns are icons. */
   --menu-line: color-mix(in srgb, var(--menu-ink) 70%, transparent);
 
@@ -274,7 +275,7 @@
   --cart-notice-text: var(--color-status-success-text);
   --cart-notice-border: color-mix(in srgb, var(--color-status-success-text) 45%, transparent);
   --cart-notice-shadow: 0 0 16px color-mix(in srgb, var(--color-status-success-text) 12%, transparent);
-  --order-history-row-marker: var(--menu-chosen);
+  --order-history-row-marker: var(--brand-crown);
   --order-progress-complete-shadow: 0 0 3px color-mix(in srgb, var(--order-progress-complete) 28%, transparent), 0 0 9px color-mix(in srgb, var(--order-progress-complete) 20%, transparent), 0 0 18px color-mix(in srgb, var(--order-progress-complete) 12%, transparent);
   --order-progress-complete-dot-shadow: 0 0 9px color-mix(in srgb, var(--order-progress-complete) 35%, transparent), 0 0 18px color-mix(in srgb, var(--order-progress-complete) 18%, transparent);
   --order-progress-complete: var(--color-green-700);
@@ -292,8 +293,8 @@
   --menu-scroll-track: color-mix(in srgb, var(--color-primary-600) 12%, transparent);
   --preferences-border: var(--menu-edge);
   --preferences-shadow: 0 12px 32px rgb(0 0 0 / 0.2);
-  --preferences-option: var(--menu-ink);
-  --preferences-selected: var(--menu-chosen);
+  --preferences-option: var(--state-rest-ink);
+  --preferences-selected: var(--state-here-ink);
   --preferences-selected-shadow: 0 0 8px color-mix(in srgb, var(--state-here-ink) 20%, transparent);
   --preferences-selected-glow: radial-gradient(ellipse, color-mix(in srgb, var(--state-here-ink) 12%, transparent), transparent 75%);
   --preferences-selected-glow-filter: blur(6px);
@@ -308,7 +309,7 @@
   --account-menu-selected: var(--state-pointer-ink);
   /* in Settings: the choice in use in gold by day (the sun), the others
      dimmed; dark.css gives it moonlight */
-  --menu-choice-active-ink: var(--menu-chosen);
+  --menu-choice-active-ink: var(--state-here-ink);
   --menu-choice-active-glow: color-mix(in srgb, var(--state-here-ink) 35%, transparent);
   --menu-choice-idle-opacity: 0.6;
   --account-menu-divider: color-mix(in srgb, var(--menu-ink) 30%, transparent);
@@ -648,7 +649,7 @@
   /* the crown is on the page's link in the navbar, not on the logo */
   --logo-rest-crown-opacity: 0;
   --logo-pointer-ink: var(--state-pointer-ink);
-  --logo-pointer-filter: var(--interaction-icon-filter);
+  --logo-pointer-filter: var(--state-pointer-icon-filter);
   --logo-here-ink: var(--state-here-ink);
   --logo-here-filter: none;
   --logo-here-pointer-ink: var(--state-here-ink);
@@ -657,16 +658,16 @@
   /* The Menu's links */
   --menu-link-here-ink: var(--state-here-ink);
   --menu-link-pointer-ink: var(--state-pointer-ink);
-  --menu-link-pointer-glow: var(--interaction-glow);
-  --menu-link-pointer-glow-filter: var(--interaction-glow-filter);
-  --menu-link-pointer-text-shadow: var(--interaction-text-shadow);
+  --menu-link-pointer-glow: var(--state-pointer-glow);
+  --menu-link-pointer-glow-filter: var(--state-pointer-glow-filter);
+  --menu-link-pointer-text-shadow: var(--state-pointer-text-shadow);
   --menu-link-pointer-crown-opacity: var(--state-pointer-crown-opacity);
 
   /* Settings: the language and theme pointed at (in use: --menu-choice-active-*) */
   --menu-choice-pointer-ink: var(--state-pointer-ink);
-  --menu-choice-pointer-text-shadow: var(--interaction-text-shadow);
-  --menu-choice-pointer-glow: var(--menu-link-glow);
-  --menu-choice-pointer-glow-filter: var(--interaction-glow-filter);
+  --menu-choice-pointer-text-shadow: var(--state-pointer-text-shadow);
+  --menu-choice-pointer-glow: var(--state-pointer-glow);
+  --menu-choice-pointer-glow-filter: var(--state-pointer-glow-filter);
   --menu-choice-pointer-crown-opacity: var(--state-pointer-crown-opacity);
 
   /* The staff's view switch */
@@ -675,10 +676,10 @@
 
   /* The start page's menu and its Login / Log out */
   --landing-pointer-ink: var(--state-pointer-ink);
-  --landing-pointer-glow: var(--interaction-glow);
-  --landing-pointer-glow-filter: var(--interaction-glow-filter);
-  --landing-pointer-text-shadow: var(--interaction-text-shadow);
-  --landing-pointer-icon-filter: var(--interaction-icon-filter);
+  --landing-pointer-glow: var(--state-pointer-glow);
+  --landing-pointer-glow-filter: var(--state-pointer-glow-filter);
+  --landing-pointer-text-shadow: var(--state-pointer-text-shadow);
+  --landing-pointer-icon-filter: var(--state-pointer-icon-filter);
   --landing-pointer-crown-opacity: var(--state-pointer-crown-opacity);
   --landing-account-pointer-ink: var(--state-pointer-ink);
 
@@ -723,4 +724,49 @@
   --chip-pointer-bg: transparent;
   --chip-pointer-shadow: none;
   --chip-pointer-glow: color-mix(in srgb, var(--state-page-rest-ink) 18%, transparent);
+}
+
+
+/* =============================================================================
+   Light customer theme (H1): white chrome, blue rest, gold pointer
+
+   The navbar, the Menu, the start page and the entrance pages are white with
+   the gold line kept under the navbar; the pages themselves stay cream. The
+   logo is as it is printed: blue (primary-400) with its gold crown.
+
+   - rest:    primary-700 (12.6:1 on white)
+   - pointer: gold accent-600, no crown, with a soft gold light behind the
+              word (gold on white is only 1.8:1, so the light carries it)
+   - here:    primary-400 with the gold crown (4.6:1 on white)
+
+   Only the public site and /my/ by day: dark.css and ops are untouched
+   (ops keeps the blue navbar of the block above until it is reviewed).
+   ============================================================================= */
+:root:not([data-theme="dark"]):not([data-site-zone="ops"]) {
+  /* ## The three */
+  --state-rest-ink: var(--color-primary-700);
+  --state-here-ink: var(--color-primary-400);
+  --state-pointer-ink: var(--color-accent-600);
+  /* the crown marks only "here", as by night */
+  --state-pointer-crown-opacity: 0;
+
+  /* ## The pointer's light: remove these two lines for gold ink alone */
+  --state-pointer-glow: radial-gradient(ellipse at center, color-mix(in srgb, var(--color-accent-600) 30%, transparent), color-mix(in srgb, var(--color-accent-600) 14%, transparent) 45%, transparent 75%);
+  --state-pointer-glow-filter: blur(6px);
+
+  /* ## The surface */
+  --menu-bg: var(--color-white);
+
+  /* ## The logo: blue with its crown, as printed. In the navbar the crown
+     is on the page's link; pointed at, it stays blue and only gets the
+     pointer's light (.site-brand::before), a gold logo is not the brand. */
+  --menu-logo: var(--color-primary-400);
+  --logo-rest-ink: var(--color-primary-400);
+  --logo-pointer-ink: var(--color-primary-400);
+  --logo-pointer-filter: none;
+  --logo-here-ink: var(--color-primary-400);
+  --logo-here-pointer-ink: var(--color-primary-400);
+
+  /* ## The filter chips keep their warm light behind the chosen word */
+  --chip-here-glow: color-mix(in srgb, var(--color-accent-600) 45%, transparent);
 }
