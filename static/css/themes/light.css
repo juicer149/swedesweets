@@ -614,8 +614,8 @@
   --state-pointer-glow-filter: var(--interaction-glow-filter);
   --state-pointer-text-shadow: var(--interaction-text-shadow);
   --state-pointer-icon-filter: var(--interaction-icon-filter);
-  /* the crown follows the pointer by day; by night it marks only "here" */
-  --state-pointer-crown-opacity: 1;
+  /* the crown marks only "here", by day as by night */
+  --state-pointer-crown-opacity: 0;
 
   /* The navbar's links */
   --nav-link-here-ink: var(--state-here-ink);

@@ -45,7 +45,7 @@ The navigation has three states, set once per theme and read by every part:
 | `--state-rest-ink` | white | `--interactive-text` (light blue) |
 | `--state-here-ink`, `-glow`, `-glow-filter`, `-text-shadow`, `-icon-filter` | gold (as before) | gold with its light |
 | `--state-pointer-ink`, `-glow`, `-glow-filter`, `-text-shadow`, `-icon-filter` | gold (as before) | moonlight with a moonlit glow |
-| `--state-pointer-crown-opacity` | 1: the crown follows the pointer | 0: the crown marks only "here" |
+| `--state-pointer-crown-opacity` | 0: the crown marks only "here" | 0: the crown marks only "here" |
 
 Each part has its own variables pointing at these, so one part can be tuned
 without touching the rest: `--nav-link-*` (the navbar's links),

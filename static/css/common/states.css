@@ -178,7 +178,8 @@ details[open] > .menu-dropdown-trigger:not([aria-current="page"]) .ui-icon-svg {
 }
 
 /* The crown: on the Menu's link for the page you are on; on the one
-   pointed at only where the theme lets it follow the pointer (by day). */
+   pointed at only if the theme lets it follow the pointer
+   (--state-pointer-crown-opacity; both themes now keep it on "here"). */
 .site-menu .site-menu__link:not(.site-menu__return, [aria-current="page"]).is-chosen::after {
   opacity: var(--menu-link-pointer-crown-opacity);
 }
