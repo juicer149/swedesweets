@@ -365,6 +365,31 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
   inset: var(--nav-trigger-cloud-inset, -0.25rem);
 }
 
+/* The start page's cart link (it is no dropdown) takes the same light. */
+.landing__cart-link {
+  position: relative;
+  isolation: isolate;
+}
+
+.landing__cart-link::before {
+  content: "";
+  position: absolute;
+  inset: var(--nav-trigger-cloud-inset, -0.25rem);
+  z-index: -1;
+  border-radius: var(--radius-pill);
+  background: var(--nav-trigger-pointer-glow);
+  filter: var(--nav-trigger-pointer-glow-filter);
+  opacity: 0;
+  transform: var(--chrome-cloud-closed, none);
+  pointer-events: none;
+  transition: opacity var(--sky-open-time, var(--motion-fast)) ease, transform var(--sky-open-time, var(--motion-fast)) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.landing__cart-link:is(:hover, :focus-visible)::before {
+  opacity: var(--interaction-halo-opacity);
+  transform: none;
+}
+
 .menu-dropdown-trigger[aria-current="page"]::before {
   opacity: var(--nav-trigger-here-glow-opacity, var(--interaction-halo-opacity));
 }

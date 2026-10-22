@@ -30,7 +30,7 @@
      dark blue reads against it; "here" is gold with its crown, no cloud. */
   --state-rest-ink: var(--color-primary-750);
   --state-here-ink: var(--color-accent-600);
-  --state-pointer-ink: var(--color-primary-950);
+  --state-pointer-ink: var(--state-rest-ink);
   --theme-cloud: var(--color-white);
   /* its shape: a wide body with a small round top, softened by the blur */
   --theme-cloud-shape:
