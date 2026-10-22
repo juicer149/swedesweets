@@ -10,6 +10,32 @@ per theme; photos and About's polaroid retain their own light surfaces.
 Light remains the default. A full light-theme review and the dark ops rollout
 are still separate work; ops is explicitly held in light mode.
 
+## Theme controls
+
+Each theme file opens with a short block of the choices everything else
+follows; change these first, and tune a single part further down only when
+it must differ:
+
+| Control | What it sets | Day (light.css) | Night (dark.css) |
+|---|---|---|---|
+| `--theme-chrome-bg` | the navbar's surface, and the Menu's, start page's and login pages' around it | primary-450 | primary-950 |
+| `--state-rest-ink` | everything clickable on it, at rest: text, edge and light | primary-1000 | light blue (`--interactive-text`) |
+| `--state-here-ink` | where you are (with the crown) | white | gold |
+| `--state-pointer-ink` | what you point at or reach with the keys | gold | moonlight |
+| `--theme-page-bg` | the page | cream (neutral-50) | primary-900 |
+| `--state-page-rest/here/pointer-ink` | the same three on the page (tabs, questions, Find Sweets, chips) | primary-700 / 900 / 600 | as the three above |
+| `--interaction-glow-strength` | how strongly the lights shine | 1 | 0.85 |
+| `--theme-action-bg`, `-ink`, `-pointer-ink`, `-pressed-ink` | the primary buttons' fill, and the ink of their text, edge and light | the navbar's blue; here; pointer; here | the night sky; here; pointer; here |
+
+The inks colour text, edges and the lights alike (a pointer's glow is made
+from `--state-pointer-ink`). The crown keeps its gold (`--menu-crown`:
+`--brand-crown`) whatever colour "here" takes. Ops shares light.css but not
+these choices: a block at the end of light.css keeps its navbar and yellow
+buttons as they were. The catalog's green add-to-cart button, the red
+removal and the quantity steppers keep their own colours.
+
+## Files
+
 - `static/css/tokens.css`: primitive colour scales, sizes, type and timings.
 - `static/css/themes/light.css`: default semantic colours and the day menu.
 - `static/css/themes/dark.css`: dark palette overrides.

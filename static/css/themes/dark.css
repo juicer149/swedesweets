@@ -1,3 +1,50 @@
+/* =============================================================================
+   Theme controls (night)
+
+   The few choices the whole theme follows; change these first. Everything
+   below reads them, and a part can still be tuned on its own further down.
+
+     --theme-chrome-bg       the navbar's surface (and the panels', start
+                             page's and login's around it)
+     --state-rest-ink        everything you can click, at rest: its text, its
+     --state-here-ink        edge and its light; "here" (where you are: gold
+     --state-pointer-ink     with the crown), the pointer (what you point at
+                             or reach with the keys)
+     --theme-page-bg         the page under it
+     --state-page-*-ink      the same three on the page (by night the same)
+     --interaction-glow-strength   how strongly the lights shine (0: none)
+     --theme-action-*        the primary buttons: their fill, and the ink of
+                             their text, edge and light at rest, pointed at
+                             and pressed
+   ============================================================================= */
+:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  /* # The navbar's surface */
+  --theme-chrome-bg: var(--color-primary-950);
+
+  /* # What you can click: rest, here, pointer (text, edge and light) */
+  --state-rest-ink: var(--interactive-text);
+  --state-here-ink: var(--selected-accent);
+  --state-pointer-ink: var(--moonlight);
+  /* the crown marks only "here" */
+  --state-pointer-crown-opacity: 0;
+
+  /* # The page */
+  --theme-page-bg: var(--color-primary-900);
+  --state-page-rest-ink: var(--state-rest-ink);
+  --state-page-here-ink: var(--state-here-ink);
+  --state-page-pointer-ink: var(--state-pointer-ink);
+
+  /* # How strongly the lights shine */
+  --interaction-glow-strength: 0.85;
+
+  /* # Primary buttons: the night sky, gold; moonlit when pointed at */
+  --theme-action-bg: var(--color-primary-1000);
+  --theme-action-ink: var(--state-here-ink);
+  --theme-action-pointer-ink: var(--state-pointer-ink);
+  --theme-action-pressed-ink: var(--state-here-ink);
+}
+
+
 /* Dark customer palette. Ops keeps light.
    Shared roles come first; component mappings follow below. Change a shared
    role for a coordinated update, or override one component mapping locally.
@@ -9,7 +56,7 @@
   /* 1. Shared roles — change these to tune the dark palette across components */
 
   /* Surfaces: page, standard panels, quiet panels and interaction states */
-  --page-bg: var(--color-primary-900);
+  --page-bg: var(--theme-page-bg);
   --surface-bg: var(--color-primary-800);
   --surface-muted: var(--color-primary-850);
   --surface-hover: var(--color-primary-750);
@@ -43,15 +90,15 @@
   --dropdown-title-icon-filter: var(--interaction-icon-filter);
 
   /* Main actions keep gold ink/edges; hover/focus adds the warm light. */
-  --action-primary-bg: var(--color-primary-1000);
-  --action-primary-text: var(--selected-accent);
+  --action-primary-bg: var(--theme-action-bg);
+  --action-primary-text: var(--theme-action-ink);
   --action-primary-default-text: var(--action-primary-text);
   --action-primary-border: var(--action-primary-text);
   --action-primary-hover-bg: var(--action-primary-bg);
-  --action-primary-hover-text: var(--state-pointer-ink);
-  --action-primary-hover-border: var(--state-pointer-ink);
+  --action-primary-hover-text: var(--theme-action-pointer-ink);
+  --action-primary-hover-border: var(--theme-action-pointer-ink);
   --action-primary-active-bg: var(--surface-hover);
-  --action-primary-active-border: var(--selected-accent);
+  --action-primary-active-border: var(--theme-action-pressed-ink);
   --action-primary-shadow: var(--state-pointer-box-glow);
   --action-primary-hover-transform: var(--transform-lift);
   --action-primary-text-shadow: var(--state-pointer-text-shadow);
@@ -137,7 +184,7 @@
   --table-row-marker: var(--interactive-border);
 
   /* 3. Navigation and landing */
-  --menu-bg: var(--color-primary-950);
+  --menu-bg: var(--theme-chrome-bg);
   --menu-ink: var(--interactive-text-subtle);
   --menu-chosen: var(--selected-accent);
 
@@ -146,7 +193,6 @@
   /* Muted gold: the edges (navbar, phone bar, panels) frame quietly, so
      what is lit (the chosen, the open icon) is the gold that shines. */
   --menu-edge: color-mix(in srgb, var(--color-accent-750) 45%, var(--menu-bg));
-  --interaction-glow-strength: 0.85;
   --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / calc(0.06 * var(--interaction-glow-strength))), rgb(249 181 26 / calc(0.05 * var(--interaction-glow-strength))) 30%, rgb(249 181 26 / calc(0.04 * var(--interaction-glow-strength))) 60%, rgb(249 181 26 / 0) 100%);
   --menu-link-glow-blur: 10px;
 
@@ -407,14 +453,10 @@
    here is gold with its light and the crown; the pointer is moonlight, with
    a moonlit glow and no crown; the rest light blue, the logo too. */
 :root[data-theme="dark"]:not([data-site-zone="ops"]) {
-  --state-rest-ink: var(--interactive-text);
-  --state-here-ink: var(--selected-accent);
-  --state-pointer-ink: var(--moonlight);
-  --state-pointer-glow: radial-gradient(ellipse at center, color-mix(in srgb, var(--moonlight) calc(11% * var(--interaction-glow-strength)), transparent), color-mix(in srgb, var(--moonlight) calc(8% * var(--interaction-glow-strength)), transparent) 30%, color-mix(in srgb, var(--moonlight) calc(5% * var(--interaction-glow-strength)), transparent) 60%, transparent 100%);
+  --state-pointer-glow: radial-gradient(ellipse at center, color-mix(in srgb, var(--state-pointer-ink) calc(11% * var(--interaction-glow-strength)), transparent), color-mix(in srgb, var(--state-pointer-ink) calc(8% * var(--interaction-glow-strength)), transparent) 30%, color-mix(in srgb, var(--state-pointer-ink) calc(5% * var(--interaction-glow-strength)), transparent) 60%, transparent 100%);
   --state-pointer-glow-filter: blur(var(--interaction-glow-blur));
-  --state-pointer-text-shadow: 0 0 3px color-mix(in srgb, var(--moonlight) 30%, transparent), 0 0 9px color-mix(in srgb, var(--moonlight) 20%, transparent), 0 0 18px color-mix(in srgb, var(--moonlight) 12%, transparent);
-  --state-pointer-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, var(--moonlight) 35%, transparent)) drop-shadow(0 0 9px color-mix(in srgb, var(--moonlight) 18%, transparent));
-  --state-pointer-crown-opacity: 0;
+  --state-pointer-text-shadow: 0 0 3px color-mix(in srgb, var(--state-pointer-ink) 30%, transparent), 0 0 9px color-mix(in srgb, var(--state-pointer-ink) 20%, transparent), 0 0 18px color-mix(in srgb, var(--state-pointer-ink) 12%, transparent);
+  --state-pointer-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, var(--state-pointer-ink) 35%, transparent)) drop-shadow(0 0 9px color-mix(in srgb, var(--state-pointer-ink) 18%, transparent));
 
   --nav-link-pointer-label-filter: none;
   --nav-trigger-pointer-glow: var(--state-pointer-glow);
@@ -466,8 +508,8 @@
   --site-menu-box-bg: var(--color-primary-1000);
 
   /* The page's own parts (common/states.css) */
-  --state-pointer-box-glow: 0 0 18px 3px color-mix(in srgb, var(--moonlight) calc(22% * var(--interaction-glow-strength)), transparent), 0 0 32px 7px color-mix(in srgb, var(--moonlight) calc(8% * var(--interaction-glow-strength)), transparent);
-  --state-pointer-sheen: linear-gradient(135deg, color-mix(in srgb, var(--moonlight) calc(16% * var(--interaction-glow-strength)), transparent), transparent 65%);
+  --state-pointer-box-glow: 0 0 18px 3px color-mix(in srgb, var(--state-pointer-ink) calc(22% * var(--interaction-glow-strength)), transparent), 0 0 32px 7px color-mix(in srgb, var(--state-pointer-ink) calc(8% * var(--interaction-glow-strength)), transparent);
+  --state-pointer-sheen: linear-gradient(135deg, color-mix(in srgb, var(--state-pointer-ink) calc(16% * var(--interaction-glow-strength)), transparent), transparent 65%);
   --section-nav-pointer-glow: var(--state-pointer-glow);
   --section-nav-pointer-glow-filter: var(--state-pointer-glow-filter);
   --section-nav-pointer-text-shadow: var(--state-pointer-text-shadow);
