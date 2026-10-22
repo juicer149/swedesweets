@@ -42,11 +42,11 @@
   --color-primary-50: #B3D5FF;
 
   /* Yellow / gold */
-  --color-accent-950: #ED851D;
-  --color-accent-900: #EF8D15; 
-  --color-accent-850: #F2951C;
-  --color-accent-800: #F39912;
-  --color-accent-750: #F69F13;
+  --color-accent-950: #D07616;
+  --color-accent-900: #D97B17;
+  --color-accent-850: #E78618;
+  --color-accent-800: #F0900A;
+  --color-accent-750: #F69D0E;
   --color-accent-700: #F8A516;
   --color-accent-650: #F8AD16;
   --color-accent-600: #F9B51A; /* brand color */
@@ -89,6 +89,7 @@
   --color-neutral-900: #191715;
   --color-neutral-800: #292622;
   --color-neutral-700: #3b3834;
+  --color-neutral-650: #4c4843;
   --color-neutral-600: #66615c;
   --color-neutral-500: #8e8882;
   --color-neutral-400: #b6b0a8;

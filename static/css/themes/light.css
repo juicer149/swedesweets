@@ -23,12 +23,12 @@
    ============================================================================= */
 :root {
   /* # The navbar's surface */
-  --theme-chrome-bg: var(--color-primary-450);
+  --theme-chrome-bg: var(--color-primary-350);
 
   /* # What you can click on it: rest, here, pointer (text, edge and light) */
-  --state-rest-ink: var(--color-primary-1000);
-  --state-here-ink: var(--color-white);
-  --state-pointer-ink: var(--color-accent-600);
+  --state-rest-ink: var(--color-primary-950);
+  --state-here-ink: var(--color-accent-600);
+  --state-pointer-ink: var(--color-neutral-50);
   /* the crown marks only "here" */
   --state-pointer-crown-opacity: 0;
 
