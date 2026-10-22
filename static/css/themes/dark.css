@@ -516,7 +516,9 @@
   /* room at the row's ends for the halo, so it is not cut there */
   --section-nav-glow-room: 1.25rem;
   --section-nav-glow-closed: none;
+  --section-nav-glow-peek: none;
   --chip-glow-closed: none;
+  --chip-glow-peek: none;
   --sky-open-time: var(--motion-fast);
   --chip-glow-inset: -4px 0;
   --chip-glow-radius: 50%;

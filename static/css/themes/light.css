@@ -41,7 +41,7 @@
   /* # Tabs and filter chips: a word in the dark blue; pointed at, a light
      blue cloud behind it and white; chosen, the navbar's blue and gold */
   --theme-sky-rest-ink: var(--color-primary-950);
-  --theme-sky-pointer-bg: var(--color-primary-250);
+  --theme-sky-pointer-bg: var(--theme-sky-here-bg);
   --theme-sky-pointer-ink: var(--color-white);
   --theme-sky-here-bg: var(--theme-chrome-bg);
   --theme-sky-here-ink: var(--color-accent-600);
@@ -52,6 +52,8 @@
   --theme-sky-reach: 16px;
   /* closed it is this small, and it opens in this long when pointed at */
   --theme-sky-closed: scale(0.35, 0.6);
+  /* pointed at, it opens only this far: a peek at the chosen one's sky */
+  --theme-sky-peek: scale(0.72, 0.82);
   --sky-open-time: 280ms;
 
   /* # How strongly the lights shine */
@@ -751,6 +753,7 @@
   --section-nav-glow-inset: -5px calc(-1 * var(--theme-sky-reach));
   --section-nav-glow-room: calc(var(--theme-sky-reach) + var(--theme-sky-blur));
   --section-nav-glow-closed: var(--theme-sky-closed);
+  --section-nav-glow-peek: var(--theme-sky-peek);
   --section-nav-pointer-glow: var(--theme-sky-pointer-bg);
   --section-nav-pointer-glow-filter: blur(var(--theme-sky-blur));
   --section-nav-here-glow: var(--theme-sky-here-bg);
@@ -792,6 +795,7 @@
   --chip-pointer-glow: var(--theme-sky-pointer-bg);
   --chip-glow-inset: -5px calc(-1 * var(--theme-sky-reach));
   --chip-glow-closed: var(--theme-sky-closed);
+  --chip-glow-peek: var(--theme-sky-peek);
   --chip-glow-radius: 999px;
   --chip-glow-blur: var(--theme-sky-blur);
 }
@@ -829,6 +833,7 @@
   --section-nav-glow-inset: -0.6rem 0;
   --section-nav-glow-room: 0px;
   --section-nav-glow-closed: none;
+  --section-nav-glow-peek: none;
   --sky-open-time: var(--motion-fast);
   --section-nav-pointer-glow: var(--interaction-glow);
   --section-nav-pointer-glow-filter: var(--interaction-glow-filter);

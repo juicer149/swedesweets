@@ -268,7 +268,13 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
   transition: opacity var(--sky-open-time, var(--motion-fast)) ease, transform var(--sky-open-time, var(--motion-fast)) cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.section-nav__link:is(:hover, :focus-visible, .section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"])::before {
+/* pointed at it opens only partly (--section-nav-glow-peek: a peek at
+   the chosen one's light), chosen fully */
+.section-nav__link:is(:hover, :focus-visible)::before {
+  transform: var(--section-nav-glow-peek, none);
+}
+
+.section-nav__link:is(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"])::before {
   transform: none;
 }
 

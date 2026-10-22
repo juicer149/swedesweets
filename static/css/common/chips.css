@@ -377,7 +377,7 @@
   .filter-chips .filter-chip:hover:not([aria-current="page"], [aria-pressed="true"]),
   .radio-chip-group label:hover:not(:has(input:checked)) {
     --chip-glow: var(--chip-pointer-glow, transparent);
-    --chip-glow-transform: none;
+    --chip-glow-transform: var(--chip-glow-peek, none);
   }
 }
 
