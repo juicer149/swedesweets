@@ -352,6 +352,23 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
 /* The light behind the navbar's links, the Menu's and the start page's
    opens from small, like the tabs' sky (--chrome-cloud-closed), and the
    one for the page you are on stays open (--*-here-glow). */
+.site-nav__link::after {
+  inset: var(--chrome-cloud-inset, -0.6rem -0.8rem);
+}
+
+.site-menu .menu-panel-link::before,
+.landing-menu__link::before {
+  inset: var(--chrome-cloud-inset, -0.6rem 0);
+}
+
+.menu-dropdown-trigger::before {
+  inset: var(--nav-trigger-cloud-inset, -0.25rem);
+}
+
+.menu-dropdown-trigger[aria-current="page"]::before {
+  opacity: var(--nav-trigger-here-glow-opacity, var(--interaction-halo-opacity));
+}
+
 .site-nav__link::after,
 .site-menu .menu-panel-link::before,
 .landing-menu__link::before {
@@ -382,26 +399,10 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
   opacity: var(--menu-link-here-glow-opacity, var(--interaction-selected-opacity));
 }
 
-/* The start page's logo on its cloud, drifting a little with it. */
-.landing__logo::before {
-  filter: var(--landing-logo-halo-filter, none);
-}
-
-.landing__logo {
-  animation: var(--landing-logo-drift, none);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .landing__logo { animation: none; }
   .site-nav__link::after,
   .site-menu .menu-panel-link::before,
   .landing-menu__link::before { transition: none; }
-}
-
-@keyframes landing-cloud-drift {
-  0%, 100% { translate: 0 0; }
-  30% { translate: 4px -5px; }
-  65% { translate: -3px 3px; }
 }
 
 

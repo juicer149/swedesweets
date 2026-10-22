@@ -26,12 +26,20 @@
   --theme-chrome-bg: var(--color-primary-350);
 
   /* # What you can click on it: rest, here, pointer (text, edge and light).
-     Pointed at and "here", a white cloud forms behind the word
-     (--theme-cloud), so the dark blue and the gold read against it. */
-  --state-rest-ink: var(--color-primary-950);
+     Pointed at, a white cloud forms behind the word (--theme-cloud), so the
+     dark blue reads against it; "here" is gold with its crown, no cloud. */
+  --state-rest-ink: var(--color-primary-750);
   --state-here-ink: var(--color-accent-600);
   --state-pointer-ink: var(--color-primary-950);
   --theme-cloud: var(--color-white);
+  /* its shape: a wide body with a small round top, softened by the blur */
+  --theme-cloud-shape:
+    radial-gradient(circle 0.62em at 44% 34%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 50% 40% at 50% 64%, var(--theme-cloud) 96%, transparent);
+  /* how far it reaches round the word (on phones a little less to the
+     sides, where the Menu's words reach the screen's edges) */
+  --theme-cloud-inset: -0.75rem -1.35rem;
+  --theme-cloud-inset-phone: -0.75rem -0.5rem;
   /* the navbar's logo: white, gold when pointed at */
   --theme-logo-ink: var(--color-white);
   --theme-logo-pointer-ink: var(--color-accent-600);
@@ -59,7 +67,7 @@
   /* closed it is this small, and it opens in this long when pointed at */
   --theme-sky-closed: scale(0.35, 0.6);
   /* pointed at, it opens only this far: a peek at the chosen one's sky */
-  --theme-sky-peek: scale(0.55, 0.45);
+  --theme-sky-peek: scale(0.55, 0.62);
   --sky-open-time: 280ms;
 
   /* # How strongly the lights shine */
@@ -865,50 +873,48 @@
   --chrome-cloud-filter: blur(var(--theme-sky-blur));
   --chrome-cloud-closed: var(--theme-sky-closed);
 
-  --nav-link-pointer-glow: var(--theme-cloud);
+  --chrome-cloud-inset: var(--theme-cloud-inset);
+
+  /* pointed at: the cloud; where you are: gold, no cloud */
+  --nav-link-pointer-glow: var(--theme-cloud-shape);
   --nav-link-pointer-glow-filter: var(--chrome-cloud-filter);
-  --nav-link-here-glow: var(--theme-cloud);
-  --nav-link-here-glow-filter: var(--chrome-cloud-filter);
-  --nav-link-here-glow-opacity: 1;
+  --nav-link-here-glow-opacity: 0;
 
-  --nav-trigger-pointer-glow: var(--theme-cloud);
+  /* the Menu and cart buttons: the cloud when pointed at, none open or on
+     their page */
+  --nav-trigger-pointer-glow: var(--theme-cloud-shape);
   --nav-trigger-pointer-glow-filter: var(--chrome-cloud-filter);
-  --nav-trigger-open-glow: var(--theme-cloud);
-  --nav-trigger-open-glow-filter: var(--chrome-cloud-filter);
   --nav-trigger-pointer-icon-filter: none;
+  --nav-trigger-open-glow: none;
   --nav-trigger-open-icon-filter: none;
+  --nav-trigger-here-glow-opacity: 0;
+  --nav-trigger-cloud-inset: -0.65rem -1rem;
 
-  --menu-link-pointer-glow: var(--theme-cloud);
+  --menu-link-pointer-glow: var(--theme-cloud-shape);
   --menu-link-pointer-glow-filter: var(--chrome-cloud-filter);
-  --menu-link-here-glow: var(--theme-cloud);
-  --menu-link-here-glow-filter: var(--chrome-cloud-filter);
-  --menu-link-here-glow-opacity: 1;
-  --menu-choice-pointer-glow: var(--theme-cloud);
+  --menu-link-here-glow-opacity: 0;
+  --menu-choice-pointer-glow: var(--theme-cloud-shape);
   --menu-choice-pointer-glow-filter: var(--chrome-cloud-filter);
+  /* Settings: the language and theme in use, gold, no cloud */
+  --menu-choice-active-bg: none;
+  --menu-choice-active-text-shadow: none;
 
-  --landing-pointer-glow: var(--theme-cloud);
+  --landing-pointer-glow: var(--theme-cloud-shape);
   --landing-pointer-glow-filter: var(--chrome-cloud-filter);
   --landing-chosen-glow-opacity: 1;
-
-  /* the Menu and cart buttons' light (open, on their page, pointed at) */
-  --menu-dropdown-glow: var(--theme-cloud);
-  --menu-dropdown-glow-filter: var(--chrome-cloud-filter);
-  --menu-dropdown-icon-filter: none;
-
-  /* Settings: the language and theme in use, gold on a cloud */
-  --menu-choice-active-bg: var(--theme-cloud);
-  --menu-choice-active-filter: var(--chrome-cloud-filter);
-  --menu-choice-active-opacity: 1;
-  --menu-choice-active-text-shadow: none;
 
   --logo-rest-ink: var(--theme-logo-ink);
   --logo-pointer-ink: var(--theme-logo-pointer-ink);
   --logo-pointer-filter: none;
-  --landing-logo-halo: radial-gradient(ellipse 46% 30% at 50% 52%, var(--theme-cloud) 0%, var(--theme-cloud) 55%, color-mix(in srgb, var(--theme-cloud) 0%, transparent) 100%);
-  --landing-logo-halo-filter: blur(10px);
-  --landing-logo-drift: landing-cloud-drift 9s ease-in-out infinite;
 
   /* The catalog's cards pointed at: the sky's blue round them, outside
      the picture's edge */
-  --catalog-card-hover-shadow: 0 0 22px 4px color-mix(in srgb, var(--theme-chrome-bg) 42%, transparent), 0 0 42px 12px color-mix(in srgb, var(--theme-chrome-bg) 16%, transparent);
+  --catalog-card-hover-shadow: 0 0 18px 4px color-mix(in srgb, var(--theme-chrome-bg) 75%, transparent), 0 0 34px 8px color-mix(in srgb, var(--theme-chrome-bg) 30%, transparent);
+}
+
+@media (max-width: 767px) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) {
+    --chrome-cloud-inset: var(--theme-cloud-inset-phone);
+    --nav-trigger-cloud-inset: -0.5rem -0.35rem;
+  }
 }

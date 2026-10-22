@@ -83,7 +83,9 @@
    page's side margin (as wide as that margin, so the page never widens)
    and its content back in, so they show whole. */
 .page-section.catalog {
-  --catalog-bleed: 1rem;
+  /* (wide enough for a card's light when pointed at, by day the sky's
+     blue; never wider than the page's own side margin) */
+  --catalog-bleed: clamp(1rem, 3vw, 3rem);
 
   margin-inline: calc(-1 * var(--catalog-bleed));
   padding-inline: var(--catalog-bleed);

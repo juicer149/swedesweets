@@ -125,8 +125,8 @@
    stand out over the words, from being cut on any browser. */
 .landing__menu-inner {
   min-height: 0;
-  margin: -1rem -2.5rem;
-  padding: 1rem 2.5rem;
+  margin: -1.75rem -3rem;
+  padding: 1.75rem 3rem;
   overflow: hidden;
 }
 
