@@ -113,7 +113,7 @@
   right: calc(var(--space-3) - 0.8em);
   width: 0.8em;
   height: 0.8em;
-  background: var(--menu-crown);
+  background: var(--marker-crown, var(--menu-crown));
   -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
   mask: url("../../images/favicon.svg") center / contain no-repeat;
   filter: var(--menu-crown-shadow);
@@ -283,7 +283,7 @@
   right: -0.3em;
   width: 0.7em;
   height: 0.7em;
-  background: var(--menu-crown);
+  background: var(--marker-crown, var(--menu-crown));
   -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
   mask: url("../../images/favicon.svg") center / contain no-repeat;
   filter: var(--menu-crown-shadow);

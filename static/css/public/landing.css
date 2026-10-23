@@ -196,7 +196,7 @@
   right: -0.75em;
   width: 0.85em;
   height: 0.85em;
-  color: var(--menu-crown);
+  color: var(--marker-crown, var(--menu-crown));
   /* a dark shadow under it, so it stands on the page (as in the navbar) */
   filter: var(--menu-crown-shadow);
   opacity: 0;
