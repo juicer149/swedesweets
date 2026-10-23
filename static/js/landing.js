@@ -88,3 +88,53 @@
     links[arrowIntoMenu ? index : next(index, event.key)].focus();
   });
 })();
+
+/* A small, bounded easter egg: native button activation works with pointer,
+   touch, Enter and Space. Repeated clicks add rain, never unbounded nodes. */
+(() => {
+  const trigger = document.querySelector("[data-candy-images]");
+  if (!trigger) return;
+  const images = trigger.dataset.candyImages.split("|");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const rain = document.createElement("div");
+  rain.className = "landing__rain";
+  rain.setAttribute("aria-hidden", "true");
+  document.querySelector(".landing").append(rain);
+  const active = new Set();
+  const clear = () => {
+    for (const motion of active) motion.cancel();
+    active.clear();
+    rain.replaceChildren();
+  };
+  trigger.addEventListener("click", () => {
+    const box = trigger.getBoundingClientRect();
+    const calm = reduced.matches;
+    const count = Math.min(calm ? 3 : 7, 48 - active.size);
+    for (let i = 0; i < count; i++) {
+      const sweet = document.createElement("img");
+      sweet.className = "landing__sweet";
+      sweet.src = images[Math.floor(Math.random() * images.length)];
+      sweet.alt = "";
+      const size = 22 + Math.random() * 16;
+      sweet.style.setProperty("--sweet-size", `${size}px`);
+      sweet.style.left = `${box.left + box.width * (0.1 + Math.random() * 0.8) - size / 2}px`;
+      sweet.style.top = `${box.bottom - box.height * 0.2}px`;
+      rain.append(sweet);
+      const spread = (Math.random() - 0.5) * Math.min(innerWidth, 320);
+      const fall = innerHeight - box.bottom + box.height * 0.2 + size;
+      const turn = (Math.random() - 0.5) * 540;
+      const motion = sweet.animate(calm
+        ? [{ opacity: 0 }, { opacity: 1, offset: 0.25 }, { opacity: 0 }]
+        : [
+          { transform: "translate(0, 0) rotate(0deg) scale(.6)", opacity: 0 },
+          { transform: `translate(${spread * 0.2}px, 20px) rotate(${turn * 0.1}deg) scale(1)`, opacity: 1, offset: 0.15 },
+          { transform: `translate(${spread}px, ${fall}px) rotate(${turn}deg) scale(1)`, opacity: 0.8 },
+        ], { duration: calm ? 600 : 1500 + Math.random() * 1100, easing: "ease-in", fill: "both" });
+      active.add(motion);
+      const done = () => { active.delete(motion); sweet.remove(); };
+      motion.finished.then(done, done);
+    }
+  });
+  reduced.addEventListener("change", clear);
+  window.addEventListener("pagehide", clear);
+})();

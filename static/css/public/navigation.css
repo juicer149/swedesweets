@@ -1,5 +1,5 @@
 /* Customer navigation: hover is paint/transform only, so neighbouring words
-   keep their positions. The current page retains the theme's cloud/crown. */
+   keep their positions. The current page retains the theme's cloud/light. */
 :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link:not([aria-current="page"]) {
   color: var(--theme-nav-rest-ink);
 }
@@ -69,11 +69,6 @@
     animation: nav-cloud-pop var(--public-nav-pop-time) cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
 }
-@media (max-width: 767px) {
-  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link.is-nav-arriving .site-nav__icon {
-    animation: nav-cloud-pop var(--public-nav-pop-time) cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-}
 @keyframes nav-cloud-sway {
   0%, 100% { transform: translate(0, 0) rotate(0); }
   35% { transform: translate(var(--theme-nav-cloud-sway-distance), -1px) rotate(0.7deg); }
@@ -94,4 +89,44 @@
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link[aria-current="page"]::after { animation: none !important; }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand::before { animation: none !important; }
   .site-nav__link.is-nav-leaving::after, .site-nav__link.is-nav-arriving::after, .site-nav__link.is-nav-arriving .site-nav__icon { animation: none !important; }
+}
+
+/* The current customer destination occupies the header's centre on phones.
+   It is the same link, so native navigation, focus and fetch history agree. */
+@media (max-width: 767px) {
+  .site-header .site-nav__links:has(> [aria-current="page"]) {
+    grid-template-columns: repeat(calc(var(--site-nav-count, 4) - 1), minmax(0, 1fr));
+  }
+  .site-header .site-nav__link[aria-current="page"] {
+    position: fixed;
+    top: 31px;
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+    display: block;
+    min-height: 0;
+    max-width: calc(100vw - 190px);
+    padding: 0.25rem;
+    font-size: clamp(0.68rem, 2.6vw, 0.875rem);
+    line-height: 1.15;
+  }
+  .site-header .site-nav__link[aria-current="page"] > .site-nav__label {
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+    font-weight: 800;
+  }
+  .site-header .site-nav__link[aria-current="page"] > .site-nav__icon { display: none; }
+  :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"],
+  :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"] * {
+    color: var(--nav-link-here-ink);
+    text-shadow: none;
+  }
+  :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"]::after {
+    inset: -0.8rem -0.85rem -0.5rem;
+    height: auto;
+    opacity: 1;
+  }
+  :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"].is-nav-arriving::after {
+    animation: nav-cloud-pop var(--public-nav-pop-time) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
 }

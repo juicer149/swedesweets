@@ -736,8 +736,16 @@ or keyboard focus turns them white and gently thickens/enlarges the lettering
 without moving adjacent links. The selected engraved cloud stays as designed.
 When changing between Catalog, Find Sweets, FAQ and About, the old cloud folds
 into its word as the new one pops open. The navbar remains in place; fresh page
-content appears below it. Mobile retains its active crown and uses a small icon
-pop instead of adding clouds. Reduced motion shows the final state directly.
+content appears below it. Mobile places the active link at the header centre, on its day cloud
+(or the existing night light); the other links share the bottom bar. Reduced motion shows the final state directly.
 Ops keeps its work-oriented navigation. Checkout and product-detail transitions
 remain their own flows; implementation and timing controls are in
 [CSS themes](docs/css-themes.md#persistent-customer-navbar-and-cloud-navigation).
+
+
+The day landing logo has occasional sketched gusts in the engraved cloud's
+style. The wordmark stays fixed while its rear cloud moves; blue letters
+briefly blend with the blue sky where the white cloud moves away. No cloud
+passes in front. Night and reduced motion stay clear of the weather animation.
+Clicking the logo releases a bounded shower of engraved sweets; keyboard and
+touch work too. Reduced motion uses a brief stationary fade.

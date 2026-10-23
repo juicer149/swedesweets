@@ -384,3 +384,63 @@
     border: 1px solid var(--dialog-edge); border-radius: var(--radius-pill);
   }
 }
+
+/* Only the rear cloud moves; the blue logo remains fixed over the blue sky. */
+.landing__wind { display: none; }
+:root[data-theme="light"] .landing__logo::before {
+  animation: landing-cloud-drift var(--landing-wind-cycle) ease-in-out infinite;
+}
+:root[data-theme="light"] .landing__wind {
+  display: block;
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  left: -45%;
+  top: 33%;
+  width: 85%;
+  height: 32%;
+  background: url("../../images/clouds/wind.svg") center / contain no-repeat;
+  animation: landing-wind var(--landing-wind-cycle) ease-in-out infinite;
+}
+@keyframes landing-cloud-drift {
+  0%, 18%, 100% { transform: translateX(0); }
+  40% { transform: translate(var(--landing-cloud-drift), -2px) rotate(0.7deg); }
+  65% { transform: translate(-2px, 1px) rotate(-0.4deg); }
+}
+@keyframes landing-wind {
+  0%, 15%, 62%, 100% { opacity: 0; transform: translateX(-8%); }
+  28% { opacity: var(--landing-wind-ink-opacity); }
+  48% { opacity: var(--landing-wind-ink-opacity); transform: translateX(28%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme="light"] .landing__logo::before { animation: none; }
+  :root[data-theme="light"] .landing__wind { display: none; }
+}
+
+
+.landing__logo-trigger {
+  display: block;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+}
+.landing__logo-trigger:focus-visible {
+  outline: 2px solid var(--landing-logo-focus, var(--menu-ink));
+  outline-offset: 8px;
+}
+.landing__rain {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  overflow: clip;
+}
+.landing__sweet {
+  position: absolute;
+  width: var(--sweet-size);
+  height: var(--sweet-size);
+  pointer-events: none;
+}

@@ -4,7 +4,8 @@
 
 Writes static/images/clouds/: the logo's cloud (logo.svg, and a plainer
 logo-small.svg for the navbar), and one cloud for each of the navbar's
-links and buttons (nav-<name>.svg). Each cloud is a heap of lumps drawn
+links and buttons (nav-<name>.svg). The landing weather also uses wind.svg
+and candy-*.svg. Each cloud is a heap of lumps drawn
 back to front: each lump white with its own outline, short broken
 curved strokes shading its lower right side, so a lump in front leaves
 an inner contour on the one behind it. The middle lumps (behind the
@@ -260,8 +261,64 @@ def clouds() -> list[Cloud]:
     return result
 
 
+def wind() -> str:
+    """Short, broken curls with the same ink as the cloud hatching."""
+    paths = (
+        "M5 36 C32 32 60 38 91 29 S134 17 126 9 C119 2 105 9 110 16",
+        "M22 47 C56 42 86 48 119 39 S159 30 168 35",
+        "M4 57 C36 53 60 60 87 54",
+        "M101 54 C126 49 158 55 180 46 C193 41 190 30 181 32",
+    )
+    strokes = "\n".join(
+        f'<path d="{path}" stroke-width="{1.1 if i % 2 else 1.4}" '
+        'vector-effect="non-scaling-stroke"/>'
+        for i, path in enumerate(paths)
+    )
+    backing = "\n".join(
+        f'<path d="{path}" vector-effect="non-scaling-stroke"/>' for path in paths
+    )
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 70">\n'
+        '<g fill="none" stroke="#fff" stroke-width="3.2" '
+        'stroke-linecap="round" opacity=".8">\n'
+        f"{backing}\n</g>\n"
+        f'<g fill="none" stroke="{INK}" stroke-linecap="round" opacity=".8">\n'
+        f"{strokes}\n</g>\n</svg>\n"
+    )
+
+
+def candy(kind: str) -> str:
+    """Small sweets with the clouds' white paper and blue engraved strokes."""
+    shapes = {
+        "wrap": (
+            '<path d="M23 25 7 15l3 16-3 17 16-10M48 25l16-10-3 16 3 17-16-10"/>',
+            '<rect x="20" y="17" width="31" height="29" rx="12"/>',
+            '<path d="m26 39 13-17m-5 21 12-17M11 23l8 5m-8 13 8-6"/>',
+        ),
+        "drop": (
+            '<path d="M16 40C7 24 23 9 43 13c18 3 17 20 5 29-13 10-26 12-32-2Z"/>',
+            '<path d="M18 30c0-7 7-13 15-13m-11 24 7 3m-3-8 8 4m-2-7 9 3"/>',
+        ),
+        "lollipop": (
+            '<path d="m34 33 6 2-10 31-6-2Z"/>',
+            '<circle cx="38" cy="24" r="19"/>',
+            '<path d="M38 24c-9-8 9-12 10-1 1 15-24 14-22-2 2-20 30-15 28 6"/>',
+        ),
+    }
+    body = "\n".join(shapes[kind])
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72">\n'
+        f'<g fill="#fff" stroke="{INK}" stroke-width="1.3" '
+        'stroke-linecap="round" stroke-linejoin="round">\n'
+        f"{body}\n</g>\n</svg>\n"
+    )
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / "wind.svg").write_text(wind(), encoding="utf-8")
+    for name in ("wrap", "drop", "lollipop"):
+        (OUT / f"candy-{name}.svg").write_text(candy(name), encoding="utf-8")
     for cloud in clouds():
         path = OUT / f"{cloud.name}.svg"
         path.write_text(draw(cloud), encoding="utf-8")

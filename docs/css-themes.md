@@ -1218,20 +1218,23 @@ its pills.
 `--theme-nav-pointer-scale` (1.035) and a slight painted thickening. Transforms
 leave neighbouring link positions unchanged. These navbar roles do not change
 the shared Menu/settings inks. The selected item retains its existing engraved
-cloud on desktop and its crown on mobile. Hovering the active desktop item
+cloud on desktop. On mobile, the current link moves to the header centre;
+the remaining links share the bottom bar. Hovering the active desktop item
 keeps its blue engraving and gently sways only the cloud, as in a breeze.
 The movement repeats while hovered or keyboard-focused and stops on leaving.
 The navbar logo uses the same movement and retains its blue engraving.
 `--theme-nav-cloud-sway-time` (1200ms) and
 `--theme-nav-cloud-sway-distance` (3px) control that movement. Reduced motion
 skips it. Desktop link spacing uses `clamp(0.8rem, 2vw, 2.25rem)` in
-`public/navigation.css`; mobile retains its equal columns.
+`public/navigation.css`; mobile shares its remaining bottom columns equally.
 
 `--public-nav-collapse-time` (180ms) folds the old cloud towards its word;
 after 60% of that time the new cloud starts its `--public-nav-pop-time`
 (340ms) expansion with a small overshoot. The old SVG paint is retained while
-folding. Mobile instead gives its newly selected icon/crown the small pop;
-its bar stays free of clouds. Content fades in over `--public-page-reveal-time`
+folding. On mobile, the selected day cloud pops in the header centre,
+while the bottom bar stays free of clouds. The original link is positioned
+there with CSS: no duplicate text, routes or navigation controllers. On night,
+the same central position retains the night ink/light instead of a day cloud. Content fades in over `--public-page-reveal-time`
 (160ms). Dark keeps its existing inks/lights and receives the same persistent
 navigation without the day cloud animation. Reduced motion skips the effects.
 
@@ -1255,3 +1258,24 @@ during an opening animation settle afterwards. A parked cart editor yields
 Back/Forward to the active public page; checkout keeps its own history. The responsive cart tracks the
 new origin URL and returns to its desktop preview on resize, preventing a
 closed mobile editor from replacing a reading page.
+
+
+## Landing day wind
+
+The landing logo's real paths stay fixed above its rear cloud. Only the
+cloud drifts, with `--landing-cloud-drift` (18% of the cloud width), so blue
+letters at the edge can briefly merge with the blue sky as the white cloud
+moves away. Nothing passes in front of the wordmark. Broken curved wind
+strokes use the cloud's blue ink with a fine white backing on the sky.
+The eight-second cycle is `--landing-wind-cycle`; wind-line strength is
+`--landing-wind-ink-opacity` (0.75). `tools/draw_clouds.py` deterministically
+writes `wind.svg` and three `candy-*.svg` files alongside the existing clouds.
+The decorative wind span is hidden from assistive technology. Night keeps
+its moonlight; reduced motion removes the wind and leaves the cloud still.
+
+The logo is a native button with an English/French accessible action label.
+Click/tap/Enter/Space releases seven small engraved sweets; repeated presses
+can add at most 48 concurrent particles. `landing.js` removes each finished
+particle and clears all particles on page exit or a motion-preference change.
+The rain layer never receives pointer events or adds page scroll. Reduced
+motion uses three stationary sweets that briefly fade instead of falling.

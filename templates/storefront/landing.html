@@ -48,8 +48,13 @@
 
     <div class="landing__stage">
       <div class="landing__brand">
-        <h1 class="landing__logo">
-          {% include "includes/ui/logo.html" with class_name="landing__logo-art" only %}
+        <h1 class="landing__logo" aria-label="SwedeSweets">
+          <span class="landing__wind" aria-hidden="true"></span>
+          <button class="landing__logo-trigger" type="button"
+            aria-label="{% trans 'Make it rain sweets' %}"
+            data-candy-images="{% static 'images/clouds/candy-wrap.svg' %}|{% static 'images/clouds/candy-drop.svg' %}|{% static 'images/clouds/candy-lollipop.svg' %}">
+            {% include "includes/ui/logo.html" with class_name="landing__logo-art" decorative=True only %}
+          </button>
         </h1>
 
         <p class="landing__tagline">

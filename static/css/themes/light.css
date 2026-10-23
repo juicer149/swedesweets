@@ -30,6 +30,9 @@
   --theme-nav-pointer-scale: 1.035;
   --theme-nav-cloud-sway-time: 1200ms;
   --theme-nav-cloud-sway-distance: 3px;
+  --landing-wind-cycle: 8s;
+  --landing-wind-ink-opacity: 0.75;
+  --landing-cloud-drift: 18%;
   --public-nav-collapse-time: 180ms;
   --public-nav-pop-time: 340ms;
   --public-page-reveal-time: 160ms;
