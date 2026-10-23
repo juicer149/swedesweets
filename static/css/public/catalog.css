@@ -1103,6 +1103,42 @@
 }
 
 
+/* On a computer the page reads as a triangle, <|: the picture its left
+   point, beside a column of the label above and the tabs and their text
+   below, the picture centred against it. Near the navbar, not in the
+   middle of the screen: the room above, beside and between grows with
+   the screen, a little at a time and never much (clamp on its height);
+   the most between the label and the tabs, so the tabs sit lower on a
+   tall screen. The picture grows with the screen too, never taller than
+   half of it. */
+@media (min-width: 768px) {
+  .page.product {
+    width: min(100%, 980px);
+    padding-top: clamp(var(--space-8), 4.5dvh, var(--space-12));
+  }
+
+  .product__main {
+    grid-template-columns:
+      minmax(0, clamp(16rem, min(34vw, 50dvh), 28rem))
+      minmax(0, 26rem);
+    align-items: center;
+    gap: clamp(var(--space-10), 6vw, 5.5rem);
+  }
+
+  .product__side {
+    padding-top: 0;
+  }
+
+  .product__tabs {
+    margin-top: clamp(var(--space-8), 7dvh, 4.5rem);
+  }
+
+  .product__tabs .page-tabs__panel {
+    padding-top: clamp(var(--space-4), 3dvh, var(--space-8));
+  }
+}
+
+
 /* Centred under the centred tabs, read left to right. */
 .product__text {
   max-width: 62ch;
