@@ -1219,7 +1219,9 @@ its pills.
 leave neighbouring link positions unchanged. These navbar roles do not change
 the shared Menu/settings inks. The selected item retains its existing engraved
 cloud on desktop and its crown on mobile. Hovering the active desktop item
-keeps its blue engraving and gently sways only the cloud once, as in a breeze.
+keeps its blue engraving and gently sways only the cloud, as in a breeze.
+The movement repeats while hovered or keyboard-focused and stops on leaving.
+The navbar logo uses the same movement and retains its blue engraving.
 `--theme-nav-cloud-sway-time` (1200ms) and
 `--theme-nav-cloud-sway-distance` (3px) control that movement. Reduced motion
 skips it. Desktop link spacing uses `clamp(0.8rem, 2vw, 2.25rem)` in

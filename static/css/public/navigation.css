@@ -25,6 +25,18 @@
     text-shadow: 0 0 0.65px currentColor;
   }
 }
+/* The brand's cloud catches the same breeze; its engraving stays blue. */
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand {
+  --logo-pointer-ink: var(--logo-rest-ink);
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand:focus-visible::before {
+  animation: nav-cloud-sway var(--theme-nav-cloud-sway-time) ease-in-out infinite;
+}
+@media (hover: hover) and (pointer: fine) {
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand:hover::before {
+    animation: nav-cloud-sway var(--theme-nav-cloud-sway-time) ease-in-out infinite;
+  }
+}
 /* Extra breathing room on desktop; the mobile bar keeps equal columns. */
 @media (min-width: 768px) {
   .site-header .site-nav__links {
@@ -39,11 +51,11 @@
     text-shadow: none;
   }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link[aria-current="page"]:not(.is-nav-arriving, .is-nav-leaving):focus-visible::after {
-    animation: nav-cloud-sway var(--theme-nav-cloud-sway-time) ease-in-out;
+    animation: nav-cloud-sway var(--theme-nav-cloud-sway-time) ease-in-out infinite;
   }
   @media (hover: hover) and (pointer: fine) {
     :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link[aria-current="page"]:not(.is-nav-arriving, .is-nav-leaving):hover::after {
-      animation: nav-cloud-sway var(--theme-nav-cloud-sway-time) ease-in-out;
+      animation: nav-cloud-sway var(--theme-nav-cloud-sway-time) ease-in-out infinite;
     }
   }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link.is-nav-leaving::after {
@@ -80,5 +92,6 @@
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__label { transition: none; }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link .site-nav__label { transform: none !important; }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link[aria-current="page"]::after { animation: none !important; }
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand::before { animation: none !important; }
   .site-nav__link.is-nav-leaving::after, .site-nav__link.is-nav-arriving::after, .site-nav__link.is-nav-arriving .site-nav__icon { animation: none !important; }
 }
