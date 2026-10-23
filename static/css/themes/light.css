@@ -29,10 +29,8 @@
      At rest the word is lit by the sun: its dark blue shines a little
      (--theme-sun-shine); pointed at, a light cloud passes behind it and it
      loses the sunlight, as in the cloud's shade; where you are, a whole
-     cloud behind it. The logo alone is gold, shining: the sun. When the
-     sun goes behind a cloud (the logo pointed at; always on the start
-     page) the blue darkens a little (--theme-overcast) and nothing
-     shines. No crown marks a choice. */
+     cloud behind it. The logo alone is gold, shining: the sun. No crown
+     marks a choice. */
   --state-rest-ink: var(--color-primary-800);
   --state-pointer-ink: var(--color-primary-750);
   --state-here-ink: var(--color-primary-900);
@@ -40,12 +38,6 @@
     0 0 6px color-mix(in srgb, var(--color-accent-300) 70%, transparent),
     0 0 14px color-mix(in srgb, var(--color-accent-400) 40%, transparent);
   --theme-sun-icon-shine: drop-shadow(0 0 4px color-mix(in srgb, var(--color-accent-300) 65%, transparent));
-  /* the sun behind a cloud: how much darker the page grows, and the
-     start page's blue and its logo seen through the cloud */
-  --theme-overcast: color-mix(in srgb, var(--color-primary-1000) 10%, transparent);
-  --theme-overcast-chrome-bg: var(--color-primary-400);
-  --theme-overcast-logo-ink: var(--color-accent-700);
-  --theme-overcast-cloud-opacity: 0.6;
   --theme-cloud: var(--color-white);
   /* its shape: a wide body with a small round top, softened by the blur */
   --theme-cloud-shape:
@@ -1179,81 +1171,6 @@
   filter: var(--chrome-cloud-filter);
   opacity: 1;
   transform: none;
-}
-
-/* The sun behind a cloud: the logo pointed at gets a thin cloud in front
-   of it, the page darkens a little and nothing on the blue shines. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-brand::after {
-  content: "";
-  position: absolute;
-  inset: -0.35rem -0.6rem;
-  z-index: 1;
-  background: var(--theme-cloud-shape);
-  filter: var(--chrome-cloud-filter);
-  opacity: 0;
-  transform: var(--chrome-cloud-closed, none);
-  pointer-events: none;
-  transition:
-    opacity var(--sky-open-time) ease,
-    transform var(--sky-open-time) cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-brand:is(:hover, :focus-visible)::after {
-  opacity: var(--theme-overcast-cloud-opacity);
-  transform: none;
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-brand:is(:hover, :focus-visible) .site-brand__logo {
-  filter: none;
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) body {
-  --overcast-opacity: 0;
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) body:has(.site-brand:is(:hover, :focus-visible)) {
-  --theme-sun-shine: none;
-  --theme-sun-icon-shine: none;
-  --overcast-opacity: 1;
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 2147483000;
-  background: var(--theme-overcast);
-  opacity: var(--overcast-opacity);
-  pointer-events: none;
-  transition: opacity var(--sky-open-time) ease;
-}
-
-/* The start page: the sun is behind a cloud. Its blue a little darker,
-   the logo a darker gold behind a thin cloud, nothing shines. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .landing {
-  --menu-bg: var(--theme-overcast-chrome-bg);
-  --theme-sun-shine: none;
-  --theme-sun-icon-shine: none;
-  --logo-here-ink: var(--theme-overcast-logo-ink);
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .landing__logo .landing__logo-art {
-  filter: none;
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .landing__logo::after {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  top: 55%;
-  width: 135%;
-  height: 80%;
-  translate: -50% -50%;
-  background: var(--theme-cloud-shape);
-  filter: blur(14px);
-  opacity: var(--theme-overcast-cloud-opacity);
-  pointer-events: none;
 }
 
 /* The Menu's × on its white cloud: the cloud's dark blue, not sunlit. */
