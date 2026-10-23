@@ -1206,6 +1206,71 @@
   color: var(--state-here-ink);
 }
 
+/* Each of the navbar's links and buttons has its own cloud where you are
+   (a heap of round tops over a wide foot, its underside in a little
+   shade, as the logo's), drawn in shares of the word's width: a longer
+   word (another language) only stretches it. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --theme-cloud-shade-ink: rgb(120 150 205 / 0.4);
+  --theme-cloud-shade-ink-soft: rgb(120 150 205 / 0.28);
+  --theme-nav-cloud-opacity: 0.95;
+  --theme-nav-cloud-blur: 2px;
+  --theme-nav-cloud-inset: -0.7rem -1.1rem;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="lollipop"] { --nav-link-here-glow:
+    radial-gradient(ellipse 48% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
+    radial-gradient(ellipse 18% 16% at 14% 74%, var(--theme-cloud-shade-ink-soft), transparent 75%),
+    radial-gradient(ellipse 22% 34% at 30% 42%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 26% 40% at 58% 36%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 18% 28% at 82% 52%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 46% 26% at 50% 68%, var(--theme-cloud) 96%, transparent); }
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="map-pin"] { --nav-link-here-glow:
+    radial-gradient(ellipse 48% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
+    radial-gradient(ellipse 16% 16% at 88% 72%, var(--theme-cloud-shade-ink-soft), transparent 75%),
+    radial-gradient(ellipse 16% 26% at 18% 56%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 22% 36% at 40% 38%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 18% 30% at 64% 44%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 14% 24% at 84% 58%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 48% 24% at 50% 70%, var(--theme-cloud) 96%, transparent); }
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="question"] { --nav-link-here-glow:
+    radial-gradient(ellipse 46% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
+    radial-gradient(ellipse 24% 38% at 36% 40%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 20% 32% at 66% 46%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 44% 26% at 50% 68%, var(--theme-cloud) 96%, transparent); }
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="info"] { --nav-link-here-glow:
+    radial-gradient(ellipse 48% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
+    radial-gradient(ellipse 18% 16% at 82% 74%, var(--theme-cloud-shade-ink-soft), transparent 75%),
+    radial-gradient(ellipse 18% 30% at 26% 50%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 26% 40% at 52% 36%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 16% 26% at 76% 52%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 46% 24% at 50% 70%, var(--theme-cloud) 96%, transparent); }
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu__trigger { --nav-trigger-cloud:
+    radial-gradient(ellipse 46% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
+    radial-gradient(ellipse 22% 36% at 34% 44%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 22% 38% at 62% 38%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 44% 26% at 50% 68%, var(--theme-cloud) 96%, transparent); }
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav-cart__trigger { --nav-trigger-cloud:
+    radial-gradient(ellipse 46% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
+    radial-gradient(ellipse 28% 40% at 46% 40%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 18% 28% at 74% 54%, var(--theme-cloud) 96%, transparent),
+    radial-gradient(ellipse 44% 26% at 50% 68%, var(--theme-cloud) 96%, transparent); }
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav__link--active, .site-nav__link[aria-current="page"])::after {
+  inset: var(--theme-nav-cloud-inset);
+  border-radius: 0;
+  filter: blur(var(--theme-nav-cloud-blur));
+  opacity: var(--theme-nav-cloud-opacity);
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .menu-dropdown-trigger[aria-current="page"]::before {
+  inset: var(--theme-nav-cloud-inset);
+  border-radius: 0;
+  background: var(--nav-trigger-cloud, var(--theme-cloud-shape));
+  filter: blur(var(--theme-nav-cloud-blur));
+  opacity: var(--theme-nav-cloud-opacity);
+}
+
 /* The Menu's × on its white cloud: in the navbar's blue, as where you are. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu .mobile-menu-close {
   color: var(--state-here-ink);
@@ -1223,6 +1288,10 @@
   :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link::after {
     inset: -0.35rem -0.45rem;
     height: auto;
+  }
+
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) {
+    --theme-nav-cloud-inset: -0.3rem -0.4rem;
   }
 }
 

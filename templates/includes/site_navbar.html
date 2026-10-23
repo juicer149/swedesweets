@@ -54,6 +54,7 @@
                   {% endif %}
                 "
                 href="{{ item.href }}"
+                {% if item.icon %}data-nav-cloud="{{ item.icon }}"{% endif %}
                 {% if not navbar_cart_current and namespace == item.namespace %}
                   {% if item.active_url_names %}
                     {% if url_name in item.active_url_names %}
