@@ -26,18 +26,17 @@
   --theme-chrome-bg: var(--color-primary-400);
 
   /* # What you can click on it: rest, pointer, here.
-     The word in the dark blue; pointed at (or chosen) it turns gold; where
+     The word in the darkest blue; pointed at (or chosen) it turns white; where
      you are, a white cloud behind it and the word in the navbar's own blue,
      as if cut out of the cloud. No crown marks a choice. */
-  --state-rest-ink: var(--color-primary-800);
-  --state-pointer-ink: var(--color-accent-600);
+  --state-rest-ink: var(--color-primary-1000);
+  --state-pointer-ink: var(--color-white);
   --state-here-ink: var(--theme-chrome-bg);
-  /* gold pointed at, with a little sunlight round it (as the moonlight by
-     night) */
+  /* white pointed at, with a little warm sunlight round it (as the
+     moonlight by night) */
   --theme-sun-glint:
-    0 0 3px color-mix(in srgb, var(--color-accent-300) 45%, transparent),
-    0 0 9px color-mix(in srgb, var(--color-accent-400) 30%, transparent),
-    0 0 18px color-mix(in srgb, var(--color-accent-500) 18%, transparent);
+    0 0 3px color-mix(in srgb, var(--color-white) 45%, transparent),
+    0 0 10px color-mix(in srgb, var(--color-accent-300) 30%, transparent);
   --theme-cloud: var(--color-white);
   /* its shape: a wide body with a small round top, softened by the blur */
   --theme-cloud-shape:
@@ -48,9 +47,10 @@
   --theme-cloud-inset: -0.75rem -1.35rem;
   --theme-cloud-inset-phone: -0.75rem -0.5rem;
   /* the logo: always on its own cloud, a heap of round tops over a wide
-     foot, in the navbar's blue with its crown; gold pointed at */
+     foot, in the navbar's blue with its crown; gold pointed at (it stands
+     on white, where the links' white would vanish) */
   --theme-logo-ink: var(--theme-chrome-bg);
-  --theme-logo-pointer-ink: var(--state-pointer-ink);
+  --theme-logo-pointer-ink: var(--color-accent-600);
   --theme-logo-crown: var(--color-brand-yellow);
   --theme-logo-cloud:
     radial-gradient(ellipse 18% 24% at 34% 40%, var(--theme-cloud) 96%, transparent),
@@ -73,12 +73,13 @@
 
   /* # Tabs and filter chips: a word in the dark blue; pointed at, a peek
      of the navbar's blue opens behind it, the word keeping its colour;
-     chosen, the whole cloud and gold */
+     chosen, the whole cloud and white */
   --theme-sky-rest-ink: var(--color-primary-750);
   /* pointed at, the word keeps its colour and the blue opens behind it */
   --theme-sky-pointer-ink: var(--theme-sky-rest-ink);
   --theme-sky-here-bg: var(--theme-chrome-bg);
-  --theme-sky-here-ink: var(--color-accent-600);
+  /* (white on the blue cloud: it reads, where gold would not) */
+  --theme-sky-here-ink: var(--color-white);
   /* chosen, the word shines a little, as if the sun were on it */
   --theme-sky-here-shine:
     0 0 6px color-mix(in srgb, var(--color-accent-300) 85%, transparent),
@@ -1076,18 +1077,18 @@
 
 
 /* =============================================================================
-   On the blue by day: dark blue, gold pointed at, a cloud where you are
+   On the blue by day: darkest blue, white pointed at, a cloud where you are
 
    The navbar, the Menu, Settings, the start page and the entrance pages:
    at rest a word in the dark blue (--state-rest-ink); pointed at or
-   chosen, gold (--state-pointer-ink), no cloud; where you are (the page,
+   chosen, white (--state-pointer-ink), no cloud; where you are (the page,
    the language and theme in use, the Menu and cart buttons on their own
    page) a white cloud behind it and the word in the navbar's blue
    (--state-here-ink). The start page has no "here" (choosing a word goes
    there). The logo always stands on its own cloud (--theme-logo-cloud) in
    the navbar's blue with its crown, gold when pointed at. No crown marks a
    choice (--marker-crown). The page's own tabs, chips and questions keep
-   their blue cloud and gold, the word shining a little.
+   their blue cloud, the chosen word white and shining a little.
    ============================================================================= */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
   --marker-crown: transparent;
@@ -1099,7 +1100,7 @@
   --logo-here-pointer-ink: var(--theme-logo-pointer-ink);
   --logo-here-filter: none;
   --landing-logo-halo: none;
-  /* pointed at: gold, no cloud */
+  /* pointed at: white, no cloud */
   --nav-link-pointer-glow: none;
   --nav-trigger-pointer-glow: none;
   --nav-trigger-open-glow: none;
