@@ -26,18 +26,13 @@
   --theme-chrome-bg: var(--color-primary-350);
 
   /* # What you can click on it: rest, pointer, here.
-     At rest the word is lit by the sun: its dark blue shines a little
-     (--theme-sun-shine); pointed at, a light cloud passes behind it and it
-     loses the sunlight, as in the cloud's shade; where you are, a whole
-     cloud behind it. The logo alone is gold, shining: the sun. No crown
+     The word in the dark blue; pointed at (or chosen) a light cloud comes
+     behind it, the word keeping its colour; where you are, a whole cloud
+     and darker still. The logo alone is gold and shines: the sun. No crown
      marks a choice. */
   --state-rest-ink: var(--color-primary-800);
-  --state-pointer-ink: var(--color-primary-750);
-  --state-here-ink: var(--color-primary-900);
-  --theme-sun-shine:
-    0 0 6px color-mix(in srgb, var(--color-accent-300) 70%, transparent),
-    0 0 14px color-mix(in srgb, var(--color-accent-400) 40%, transparent);
-  --theme-sun-icon-shine: drop-shadow(0 0 4px color-mix(in srgb, var(--color-accent-300) 65%, transparent));
+  --state-pointer-ink: var(--state-rest-ink);
+  --state-here-ink: var(--color-primary-1000);
   --theme-cloud: var(--color-white);
   /* its shape: a wide body with a small round top, softened by the blur */
   --theme-cloud-shape:
@@ -1064,13 +1059,13 @@
 
 
 /* =============================================================================
-   On the blue by day: sunlit, a cloud's shade, a cloud where you are
+   On the blue by day: a light cloud pointed at, a whole one where you are
 
    The navbar, the Menu, Settings, the start page and the entrance pages:
-   at rest a word is lit (--state-rest-ink, --theme-sun-shine); pointed at
-   or chosen, a light cloud behind it (--theme-cloud-pointer-opacity) and it
-   darkens; where you are (the page, the language and theme in use) a whole
-   cloud and dark. The logo is gold and shines (--theme-logo-ink,
+   at rest a word in the dark blue (--state-rest-ink); pointed at or
+   chosen, a light cloud behind it (--theme-cloud-pointer-opacity), the
+   word the same; where you are (the page, the language and theme in use)
+   a whole cloud and darker (--state-here-ink). The logo is gold and shines (--theme-logo-ink,
    --theme-logo-shine), with its crown, and never has a cloud. No crown
    marks a choice (--marker-crown). The page's own tabs, chips and
    questions keep their blue cloud and gold, the word shining a little.
@@ -1102,48 +1097,6 @@
 /* (on the blue, what you point at gets the lighter cloud) */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-header, .site-menu, .landing, .entrance-header) {
   --interaction-halo-opacity: var(--theme-cloud-pointer-opacity);
-}
-
-/* At rest: lit by the sun. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
-  .site-nav__link, .site-menu .menu-panel-link, .site-menu[data-menu-ready] .language-switcher__option,
-  .landing-menu__link, .menu-dropdown-trigger, .landing__cart-link, .landing__account, .site-nav__auth-action
-) {
-  text-shadow: var(--theme-sun-shine);
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
-  .site-nav__link, .landing-menu__link, .menu-dropdown-trigger, .landing__cart-link, .landing__account, .site-nav__auth-action
-) .ui-icon-svg {
-  filter: var(--theme-sun-icon-shine);
-}
-
-/* Pointed at, chosen, or where you are: in a cloud's shade, no sunlight. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
-  .site-nav__link:is(:hover, :focus-visible, .site-nav__link--active, [aria-current="page"]),
-  .site-menu .menu-panel-link:is(.is-chosen, [aria-current="page"]),
-  .site-menu:not([data-menu-ready]) .menu-panel-link:is(:hover, :focus-visible),
-  .site-menu[data-menu-ready] .language-switcher__option:is(.is-chosen, .language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]),
-  .landing-menu__link:is(.landing-menu__link--chosen, :hover, :focus-visible),
-  .menu-dropdown-trigger:is(:hover, :focus-visible, [aria-current="page"]),
-  details[open] > .menu-dropdown-trigger,
-  .landing__cart-link:is(:hover, :focus-visible),
-  .landing__account:is(:hover, :focus-visible),
-  .site-nav__auth-action:is(:hover, :focus-visible)
-) {
-  text-shadow: none;
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
-  .site-nav__link:is(:hover, :focus-visible, .site-nav__link--active, [aria-current="page"]),
-  .landing-menu__link:is(.landing-menu__link--chosen, :hover, :focus-visible),
-  .menu-dropdown-trigger:is(:hover, :focus-visible, [aria-current="page"]),
-  details[open] > .menu-dropdown-trigger,
-  .landing__cart-link:is(:hover, :focus-visible),
-  .landing__account:is(:hover, :focus-visible),
-  .site-nav__auth-action:is(:hover, :focus-visible)
-) .ui-icon-svg {
-  filter: none;
 }
 
 /* The language or theme in use: a whole cloud even when chosen. */
