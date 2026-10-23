@@ -74,16 +74,13 @@
   /* # Tabs and filter chips: a word in the dark blue; pointed at, a peek
      of the navbar's blue opens behind it, the word keeping its colour;
      chosen, the whole cloud and white */
-  --theme-sky-rest-ink: var(--color-primary-750);
-  /* pointed at, the word keeps its colour and the blue opens behind it */
-  --theme-sky-pointer-ink: var(--theme-sky-rest-ink);
+  /* at rest a quiet neutral on the page; the blue means pointed at or chosen */
+  --theme-sky-rest-ink: var(--color-neutral-650);
+  /* pointed at, a peek of the blue opens behind it and the word turns white */
+  --theme-sky-pointer-ink: var(--color-white);
   --theme-sky-here-bg: var(--theme-chrome-bg);
   /* (white on the blue cloud: it reads, where gold would not) */
   --theme-sky-here-ink: var(--color-white);
-  /* chosen, the word shines a little, as if the sun were on it */
-  --theme-sky-here-shine:
-    0 0 6px color-mix(in srgb, var(--color-accent-300) 85%, transparent),
-    0 0 14px color-mix(in srgb, var(--color-accent-400) 55%, transparent);
   /* how soft the cloud's edge is (larger: softer) */
   --theme-sky-blur: 6.5px;
   /* how far it reaches beside the word; the row keeps room at its ends
@@ -791,7 +788,8 @@
   --menu-choice-pointer-crown-opacity: var(--state-pointer-crown-opacity);
 
   /* The staff's view switch */
-  --site-switch-here-ink: var(--state-here-ink);
+  /* (the view you are in: white, on the Menu's blue without a cloud) */
+  --site-switch-here-ink: var(--color-white);
   --site-switch-pointer-ink: var(--state-pointer-ink);
 
   /* The start page's menu and its Login / Log out */
@@ -1215,13 +1213,28 @@
   }
 }
 
-/* On the page: the chosen one's word shines a little on its blue cloud. */
+/* (the open question's arrow is off its cloud, on the page: the blue) */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .faq .accordion > .accordion__summary:is(:hover, :focus-visible) .accordion__chevron,
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .faq .accordion[open] > .accordion__summary .accordion__chevron {
+  color: var(--theme-sky-here-bg);
+}
+
+/* On the page: the chosen one's word plain white on its blue cloud. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
   .section-nav__link:is(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]),
   .chip:is([aria-pressed="true"], [aria-current="page"]),
   .filter-chip:is([aria-pressed="true"], [aria-current="page"]),
   .faq .accordion[open] > .accordion__summary
 ) {
-  text-shadow: var(--theme-sky-here-shine);
+  text-shadow: none;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
+  .section-nav__link:is(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]),
+  .chip:is([aria-pressed="true"], [aria-current="page"]),
+  .filter-chip:is([aria-pressed="true"], [aria-current="page"]),
+  .faq .accordion[open] > .accordion__summary
+) .ui-icon-svg {
+  filter: none;
 }
 
