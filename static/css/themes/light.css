@@ -25,42 +25,41 @@
   /* # The navbar's surface */
   --theme-chrome-bg: var(--color-primary-350);
 
-  /* # What you can click on it: rest, here, pointer (text, edge and light).
-     Pointed at, a white cloud forms behind the word (--theme-cloud), so the
-     dark blue reads against it; "here" stands dark in front of a sun
-     (--theme-sun), no cloud, no crown. */
-  --state-rest-ink: var(--color-primary-750);
-  --state-here-ink: var(--color-primary-1000);
-  --state-pointer-ink: var(--state-rest-ink);
+  /* # What you can click on it: rest, pointer, here.
+     At rest the word is lit by the sun, a warm white that shines a little
+     (--theme-sun-shine); pointed at, a light cloud passes behind it and it
+     darkens, as in the cloud's shade; where you are, a whole cloud behind it
+     and dark. The logo alone is gold, shining: the sun. No crown marks a
+     choice. */
+  --state-rest-ink: color-mix(in srgb, var(--color-white) 45%, var(--color-accent-25));
+  --state-pointer-ink: var(--color-primary-750);
+  --state-here-ink: var(--color-primary-900);
+  --theme-sun-shine:
+    0 0 6px color-mix(in srgb, var(--color-accent-300) 70%, transparent),
+    0 0 14px color-mix(in srgb, var(--color-accent-400) 40%, transparent);
   --theme-cloud: var(--color-white);
   /* its shape: a wide body with a small round top, softened by the blur */
   --theme-cloud-shape:
     radial-gradient(circle 0.62em at 44% 29%, var(--theme-cloud) 96%, transparent),
     radial-gradient(ellipse 50% 40% at 50% 58%, var(--theme-cloud) 96%, transparent);
+  /* how strong the cloud is pointed at (where you are: whole) */
+  --theme-cloud-pointer-opacity: 0.55;
   /* how far it reaches round the word (on phones a little less to the
      sides, where the Menu's words reach the screen's edges) */
   --theme-cloud-inset: -0.75rem -1.35rem;
   --theme-cloud-inset-phone: -0.75rem -0.5rem;
-  /* the navbar's logo: as its links (at rest, a cloud pointed at, the sun
-     on the brand's own pages), always with its crown */
-  --theme-logo-ink: var(--state-rest-ink);
-  --theme-logo-pointer-ink: var(--state-pointer-ink);
+  /* the logo: gold, shining, always with its crown, never a cloud */
+  --theme-logo-ink: var(--color-accent-500);
+  --theme-logo-shine:
+    drop-shadow(0 0 3px var(--color-accent-25))
+    drop-shadow(0 0 8px color-mix(in srgb, var(--color-accent-300) 85%, transparent))
+    drop-shadow(0 0 16px color-mix(in srgb, var(--color-accent-500) 45%, transparent));
+  --theme-logo-shine-large:
+    drop-shadow(0 0 6px color-mix(in srgb, var(--color-accent-25) 90%, transparent))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--color-accent-400) 65%, transparent))
+    drop-shadow(0 0 40px color-mix(in srgb, var(--color-accent-500) 40%, transparent));
   /* the crown is the logo's alone: it marks nothing */
   --state-pointer-crown-opacity: 0;
-
-  /* # Where you are: a sun behind the word (navbar, Menu, start page's
-     logo); its ball, the soft light round it, and how big it is */
-  --theme-sun:
-    radial-gradient(closest-side, #fffbe6 0%, var(--color-accent-200) 12.5%, var(--color-accent-400) 24%, color-mix(in srgb, var(--color-accent-600) 50%, transparent) 35%, transparent 50%),
-    radial-gradient(closest-side, color-mix(in srgb, var(--color-accent-300) 45%, transparent) 0%, color-mix(in srgb, var(--color-accent-400) 18%, transparent) 50%, transparent 100%);
-  --theme-sun-size: 3.4rem;
-  --theme-sun-size-menu: 4.5rem;
-  /* the start page's logo: its ball, and its light reaching out over the
-     blue (as wide as this, round the logo) */
-  --theme-sun-logo:
-    radial-gradient(closest-side, #fffbe6 0%, var(--color-accent-200) 22%, var(--color-accent-400) 40%, color-mix(in srgb, var(--color-accent-600) 45%, transparent) 58%, transparent 72%);
-  --theme-sun-logo-light: radial-gradient(closest-side, color-mix(in srgb, var(--color-accent-300) 45%, transparent) 0%, color-mix(in srgb, var(--color-accent-400) 18%, transparent) 50%, transparent 100%);
-  --theme-sun-logo-reach: 300%;
 
   /* # The page */
   --theme-page-bg: var(--color-neutral-50);
@@ -943,11 +942,8 @@
 
   --landing-pointer-glow: var(--theme-cloud-shape);
   --landing-pointer-glow-filter: var(--chrome-cloud-filter);
-  --landing-chosen-glow-opacity: 1;
-
-  --logo-rest-ink: var(--theme-logo-ink);
-  --logo-pointer-ink: var(--theme-logo-pointer-ink);
-  --logo-pointer-filter: none;
+  /* (the start page's chosen word: the lighter cloud, it is pointed at) */
+  --landing-chosen-glow-opacity: var(--theme-cloud-pointer-opacity);
 
   /* The catalog's cards pointed at: the sky's blue round them, outside
      the picture's edge */
@@ -1067,115 +1063,119 @@
 
 
 /* =============================================================================
-   Where you are, by day: the sun
+   On the blue by day: sunlit, a cloud's shade, a cloud where you are
 
-   On the blue (the navbar, the Menu, the start page's logo) the page you
-   are on stands dark in front of a round sun (--theme-sun), its light soft
-   round it; a cloud pointed at beside it passes in front of its light. No
-   crown marks anything: the logo keeps its own, and follows its links (a
-   cloud pointed at, the sun on the brand's own pages). On the page the
-   chosen tab, chip or question keeps its blue cloud and gold, the word
-   shining a little (--theme-sky-here-shine).
+   The navbar, the Menu, Settings, the start page and the entrance pages:
+   at rest a word is lit (--state-rest-ink, --theme-sun-shine); pointed at
+   or chosen, a light cloud behind it (--theme-cloud-pointer-opacity) and it
+   darkens; where you are (the page, the language and theme in use) a whole
+   cloud and dark. The logo is gold and shines (--theme-logo-ink,
+   --theme-logo-shine), with its crown, and never has a cloud. No crown
+   marks a choice (--marker-crown). The page's own tabs, chips and
+   questions keep their blue cloud and gold, the word shining a little.
    ============================================================================= */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
-  /* (the crowns that marked a choice: gone; the logo's keeps its gold) */
   --marker-crown: transparent;
+  --logo-rest-ink: var(--theme-logo-ink);
   --logo-rest-crown-opacity: 1;
-  --logo-here-ink: var(--state-here-ink);
-  --logo-here-pointer-ink: var(--state-here-ink);
-  --nav-link-here-glow: var(--theme-sun);
-  --nav-link-here-glow-filter: blur(2px);
+  --logo-pointer-ink: var(--theme-logo-ink);
+  --logo-pointer-filter: var(--theme-logo-shine);
+  --logo-here-ink: var(--theme-logo-ink);
+  --logo-here-pointer-ink: var(--theme-logo-ink);
+  --logo-here-filter: var(--theme-logo-shine);
+  --landing-logo-halo: none;
+  --nav-link-here-glow: var(--theme-cloud-shape);
+  --nav-link-here-glow-filter: var(--chrome-cloud-filter);
   --nav-link-here-glow-opacity: 1;
-  --nav-link-here-text-shadow: none;
-  --menu-link-here-glow: var(--theme-sun);
-  --menu-link-here-glow-filter: blur(2px);
+  --nav-trigger-here-glow-opacity: 1;
+  --menu-link-here-glow: var(--theme-cloud-shape);
+  --menu-link-here-glow-filter: var(--chrome-cloud-filter);
   --menu-link-here-glow-opacity: 1;
-  --menu-choice-active-bg: var(--theme-sun);
-  --menu-choice-active-filter: blur(2px);
+  --menu-choice-active-bg: var(--theme-cloud-shape);
+  --menu-choice-active-filter: var(--chrome-cloud-filter);
   --menu-choice-active-opacity: 1;
   --menu-choice-active-ink: var(--state-here-ink);
-  --landing-logo-halo: var(--theme-sun-logo);
+  --menu-choice-active-text-shadow: none;
 }
 
-/* The sun is round, whatever the word's width: twice its ball, for its
-   light. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav__link--active, .site-nav__link[aria-current="page"])::after,
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu .menu-panel-link[aria-current="page"]::before,
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"]):not(.is-chosen)::after {
-  inset: auto;
-  left: 50%;
-  top: 50%;
-  width: calc(2 * var(--theme-sun-size));
-  height: calc(2 * var(--theme-sun-size));
-  translate: -50% -50%;
-  border-radius: 50%;
-  transform: none;
+/* (on the blue, what you point at gets the lighter cloud) */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-header, .site-menu, .landing, .entrance-header) {
+  --interaction-halo-opacity: var(--theme-cloud-pointer-opacity);
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu .menu-panel-link[aria-current="page"]::before {
-  width: calc(2 * var(--theme-sun-size-menu));
-  height: calc(2 * var(--theme-sun-size-menu));
+/* At rest: lit by the sun. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
+  .site-nav__link, .site-menu .menu-panel-link, .site-menu[data-menu-ready] .language-switcher__option,
+  .landing-menu__link, .menu-dropdown-trigger, .landing__cart-link, .landing__account, .site-nav__auth-action
+) {
+  text-shadow: var(--theme-sun-shine);
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav__link--active, .site-nav__link[aria-current="page"]) {
-  z-index: 0;
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
+  .site-nav__link, .landing-menu__link, .menu-dropdown-trigger, .landing__cart-link, .landing__account, .site-nav__auth-action
+) .ui-icon-svg {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-accent-300) 65%, transparent));
+}
+
+/* Pointed at, chosen, or where you are: in a cloud's shade, no sunlight. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
+  .site-nav__link:is(:hover, :focus-visible, .site-nav__link--active, [aria-current="page"]),
+  .site-menu .menu-panel-link:is(.is-chosen, [aria-current="page"]),
+  .site-menu:not([data-menu-ready]) .menu-panel-link:is(:hover, :focus-visible),
+  .site-menu[data-menu-ready] .language-switcher__option:is(.is-chosen, .language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]),
+  .landing-menu__link:is(.landing-menu__link--chosen, :hover, :focus-visible),
+  .menu-dropdown-trigger:is(:hover, :focus-visible, [aria-current="page"]),
+  details[open] > .menu-dropdown-trigger,
+  .landing__cart-link:is(:hover, :focus-visible),
+  .landing__account:is(:hover, :focus-visible),
+  .site-nav__auth-action:is(:hover, :focus-visible)
+) {
   text-shadow: none;
 }
 
-/* (a cloud pointed at beside the sun passes in front of its light) */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(:hover, :focus-visible):not(.site-nav__link--active, [aria-current="page"]) {
-  z-index: 1;
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav__link--active, .site-nav__link[aria-current="page"]) .ui-icon-svg {
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
+  .site-nav__link:is(:hover, :focus-visible, .site-nav__link--active, [aria-current="page"]),
+  .landing-menu__link:is(.landing-menu__link--chosen, :hover, :focus-visible),
+  .menu-dropdown-trigger:is(:hover, :focus-visible, [aria-current="page"]),
+  details[open] > .menu-dropdown-trigger,
+  .landing__cart-link:is(:hover, :focus-visible),
+  .landing__account:is(:hover, :focus-visible),
+  .site-nav__auth-action:is(:hover, :focus-visible)
+) .ui-icon-svg {
   filter: none;
 }
 
-/* The start page's logo: dark in front of its sun, which stays still
-   (no drifting cloud), its light reaching out round it. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .landing__logo::before {
-  animation: none;
-  filter: blur(4px);
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .landing__logo::after {
-  content: "";
-  position: absolute;
-  z-index: -2;
-  left: 50%;
-  top: 52%;
-  width: var(--theme-sun-logo-reach);
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: var(--theme-sun-logo-light);
-  pointer-events: none;
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .landing__logo .landing__logo-art {
-  filter: none;
-}
-
-/* The logo on the brand's own pages (login and the other entrance
-   pages' header): "here", dark in front of its sun. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .entrance-header__brand::before {
-  inset: auto;
-  left: 50%;
-  top: 50%;
-  width: calc(2.6 * var(--theme-sun-size));
-  height: calc(2.6 * var(--theme-sun-size));
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: var(--theme-sun);
-  filter: blur(2px);
+/* The language or theme in use: a whole cloud even when chosen. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]).is-chosen::after {
   opacity: 1;
 }
 
-/* The navbar's logo pointed at: the cloud behind it, as its links. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-brand::before {
-  inset: var(--chrome-cloud-inset);
-  background: var(--theme-cloud-shape);
-  filter: var(--chrome-cloud-filter);
+/* The logo: gold and shining wherever it is, with no cloud behind it. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-brand .site-brand__logo {
+  filter: var(--theme-logo-shine);
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-brand, .entrance-header__brand)::before {
+  content: none;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .landing__logo .landing__logo-art {
+  filter: var(--theme-logo-shine-large);
+}
+
+/* The Menu's × on its white cloud: the cloud's dark blue, not sunlit. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu .mobile-menu-close {
+  color: var(--state-pointer-ink);
+  text-shadow: none;
+}
+
+/* On a phone the navbar's links are a bar of icons over words: the cloud
+   round both. */
+@media (max-width: 767px) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link::after {
+    inset: -0.35rem -0.45rem;
+    height: auto;
+  }
 }
 
 /* On the page: the chosen one's word shines a little on its blue cloud. */
