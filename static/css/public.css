@@ -9,6 +9,7 @@
 @import url("./public/landing.css");
 /* Here, pointer and rest: after the parts above, over their shared rules (common/states.css). */
 @import url("./common/states.css");
+@import url("./public/navigation.css");
 
 /* On phones, let local lights reach the screen edge rather than clipping at
    a narrow content column. The full-width main still prevents sideways page

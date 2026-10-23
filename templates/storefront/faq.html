@@ -10,6 +10,7 @@
   /contact/ redirects here.
 {% endcomment %}
 <section
+  data-public-page="faq"
   class="page-section"
   aria-labelledby="public-faq-title"
 >
@@ -56,5 +57,5 @@
 
 {% block scripts %}
   {{ block.super }}
-  <script src="{% static 'js/smooth-details.js' %}" defer></script>
+  <script data-public-page-script src="{% static 'js/smooth-details.js' %}" defer></script>
 {% endblock %}

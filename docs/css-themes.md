@@ -1210,3 +1210,41 @@ by day dark ink with a warm light), the one pointed at by a cooler one
 `--chip-pointer-glow` and take the pill away with `--chip-pill-bg`,
 `--chip-pill-border` and `--chip-here-bg`; ops sets none of them and keeps
 its pills.
+
+## Persistent customer navbar and cloud navigation
+
+`public/navigation.css` is imported only by public.css. Light's navbar uses
+`--theme-nav-rest-ink` (primary-50) and `--theme-nav-pointer-ink` (white), with
+`--theme-nav-pointer-scale` (1.035) and a slight painted thickening. Transforms
+leave neighbouring link positions unchanged. These navbar roles do not change
+the shared Menu/settings inks. The selected item retains its existing engraved
+cloud on desktop and its crown on mobile.
+
+`--public-nav-collapse-time` (180ms) folds the old cloud towards its word;
+after 60% of that time the new cloud starts its `--public-nav-pop-time`
+(340ms) expansion with a small overshoot. The old SVG paint is retained while
+folding. Mobile instead gives its newly selected icon/crown the small pop;
+its bar stays free of clouds. Content fades in over `--public-page-reveal-time`
+(160ms). Dark keeps its existing inks/lights and receives the same persistent
+navigation without the day cloud animation. Reduced motion skips the effects.
+
+`public-navigation.js` progressively enhances only the header's four links
+while a `data-public-page` surface is mounted: retail/B2B catalog, Find Sweets,
+FAQ and About. It fetches a fresh server render, verifies its language, asset
+versions and navigation/account shell, then replaces main/footer and updates
+the title, sharing metadata and active link. The header, cart and Menu DOM and
+their controllers remain mounted. URL/history, Back/Forward, per-page scroll
+positions and heading focus follow the page. Selection changes only after a
+successful response. A newer click aborts an older GET. Failed requests or
+incompatible page shells use normal navigation. Forms, checkout, product
+links, landing and ops continue with their existing navigation owners.
+
+Page scripts opt in with `data-public-page-script`; only tabs, catalog,
+product-detail and smooth-details modules can be loaded. The catalog exposes
+`SwedeSweetsCatalog.init/destroy` to release listeners/observers and TomSelect
+instances when leaving. Product detail releases its global cart subscription;
+smooth accordions release detached entries. Product-history events received
+during an opening animation settle afterwards. A parked cart editor yields
+Back/Forward to the active public page; checkout keeps its own history. The responsive cart tracks the
+new origin URL and returns to its desktop preview on resize, preventing a
+closed mobile editor from replacing a reading page.

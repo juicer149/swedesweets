@@ -728,3 +728,16 @@ ink. FAQ and footer hover text uses dark navy on pale surfaces; the Menu is
 white and gold on the navbar's blue.
 Order-progress text is navy in light while its connectors/dots retain gold;
 completed progress remains green in both themes.
+
+## Customer navbar transitions
+
+In the light customer navbar, available links rest in pale primary-50. Hover
+or keyboard focus turns them white and gently thickens/enlarges the lettering
+without moving adjacent links. The selected engraved cloud stays as designed.
+When changing between Catalog, Find Sweets, FAQ and About, the old cloud folds
+into its word as the new one pops open. The navbar remains in place; fresh page
+content appears below it. Mobile retains its active crown and uses a small icon
+pop instead of adding clouds. Reduced motion shows the final state directly.
+Ops keeps its work-oriented navigation. Checkout and product-detail transitions
+remain their own flows; implementation and timing controls are in
+[CSS themes](docs/css-themes.md#persistent-customer-navbar-and-cloud-navigation).

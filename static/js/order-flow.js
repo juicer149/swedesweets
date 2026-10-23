@@ -203,7 +203,8 @@
     event.preventDefault(); event.stopImmediatePropagation(); void transition(link.href);
   }, true);
   window.addEventListener("popstate", () => {
-    if (!current() || location.href === shownUrl) return;
+    if ((app.publicNavigation?.isPageActive() && current()?.dataset.flowStep === "cart")
+      || !current() || location.href === shownUrl) return;
     if (busy) location.reload(); else void transition(location.href, {}, { push: false });
   });
   window.addEventListener("pageshow", event => { if (event.persisted) { busy = false; reset(current()); } });

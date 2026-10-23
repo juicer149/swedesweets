@@ -17,11 +17,28 @@
 (() => {
   "use strict";
 
+  if (window.SwedeSweetsCatalog) return;
+  let dispose = () => {};
+function initCatalog() {
   const catalog = document.querySelector(".catalog");
 
-  if (!catalog) {
+  if (!catalog || catalog.dataset.navigationReady) {
     return;
   }
+
+  dispose();
+  catalog.dataset.navigationReady = "true";
+  const controller = new AbortController();
+  const cleanups = [];
+  const listen = (target, name, handler) => target.addEventListener(name, handler, { signal: controller.signal });
+  dispose = () => {
+    controller.abort();
+    cleanups.forEach(cleanup => cleanup());
+    window.SwedeSweetsProduct?.destroy(catalog);
+    catalog.querySelectorAll("select").forEach(select => select.tomselect?.destroy());
+    document.documentElement.classList.remove("catalog--detail-open");
+    delete catalog.dataset.navigationReady;
+  };
 
   const tiles = Array.from(
     catalog.querySelectorAll("[data-catalog-product]")
@@ -104,14 +121,14 @@
   }
 
   for (const button of categoryButtons) {
-    button.addEventListener("click", () => {
+    listen(button, "click", () => {
       filter.category = button.dataset.catalogCategory || "all";
       applyFilters();
     });
   }
 
   if (searchInput) {
-    searchInput.addEventListener("input", () => {
+    listen(searchInput, "input", () => {
       filter.query = normalize(searchInput.value);
       applyFilters();
     });
@@ -124,7 +141,7 @@
     let loading = false;
 
     const showMore = async () => {
-      if (loading || matchingCount <= shownLimit) {
+      if (!catalog.isConnected || loading || matchingCount <= shownLimit) {
         return;
       }
 
@@ -152,11 +169,13 @@
       return !more.hidden && box.top < window.innerHeight + 200;
     };
 
-    new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
       if (entries.some((entry) => entry.isIntersecting)) {
         void showMore();
       }
-    }, { rootMargin: "0px 0px 200px 0px" }).observe(more);
+    }, { rootMargin: "0px 0px 200px 0px" });
+    observer.observe(more);
+    cleanups.push(() => observer.disconnect());
   }
 
 
@@ -253,7 +272,7 @@
       form.querySelector("[data-catalog-add-button]")?.focus();
     };
 
-    error.addEventListener("click", done);
+    listen(error, "click", done);
     timer = window.setTimeout(done, 4000);
   }
 
@@ -331,7 +350,7 @@
   /* After any change to the cart (the navbar's refresh, here or after an
      add), every badge counts the navbar cart's lines anew: the server's
      cart, not our sums. */
-  document.addEventListener("navbar-cart-refreshed", (event) => {
+  listen(document, "navbar-cart-refreshed", (event) => {
     const lines = (event.detail?.container || document).querySelectorAll(
       "[data-navbar-cart-line][data-product-id]"
     );
@@ -378,7 +397,7 @@
       resetQuantity();
     };
 
-    form.addEventListener("submit", (event) => {
+    listen(form, "submit", (event) => {
       event.preventDefault();
 
       if (form.dataset.state) {
@@ -489,6 +508,7 @@
     const response = await fetch(url, {
       headers: { Accept: "text/html" },
       credentials: "same-origin",
+      signal: controller.signal,
     });
 
     if (!response.ok) {
@@ -509,6 +529,7 @@
   }
 
   let labelResizeObserver = null;
+  cleanups.push(() => labelResizeObserver?.disconnect());
 
   /* Scale the actual name area, not an estimate of the grid's spare room.
      Keep it in sync when the viewport, browser zoom or source card changes. */
@@ -568,6 +589,7 @@
   }
 
   function hide() {
+    window.SwedeSweetsProduct?.destroy(detail);
     labelResizeObserver?.disconnect();
     labelResizeObserver = null;
     detail.hidden = true;
@@ -575,6 +597,19 @@
     document.documentElement.classList.remove("catalog--detail-open");
   }
 
+  let pendingHistory = false;
+  function syncProductHistory(event) {
+    if (opened.busy) { pendingHistory = true; return; }
+    const url = event.state?.catalogProduct;
+    if (opened.url && !url) void closeProduct();
+    else if (url && !opened.url) void openProduct(tileFor(url), url, { push: false });
+  }
+  function historySettled() {
+    if (pendingHistory && !controller.signal.aborted) {
+      pendingHistory = false;
+      syncProductHistory({ state: window.history.state });
+    }
+  }
   async function openProduct(tile, url, { push = true, keyboard = false } = {}) {
     if (!detail || opened.busy || opened.tile) {
       return;
@@ -592,10 +627,12 @@
     try {
       [page] = await Promise.all([loading, motion ? wait(FOLD_MS) : null]);
     } catch (error) {
+      if (controller.signal.aborted) return;
       window.location.assign(url);
       return;
     }
 
+    if (controller.signal.aborted) return;
     const article = page.section.querySelector("[data-product-page]") || page.section;
 
     opened.tile = tile;
@@ -617,6 +654,7 @@
       });
 
       await transition.finished.catch(() => {});
+      if (controller.signal.aborted) return;
       // Then the label unfolds with what the page adds (clipped while it
       // does).
       void article.offsetWidth;
@@ -636,6 +674,7 @@
     }
 
     opened.busy = false;
+    historySettled();
   }
 
   async function closeProduct() {
@@ -651,6 +690,7 @@
     if (motion && article) {
       article.classList.add("product--folded");
       await wait(FOLD_MS);
+      if (controller.signal.aborted) return;
 
       const transition = document.startViewTransition(() => {
         hide();
@@ -658,6 +698,7 @@
       });
 
       await transition.finished.catch(() => {});
+      if (controller.signal.aborted) return;
       nameTile(tile, false);
     } else {
       hide();
@@ -672,10 +713,11 @@
     opened.tile = null;
     opened.url = "";
     opened.busy = false;
+    historySettled();
   }
 
   if (detail) {
-    catalog.addEventListener("click", (event) => {
+    listen(catalog, "click", (event) => {
       const link = event.target.closest(".tile__media, .tile__name a");
 
       if (
@@ -694,14 +736,9 @@
     });
 
     // The browser's back closes it; forward opens it again.
-    window.addEventListener("popstate", (event) => {
-      const url = event.state?.catalogProduct;
-
-      if (opened.url && !url) {
-        void closeProduct();
-      } else if (url && !opened.url) {
-        void openProduct(tileFor(url), url, { push: false });
-      }
-    });
+    listen(window, "popstate", syncProductHistory);
   }
+}
+  window.SwedeSweetsCatalog = { init: initCatalog, destroy: () => dispose() };
+  initCatalog();
 })();

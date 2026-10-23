@@ -128,6 +128,9 @@
     ></script>
 
     <script src="{% static 'js/order-flow.js' %}" defer></script>
+    {% if site_zone != "ops" %}
+      <script src="{% static 'js/public-navigation.js' %}" defer></script>
+    {% endif %}
     {% block scripts %}{% endblock %}
   </body>
 </html>

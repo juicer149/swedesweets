@@ -4,7 +4,7 @@
   "use strict";
   const app = window.SwedeSweets = window.SwedeSweets || {};
   const mobile = matchMedia("(max-width: 767px)");
-  const originUrl = location.href;
+  let originUrl = location.href;
   const cartMenu = () => document.querySelector('details[data-mobile-menu="cart"]');
   if (!cartMenu()) return;
   let root = document.querySelector("[data-order-flow-page]");
@@ -53,6 +53,14 @@
     const menu = cartMenu(), scroll = menu?.querySelector("[data-cart-panel-scroll]");
     if (!root || !scroll) return;
     preserve();
+    // Public navigation keeps this document alive. A closed mobile editor
+    // must return to its preview on desktop, not replace the reading page.
+    if (!mobile.matches && app.publicNavigation?.isPageActive()) {
+      if (hosted && preview) { scroll.replaceChildren(preview); preview = null; }
+      hosted = false;
+      controls();
+      return;
+    }
     if (mobile.matches) {
       if (root.parentElement !== scroll) {
         preview = document.createDocumentFragment();
@@ -180,7 +188,17 @@
     }
     if (directVisit || location.href !== originUrl || root?.dataset.flowStep === "placed") location.assign(root?.dataset.flowCloseUrl || originUrl);
   });
-  mobile.addEventListener("change", () => mount({ open: mobile.matches && Boolean(root) }));
+  document.addEventListener("public-page-ready", () => {
+    if (!directVisit && !cartMenu()?.open) originUrl = location.href;
+  });
+  mobile.addEventListener("change", () => {
+    if (app.publicNavigation?.isPageActive()) {
+      if (!mobile.matches) mount();
+      else if (cartMenu()?.open) void loadCart().then(() => mount({ open: true }));
+      return;
+    }
+    mount({ open: mobile.matches && Boolean(root) });
+  });
   app.cartPanel = { getRoot: () => root, adopt, dependencies, loadCart, mount };
   if (root) mount({ open: mobile.matches });
 })();

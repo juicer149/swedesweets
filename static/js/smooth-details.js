@@ -57,7 +57,17 @@
     };
   }
 
+  function destroy(root) {
+    for (const [details, item] of items) {
+      if (!details.isConnected || root?.contains(details)) {
+        item.animation?.cancel();
+        items.delete(details);
+      }
+    }
+  }
+  window.destroySmoothDetails = destroy;
   function enhance(root = document) {
+  destroy();
   root.querySelectorAll("details[data-smooth]").forEach((details) => {
     if (items.has(details)) {
       return;

@@ -16,6 +16,8 @@
 */
 (() => {
   "use strict";
+  if (window.SwedeSweetsProduct) return;
+  const controllers = new WeakMap();
 
 /* root: the product's <article data-product-page>, on its own page or
    opened over the catalog. options.onClose(): the × and Back close it
@@ -28,6 +30,8 @@ function initProduct(root, options = {}) {
     return;
   }
 
+  const controller = new AbortController();
+  controllers.set(root, controller);
   form.dataset.enhanced = "";
   // The checks are ours (on submit): the size's select is hidden behind
   // the site's dropdown, which the browser could not point at.
@@ -210,7 +214,7 @@ function initProduct(root, options = {}) {
     }
 
     setBadge(units);
-  });
+  }, { signal: controller.signal });
 
 
   /* Adding. */
@@ -358,7 +362,15 @@ function initProduct(root, options = {}) {
   });
 }
 
-  window.SwedeSweetsProduct = { init: initProduct };
+  function destroy(scope) {
+    const roots = [...scope.querySelectorAll("[data-product-page]")];
+    if (scope.matches?.("[data-product-page]")) roots.push(scope);
+    for (const root of roots) {
+      controllers.get(root)?.abort();
+      controllers.delete(root);
+    }
+  }
+  window.SwedeSweetsProduct = { init: initProduct, destroy };
 
   // Its own page.
   const page = document.querySelector("[data-product-page]");
