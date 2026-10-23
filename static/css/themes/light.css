@@ -44,16 +44,17 @@
      sides, where the Menu's words reach the screen's edges) */
   --theme-cloud-inset: -0.75rem -1.35rem;
   --theme-cloud-inset-phone: -0.75rem -0.5rem;
-  /* the logo: gold, shining, always with its crown, never a cloud */
+  /* the logo: in the navbar gold and shining, always with its crown;
+     pointed at (and on the start and entrance pages) on a cloud, in its
+     own colours */
   --theme-logo-ink: var(--color-accent-500);
+  --theme-logo-own-ink: var(--color-primary-400);
+  --theme-logo-own-crown: var(--color-brand-yellow);
+  --theme-logo-cloud-inset: -0.9rem -1.4rem;
   --theme-logo-shine:
     drop-shadow(0 0 3px var(--color-accent-25))
     drop-shadow(0 0 8px color-mix(in srgb, var(--color-accent-300) 85%, transparent))
     drop-shadow(0 0 16px color-mix(in srgb, var(--color-accent-500) 45%, transparent));
-  --theme-logo-shine-large:
-    drop-shadow(0 0 6px color-mix(in srgb, var(--color-accent-25) 90%, transparent))
-    drop-shadow(0 0 18px color-mix(in srgb, var(--color-accent-400) 65%, transparent))
-    drop-shadow(0 0 40px color-mix(in srgb, var(--color-accent-500) 40%, transparent));
   /* the crown is the logo's alone: it marks nothing */
   --state-pointer-crown-opacity: 0;
 
@@ -1070,7 +1071,8 @@
    chosen, a light cloud behind it (--theme-cloud-pointer-opacity), the
    word the same; where you are (the page, the language and theme in use)
    a whole cloud and darker (--state-here-ink). The logo is gold and shines (--theme-logo-ink,
-   --theme-logo-shine), with its crown, and never has a cloud. No crown
+   --theme-logo-shine), with its crown; pointed at, and on the brand's own
+   pages, it stands on a cloud in its own colours. No crown
    marks a choice (--marker-crown). The page's own tabs, chips and
    questions keep their blue cloud and gold, the word shining a little.
    ============================================================================= */
@@ -1078,11 +1080,11 @@
   --marker-crown: transparent;
   --logo-rest-ink: var(--theme-logo-ink);
   --logo-rest-crown-opacity: 1;
-  --logo-pointer-ink: var(--theme-logo-ink);
-  --logo-pointer-filter: var(--theme-logo-shine);
-  --logo-here-ink: var(--theme-logo-ink);
-  --logo-here-pointer-ink: var(--theme-logo-ink);
-  --logo-here-filter: var(--theme-logo-shine);
+  --logo-pointer-ink: var(--theme-logo-own-ink);
+  --logo-pointer-filter: none;
+  --logo-here-ink: var(--theme-logo-own-ink);
+  --logo-here-pointer-ink: var(--theme-logo-own-ink);
+  --logo-here-filter: none;
   --landing-logo-halo: none;
   --nav-link-here-glow: var(--theme-cloud-shape);
   --nav-link-here-glow-filter: var(--chrome-cloud-filter);
@@ -1108,17 +1110,58 @@
   opacity: 1;
 }
 
-/* The logo: gold and shining wherever it is, with no cloud behind it. */
+/* The logo: in the navbar gold and shining; pointed at, a cloud behind it
+   and it shows its own colours (--theme-logo-own-ink and its crown). On
+   the brand's own pages (the start page, the entrance pages) it is always
+   so: on its cloud, in its own colours. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-brand .site-brand__logo {
   filter: var(--theme-logo-shine);
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-brand, .entrance-header__brand)::before {
-  content: none;
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-brand:is(:hover, :focus-visible) .site-brand__logo {
+  filter: none;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-brand::before {
+  inset: var(--theme-logo-cloud-inset);
+  border-radius: 0;
+  background: var(--theme-cloud-shape);
+  filter: var(--chrome-cloud-filter);
+  transform: var(--chrome-cloud-closed, none);
+  transition:
+    opacity var(--sky-open-time) ease,
+    transform var(--sky-open-time) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-brand:is(:hover, :focus-visible)::before {
+  opacity: 1;
+  transform: none;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-brand:is(:hover, :focus-visible), .landing__logo, .entrance-header__brand) .brand-logo__crown {
+  fill: var(--theme-logo-own-crown);
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .entrance-header__brand::before {
+  inset: var(--theme-logo-cloud-inset);
+  border-radius: 0;
+  background: var(--theme-cloud-shape);
+  filter: var(--chrome-cloud-filter);
+  opacity: 1;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .landing__logo::before {
+  top: 52%;
+  width: 175%;
+  height: 115%;
+  aspect-ratio: auto;
+  border-radius: 0;
+  background: var(--theme-cloud-shape);
+  filter: blur(12px);
 }
 
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .landing__logo .landing__logo-art {
-  filter: var(--theme-logo-shine-large);
+  filter: none;
 }
 
 /* The Menu and cart buttons on their own page: the whole cloud (also
