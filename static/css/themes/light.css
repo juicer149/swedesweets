@@ -56,7 +56,6 @@
      of the navbar's blue opens behind it, the word keeping its colour;
      chosen, the whole cloud and gold */
   --theme-sky-rest-ink: var(--color-primary-750);
-  --theme-sky-pointer-bg: var(--theme-sky-here-bg);
   /* pointed at, the word keeps its colour and the blue opens behind it */
   --theme-sky-pointer-ink: var(--theme-sky-rest-ink);
   --theme-sky-here-bg: var(--theme-chrome-bg);

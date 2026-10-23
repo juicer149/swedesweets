@@ -20,8 +20,9 @@
   padding-left: calc(var(--space-4) + var(--space-5));
 }
 
-/* The last question opens to the phone and mail rows, indented the same. */
-.faq-contact .icon-rows {
+/* The phone and mail rows (the last question, and an answer that ends on
+   them) start where the answers do, not centred. */
+.faq .accordion__content .icon-rows {
   margin: 0;
   padding: var(--space-2) var(--space-2) var(--space-4) calc(var(--space-4) + var(--space-5));
 }
