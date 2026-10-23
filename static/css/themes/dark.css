@@ -219,6 +219,8 @@
   --order-history-row-marker: var(--menu-chosen);
   --order-progress-complete: var(--color-green-400);
   --confirm-remove-text: var(--cart-remove-ink);
+  /* the red button's word (Clear cart, Remove): a light red, not grey */
+  --confirm-danger-action-ink: var(--color-red-100);
   --order-progress-ready: var(--interactive-text);
   --order-progress-lit: var(--selected-accent);
   --order-progress-lit-label: var(--order-progress-lit);

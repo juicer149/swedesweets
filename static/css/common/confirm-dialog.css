@@ -208,3 +208,8 @@
 .confirm-dialog[data-tone="danger"] :is(.confirm-dialog__title, .confirm-dialog__message) {
   color: var(--confirm-remove-text);
 }
+
+/* Its red button's word in a light red (--confirm-danger-action-ink). */
+.confirm-dialog .button--tone-danger {
+  --button-solid-text: var(--confirm-danger-action-ink, var(--color-primary-50));
+}
