@@ -26,17 +26,15 @@
   --theme-chrome-bg: var(--color-primary-400);
 
   /* # What you can click on it: rest, pointer, here.
-     The word in the darkest blue; pointed at (or chosen) it turns white; where
+     The word in white; pointed at (or chosen) it turns the darkest blue,
+     as in a shade; where
      you are, a white cloud behind it and the word in the navbar's own blue,
      as if cut out of the cloud. No crown marks a choice. */
-  --state-rest-ink: var(--color-primary-1000);
-  --state-pointer-ink: var(--color-white);
+  --state-rest-ink: var(--color-white);
+  --state-pointer-ink: var(--color-primary-1000);
   --state-here-ink: var(--theme-chrome-bg);
-  /* white pointed at, with a little warm sunlight round it (as the
-     moonlight by night) */
-  --theme-sun-glint:
-    0 0 3px color-mix(in srgb, var(--color-white) 45%, transparent),
-    0 0 10px color-mix(in srgb, var(--color-accent-300) 30%, transparent);
+  /* (no light round it pointed at: the dark blue is its own mark) */
+  --theme-sun-glint: none;
   --theme-cloud: var(--color-white);
   /* its shape: a wide body with a small round top, softened by the blur */
   --theme-cloud-shape:
@@ -1086,11 +1084,11 @@
 
 
 /* =============================================================================
-   On the blue by day: darkest blue, white pointed at, a cloud where you are
+   On the blue by day: white, the darkest blue pointed at, a cloud where you are
 
    The navbar, the Menu, Settings, the start page and the entrance pages:
-   at rest a word in the dark blue (--state-rest-ink); pointed at or
-   chosen, white (--state-pointer-ink), no cloud; where you are (the page,
+   at rest a word in white (--state-rest-ink); pointed at or
+   chosen, the darkest blue (--state-pointer-ink), no cloud; where you are (the page,
    the language and theme in use, the Menu and cart buttons on their own
    page) a white cloud behind it and the word in the navbar's blue
    (--state-here-ink). The start page has no "here" (choosing a word goes
@@ -1109,7 +1107,7 @@
   --logo-here-pointer-ink: var(--theme-logo-pointer-ink);
   --logo-here-filter: none;
   --landing-logo-halo: none;
-  /* pointed at: white, no cloud */
+  /* pointed at: the darkest blue, no cloud */
   --nav-link-pointer-glow: none;
   --nav-trigger-pointer-glow: none;
   --nav-trigger-open-glow: none;
