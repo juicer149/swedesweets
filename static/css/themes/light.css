@@ -960,9 +960,9 @@
   --dropdown-title-pointer-glow-filter: blur(var(--theme-sky-blur));
   --dropdown-title-here-glow: var(--theme-sky-cloud);
   --dropdown-title-here-glow-filter: blur(var(--theme-sky-blur));
-  --dropdown-title-glow-inset: -0.8rem calc(-1 * var(--theme-sky-reach));
+  --dropdown-title-glow-inset: -0.8rem calc(-1 * var(--theme-sky-reach) - 0.5rem);
   --dropdown-title-glow-closed: var(--theme-sky-closed);
-  --dropdown-title-glow-peek: var(--theme-sky-peek);
+  --dropdown-title-glow-peek: scale(0.7, 0.6);
   --dropdown-title-text-shadow: none;
   --dropdown-title-pointer-text-shadow: none;
   --dropdown-title-icon-filter: none;
