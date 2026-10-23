@@ -28,6 +28,8 @@
   --theme-nav-rest-ink: var(--color-primary-50);
   --theme-nav-pointer-ink: var(--color-white);
   --theme-nav-pointer-scale: 1.035;
+  --theme-nav-cloud-sway-time: 1200ms;
+  --theme-nav-cloud-sway-distance: 3px;
   --public-nav-collapse-time: 180ms;
   --public-nav-pop-time: 340ms;
   --public-page-reveal-time: 160ms;
@@ -1137,16 +1139,14 @@
   text-decoration: none;
 }
 
-/* Where you are, pointed at: the word on its cloud turns gold, as the
-   logo does. */
+/* The active navbar keeps its blue engraving; Menu choices and triggers
+   retain their gold pointer state. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
-  .site-nav__link:is(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible),
   .site-menu .menu-panel-link[aria-current="page"]:is(.is-chosen, :focus-visible),
   .site-menu:not([data-menu-ready]) .menu-panel-link[aria-current="page"]:hover,
   .site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]).is-chosen,
   .menu-dropdown-trigger[aria-current="page"]:is(:hover, :focus-visible)
-),
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible) * {
+) {
   color: var(--state-here-pointer-ink);
   text-shadow: none;
 }

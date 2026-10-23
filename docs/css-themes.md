@@ -1218,7 +1218,12 @@ its pills.
 `--theme-nav-pointer-scale` (1.035) and a slight painted thickening. Transforms
 leave neighbouring link positions unchanged. These navbar roles do not change
 the shared Menu/settings inks. The selected item retains its existing engraved
-cloud on desktop and its crown on mobile.
+cloud on desktop and its crown on mobile. Hovering the active desktop item
+keeps its blue engraving and gently sways only the cloud once, as in a breeze.
+`--theme-nav-cloud-sway-time` (1200ms) and
+`--theme-nav-cloud-sway-distance` (3px) control that movement. Reduced motion
+skips it. Desktop link spacing uses `clamp(0.8rem, 2vw, 2.25rem)` in
+`public/navigation.css`; mobile retains its equal columns.
 
 `--public-nav-collapse-time` (180ms) folds the old cloud towards its word;
 after 60% of that time the new cloud starts its `--public-nav-pop-time`
