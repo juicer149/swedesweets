@@ -51,6 +51,12 @@
      on white, where the links' white would vanish) */
   --theme-logo-ink: var(--theme-chrome-bg);
   --theme-logo-pointer-ink: var(--color-accent-600);
+  /* where you are, pointed at: gold on its cloud, as the logo */
+  --state-here-pointer-ink: var(--theme-logo-pointer-ink);
+  /* the logo's cloud: how solid, and how soft its edge (navbar; start page) */
+  --theme-logo-cloud-opacity: 0.85;
+  --theme-logo-cloud-blur: 2.5px;
+  --theme-logo-cloud-blur-large: 5px;
   --theme-logo-crown: var(--color-brand-yellow);
   --theme-logo-cloud:
     radial-gradient(ellipse 18% 24% at 34% 40%, var(--theme-cloud) 96%, transparent),
@@ -1131,7 +1137,8 @@
   text-decoration: none;
 }
 
-/* Where you are, pointed at: the word on its cloud turns gold too. */
+/* Where you are, pointed at: the word on its cloud turns gold, as the
+   logo does. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
   .site-nav__link:is(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible),
   .site-menu .menu-panel-link[aria-current="page"]:is(.is-chosen, :focus-visible),
@@ -1140,8 +1147,8 @@
   .menu-dropdown-trigger[aria-current="page"]:is(:hover, :focus-visible)
 ),
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible) * {
-  color: var(--state-pointer-ink);
-  text-shadow: var(--theme-sun-glint);
+  color: var(--state-here-pointer-ink);
+  text-shadow: none;
 }
 
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]).is-chosen::after {
@@ -1155,8 +1162,8 @@
   inset: var(--theme-logo-cloud-inset);
   border-radius: 0;
   background: var(--theme-logo-cloud);
-  filter: blur(4px);
-  opacity: 1;
+  filter: blur(var(--theme-logo-cloud-blur));
+  opacity: var(--theme-logo-cloud-opacity);
   transform: none;
 }
 
@@ -1176,7 +1183,8 @@
   aspect-ratio: auto;
   border-radius: 0;
   background: var(--theme-logo-cloud);
-  filter: blur(7px);
+  filter: blur(var(--theme-logo-cloud-blur-large));
+  opacity: var(--theme-logo-cloud-opacity);
 }
 
 /* The Menu and cart buttons on their own page: the cloud (also with their
