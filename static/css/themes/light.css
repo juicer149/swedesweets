@@ -94,7 +94,7 @@
   --theme-sky-blur: 6.5px;
   /* how far it reaches beside the word; the row keeps room at its ends
      for it, so it is not cut */
-  --theme-sky-reach: 2.25rem;
+  --theme-sky-reach: 1.1rem;
   /* how far it reaches above and under the word */
   --theme-sky-rise: 0.8rem;
   /* its shape: the navbar's cloud (a wide body with a small round top),
