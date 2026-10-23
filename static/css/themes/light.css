@@ -23,14 +23,14 @@
    ============================================================================= */
 :root {
   /* # The navbar's surface */
-  --theme-chrome-bg: var(--color-primary-350);
+  --theme-chrome-bg: var(--color-primary-400);
 
   /* # What you can click on it: rest, pointer, here.
      The word in the dark blue; pointed at (or chosen) it turns gold; where
      you are, a white cloud behind it and the word in the navbar's own blue,
      as if cut out of the cloud. No crown marks a choice. */
   --state-rest-ink: var(--color-primary-800);
-  --state-pointer-ink: var(--color-accent-500);
+  --state-pointer-ink: var(--color-accent-600);
   --state-here-ink: var(--theme-chrome-bg);
   /* gold pointed at, with a little sunlight round it (as the moonlight by
      night) */

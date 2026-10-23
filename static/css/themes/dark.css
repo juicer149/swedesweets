@@ -391,8 +391,14 @@
   --catalog-close-ink: var(--color-primary-400);
   --catalog-close-border: var(--color-primary-400);
   --catalog-close-bg: var(--surface-bg);
-  --catalog-close-hover-ink: var(--interactive-text);
+  /* pointed at: in moonlight, its ring, its cross and a light round it */
+  --catalog-close-hover-ink: var(--moonlight);
   --catalog-close-hover-bg: var(--surface-hover);
+  --catalog-close-hover-border: var(--moonlight);
+  --catalog-close-hover-shadow:
+    0 0 8px color-mix(in srgb, var(--moonlight) 45%, transparent),
+    0 0 18px color-mix(in srgb, var(--moonlight) 22%, transparent);
+  --catalog-close-hover-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, var(--moonlight) 70%, transparent));
 
   /* 7. Cart and quantity stepper */
   --cart-panel-bg: var(--surface-bg);

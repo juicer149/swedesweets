@@ -807,6 +807,12 @@
 .product__close:hover {
   color: var(--catalog-close-hover-ink);
   background: var(--catalog-close-hover-bg);
+  border-color: var(--catalog-close-hover-border, var(--catalog-close-border));
+  box-shadow: var(--catalog-close-hover-shadow, 0 2px 4px rgb(var(--color-row-shadow) / 0.14));
+}
+
+.product__close:hover .ui-icon-svg {
+  filter: var(--catalog-close-hover-icon-filter, none);
 }
 
 .product__close:focus-visible {

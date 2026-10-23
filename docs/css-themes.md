@@ -18,7 +18,7 @@ it must differ:
 
 | Control | What it sets | Day (light.css) | Night (dark.css) |
 |---|---|---|---|
-| `--theme-chrome-bg` | the navbar's surface, and the Menu's, start page's and login pages' around it | primary-350 | primary-950 |
+| `--theme-chrome-bg` | the navbar's surface, and the Menu's, start page's and login pages' around it | primary-400 (the logo's blue) | primary-950 |
 | `--state-rest-ink` | everything clickable on it, at rest: text, edge and light | primary-750 | light blue (`--interactive-text`) |
 | `--state-here-ink` | where you are (with the crown) | gold | gold |
 | `--state-pointer-ink` | what you point at or reach with the keys | primary-950 | moonlight |
@@ -26,7 +26,7 @@ it must differ:
 | `--state-page-rest/here/pointer-ink` | the same three on the page (tabs, questions, Find Sweets, chips) | primary-700 / 900 / 600 | as the three above |
 | `--theme-sky-*` | tabs and filter chips: the word at rest, a cloud behind it and its ink pointed at and chosen, the cloud's softness (`-blur`), how far it reaches beside the word (`-reach`; the tab row keeps that much room at its ends, so the light is not cut), its size while closed (`-closed`), how far it opens when pointed at (`-peek`: a smaller look at the chosen one's sky) and how long it takes (`--sky-open-time`) | primary-950; the navbar's blue + white pointed at, + gold chosen; 6.5px; 28px; scale(.35, .6); scale(.55, .62); 280ms | (not used: the night keeps its halo, with 1.25rem of room at the row's ends) |
 | `--theme-cloud`, `-shape`, `-inset` | by day on the blue (navbar, Menu, Settings, entrance pages): the white cloud behind where you are (a wide body with a small round top; less wide on phones) | white | (not used) |
-| `--state-rest-ink`, `--state-pointer-ink`, `--state-here-ink` | by day on the blue, a word at rest (dark blue), pointed at or chosen (gold, no cloud) and where you are (on the white cloud, in the navbar's own blue, as if cut out of it); the start page has no "here". No crown marks a choice (`--marker-crown`) | primary-800; accent-500; the navbar's blue | (the night's own) |
+| `--state-rest-ink`, `--state-pointer-ink`, `--state-here-ink` | by day on the blue, a word at rest (dark blue), pointed at or chosen (gold, no cloud) and where you are (on the white cloud, in the navbar's own blue, as if cut out of it); the start page has no "here". No crown marks a choice (`--marker-crown`) | primary-800; accent-600; the navbar's blue | (the night's own) |
 | `--theme-logo-ink`, `-pointer-ink`, `-crown`, `--theme-logo-cloud`, `-cloud-inset` | the logo: always on its own cloud (a heap of round tops over a wide foot), in the navbar's blue with its yellow crown; gold pointed at | the navbar's blue; gold; the brand yellow | (as the rest and the pointer) |
 | `--theme-sky-here-shine` | the chosen tab's, chip's or question's word shining a little on its blue cloud | a soft gold light | (not used) |
 | `--interaction-glow-strength` | how strongly the lights shine | 1 | 0.85 |
