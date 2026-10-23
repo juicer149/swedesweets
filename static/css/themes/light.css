@@ -934,20 +934,24 @@
   --catalog-card-hover-shadow: 0 0 18px 4px color-mix(in srgb, var(--theme-chrome-bg) 75%, transparent), 0 0 34px 8px color-mix(in srgb, var(--theme-chrome-bg) 30%, transparent);
 }
 
-/* The panels' round × (the Menu's and the cart's on a phone): a white
-   cloud inside its ring, the dark blue cross on it. */
+/* The panels' × (the Menu's and the cart's on a phone): the cross on a
+   white cloud, which is the button; no round ring. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .mobile-menu-close {
   isolation: isolate;
-  overflow: hidden;
+  background: transparent;
+  border-color: transparent;
+  /* a little higher, on the panel's point: the cloud is cut at the
+     screen's foot otherwise */
+  translate: 0 -0.75rem;
 }
 
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .mobile-menu-close::before {
   content: "";
   position: absolute;
-  inset: 0.1rem -0.2rem -0.1rem;
+  inset: -0.5rem -0.9rem -0.05rem;
   z-index: -1;
   background: var(--theme-cloud-shape);
-  filter: blur(4px);
+  filter: var(--chrome-cloud-filter);
   pointer-events: none;
 }
 
