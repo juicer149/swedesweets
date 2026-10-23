@@ -922,7 +922,11 @@
   --nav-trigger-pointer-glow: var(--theme-cloud-shape);
   --nav-trigger-pointer-glow-filter: var(--chrome-cloud-filter);
   --nav-trigger-pointer-icon-filter: none;
-  --nav-trigger-open-glow: none;
+  /* open (its panel showing) it is pointed at, not where you are: the
+     light cloud, the word unchanged */
+  --nav-trigger-open-ink: var(--state-pointer-ink);
+  --nav-trigger-open-glow: var(--theme-cloud-shape);
+  --nav-trigger-open-glow-filter: var(--chrome-cloud-filter);
   --nav-trigger-open-icon-filter: none;
   --nav-trigger-here-glow-opacity: 0;
   --nav-trigger-cloud-inset: -0.65rem -1rem;
@@ -1117,7 +1121,13 @@
   filter: var(--theme-logo-shine-large);
 }
 
-/* The Menu and cart buttons on their own page: the whole cloud. */
+/* The Menu and cart buttons on their own page: the whole cloud (also
+   with their panel open there); elsewhere, open, the light one. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) details[open] > .menu-dropdown-trigger:not([aria-current="page"])::before {
+  inset: var(--nav-trigger-cloud-inset);
+  transform: none;
+}
+
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .menu-dropdown-trigger[aria-current="page"]::before {
   inset: var(--nav-trigger-cloud-inset);
   background: var(--theme-cloud-shape);
