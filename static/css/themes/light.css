@@ -64,7 +64,9 @@
   --theme-sky-blur: 6.5px;
   /* how far it reaches beside the word; the row keeps room at its ends
      for it, so it is not cut */
-  --theme-sky-reach: 1.75rem;
+  --theme-sky-reach: 2.25rem;
+  /* how far it reaches above and under the word */
+  --theme-sky-rise: 0.8rem;
   /* its shape: the navbar's cloud (a wide body with a small round top),
      in the sky's blue: a hole in the page's cream cloud */
   --theme-sky-cloud:
@@ -73,7 +75,7 @@
   /* closed it is this small, and it opens in this long when pointed at */
   --theme-sky-closed: scale(0.35, 0.6);
   /* pointed at, it opens only this far: a peek at the chosen one's sky */
-  --theme-sky-peek: scale(0.55, 0.62);
+  --theme-sky-peek: scale(0.7, 0.6);
   --sky-open-time: 280ms;
 
   /* # How strongly the lights shine */
@@ -782,7 +784,9 @@
   --site-menu-box-border: transparent;
 
   /* The page's own parts (common/states.css): by day as before */
-  --section-nav-glow-inset: -0.55rem calc(-1 * var(--theme-sky-reach));
+  /* (a tab's box is already taller than its word, a chip's a little:
+     the cloud reaches --theme-sky-rise past the word, not the box) */
+  --section-nav-glow-inset: calc(0.95rem - var(--theme-sky-rise)) calc(-1 * var(--theme-sky-reach));
   --section-nav-glow-room: calc(var(--theme-sky-reach) + var(--theme-sky-blur));
   --section-nav-glow-closed: var(--theme-sky-closed);
   --section-nav-glow-peek: var(--theme-sky-peek);
@@ -825,7 +829,7 @@
   --chip-pointer-bg: transparent;
   --chip-pointer-shadow: none;
   --chip-pointer-glow: var(--theme-sky-cloud);
-  --chip-glow-inset: -0.55rem calc(-1 * var(--theme-sky-reach));
+  --chip-glow-inset: calc(0.6rem - var(--theme-sky-rise)) calc(-1 * var(--theme-sky-reach));
   --chip-glow-closed: var(--theme-sky-closed);
   --chip-glow-peek: var(--theme-sky-peek);
   --chip-glow-radius: 0;
@@ -930,6 +934,33 @@
   --catalog-card-hover-shadow: 0 0 18px 4px color-mix(in srgb, var(--theme-chrome-bg) 75%, transparent), 0 0 34px 8px color-mix(in srgb, var(--theme-chrome-bg) 30%, transparent);
 }
 
+/* The panels' round × (the Menu's and the cart's on a phone): a white
+   cloud inside its ring, the dark blue cross on it. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .mobile-menu-close {
+  isolation: isolate;
+  overflow: hidden;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .mobile-menu-close::before {
+  content: "";
+  position: absolute;
+  inset: 0.1rem -0.2rem -0.1rem;
+  z-index: -1;
+  background: var(--theme-cloud-shape);
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+/* On a touch screen nothing is pointed at: the navbar's clouds come only
+   with a mouse (a tap would leave one behind). The start page keeps its
+   clouds, which are there without pointing; the Menu its chosen one. */
+@media (hover: none) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) {
+    --nav-link-pointer-glow: none;
+    --nav-trigger-pointer-glow: none;
+  }
+}
+
 @media (max-width: 767px) {
   :root:not([data-theme="dark"], [data-site-zone="ops"]) {
     --chrome-cloud-inset: var(--theme-cloud-inset-phone);
@@ -959,9 +990,9 @@
   --dropdown-title-pointer-glow-filter: blur(var(--theme-sky-blur));
   --dropdown-title-here-glow: var(--theme-sky-cloud);
   --dropdown-title-here-glow-filter: blur(var(--theme-sky-blur));
-  --dropdown-title-glow-inset: -0.8rem calc(-1 * var(--theme-sky-reach) - 0.5rem);
+  --dropdown-title-glow-inset: calc(-1 * var(--theme-sky-rise)) calc(-1 * var(--theme-sky-reach));
   --dropdown-title-glow-closed: var(--theme-sky-closed);
-  --dropdown-title-glow-peek: scale(0.7, 0.6);
+  --dropdown-title-glow-peek: var(--theme-sky-peek);
   --dropdown-title-text-shadow: none;
   --dropdown-title-pointer-text-shadow: none;
   --dropdown-title-icon-filter: none;

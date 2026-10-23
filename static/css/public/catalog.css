@@ -27,7 +27,8 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-4);
-  margin-bottom: clamp(var(--space-5), 4dvh, var(--space-8));
+  /* room under the tabs (and their cloud) before the first cards */
+  margin-bottom: clamp(var(--space-8), 6dvh, var(--space-12));
   border-bottom: 1px solid var(--line-soft);
 }
 
@@ -1258,7 +1259,8 @@
        at the screen edge, so the first/last halo can fade into the gutter. */
     padding-inline: calc(var(--space-8) + var(--section-nav-glow-room, 0px));
     margin-inline: calc(-1 * var(--space-8));
-    padding-bottom: calc(var(--space-1) + 1px);
+    /* room under the words for their cloud (the scroll box would cut it) */
+    padding-bottom: calc(var(--space-4) + 1px);
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: none;

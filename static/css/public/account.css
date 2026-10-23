@@ -31,3 +31,13 @@
 
 /* Customer rows share the navigation gold on hover/focus; ops is independent. */
 [data-order-history] { --table-row-marker: var(--order-history-row-marker); }
+
+/* The account's tabs (My account, Orders) on a phone: more room under the
+   navbar, between the two, and down to the page, for their clouds. */
+@media (max-width: 767px) {
+  .account-nav {
+    gap: var(--space-8);
+    margin-block: var(--space-8) var(--space-6);
+    padding-bottom: var(--space-3);
+  }
+}

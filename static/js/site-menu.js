@@ -16,6 +16,10 @@
    open (no dialog, no product opened over the catalog, no dropdown, not
    typing) it opens the menu.
 
+   Opened, the first choice is the chosen one (by day its cloud shows where
+   you are), whatever opened it; Settings opens on the theme in use, the
+   cloud in front of the sun or the moon.
+
    A staff member switching views (the corner's house and wrench) keeps the
    Menu in front: the new site opens with it already there. */
 (() => {
@@ -65,7 +69,7 @@
   }
 
   // Into a row: on the choice in use (the language, the theme, the site you
-  // are on), or its first.
+  // are on), or its first. Settings starts on the theme's row.
   const entry = (row) => row.items.find((item) =>
     item.matches('[aria-current="true"], [aria-pressed="true"], .language-switcher__option--active')
   ) || row.items[0];
@@ -83,8 +87,9 @@
       // Back from Settings, the crown waits on Settings; elsewhere on the
       // first row.
       const from = level === "main" && menu.querySelector('[data-menu-go="settings"]');
-      const first = rows(menu)[0];
-      take(menu, from && visible(from) ? from : first && entry(first));
+      const all = rows(menu);
+      const first = (level === "settings" && all.find((row) => row.group?.closest("[data-theme-preferences]"))) || all[0];
+      take(menu, from && visible(from) ? from : first && entry(first), true);
     }
   }
 
@@ -101,6 +106,13 @@
         choose(menu, null);
         show(menu, "main", false);
       }
+    });
+    // Opened (mobile-menu.js puts the focus on the first choice): that one
+    // is the chosen one, by the keys or not.
+    document.addEventListener("mobile-menu-settled", (event) => {
+      if (!menu.open || event.detail?.key !== menu.dataset.mobileMenu) return;
+      const focused = document.activeElement;
+      if (menu.contains(focused) && focused.matches?.(ITEMS)) choose(menu, focused);
     });
     // The chosen one follows the focus and the pointer, and stays.
     menu.addEventListener("focusin", (event) => {
