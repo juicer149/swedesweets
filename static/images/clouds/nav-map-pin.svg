@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -8 208 111" preserveAspectRatio="none">
+<defs>
+<clipPath id="c0"><ellipse cx="36" cy="56" rx="32" ry="26"/></clipPath>
+<clipPath id="c1"><ellipse cx="80" cy="38" rx="44" ry="36"/></clipPath>
+<clipPath id="c2"><ellipse cx="128" cy="44" rx="36" ry="30"/></clipPath>
+<clipPath id="c3"><ellipse cx="168" cy="58" rx="28" ry="24"/></clipPath>
+<clipPath id="c4"><ellipse cx="100" cy="66" rx="92" ry="24"/></clipPath>
+<clipPath id="c5"><ellipse cx="100" cy="82" rx="96" ry="16"/></clipPath>
+</defs>
+<g fill="none" stroke="#5f78c0" stroke-width="1.2" vector-effect="non-scaling-stroke">
+<ellipse cx="36" cy="56" rx="32" ry="26" vector-effect="non-scaling-stroke"/>
+<ellipse cx="80" cy="38" rx="44" ry="36" vector-effect="non-scaling-stroke"/>
+<ellipse cx="128" cy="44" rx="36" ry="30" vector-effect="non-scaling-stroke"/>
+<ellipse cx="168" cy="58" rx="28" ry="24" vector-effect="non-scaling-stroke"/>
+<ellipse cx="100" cy="66" rx="92" ry="24" vector-effect="non-scaling-stroke"/>
+<ellipse cx="100" cy="82" rx="96" ry="16" vector-effect="non-scaling-stroke"/>
+</g>
+<ellipse cx="36" cy="56" rx="32" ry="26" fill="#fff"/>
+<g clip-path="url(#c0)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M44,41 44,42 44,43 44,44M44,45 44,46 44,47 44,48M43,49 43,49 42,50 42,51M41,52 40,53 39,54 37,55M36,56 34,57 33,57 31,58M30,58 29,58 27,58 26,58M24,58 23,58 22,58 21,57M20,57 19,57 18,56 17,56M15,55 14,54 13,53 12,52" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M51,40 52,42 52,44 52,46M51,47 51,48 50,50 50,51M49,53 48,55 46,56 45,58M43,59 41,60 39,61 37,62M35,63 33,63 31,64 29,64M27,64 25,64 23,64 21,64M19,63 17,63 15,62 14,61M12,61 10,59 8,58 7,56M5,55 4,53 3,52 2,50" stroke-width="0.70" opacity="0.60" vector-effect="non-scaling-stroke"/>
+<path d="M59,39 59,42 59,44 59,47M58,49 57,52 56,54 55,57M53,59 51,61 50,62 48,64M46,65 43,66 41,67 38,68M36,69 34,69 32,70 30,70M28,70 25,70 21,70 18,69M17,69 15,68 13,68 12,67M9,66 7,65 5,64 4,63M2,61 0,59 -1,58 -2,56" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+<ellipse cx="80" cy="38" rx="44" ry="36" fill="#fff"/>
+<g clip-path="url(#c1)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M91,17 91,19 91,21 91,24M91,25 91,26 90,28 89,29M89,30 87,32 86,33 85,34M84,36 82,36 81,37 79,38M77,39 76,40 74,40 72,40M70,41 68,41 65,41 63,41M61,40 60,40 59,40 57,39M56,39 54,38 52,37 50,36M49,34 47,33 47,32 46,31" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M101,16 101,18 102,19 102,21M101,23 101,25 101,26 100,28M99,31 98,33 96,36 94,38M92,41 89,42 87,44 84,45M80,47 79,47 77,48 75,48M73,49 69,49 66,49 62,49M58,48 56,48 53,47 51,46M48,44 45,43 43,41 41,40M39,37 37,36 36,34 35,32" stroke-width="0.70" opacity="0.60" vector-effect="non-scaling-stroke"/>
+<path d="M111,14 111,17 112,20 112,23M111,25 111,28 110,30 109,33M107,37 106,39 104,41 102,43M101,45 99,46 97,48 95,49M93,50 90,52 86,54 82,55M79,56 76,57 73,57 70,57M67,57 63,57 58,57 53,56M50,55 47,54 45,53 42,52M40,50 38,49 37,48 35,46M33,45 30,42 28,39 26,37" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+<ellipse cx="128" cy="44" rx="36" ry="30" fill="#fff"/>
+<g clip-path="url(#c2)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M137,27 137,28 137,28 137,29M137,31 137,32 137,33 137,34M136,36 135,37 135,38 134,39M133,40 132,41 131,42 129,43M128,44 126,45 124,45 122,46M120,46 119,46 118,46 116,46M115,46 114,46 113,46 112,46M110,45 109,45 108,44 106,44M105,43 103,42 102,40 101,39" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M145,25 145,27 146,28 146,29M146,31 145,33 145,34 145,36M144,37 144,38 143,40 142,41M140,43 139,45 138,46 137,47M136,48 133,49 131,50 128,51M126,52 123,53 120,53 117,53M115,53 112,53 109,52 107,52M104,51 102,50 100,48 98,47M96,45 94,44 93,42 92,40" stroke-width="0.70" opacity="0.60" vector-effect="non-scaling-stroke"/>
+<path d="M153,24 154,26 154,28 154,30M154,34 153,37 152,39 151,42M149,45 147,47 146,49 144,51M141,53 139,54 136,56 133,57M129,58 126,59 123,60 119,60M116,60 113,60 110,60 106,59M103,58 101,57 99,56 97,55M93,53 90,51 88,48 86,46" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+<ellipse cx="168" cy="58" rx="28" ry="24" fill="#fff"/>
+<g clip-path="url(#c3)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M175,44 175,46 175,47 175,48M175,50 174,51 174,52 173,53M173,54 172,55 171,56 170,57M169,57 168,58 166,59 165,59M163,60 162,60 161,60 161,60M160,60 158,60 157,60 156,60M154,59 153,59 152,58 150,57M149,56 148,56 148,55 147,55M147,54 146,53 145,52 145,50" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M181,43 182,45 182,47 182,49M181,50 181,52 180,53 179,55M178,57 177,58 176,60 174,61M172,62 170,63 169,64 167,65M165,65 163,65 161,65 159,65M158,65 156,65 153,65 151,64M149,63 148,62 146,62 145,61M144,60 143,59 142,58 141,57M141,56 140,55 139,53 138,52" stroke-width="0.70" opacity="0.60" vector-effect="non-scaling-stroke"/>
+<path d="M188,42 188,45 188,47 188,49M188,52 187,53 187,54 186,56M185,58 184,60 182,61 181,63M179,65 178,65 176,66 175,67M172,68 170,69 167,70 165,71M163,71 161,71 158,71 156,71M154,70 151,70 149,69 146,68M145,67 143,66 142,65 140,64M138,63 137,61 135,59 134,57" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+<ellipse cx="100" cy="66" rx="92" ry="24" fill="#fff"/>
+<ellipse cx="100" cy="82" rx="96" ry="16" fill="#fff"/>
+<g clip-path="url(#c5)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M124,73 125,73 125,74 125,74M125,75 124,76 123,77 121,78M119,78 117,79 115,80 112,80M108,81 104,81 100,82 96,82M93,83 88,83 83,83 78,83M74,83 70,83 67,83 63,83M57,83 54,83 50,83 46,82M41,82 38,81 36,81 34,81M29,80 27,80 26,79 24,79" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M139,72 139,73 140,74 140,75M139,76 138,77 137,78 135,79M132,80 128,81 125,81 121,82M118,83 115,83 111,84 107,84M102,85 97,85 92,85 87,85M80,86 74,86 69,86 64,86M60,86 55,85 51,85 47,85M40,84 36,84 32,84 28,83M22,82 18,81 13,80 10,79" stroke-width="0.63" opacity="0.52" vector-effect="non-scaling-stroke"/>
+<path d="M153,72 154,73 154,74 154,76M153,77 152,78 150,79 148,80M144,81 141,82 137,83 133,84M126,85 122,85 117,86 112,86M104,87 96,88 89,88 81,88M73,88 67,88 61,88 54,88M49,88 42,87 35,87 28,86M23,86 17,85 12,84 7,83M4,82 1,82 -1,81 -3,80" stroke-width="0.77" opacity="0.68" vector-effect="non-scaling-stroke"/>
+<path d="M168,71 169,73 169,75 169,76M168,77 165,79 162,80 158,82M155,83 150,84 145,85 139,86M134,87 127,88 120,88 113,89M108,89 101,90 94,90 87,90M75,91 69,91 63,91 57,90M48,90 41,90 35,89 29,89M22,88 18,88 14,88 9,87M5,86 -2,85 -8,84 -13,83" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+</svg>

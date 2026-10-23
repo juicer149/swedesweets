@@ -51,25 +51,10 @@
   --theme-logo-pointer-ink: var(--color-accent-600);
   /* where you are, pointed at: gold on its cloud, as the logo */
   --state-here-pointer-ink: var(--theme-logo-pointer-ink);
-  /* the logo's cloud: how solid, and how soft its edge (navbar; start page) */
-  --theme-logo-cloud-opacity: 0.95;
-  --theme-logo-cloud-blur: 2px;
-  --theme-logo-cloud-blur-large: 4px;
-  /* its underside in a little blue-grey shade, as if lit from above */
-  --theme-logo-cloud-shade:
-    radial-gradient(ellipse 52% 20% at 50% 84%, rgb(120 150 205 / 0.42), transparent 75%),
-    radial-gradient(ellipse 22% 16% at 16% 76%, rgb(120 150 205 / 0.3), transparent 75%),
-    radial-gradient(ellipse 22% 16% at 84% 76%, rgb(120 150 205 / 0.3), transparent 75%);
+  /* the logo's cloud, drawn as an engraving (tools/draw_clouds.py): its
+     own outline and short curved strokes shading its lumps; a plainer one
+     in the navbar, where it is small */
   --theme-logo-crown: var(--color-brand-yellow);
-  --theme-logo-cloud:
-    radial-gradient(ellipse 18% 24% at 34% 40%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 22% 30% at 62% 34%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 30% 26% at 50% 62%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 18% 22% at 22% 66%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 18% 22% at 78% 66%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 12% 15% at 10% 72%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 12% 15% at 90% 72%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 50% 15% at 50% 78%, var(--theme-cloud) 96%, transparent);
   --theme-logo-cloud-inset: -0.55rem -1.5rem -0.9rem;
   /* the crown is the logo's alone: it marks nothing */
   --state-pointer-crown-opacity: 0;
@@ -1096,7 +1081,8 @@
    the language and theme in use, the Menu and cart buttons on their own
    page) a white cloud behind it and the word in the navbar's blue
    (--state-here-ink). The start page has no "here" (choosing a word goes
-   there). The logo always stands on its own cloud (--theme-logo-cloud) in
+   there). The logo always stands on its own engraved cloud
+   (images/clouds/, tools/draw_clouds.py) in
    the navbar's blue with its crown, gold when pointed at. No crown marks a
    choice (--marker-crown). The page's own tabs, chips and questions keep
    their blue cloud, the chosen word white and shining a little.
@@ -1168,9 +1154,9 @@
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-brand, .entrance-header__brand)::before {
   inset: var(--theme-logo-cloud-inset);
   border-radius: 0;
-  background: var(--theme-logo-cloud-shade), var(--theme-logo-cloud);
-  filter: blur(var(--theme-logo-cloud-blur));
-  opacity: var(--theme-logo-cloud-opacity);
+  background: url("../../images/clouds/logo-small.svg") center / 100% 100% no-repeat;
+  filter: none;
+  opacity: 1;
   transform: none;
 }
 
@@ -1189,9 +1175,9 @@
   height: 150%;
   aspect-ratio: auto;
   border-radius: 0;
-  background: var(--theme-logo-cloud-shade), var(--theme-logo-cloud);
-  filter: blur(var(--theme-logo-cloud-blur-large));
-  opacity: var(--theme-logo-cloud-opacity);
+  background: url("../../images/clouds/logo.svg") center / 100% 100% no-repeat;
+  filter: none;
+  opacity: 1;
 }
 
 /* The Menu and cart buttons on their own page: the cloud (also with their
@@ -1208,69 +1194,52 @@
   color: var(--state-here-ink);
 }
 
-/* Each of the navbar's links and buttons has its own cloud where you are
-   (a heap of round tops over a wide foot, its underside in a little
-   shade, as the logo's), drawn in shares of the word's width: a longer
-   word (another language) only stretches it. */
+/* Each of the navbar's links and buttons has its own cloud where you are,
+   engraved as the logo's (images/clouds/nav-*.svg, tools/draw_clouds.py):
+   drawn to stretch, so a longer word (another language) only widens it. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
-  --theme-cloud-shade-ink: rgb(120 150 205 / 0.4);
-  --theme-cloud-shade-ink-soft: rgb(120 150 205 / 0.28);
-  --theme-nav-cloud-opacity: 0.95;
-  --theme-nav-cloud-blur: 2px;
-  --theme-nav-cloud-inset: -0.7rem -1.1rem;
+  --theme-nav-cloud-inset: -1.2rem -1.45rem -0.55rem;
+  /* (the Menu and cart buttons sit higher in the bar: their cloud less tall) */
+  --theme-nav-trigger-cloud-inset: -0.8rem -1.1rem -0.45rem;
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="lollipop"] { --nav-link-here-glow:
-    radial-gradient(ellipse 48% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
-    radial-gradient(ellipse 18% 16% at 14% 74%, var(--theme-cloud-shade-ink-soft), transparent 75%),
-    radial-gradient(ellipse 22% 34% at 30% 42%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 26% 40% at 58% 36%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 18% 28% at 82% 52%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 46% 26% at 50% 68%, var(--theme-cloud) 96%, transparent); }
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="map-pin"] { --nav-link-here-glow:
-    radial-gradient(ellipse 48% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
-    radial-gradient(ellipse 16% 16% at 88% 72%, var(--theme-cloud-shade-ink-soft), transparent 75%),
-    radial-gradient(ellipse 16% 26% at 18% 56%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 22% 36% at 40% 38%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 18% 30% at 64% 44%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 14% 24% at 84% 58%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 48% 24% at 50% 70%, var(--theme-cloud) 96%, transparent); }
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="question"] { --nav-link-here-glow:
-    radial-gradient(ellipse 46% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
-    radial-gradient(ellipse 24% 38% at 36% 40%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 20% 32% at 66% 46%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 44% 26% at 50% 68%, var(--theme-cloud) 96%, transparent); }
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="info"] { --nav-link-here-glow:
-    radial-gradient(ellipse 48% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
-    radial-gradient(ellipse 18% 16% at 82% 74%, var(--theme-cloud-shade-ink-soft), transparent 75%),
-    radial-gradient(ellipse 18% 30% at 26% 50%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 26% 40% at 52% 36%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 16% 26% at 76% 52%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 46% 24% at 50% 70%, var(--theme-cloud) 96%, transparent); }
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu__trigger { --nav-trigger-cloud:
-    radial-gradient(ellipse 46% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
-    radial-gradient(ellipse 22% 36% at 34% 44%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 22% 38% at 62% 38%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 44% 26% at 50% 68%, var(--theme-cloud) 96%, transparent); }
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav-cart__trigger { --nav-trigger-cloud:
-    radial-gradient(ellipse 46% 22% at 50% 84%, var(--theme-cloud-shade-ink), transparent 75%),
-    radial-gradient(ellipse 28% 40% at 46% 40%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 18% 28% at 74% 54%, var(--theme-cloud) 96%, transparent),
-    radial-gradient(ellipse 44% 26% at 50% 68%, var(--theme-cloud) 96%, transparent); }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav__link--active, .site-nav__link[aria-current="page"])::after {
-  inset: var(--theme-nav-cloud-inset);
-  border-radius: 0;
-  filter: blur(var(--theme-nav-cloud-blur));
-  opacity: var(--theme-nav-cloud-opacity);
-}
 
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav__link--active, .site-nav__link[aria-current="page"])::after,
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .menu-dropdown-trigger[aria-current="page"]::before {
   inset: var(--theme-nav-cloud-inset);
   border-radius: 0;
-  background: var(--nav-trigger-cloud, var(--theme-cloud-shape));
-  filter: blur(var(--theme-nav-cloud-blur));
-  opacity: var(--theme-nav-cloud-opacity);
+  background: url("../../images/clouds/nav-question.svg") center / 100% 100% no-repeat;
+  filter: none;
+  opacity: 1;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .menu-dropdown-trigger[aria-current="page"]::before {
+  inset: var(--theme-nav-trigger-cloud-inset);
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="lollipop"]:is(.site-nav__link--active, [aria-current="page"])::after {
+  background-image: url("../../images/clouds/nav-lollipop.svg");
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="map-pin"]:is(.site-nav__link--active, [aria-current="page"])::after {
+  background-image: url("../../images/clouds/nav-map-pin.svg");
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="question"]:is(.site-nav__link--active, [aria-current="page"])::after {
+  background-image: url("../../images/clouds/nav-question.svg");
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="info"]:is(.site-nav__link--active, [aria-current="page"])::after {
+  background-image: url("../../images/clouds/nav-info.svg");
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu__trigger[aria-current="page"]::before {
+  background-image: url("../../images/clouds/nav-menu.svg");
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav-cart__trigger[aria-current="page"]::before {
+  background-image: url("../../images/clouds/nav-cart.svg");
 }
 
 /* The Menu's × on its white cloud: in the navbar's blue, as where you are. */

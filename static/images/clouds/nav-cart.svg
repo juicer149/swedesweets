@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -8 208 111" preserveAspectRatio="none">
+<defs>
+<clipPath id="c0"><ellipse cx="92" cy="40" rx="56" ry="40"/></clipPath>
+<clipPath id="c1"><ellipse cx="148" cy="54" rx="36" ry="28"/></clipPath>
+<clipPath id="c2"><ellipse cx="100" cy="64" rx="88" ry="26"/></clipPath>
+<clipPath id="c3"><ellipse cx="100" cy="82" rx="92" ry="16"/></clipPath>
+</defs>
+<g fill="none" stroke="#5f78c0" stroke-width="1.2" vector-effect="non-scaling-stroke">
+<ellipse cx="92" cy="40" rx="56" ry="40" vector-effect="non-scaling-stroke"/>
+<ellipse cx="148" cy="54" rx="36" ry="28" vector-effect="non-scaling-stroke"/>
+<ellipse cx="100" cy="64" rx="88" ry="26" vector-effect="non-scaling-stroke"/>
+<ellipse cx="100" cy="82" rx="92" ry="16" vector-effect="non-scaling-stroke"/>
+</g>
+<ellipse cx="92" cy="40" rx="56" ry="40" fill="#fff"/>
+<g clip-path="url(#c0)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M106,17 106,18 107,20 107,21M107,23 106,24 106,26 105,27M105,29 104,30 103,31 102,32M101,34 99,35 97,37 94,39M92,40 89,41 86,42 84,42M82,43 79,43 77,43 74,43M72,43 70,43 68,43 66,42M64,42 63,41 61,41 59,40M56,39 54,37 52,36 50,34" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M119,15 119,18 119,21 119,24M119,26 118,28 117,30 116,33M115,35 113,38 110,40 108,42M104,45 101,47 97,48 93,50M91,50 87,51 84,52 80,52M75,52 72,52 68,52 65,52M62,51 59,50 56,49 53,48M51,47 47,45 44,43 41,41M38,38 36,36 35,33 33,31" stroke-width="0.70" opacity="0.60" vector-effect="non-scaling-stroke"/>
+<path d="M131,14 132,18 132,22 132,26M131,30 129,33 127,37 125,41M122,45 119,47 116,50 112,52M109,54 105,56 101,57 96,59M92,60 88,60 85,61 82,61M77,62 72,62 67,61 61,60M58,60 55,59 52,58 50,57M45,55 42,54 39,52 36,50M32,48 29,45 27,43 25,40" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+<ellipse cx="148" cy="54" rx="36" ry="28" fill="#fff"/>
+<g clip-path="url(#c1)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M157,38 157,39 157,41 157,43M157,44 157,45 156,46 156,47M155,48 154,49 153,50 152,51M151,52 150,53 149,53 148,54M146,55 144,55 143,56 142,56M140,56 138,56 136,56 134,56M133,56 132,56 131,55 129,55M128,55 127,54 125,53 124,52M122,51 121,50 121,50 120,49" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M165,37 165,38 166,39 166,41M166,43 165,44 165,45 165,46M164,48 163,50 161,52 160,54M158,56 156,57 154,59 151,60M148,61 147,61 145,62 144,62M142,62 139,63 136,63 133,62M130,62 128,62 126,61 124,60M121,59 120,58 118,57 116,55M114,53 113,52 112,51 111,50" stroke-width="0.70" opacity="0.60" vector-effect="non-scaling-stroke"/>
+<path d="M173,36 174,38 174,40 174,42M174,44 173,46 173,48 172,50M170,53 169,55 168,56 166,58M165,59 164,60 162,61 161,63M159,64 156,65 153,66 150,67M147,68 145,69 142,69 140,69M138,69 134,69 130,69 126,68M123,67 121,66 119,65 117,65M116,64 114,63 112,62 111,61M109,59 107,57 106,55 104,53" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+<ellipse cx="100" cy="64" rx="88" ry="26" fill="#fff"/>
+<ellipse cx="100" cy="82" rx="92" ry="16" fill="#fff"/>
+<g clip-path="url(#c3)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M123,73 124,73 124,74 124,74M124,75 123,76 123,76 122,77M120,78 119,78 117,79 116,79M113,80 110,80 107,81 103,82M99,82 95,82 90,83 85,83M80,83 77,83 74,83 70,83M66,83 63,83 61,83 58,83M54,83 51,82 48,82 45,82M40,81 36,81 33,80 30,79" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M137,72 138,73 138,74 138,74M138,75 138,76 137,76 136,77M135,78 133,79 132,79 130,80M126,81 123,82 121,82 118,83M115,83 110,84 104,84 98,85M93,85 86,85 79,86 73,86M67,86 61,86 54,85 48,85M42,84 37,84 32,83 27,83M23,82 19,81 17,80 14,80" stroke-width="0.63" opacity="0.52" vector-effect="non-scaling-stroke"/>
+<path d="M151,72 152,73 152,74 152,75M152,76 150,77 148,79 145,80M141,82 138,82 134,83 131,84M125,85 119,86 113,86 106,87M99,87 92,88 84,88 77,88M70,88 63,88 56,88 49,88M42,87 37,87 32,86 28,86M20,85 14,84 9,83 4,82" stroke-width="0.77" opacity="0.68" vector-effect="non-scaling-stroke"/>
+<path d="M165,71 166,73 166,75 165,77M163,78 161,80 158,81 154,82M151,83 146,84 140,86 133,87M128,87 120,88 112,89 103,90M94,90 89,90 84,91 78,91M72,91 64,91 56,90 49,90M40,90 32,89 25,88 18,88M9,86 5,86 1,85 -3,84M-6,83 -11,82 -15,80 -18,79" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+</svg>
