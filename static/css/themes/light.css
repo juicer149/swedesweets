@@ -32,6 +32,12 @@
   --state-rest-ink: var(--color-primary-800);
   --state-pointer-ink: var(--color-accent-500);
   --state-here-ink: var(--theme-chrome-bg);
+  /* gold pointed at, with a little sunlight round it (as the moonlight by
+     night) */
+  --theme-sun-glint:
+    0 0 3px color-mix(in srgb, var(--color-accent-300) 45%, transparent),
+    0 0 9px color-mix(in srgb, var(--color-accent-400) 30%, transparent),
+    0 0 18px color-mix(in srgb, var(--color-accent-500) 18%, transparent);
   --theme-cloud: var(--color-white);
   /* its shape: a wide body with a small round top, softened by the blur */
   --theme-cloud-shape:
@@ -1010,9 +1016,15 @@
    with a mouse (a tap would leave one behind). The start page keeps its
    clouds, which are there without pointing; the Menu its chosen one. */
 @media (hover: none) {
-  :root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-header, .site-menu) {
     --nav-link-pointer-glow: none;
     --nav-trigger-pointer-glow: none;
+    /* (a tap is not pointing: the word keeps its colour) */
+    --nav-link-pointer-ink: var(--state-rest-ink);
+    --nav-trigger-pointer-ink: var(--state-rest-ink);
+    --nav-link-pointer-text-shadow: none;
+    --menu-link-pointer-ink: var(--state-rest-ink);
+    --menu-link-pointer-text-shadow: none;
   }
 }
 
@@ -1107,17 +1119,30 @@
   --menu-choice-active-opacity: 1;
   --menu-choice-active-ink: var(--state-here-ink);
   --menu-choice-active-text-shadow: none;
+  /* pointed at: gold in a little sunlight */
+  --state-pointer-text-shadow: var(--theme-sun-glint);
+  --nav-link-pointer-text-shadow: var(--theme-sun-glint);
+  --menu-link-pointer-text-shadow: var(--theme-sun-glint);
+  --menu-choice-pointer-text-shadow: var(--theme-sun-glint);
+  --landing-pointer-text-shadow: var(--theme-sun-glint);
 }
 
-/* (gold is enough to say "pointed at": no underline, no light) */
+/* (gold is enough to say "pointed at": no underline) */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-menu .menu-panel-link, .site-nav__link, .landing-menu__link):is(:hover, :focus-visible, .is-chosen) {
   text-decoration: none;
-  text-shadow: none;
 }
 
-/* The language or theme in use keeps its cloud and blue when chosen. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]).is-chosen {
-  color: var(--state-here-ink);
+/* Where you are, pointed at: the word on its cloud turns gold too. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
+  .site-nav__link:is(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible),
+  .site-menu .menu-panel-link[aria-current="page"]:is(.is-chosen, :focus-visible),
+  .site-menu:not([data-menu-ready]) .menu-panel-link[aria-current="page"]:hover,
+  .site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]).is-chosen,
+  .menu-dropdown-trigger[aria-current="page"]:is(:hover, :focus-visible)
+),
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(.site-nav__link--active, [aria-current="page"]):is(:hover, :focus-visible) * {
+  color: var(--state-pointer-ink);
+  text-shadow: var(--theme-sun-glint);
 }
 
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu[data-menu-ready] .language-switcher__option:is(.language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]).is-chosen::after {
