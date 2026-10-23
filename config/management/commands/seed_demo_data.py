@@ -17,7 +17,9 @@ it also creates four logins whose password is their username:
                          Comptoir): it lands on Complete your shop details
 
 With --with-images every product gets a drawn picture (_demo_images.py),
-stored through the normal product-image upload so thumbnails exist too.
+stored through the normal product-image upload so thumbnails exist too,
+and a description and ingredients in English and French (_demo_data.py),
+so its page has its Description and Ingredients tabs.
 
 All customers, batches and orders are invented (see _demo_data.py).
 Orders go through the same services as the ops portal: business placement,
@@ -67,7 +69,12 @@ from pricing.services import (
 )
 from products.image_services import change_product_image
 from products.models import Product, ProductProfile, ProductVariant
-from products.services import add_variant, create_product
+from products.services import (
+    CatalogTextChange,
+    add_variant,
+    create_product,
+    set_catalog_text,
+)
 from reservations.models import Allocation
 
 from . import _demo_data as demo
@@ -158,7 +165,8 @@ class Command(BaseCommand):
 
         if options["with_images"]:
             self._add_images([*products.values(), *merch.values()])
-            summary += ", product pictures"
+            self._add_catalog_text([*products.values(), *merch.values()])
+            summary += ", product pictures and text"
 
         orders: list[demo.DemoOrder] = []
         if options["with_orders"]:
@@ -312,6 +320,24 @@ class Command(BaseCommand):
                 content_type="image/jpeg",
             )
             change_product_image(product=product, uploaded_image=picture).commit()
+
+    def _add_catalog_text(self, products: list[Product]) -> None:
+        for product in products:
+            texts = demo.MERCH_TEXT.get(product.internal_number) or demo.candy_text(
+                brand=product.brand,
+                name=product.name,
+                manufacturer=product.manufacturer,
+                vegan=product.vegan,
+            )
+            for language_code, (description, ingredients) in texts.items():
+                set_catalog_text(
+                    product=product,
+                    language_code=language_code,
+                    text=CatalogTextChange(
+                        description=description,
+                        ingredients=ingredients,
+                    ),
+                )
 
     def _create_merch(self) -> dict[int, Product]:
         merch: dict[int, Product] = {}

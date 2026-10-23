@@ -288,3 +288,96 @@ def build_orders(
         )
 
     return orders
+
+
+# ---------------------------------------------------------------------------
+# Catalog text: a description and ingredients in each catalog language, so
+# a product's page has its Description and Ingredients tabs. Invented: the
+# candy's text is general, never the manufacturer's own list.
+# ---------------------------------------------------------------------------
+
+# The merch's own text: (description, ingredients) per language.
+MERCH_TEXT: dict[int, dict[str, tuple[str, str]]] = {
+    901: {
+        "en": (
+            "A warm hoodie in soft cotton, with the crown on the chest and "
+            "SwedeSweets across the back. Made for cold mornings in the "
+            "mountains.",
+            "80% cotton, 20% polyester.",
+        ),
+        "fr": (
+            "Un sweat à capuche chaud en coton doux, la couronne sur la "
+            "poitrine et SwedeSweets dans le dos. Pour les matins froids à "
+            "la montagne.",
+            "80 % coton, 20 % polyester.",
+        ),
+    },
+    902: {
+        "en": (
+            "A light T-shirt with the SwedeSweets crown, for summer days "
+            "by the lake.",
+            "100% organic cotton.",
+        ),
+        "fr": (
+            "Un T-shirt léger avec la couronne SwedeSweets, pour les jours "
+            "d'été au bord du lac.",
+            "100 % coton biologique.",
+        ),
+    },
+    903: {
+        "en": (
+            "A classic six-panel cap with the crown embroidered on the front "
+            "and an adjustable strap.",
+            "100% cotton twill.",
+        ),
+        "fr": (
+            "Une casquette classique à six panneaux, la couronne brodée sur "
+            "le devant, sangle réglable.",
+            "100 % sergé de coton.",
+        ),
+    },
+    904: {
+        "en": (
+            "A trucker cap with a mesh back and the SwedeSweets crown on "
+            "the front.",
+            "Front: 100% cotton. Back: 100% polyester mesh.",
+        ),
+        "fr": (
+            "Une casquette trucker, dos en filet, la couronne SwedeSweets "
+            "sur le devant.",
+            "Devant : 100 % coton. Dos : filet 100 % polyester.",
+        ),
+    },
+}
+
+
+def candy_text(
+    *,
+    brand: str,
+    name: str,
+    manufacturer: str,
+    vegan: bool,
+) -> dict[str, tuple[str, str]]:
+    """A candy's demo text, (description, ingredients) per language: general
+    pick-and-mix words, the ingredients marked as demo text."""
+
+    title = name if name.startswith(brand) else f"{brand} {name}"
+
+    return {
+        "en": (
+            f"{title} from {manufacturer}: Swedish pick-and-mix, sold loose "
+            "by the box for the shop's sweet wall."
+            + (" Vegan." if vegan else ""),
+            "Demo text. Sugar, glucose syrup, "
+            + ("starch, " if vegan else "gelatine, starch, ")
+            + "acid (citric acid), flavourings, colours.",
+        ),
+        "fr": (
+            f"{title} de {manufacturer} : bonbons suédois en vrac, vendus "
+            "par carton pour le mur de bonbons de la boutique."
+            + (" Vegan." if vegan else ""),
+            "Texte de démonstration. Sucre, sirop de glucose, "
+            + ("amidon, " if vegan else "gélatine, amidon, ")
+            + "acidifiant (acide citrique), arômes, colorants.",
+        ),
+    }

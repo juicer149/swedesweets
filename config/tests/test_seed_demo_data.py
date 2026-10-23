@@ -251,6 +251,31 @@ def test_with_images_gives_every_product_a_picture_and_reset_removes_them(
     assert not files & first_files
 
 
+@pytest.mark.django_db
+def test_with_images_gives_every_product_its_description_and_ingredients(
+    debug,
+    settings,
+    monkeypatch,
+):
+    from config.management.commands.seed_demo_data import Command
+
+    # The pictures are under test above.
+    monkeypatch.setattr(Command, "_add_images", lambda self, products: None)
+
+    call_command("seed_demo_data", with_images=True)
+
+    languages = {code for code, _ in settings.LANGUAGES}
+    for product in Product.objects.all():
+        texts = {text.language_code: text for text in product.translations.all()}
+        assert set(texts) == languages
+        assert all(text.description and text.ingredients for text in texts.values())
+
+    hoodie = Product.objects.get(internal_number=901)
+    assert hoodie.translations.get(language_code="en").ingredients == (
+        "80% cotton, 20% polyester."
+    )
+
+
 def test_demo_pictures_follow_the_name():
     from config.management.commands._demo_images import product_picture_jpeg
 
