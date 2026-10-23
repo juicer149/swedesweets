@@ -73,6 +73,10 @@
   --theme-logo-cloud-inset: -0.55rem -1.5rem -0.9rem;
   /* the crown is the logo's alone: it marks nothing */
   --state-pointer-crown-opacity: 0;
+  /* on a phone the bar at the screen's foot marks where you are with the
+     crown and a bigger word */
+  --theme-bar-here-crown: var(--color-accent-600);
+  --theme-bar-here-scale: 1.12;
 
   /* # The page */
   --theme-page-bg: var(--color-neutral-50);
@@ -1288,8 +1292,29 @@
     height: auto;
   }
 
-  :root:not([data-theme="dark"], [data-site-zone="ops"]) {
-    --theme-nav-cloud-inset: -0.3rem -0.4rem;
+  /* The bar of icons at the screen's foot: where you are has no cloud but
+     the crown, gold, on its icon, and the word a little bigger and bolder
+     (white, as the others). */
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(.site-nav__link--active, [aria-current="page"])::after {
+    opacity: 0;
+  }
+
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(.site-nav__link--active, [aria-current="page"]),
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(.site-nav__link--active, [aria-current="page"]) * {
+    color: var(--state-rest-ink);
+  }
+
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(.site-nav__link--active, [aria-current="page"]) {
+    transform: scale(var(--theme-bar-here-scale));
+  }
+
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(.site-nav__link--active, [aria-current="page"]) .site-nav__label {
+    font-weight: 900;
+  }
+
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link:is(.site-nav__link--active, [aria-current="page"]) .site-nav__icon::after {
+    background: var(--theme-bar-here-crown);
+    filter: drop-shadow(0 1px 1.5px rgb(3 10 28 / 0.45));
   }
 }
 
