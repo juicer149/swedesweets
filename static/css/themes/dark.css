@@ -298,12 +298,19 @@
   --faq-question-open-bg: transparent;
 
   /* Decorative lettering, photo paper and category icons retain their own colours */
-  /* The page titles (Q & A, Who we are?): decoration, muted moonlight,
-     a soft blue rather than grey, which would read as switched off. */
-  --display-stamped: color-mix(in srgb, var(--moonlight) 50%, var(--color-primary-700));
+  /* The page titles (Q & A, Who we are?): decoration, in moonlight. */
   --display-shadow: var(--color-primary-750);
-  --display-lip: var(--color-primary-100);
-  --display-lip-opacity: 0.25;
+  /* raised, as by day: a dim face, a little moonlight on its upper edge,
+     the night's shadow under it and a faint moonlit glow round it */
+  --display-face: color-mix(in srgb, var(--moonlight) 14%, var(--color-primary-850));
+  --display-light: var(--moonlight);
+  --display-light-opacity: 0.45;
+  --display-underside: var(--color-primary-1000);
+  --display-underside-opacity: 0.35;
+  --display-near-shadow: var(--color-primary-1000);
+  --display-near-shadow-opacity: 0.45;
+  --display-far-shadow: var(--moonlight);
+  --display-far-shadow-opacity: 0.28;
   --paper-bg: var(--color-neutral-200);
   --contact-mail: var(--interactive-text-strong);
   --contact-phone: var(--color-green-400);

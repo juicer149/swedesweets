@@ -871,7 +871,7 @@ Missing photos, empty catalogs and searches with no matches all reuse the
 crown/text illustration in `catalog/no_photo.html`. Search still toggles its
 hidden state as results appear/disappear; `.catalog__empty[hidden]` explicitly
 wins over the illustration's grid layout. Dark crown and caption roles both
-follow `--display-stamped` (currently #63718f), matching FAQ/About titles.
+share one muted moonlit tone.
 Light retains its own muted placeholder palette. Empty catalogs/searches paint
 directly on the page; only missing product photos keep a placeholder surface.
 
@@ -1180,8 +1180,12 @@ aliases `--action-primary-text`, retaining navy while the fill changes.
 FAQ/previous-order hover titles and footer link hover use primary-900 in
 light; the Menu's links and choices are white and gold on its blue (Here,
 pointer and rest).
-`--display-shadow` uses neutral-600 to retain the stamped lettering's dark
-inner shading without an orange cast. Dark's intentional gold selections and
+`--display-shadow` uses neutral-600 to retain the yellow lettering's dark
+inner shading without an orange cast. The page titles (Q & A, Who we are?)
+stand raised like a cloud's hills (`--display-face`, `--display-light`,
+`--display-underside`, `--display-near-shadow`, `--display-far-shadow`, each
+with its `-opacity`): by day a whiter face shaped by warm neutral shadows, by
+night a dim face in a faint moonlight glow. Dark's intentional gold selections and
 orange warnings retain their roles.
 
 `--order-progress-lit-label` separates text contrast from the gold connectors

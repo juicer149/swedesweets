@@ -6,10 +6,13 @@ a page that has a display title.
                               letter's upper edge (the yellow lines)
   display-title-cloud         a cloud: white with a soft glow around it and
                               a blue-grey shade along its underside
-  display-title-stamped       pressed into the page: a soft dark shadow
-                              inside each letter's upper edge, and a thin
-                              light lip under it, outside (the page titles,
-                              in nearly the page's own colour)
+  display-title-raised        standing out of the page like a cloud's
+                              hills (the page titles): a wide soft shadow
+                              under and around each letter and a close one
+                              under it, the letter's lower edge a little
+                              shaded inside and its upper edge lit; by
+                              night the wide shadow is moonlight, a faint
+                              glow (the colours: --display-* in the themes)
 {% endcomment %}
 <svg class="visually-hidden" aria-hidden="true" focusable="false" width="0" height="0">
   <filter id="display-title-inner-shadow" x="-5%" y="-5%" width="110%" height="110%">
@@ -37,20 +40,31 @@ a page that has a display title.
     </feMerge>
   </filter>
 
-  <filter id="display-title-stamped" x="-5%" y="-10%" width="110%" height="125%">
-    <feOffset dx="0" dy="3" in="SourceAlpha" result="moved"/>
-    <feGaussianBlur stdDeviation="2" in="moved" result="blurred"/>
-    <feComposite operator="out" in="SourceAlpha" in2="blurred" result="inside"/>
-    <feFlood class="display-title-filter__shadow" flood-opacity="0.4"/>
-    <feComposite operator="in" in2="inside" result="shadow"/>
-    <feOffset dx="0" dy="1.5" in="SourceAlpha" result="lipMoved"/>
-    <feComposite operator="out" in="lipMoved" in2="SourceAlpha" result="lipOnly"/>
-    <feFlood class="display-title-filter__lip"/>
-    <feComposite operator="in" in2="lipOnly" result="lip"/>
+  <filter id="display-title-raised" x="-20%" y="-30%" width="140%" height="180%">
+    <feGaussianBlur stdDeviation="7" in="SourceAlpha" result="far"/>
+    <feOffset dy="7" in="far" result="farMoved"/>
+    <feFlood class="display-title-filter__far"/>
+    <feComposite operator="in" in2="farMoved" result="farShadow"/>
+    <feGaussianBlur stdDeviation="1.6" in="SourceAlpha" result="near"/>
+    <feOffset dy="2.5" in="near" result="nearMoved"/>
+    <feFlood class="display-title-filter__near"/>
+    <feComposite operator="in" in2="nearMoved" result="nearShadow"/>
+    <feOffset dy="-3" in="SourceAlpha" result="up"/>
+    <feGaussianBlur stdDeviation="2.2" in="up" result="upBlur"/>
+    <feComposite operator="out" in="SourceAlpha" in2="upBlur" result="lowerEdge"/>
+    <feFlood class="display-title-filter__underside"/>
+    <feComposite operator="in" in2="lowerEdge" result="underside"/>
+    <feOffset dy="2.5" in="SourceAlpha" result="down"/>
+    <feGaussianBlur stdDeviation="1.6" in="down" result="downBlur"/>
+    <feComposite operator="out" in="SourceAlpha" in2="downBlur" result="upperEdge"/>
+    <feFlood class="display-title-filter__light"/>
+    <feComposite operator="in" in2="upperEdge" result="light"/>
     <feMerge>
-      <feMergeNode in="lip"/>
+      <feMergeNode in="farShadow"/>
+      <feMergeNode in="nearShadow"/>
       <feMergeNode in="SourceGraphic"/>
-      <feMergeNode in="shadow"/>
+      <feMergeNode in="underside"/>
+      <feMergeNode in="light"/>
     </feMerge>
   </filter>
 </svg>

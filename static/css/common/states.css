@@ -306,6 +306,28 @@ a.site-menu__site-choice:is(:hover, :focus-visible) {
 /* ## The questions (FAQ, Previous orders): open is "here", the closed one
    pointed at the pointer ------------------------------------------------ */
 
+/* The cloud's shape round the question (--dropdown-title-glow-inset), its
+   size while closed (--dropdown-title-glow-closed), a peek when pointed at
+   (--dropdown-title-glow-peek), whole while open; by night none of these. */
+.glow-accordions .accordion__summary > span:first-child::before {
+  inset: var(--dropdown-title-glow-inset, -0.4rem -0.5rem);
+  transform: var(--dropdown-title-glow-closed, none);
+  transition:
+    opacity var(--motion-fast),
+    transform var(--sky-open-time, 0ms) cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.glow-accordions .accordion:not([open]) > .accordion__summary:is(:hover, :focus-visible) > span:first-child::before {
+  transform: var(--dropdown-title-glow-peek, none);
+}
+
+.glow-accordions .accordion[open] > .accordion__summary > span:first-child::before {
+  transform: none;
+  /* (open, its own cloud where the theme gives one: by day the tabs') */
+  background: var(--dropdown-title-here-glow, var(--interaction-glow));
+  filter: var(--dropdown-title-here-glow-filter, var(--interaction-glow-filter));
+}
+
 .glow-accordions .accordion:not([open]) > .accordion__summary > span::before {
   background: var(--dropdown-title-pointer-glow);
   filter: var(--dropdown-title-pointer-glow-filter);

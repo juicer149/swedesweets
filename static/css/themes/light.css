@@ -449,11 +449,20 @@
   --accordion-open-bg: color-mix(in srgb, var(--color-accent-600) 18%, transparent);
   --accordion-nested-bg: color-mix(in srgb, var(--color-accent-600) 9%, transparent);
 
-  /* Display lettering: FAQ and About */
-  --display-stamped: color-mix(in srgb, var(--color-accent-200) 40%, var(--color-neutral-200));
+  /* Display lettering: FAQ and About, raised like a cloud's hills: a face
+     whiter than the page, the light on its upper edge, a little shade
+     inside its lower edge, a close shadow under it and a wide soft one
+     round it, in the warm neutrals */
   --display-shadow: var(--color-neutral-600);
-  --display-lip: var(--color-white);
-  --display-lip-opacity: 0.9;
+  --display-face: color-mix(in srgb, var(--color-white) 70%, var(--color-neutral-50));
+  --display-light: var(--color-white);
+  --display-light-opacity: 0.95;
+  --display-underside: var(--color-neutral-300);
+  --display-underside-opacity: 0.35;
+  --display-near-shadow: var(--color-neutral-500);
+  --display-near-shadow-opacity: 0.4;
+  --display-far-shadow: var(--color-neutral-400);
+  --display-far-shadow-opacity: 0.55;
 
   /* Paper objects retain their own dark ink. */
   --paper-bg: var(--color-white);
@@ -927,5 +936,44 @@
     --chrome-cloud-inset: var(--theme-cloud-inset-phone);
     --nav-trigger-cloud-inset: -0.5rem -0.35rem;
   }
+}
+
+
+/* =============================================================================
+   Q & A by day: the questions as the tabs
+
+   A question in the dark blue; pointed at, a peek of the navbar's blue
+   cloud opens behind it, the word keeping its colour; open, the whole cloud
+   and gold, its answer straight on the page. The arrow follows the word.
+   ============================================================================= */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .faq {
+  --faq-question-text: var(--theme-sky-rest-ink);
+  --faq-question-hover-text: var(--theme-sky-pointer-ink);
+  --faq-question-open-text: var(--theme-sky-here-ink);
+  --faq-question-hover-bg: transparent;
+  --faq-question-open-bg: transparent;
+  --dropdown-title-hover-text: var(--theme-sky-pointer-ink);
+  --dropdown-title-active-text: var(--theme-sky-here-ink);
+  --dropdown-title-glow: var(--theme-sky-cloud);
+  --dropdown-title-glow-filter: blur(var(--theme-sky-blur));
+  --dropdown-title-pointer-glow: var(--theme-sky-cloud);
+  --dropdown-title-pointer-glow-filter: blur(var(--theme-sky-blur));
+  --dropdown-title-here-glow: var(--theme-sky-cloud);
+  --dropdown-title-here-glow-filter: blur(var(--theme-sky-blur));
+  --dropdown-title-glow-inset: -0.8rem calc(-1 * var(--theme-sky-reach));
+  --dropdown-title-glow-closed: var(--theme-sky-closed);
+  --dropdown-title-glow-peek: var(--theme-sky-peek);
+  --dropdown-title-text-shadow: none;
+  --dropdown-title-pointer-text-shadow: none;
+  --dropdown-title-icon-filter: none;
+  --dropdown-title-pointer-icon-filter: none;
+  --dropdown-title-pointer-chevron: var(--theme-sky-pointer-ink);
+  --interaction-selected-opacity: 1;
+  --interaction-halo-opacity: 1;
+}
+
+/* (the cloud is the question's alone: none behind the arrow) */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .faq .accordion__chevron::before {
+  content: none;
 }
 

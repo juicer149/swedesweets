@@ -13,15 +13,19 @@
   filter: url("#display-title-inner-shadow");
 }
 
-/* The page titles (Q & A, Who we are?): stamped into the page, in
-   nearly its own colour, a little warm; the shadow inside the letters
-   (the darkest yellow) and the light lip under them draw them. Big: the page's picture as much as its title. */
-.display-title--stamped {
-  /* The page's cream, a little warmer: a touch of the yellow scale. */
-  color: var(--display-stamped);
+/* The page titles (Q & A, Who we are?): standing out of the page like a
+   cloud's hills, a face a little whiter than the page, shaped by the
+   shadows round and under it (the display-title-raised filter; by night a
+   dim face in a faint moonlight glow). Big: the page's picture as much as
+   its title. */
+.display-title--raised {
+  color: var(--display-face);
   text-align: center;
-  filter: url("#display-title-stamped");
+  filter: url("#display-title-raised");
 }
 
 .display-title-filter__shadow { flood-color: var(--display-shadow); }
-.display-title-filter__lip { flood-color: var(--display-lip); flood-opacity: var(--display-lip-opacity); }
+.display-title-filter__far { flood-color: var(--display-far-shadow); flood-opacity: var(--display-far-shadow-opacity); }
+.display-title-filter__near { flood-color: var(--display-near-shadow); flood-opacity: var(--display-near-shadow-opacity); }
+.display-title-filter__underside { flood-color: var(--display-underside); flood-opacity: var(--display-underside-opacity); }
+.display-title-filter__light { flood-color: var(--display-light); flood-opacity: var(--display-light-opacity); }
