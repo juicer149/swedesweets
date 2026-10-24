@@ -105,12 +105,34 @@
   rain.setAttribute("aria-hidden", "true");
   document.querySelector(".landing").append(rain);
   const active = new Set();
+  const logo = trigger.closest(".landing__logo");
+  let hop = null;
+  function nudgeCloud() {
+    if (reduced.matches || document.documentElement.dataset.theme !== "light") return;
+    // Margin moves only the cloud pseudo-element; its CSS transform keeps
+    // breathing underneath, and the wordmark never moves. Restart from the
+    // current height so repeated clicks do not snap it back to the baseline.
+    const current = getComputedStyle(logo, "::before").marginTop;
+    hop?.cancel();
+    const motion = logo.animate([
+      { marginTop: current },
+      { marginTop: "calc(-1 * var(--landing-cloud-hop-height))", offset: 0.32 },
+      { marginTop: "2px", offset: 0.72 },
+      { marginTop: "0px" },
+    ], { duration: 360, easing: "ease-out", pseudoElement: "::before" });
+    hop = motion;
+    const done = () => { if (hop === motion) hop = null; };
+    motion.finished.then(done, done);
+  }
   const clear = () => {
+    hop?.cancel();
+    hop = null;
     for (const motion of active) motion.cancel();
     active.clear();
     rain.replaceChildren();
   };
   trigger.addEventListener("click", () => {
+    nudgeCloud();
     const box = trigger.getBoundingClientRect();
     const calm = reduced.matches;
     const count = Math.min(calm ? 3 : 7, 48 - active.size);

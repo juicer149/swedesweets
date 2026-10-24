@@ -1265,8 +1265,10 @@ closed mobile editor from replacing a reading page.
 The day landing cloud gently sways and breathes with `landing-cloud-breathe`.
 `--landing-cloud-sway-time` (4s) sets the cycle; `--landing-cloud-breathe-min`
 (0.985) and `--landing-cloud-breathe-max` (1.025) set the scale range.
-The logo stays fixed and there is no large translation or wind overlay. The unused `wind.svg` sketch
-and its generator are retained for later design work. Night keeps its moonlight;
+The logo stays fixed and there is no large translation or wind overlay.
+The unused wind sketch is archived as
+`design/animations_ideas/cloud-wind.svg`; its generator is retained for later
+work, outside the live static assets. Night keeps its moonlight;
 reduced motion leaves the cloud still.
 
 Landing links share `--theme-nav-rest-ink` (primary-50),
@@ -1282,3 +1284,10 @@ can add at most 48 concurrent particles. `landing.js` removes each finished
 particle and clears all particles on page exit or a motion-preference change.
 The rain layer never receives pointer events or adds page scroll. Reduced
 motion uses three stationary sweets that briefly fade instead of falling.
+
+Each day-logo activation also gives the cloud a small 360ms hop, controlled
+by `--landing-cloud-hop-height` (9px). Only its pseudo-element margin moves;
+the CSS breathing transform and fixed wordmark are preserved. A new press
+restarts from the current height rather than stacking animations. Motion
+preference changes and page exit cancel the hop together with the sweets.
+Night and reduced motion do not hop.

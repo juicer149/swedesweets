@@ -4,8 +4,9 @@
 
 Writes static/images/clouds/: the logo's cloud (logo.svg, and a plainer
 logo-small.svg for the navbar), and one cloud for each of the navbar's
-links and buttons (nav-<name>.svg). The landing weather also uses wind.svg
-and candy-*.svg. Each cloud is a heap of lumps drawn
+links and buttons (nav-<name>.svg), plus the candy-*.svg sprites.
+An unused wind sketch is retained in design/animations_ideas/cloud-wind.svg.
+Each cloud is a heap of lumps drawn
 back to front: each lump white with its own outline, short broken
 curved strokes shading its lower right side, so a lump in front leaves
 an inner contour on the one behind it. The middle lumps (behind the
@@ -316,7 +317,9 @@ def candy(kind: str) -> str:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / "wind.svg").write_text(wind(), encoding="utf-8")
+    ideas = OUT.parents[2] / "design" / "animations_ideas"
+    ideas.mkdir(parents=True, exist_ok=True)
+    (ideas / "cloud-wind.svg").write_text(wind(), encoding="utf-8")
     for name in ("wrap", "drop", "lollipop"):
         (OUT / f"candy-{name}.svg").write_text(candy(name), encoding="utf-8")
     for cloud in clouds():

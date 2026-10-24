@@ -746,5 +746,6 @@ remain their own flows; implementation and timing controls are in
 The day landing cloud gently sways and grows/shrinks behind the fixed logo;
 shape morphing and stronger wind effects are deferred. Landing links share
 the navbar's primary-50 rest, white hover and slight text growth.
-Clicking the logo releases a bounded shower of engraved sweets; keyboard and
-touch work too. Reduced motion uses a brief stationary fade.
+Clicking the logo releases a bounded shower of engraved sweets and gives
+the day cloud a small hop; keyboard and touch work too. The wordmark stays
+fixed. Reduced motion uses a brief stationary fade.
