@@ -385,9 +385,20 @@
   }
 }
 
-/* A restrained sway for now; the logo itself stays fixed. */
+/* A small breath accompanies the sway; the logo itself stays fixed. */
 :root[data-theme="light"] .landing__logo::before {
-  animation: nav-cloud-sway var(--landing-cloud-sway-time) ease-in-out infinite;
+  animation: landing-cloud-breathe var(--landing-cloud-sway-time) ease-in-out infinite;
+}
+@keyframes landing-cloud-breathe {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0) scale(var(--landing-cloud-breathe-min));
+  }
+  40% {
+    transform: translate(var(--theme-nav-cloud-sway-distance), -1px) rotate(0.7deg) scale(var(--landing-cloud-breathe-max));
+  }
+  70% {
+    transform: translate(-1px, 0) rotate(-0.35deg) scale(1);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   :root[data-theme="light"] .landing__logo::before { animation: none; }

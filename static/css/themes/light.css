@@ -31,6 +31,8 @@
   --theme-nav-cloud-sway-time: 1200ms;
   --theme-nav-cloud-sway-distance: 3px;
   --landing-cloud-sway-time: 4s;
+  --landing-cloud-breathe-min: 0.985;
+  --landing-cloud-breathe-max: 1.025;
   --public-nav-collapse-time: 180ms;
   --public-nav-pop-time: 340ms;
   --public-page-reveal-time: 160ms;

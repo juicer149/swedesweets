@@ -743,7 +743,7 @@ remain their own flows; implementation and timing controls are in
 [CSS themes](docs/css-themes.md#persistent-customer-navbar-and-cloud-navigation).
 
 
-The day landing cloud currently uses a small sway behind the fixed logo;
+The day landing cloud gently sways and grows/shrinks behind the fixed logo;
 shape morphing and stronger wind effects are deferred. Landing links share
 the navbar's primary-50 rest, white hover and slight text growth.
 Clicking the logo releases a bounded shower of engraved sweets; keyboard and

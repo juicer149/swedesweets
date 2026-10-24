@@ -1262,9 +1262,10 @@ closed mobile editor from replacing a reading page.
 
 ## Landing day motion and menu
 
-For now the day landing cloud uses the navbar's small `nav-cloud-sway`
-movement, with `--landing-cloud-sway-time` (4s). The logo stays fixed and
-there is no large translation or wind overlay. The unused `wind.svg` sketch
+The day landing cloud gently sways and breathes with `landing-cloud-breathe`.
+`--landing-cloud-sway-time` (4s) sets the cycle; `--landing-cloud-breathe-min`
+(0.985) and `--landing-cloud-breathe-max` (1.025) set the scale range.
+The logo stays fixed and there is no large translation or wind overlay. The unused `wind.svg` sketch
 and its generator are retained for later design work. Night keeps its moonlight;
 reduced motion leaves the cloud still.
 
