@@ -1278,7 +1278,10 @@ landing has no current-page link. Its first navigation still opens a normal
 page; subsequent navbar changes between catalog/Find Sweets/FAQ/About keep
 the header mounted with fetch and the cloud transition described above.
 
-The logo is a native button with an English/French accessible action label.
+In the day theme the logo is a native button with an English/French
+accessible action label. It is disabled in night, with the same appearance
+and no pointer cursor or keyboard stop. Switching to night immediately clears
+any sweets/hop; switching back enables it again.
 Click/tap/Enter/Space releases seven small engraved sweets; repeated presses
 can add at most 48 concurrent particles. `landing.js` removes each finished
 particle and clears all particles on page exit or a motion-preference change.

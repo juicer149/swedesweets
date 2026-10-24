@@ -131,7 +131,16 @@
     active.clear();
     rain.replaceChildren();
   };
+  function syncTheme() {
+    trigger.disabled = document.documentElement.dataset.theme !== "light";
+    if (trigger.disabled) clear();
+  }
+  new MutationObserver(syncTheme).observe(document.documentElement, {
+    attributes: true, attributeFilter: ["data-theme"],
+  });
+  syncTheme();
   trigger.addEventListener("click", () => {
+    if (trigger.disabled || document.documentElement.dataset.theme !== "light") return;
     nudgeCloud();
     const box = trigger.getBoundingClientRect();
     const calm = reduced.matches;

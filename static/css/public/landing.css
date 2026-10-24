@@ -414,6 +414,7 @@
   cursor: pointer;
   border-radius: var(--radius-md);
 }
+.landing__logo-trigger:disabled { cursor: default; opacity: 1; }
 .landing__logo-trigger:focus-visible {
   outline: 2px solid var(--landing-logo-focus, var(--menu-ink));
   outline-offset: 8px;
