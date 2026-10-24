@@ -130,3 +130,30 @@
     animation: nav-cloud-pop var(--public-nav-pop-time) cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
 }
+
+
+/* Landing uses the same pale rest / white puffy pointer as the navbar.
+   Its chosen class follows pointer/keys, but is not a selected page. */
+:root[data-theme="light"] .landing {
+  --landing-ink: var(--theme-nav-rest-ink);
+  --landing-pointer-ink: var(--theme-nav-pointer-ink);
+}
+:root[data-theme="light"] .landing-menu .landing-menu__link {
+  color: var(--theme-nav-rest-ink);
+  text-shadow: none;
+}
+:root[data-theme="light"] .landing-menu__text {
+  display: inline-block;
+  transition: transform 180ms ease, text-shadow 180ms ease;
+}
+:root[data-theme="light"] .landing-menu .landing-menu__link.landing-menu__link--chosen:is(:hover, :focus-visible) {
+  color: var(--theme-nav-pointer-ink);
+  text-shadow: none;
+}
+:root[data-theme="light"] .landing-menu__link--chosen:is(:hover, :focus-visible) .landing-menu__text {
+  transform: scale(var(--theme-nav-pointer-scale));
+  text-shadow: 0 0 0.65px currentColor;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme="light"] .landing-menu__text { transition: none; transform: none !important; }
+}

@@ -743,9 +743,8 @@ remain their own flows; implementation and timing controls are in
 [CSS themes](docs/css-themes.md#persistent-customer-navbar-and-cloud-navigation).
 
 
-The day landing logo has occasional sketched gusts in the engraved cloud's
-style. The wordmark stays fixed while its rear cloud moves; blue letters
-briefly blend with the blue sky where the white cloud moves away. No cloud
-passes in front. Night and reduced motion stay clear of the weather animation.
+The day landing cloud currently uses a small sway behind the fixed logo;
+shape morphing and stronger wind effects are deferred. Landing links share
+the navbar's primary-50 rest, white hover and slight text growth.
 Clicking the logo releases a bounded shower of engraved sweets; keyboard and
 touch work too. Reduced motion uses a brief stationary fade.

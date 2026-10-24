@@ -46,6 +46,10 @@
     link.addEventListener("focus", () => choose(link));
   }
 
+  menu.addEventListener("pointerleave", () => {
+    if (links.includes(document.activeElement)) choose(document.activeElement);
+  });
+
   function next(index, key) {
     const last = links.length - 1;
 

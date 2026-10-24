@@ -1260,18 +1260,20 @@ new origin URL and returns to its desktop preview on resize, preventing a
 closed mobile editor from replacing a reading page.
 
 
-## Landing day wind
+## Landing day motion and menu
 
-The landing logo's real paths stay fixed above its rear cloud. Only the
-cloud drifts, with `--landing-cloud-drift` (18% of the cloud width), so blue
-letters at the edge can briefly merge with the blue sky as the white cloud
-moves away. Nothing passes in front of the wordmark. Broken curved wind
-strokes use the cloud's blue ink with a fine white backing on the sky.
-The eight-second cycle is `--landing-wind-cycle`; wind-line strength is
-`--landing-wind-ink-opacity` (0.75). `tools/draw_clouds.py` deterministically
-writes `wind.svg` and three `candy-*.svg` files alongside the existing clouds.
-The decorative wind span is hidden from assistive technology. Night keeps
-its moonlight; reduced motion removes the wind and leaves the cloud still.
+For now the day landing cloud uses the navbar's small `nav-cloud-sway`
+movement, with `--landing-cloud-sway-time` (4s). The logo stays fixed and
+there is no large translation or wind overlay. The unused `wind.svg` sketch
+and its generator are retained for later design work. Night keeps its moonlight;
+reduced motion leaves the cloud still.
+
+Landing links share `--theme-nav-rest-ink` (primary-50),
+`--theme-nav-pointer-ink` (white) and `--theme-nav-pointer-scale` (1.035)
+with the customer navbar. Only the pointed/focused chosen link puffs up;
+landing has no current-page link. Its first navigation still opens a normal
+page; subsequent navbar changes between catalog/Find Sweets/FAQ/About keep
+the header mounted with fetch and the cloud transition described above.
 
 The logo is a native button with an English/French accessible action label.
 Click/tap/Enter/Space releases seven small engraved sweets; repeated presses
