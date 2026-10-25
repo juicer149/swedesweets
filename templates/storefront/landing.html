@@ -11,7 +11,7 @@
   the last letter of the chosen one, as on the logo. The pointer, Tab or
   the arrow keys move it, and it stays where it was last put (landing.js).
   Login or Log out at the bottom; desktop has a direct cart link once it
-  holds something. Mobile keeps cart access in the shop/catalog.
+  holds something, on both mobile and desktop.
   No navbar, no footer, and the page never scrolls.
 
   The splash plays once per visit: coming back within the same tab session,
@@ -103,6 +103,7 @@
         </a>
       {% endif %}
     </div>
+    <span id="landing-ready" hidden></span>
   </main>
 {% endblock %}
 

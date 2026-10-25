@@ -1393,3 +1393,35 @@ outside-click dismissal so their native navigation does not race panel history.
 Cart recent-order disclosures opt into `data-smooth-duration="160"`; their
 height animates without the general disclosure opacity fade. Other disclosures
 keep their default 280ms and reduced motion remains immediate.
+
+
+## Home arrival and checkout chrome
+
+`public/home-arrival.css` and the small parser-blocking `home-arrival.js` head
+script provide the day brand-to-landing transition. A normal, same-origin,
+unmodified brand activation records only the source geometry, timestamp,
+destination and surface colour in a short-lived, consumed sessionStorage
+entry. The source gets an engraved `.home-flight-cloud`; cloud and wordmark
+use the shared names `home-cloud` and `home-wordmark`. No page HTML, checkout
+form values or payment actions are transported by this transition.
+
+Cross-document View Transitions retain native navigation and animate the
+shared geometry for 700ms while the old page fades into the landing blue.
+`pageswap`/`pagereveal` skip unrelated transitions. A render expectation on
+`#landing-ready` ensures the full landing markup is present before capturing
+it. Without cross-document support the destination animates from the recorded
+geometry and fades the recorded surface colour instead. Arrival uses a 300ms
+cloud-only squash/stretch and 180ms link reveals. The final landing geometry
+is reserved throughout, so the logo does not move again as the links appear.
+Transient names/clouds/inert controls are cleaned on completion, BFCache
+restoration and a bounded fallback. Reduced motion, night, modifier clicks,
+unavailable sessionStorage and normal first visits retain the native path.
+
+`data-checkout-flow` is rendered from the existing `navbar_cart_current`
+context on a full flow page. `responsive-cart.js` updates it on adopted flow
+steps according to the actual flow URL and emits `order-flow-chrome`.
+`mobile-menu.js` reuses its measured summary translation to centre the real
+cart on desktop too, while `public/navigation.css` hides the page-link strip
+for the focused flow. Quick mobile previews do not change the underlying
+reading page's route/chrome. Mobile Menu switching, fragment replacement,
+resizing and reduced motion retain the shared controller behaviour.

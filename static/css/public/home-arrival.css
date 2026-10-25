@@ -1,0 +1,53 @@
+/* Shared-element travel is only enabled for a day logo's native home link.
+   The controller skips every unrelated cross-document transition. */
+@view-transition { navigation: auto; }
+
+.home-flight-source :is(.site-brand, .entrance-header__brand) {
+  position: relative;
+  isolation: isolate;
+}
+.home-flight-cloud {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 130%; height: 150%;
+  translate: -50% -50%;
+  background: center / 100% 100% no-repeat;
+  pointer-events: none;
+  z-index: -1;
+  view-transition-name: home-cloud;
+}
+.home-flight-cloud--target { width: 185%; }
+.home-flight-source :is(.site-brand, .entrance-header__brand) .brand-logo,
+.home-flight-target .landing__logo-art { view-transition-name: home-wordmark; }
+.landing[data-home-arrival] .landing__logo::before { visibility: hidden; }
+.landing[data-home-arrival="flying"] :is(.landing__menu, .landing__tagline, .landing__top, .landing__bottom) {
+  opacity: 0;
+  visibility: hidden;
+}
+.landing[data-home-arrival] .landing__logo-trigger { pointer-events: none; }
+
+.home-flight-target::view-transition-group(root) { z-index: 0; }
+.home-flight-target::view-transition-group(home-cloud) { z-index: 1; }
+.home-flight-target::view-transition-group(home-wordmark) { z-index: 2; }
+.home-flight-target::view-transition-group(home-cloud),
+.home-flight-target::view-transition-group(home-wordmark) {
+  animation-duration: 700ms;
+  animation-timing-function: cubic-bezier(.2,.7,.2,1);
+}
+.home-flight-target::view-transition-old(root) {
+  animation: home-surface-away 650ms ease-out both;
+}
+.home-flight-target::view-transition-new(root) {
+  animation: home-blue-arrive 650ms ease-out both;
+}
+.home-flight-target::view-transition-old(home-cloud),
+.home-flight-target::view-transition-old(home-wordmark) { animation-duration: 160ms; }
+.home-flight-target::view-transition-new(home-cloud),
+.home-flight-target::view-transition-new(home-wordmark) { animation-duration: 180ms; }
+@keyframes home-surface-away { to { opacity: 0; } }
+@keyframes home-blue-arrive { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  .home-flight-cloud { display: none; }
+}

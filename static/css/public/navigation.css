@@ -350,3 +350,18 @@
 :root:not([data-theme="light"]) .candy-rain {
   display: none;
 }
+
+/* Checkout retains the existing page/sheet, with only its essential chrome.
+   The same measured translation as mobile centres the real cart summary. */
+:root[data-checkout-flow]:not([data-site-zone="ops"]) .site-header .site-nav__links {
+  display: none !important;
+}
+:root[data-checkout-flow]:not([data-site-zone="ops"]) .site-header .menu-dropdown-trigger {
+  transition: translate 280ms cubic-bezier(.22,.7,.2,1), color var(--motion-fast);
+}
+:root[data-checkout-flow]:not([data-site-zone="ops"]) .site-header[data-mobile-panel="cart"] .site-nav-cart > .menu-dropdown-trigger {
+  translate: var(--mobile-cart-shift-x, 0px) var(--mobile-cart-shift-y, 0px);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-checkout-flow] .site-header .menu-dropdown-trigger { transition: none; }
+}

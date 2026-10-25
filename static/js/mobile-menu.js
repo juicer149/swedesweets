@@ -51,7 +51,9 @@
   function syncHeader(key = running ? wanted : openMenu()?.dataset.mobileMenu) {
     const header = document.querySelector(".site-header");
     if (!header || root.dataset.siteZone === "ops") return;
-    if (!mobile.matches || !["cart", "menu"].includes(key)) {
+    const flow = root.hasAttribute("data-checkout-flow");
+    if (flow && (!mobile.matches || !key)) key = "cart";
+    if ((!mobile.matches && !flow) || !["cart", "menu"].includes(key)) {
       delete header.dataset.mobilePanel;
       for (const [link, inert] of headerInertBefore) {
         link.inert = inert;
@@ -244,6 +246,7 @@
     request(event.detail.key, Boolean(event.detail.restoreFocus), Boolean(event.detail.instant));
   });
   document.addEventListener("navbar-cart-refreshed", sync);
+  document.addEventListener("order-flow-chrome", sync);
   mobile.addEventListener("change", () => { motion?.finish(); sync(); });
   reducedMotion.addEventListener("change", () => { if (reducedMotion.matches) motion?.finish(); });
   window.addEventListener("resize", sync);

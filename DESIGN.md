@@ -816,3 +816,31 @@ circle; tapping outside the editor dismisses its keyboard while preserving
 normal control actions and Tom Select option selection. Cart Previous orders
 uses a 160ms height-only disclosure, including its nested orders; FAQ and ops
 retain their usual disclosure timing.
+
+
+### Returning home and focused checkout navigation
+
+A day logo click follows its normal home link, including when Menu/cart is
+open. The engraved cloud appears at the small wordmark, grows and travels to
+the landing wordmark over 700ms while the blue surface appears underneath.
+At arrival the cloud has a 300ms braking squash/stretch; its lettering stays
+steady and the links appear. Returning this way uses the final landing layout
+rather than replaying the first-visit splash. Night and reduced motion keep
+native navigation. Landing shows its existing cart link whenever it holds
+products, on mobile as well as desktop.
+
+Cart, review and result keep their current page/sheet design. Their navbar
+hides the ordinary page links, retaining the logo, Menu and the real cart
+trigger centred across the viewport. Opening a mobile quick cart over a
+reading page keeps that page's navigation state; the focused checkout chrome
+begins when the URL actually belongs to the order flow. Continue shopping,
+Back, the logo and Menu retain their existing routes. A separate checkout
+page design is deferred.
+
+The server remains authoritative for checkout validity. Expired/replaced
+unpaid checkouts return to details; valid details are remembered even if the
+cart is rejected, so the first step can be corrected and resubmitted without
+retyping them. Validation failures do not automatically empty purchase intent.
+Existing pending-payment reconciliation, cart locking and stock checks remain
+in place; a payment with an unknown result must be reconciled before a fresh
+attempt is allowed.

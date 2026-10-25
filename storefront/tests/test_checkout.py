@@ -990,3 +990,44 @@ def test_invalid_details_return_editable_cart_and_keep_values(client, cart):
     html = response.content.decode()
     assert html.count('id="id_email"') == 1
     assert not RetailCheckoutSession.objects.exists()
+
+
+@pytest.mark.django_db
+def test_rejected_cart_keeps_valid_details_for_restart(client, cart):
+    price = cart.lines.get().commercial_price
+    price.enabled = False
+    price.save(update_fields=["enabled"])
+
+    response = _submit_details(client)
+
+    assert response.status_code == 200
+    assert response.context["form"].non_field_errors()
+    assert not RetailCheckoutSession.objects.exists()
+    assert cart.lines.get().quantity == 2
+
+    restarted = client.get(reverse("storefront:checkout"))
+    details = restarted.context["form"].initial
+    assert details["email"] == "marie@example.com"
+    assert details["address_line"] == "10 Rue de Test"
+
+    price.enabled = True
+    price.save(update_fields=["enabled"])
+    assert client.post(reverse("storefront:checkout"), details).status_code == 302
+    assert RetailCheckoutSession.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_expired_unpaid_checkout_restarts_with_details_and_cart_intact(client, cart):
+    checkout = _created_checkout(client)
+    RetailCheckoutSession.objects.filter(pk=checkout.pk).update(
+        expires_at=timezone.now() - timedelta(minutes=1),
+    )
+
+    response = client.get(_review_url(checkout), follow=True)
+
+    assert response.status_code == 200
+    assert response.context["form"].initial["email"] == "marie@example.com"
+    assert cart.lines.get().quantity == 2
+    assert _submit_details(client).status_code == 302
+    checkout.order.refresh_from_db()
+    assert checkout.order.status == Order.Status.CANCELLED

@@ -334,8 +334,7 @@
   filter: none;
 }
 
-/* Landing has no navbar frame: desktop navigates directly to the cart page. */
-@media (max-width: 767px) { .landing__cart-link { display: none; } }
+/* Landing has no cart sheet: its cart link opens the editor at every width. */
 
 /* The start and entrance pages' Menu opens centred at every width: on a phone in the
    pennant shape, the close circle at the tip of the V; on wider screens as

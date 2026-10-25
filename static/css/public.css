@@ -7,6 +7,7 @@
 @import url("./public/checkout.css");
 @import url("./public/catalog.css");
 @import url("./public/landing.css");
+@import url("./public/home-arrival.css");
 /* Here, pointer and rest: after the parts above, over their shared rules (common/states.css). */
 @import url("./common/states.css");
 @import url("./public/navigation.css");

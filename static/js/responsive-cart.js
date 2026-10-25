@@ -32,6 +32,7 @@
     menu.dataset.flowHost = String(hosted);
     const trigger = menu.querySelector("summary");
     const fullPage = flowUrl && new URL(flowUrl).pathname === location.pathname;
+    document.documentElement.toggleAttribute("data-checkout-flow", Boolean(fullPage));
     if (fullPage) {
       menu.dataset.cartLocked = "true";
       trigger?.setAttribute("aria-current", "page");
@@ -48,6 +49,7 @@
     button?.querySelector("[data-panel-close-icon]")?.toggleAttribute("hidden", Boolean(back));
     button?.querySelector("[data-panel-back-icon]")?.toggleAttribute("hidden", !back);
     if (button) button.setAttribute("aria-label", back ? button.dataset.backLabel : button.dataset.closeLabel);
+    document.dispatchEvent(new Event("order-flow-chrome"));
   }
   function mount({ open = false } = {}) {
     const menu = cartMenu(), scroll = menu?.querySelector("[data-cart-panel-scroll]");

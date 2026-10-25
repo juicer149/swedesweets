@@ -160,6 +160,12 @@ def checkout_details(
         form = RetailCheckoutDetailsForm(request.POST)
 
         if form.is_valid():
+            # Valid details survive a rejected cart too, so restarting the
+            # checkout does not make the buyer type them all again.
+            remember_checkout_details(
+                request,
+                details=form.session_data(),
+            )
             try:
                 checkout = create_retail_checkout_from_cart(
                     cart=cart,
@@ -204,10 +210,6 @@ def checkout_details(
                 remember_checkout(
                     request,
                     checkout_id=checkout.pk,
-                )
-                remember_checkout_details(
-                    request,
-                    details=form.session_data(),
                 )
 
                 return redirect(

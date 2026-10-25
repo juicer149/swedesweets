@@ -3,7 +3,7 @@
 {% get_current_language as LANGUAGE_CODE %}
 
 <!doctype html>
-<html lang="{{ LANGUAGE_CODE }}" data-theme="light" data-site-zone="{{ site_zone|default:'public' }}">
+<html lang="{{ LANGUAGE_CODE }}" data-theme="light" data-site-zone="{{ site_zone|default:'public' }}"{% if navbar_cart_current %} data-checkout-flow{% endif %}>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,6 +40,9 @@
     {# Light is the default. ?theme=dark previews this tab; auto follows Paris time. #}
     {# The script runs before CSS loads to avoid flashing the wrong theme. #}
     <script src="{% static 'js/theme.js' %}"></script>
+    {% if site_zone != "ops" %}
+      <script src="{% static 'js/home-arrival.js' %}" data-cloud="{% static 'images/clouds/logo.svg' %}"></script>
+    {% endif %}
     <script src="{% static 'js/theme-switch.js' %}" defer></script>
     <script src="{% static 'js/site-menu.js' %}" defer></script>
     <script src="{% static 'js/language-switch.js' %}" defer></script>
