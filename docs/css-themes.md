@@ -1229,6 +1229,20 @@ its pills.
 
 ## Persistent customer navbar and cloud navigation
 
+Mobile current links use a 4.5rem minimum width and
+`clamp(0.8rem, 3.5vw, 1rem)` lettering in both customer themes. The day
+cloud has more room around the label; night expands its existing halo without
+changing its colours. Side-control space stays reserved and logo artwork is
+unchanged. Day FAQ hover/focus reads `--text-blue-deep` (primary-950) via
+`--faq-question-hover-text` and `--dropdown-title-hover-text`; focused open
+questions explicitly retain their open ink.
+
+Landing's centred Menu rules in `public/landing.css` also match
+`.entrance-header`. The mobile-menu controller selects the same centred
+scale/fade animation for entrance pages, and both surfaces omit the sliding
+sheet's top-edge light. Keyboard, Escape, outside dismissal and reduced-motion
+handling remain shared.
+
 The day Menu's available links and unselected Settings choices share
 `--theme-nav-rest-ink`, `--theme-nav-pointer-ink` and
 `--theme-nav-pointer-scale` with landing. Hover, focus and the controller's

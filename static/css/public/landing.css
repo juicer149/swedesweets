@@ -337,16 +337,16 @@
 /* Landing has no navbar frame: desktop navigates directly to the cart page. */
 @media (max-width: 767px) { .landing__cart-link { display: none; } }
 
-/* The start page's Menu opens centred at every width: on a phone in the
+/* The start and entrance pages' Menu opens centred at every width: on a phone in the
    pennant shape, the close circle at the tip of the V; on wider screens as
    the navbar's rectangle (common/mobile-menu.css). */
-.landing__top details[open] > .mobile-menu-viewport {
+:is(.landing__top, .entrance-header) details[open] > .mobile-menu-viewport {
   display: grid; position: fixed; inset: 0; z-index: 130;
   place-items: center; padding: 2.5rem 1rem;
   overflow: visible; pointer-events: none;
 }
 @media (max-width: 767px) {
-  .landing__top .site-menu__panel.mobile-menu-panel {
+  :is(.landing__top, .entrance-header) .site-menu__panel.mobile-menu-panel {
     --dialog-bg: var(--account-menu-bg);
     --dialog-edge: var(--account-menu-border);
     position: relative; inset: auto; translate: none;
@@ -361,23 +361,23 @@
     filter: drop-shadow(0 22px 40px rgb(0 0 0 / 0.35));
     pointer-events: auto;
   }
-  .landing__top .site-menu__panel.mobile-menu-panel::before,
-  .landing__top .site-menu__panel.mobile-menu-panel::after {
+  :is(.landing__top, .entrance-header) .site-menu__panel.mobile-menu-panel::before,
+  :is(.landing__top, .entrance-header) .site-menu__panel.mobile-menu-panel::after {
     content: ""; display: block;
     position: absolute; inset: 0 0 1.375rem; z-index: -1; pointer-events: none;
     background: var(--dialog-edge);
     border-radius: var(--radius-md) var(--radius-md) 0 0;
     clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4rem), calc(100% - 1px) calc(100% - 3.5rem), calc(100% - 5px) calc(100% - 3.0625rem), calc(100% - 12px) calc(100% - 2.75rem), 50% 100%, 12px calc(100% - 2.75rem), 5px calc(100% - 3.0625rem), 1px calc(100% - 3.5rem), 0 calc(100% - 4rem));
   }
-  .landing__top .site-menu__panel.mobile-menu-panel::after {
+  :is(.landing__top, .entrance-header) .site-menu__panel.mobile-menu-panel::after {
     inset: 1px 1px calc(1.375rem + 1px);
     background: var(--dialog-bg);
   }
-  .landing__top .mobile-menu-panel .menu-panel-scroll {
+  :is(.landing__top, .entrance-header) .mobile-menu-panel .menu-panel-scroll {
     width: 100%; height: auto; min-height: 0; max-height: none; flex: 0 1 auto; padding-block: var(--space-4);
     overflow-y: auto;
   }
-  .landing__top .mobile-menu-panel .mobile-menu-close {
+  :is(.landing__top, .entrance-header) .mobile-menu-panel .mobile-menu-close {
     position: absolute; bottom: 0; left: calc(50% - 1.375rem);
     display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
     color: var(--account-menu-text); background: var(--dialog-bg);

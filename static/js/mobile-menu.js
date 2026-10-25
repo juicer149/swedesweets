@@ -53,7 +53,7 @@
   async function animate(menu, opening) {
     if (instant || reducedMotion.matches || !menu?.isConnected) return;
     // Wider screens open every panel as a centred box (the Menu, the cart).
-    const centered = Boolean(menu.closest("[data-landing]")) || !mobile.matches;
+    const centered = Boolean(menu.closest("[data-landing], .entrance-header")) || !mobile.matches;
     const frames = centered
       ? [{ opacity: 0, transform: "scale(.96)" }, { opacity: 1, transform: "scale(1)" }]
       : [{ transform: "translateY(-102%)" }, { transform: "translateY(0)" }];

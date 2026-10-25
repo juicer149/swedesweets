@@ -299,7 +299,7 @@ details[data-mobile-menu]:not([data-panel-lit]) .mobile-menu-panel {
 .mobile-menu-close [hidden] { display: none; }
 .order-flow-busy .mobile-menu-close { pointer-events: none; opacity: .45; }
 
-.landing__top .menu-panel-toplight { display: none; }
+:is(.landing__top, .entrance-header) .menu-panel-toplight { display: none; }
 
 /* Wider screens: the Menu is a centred rectangle with its quiet cross in
    the corner (site-menu.css); the cart keeps its quick view. */

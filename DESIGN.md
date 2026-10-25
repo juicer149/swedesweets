@@ -740,6 +740,14 @@ completed progress remains green in both themes.
 
 ## Customer navbar transitions
 
+The current mobile destination has larger lettering and a wider day cloud;
+night uses the same larger lettering with a wider/taller gold light. The logo
+keeps its own geometry. Closed day FAQ questions use the existing deep-blue
+reading role (primary-950) on hover/focus so text remains legible beyond the
+small blue cloud; open questions retain white. Entrance-page Menus share
+landing's centred mobile pennant and scale/fade motion instead of sliding
+down from the header.
+
 Available links inside the day Menu, including its unselected language/theme
 choices, share landing's pale-blue rest and white, gently enlarged pointer or
 keyboard choice. Current destinations/settings keep their existing cloud

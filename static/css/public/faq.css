@@ -37,6 +37,12 @@
   --accordion-answer-text: var(--faq-answer-text, var(--prose-text));
 }
 
+/* Closed questions use the readable day pointer ink; an open question
+   keeps its existing white lettering on the blue cloud even with focus. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .faq .accordion[open]:not([data-smooth-closing]) > .accordion__summary:focus-visible {
+  color: var(--faq-question-open-text);
+}
+
 /* Extinguish at the start of closing, before the answer finishes sliding. */
 .faq .accordion[data-smooth-closing] > .accordion__summary {
   color: var(--faq-question-text);

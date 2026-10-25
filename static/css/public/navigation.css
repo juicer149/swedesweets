@@ -163,15 +163,26 @@
     font-weight: 800;
   }
   .site-header .site-nav__link[aria-current="page"] > .site-nav__icon { display: none; }
+  /* A readable current destination in both themes; reserve the existing
+     side controls and enlarge only this link, never the brand's cloud. */
+  :root:not([data-site-zone="ops"]) .site-header .site-nav__link[aria-current="page"] {
+    min-width: 4.5rem;
+    padding: 0.3rem;
+    font-size: clamp(0.8rem, 3.5vw, 1rem);
+  }
   :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"],
   :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"] * {
     color: var(--nav-link-here-ink);
     text-shadow: none;
   }
   :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"]::after {
-    inset: -0.8rem -0.85rem -0.5rem;
+    inset: -1rem calc(-1 * clamp(0.7rem, 4vw, 1.15rem)) -0.65rem;
     height: auto;
     opacity: 1;
+  }
+  :root[data-theme="dark"]:not([data-site-zone="ops"]) .site-header .site-nav__link[aria-current="page"]::after {
+    inset: -0.85rem -1rem -0.65rem;
+    height: auto;
   }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header .site-nav__link[aria-current="page"] > .site-nav__label::before {
     content: "";

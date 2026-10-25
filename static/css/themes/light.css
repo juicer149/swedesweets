@@ -1027,11 +1027,11 @@
    ============================================================================= */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .faq {
   --faq-question-text: var(--theme-sky-rest-ink);
-  --faq-question-hover-text: var(--theme-sky-pointer-ink);
+  --faq-question-hover-text: var(--text-blue-deep);
   --faq-question-open-text: var(--theme-sky-here-ink);
   --faq-question-hover-bg: transparent;
   --faq-question-open-bg: transparent;
-  --dropdown-title-hover-text: var(--theme-sky-pointer-ink);
+  --dropdown-title-hover-text: var(--text-blue-deep);
   --dropdown-title-active-text: var(--theme-sky-here-ink);
   --dropdown-title-glow: var(--theme-sky-cloud);
   --dropdown-title-glow-filter: blur(var(--theme-sky-blur));
