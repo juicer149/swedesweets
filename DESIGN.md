@@ -740,6 +740,14 @@ completed progress remains green in both themes.
 
 ## Customer navbar transitions
 
+The day mobile bottom bar is white inside its clean rounded rectangle, with a
+thin brand-blue outline and blue links. Fine engraved strokes shade its lower
+corners and foot, leaving the reading area clear. The active destination stays
+on its cloud with its crown in the header. Day product and mobile cart/Menu
+close controls use quiet circles instead of clouds: muted blue with a white
+cross on paper, near-white with a blue cross on the blue Menu, gold at
+hover/focus. Their target is 44px. Night and ops keep their existing appearance.
+
 By day the navbar wordmark has no cloud or crown: it rests in the same pale
 blue as the links and turns white with their gentle enlargement and optical
 thickening on hover/focus. Landing keeps its existing logo cloud and crown.

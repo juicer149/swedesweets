@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" preserveAspectRatio="none">
+  <title>Fine engraved shading at the navigation bar's corners and lower edge</title>
+  <g fill="none" stroke="#5f78c0" stroke-width="0.7" stroke-linecap="round" opacity="0.42">
+    <path d="M 8.0 64.0 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 11.5 66.3 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 15.0 68.6 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 18.5 70.9 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 22.0 73.2 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 25.5 75.5 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 29.0 77.8 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 32.5 80.1 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 36.0 82.4 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 39.5 84.7 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 43.0 87.0 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
+    <path d="M 8.0 64.0 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 11.5 66.3 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 15.0 68.6 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 18.5 70.9 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 22.0 73.2 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 25.5 75.5 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 29.0 77.8 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 32.5 80.1 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 36.0 82.4 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 39.5 84.7 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 43.0 87.0 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
+    <path d="M 55.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 70.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 86.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 101.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 117.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 132.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 148.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 163.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 179.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 194.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 210.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 225.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 241.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 256.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 272.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 287.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 303.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 318.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 334.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 349.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 365.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 380.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 396.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 411.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 427.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 442.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 458.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 473.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 489.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 504.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 520.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+    <path d="M 535.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
+  </g>
+</svg>

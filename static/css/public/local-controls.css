@@ -99,3 +99,92 @@
     outline-offset: -2px;
   }
 }
+
+/* Quiet circular close controls; keep their native action and focus target. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close) {
+  --day-close-bg: var(--day-close-light-bg);
+  --day-close-ink: var(--day-close-light-ink);
+  --day-close-edge: var(--day-close-light-edge);
+  --day-close-hover-bg: var(--day-close-light-hover-bg);
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--day-close-ink);
+  background: var(--day-close-bg);
+  border: 1px solid var(--day-close-edge);
+  border-radius: 50%;
+  box-shadow: var(--day-close-shadow);
+  translate: none;
+  filter: none;
+  transition: background var(--motion-fast), color var(--motion-fast), scale var(--motion-fast);
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav-cart__popover .mobile-menu-close, .product__close) {
+  --day-close-bg: var(--day-close-blue-bg);
+  --day-close-ink: var(--day-close-blue-ink);
+  --day-close-edge: var(--day-close-blue-edge);
+  --day-close-hover-bg: var(--day-close-blue-hover-bg);
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close)::before {
+  display: none;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close):focus-visible {
+  color: var(--day-close-hover-ink);
+  background: var(--day-close-hover-bg);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  scale: 1.035;
+  filter: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close):hover {
+    color: var(--day-close-hover-ink);
+    background: var(--day-close-hover-bg);
+    border-color: var(--day-close-edge);
+    box-shadow: var(--day-close-shadow);
+    scale: 1.035;
+    filter: none;
+  }
+}
+
+/* The phone bar keeps its clean outline; engraving stays at the paper's
+   corners and foot, clear of the words and icons. The active link still
+   belongs to the header's cloud, with its crown. */
+@media (max-width: 767px) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-header .site-nav__links {
+    background-color: var(--day-bar-bg);
+    background-image: url("../../images/clouds/nav-bar-engraving.svg");
+    background-position: center;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border: 1px solid var(--day-bar-edge);
+    box-shadow: var(--day-bar-shadow);
+  }
+
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-header .site-nav__link:not([aria-current="page"]) {
+    color: var(--day-bar-ink);
+  }
+
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-header .site-nav__link:not([aria-current="page"]):is(:hover, :focus-visible) {
+    color: var(--day-bar-ink);
+  }
+
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-header .site-nav__link:not([aria-current="page"]):is(:hover, :focus-visible) > :is(.site-nav__label, .site-nav__icon) {
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close) {
+    transition: none;
+    scale: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-header .site-nav__links {
+    background-image: none;
+  }
+}

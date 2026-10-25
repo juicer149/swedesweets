@@ -967,59 +967,23 @@
   --catalog-card-hover-shadow: 0 0 18px 4px color-mix(in srgb, var(--theme-chrome-bg) 75%, transparent), 0 0 34px 8px color-mix(in srgb, var(--theme-chrome-bg) 30%, transparent);
 }
 
-/* The ×s: the cross on a cloud, which is the button; no round ring. On
-   the blue (the Menu's) a white cloud and the dark blue cross; on the
-   page (the cart's sheet on a phone, a product's page) the navbar's blue
-   and a white cross, gold when pointed at. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close) {
-  --close-cloud: var(--theme-cloud);
-  isolation: isolate;
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav-cart__popover .mobile-menu-close, .product__close) {
-  --close-cloud: var(--theme-chrome-bg);
-  color: var(--color-white);
-}
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav-cart__popover .mobile-menu-close, .product__close):is(:hover, :focus-visible) {
-  color: var(--color-accent-600);
-  background: transparent;
-  filter: none;
-}
-
-/* (the panels' a little higher, on the panel's point: the screen's foot
-   would cut the cloud) */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .mobile-menu-close {
-  translate: 0 -0.75rem;
-}
-
-/* (the navbar's cloud shape, in the cross's own colour) */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close)::before {
-  content: "";
-  position: absolute;
-  inset: -0.5rem -0.9rem -0.05rem;
-  z-index: -1;
-  background:
-    radial-gradient(circle 0.62em at 44% 29%, var(--close-cloud) 96%, transparent),
-    radial-gradient(ellipse 50% 40% at 50% 58%, var(--close-cloud) 96%, transparent);
-  filter: var(--chrome-cloud-filter);
-  pointer-events: none;
-}
-
-/* (a product's × on a phone sits by the page's edge, which clips: a
-   little in from it, its cloud reaching less far that way) */
-@media (max-width: 767px) {
-  :root:not([data-theme="dark"], [data-site-zone="ops"]) .product__close {
-    translate: 0.5rem 0;
-  }
-
-
-  :root:not([data-theme="dark"], [data-site-zone="ops"]) .product__close::before {
-    inset: -0.5rem -0.6rem -0.05rem 0;
-  }
+/* Customer day close buttons: quiet circles with their existing colour roles.
+   Component geometry and states live in public/local-controls.css. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --day-close-light-bg: color-mix(in srgb, var(--color-white) 92%, var(--color-primary-50));
+  --day-close-light-ink: var(--theme-chrome-bg);
+  --day-close-light-edge: color-mix(in srgb, var(--theme-chrome-bg) 20%, var(--color-white));
+  --day-close-light-hover-bg: var(--color-white);
+  --day-close-blue-bg: color-mix(in srgb, var(--theme-chrome-bg) 86%, var(--color-neutral-650));
+  --day-close-blue-ink: var(--color-white);
+  --day-close-blue-edge: color-mix(in srgb, var(--day-close-blue-bg) 75%, var(--color-white));
+  --day-close-blue-hover-bg: var(--theme-chrome-bg);
+  --day-close-hover-ink: var(--color-accent-600);
+  --day-close-shadow: 0 2px 5px rgb(3 10 28 / 0.12);
+  --day-bar-bg: var(--color-white);
+  --day-bar-edge: var(--theme-chrome-bg);
+  --day-bar-ink: var(--theme-chrome-bg);
+  --day-bar-shadow: 0 6px 18px rgb(3 10 28 / 0.12);
 }
 
 /* On a touch screen nothing is pointed at: the navbar's clouds come only

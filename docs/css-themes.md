@@ -1229,6 +1229,16 @@ its pills.
 
 ## Persistent customer navbar and cloud navigation
 
+Day mobile bar and close controls are scoped in `public/local-controls.css`.
+`--day-bar-bg/edge/ink/shadow` choose its white paper, blue contour and links.
+`images/clouds/nav-bar-engraving.svg` supplies sparse corner/foot hatching;
+the existing rounded geometry, safe-area inset and centred active header link
+are preserved. Day close controls use `--day-close-light-*` on the blue Menu
+and `--day-close-blue-*` for products and cart sheets, with
+`--day-close-hover-ink` for the existing gold pointer state. Their cloud
+pseudo-elements are hidden and their circular targets are 44px. Reduced motion
+omits enlargement. All these overrides exclude dark and ops.
+
 Day navbar branding now follows `--theme-nav-rest-ink`,
 `--theme-nav-pointer-ink` and `--theme-nav-pointer-scale`: the navbar logo
 has no cloud and hides its crown, while the active link's existing crown mask
