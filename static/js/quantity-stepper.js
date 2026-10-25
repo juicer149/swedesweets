@@ -419,6 +419,14 @@
   document.addEventListener("navbar-cart-refreshed", () => {
     document.querySelectorAll("[data-quantity-stepper]").forEach(renderState);
   });
+  // Every cart uses the server-confirmed amount, including unpriced B2B lines.
+  document.addEventListener("cart-changed", event => {
+    const { lineId, payload } = event.detail || {};
+    if (!Number.isInteger(Number(lineId)) || !payload || payload.line_total_label == null) return;
+    for (const total of document.querySelectorAll(`[data-cart-line-total="${Number(lineId)}"]`)) {
+      total.textContent = payload.line_total_label;
+    }
+  });
   document.documentElement.classList.add("cart-controls-ready");
 
   document

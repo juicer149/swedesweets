@@ -257,9 +257,13 @@
       if (wasLocked && refreshedCart) {
         refreshedCart.dataset.cartLocked = "true";
         const trigger = refreshedCart.querySelector("summary");
-        trigger?.setAttribute("aria-disabled", "true");
-        trigger?.setAttribute("tabindex", "-1");
-        trigger?.setAttribute("inert", "");
+        // In the focused flow this summary is a return control, not a second
+        // cart editor. Server-side cart/payment locks still remain in force.
+        if (!document.documentElement.hasAttribute("data-checkout-flow")) {
+          trigger?.setAttribute("aria-disabled", "true");
+          trigger?.setAttribute("tabindex", "-1");
+          trigger?.setAttribute("inert", "");
+        }
       }
       const restoredForm = refreshedCart?.querySelector("[data-checkout-details-form]");
       for (const [name, value] of draft) {

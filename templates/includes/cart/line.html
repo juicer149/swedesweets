@@ -25,9 +25,9 @@
       data-confirmed-quantity="{{ line.quantity }}">
       {% csrf_token %}
       {% if navbar %}
-        {% include "includes/ui/quantity_stepper.html" with id_prefix="navbar-quantity-" id_suffix=line.line_id value=line.quantity compact=True remove_at_min=True only %}
+        {% include "includes/ui/quantity_stepper.html" with id_prefix="navbar-quantity-" id_suffix=line.line_id value=line.quantity compact=True only %}
       {% else %}
-        {% include "includes/ui/quantity_stepper.html" with id_prefix="quantity-" id_suffix=line.line_id value=line.quantity compact=True remove_at_min=True only %}
+        {% include "includes/ui/quantity_stepper.html" with id_prefix="quantity-" id_suffix=line.line_id value=line.quantity compact=True only %}
       {% endif %}
       <span class="visually-hidden" role="status" aria-live="polite" data-current-order-quantity-status></span>
       <noscript><button class="quiet-link" type="submit">{% trans "Update quantity" %}</button></noscript>

@@ -20,6 +20,7 @@ from accounts.roles import AccountRole
 from carts.models import Cart
 from carts.selectors import units_in_cart_by_product_id
 from carts.services import create_cart
+from common.catalog.pagination import catalog_response
 from common.channels import SalesChannel
 from common.http import wants_json
 from products.models import Product
@@ -190,12 +191,10 @@ def product_list(request: HttpRequest):
     )
 
 
-    return render(
+    return catalog_response(
         request,
-        "storefront/catalog/index.html",
-        {
-            "product_cards": product_cards,
-        },
+        template_name="storefront/catalog/index.html",
+        product_cards=product_cards,
     )
 
 

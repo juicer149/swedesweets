@@ -1514,3 +1514,11 @@
 /* The opened product's label stands in a faint light by night (outside
    its edge only; themes/dark.css). */
 .product__label { box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15), var(--catalog-outline-shadow), var(--product-label-glow); }
+
+:root:not([data-theme="dark"]) .tile__in-cart {
+  color: var(--action-primary-text); background: var(--action-primary-bg); border-color: var(--action-primary-border);
+}
+.catalog__pagination { display: flex; justify-content: center; gap: var(--space-6); margin-top: var(--space-8); }
+.catalog__more [data-catalog-load-more] { min-height: 2.75rem; }
+
+.catalog__pagination[hidden] { display: none; }

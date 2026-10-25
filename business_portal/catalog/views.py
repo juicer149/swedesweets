@@ -33,6 +33,7 @@ from business_portal.selectors import (
     get_portal_customer_for_user,
 )
 from carts.selectors import units_in_cart_by_product_id
+from common.catalog.pagination import catalog_response
 from common.http import wants_json
 from products.models import Product
 
@@ -204,12 +205,10 @@ def catalog(request):
     )
 
 
-    return render(
+    return catalog_response(
         request,
-        "business_portal/catalog/index.html",
-        {
-            "product_cards": product_cards,
-        },
+        template_name="business_portal/catalog/index.html",
+        product_cards=product_cards,
     )
 
 

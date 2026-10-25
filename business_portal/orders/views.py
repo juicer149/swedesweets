@@ -169,11 +169,17 @@ def set_cart_line_quantity(
         )
 
         if as_json:
+            current = build_portal_cart_line(
+                cart=line.cart,
+                cart_line_id=line.id,
+                language_code=request.LANGUAGE_CODE,
+            )
             return JsonResponse(
                 {
                     "ok": True,
                     "message": str(message),
                     "quantity": quantity,
+                    "line_total_label": current.line_total_label if current else None,
                 }
             )
 

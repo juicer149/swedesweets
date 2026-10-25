@@ -11,7 +11,7 @@
   <summary
     class="site-nav-cart__trigger menu-dropdown-trigger"
     aria-label="{{ navbar_cart.aria_label }}"
-    {% if navbar_cart_locked %}aria-disabled="true" tabindex="-1" inert{% endif %}
+    {% if navbar_cart_locked and not navbar_cart_current %}aria-disabled="true" tabindex="-1" inert{% endif %}
     {% if navbar_cart_current %}aria-current="page"{% endif %}
   >
     <span

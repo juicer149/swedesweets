@@ -154,6 +154,7 @@ def test_set_cart_line_quantity_returns_json_success(
         "ok": True,
         "message": "Quantity updated.",
         "quantity": 5,
+        "line_total_label": None,
     }
 
     line.refresh_from_db()
@@ -700,3 +701,23 @@ def test_customer_can_remove_cart_line_with_json_response(
     assert not CartLine.objects.filter(
         pk=line_id,
     ).exists()
+
+
+@pytest.mark.django_db
+def test_quantity_response_recalculates_priced_business_line(client):
+    from decimal import Decimal
+
+    from pricing.tests.factories import price_amount_factory
+
+    customer = _login_customer(client=client)
+    product = product_factory(name="Priced Apple")
+    line = _create_cart_line(customer=customer, product=product, quantity=2)
+    price_amount_factory(commercial_price=line.commercial_price, price=Decimal("7.50"))
+    response = client.post(
+        reverse(
+            "business_portal:set_cart_line_quantity", kwargs={"cart_line_id": line.id},
+        ),
+        {"quantity": "5"}, HTTP_ACCEPT="application/json",
+    )
+    assert response.status_code == 200
+    assert response.json()["line_total_label"] == "€37.50"

@@ -900,23 +900,26 @@ directly on the page; only missing product photos keep a placeholder surface.
 `common/cart-panel.css` owns the shared row geometry, responsive cart frame and
 checkout section. `includes/cart/line.html` is used by both cart pages and
 both navbar carts; B2B quick-add search options retain their compact layout.
-The existing quantity stepper gains an opt-in trash at its minimum; other quantity controls keep their existing minimum behaviour.
+Cart steppers stop at one. The existing separate removal form stays visible
+at every quantity; its icon is small while its target remains 44px. Other
+quantity controls keep their existing minimum behaviour.
 
 | Roles | Purpose |
 | --- | --- |
 | `--cart-name`, `--cart-amount`, `--cart-total` | Clickable product name, ordinary amounts, subtotal |
 | `--cart-row-line` | Quiet separator between cart rows and details |
-| `--cart-remove-hover` | Trash at the stepper's minimum |
+| `--cart-remove-hover` | Cart row trash hover |
 | `--cart-disabled-ink`, `--cart-disabled-bg`, `--cart-disabled-border` | Incomplete checkout action |
 | `--menu-backdrop-bg` | Veil behind any open navbar disclosure, both viewport sizes |
 | `--field-focus-color`, `--field-focus-shadow` | Border and diffuse light for focused form inputs and enhanced selects |
 | `--entrance-field-focus-shadow` | Entrance form emission, following its menu accent |
 
-Desktop has a compact quick cart (up to 38rem): product rows, quantity
+Desktop has a responsive quick cart (clamped from 36rem to 64rem): product rows, quantity
 steppers and Go to cart. This opens the real cart page, with contact details
 below the products for retail, or Previous orders/product search for B2B.
 Desktop cart, review and placed share an unframed page surface.
-Both have a cumulative timeline. The full editor uses the same 36rem column as its timeline and customer details. Both
+Both have a cumulative timeline. The full editor expands its rows with the viewport; its timeline and customer
+details keep a 36rem maximum. Both
 email fields share the same width; postal code uses one of four columns and town uses three. Country stays France.
 
 On mobile, `responsive-cart.js` hosts cart, review and placed content in the
@@ -1425,3 +1428,52 @@ cart on desktop too, while `public/navigation.css` hides the page-link strip
 for the focused flow. Quick mobile previews do not change the underlying
 reading page's route/chrome. Mobile Menu switching, fragment replacement,
 resizing and reduced motion retain the shared controller behaviour.
+
+
+## Landing exit and cart return travel
+
+`home-arrival.js` also owns landing-to-navbar (`mode: exit`) and current-cart
+return (`mode: cart`). Matching wordmark/cloud and `home-link-0..3` snapshots
+move into the actual header; labels use 480ms with 50ms offsets, the brand
+650ms, and cart return 360ms. The selected link's own cloud appears after the
+landing exit. Unrelated native transitions are disabled by default. Only a
+recorded journey temporarily opts into cross-document transitions through an
+adopted stylesheet, cleaned after native teardown; fallback animations use
+recorded geometry. This avoids enabling/cancelling transitions for ordinary
+cart, login and account navigation.
+
+`cart-return.js` stores only a same-origin browsing URL, scroll position and
+timestamp in sessionStorage, before opening the cart. Opening/continuing an
+already open preview does not overwrite that origin with its locked scroll.
+The header arrow and current cart summary restore that URL/scroll; bottom
+`data-continue-shopping` links always retain the catalog destination.
+Fragment refresh preserves the current summary as an active return control.
+The existing `data-cart-locked` state still protects order/payment editing.
+
+## Deferred catalog cards and shared cart actions
+
+`common/catalog/pagination.py` is the shared presentation adapter for retail
+and business catalog views. It renders twelve initial cards and a text-only
+`json_script` search index. A bounded `catalog_cards=1&ids=...` GET returns up
+to twelve currently allowed cards, in requested order, with fresh server
+prices/cart counts, CSRF tokens and `private, no-store` cache control. Business
+authentication and sales-channel selectors remain in their original views.
+Without JS, the ordinary page parameter renders a reachable next/previous
+batch. The server still builds catalog view models for the search index;
+this change defers browser card DOM and images rather than claiming database
+query pagination.
+
+`catalog.js` cancels stale filter requests, lazily initializes added card
+forms/selects, keeps loaded cards for reuse and destroys outstanding work on
+page teardown. A load failure retains a manual retry action. Tom Select's
+full offer data is independent of visible catalog cards.
+
+`common/cart-panel.css` owns circular cart pictures, heading alignment,
+responsive row columns and the wider desktop clamp. Mobile puts product text
+above a shared quantity/price row; desktop places all controls on one line.
+Both navbar and page carts expose a separate removal form at every quantity.
+B2B row totals use Decimal prices from the existing presentation contract;
+unpriced offers stay unpriced. Quantity responses carry confirmed totals,
+and `quantity-stepper.js` updates matching totals across cart surfaces.
+Previous-order buttons, product add buttons and the day in-cart badge reference
+the shared `--action-primary-*` roles; night paint keeps its existing roles.

@@ -28,6 +28,12 @@ class BusinessOrderLinePresentation:
     catalog_label: str
     offer_label: str | None
     price_label: str | None
+    unit_price: Decimal | None = None
+
+    def total_label(self, quantity: int) -> str | None:
+        if self.unit_price is None:
+            return None
+        return f"€{self.unit_price * quantity:.2f}"
 
 
 def business_variant_catalog_label(
@@ -100,6 +106,7 @@ def business_cart_line_presentation(
         offer_label=_commercial_price_offer_label(
             commercial_price
         ),
+        unit_price=amount.price if amount is not None else None,
         price_label=_business_price_label(
             (
                 amount.price

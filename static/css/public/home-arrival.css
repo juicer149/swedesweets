@@ -1,6 +1,6 @@
 /* Shared-element travel is only enabled for a day logo's native home link.
    The controller skips every unrelated cross-document transition. */
-@view-transition { navigation: auto; }
+@view-transition { navigation: none; }
 
 .home-flight-source :is(.site-brand, .entrance-header__brand) {
   position: relative;
@@ -51,3 +51,22 @@
   @view-transition { navigation: none; }
   .home-flight-cloud { display: none; }
 }
+
+/* Leaving the landing: the wordmark returns left, words settle in order. */
+.home-flight-source-out .landing__logo-art { view-transition-name: home-wordmark; }
+.landing[data-home-exit] .landing__logo::before { visibility: hidden; }
+.home-flight-exit-target .site-brand { position: relative; isolation: isolate; }
+.home-flight-exit-target .site-nav__link[aria-current="page"]::after { visibility: hidden; }
+.home-flight-exit-target::view-transition-group(root) { z-index: 0; }
+.home-flight-exit-target::view-transition-group(home-cloud) { z-index: 1; animation-duration: 650ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+.home-flight-exit-target::view-transition-group(home-wordmark) { z-index: 2; animation-duration: 650ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+.home-flight-exit-target::view-transition-old(home-cloud) { animation: home-surface-away 180ms 470ms both; width: 100%; height: 100%; }
+.home-flight-exit-target::view-transition-new(home-cloud) { animation: none; opacity: 0; }
+.home-flight-exit-target::view-transition-group(home-link-0),
+.home-flight-exit-target::view-transition-group(home-link-1),
+.home-flight-exit-target::view-transition-group(home-link-2),
+.home-flight-exit-target::view-transition-group(home-link-3) { z-index: 3; animation-duration: 480ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+.home-flight-exit-target::view-transition-group(home-link-1) { animation-delay: 50ms; }
+.home-flight-exit-target::view-transition-group(home-link-2) { animation-delay: 100ms; }
+.home-flight-exit-target::view-transition-group(home-link-3) { animation-delay: 150ms; }
+.cart-flight-target::view-transition-group(cart-return-icon) { animation-duration: 360ms; animation-timing-function: cubic-bezier(.22,.7,.2,1); z-index: 3; }

@@ -45,6 +45,7 @@
     {% endif %}
     <script src="{% static 'js/theme-switch.js' %}" defer></script>
     <script src="{% static 'js/site-menu.js' %}" defer></script>
+    {% if site_zone != "ops" %}<script src="{% static 'js/cart-return.js' %}" defer></script>{% endif %}
     <script src="{% static 'js/language-switch.js' %}" defer></script>
     <link rel="stylesheet" href="{% static site_stylesheet|default:'css/public.css' %}">
   </head>
@@ -74,6 +75,8 @@
         </div>
       </main>
     {% endblock %}
+
+    <span id="site-ready" hidden></span>
 
     {% if show_ops_footer %}
       {% include "includes/ops_footer.html" %}

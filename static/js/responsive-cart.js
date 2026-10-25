@@ -40,7 +40,7 @@
         other.removeAttribute("aria-current"); other.classList.remove("site-nav__link--active");
       }
     }
-    const locked = menu.dataset.cartLocked === "true" && !hosted;
+    const locked = menu.dataset.cartLocked === "true" && !hosted && !fullPage;
     trigger?.toggleAttribute("inert", locked);
     if (locked) { trigger?.setAttribute("aria-disabled", "true"); trigger?.setAttribute("tabindex", "-1"); }
     else { trigger?.removeAttribute("aria-disabled"); trigger?.removeAttribute("tabindex"); }

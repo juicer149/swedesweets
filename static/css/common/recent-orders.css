@@ -151,3 +151,17 @@
   color: var(--text-body);
   font-size: var(--font-size-14);
 }
+
+.recent-order__repeat-button { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; }
+/* All day cart actions share the theme's primary-action paint. */
+:root:not([data-theme="dark"]) :is(.recent-order__repeat-button, .recent-order__add-button) {
+  color: var(--action-primary-text); background: var(--action-primary-bg); border-color: var(--action-primary-border);
+}
+:root:not([data-theme="dark"]) :is(.recent-order__repeat-button, .recent-order__add-button):is(:hover, :focus-visible) {
+  color: var(--action-primary-hover-text); background: var(--action-primary-hover-bg); border-color: var(--action-primary-hover-border);
+}
+@media (max-width: 479px) {
+  .recent-order { --recent-order-button: 2.75rem; }
+  .recent-order__repeat-label { display: none; }
+  .recent-order__repeat-button { width: 2.75rem; min-height: 2.75rem; padding: 0; }
+}

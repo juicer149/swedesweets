@@ -124,13 +124,15 @@ def _assert_no_business_draft_order(
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("params", [{}, {"catalog_cards": "1", "ids": "1"}])
 def test_catalog_requires_login(
     client,
+    params,
 ):
     response = client.get(
         reverse(
             "business_portal:catalog"
-        )
+        ), params,
     )
 
     assert response.status_code == 302

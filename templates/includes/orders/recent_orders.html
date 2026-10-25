@@ -2,7 +2,7 @@
 {% comment %}
   A customer's last few orders, folded twice like the FAQ: "Previous
   orders" opens to one row per order with "Order again" beside it; an
-  order opens to its products, each with a "+" when it can still be
+  order opens to its products, each with a cart action when it can still be
   ordered. Shared by a shop's cart and the ops order form; the CSS is
   recent-orders.css.
 
@@ -10,12 +10,12 @@
                  a line has view (LineView), name, quantity and
                  commercial_price_id (None when it cannot be ordered now)
   mode           "cart": a shop's cart; the buttons post (repeat_url on
-                 the order, add_url for "+"; business_cart.js adds in
+                 the order, add_url for the cart button; business_cart.js adds in
                  place, with a green row flash)
                  "form": the ops order form; the buttons add lines to the
                  form in the page (order_lines.js), each "+" carrying its
                  offer (line.offer: name, meta, offer_detail, image_url)
-  add_url        cart: where "+" posts
+  add_url        cart: where the cart button posts
   csrf_token     cart: the page's token
 {% endcomment %}
 {% if recent_orders %}
@@ -62,7 +62,7 @@
                           data-offer-detail="{{ line.offer.offer_detail }}"
                           data-image="{{ line.offer.image_url|default_if_none:'' }}"
                         >
-                          {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
+                          {% include "includes/ui/icon_block.html" with name="cart" size="sm" only %}
                         </button>
                       </span>
                     {% else %}
@@ -80,7 +80,7 @@
                           aria-label="{{ add_label }}"
                           data-cart-add-button
                         >
-                          {% include "includes/ui/icon_block.html" with name="plus" size="sm" only %}
+                          {% include "includes/ui/icon_block.html" with name="cart" size="sm" only %}
                         </button>
                       </form>
                     {% endif %}
@@ -92,8 +92,8 @@
 
           {% if mode == "form" %}
             <span class="recent-order__repeat">
-              <button class="recent-order__repeat-button" type="button" data-recent-order-repeat>
-                {% trans "Order again" %}
+              <button class="recent-order__repeat-button" aria-label="{% trans 'Order again' %}" type="button" data-recent-order-repeat>
+                {% include "includes/ui/icon_block.html" with name="cart" size="sm" only %}<span class="recent-order__repeat-label">{% trans "Order again" %}</span>
               </button>
             </span>
           {% else %}
@@ -104,8 +104,8 @@
               data-cart-repeat
             >
               {% csrf_token %}
-              <button class="recent-order__repeat-button" type="submit" data-cart-add-button>
-                {% trans "Order again" %}
+              <button class="recent-order__repeat-button" aria-label="{% trans 'Order again' %}" type="submit" data-cart-add-button>
+                {% include "includes/ui/icon_block.html" with name="cart" size="sm" only %}<span class="recent-order__repeat-label">{% trans "Order again" %}</span>
               </button>
             </form>
           {% endif %}

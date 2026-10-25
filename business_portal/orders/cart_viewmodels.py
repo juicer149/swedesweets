@@ -26,6 +26,7 @@ class PortalCartLine:
     quantity: int
     quantity_url: str
     remove_url: str
+    line_total_label: str | None = None
 
     @property
     def presentation(self) -> NavbarCartLine:
@@ -35,9 +36,11 @@ class PortalCartLine:
             product_url=self.product_url,
             image_url=self.image_url,
             metadata=tuple(
-                value for value in (self.offer_label, self.price_label) if value
+                value for value in (self.offer_label,) if value
             ),
             quantity=self.quantity,
+            unit_price_label=self.price_label,
+            line_total_label=self.line_total_label,
             quantity_url=self.quantity_url,
             remove_url=self.remove_url,
         )
@@ -221,6 +224,7 @@ def _build_portal_cart_lines(
                     presentation.price_label
                 ),
                 quantity=line.quantity,
+                line_total_label=presentation.total_label(line.quantity),
                 quantity_url=reverse(
                     "business_portal:set_cart_line_quantity",
                     kwargs={

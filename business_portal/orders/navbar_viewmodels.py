@@ -117,7 +117,6 @@ def _build_business_navbar_cart_line(
         value
         for value in (
             presentation.offer_label,
-            presentation.price_label,
         )
         if value
     )
@@ -152,6 +151,8 @@ def _build_business_navbar_cart_line(
         ),
         metadata=metadata,
         quantity=line.quantity,
+        unit_price_label=presentation.price_label,
+        line_total_label=presentation.total_label(line.quantity),
         image_url=product_image_url(product),
         remove_url=reverse(
             "business_portal:remove_cart_line",

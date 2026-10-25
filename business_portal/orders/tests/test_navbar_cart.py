@@ -210,10 +210,9 @@ def test_navbar_cart_uses_current_batch_offer_metadata(
 
     navbar_line = navbar_cart.lines[0]
 
-    assert navbar_line.metadata == (
-        "Short dated",
-        "€7.50",
-    )
+    assert navbar_line.metadata == ("Short dated",)
+    assert navbar_line.unit_price_label == "€7.50"
+    assert navbar_line.line_total_label == "€15.00"
 
 
 @pytest.mark.django_db

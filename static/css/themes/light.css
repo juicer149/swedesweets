@@ -1324,3 +1324,16 @@
   --action-secondary-hover-text: var(--theme-chrome-bg);
   --action-secondary-hover-border: var(--theme-chrome-bg);
 }
+
+/* Customer cart actions share one primary palette, including product cards. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --catalog-cart-bg: var(--action-primary-bg);
+  --catalog-cart-ink: var(--action-primary-text);
+  --catalog-cart-border: var(--action-primary-border);
+  --catalog-cart-hover-bg: var(--action-primary-hover-bg);
+  --catalog-cart-hover-ink: var(--action-primary-hover-text);
+  --catalog-cart-hover-border: var(--action-primary-hover-border);
+  --catalog-cart-active-bg: var(--action-primary-active-bg);
+  --catalog-cart-active-ink: var(--action-primary-text);
+  --catalog-cart-active-border: var(--action-primary-active-border);
+}

@@ -2316,3 +2316,16 @@ msgstr "Opérations"
 #: templates/storefront/landing.html
 msgid "Make it rain sweets"
 msgstr "Faire pleuvoir des bonbons"
+
+
+msgid "Load more"
+msgstr "Afficher plus"
+
+msgid "Previous"
+msgstr "Précédent"
+
+msgid "Next"
+msgstr "Suivant"
+
+msgid "Could not load products. Try again."
+msgstr "Impossible de charger les produits. Réessayez."

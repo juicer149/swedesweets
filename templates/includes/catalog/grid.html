@@ -13,10 +13,13 @@
 <section
   class="page-section catalog"
   data-public-page="catalog"
+  data-catalog-page-size="{{ catalog_page_size|default:12 }}"
   aria-labelledby="catalog-title"
   data-catalog-added-label="{% trans 'Added' %}"
   data-catalog-error-message="{% trans 'Could not add product.' %}"
+  data-catalog-load-error="{% trans 'Could not load products. Try again.' %}"
 >
+  {{ catalog_index|json_script:"catalog-search-index" }}
   <div class="page catalog__page">
     <h1 id="catalog-title" class="visually-hidden">{{ title }}</h1>
 
@@ -56,14 +59,19 @@
       <div class="catalog__detail" data-catalog-detail hidden></div>
 
       <div class="tiles" aria-label="{% trans 'Products' %}">
-        {% for card in product_cards %}
+        {% for card in initial_product_cards %}
           {% include "includes/catalog/tile.html" with card=card csrf_token=csrf_token only %}
         {% endfor %}
       </div>
 
-      {# The next 24 cards, when this comes into view (catalog.js): the dots, then the crown. #}
+      <nav class="catalog__pagination" data-catalog-pagination aria-label="{% trans 'Products' %}">
+        {% if catalog_previous_page %}<a class="quiet-link" href="?page={{ catalog_previous_page }}">← {% trans "Previous" %}</a>{% endif %}
+        {% if catalog_next_page %}<a class="quiet-link" href="?page={{ catalog_next_page }}">{% trans "Next" %} →</a>{% endif %}
+      </nav>
+      {# The next twelve cards are fetched only near the foot of the wall. #}
       <div class="catalog__more" data-catalog-more hidden>
         <span class="catalog__more-status" data-catalog-more-status></span>
+        <button class="quiet-link" type="button" data-catalog-load-more>{% trans "Load more" %}</button>
       </div>
     {% else %}
       <div class="catalog__empty" role="status">

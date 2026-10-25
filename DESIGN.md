@@ -504,7 +504,8 @@ Detailed mappings are in [CSS themes](docs/css-themes.md).
   sheet with its close circle at the tip; desktop: a centred rectangle with
   a small × in the corner. The FAQ tells customers how to find it.
 - **Navbar cart:** an icon-only disclosure with editable product rows and a
-  quantity stepper. At one item, the minus becomes a trash action. Desktop
+  quantity stepper. The minus stops at one; a separate quiet trash removes
+  the entire product row at any quantity. Desktop
   uses a compact preview with Go to cart in a centred box like the Menu's; the full cart, review and placed
   share unframed pages. Mobile hosts the full flow in the same sliding V-shaped sheet as
   the Menu, with its own scrolling content. Retail details follow
@@ -844,3 +845,32 @@ retyping them. Validation failures do not automatically empty purchase intent.
 Existing pending-payment reconciliation, cart locking and stock checks remain
 in place; a payment with an unknown result must be reconciled before a fresh
 attempt is allowed.
+
+
+### Landing exit, catalog batches and cart rows
+
+Day landing links return the wordmark/cloud to the navbar. The four labels
+shrink into their own slots in top-to-bottom order, with 50ms spacing; the
+chosen page then gets its own engraved cloud. Motion preferences, normal
+links, first visits and night keep their existing behaviour.
+
+The catalog initially renders twelve cards. Its text-only search/category
+index covers all available products; the remaining card HTML is fetched in
+twelve-card batches near the bottom, or when a search needs those products.
+Unloaded cards have no DOM/photos to render or fetch. The cart's Tom Select
+options remain a separate complete data set. Without JavaScript, Previous
+and Next page links keep the catalog reachable.
+
+Cart quantity and server-confirmed row total sit next to each other, with a
+separate small trash icon at the right. A circular picture hangs left of the
+product text; Previous orders headings share that text alignment. Desktop
+cart surfaces/rows grow with a clamp while contact details and the timeline
+retain a readable width. Previous-order add/repeat actions reuse the cart
+icon and day primary-action palette, as does the catalog in-cart badge.
+
+The upper quiet arrow and current cart trigger return to the page and scroll
+position recorded before opening the cart. The lower Continue shopping action
+always opens Shop/Catalog. During either full-page return the real cart icon
+travels back to its normal navbar slot. Closing a quick preview stays on its
+underlying page. Navigation controls never unlock payment/cart mutations or
+retry an order submission.

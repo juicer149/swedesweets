@@ -38,6 +38,7 @@ function initCatalog() {
     catalog.querySelectorAll("select").forEach(select => select.tomselect?.destroy());
     document.documentElement.classList.remove("catalog--detail-open");
     delete catalog.dataset.navigationReady;
+    dispose = () => {};
   };
 
   const tiles = Array.from(
@@ -67,117 +68,98 @@ function initCatalog() {
     return String(value || "").trim().toLocaleLowerCase();
   }
 
-  function tileMatches(tile) {
-    const inCategory = (
-      filter.category === "all"
-      || tile.dataset.productCategory === filter.category
-    );
+  const PAGE_SIZE = Number(catalog.dataset.catalogPageSize) || 12;
+  const batchURL = new URL(location.href);
+  const grid = catalog.querySelector(".tiles");
+  const indexNode = catalog.querySelector("#catalog-search-index");
+  const index = indexNode ? JSON.parse(indexNode.textContent) : tiles.map(tile => ({
+    id: Number(tile.dataset.productId), category: tile.dataset.productCategory, search: tile.dataset.productSearch,
+  }));
+  const loaded = new Map(tiles.map(tile => [Number(tile.dataset.productId), tile]));
+  const unavailable = new Set();
+  let limit = PAGE_SIZE;
+  let generation = 0;
+  let pending = null;
+  let loadingMore = false;
+  let loadFailed = false;
+  const matches = () => index.filter(item => !unavailable.has(item.id)
+    && (filter.category === "all" || item.category === filter.category)
+    && (!filter.query || normalize(item.search).includes(filter.query)));
+  catalog.querySelector("[data-catalog-pagination]")?.setAttribute("hidden", "");
+  cleanups.push(() => pending?.abort());
 
-    const inSearch = (
-      !filter.query
-      || normalize(tile.dataset.productSearch).includes(filter.query)
-    );
-
-    return inCategory && inSearch;
-  }
-
-  /* A page of cards at a time: 24, whole rows of 2, 3 or 4. Every card is
-     on the page (the search and the tabs look through them all); the
-     ones past the page wait hidden until the wall's foot comes into view,
-     then the three dots, the crown, and the next 24. */
-  const PAGE_SIZE = 24;
-  let shownLimit = PAGE_SIZE;
-  let matchingCount = 0;
-
-  function applyFilters({ keepPage = false } = {}) {
-    let visible = 0;
-
-    if (!keepPage) {
-      shownLimit = PAGE_SIZE;
-    }
-
-    for (const tile of tiles) {
-      const matches = tileMatches(tile);
-      const show = matches && visible < shownLimit;
-      tile.hidden = !show;
-      visible += matches ? 1 : 0;
-    }
-
-    matchingCount = visible;
-
-    if (more) {
-      more.hidden = matchingCount <= shownLimit;
-    }
-
-    if (noResults) {
-      noResults.hidden = visible !== 0;
-    }
-
+  async function applyFilters({ keepPage = false } = {}) {
+    const version = ++generation;
+    loadFailed = false;
+    pending?.abort();
+    pending = new AbortController();
+    if (!keepPage) limit = PAGE_SIZE;
+    const selected = matches().slice(0, limit);
+    const desired = new Set(selected.map(item => item.id));
+    for (const tile of tiles) tile.hidden = !desired.has(Number(tile.dataset.productId));
     for (const button of categoryButtons) {
       const active = button.dataset.catalogCategory === filter.category;
       button.classList.toggle("section-nav__link--active", active);
       button.setAttribute("aria-pressed", String(active));
     }
+    catalog.setAttribute("aria-busy", "true");
+    try {
+      const missing = selected.filter(item => !loaded.has(item.id));
+      for (let offset = 0; offset < missing.length; offset += PAGE_SIZE) {
+        const requested = missing.slice(offset, offset + PAGE_SIZE).map(item => item.id);
+        const url = new URL(batchURL);
+        url.search = ""; url.searchParams.set("catalog_cards", "1"); url.searchParams.set("ids", requested.join(","));
+        const response = await fetch(url, { credentials: "same-origin", signal: pending.signal, headers: { Accept: "application/json" } });
+        if (response.redirected) { location.assign(response.url); return; }
+        if (!response.ok) throw new Error("Catalog unavailable");
+        const payload = await response.json();
+        if (version !== generation || !catalog.isConnected) return;
+        const fragment = document.createElement("template"); fragment.innerHTML = payload.html;
+        const added = [...fragment.content.querySelectorAll("[data-catalog-product]")];
+        for (const tile of added) {
+          const id = Number(tile.dataset.productId);
+          if (!requested.includes(id) || loaded.has(id)) continue;
+          loaded.set(id, tile); tiles.push(tile); grid.append(tile);
+          initializeTile(tile); window.enhanceSelects?.(tile);
+        }
+        const returned = new Set(added.map(tile => Number(tile.dataset.productId)));
+        requested.filter(id => !returned.has(id)).forEach(id => unavailable.add(id));
+      }
+      if (version !== generation) return;
+      for (const item of selected) if (loaded.has(item.id)) grid.append(loaded.get(item.id));
+      if (noResults) noResults.hidden = matches().length !== 0;
+      if (more) more.hidden = matches().length <= limit;
+      setFeedback("", { quiet: true });
+    } catch (error) {
+      if (error.name === "AbortError" || version !== generation) return;
+      loadFailed = true;
+      setFeedback(catalog.dataset.catalogLoadError || "Could not load products. Try again.");
+      if (more) more.hidden = false;
+    } finally {
+      if (version === generation) catalog.removeAttribute("aria-busy");
+    }
   }
-
-  for (const button of categoryButtons) {
-    listen(button, "click", () => {
-      filter.category = button.dataset.catalogCategory || "all";
-      applyFilters();
-    });
+  for (const button of categoryButtons) listen(button, "click", () => {
+    filter.category = button.dataset.catalogCategory || "all"; void applyFilters();
+  });
+  if (searchInput) listen(searchInput, "input", () => { filter.query = normalize(searchInput.value); void applyFilters(); });
+  const isAtFoot = () => more && !more.hidden && more.getBoundingClientRect().top < innerHeight + 120;
+  async function showMore() {
+    if (loadFailed) { await applyFilters({ keepPage: true }); return; }
+    if (!catalog.isConnected || loadingMore || catalog.hasAttribute("aria-busy") || matches().length <= limit) return;
+    loadingMore = true; limit += PAGE_SIZE;
+    await applyFilters({ keepPage: true });
+    loadingMore = false;
   }
-
-  if (searchInput) {
-    listen(searchInput, "input", () => {
-      filter.query = normalize(searchInput.value);
-      applyFilters();
-    });
-  }
-
-  applyFilters();
-
-  /* The next page, when the wall's foot comes into view. */
+  const moreButton = catalog.querySelector("[data-catalog-load-more]");
+  if (moreButton) listen(moreButton, "click", () => void showMore());
   if (more && "IntersectionObserver" in window) {
-    let loading = false;
-
-    const showMore = async () => {
-      if (!catalog.isConnected || loading || matchingCount <= shownLimit) {
-        return;
-      }
-
-      loading = true;
-      const place = more.querySelector("[data-catalog-more-status]");
-
-      if (window.statusBurst && place) {
-        // Nothing to fetch: the cards are here; the dots and the crown
-        // say the wall goes on.
-        await window.statusBurst.run(place, "default", () => Promise.resolve());
-      }
-
-      shownLimit += PAGE_SIZE;
-      applyFilters({ keepPage: true });
-      loading = false;
-
-      // Still at the foot (a tall screen): the next one.
-      if (isAtFoot()) {
-        void showMore();
-      }
-    };
-
-    const isAtFoot = () => {
-      const box = more.getBoundingClientRect();
-      return !more.hidden && box.top < window.innerHeight + 200;
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) {
-        void showMore();
-      }
-    }, { rootMargin: "0px 0px 200px 0px" });
-    observer.observe(more);
-    cleanups.push(() => observer.disconnect());
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting) && isAtFoot()) void showMore();
+    }, { rootMargin: "0px 0px 120px 0px" });
+    observer.observe(more); cleanups.push(() => observer.disconnect());
   }
-
+  void applyFilters();
 
   /* Size, how many, then add ------------------------------------------ */
 
@@ -373,9 +355,10 @@ function initCatalog() {
     }
   });
 
+  function initializeTile(tile) {
   /* A narrow card says "Size", not "Choose size" (before the site's
      dropdown takes the select over, on DOMContentLoaded). */
-  for (const select of catalog.querySelectorAll(".tile [data-size-select]")) {
+  for (const select of tile.querySelectorAll("[data-size-select]")) {
     const empty = select.querySelector('option[value=""][data-short]');
     const label = select.closest(".tile__label");
 
@@ -384,7 +367,7 @@ function initCatalog() {
     }
   }
 
-  for (const form of catalog.querySelectorAll("[data-catalog-add-form]")) {
+  for (const form of tile.querySelectorAll("[data-catalog-add-form]")) {
     form.dataset.enhanced = "";
     // The checks are ours (below): the size's select is hidden behind the
     // site's dropdown, which the browser could not point at.
@@ -425,6 +408,9 @@ function initCatalog() {
     });
   }
 
+
+  }
+  tiles.forEach(initializeTile);
 
   /* A card's page, over the catalog ------------------------------------
 

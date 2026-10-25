@@ -5,7 +5,7 @@
 
 {% block content %}
   {% trans "Catalog" as catalog_title %}
-  {% include "includes/catalog/grid.html" with product_cards=product_cards title=catalog_title csrf_token=csrf_token only %}
+  {% include "includes/catalog/grid.html" with product_cards=product_cards initial_product_cards=initial_product_cards catalog_index=catalog_index catalog_page_size=catalog_page_size catalog_previous_page=catalog_previous_page catalog_next_page=catalog_next_page title=catalog_title csrf_token=csrf_token only %}
 {% endblock %}
 
 {% block scripts %}
