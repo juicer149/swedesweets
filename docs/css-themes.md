@@ -44,6 +44,9 @@ removal and the quantity steppers keep their own colours.
 ## Files
 
 - `static/css/tokens.css`: primitive colour scales, sizes, type and timings.
+- `static/css/public/local-controls.css`: customer day section lettering,
+  filter pills and cart/Menu spacing, loaded after shared states and public
+  navigation. All selectors exclude dark and ops.
 - `static/css/themes/light.css`: default semantic colours and the day menu.
 - `static/css/themes/dark.css`: dark palette overrides.
 - `static/css/main.css`: the shared CSS imports.
@@ -63,6 +66,19 @@ dark 22–06. An unknown choice falls back to light. Ops remains light until its
 work pages have been checked for the dark palette.
 
 ## Here, pointer and rest (common/states.css)
+
+Customer day local controls have a scoped override in
+`public/local-controls.css`: section labels use `--day-section-rest-ink`,
+`--day-section-pointer-ink` and `--day-section-here-ink` from light.css.
+Hover/focus and selection use the navbar's 1.035 text scale and optical
+thickening without a background cloud or layout movement. Reduced motion
+keeps the text emphasis without scaling. Filter pills use
+`--day-filter-rest/pointer-ink/bg` and the existing `--action-primary-*`
+roles when selected; their cloud pseudo-element is hidden. These overrides
+take precedence over the older day sky mappings described below. Radio chips,
+status toggles, FAQ, night and ops keep their existing rules.
+The customer day cart/Menu gap is 16px on desktop and 12px on mobile; the
+centred mobile current-page link reserves the additional room.
 
 The navigation has three states, set once per theme and read by every part:
 
@@ -1291,3 +1307,4 @@ the CSS breathing transform and fixed wordmark are preserved. A new press
 restarts from the current height rather than stacking animations. Motion
 preference changes and page exit cancel the hop together with the sweets.
 Night and reduced motion do not hop.
+

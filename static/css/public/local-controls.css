@@ -1,0 +1,101 @@
+/* Customer day controls: local tabs use lettering, filters use pill surfaces.
+   Loaded after shared states. Every rule excludes night and ops. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link {
+  color: var(--day-section-rest-ink);
+  transform: none;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link::before,
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link::after,
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .filter-chips .filter-chip::before {
+  display: none;
+}
+
+/* Paint and transform the label, keeping neighbouring tabs in place. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__label {
+  display: inline-block;
+  transition: transform 180ms ease, text-shadow 180ms ease;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link:focus-visible {
+  color: var(--day-section-pointer-ink);
+  text-shadow: none;
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link:focus-visible .section-nav__label {
+  transform: scale(var(--theme-nav-pointer-scale));
+  text-shadow: 0 0 0.65px currentColor;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link:hover {
+    color: var(--day-section-pointer-ink);
+    text-shadow: none;
+  }
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link:hover .section-nav__label {
+    transform: scale(var(--theme-nav-pointer-scale));
+    text-shadow: 0 0 0.65px currentColor;
+  }
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link:is(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]) {
+  color: var(--day-section-here-ink);
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link:is(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]) .section-nav__label {
+  transform: scale(var(--theme-nav-pointer-scale));
+  text-shadow: 0 0 0.65px currentColor;
+}
+
+/* Keep the existing pill geometry, press feedback and focus outline. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .filter-chips {
+  --filter-chip-text: var(--day-filter-rest-ink);
+  --filter-chip-bg: var(--day-filter-rest-bg);
+  --filter-chip-hover-text: var(--day-filter-pointer-ink);
+  --filter-chip-hover-bg: var(--day-filter-pointer-bg);
+  --filter-chip-active-text: var(--action-primary-text);
+  --filter-chip-active-bg: var(--action-primary-bg);
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .filter-chips .filter-chip:is([aria-current="page"], [aria-pressed="true"]):focus-visible {
+  color: var(--action-primary-hover-text);
+  background: var(--action-primary-hover-bg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .filter-chips .filter-chip:is([aria-current="page"], [aria-pressed="true"]):hover {
+    color: var(--action-primary-hover-text);
+    background: var(--action-primary-hover-bg);
+  }
+}
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__auth {
+  gap: var(--space-4);
+}
+
+@media (max-width: 767px) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__auth {
+    gap: var(--space-3);
+  }
+  /* Reserve the extra gap beside the centred current-page link. */
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-header .site-nav__link[aria-current="page"] {
+    max-width: calc(100vw - 206px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__label {
+    transition: none;
+    transform: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .section-nav__link:is(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]) {
+    text-decoration: underline;
+  }
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .filter-chips .filter-chip:is([aria-current="page"], [aria-pressed="true"]) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}

@@ -1304,7 +1304,8 @@
   color: var(--theme-sky-here-bg);
 }
 
-/* On the page: the chosen one's word plain white on its blue cloud. */
+/* On the page: the chosen one's word plain white on its blue cloud.
+   Customer local navigation and filters override this in local-controls.css. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(
   .section-nav__link:is(.section-nav__link--active, [aria-current="page"], [aria-selected="true"], [aria-pressed="true"]),
   .chip:is([aria-pressed="true"], [aria-current="page"]),
@@ -1322,4 +1323,16 @@
 ) .ui-icon-svg {
   filter: none;
 }
+
+/* Customer day controls only; night and ops keep their existing mappings. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --day-section-rest-ink: var(--theme-sky-rest-ink);
+  --day-section-pointer-ink: var(--theme-chrome-bg);
+  --day-section-here-ink: var(--theme-chrome-bg);
+  --day-filter-rest-ink: var(--theme-sky-rest-ink);
+  --day-filter-rest-bg: var(--color-neutral-200);
+  --day-filter-pointer-ink: var(--text-strong);
+  --day-filter-pointer-bg: var(--color-neutral-300);
+}
+
 

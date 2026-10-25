@@ -714,6 +714,15 @@ or wrong (red), like ops's changed fields, and goes to the first.
 
 ## Remaining design work
 
+Customer day section navigation uses quiet neutral lettering at rest and the
+navbar's brand blue for hover, keyboard focus and the active section. There is
+no blue cloud behind these tabs. Their labels gently enlarge and thicken like
+the navbar's hover lettering, keeping adjacent tabs in place; the active label
+keeps this emphasis. Day filter chips use muted neutral pill surfaces and the
+primary action's blue/white palette when selected. Cart and Menu have more space
+between them on desktop and mobile. These changes apply only to customer day
+pages; the night theme and ops retain their existing appearance.
+
 - Review the full light customer theme using the finished public structure.
 - Review ops work pages before enabling their dark palette; ops remains light.
 - Keep future content and photography changes separate from palette tuning.
@@ -749,3 +758,4 @@ the navbar's primary-50 rest, white hover and slight text growth.
 Clicking the logo releases a bounded shower of engraved sweets and gives
 the day cloud a small hop; keyboard and touch work too. The wordmark stays
 fixed. Reduced motion uses a brief stationary fade.
+
