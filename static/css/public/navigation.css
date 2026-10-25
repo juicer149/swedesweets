@@ -36,6 +36,12 @@
     text-shadow: 0 0 0.65px currentColor;
   }
 }
+/* Give the current desktop page a little more weight than resting links. */
+@media (min-width: 768px) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .site-header .site-nav__link:is(.site-nav__link--active, [aria-current="page"]) > .site-nav__label {
+    font-weight: 800;
+  }
+}
 /* The navbar wordmark shares its neighbours' ink; landing keeps its
    brand cloud. The page's crown is on its current navigation label. */
 :root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand::before {
