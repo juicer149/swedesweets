@@ -790,8 +790,9 @@ Normal navigation, modifier clicks and night retain their existing behaviour.
 In the light customer navbar, available links rest in pale primary-50. Hover
 or keyboard focus turns them white and gently thickens/enlarges the lettering
 without moving adjacent links. The selected engraved cloud stays as designed.
-When changing between Catalog, Find Sweets, FAQ and About, the old cloud folds
-into its word as the new one pops open. The navbar remains in place; fresh page
+When changing between Catalog, Find Sweets, FAQ and About, the old cloud hides
+immediately on activation, before the network response. Navigation has no extra
+animation wait; the new cloud pops open when the page arrives. The navbar remains in place; fresh page
 content appears below it. Mobile places the active link at the header centre, on its day cloud
 (or the existing night light); the other links share the bottom bar. Reduced motion shows the final state directly.
 Ops keeps its work-oriented navigation. Checkout and product-detail transitions

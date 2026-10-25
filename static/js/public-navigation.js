@@ -22,7 +22,6 @@
     const number = parseFloat(value);
     return Number.isFinite(number) ? number * (value.endsWith("ms") ? 1 : 1000) : fallback;
   };
-  const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
   const signature = root => JSON.stringify([
     [...root.querySelectorAll(".site-header .site-nav__link[href]")].map(link => new URL(link.getAttribute("href"), location.origin).pathname),
     root.querySelector("[data-navbar-cart-container]")?.dataset.navbarCartUrl,
@@ -74,6 +73,12 @@
     request?.abort();
     const controller = new AbortController(); request = controller;
     remember(); busy = true; resetAnimation();
+    const motion = document.documentElement.dataset.theme === "light" && !reduced.matches;
+    // Acknowledge navigation before waiting for the server, without delaying it.
+    if (motion) {
+      links.filter(link => link.getAttribute("aria-current") === "page")
+        .forEach(link => link.classList.add("is-nav-leaving"));
+    }
     document.querySelector("main.site-main")?.setAttribute("aria-busy", "true");
     let committed = false;
     try {
@@ -98,14 +103,6 @@
         })) throw new Error("New asset version");
       }
       if (controller.signal.aborted) return;
-      const motion = document.documentElement.dataset.theme === "light" && !reduced.matches;
-      const leaving = links.filter(link => link.getAttribute("aria-current") === "page");
-      if (motion) {
-        leaving.forEach(link => {
-          link.classList.add("is-nav-leaving");
-        });
-        await pause(duration("--public-nav-collapse-time", 180) * 0.6);
-      }
       if (controller.signal.aborted || panelOpen() || (!pop && overlay())) return;
       window.SwedeSweetsCatalog?.destroy();
       window.destroySmoothDetails?.(currentMain);

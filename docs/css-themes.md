@@ -1231,7 +1231,7 @@ its pills.
 
 Day link/trigger artwork is mapped permanently through `--nav-cloud-art`.
 Inactive link pseudo-elements keep their own image but remain transparent;
-departing/arriving classes animate that image without a captured background.
+departing/arriving classes control that image without a captured background.
 This avoids a shared fallback shape during interrupted page transitions.
 
 On mobile, `mobile-menu.js` sets `data-mobile-panel` on the site header and
@@ -1317,10 +1317,10 @@ The navbar logo uses the same movement and retains its blue engraving.
 skips it. Desktop link spacing uses `clamp(0.8rem, 2vw, 2.25rem)` in
 `public/navigation.css`; mobile shares its remaining bottom columns equally.
 
-`--public-nav-collapse-time` (180ms) folds the old cloud towards its word;
-after 60% of that time the new cloud starts its `--public-nav-pop-time`
-(340ms) expansion with a small overshoot. The old SVG paint is retained while
-folding. On mobile, the selected day cloud pops in the header centre,
+The old day cloud hides immediately on activation, before fetching the next
+page, with no collapse animation or artificial navigation delay. The new cloud
+uses `--public-nav-pop-time` (340ms) with a small overshoot. Each link retains
+its own SVG paint. On mobile, the selected day cloud pops in the header centre,
 while the bottom bar stays free of clouds. The original link is positioned
 there with CSS: no duplicate text, routes or navigation controllers. On night,
 the same central position retains the night ink/light instead of a day cloud. Content fades in over `--public-page-reveal-time`
