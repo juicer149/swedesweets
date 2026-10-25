@@ -418,16 +418,3 @@
   outline: 2px solid var(--landing-logo-focus, var(--menu-ink));
   outline-offset: 8px;
 }
-.landing__rain {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  pointer-events: none;
-  overflow: clip;
-}
-.landing__sweet {
-  position: absolute;
-  width: var(--sweet-size);
-  height: var(--sweet-size);
-  pointer-events: none;
-}

@@ -1229,6 +1229,25 @@ its pills.
 
 ## Persistent customer navbar and cloud navigation
 
+Day navbar branding now follows `--theme-nav-rest-ink`,
+`--theme-nav-pointer-ink` and `--theme-nav-pointer-scale`: the navbar logo
+has no cloud and hides its crown, while the active link's existing crown mask
+uses `--brand-crown` (on the centred label on mobile too). Landing branding
+keeps its cloud and crown. Day Menu/cart rest, pointer and open inks share
+those navbar roles on landing as well as regular pages. Current-page triggers
+retain blue ink on their white cloud. Content-only transforms leave hit areas,
+count badges, dropdown anchoring and neighbouring links in place.
+
+`js/candy-rain.js`, loaded only on customer pages from base.html, owns the
+shared landing/current-link candy effect; landing.js owns menu keys only.
+Asset URLs come from Django's static tag on the script. Delegated clicks only
+intercept an unmodified click on the current same-page navbar link, outside
+panels, overlays and pending navigation. Each click adds up to seven sweets,
+with a shared cap of 48, and nudges the cloud pseudo-element while its word
+stays fixed. Reduced motion uses three stationary fades with no hop. Active
+animations are cleaned up on pagehide, public-page-ready, motion preference
+changes and switching away from day. The night palette is unchanged.
+
 `public/navigation.css` is imported only by public.css. Light's navbar uses
 `--theme-nav-rest-ink` (primary-50) and `--theme-nav-pointer-ink` (white), with
 `--theme-nav-pointer-scale` (1.035) and a slight painted thickening. Transforms
@@ -1307,4 +1326,3 @@ the CSS breathing transform and fixed wordmark are preserved. A new press
 restarts from the current height rather than stacking animations. Motion
 preference changes and page exit cancel the hop together with the sweets.
 Night and reduced motion do not hop.
-

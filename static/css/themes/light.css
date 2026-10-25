@@ -1102,14 +1102,22 @@
    ============================================================================= */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
   --marker-crown: transparent;
-  --logo-rest-ink: var(--theme-logo-ink);
-  --logo-rest-crown-opacity: 1;
-  --logo-pointer-ink: var(--theme-logo-pointer-ink);
+  --logo-rest-ink: var(--theme-nav-rest-ink);
+  --logo-rest-crown-opacity: 0;
+  --logo-pointer-ink: var(--theme-nav-pointer-ink);
   --logo-pointer-filter: none;
   --logo-here-ink: var(--theme-logo-ink);
   --logo-here-pointer-ink: var(--theme-logo-pointer-ink);
   --logo-here-filter: none;
   --landing-logo-halo: none;
+  /* Shared day chrome inks, including Menu/cart on the start page.
+     Current-page controls retain their blue engraving on white clouds. */
+  --nav-cart-rest-ink: var(--theme-nav-rest-ink);
+  --menu-cart-ink: var(--theme-nav-rest-ink);
+  --menu-cart-ink-hover: var(--theme-nav-pointer-ink);
+  --preferences-trigger-ink: var(--theme-nav-rest-ink);
+  --nav-trigger-pointer-ink: var(--theme-nav-pointer-ink);
+  --nav-trigger-open-ink: var(--theme-nav-pointer-ink);
   /* pointed at: the darkest blue, no cloud */
   --nav-link-pointer-glow: none;
   --nav-trigger-pointer-glow: none;
@@ -1334,5 +1342,3 @@
   --day-filter-pointer-ink: var(--text-strong);
   --day-filter-pointer-bg: var(--color-neutral-300);
 }
-
-

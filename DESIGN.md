@@ -740,6 +740,16 @@ completed progress remains green in both themes.
 
 ## Customer navbar transitions
 
+By day the navbar wordmark has no cloud or crown: it rests in the same pale
+blue as the links and turns white with their gentle enlargement and optical
+thickening on hover/focus. Landing keeps its existing logo cloud and crown.
+The gold crown marks the current navbar destination, including its centred
+label on phones. Menu and cart share the links' pale rest and white pointer
+colours on both landing and normal pages; their current-page clouds keep blue
+ink for contrast. Repeated activation of the current navbar link releases the
+same bounded candy shower and cloud hop as the landing logo, without reloading.
+Normal navigation, modifier clicks and night retain their existing behaviour.
+
 In the light customer navbar, available links rest in pale primary-50. Hover
 or keyboard focus turns them white and gently thickens/enlarges the lettering
 without moving adjacent links. The selected engraved cloud stays as designed.
@@ -758,4 +768,3 @@ the navbar's primary-50 rest, white hover and slight text growth.
 Clicking the logo releases a bounded shower of engraved sweets and gives
 the day cloud a small hop; keyboard and touch work too. The wordmark stays
 fixed. Reduced motion uses a brief stationary fade.
-

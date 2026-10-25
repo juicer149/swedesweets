@@ -25,16 +25,59 @@
     text-shadow: 0 0 0.65px currentColor;
   }
 }
-/* The brand's cloud catches the same breeze; its engraving stays blue. */
-:root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand {
-  --logo-pointer-ink: var(--logo-rest-ink);
+/* The navbar wordmark shares its neighbours' ink; landing keeps its
+   brand cloud. The page's crown is on its current navigation label. */
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand::before {
+  display: none;
 }
-:root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand:focus-visible::before {
-  animation: nav-cloud-sway var(--theme-nav-cloud-sway-time) ease-in-out infinite;
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand .brand-logo__wordmark {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill 180ms ease, transform 180ms ease, filter 180ms ease;
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-header .site-nav__label::before,
+:root[data-theme="light"]:not([data-site-zone="ops"]) .menu-dropdown-trigger__crown::before {
+  background: var(--brand-crown);
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand:focus-visible .brand-logo__wordmark {
+  transform: scale(var(--theme-nav-pointer-scale));
+  filter: drop-shadow(0 0 0.35px currentColor);
 }
 @media (hover: hover) and (pointer: fine) {
-  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand:hover::before {
-    animation: nav-cloud-sway var(--theme-nav-cloud-sway-time) ease-in-out infinite;
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand:hover .brand-logo__wordmark {
+    transform: scale(var(--theme-nav-pointer-scale));
+    filter: drop-shadow(0 0 0.35px currentColor);
+  }
+}
+
+/* Menu and cart use the same rest/pointer roles on landing and in the
+   navbar. Scale their contents so dropdown and cloud geometry stay fixed. */
+:root[data-theme="light"]:not([data-site-zone="ops"]) :is(.menu-dropdown-trigger, .landing__cart-link):not([aria-current="page"]) {
+  color: var(--theme-nav-rest-ink);
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) :is(.menu-dropdown-trigger, .landing__cart-link):not([aria-current="page"]):focus-visible,
+:root[data-theme="light"]:not([data-site-zone="ops"]) details[open] > .menu-dropdown-trigger:not([aria-current="page"]) {
+  color: var(--theme-nav-pointer-ink);
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .menu-dropdown-trigger[aria-current="page"]:is(:hover, :focus-visible) {
+  color: var(--nav-trigger-here-ink);
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) :is(.menu-dropdown-trigger, .landing__cart-link) > :is(.ui-icon-svg, .site-nav-cart__icon, .site-menu__trigger-label) {
+  transition: transform 180ms ease, text-shadow 180ms ease, filter 180ms ease;
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) :is(.menu-dropdown-trigger, .landing__cart-link):not([aria-current="page"]):focus-visible > :is(.ui-icon-svg, .site-nav-cart__icon, .site-menu__trigger-label) {
+  transform: scale(var(--theme-nav-pointer-scale));
+  text-shadow: 0 0 0.65px currentColor;
+  filter: drop-shadow(0 0 0.35px currentColor);
+}
+@media (hover: hover) and (pointer: fine) {
+  :root[data-theme="light"]:not([data-site-zone="ops"]) :is(.menu-dropdown-trigger, .landing__cart-link):not([aria-current="page"]):hover {
+    color: var(--theme-nav-pointer-ink);
+  }
+  :root[data-theme="light"]:not([data-site-zone="ops"]) :is(.menu-dropdown-trigger, .landing__cart-link):not([aria-current="page"]):hover > :is(.ui-icon-svg, .site-nav-cart__icon, .site-menu__trigger-label) {
+    transform: scale(var(--theme-nav-pointer-scale));
+    text-shadow: 0 0 0.65px currentColor;
+    filter: drop-shadow(0 0 0.35px currentColor);
   }
 }
 /* Extra breathing room on desktop; the mobile bar keeps equal columns. */
@@ -89,6 +132,10 @@
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link[aria-current="page"]::after { animation: none !important; }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand::before { animation: none !important; }
   .site-nav__link.is-nav-leaving::after, .site-nav__link.is-nav-arriving::after { animation: none !important; }
+  :root[data-theme="light"]:not([data-site-zone="ops"]) :is(.site-brand .brand-logo__wordmark, .menu-dropdown-trigger > .ui-icon-svg, .menu-dropdown-trigger > .site-nav-cart__icon, .menu-dropdown-trigger > .site-menu__trigger-label, .landing__cart-link > .site-nav-cart__icon) {
+    transition: none;
+    transform: none !important;
+  }
 }
 
 /* The current customer destination occupies the header's centre on phones.
@@ -126,6 +173,14 @@
     height: auto;
     opacity: 1;
   }
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header .site-nav__link[aria-current="page"] > .site-nav__label::before {
+    content: "";
+    display: block;
+    width: 0.85em;
+    height: 0.85em;
+    top: -0.65em;
+    right: -0.65em;
+  }
   :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"].is-nav-arriving::after {
     animation: nav-cloud-pop var(--public-nav-pop-time) cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
@@ -156,4 +211,22 @@
 }
 @media (prefers-reduced-motion: reduce) {
   :root[data-theme="light"] .landing-menu__text { transition: none; transform: none !important; }
+}
+
+/* Shared with landing; fixed above the header, without taking pointer input. */
+:root[data-theme="light"]:not([data-site-zone="ops"]) .candy-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  pointer-events: none;
+  overflow: clip;
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .candy-rain__sweet {
+  position: absolute;
+  width: var(--sweet-size);
+  height: var(--sweet-size);
+  pointer-events: none;
+}
+:root:not([data-theme="light"]) .candy-rain {
+  display: none;
 }
