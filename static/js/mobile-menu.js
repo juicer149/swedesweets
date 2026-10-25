@@ -71,11 +71,12 @@
 
     const viewport = covered.querySelector(".mobile-menu-viewport");
     const top = document.querySelector(".site-header, .entrance-header, .landing__top");
-    const nav = document.querySelector(".site-nav__links:not(.site-nav__links--empty)");
-    const bottom = nav && nav.getClientRects().length && getComputedStyle(nav).position === "fixed"
-      ? innerHeight - nav.getBoundingClientRect().top + 8 : 12;
+    // The bottom navbar is hidden while a sheet is open. Fill its space;
+    // only reserve the part outside the visible viewport (e.g. a keyboard).
+    const visible = window.visualViewport;
+    const bottom = visible ? Math.max(0, innerHeight - visible.height - visible.offsetTop) : 0;
     viewport.style.setProperty("--mobile-menu-top", `${Math.max(0, top?.getBoundingClientRect().bottom || 0)}px`);
-    viewport.style.setProperty("--mobile-menu-bottom", `${bottom}px`);
+    viewport.style.setProperty("--mobile-menu-viewport-bottom", `${bottom}px`);
     for (const element of document.querySelectorAll("main, footer, .landing__stage, .landing__bottom, .catalog__detail")) {
       if (!element.contains(covered) && !covered.contains(element)) {
         inertBefore.set(element, element.inert);
@@ -216,5 +217,6 @@
   reducedMotion.addEventListener("change", () => { if (reducedMotion.matches) motion?.finish(); });
   window.addEventListener("resize", sync);
   window.visualViewport?.addEventListener("resize", sync);
+  window.visualViewport?.addEventListener("scroll", sync);
   window.addEventListener("pageshow", sync);
 })();

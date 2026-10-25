@@ -481,7 +481,9 @@ Detailed mappings are in [CSS themes](docs/css-themes.md).
   the bottom bar. The header edge is independent of selection (`--menu-edge`).
   The Menu and the cart open as full-height sheets below the top bar, hiding
   the covered page/footer and keeping the page's scroll position. Their
-  V-shaped lower edge meets a 44px close circle. On desktop they are centred
+  V-shaped lower edge meets a 44px close circle. Mobile sheets use the visible
+  viewport down to a small safe-area-aware bottom margin; they do not reserve
+  space for the hidden bottom navbar. Long content scrolls inside that frame. On desktop they are centred
   rounded boxes over the dimmed, softly blurred page. Mobile sheets hide the
   page links; the logo and header buttons stay available, the open one lit
   gold. The close/back circle returns to the page.
@@ -489,7 +491,7 @@ Detailed mappings are in [CSS themes](docs/css-themes.md).
 - **Menu:** three lines (and "Menu" from 768px up) open a pause-menu panel
   with a fixed title. The Menu level: Profile, Order history for business
   customers, Settings ›, Log out (CSRF-protected POST) or Login, and a
-  quieter Return; staff switch views in the top left corner ("View" over
+  quieter Return on desktop (mobile uses the close circle); staff switch views in the top left corner ("View" over
   the house and the wrench, the current one filled). In Settings the choice
   in use is gold ("here"); the one pointed at is moonlight by night (gold with the crown by day).
   The page behind is dimmed and softly blurred. The Settings level: English/Français and the sun/moon theme (the

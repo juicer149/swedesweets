@@ -61,11 +61,13 @@
 
 @media (max-width: 767px) {
   html.mobile-menu-open { overflow: hidden; }
+  /* The cross replaces Return on phones, including the Settings level. */
+  .site-menu .site-menu__return { display: none; }
   details[open] > .mobile-menu-viewport {
     display: block;
     position: fixed;
     z-index: 130;
-    inset: var(--mobile-menu-top, 4rem) 0 var(--mobile-menu-bottom, 6rem);
+    inset: var(--mobile-menu-top, 4rem) 0 calc(var(--mobile-menu-viewport-bottom, 0px) + max(0.75rem, env(safe-area-inset-bottom, 0px)));
     overflow: hidden;
     pointer-events: none;
   }
@@ -80,7 +82,7 @@
     --mobile-menu-edge: var(--preferences-border);
     position: fixed;
     z-index: 130;
-    inset: var(--mobile-menu-top, 4rem) 0 var(--mobile-menu-bottom, 6rem);
+    inset: var(--mobile-menu-top, 4rem) 0 calc(var(--mobile-menu-viewport-bottom, 0px) + max(0.75rem, env(safe-area-inset-bottom, 0px)));
     width: auto;
     max-width: none;
     padding: clamp(0.75rem, 4dvh, 2rem) var(--space-6) 4.5rem;
