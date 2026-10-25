@@ -1,4 +1,4 @@
-/* The top return goes to the browsing page; the bottom action always browses
+/* The current cart icon returns to the browsing page; the bottom action browses
    the channel's catalog. An order/payment POST is never cancelled or replayed. */
 (() => {
   "use strict";
@@ -18,20 +18,15 @@
   }
   function update() {
     const trigger = document.querySelector(".site-nav-cart > summary");
-    const backLabel = document.querySelector("[data-cart-return]")?.getAttribute("aria-label");
+    const backLabel = document.querySelector("[data-continue-shopping]")?.textContent.trim();
     if (trigger) {
       trigger.dataset.cartLabel ||= trigger.getAttribute("aria-label") || "";
       trigger.setAttribute("aria-label", root.hasAttribute("data-checkout-flow") && backLabel ? backLabel : trigger.dataset.cartLabel);
-    }
-    for (const link of document.querySelectorAll("[data-cart-return]")) {
-      link.dataset.fallback ||= link.href;
-      link.href = origin()?.url || link.dataset.fallback;
     }
   }
   document.addEventListener("click", event => {
     if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     const summary = event.target.closest('.site-nav-cart > summary');
-    const arrow = event.target.closest("[data-cart-return]");
     const bottom = event.target.closest("[data-continue-shopping]");
     const entry = event.target.closest(".landing__cart-link, a[href]");
     const cart = document.querySelector('.site-nav-cart[data-cart-page-url]');
@@ -39,16 +34,11 @@
       if (summary || entry?.matches(".landing__cart-link") || (entry && new URL(entry.href).pathname === cart?.dataset.cartPageUrl)) remember();
     }
     const fullFlow = root.hasAttribute("data-checkout-flow");
-    if ((!summary || !fullFlow) && !arrow && !bottom) return;
+    if ((!summary || !fullFlow) && !bottom) return;
     if (window.SwedeSweets?.orderFlow?.busy()) { event.preventDefault(); event.stopImmediatePropagation(); return; }
-    if (arrow && !fullFlow && cart?.open) {
-      event.preventDefault(); event.stopImmediatePropagation();
-      document.dispatchEvent(new CustomEvent("mobile-menu-request", { detail: { key: null, restoreFocus: true } }));
-      return;
-    }
     const saved = origin();
-    const back = document.querySelector("[data-cart-return]");
-    const destination = bottom?.href || saved?.url || back?.dataset.fallback || back?.href;
+    const fallback = document.querySelector("[data-cart-return-url]")?.dataset.cartReturnUrl || cart?.dataset.cartPageUrl;
+    const destination = bottom?.href || saved?.url || fallback;
     if (!destination) return;
     event.preventDefault(); event.stopImmediatePropagation();
     window.SwedeSweetsHomeTravel?.cartReturn(destination, bottom ? null : saved?.scroll);

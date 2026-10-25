@@ -33,10 +33,6 @@
         {% include "includes/ui/logo.html" with class_name="site-brand__logo" decorative=True only %}
       </a>
 
-      <a class="site-nav__back" data-cart-return href="{% if navbar_cart.is_retail %}{% url 'storefront:product_list' %}{% else %}{% url 'business_portal:catalog' %}{% endif %}" aria-label="{% trans 'Continue shopping' %}">
-        {% include "includes/ui/icon_block.html" with name="arrow-return" size="sm" only %}
-      </a>
-
       <div class="site-nav__content">
         {% if primary_nav_items %}
           <div

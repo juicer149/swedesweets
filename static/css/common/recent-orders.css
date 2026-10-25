@@ -153,12 +153,12 @@
 }
 
 .recent-order__repeat-button { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; }
-/* All day cart actions share the theme's primary-action paint. */
-:root:not([data-theme="dark"]) :is(.recent-order__repeat-button, .recent-order__add-button) {
-  color: var(--action-primary-text); background: var(--action-primary-bg); border-color: var(--action-primary-border);
+/* Customer add/repeat controls follow the shared secondary palette. */
+:root:not([data-site-zone="ops"]) :is(.recent-order__repeat-button, .recent-order__add-button) {
+  color: var(--action-secondary-text); background: var(--action-secondary-bg); border-color: var(--action-secondary-border);
 }
-:root:not([data-theme="dark"]) :is(.recent-order__repeat-button, .recent-order__add-button):is(:hover, :focus-visible) {
-  color: var(--action-primary-hover-text); background: var(--action-primary-hover-bg); border-color: var(--action-primary-hover-border);
+:root:not([data-site-zone="ops"]) :is(.recent-order__repeat-button, .recent-order__add-button):is(:hover, :focus-visible) {
+  color: var(--action-secondary-hover-text); background: var(--action-secondary-hover-bg); border-color: var(--action-secondary-hover-border);
 }
 @media (max-width: 479px) {
   .recent-order { --recent-order-button: 2.75rem; }

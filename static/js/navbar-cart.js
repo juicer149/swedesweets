@@ -544,8 +544,7 @@
   );
 
 
-  /* A little jump and a flash of the cart button (navigation.css): green
-     when something just went into it, red when something went out. */
+  /* Brief shake and themed icon light; keep the active cloud intact. */
   function bumpCart(kind = "added") {
     const trigger = cartTriggerElement();
 

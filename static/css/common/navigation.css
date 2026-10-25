@@ -326,10 +326,8 @@
   outline-offset: 4px;
 }
 
-/* Something just went into the cart (catalog "+ Add"): a little jump,
-   and a light green flash of the button, its icon and its count, the
-   green of the tick that was pressed and the cart that grew in. Something
-   went out (a bin, here or on the cart's page): the same in red. */
+/* Additions shake briefly and light the icon in the theme feedback colour.
+   Removal uses the same motion with danger ink. Keep the cloud intact. */
 .site-nav-cart__trigger {
   --cart-flash: var(--menu-cart-feedback-added-ink);
   --cart-flash-bg: var(--color-action-deliver-light-bg);
@@ -350,11 +348,8 @@
   animation: site-nav-cart-count-flash 1.6s ease-out;
 }
 
-.site-nav-cart__trigger.is-bumped::before {
-  animation: var(--menu-cart-feedback-halo-animation, none);
-  background: var(--menu-cart-feedback-halo, var(--menu-dropdown-glow));
-  filter: var(--menu-cart-feedback-halo-filter, var(--menu-dropdown-glow-filter));
-}
+/* Never animate the cloud's opacity/background: it shares this pseudo-element.
+   The real cart icon carries the temporary light instead. */
 
 .site-nav-cart__trigger.is-bumped .ui-icon-svg {
   animation: var(--menu-cart-feedback-icon-animation, none);
@@ -374,6 +369,7 @@
 
 @keyframes site-nav-cart-glow-icon {
   12%, 35% {
+    color: var(--cart-flash);
     filter: var(--menu-cart-feedback-icon-filter);
   }
 }
@@ -415,8 +411,9 @@
 
 @keyframes site-nav-cart-bump {
   0% { transform: scale(1); }
-  35% { transform: scale(1.18) rotate(-6deg); }
-  70% { transform: scale(0.96) rotate(3deg); }
+  25% { transform: translateX(-2px) rotate(-4deg); }
+  55% { transform: translateX(2px) rotate(3deg); }
+  80% { transform: translateX(-1px) rotate(-1deg); }
   100% { transform: scale(1); }
 }
 

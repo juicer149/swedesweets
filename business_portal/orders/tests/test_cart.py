@@ -222,7 +222,8 @@ def test_cart_review_lists_lines_with_quantity_and_actions(
     assert response.context["navbar_cart_locked"] is True
     assert 'data-order-progress="review"' in content
     assert content.count('class="order-progress__step is-lit"') == 2
-    assert 'data-cart-return' in content
+    assert 'class="site-nav__back"' not in content
+    assert 'class="site-nav-cart__trigger menu-dropdown-trigger"' in content
     assert 'aria-disabled="true" tabindex="-1" inert' not in content
     assert 'value="place_order"' in content
     assert 'value="clear_cart"' in content

@@ -38,7 +38,7 @@
   --interaction-glow-strength: 0.85;
 
   /* # Primary buttons: the night sky, gold; moonlit when pointed at */
-  --theme-action-bg: var(--color-primary-1000);
+  --theme-action-bg: var(--surface-bg);
   --theme-action-ink: var(--state-here-ink);
   --theme-action-pointer-ink: var(--state-pointer-ink);
   --theme-action-pressed-ink: var(--state-here-ink);
@@ -249,7 +249,7 @@
   --menu-cart-ink: var(--moonlight);
   /* Feedback has no circular fill/ring: a coloured icon lights the space behind it. */
   --menu-cart-feedback-animation: site-nav-cart-glow;
-  --menu-cart-feedback-added-ink: var(--color-green-400);
+  --menu-cart-feedback-added-ink: var(--moonlight);
   --menu-cart-feedback-removed-ink: var(--color-red-400);
   --menu-cart-feedback-count-ink: var(--color-primary-950);
   --menu-cart-feedback-halo-animation: site-nav-cart-glow-halo 1.6s ease-out;
@@ -426,7 +426,7 @@
   --catalog-cart-active-border: var(--selected-accent);
 
   /* Success burst and destructive feedback keep their existing shade/intensity */
-  --catalog-burst-success: var(--color-status-success-text);
+  --catalog-burst-success: var(--moonlight);
   --catalog-burst-error: #e45f5f;
   --catalog-burst-halo: rgb(36 143 78 / 0.28);
   --cart-remove-ink: #dc5a5a;
@@ -573,4 +573,21 @@
   --chip-here-glow: color-mix(in srgb, var(--state-here-ink) 28%, transparent);
   --chip-pointer-ink: var(--state-pointer-ink);
   --chip-pointer-glow: color-mix(in srgb, var(--state-pointer-ink) 18%, transparent);
+}
+
+/* Secondary cart actions follow the same blue surface as the quantity stepper. */
+:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  --action-secondary-bg: var(--surface-bg);
+  --action-secondary-text: var(--interactive-text);
+  --action-secondary-border: var(--interactive-border);
+  --action-secondary-hover-bg: var(--surface-hover);
+  --action-secondary-hover-text: var(--selected-accent);
+  --action-secondary-hover-border: var(--selected-accent);
+  --catalog-cart-bg: var(--action-secondary-bg);
+  --catalog-cart-ink: var(--action-secondary-text);
+  --catalog-cart-border: var(--action-secondary-border);
+  --catalog-cart-hover-bg: var(--action-secondary-hover-bg);
+  --catalog-cart-hover-ink: var(--action-secondary-hover-text);
+  --catalog-cart-hover-border: var(--action-secondary-hover-border);
+  --catalog-burst-halo: color-mix(in srgb, var(--moonlight) 30%, transparent);
 }

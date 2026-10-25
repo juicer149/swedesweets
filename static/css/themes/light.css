@@ -362,11 +362,9 @@
   --menu-cart-count-ink: var(--color-primary-950);
   --menu-cart-count-bg: var(--color-accent-600);
 
-  /* Added/removed feedback: light keeps the filled flash; dark emits light. */
-  /* Added/removed: the icon lights up green or red with a soft light round
-     it, as by night; the lighter greens and reds show on the blue. */
+  /* Additions light the cart gold; removal keeps danger ink. */
   --menu-cart-feedback-animation: site-nav-cart-glow;
-  --menu-cart-feedback-added-ink: var(--color-green-300);
+  --menu-cart-feedback-added-ink: var(--color-accent-600);
   --menu-cart-feedback-removed-ink: var(--color-red-300);
   --menu-cart-feedback-count-ink: var(--color-primary-950);
   --menu-cart-feedback-halo-animation: site-nav-cart-glow-halo 1.6s ease-out;
@@ -644,9 +642,9 @@
   --catalog-cart-hover-border: var(--catalog-cart-border);
   --catalog-cart-active-ink: var(--catalog-cart-hover-ink);
   --catalog-cart-active-border: var(--catalog-cart-hover-border);
-  --catalog-burst-success: var(--color-action-deliver);
+  --catalog-burst-success: var(--color-accent-600);
   --catalog-burst-error: var(--color-action-danger-on-light);
-  --catalog-burst-halo: color-mix(in srgb, var(--color-action-deliver) 40%, transparent);
+  --catalog-burst-halo: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
 
   /* Cart page and navbar dropdown only; preserve other delete controls. */
   --cart-remove-ink: var(--color-red-600);
@@ -1317,23 +1315,23 @@
 /* Secondary action: pale blue paper with brand-blue ink/edge. Shared by
    quiet day actions such as the product-detail return control. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
-  --action-secondary-bg: var(--color-primary-50);
+  --action-secondary-bg: var(--theme-nav-rest-ink);
   --action-secondary-text: var(--theme-chrome-bg);
   --action-secondary-border: var(--theme-chrome-bg);
-  --action-secondary-hover-bg: color-mix(in srgb, var(--color-primary-50) 55%, var(--color-white));
-  --action-secondary-hover-text: var(--theme-chrome-bg);
+  --action-secondary-hover-bg: var(--theme-chrome-bg);
+  --action-secondary-hover-text: var(--color-accent-600);
   --action-secondary-hover-border: var(--theme-chrome-bg);
 }
 
-/* Customer cart actions share one primary palette, including product cards. */
+/* Customer add controls use the shared secondary action palette. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
-  --catalog-cart-bg: var(--action-primary-bg);
-  --catalog-cart-ink: var(--action-primary-text);
-  --catalog-cart-border: var(--action-primary-border);
-  --catalog-cart-hover-bg: var(--action-primary-hover-bg);
-  --catalog-cart-hover-ink: var(--action-primary-hover-text);
-  --catalog-cart-hover-border: var(--action-primary-hover-border);
-  --catalog-cart-active-bg: var(--action-primary-active-bg);
-  --catalog-cart-active-ink: var(--action-primary-text);
-  --catalog-cart-active-border: var(--action-primary-active-border);
+  --catalog-cart-bg: var(--action-secondary-bg);
+  --catalog-cart-ink: var(--action-secondary-text);
+  --catalog-cart-border: var(--action-secondary-border);
+  --catalog-cart-hover-bg: var(--action-secondary-hover-bg);
+  --catalog-cart-hover-ink: var(--action-secondary-hover-text);
+  --catalog-cart-hover-border: var(--action-secondary-hover-border);
+  --catalog-cart-active-bg: var(--action-secondary-hover-bg);
+  --catalog-cart-active-ink: var(--action-secondary-hover-text);
+  --catalog-cart-active-border: var(--action-secondary-hover-border);
 }

@@ -866,7 +866,7 @@ separate small trash icon at the right. A circular picture hangs left of the
 product text; Previous orders headings share that text alignment. Desktop
 cart surfaces/rows grow with a clamp while contact details and the timeline
 retain a readable width. Previous-order add/repeat actions reuse the cart
-icon and day primary-action palette, as does the catalog in-cart badge.
+icon and shared secondary-action palette, as does the catalog in-cart badge.
 
 The upper quiet arrow and current cart trigger return to the page and scroll
 position recorded before opening the cart. The lower Continue shopping action
@@ -874,3 +874,11 @@ always opens Shop/Catalog. During either full-page return the real cart icon
 travels back to its normal navbar slot. Closing a quick preview stays on its
 underlying page. Navigation controls never unlock payment/cart mutations or
 retry an order submission.
+
+Customer cart additions (including Previous orders and catalog in-cart badges)
+use the theme secondary action: pale blue/blue by day, stepper-blue/pale ink
+by night, with gold hover emphasis. Night primary actions keep gold ink and
+edges on the same blue surface as quantity controls. Cart feedback briefly
+shakes and lights its icon (gold by day, moonlight by night), preserving the
+active cloud. Search and Previous orders retain the standard content width;
+only current cart product rows widen moderately, with controls at the right.

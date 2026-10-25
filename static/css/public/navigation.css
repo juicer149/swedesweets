@@ -365,8 +365,3 @@
 @media (prefers-reduced-motion: reduce) {
   :root[data-checkout-flow] .site-header .menu-dropdown-trigger { transition: none; }
 }
-
-.site-nav__back { display: none; color: var(--text-muted); text-decoration: none; }
-:root[data-checkout-flow] .site-nav__back,
-:root:has(.site-nav-cart[open]) .site-nav__back { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 2.5rem; min-height: 2.75rem; color: var(--theme-nav-rest-ink, var(--menu-ink)); }
-.site-nav__back:is(:hover, :focus-visible) { color: var(--theme-nav-pointer-ink, var(--menu-chosen)); }

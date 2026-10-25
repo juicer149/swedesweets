@@ -330,7 +330,7 @@
 .cart-panel-scroll > .order-flow-page > .page.order-flow-surface { padding: var(--space-6) 0 0; }
 
 .cart-line .quantity-stepper__button:active:not(:disabled) { color: var(--cart-control-active, var(--menu-chosen)); }
-.cart-line .quantity-stepper.is-minimum [data-quantity-decrease] { color: var(--cart-remove-ink); }
+
 .order-flow-page .line__name { color: var(--cart-name); }
 
 /* The outer scrollport bounds the sheet. Its inner page must not cut a row's
@@ -346,20 +346,20 @@
   --cart-picture: clamp(2.5rem, 4vw, 3.5rem);
   --cart-row-gap: clamp(.75rem, 1.5vw, 1.5rem);
   grid-template-columns: var(--cart-picture) minmax(0, 1fr) minmax(3.5rem, auto) 2.75rem;
-  grid-template-areas: "picture text text remove" "picture quantity price remove";
+  grid-template-areas: "picture text text text" "picture quantity price remove";
   align-items: center;
   column-gap: var(--cart-row-gap);
 }
 .cart-line .line__image {
   grid-area: picture; width: var(--cart-picture); height: var(--cart-picture);
-  border-radius: 50%; object-fit: contain; padding: 3px;
+  border-radius: 50%; object-fit: contain; padding: 3px; align-self: start;
 }
 .cart-line__text { grid-area: text; }
-.cart-line__quantity { grid-area: quantity; justify-self: center; }
-.cart-line__price { grid-area: price; align-self: center; font-variant-numeric: tabular-nums; }
+.cart-line__quantity { grid-area: quantity; justify-self: end; }
+.cart-line__price { grid-area: price; align-self: center; justify-self: end; font-variant-numeric: tabular-nums; }
 .cart-controls-ready .cart-line :is(.line__remove, .site-nav-cart-line__remove),
 .cart-line :is(.line__remove, .site-nav-cart-line__remove) {
-  display: block; grid-area: remove; justify-self: end; align-self: start; margin: 0;
+  display: block; grid-area: remove; justify-self: end; align-self: center; margin: 0;
 }
 .cart-line :is(.line__remove-button, .site-nav-cart-line__remove-button) {
   display: grid; place-items: center; width: 2.75rem; min-width: 2.75rem; min-height: 2.75rem; padding: 0;
@@ -367,22 +367,23 @@
 }
 .cart-line :is(.line__remove-button, .site-nav-cart-line__remove-button) .ui-icon-block { width: 1rem; height: 1rem; }
 .cart-line :is(.line__remove-button, .site-nav-cart-line__remove-button):is(:hover, :focus-visible) { color: var(--cart-remove-hover); }
-.cart-page .recent-orders { margin-left: var(--cart-text-inset); }
-.cart-page .recent-orders__summary, .cart-page .recent-order__summary { padding-left: 0; }
-.cart-page .recent-orders__list { padding-left: 0; }
-.cart-page .lines.recent-order__lines { padding-left: 0; margin-left: calc(-1 * var(--cart-text-inset)); }
+.cart-page .recent-orders { margin-inline: auto; }
 .cart-page .recent-order__lines .line__product { grid-template-columns: var(--cart-picture) minmax(0,1fr); gap: var(--cart-row-gap); }
 .cart-page .recent-order__lines .line__image { width: var(--cart-picture); height: var(--cart-picture); border-radius: 50%; }
 @media (min-width: 768px) {
   .cart-line {
-    grid-template-columns: var(--cart-picture) minmax(0, 1fr) auto minmax(5rem, 1fr) 2.75rem;
+    grid-template-columns: var(--cart-picture) minmax(0, 1fr) auto auto 2.75rem;
     grid-template-areas: "picture text quantity price remove";
     column-gap: clamp(.75rem, 1.5vw, 1.5rem);
   }
-  .cart-line :is(.line__remove, .site-nav-cart-line__remove) { align-self: center; }
+  .cart-line :is(.line__image, .line__remove, .site-nav-cart-line__remove) { align-self: center; }
   .cart-line__price { justify-self: start; text-align: left; }
-  .site-nav-cart__popover.mobile-menu-panel { width: min(calc(100vw - 2rem), clamp(36rem, 76vw, 64rem)); }
-  .order-flow-page > .page.order-flow-surface.cart-page { width: 100%; max-width: clamp(38rem, 80vw, 72rem); }
-  .cart-details { max-width: 36rem; }
+  .site-nav-cart__popover.mobile-menu-panel { width: min(calc(100vw - 2rem), clamp(36rem, 62vw, 48rem)); }
+  .order-flow-page > .page.order-flow-surface.cart-page { width: 100%; max-width: clamp(36rem, 62vw, 48rem); }
+  .cart-page :is(.recent-orders, .cart-quick-add, .cart-details, .page__actions, .order-flow-summary) { width: 100%; max-width: 36rem; margin-inline: auto; }
   .cart-page > .order-progress { max-width: 36rem; margin-inline: auto; }
+}
+
+@media (max-width: 767px) {
+  .cart-line { column-gap: var(--space-2); }
 }
