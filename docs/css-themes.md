@@ -1317,9 +1317,10 @@ The navbar logo uses the same movement and retains its blue engraving.
 skips it. Desktop link spacing uses `clamp(0.8rem, 2vw, 2.25rem)` in
 `public/navigation.css`; mobile shares its remaining bottom columns equally.
 
-The old day cloud hides immediately on activation, before fetching the next
-page, with no collapse animation or artificial navigation delay. The new cloud
-uses `--public-nav-pop-time` (340ms) with a small overshoot. Each link retains
+The old day cloud fades/shrinks over 160ms. On desktop its destination starts
+growing on the same activation, before fetching the next page; on mobile it
+keeps the header arrival placement. Navigation never waits for either effect.
+The new cloud uses `--public-nav-pop-time` (200ms), without overshoot. Each link retains
 its own SVG paint. On mobile, the selected day cloud pops in the header centre,
 while the bottom bar stays free of clouds. The original link is positioned
 there with CSS: no duplicate text, routes or navigation controllers. On night,
@@ -1380,3 +1381,15 @@ the CSS breathing transform and fixed wordmark are preserved. A new press
 restarts from the current height rather than stacking animations. Motion
 preference changes and page exit cancel the hop together with the sweets.
 Night and reduced motion do not hop.
+
+Mobile sheet keyboard handling keeps the layout height captured on focus,
+without subtracting the visual viewport keyboard area. A negative
+`--mobile-menu-viewport-bottom` compensates if the browser also shrinks its
+layout viewport; focus dismissal retains that height until the viewport
+returns. The close circle can be covered by the keyboard instead of moving
+above it. Pointer presses outside the focused editor blur it; presses inside
+its Tom Select wrapper preserve option selection. Brand anchors bypass
+outside-click dismissal so their native navigation does not race panel history.
+Cart recent-order disclosures opt into `data-smooth-duration="160"`; their
+height animates without the general disclosure opacity fade. Other disclosures
+keep their default 280ms and reduced motion remains immediate.

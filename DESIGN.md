@@ -790,9 +790,11 @@ Normal navigation, modifier clicks and night retain their existing behaviour.
 In the light customer navbar, available links rest in pale primary-50. Hover
 or keyboard focus turns them white and gently thickens/enlarges the lettering
 without moving adjacent links. The selected engraved cloud stays as designed.
-When changing between Catalog, Find Sweets, FAQ and About, the old cloud hides
-immediately on activation, before the network response. Navigation has no extra
-animation wait; the new cloud pops open when the page arrives. The navbar remains in place; fresh page
+When changing between Catalog, Find Sweets, FAQ and About, the old cloud fades
+out over 160ms as the destination cloud grows over 200ms, without overshoot.
+Desktop starts both on activation, before the network response; mobile keeps
+the destination in its normal header position when the page arrives. Navigation
+has no extra animation wait. The navbar remains in place; fresh page
 content appears below it. Mobile places the active link at the header centre, on its day cloud
 (or the existing night light); the other links share the bottom bar. Reduced motion shows the final state directly.
 Ops keeps its work-oriented navigation. Checkout and product-detail transitions
@@ -806,3 +808,11 @@ the navbar's primary-50 rest, white hover and slight text growth.
 Clicking the logo releases a bounded shower of engraved sweets and gives
 the day cloud a small hop; keyboard and touch work too. The wordmark stays
 fixed. Reduced motion uses a brief stationary fade.
+
+Mobile panel interactions: the brand follows its link directly, without first
+closing the sheet or stepping back through panel history. While typing, the
+keyboard covers the lower part of the sheet rather than lifting its close
+circle; tapping outside the editor dismisses its keyboard while preserving
+normal control actions and Tom Select option selection. Cart Previous orders
+uses a 160ms height-only disclosure, including its nested orders; FAQ and ops
+retain their usual disclosure timing.

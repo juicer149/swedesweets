@@ -39,12 +39,13 @@
     const end = expand ? full : 0;
 
     content.style.overflow = "hidden";
+    const quick = details.dataset.smoothDuration === "160";
     const animation = content.animate(
       [
-        { height: `${start}px`, opacity: expand ? 0 : 1 },
-        { height: `${end}px`, opacity: expand ? 1 : 0 },
+        { height: `${start}px`, opacity: quick ? 1 : expand ? 0 : 1 },
+        { height: `${end}px`, opacity: quick ? 1 : expand ? 1 : 0 },
       ],
-      { duration: 280, easing: "cubic-bezier(0.2, 0, 0, 1)" },
+      { duration: quick ? 160 : 280, easing: "cubic-bezier(0.2, 0, 0, 1)" },
     );
     item.animation = animation;
 

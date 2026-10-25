@@ -74,10 +74,12 @@
     const controller = new AbortController(); request = controller;
     remember(); busy = true; resetAnimation();
     const motion = document.documentElement.dataset.theme === "light" && !reduced.matches;
-    // Acknowledge navigation before waiting for the server, without delaying it.
+    // Start both clouds on activation; never wait for the animation to navigate.
     if (motion) {
       links.filter(link => link.getAttribute("aria-current") === "page")
         .forEach(link => link.classList.add("is-nav-leaving"));
+      links.find(link => new URL(link.href).pathname === new URL(url).pathname)
+        ?.classList.add("is-nav-arriving");
     }
     document.querySelector("main.site-main")?.setAttribute("aria-busy", "true");
     let committed = false;

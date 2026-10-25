@@ -8,7 +8,7 @@
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
-:root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link:not(.site-nav__link--active, [aria-current="page"], .is-nav-leaving)::after {
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link:not(.site-nav__link--active, [aria-current="page"], .is-nav-leaving, .is-nav-arriving)::after {
   opacity: 0;
 }
 :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link:not([aria-current="page"]) {
@@ -118,15 +118,22 @@
       animation: nav-cloud-sway var(--theme-nav-cloud-sway-time) ease-in-out infinite;
     }
   }
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header .site-nav__link.is-nav-arriving,
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header .site-nav__link.is-nav-arriving * {
+    color: var(--nav-link-here-ink);
+  }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link.is-nav-arriving::after {
     animation: nav-cloud-pop var(--public-nav-pop-time) cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
 }
-/* Hide the departing cloud on the click itself, at every screen width. */
+/* Both cloud animations begin on activation, without blocking navigation. */
 :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header .site-nav__link.is-nav-leaving::after {
-  opacity: 0;
-  animation: none;
+  animation: nav-cloud-depart 160ms ease-out both;
   transition: none;
+}
+@keyframes nav-cloud-depart {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.8); }
 }
 @keyframes nav-cloud-sway {
   0%, 100% { transform: translate(0, 0) rotate(0); }
@@ -135,7 +142,6 @@
 }
 @keyframes nav-cloud-pop {
   0% { transform: scale(0.08, 0.25); opacity: 0; }
-  65% { transform: scale(1.08, 1.1); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -144,6 +150,7 @@
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link[aria-current="page"]::after { animation: none !important; }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-brand::before { animation: none !important; }
   .site-nav__link.is-nav-leaving::after, .site-nav__link.is-nav-arriving::after { animation: none !important; }
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header .site-nav__link.is-nav-leaving::after { opacity: 0; }
   :root[data-theme="light"]:not([data-site-zone="ops"]) :is(.site-brand .brand-logo__wordmark, .menu-dropdown-trigger > .ui-icon-svg, .menu-dropdown-trigger > .site-nav-cart__icon, .menu-dropdown-trigger > .site-menu__trigger-label, .landing__cart-link > .site-nav-cart__icon) {
     transition: none;
     transform: none !important;

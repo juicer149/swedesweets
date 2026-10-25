@@ -69,6 +69,10 @@
         return;
       }
 
+      // Let the brand's native navigation leave immediately. Closing a sheet
+      // first would animate and history.back() before the browser follows it.
+      if (target instanceof Element && target.closest("a.site-brand[href], a.entrance-header__brand[href]")) return;
+
       // A confirmation opened by the panel is a separate top-layer dialog,
       // not an outside click dismissing its underlying cart.
       if (target instanceof Element && target.closest("dialog")) return;

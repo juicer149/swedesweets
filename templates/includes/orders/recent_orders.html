@@ -19,7 +19,7 @@
   csrf_token     cart: the page's token
 {% endcomment %}
 {% if recent_orders %}
-  <details class="accordion recent-orders" data-smooth>
+  <details class="accordion recent-orders" data-smooth{% if mode == "cart" %} data-smooth-duration="160"{% endif %}>
     <summary class="accordion__summary recent-orders__summary">
       <span class="recent-orders__title">{% trans "Previous orders" %}</span>
       {% include "includes/ui/icon_block.html" with name="chevron-down" size="sm" class_name="accordion__chevron" only %}
@@ -28,7 +28,7 @@
     <div class="recent-orders__list" data-smooth-content>
       {% for order in recent_orders %}
         <div class="recent-order" data-recent-order>
-          <details class="accordion recent-order__details" data-smooth data-smooth-group="recent-orders">
+          <details class="accordion recent-order__details" data-smooth data-smooth-group="recent-orders"{% if mode == "cart" %} data-smooth-duration="160"{% endif %}>
             <summary class="accordion__summary recent-order__summary">
               <span class="recent-order__heading">
                 <span class="recent-order__title">{{ order.title }}</span>

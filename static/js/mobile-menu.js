@@ -19,6 +19,32 @@
   let restoreFocus = false;
   // Opened without its motion: the Menu staying in front across a site switch.
   let instant = false;
+  // Keep the sheet at its layout-viewport position while an on-screen keyboard
+  // covers its lower part. It must not lift the close circle above the keys.
+  let editingHeight = null;
+  let editingWidth = null;
+  const textEditor = element => element instanceof HTMLElement && element.matches(
+    'input:not([type="hidden"], [type="checkbox"], [type="radio"], [type="button"], [type="submit"], [type="range"]), textarea, [contenteditable="true"]'
+  );
+  document.addEventListener("focusin", event => {
+    if (mobile.matches && event.target.closest(selector) && textEditor(event.target)) {
+      editingHeight ??= innerHeight;
+      editingWidth = innerWidth;
+    }
+  });
+  document.addEventListener("focusout", () => {
+    if (editingHeight !== null) setTimeout(sync, 0);
+  });
+  document.addEventListener("pointerdown", event => {
+    const active = document.activeElement;
+    if (!mobile.matches || !textEditor(active) || !active.closest(selector)) return;
+    const wrapper = active.closest(".ts-wrapper");
+    if (event.target === active || wrapper?.contains(event.target)) return;
+    // Keep option selection and the next control's native click behaviour.
+    active.blur();
+    const select = [...document.querySelectorAll("select")].find(element => element.tomselect?.wrapper === wrapper);
+    select?.tomselect?.blur();
+  }, true);
   const menuFor = key => [...document.querySelectorAll(selector)].find(menu => menu.dataset.mobileMenu === key);
   const openMenu = () => document.querySelector(`${selector}[open]`);
 
@@ -67,14 +93,19 @@
     for (const menu of document.querySelectorAll(selector)) {
       menu.querySelector(".mobile-menu-viewport").style.setProperty("--menu-panel-top", `${headerBottom}px`);
     }
+    if (editingHeight !== null && editingWidth !== innerWidth) {
+      editingHeight = textEditor(document.activeElement) ? innerHeight : null;
+      editingWidth = innerWidth;
+    }
+    if (!covered || !mobile.matches
+      || (editingHeight !== null && !textEditor(document.activeElement) && innerHeight >= editingHeight - 1)) editingHeight = null;
     if (!covered) return;
 
     const viewport = covered.querySelector(".mobile-menu-viewport");
     const top = document.querySelector(".site-header, .entrance-header, .landing__top");
-    // The bottom navbar is hidden while a sheet is open. Fill its space;
-    // only reserve the part outside the visible viewport (e.g. a keyboard).
-    const visible = window.visualViewport;
-    const bottom = visible ? Math.max(0, innerHeight - visible.height - visible.offsetTop) : 0;
+    // Browsers may resize only the visual viewport, or the layout viewport
+    // too. Neither should lift the sheet's close circle while typing.
+    const bottom = editingHeight === null ? 0 : Math.min(0, innerHeight - editingHeight);
     viewport.style.setProperty("--mobile-menu-top", `${Math.max(0, top?.getBoundingClientRect().bottom || 0)}px`);
     viewport.style.setProperty("--mobile-menu-viewport-bottom", `${bottom}px`);
     for (const element of document.querySelectorAll("main, footer, .landing__stage, .landing__bottom, .catalog__detail")) {
