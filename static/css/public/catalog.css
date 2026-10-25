@@ -1206,6 +1206,23 @@
   .catalog__detail > .page-section {
     padding-bottom: calc(6.5rem + var(--space-8));
   }
+  /* The same real close link takes the bottom bar's place. */
+  :root:not([data-site-zone="ops"]).catalog--detail-open .catalog__detail .product__close {
+    position: fixed;
+    top: auto;
+    left: 50%;
+    bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    translate: -50% 0;
+    z-index: 111;
+  }
+  :root.mobile-menu-open .catalog__detail .product__close {
+    visibility: hidden;
+  }
+}
+@media (max-width: 479px) {
+  :root:not([data-site-zone="ops"]).catalog--detail-open .catalog__detail .product__close {
+    bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 .catalog--detail-open {

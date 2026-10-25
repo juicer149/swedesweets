@@ -37,7 +37,6 @@
   function resetAnimation() {
     for (const link of links) {
       link.classList.remove("is-nav-leaving", "is-nav-arriving");
-      link.style.removeProperty("--public-nav-departure-paint");
     }
   }
   function remember() {
@@ -103,7 +102,6 @@
       const leaving = links.filter(link => link.getAttribute("aria-current") === "page");
       if (motion) {
         leaving.forEach(link => {
-          link.style.setProperty("--public-nav-departure-paint", getComputedStyle(link, "::after").background);
           link.classList.add("is-nav-leaving");
         });
         await pause(duration("--public-nav-collapse-time", 180) * 0.6);

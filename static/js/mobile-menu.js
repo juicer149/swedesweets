@@ -8,6 +8,7 @@
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const root = document.documentElement;
   const inertBefore = new Map();
+  const headerInertBefore = new Map();
   const backdrop = document.createElement("div");
   backdrop.className = "menu-panel-backdrop";
   backdrop.setAttribute("aria-hidden", "true");
@@ -21,11 +22,44 @@
   const menuFor = key => [...document.querySelectorAll(selector)].find(menu => menu.dataset.mobileMenu === key);
   const openMenu = () => document.querySelector(`${selector}[open]`);
 
+  function syncHeader(key = running ? wanted : openMenu()?.dataset.mobileMenu) {
+    const header = document.querySelector(".site-header");
+    if (!header || root.dataset.siteZone === "ops") return;
+    if (!mobile.matches || !["cart", "menu"].includes(key)) {
+      delete header.dataset.mobilePanel;
+      for (const [link, inert] of headerInertBefore) {
+        link.inert = inert;
+        link.classList.remove("is-mobile-panel-underlay");
+      }
+      headerInertBefore.clear();
+      return;
+    }
+    const trigger = menuFor(key)?.querySelector(":scope > summary");
+    if (!trigger) return;
+    const pageLink = header.querySelector('.site-nav__link[aria-current="page"]');
+    if (pageLink) {
+      if (!headerInertBefore.has(pageLink)) headerInertBefore.set(pageLink, pageLink.inert);
+      pageLink.classList.add("is-mobile-panel-underlay");
+      pageLink.inert = true;
+    }
+    const box = trigger.getBoundingClientRect();
+    const shift = getComputedStyle(trigger).translate.split(" ").map(value => parseFloat(value) || 0);
+    const bar = header.getBoundingClientRect();
+    // Subtract the live translate, including a half-finished movement or a
+    // newly refreshed cart fragment, to recover the unchanged layout slot.
+    const x = innerWidth / 2 - (box.left + box.width / 2 - shift[0]);
+    const y = bar.top + bar.height / 2 - (box.top + box.height / 2 - (shift[1] || 0));
+    header.style.setProperty(`--mobile-${key}-shift-x`, `${x}px`);
+    header.style.setProperty(`--mobile-${key}-shift-y`, `${y}px`);
+    header.dataset.mobilePanel = key;
+  }
+
   function sync() {
     const next = openMenu();
     const covered = next || (wanted && menuFor(wanted));
     root.classList.toggle("menu-panel-open", Boolean(covered));
     root.classList.toggle("mobile-menu-open", mobile.matches && Boolean(covered));
+    syncHeader();
     for (const [element, inert] of inertBefore) element.inert = inert;
     inertBefore.clear();
     const header = document.querySelector(".site-header, .entrance-header, .landing__top");
@@ -42,7 +76,7 @@
       ? innerHeight - nav.getBoundingClientRect().top + 8 : 12;
     viewport.style.setProperty("--mobile-menu-top", `${Math.max(0, top?.getBoundingClientRect().bottom || 0)}px`);
     viewport.style.setProperty("--mobile-menu-bottom", `${bottom}px`);
-    for (const element of document.querySelectorAll("main, footer, .landing__stage, .landing__bottom")) {
+    for (const element of document.querySelectorAll("main, footer, .landing__stage, .landing__bottom, .catalog__detail")) {
       if (!element.contains(covered) && !covered.contains(element)) {
         inertBefore.set(element, element.inert);
         element.inert = true;
@@ -76,6 +110,7 @@
     wanted = key;
     restoreFocus = focus;
     instant = still;
+    syncHeader(wanted);
     if (running) return;
     running = true;
     let focusTarget = null;

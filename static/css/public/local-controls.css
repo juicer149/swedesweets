@@ -132,6 +132,7 @@
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close):focus-visible {
   color: var(--day-close-hover-ink);
   background: var(--day-close-hover-bg);
+  border-color: var(--day-close-hover-edge, var(--day-close-edge));
   outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
   scale: 1.035;
@@ -142,11 +143,21 @@
   :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close):hover {
     color: var(--day-close-hover-ink);
     background: var(--day-close-hover-bg);
-    border-color: var(--day-close-edge);
+    border-color: var(--day-close-hover-edge, var(--day-close-edge));
     box-shadow: var(--day-close-shadow);
     scale: 1.035;
     filter: none;
   }
+}
+
+/* Product return uses the shared secondary-action palette in day mode. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.product, .catalog__detail) .product__close {
+  --day-close-bg: var(--action-secondary-bg);
+  --day-close-ink: var(--action-secondary-text);
+  --day-close-edge: var(--action-secondary-border);
+  --day-close-hover-bg: var(--action-secondary-hover-bg);
+  --day-close-hover-ink: var(--action-secondary-hover-text);
+  --day-close-hover-edge: var(--action-secondary-hover-border);
 }
 
 /* The phone bar keeps its clean outline; engraving stays at the paper's

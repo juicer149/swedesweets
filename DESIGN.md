@@ -740,6 +740,19 @@ completed progress remains green in both themes.
 
 ## Customer navbar transitions
 
+Each day navigation link owns its cloud artwork even while inactive; page
+transitions only animate its visibility and size, without copying another
+painted background. On phones an open cart/Menu moves its real trigger into
+the header centre while the current destination fades away; closing restores
+the destination and trigger. Counts, focus and live cart updates stay on the
+same controls. Reduced motion shows the final positions directly.
+
+Over the mobile catalog, a product's close link replaces the bottom navigation
+at the foot of the screen. The Catalog/Shop cloud stays in the header and also
+closes the product through its existing history entry, preserving filters and
+scroll. Day product return controls consume the shared secondary-action roles:
+pale blue fill, brand-blue ink and border, and a lighter fill on hover/focus.
+
 The current mobile destination has larger lettering and a wider day cloud;
 night uses the same larger lettering with a wider/taller gold light. The logo
 keeps its own geometry. Closed day FAQ questions use the existing deep-blue

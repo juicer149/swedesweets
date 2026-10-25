@@ -1,5 +1,16 @@
 /* Customer navigation: hover is paint/transform only, so neighbouring words
    keep their positions. The current page retains the theme's cloud/light. */
+/* Keep each link's artwork resolved even while inactive or interrupted
+   mid-transition. Opacity, rather than a shared fallback image, hides it. */
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link[data-nav-cloud]::after {
+  background-image: var(--nav-cloud-art);
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link:not(.site-nav__link--active, [aria-current="page"], .is-nav-leaving)::after {
+  opacity: 0;
+}
 :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link:not([aria-current="page"]) {
   color: var(--theme-nav-rest-ink);
 }
@@ -102,7 +113,6 @@
     }
   }
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-nav__link.is-nav-leaving::after {
-    background: var(--public-nav-departure-paint);
     inset: var(--theme-nav-cloud-inset);
     border-radius: 0;
     filter: none;
@@ -194,6 +204,54 @@
   }
   :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"].is-nav-arriving::after {
     animation: nav-cloud-pop var(--public-nav-pop-time) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+}
+
+/* One mobile header destination: the actual panel trigger moves, so its
+   count, focus and event handlers survive. The page label fades underneath. */
+@media (max-width: 767px) {
+  :root:not([data-site-zone="ops"]) .site-header .menu-dropdown-trigger {
+    transition: translate 280ms cubic-bezier(.22,.7,.2,1), color var(--motion-fast);
+    translate: 0 0;
+  }
+  :root:not([data-site-zone="ops"]) .site-header[data-mobile-panel="cart"] [data-mobile-menu="cart"] > summary {
+    translate: var(--mobile-cart-shift-x, 0px) var(--mobile-cart-shift-y, 0px);
+  }
+  :root:not([data-site-zone="ops"]) .site-header[data-mobile-panel="menu"] [data-mobile-menu="menu"] > summary {
+    translate: var(--mobile-menu-shift-x, 0px) var(--mobile-menu-shift-y, 0px);
+  }
+  :root:not([data-site-zone="ops"]) .site-header .site-nav__link[aria-current="page"],
+  :root:not([data-site-zone="ops"]) .site-header .is-mobile-panel-underlay {
+    transition: opacity 160ms ease;
+  }
+  :root:not([data-site-zone="ops"]) .site-header[data-mobile-panel] .site-nav__link[aria-current="page"],
+  :root:not([data-site-zone="ops"]) .site-header[data-mobile-panel] .is-mobile-panel-underlay {
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* A hosted cart may take aria-current while it loads. Keep the fading
+     page label in the header until the panel journey has settled. */
+  :root:not([data-site-zone="ops"]) .site-header .is-mobile-panel-underlay:not([aria-current="page"]) {
+    position: fixed;
+    top: 31px;
+    left: 50%;
+    display: block;
+    transform: translate(-50%, -50%) !important;
+    min-height: 0;
+    min-width: 4.5rem;
+    padding: 0.3rem;
+    font-size: clamp(0.8rem, 3.5vw, 1rem);
+    line-height: 1.15;
+  }
+  :root:not([data-site-zone="ops"]) .site-header .is-mobile-panel-underlay > .site-nav__icon {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-site-zone="ops"]) .site-header .menu-dropdown-trigger,
+  :root:not([data-site-zone="ops"]) .site-header .site-nav__link,
+  :root:not([data-site-zone="ops"]) .site-header .is-mobile-panel-underlay {
+    transition: none;
   }
 }
 

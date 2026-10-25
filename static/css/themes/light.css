@@ -1200,7 +1200,7 @@
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .menu-dropdown-trigger[aria-current="page"]::before {
   inset: var(--theme-nav-cloud-inset);
   border-radius: 0;
-  background: url("../../images/clouds/nav-question.svg") center / 100% 100% no-repeat;
+  background: var(--nav-cloud-art, url("../../images/clouds/nav-question.svg")) center / 100% 100% no-repeat;
   filter: none;
   opacity: 1;
 }
@@ -1209,28 +1209,28 @@
   inset: var(--theme-nav-trigger-cloud-inset);
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="lollipop"]:is(.site-nav__link--active, [aria-current="page"])::after {
-  background-image: url("../../images/clouds/nav-lollipop.svg");
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="lollipop"] {
+  --nav-cloud-art: url("../../images/clouds/nav-lollipop.svg");
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="map-pin"]:is(.site-nav__link--active, [aria-current="page"])::after {
-  background-image: url("../../images/clouds/nav-map-pin.svg");
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="map-pin"] {
+  --nav-cloud-art: url("../../images/clouds/nav-map-pin.svg");
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="question"]:is(.site-nav__link--active, [aria-current="page"])::after {
-  background-image: url("../../images/clouds/nav-question.svg");
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="question"] {
+  --nav-cloud-art: url("../../images/clouds/nav-question.svg");
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="info"]:is(.site-nav__link--active, [aria-current="page"])::after {
-  background-image: url("../../images/clouds/nav-info.svg");
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav__link[data-nav-cloud="info"] {
+  --nav-cloud-art: url("../../images/clouds/nav-info.svg");
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu__trigger[aria-current="page"]::before {
-  background-image: url("../../images/clouds/nav-menu.svg");
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu__trigger {
+  --nav-cloud-art: url("../../images/clouds/nav-menu.svg");
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav-cart__trigger[aria-current="page"]::before {
-  background-image: url("../../images/clouds/nav-cart.svg");
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav-cart__trigger {
+  --nav-cloud-art: url("../../images/clouds/nav-cart.svg");
 }
 
 /* The Menu's × on its white cloud: in the navbar's blue, as where you are. */
@@ -1313,4 +1313,15 @@
   --day-filter-rest-bg: var(--color-neutral-200);
   --day-filter-pointer-ink: var(--text-strong);
   --day-filter-pointer-bg: var(--color-neutral-300);
+}
+
+/* Secondary action: pale blue paper with brand-blue ink/edge. Shared by
+   quiet day actions such as the product-detail return control. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --action-secondary-bg: var(--color-primary-50);
+  --action-secondary-text: var(--theme-chrome-bg);
+  --action-secondary-border: var(--theme-chrome-bg);
+  --action-secondary-hover-bg: color-mix(in srgb, var(--color-primary-50) 55%, var(--color-white));
+  --action-secondary-hover-text: var(--theme-chrome-bg);
+  --action-secondary-hover-border: var(--theme-chrome-bg);
 }

@@ -1229,6 +1229,26 @@ its pills.
 
 ## Persistent customer navbar and cloud navigation
 
+Day link/trigger artwork is mapped permanently through `--nav-cloud-art`.
+Inactive link pseudo-elements keep their own image but remain transparent;
+departing/arriving classes animate that image without a captured background.
+This avoids a shared fallback shape during interrupted page transitions.
+
+On mobile, `mobile-menu.js` sets `data-mobile-panel` on the site header and
+per-trigger x/y translation roles. Measurements subtract the current live
+translate, so resize, rapid switching and refreshed cart fragments keep the
+correct anchor. The real summary moves; its badge and events are retained.
+The page link fades and becomes inert, then restores its prior state on close
+or desktop resize. Landing/entrance panels retain their centred behaviour.
+
+Mobile catalog overlays replace the bottom bar with the existing product
+close link, fixed above the safe-area inset. The header's current catalog link
+closes the overlay through the same history entry. The underlying catalog
+is inert while the product is open; panels also cover/inert the product if
+opened above it. Day product return colours map to
+`--action-secondary-{bg,text,border,hover-bg,hover-text,hover-border}` in
+light.css; other quiet actions can reuse those semantic roles.
+
 Mobile current links use a 4.5rem minimum width and
 `clamp(0.8rem, 3.5vw, 1rem)` lettering in both customer themes. The day
 cloud has more room around the label; night expands its existing halo without

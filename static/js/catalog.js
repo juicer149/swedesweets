@@ -440,12 +440,20 @@ function initCatalog() {
      fetched; failing that, the browser goes there. */
 
   const detail = catalog.querySelector("[data-catalog-detail]");
+  const mobileDetail = matchMedia("(max-width: 767px)");
+  const catalogURL = new URL(location.href);
+  const catalogWasInert = catalog.inert;
 
   // Out of the catalog's page (its own stacking context) and straight
   // under the body, so it lies over everything on the page, the footer
   // too, and under the site's header and phone bar only.
   if (detail) {
     document.body.append(detail);
+    cleanups.push(() => {
+      window.SwedeSweetsProduct?.destroy(detail);
+      detail.remove();
+      catalog.inert = catalogWasInert;
+    });
   }
   const FOLD_MS = 220;
   const PARTS = {
@@ -584,6 +592,7 @@ function initCatalog() {
     );
     detail.hidden = false;
     document.documentElement.classList.add("catalog--detail-open");
+    catalog.inert = true;
 
     scaleLabel(section.querySelector("[data-product-page]") || section, tile);
   }
@@ -595,6 +604,7 @@ function initCatalog() {
     detail.hidden = true;
     detail.replaceChildren();
     document.documentElement.classList.remove("catalog--detail-open");
+    catalog.inert = catalogWasInert;
   }
 
   let pendingHistory = false;
@@ -665,7 +675,7 @@ function initCatalog() {
 
     window.SwedeSweetsTabs?.init(page.section);
     window.SwedeSweetsProduct?.init(article, {
-      onClose: () => window.history.back(),
+      onClose: () => { if (!opened.busy) window.history.back(); },
       onAdded: () => window.history.back(),
     });
     // From the keyboard, on to the page's ×; a click leaves the focus be.
@@ -717,6 +727,19 @@ function initCatalog() {
   }
 
   if (detail) {
+    // The mobile header cloud and bottom cross return through the same
+    // history entry, preserving the catalog's filters, scroll and tile.
+    listen(document, "click", event => {
+      if (!mobileDetail.matches || !opened.url || event.defaultPrevented || event.button !== 0
+        || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = event.target.closest(".site-header .site-nav__link[aria-current='page'][href], [data-product-close]");
+      if (!link || (link.matches("[data-product-close]") && !detail.contains(link))
+        || link.download || (link.target && link.target !== "_self")) return;
+      const destination = new URL(link.href, location.href);
+      if (destination.origin !== catalogURL.origin || destination.pathname !== catalogURL.pathname || destination.hash) return;
+      event.preventDefault();
+      if (!opened.busy) window.history.back();
+    });
     listen(catalog, "click", (event) => {
       const link = event.target.closest(".tile__media, .tile__name a");
 

@@ -295,6 +295,24 @@ details[data-mobile-menu]:not([data-panel-lit]) .mobile-menu-panel {
    hidden behind the mobile flow. Landing has no navbar edge to emit light. */
 @media (max-width: 767px) {
   html.mobile-menu-open .site-nav__links { display: none; }
+  /* Keep the current header label mounted long enough to fade. Hide the
+     bottom bar's surface and destinations while a panel or product owns it. */
+  html:is(.mobile-menu-open, .catalog--detail-open) .site-header .site-nav__links {
+    display: grid;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    pointer-events: none;
+  }
+  html:is(.mobile-menu-open, .catalog--detail-open) .site-header .site-nav__link:not([aria-current="page"], .is-mobile-panel-underlay) {
+    visibility: hidden;
+  }
+  html.catalog--detail-open:not(.mobile-menu-open) .site-header .site-nav__link[aria-current="page"] {
+    pointer-events: auto;
+  }
+  html.catalog--detail-open.menu-panel-open .menu-panel-backdrop {
+    z-index: 95;
+  }
 }
 .mobile-menu-close [hidden] { display: none; }
 .order-flow-busy .mobile-menu-close { pointer-events: none; opacity: .45; }
