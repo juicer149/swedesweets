@@ -983,7 +983,15 @@
   --day-bar-bg: var(--color-white);
   --day-bar-edge: var(--theme-chrome-bg);
   --day-bar-ink: var(--theme-chrome-bg);
-  --day-bar-shadow: 0 6px 18px rgb(3 10 28 / 0.12);
+  --day-bar-shadow: none;
+}
+
+/* Menu contents share the landing's available/pointer inks; selected
+   destinations and settings retain their existing cloud palette. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-menu {
+  --account-menu-text: var(--theme-nav-rest-ink);
+  --menu-link-pointer-ink: var(--theme-nav-pointer-ink);
+  --menu-choice-pointer-ink: var(--theme-nav-pointer-ink);
 }
 
 /* On a touch screen nothing is pointed at: the navbar's clouds come only

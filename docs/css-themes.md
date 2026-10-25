@@ -1229,6 +1229,16 @@ its pills.
 
 ## Persistent customer navbar and cloud navigation
 
+The day Menu's available links and unselected Settings choices share
+`--theme-nav-rest-ink`, `--theme-nav-pointer-ink` and
+`--theme-nav-pointer-scale` with landing. Hover, focus and the controller's
+`.is-chosen` state use the same white optical thickening; reduced motion
+keeps the ink without scaling. Selected clouds keep their existing palette.
+`tools/draw_clouds.py` now generates `nav-bar-engraving.svg` using the same
+`_hatching` function as the clouds: seeded broken curved strokes with varying
+width/opacity, clipped to the straight bar's edges. The ordinary box shadow
+is disabled by `--day-bar-shadow`. Existing cloud/candy output is unchanged.
+
 Day mobile bar and close controls are scoped in `public/local-controls.css`.
 `--day-bar-bg/edge/ink/shadow` choose its white paper, blue contour and links.
 `images/clouds/nav-bar-engraving.svg` supplies sparse corner/foot hatching;

@@ -1,59 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" preserveAspectRatio="none">
-  <title>Fine engraved shading at the navigation bar's corners and lower edge</title>
-  <g fill="none" stroke="#5f78c0" stroke-width="0.7" stroke-linecap="round" opacity="0.42">
-    <path d="M 8.0 64.0 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 11.5 66.3 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 15.0 68.6 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 18.5 70.9 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 22.0 73.2 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 25.5 75.5 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 29.0 77.8 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 32.5 80.1 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 36.0 82.4 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 39.5 84.7 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 43.0 87.0 q 3 8 10 10" vector-effect="non-scaling-stroke"/>
-    <path d="M 8.0 64.0 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 11.5 66.3 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 15.0 68.6 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 18.5 70.9 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 22.0 73.2 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 25.5 75.5 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 29.0 77.8 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 32.5 80.1 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 36.0 82.4 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 39.5 84.7 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 43.0 87.0 q 3 8 10 10" transform="translate(600 0) scale(-1 1)" vector-effect="non-scaling-stroke"/>
-    <path d="M 55.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 70.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 86.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 101.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 117.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 132.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 148.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 163.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 179.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 194.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 210.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 225.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 241.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 256.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 272.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 287.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 303.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 318.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 334.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 349.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 365.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 380.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 396.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 411.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 427.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 442.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 458.0 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 473.5 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 489.0 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 504.5 95.6 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 520.0 93.0 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-    <path d="M 535.5 94.3 q 3 3 7 4" vector-effect="non-scaling-stroke"/>
-  </g>
+<defs>
+<clipPath id="bar-edges"><rect x="0" y="86" width="600" height="14"/><rect x="0" y="20" width="24" height="80"/><rect x="576" y="20" width="24" height="80"/></clipPath>
+<clipPath id="b0"><ellipse cx="30" cy="62" rx="35" ry="40"/></clipPath>
+<clipPath id="b1"><ellipse cx="570" cy="62" rx="35" ry="40"/></clipPath>
+<clipPath id="b2"><ellipse cx="300" cy="85" rx="310" ry="24"/></clipPath>
+</defs>
+<g clip-path="url(#bar-edges)">
+<g clip-path="url(#b0)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M39,39 39,40 39,42 39,43M39,45 39,46 39,48 38,49M38,51 37,52 37,53 36,54M36,56 34,57 33,59 32,61M30,62 28,63 27,64 25,64M24,65 22,65 20,65 19,65M17,65 16,65 15,65 14,64M13,64 12,63 10,63 9,62M7,61 6,59 5,58 4,56" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M44,38 44,41 44,43 44,46M44,48 44,50 43,52 43,53M42,56 41,58 39,60 38,62M36,64 34,66 32,68 30,69M28,70 26,70 24,71 22,71M20,71 18,71 16,71 14,71M12,70 10,69 9,69 7,67M6,67 4,65 2,63 0,61M-2,58 -3,56 -3,54 -4,52" stroke-width="0.63" opacity="0.52" vector-effect="non-scaling-stroke"/>
+<path d="M49,37 50,40 50,44 50,47M49,50 48,54 47,57 46,60M44,63 43,65 41,67 39,69M37,71 35,72 33,74 31,75M28,76 27,77 25,77 23,77M21,77 18,77 15,77 12,76M10,76 9,75 7,75 6,74M3,72 2,71 0,69 -1,68M-3,66 -5,64 -6,61 -7,59" stroke-width="0.77" opacity="0.68" vector-effect="non-scaling-stroke"/>
+<path d="M55,36 55,40 55,44 55,48M54,51 54,54 53,57 52,60M51,62 49,65 48,68 46,71M44,73 42,75 40,76 38,78M34,80 32,81 30,82 27,83M24,83 21,84 17,84 14,83M12,83 10,82 8,81 6,80M4,79 1,78 -2,75 -5,73M-7,70 -8,68 -10,66 -11,64" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+<g clip-path="url(#b1)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M579,39 579,40 579,42 579,43M579,45 579,46 579,47 578,49M578,51 577,53 576,55 575,57M574,59 572,60 571,61 569,62M567,63 566,64 565,64 564,65M563,65 561,65 559,65 557,65M555,65 553,64 552,64 551,63M549,62 547,60 546,59 545,58M544,56 543,55 542,53 542,52" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M584,38 584,40 584,42 584,44M584,46 584,48 584,50 583,52M582,55 581,57 580,59 579,60M578,61 577,63 577,64 575,65M574,66 572,67 570,69 568,70M566,70 565,71 563,71 561,71M560,71 557,71 555,71 552,70M550,69 549,69 547,68 546,67M545,66 544,65 543,64 542,63M541,61 539,59 538,57 537,55" stroke-width="0.63" opacity="0.52" vector-effect="non-scaling-stroke"/>
+<path d="M589,37 590,39 590,41 590,42M590,45 590,48 589,50 589,52M588,56 587,58 586,60 585,62M583,64 582,66 580,69 577,71M575,72 573,74 570,75 567,76M564,77 562,77 560,77 558,77M556,77 554,77 553,77 551,76M549,75 547,74 545,73 543,72M540,70 538,68 536,65 535,63" stroke-width="0.77" opacity="0.68" vector-effect="non-scaling-stroke"/>
+<path d="M595,36 595,38 595,40 595,42M595,45 595,48 595,50 594,53M593,56 593,58 592,60 591,63M588,67 587,69 586,70 584,72M583,74 580,76 577,78 574,80M571,82 567,83 563,83 560,84M557,83 553,83 550,82 546,81M543,79 540,77 538,75 535,72M532,69 531,67 529,64 528,61" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+<g clip-path="url(#b2)" fill="none" stroke="#5f78c0" stroke-linecap="round">
+<path d="M378,71 380,72 381,73 381,74M379,75 376,77 372,78 365,79M356,80 349,81 342,82 334,83M321,84 309,84 295,85 280,86M265,86 249,87 233,87 216,87M201,87 186,87 171,87 156,86M140,86 129,86 119,85 109,85M93,84 80,83 69,82 59,81" stroke-width="0.50" opacity="0.35" vector-effect="non-scaling-stroke"/>
+<path d="M425,71 428,72 428,74 426,76M421,78 416,79 408,81 399,82M393,83 380,84 366,85 350,87M339,87 320,88 300,89 279,90M258,90 246,90 233,90 221,91M207,91 188,91 169,90 151,90M131,90 113,89 95,88 78,87M58,86 48,85 38,85 29,84M23,83 11,81 2,80 -5,78" stroke-width="0.63" opacity="0.52" vector-effect="non-scaling-stroke"/>
+<path d="M472,70 475,72 476,74 474,76M471,77 466,79 458,81 447,83M433,85 418,86 400,88 381,89M362,90 339,92 316,93 291,93M274,94 251,94 228,94 204,94M184,94 157,94 132,93 106,93M81,92 63,91 46,90 30,89M12,88 3,87 -6,86 -15,85M-23,84 -34,83 -43,81 -50,80" stroke-width="0.77" opacity="0.68" vector-effect="non-scaling-stroke"/>
+<path d="M518,69 522,72 523,74 521,76M516,79 512,80 506,81 499,83M489,85 475,87 458,88 439,90M419,92 406,92 393,93 379,94M349,95 321,96 292,97 263,98M245,98 219,98 194,98 168,98M144,97 115,97 87,96 60,95M40,94 23,93 7,92 -9,91M-28,90 -48,88 -66,86 -81,84" stroke-width="0.90" opacity="0.85" vector-effect="non-scaling-stroke"/>
+</g>
+</g>
 </svg>

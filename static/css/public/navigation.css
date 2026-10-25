@@ -213,6 +213,48 @@
   :root[data-theme="light"] .landing-menu__text { transition: none; transform: none !important; }
 }
 
+/* Available Menu links use the same painted thickening as landing. Native
+   hover/focus and the Menu controller's keyboard choice share the result. */
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-menu .site-menu__link:not([aria-current="page"]) {
+  color: var(--theme-nav-rest-ink);
+  transition: color 180ms ease, transform 180ms ease, text-shadow 180ms ease;
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-menu .site-menu__link:not([aria-current="page"]):is(.is-chosen, :focus-visible) {
+  color: var(--theme-nav-pointer-ink);
+  transform: scale(var(--theme-nav-pointer-scale));
+  text-shadow: 0 0 0.65px currentColor;
+}
+@media (hover: hover) and (pointer: fine) {
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-menu .site-menu__link:not([aria-current="page"]):hover {
+    color: var(--theme-nav-pointer-ink);
+    transform: scale(var(--theme-nav-pointer-scale));
+    text-shadow: 0 0 0.65px currentColor;
+  }
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-menu .language-switcher__option:not(.language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]) {
+  color: var(--theme-nav-rest-ink);
+  opacity: 1;
+  transition: color 180ms ease, transform 180ms ease, text-shadow 180ms ease;
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-menu .language-switcher__option:not(.language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]):is(.is-chosen, :focus-visible) {
+  color: var(--theme-nav-pointer-ink);
+  transform: scale(var(--theme-nav-pointer-scale));
+  text-shadow: 0 0 0.65px currentColor;
+}
+@media (hover: hover) and (pointer: fine) {
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-menu .language-switcher__option:not(.language-switcher__option--active, [aria-current="true"], [aria-pressed="true"]):hover {
+    color: var(--theme-nav-pointer-ink);
+    transform: scale(var(--theme-nav-pointer-scale));
+    text-shadow: 0 0 0.65px currentColor;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-menu :is(.site-menu__link, .language-switcher__option) {
+    transition: none;
+    transform: none !important;
+  }
+}
+
 /* Shared with landing; fixed above the header, without taking pointer input. */
 :root[data-theme="light"]:not([data-site-zone="ops"]) .candy-rain {
   position: fixed;

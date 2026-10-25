@@ -4,7 +4,8 @@
 
 Writes static/images/clouds/: the logo's cloud (logo.svg, and a plainer
 logo-small.svg for the navbar), and one cloud for each of the navbar's
-links and buttons (nav-<name>.svg), plus the candy-*.svg sprites.
+links and buttons (nav-<name>.svg), the straight mobile bar's engraving
+(nav-bar-engraving.svg), plus the candy-*.svg sprites.
 An unused wind sketch is retained in design/animations_ideas/cloud-wind.svg.
 Each cloud is a heap of lumps drawn
 back to front: each lump white with its own outline, short broken
@@ -77,6 +78,49 @@ def _arc(
     return "M" + " ".join(f"{_n(x)},{_n(y)}" for x, y in points)
 
 
+def _hatching(
+    cloud: Cloud, lump: Lump, clip_id: str, rng: random.Random
+) -> list[str]:
+    rows = round(cloud.rows * lump.hatch)
+    if not rows:
+        return []
+    group = [
+        f'<g clip-path="url(#{clip_id})" fill="none" stroke="{INK}" '
+        'stroke-linecap="round">'
+    ]
+    for k in range(rows):
+        share = k / max(rows - 1, 1)
+        radius = 0.55 + 0.45 * share
+        ox, oy = -lump.rx * 0.30, -lump.ry * 0.48
+        width = cloud.stroke[0] + (cloud.stroke[1] - cloud.stroke[0]) * share
+        opacity = 0.35 + 0.5 * share
+        t = math.radians(-10)
+        strokes = []
+        while t < math.radians(150):
+            seg = math.radians(rng.uniform(9, 18))
+            gap = math.radians(rng.uniform(3, 7))
+            strokes.append(
+                _arc(
+                    lump.cx + ox,
+                    lump.cy + oy,
+                    lump.rx * radius * 1.02,
+                    lump.ry * radius * 1.02,
+                    t,
+                    t + seg,
+                    3,
+                )
+            )
+            t += seg + gap
+        # (a row's broken strokes as one path)
+        group.append(
+            f'<path d="{"".join(strokes)}" stroke-width="{width:.2f}" '
+            f'opacity="{opacity:.2f}" '
+            'vector-effect="non-scaling-stroke"/>'
+        )
+    group.append("</g>")
+    return group
+
+
 def draw(cloud: Cloud) -> str:
     rng = random.Random(4)
     pad_x, pad_y = cloud.width * 0.02, cloud.height * 0.08
@@ -115,44 +159,7 @@ def draw(cloud: Cloud) -> str:
                 f'stroke-width="{cloud.contour}" stroke-linecap="round" '
                 'opacity=".85" vector-effect="non-scaling-stroke"/>'
             )
-        rows = round(cloud.rows * lump.hatch)
-        if not rows:
-            continue
-        group = [
-            f'<g clip-path="url(#c{i})" fill="none" stroke="{INK}" '
-            'stroke-linecap="round">'
-        ]
-        for k in range(rows):
-            share = k / max(rows - 1, 1)
-            radius = 0.55 + 0.45 * share
-            ox, oy = -lump.rx * 0.30, -lump.ry * 0.48
-            width = cloud.stroke[0] + (cloud.stroke[1] - cloud.stroke[0]) * share
-            opacity = 0.35 + 0.5 * share
-            t = math.radians(-10)
-            strokes = []
-            while t < math.radians(150):
-                seg = math.radians(rng.uniform(9, 18))
-                gap = math.radians(rng.uniform(3, 7))
-                strokes.append(
-                    _arc(
-                        lump.cx + ox,
-                        lump.cy + oy,
-                        lump.rx * radius * 1.02,
-                        lump.ry * radius * 1.02,
-                        t,
-                        t + seg,
-                        3,
-                    )
-                )
-                t += seg + gap
-            # (a row's broken strokes as one path)
-            group.append(
-                f'<path d="{"".join(strokes)}" stroke-width="{width:.2f}" '
-                f'opacity="{opacity:.2f}" '
-                'vector-effect="non-scaling-stroke"/>'
-            )
-        group.append("</g>")
-        out += group
+        out += _hatching(cloud, lump, f"c{i}", rng)
     out.append("</svg>")
     return "\n".join(out) + "\n"
 
@@ -262,6 +269,46 @@ def clouds() -> list[Cloud]:
     return result
 
 
+def draw_bar() -> str:
+    """Shade a straight paper bar with the clouds' broken curved engraving.
+
+    Only the corners and lowest band receive ink. The CSS owns the outer
+    rectangle, so the artwork does not add a second, cloud-shaped outline.
+    """
+    cloud = Cloud(
+        "nav-bar-engraving",
+        600,
+        100,
+        (
+            Lump(30, 62, 35, 40),
+            Lump(570, 62, 35, 40),
+            Lump(300, 85, 310, 24),
+        ),
+        rows=4,
+        outline=1.2,
+        contour=0.8,
+        stroke=(0.5, 0.9),
+    )
+    rng = random.Random(4)
+    out = [
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 100" '
+        'preserveAspectRatio="none">',
+        '<defs>',
+        '<clipPath id="bar-edges"><rect x="0" y="86" width="600" height="14"/>'
+        '<rect x="0" y="20" width="24" height="80"/>'
+        '<rect x="576" y="20" width="24" height="80"/></clipPath>',
+        *(
+            f'<clipPath id="b{i}">{_ellipse(lump)}</clipPath>'
+            for i, lump in enumerate(cloud.lumps)
+        ),
+        "</defs>",
+        '<g clip-path="url(#bar-edges)">',
+    ]
+    for i, lump in enumerate(cloud.lumps):
+        out += _hatching(cloud, lump, f"b{i}", rng)
+    return "\n".join([*out, "</g>", "</svg>"]) + "\n"
+
+
 def wind() -> str:
     """Short, broken curls with the same ink as the cloud hatching."""
     paths = (
@@ -322,6 +369,7 @@ def main() -> None:
     (ideas / "cloud-wind.svg").write_text(wind(), encoding="utf-8")
     for name in ("wrap", "drop", "lollipop"):
         (OUT / f"candy-{name}.svg").write_text(candy(name), encoding="utf-8")
+    (OUT / "nav-bar-engraving.svg").write_text(draw_bar(), encoding="utf-8")
     for cloud in clouds():
         path = OUT / f"{cloud.name}.svg"
         path.write_text(draw(cloud), encoding="utf-8")
