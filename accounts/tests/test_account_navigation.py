@@ -114,7 +114,7 @@ def test_business_header_marks_the_current_destination(
 
 
 @pytest.mark.django_db
-def test_retail_cart_marks_its_header_icon_current_and_disables_preview(client):
+def test_retail_cart_keeps_current_header_icon_available_for_return(client):
     response = client.get(reverse("storefront:cart"))
     assert response.status_code == 200
     cart = response.content.decode().split('class="site-nav-cart__trigger', 1)[1].split(
@@ -122,4 +122,7 @@ def test_retail_cart_marks_its_header_icon_current_and_disables_preview(client):
     )[0]
     assert 'aria-current="page"' in cart
     assert response.context["navbar_cart_locked"] is True
-    assert 'aria-disabled="true"' in cart
+    # The preview stays locked; the current icon is the return control.
+    assert 'aria-disabled="true"' not in cart
+    assert 'tabindex="-1"' not in cart
+    assert ' inert' not in cart
