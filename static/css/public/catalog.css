@@ -1533,3 +1533,46 @@
 .catalog-product-transition::view-transition-group(catalog-chrome) { z-index: 100; animation: none; }
 .catalog-product-transition::view-transition-old(catalog-chrome) { display: none; animation: none; }
 .catalog-product-transition::view-transition-new(catalog-chrome) { animation: none; opacity: 1; mix-blend-mode: normal; }
+
+/* The label's lower halves are the controls themselves, not small inputs
+   inside a second box. The expanded options keep their shared list styling. */
+.tile__order {
+  width: calc(100% + 2 * var(--space-2));
+  margin-inline: calc(-1 * var(--space-2));
+  margin-bottom: calc(-1 * var(--tile-foot));
+}
+.tile__label:has(> .tile__order) > .tile__name { margin-bottom: 0; }
+.tile__row { height: calc(2.6rem + var(--tile-foot)); }
+.tile__size, .tile__buy { padding: 0; }
+.tile__size { border-radius: 0 0 0 7px; }
+.tile__buy { border-radius: 0 0 7px 0; }
+.tile__picker, .tile__picker .ts-wrapper, .tile__picker .ts-wrapper .ts-control {
+  height: 100%; min-height: 0;
+}
+.tile__picker { border: 0; }
+.tile__picker .ts-wrapper .ts-control,
+.tile__quantity,
+.tile__picker > select:not(.tomselected) {
+  width: 100%; height: 100%; min-height: 0;
+  border: 0; border-radius: inherit; background: transparent; box-shadow: none;
+  font: 700 var(--font-size-16) / 1.2 var(--font-body);
+  color: var(--catalog-package-text);
+}
+.tile__picker .ts-wrapper .ts-control { padding-inline: .35rem 1rem; }
+.tile__picker .ts-wrapper .ts-control .item { white-space: normal; overflow-wrap: normal; }
+.tile__picker .ts-wrapper .ts-control .item[data-value=""] { font-size: inherit; opacity: 1; }
+.tile__picker .ts-wrapper.single .ts-control::after { right: .5rem; }
+.tile__size:has(.ts-wrapper:is(.focus, .dropdown-active)),
+.tile__size:has(> .tile__picker > select:focus),
+.tile__buy:has(.tile__quantity:focus) {
+  color: var(--catalog-control-focus-text);
+  background: var(--catalog-control-focus-bg);
+  box-shadow: inset 0 0 0 1px var(--catalog-control-focus-border);
+}
+.tile__picker .ts-wrapper:is(.focus, .dropdown-active) .ts-control,
+.tile__picker > select:not(.tomselected):focus,
+.tile__quantity:focus {
+  background: transparent; color: var(--catalog-control-focus-text); box-shadow: none;
+}
+.tile__picker, .tile__picker .ts-wrapper, .tile__picker .ts-control { border-bottom-left-radius: inherit; }
+.tile__quantity { border-bottom-right-radius: inherit; }

@@ -1580,3 +1580,5 @@ menu-scroll.js measures the sticky footer into `--cart-actions-height`; the
 left extension clips back to the panel edge below that point so scrolled-under
 tags cannot peek out beside the summary. `--cart-sheet-shadow` and `--cart-popover-tag-shadow` supply a subtle
 day shadow and night glow; the rules exclude mobile and full cart pages.
+
+Mobile cart: show the subtotal only in the fixed summary, use secondary action tokens for its close control, centre unit tags over portrait media, and inset quantity controls slightly from the trash corner. Open mobile header cart/menu triggers retain their own active artwork (night uses its halo). Catalog label halves are full-area variant/quantity controls, with shared text sizing and field-wide focus colour; expanded variant options retain the common list.

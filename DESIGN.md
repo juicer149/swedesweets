@@ -931,3 +931,5 @@ In the desktop navbar cart preview only, most of each price tag hangs left of
 the product image (roughly one fifth remains over it). Transparent scroll room
 lets it extend beyond the panel edge. Day uses a faint shadow; night a faint
 moonlit glow. Mobile and full cart/review pages retain their tag placement.
+
+Mobile cart: show the subtotal only in the fixed summary, use secondary action tokens for its close control, centre unit tags over portrait media, and inset quantity controls slightly from the trash corner. Open mobile header cart/menu triggers retain their own active artwork (night uses its halo). Catalog label halves are full-area variant/quantity controls, with shared text sizing and field-wide focus colour; expanded variant options retain the common list.

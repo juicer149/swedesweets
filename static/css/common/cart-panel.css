@@ -439,3 +439,12 @@
     box-shadow: var(--cart-popover-tag-shadow);
   }
 }
+
+/* On phones the fixed summary owns the subtotal. Keep delivery notes visible. */
+@media (max-width: 767px) {
+  .site-nav-cart .order-flow-page[data-flow-step="cart"] .cart-page .lines-total { display: none; }
+  .cart-line__controls { margin-right: .5rem; }
+  :is(.cart-line, .line--cart-review) .cart-line__unit-price {
+    left: 50%; right: auto; translate: -50% 0;
+  }
+}

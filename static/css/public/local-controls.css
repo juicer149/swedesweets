@@ -199,3 +199,22 @@
     background-image: none;
   }
 }
+
+/* Closing a cart is secondary to continuing the order. Shared action tokens
+   keep this quiet cross in step with the other secondary controls. */
+:root:not([data-site-zone="ops"]) .site-nav-cart__popover .mobile-menu-close {
+  --day-close-bg: var(--action-secondary-bg);
+  --day-close-ink: var(--action-secondary-text);
+  --day-close-edge: var(--action-secondary-border);
+  --day-close-hover-bg: var(--action-secondary-hover-bg);
+  --day-close-hover-ink: var(--action-secondary-hover-text);
+  --day-close-hover-edge: var(--action-secondary-hover-border);
+  background: var(--action-secondary-bg);
+  color: var(--action-secondary-text);
+  border-color: var(--action-secondary-border);
+}
+:root:not([data-site-zone="ops"]) .site-nav-cart__popover .mobile-menu-close:is(:hover, :focus-visible) {
+  background: var(--action-secondary-hover-bg);
+  color: var(--action-secondary-hover-text);
+  border-color: var(--action-secondary-hover-border);
+}

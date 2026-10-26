@@ -392,3 +392,23 @@
 @media (prefers-reduced-motion: reduce) {
   :root[data-motion-profile="cloud"] :is(.landing-menu__text, .site-nav__label) { transition: none; transform: none !important; }
 }
+
+/* A mobile panel's centred trigger owns the active cloud while open.
+   Night retains its own halo; day uses each trigger's engraved artwork. */
+@media (max-width: 767px) {
+  :root:not([data-site-zone="ops"]) .site-header[data-mobile-panel] details[open] > .menu-dropdown-trigger::before {
+    opacity: 1;
+    transform: none;
+    background: var(--nav-trigger-open-glow);
+    filter: var(--nav-trigger-open-glow-filter);
+  }
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header[data-mobile-panel] details[open] > .menu-dropdown-trigger::before {
+    inset: -.85rem -1.1rem -.65rem;
+    border-radius: 0;
+    background: var(--nav-cloud-art) center / 100% 100% no-repeat;
+    filter: none;
+  }
+  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header[data-mobile-panel] details[open] > .menu-dropdown-trigger {
+    color: var(--state-here-ink);
+  }
+}
