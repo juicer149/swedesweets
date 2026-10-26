@@ -179,7 +179,9 @@
     overflow: visible;
     white-space: normal;
     text-overflow: clip;
-    font-weight: 800;
+    font-weight: 900;
+    position: relative;
+    top: 2px;
   }
   .site-header .site-nav__link[aria-current="page"] > .site-nav__icon { display: none; }
   /* A readable current destination in both themes; reserve the existing
@@ -187,7 +189,7 @@
   :root:not([data-site-zone="ops"]) .site-header .site-nav__link[aria-current="page"] {
     min-width: 4.5rem;
     padding: 0.3rem;
-    font-size: clamp(0.8rem, 3.5vw, 1rem);
+    font-size: clamp(0.9rem, 3.8vw, 1.1rem);
   }
   :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"],
   :root[data-theme="light"] .site-header .site-nav__link[aria-current="page"] * {
@@ -249,7 +251,7 @@
     min-height: 0;
     min-width: 4.5rem;
     padding: 0.3rem;
-    font-size: clamp(0.8rem, 3.5vw, 1rem);
+    font-size: clamp(0.9rem, 3.8vw, 1.1rem);
     line-height: 1.15;
   }
   :root:not([data-site-zone="ops"]) .site-header .is-mobile-panel-underlay > .site-nav__icon {
@@ -369,7 +371,7 @@
 /* Current mobile destination: night needs a stronger text landmark. */
 @media (max-width: 767px) {
   :root[data-theme="dark"]:not([data-site-zone="ops"]) .site-header .site-nav__link[aria-current="page"] {
-    font-size: clamp(1.05rem, 4.2vw, 1.2rem);
+    font-size: clamp(1.1rem, 4.4vw, 1.25rem);
   }
 }
 
