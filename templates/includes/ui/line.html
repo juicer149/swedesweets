@@ -4,8 +4,8 @@
 
   line   a LineView (common/lines.py)
 {% endcomment %}
-<li class="line line--static">
-  {% include "includes/ui/line_product.html" with line=line only %}
+<li class="line line--static{% if cart_visual %} line--cart-review{% endif %}">
+  {% include "includes/ui/line_product.html" with line=line cart_visual=cart_visual unit_price_label=unit_price_label only %}
 
   {% if line.aside %}
     <span class="line__quantity-label">{{ line.aside }}</span>

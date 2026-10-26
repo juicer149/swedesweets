@@ -912,3 +912,11 @@ again) and removals now carry the same signed price feedback as quantity edits.
 Desktop Save changes has a wider minimum; the listed switch is larger in both
 layouts. Night home/landing travel moves its wordmark without day cloud art;
 logo/current-link spam does not trigger a celebration until its design is chosen.
+
+Cart rows use portrait rectangular product crops spanning their product text.
+The unit-price tag overlays the picture's top, tilted left with its hole at
+the right; text is never mirrored. Quantity and row price stay side by side,
+centred against the product information, with mobile removal at the upper-right corner (desktop keeps its right-hand column).
+The compact mobile controls leave room for wrapped product names. A shared
+product visual carries this crop/tag into review and just-placed confirmation.
+Catalog pictures and ordinary historical order rows retain their own layout.

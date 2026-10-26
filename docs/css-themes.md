@@ -1542,3 +1542,19 @@ markup permits switching between money and count after an in-place mutation.
 The dark effects profile has `travel: wordmark` and `celebration: none`. Cloud
 creation/preloading is guarded in home-arrival.js; motion and native navigation
 retain the same owner, and reduced-motion behavior is unchanged.
+
+## Portrait cart media and aligned controls
+
+`includes/cart/product_visual.html` owns the image/tag markup shared by the
+editable cart, read-only review and just-placed confirmation. The optional
+`cart_visual` flag flows through generic line templates, so unrelated history
+and ops rows retain their image layout. cart-panel.css positions the visual
+in its own column, crops with `object-fit: cover`, stretches it to the product
+text height (at least 7rem), and overlays the shared `.tile__tag`. Tag tilt and
+hole/padding are reversed independently from its readable text.
+
+The cart grid keeps product information, quantity and row amount in one row
+across mobile/desktop. Mobile trash is independently anchored upper-right; desktop retains the final
+control column. Quantity and amount align to the product text centre. Mobile control widths are compact
+while their vertical tap area remains 2.5rem; long names wrap inside a zero-min
+text column rather than pushing controls beneath the product.

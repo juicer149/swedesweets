@@ -3,12 +3,11 @@
   data-cart-line-id="{{ line.line_id }}"
   {% if navbar %}data-navbar-cart-line data-line-id="{{ line.line_id }}" data-product-id="{{ line.product_id|default:'' }}" data-quantity="{{ line.quantity }}"{% endif %}>
   <a class="cart-line__product" href="{{ line.product_url }}" aria-label="{{ line.label }}">
-    {% include "includes/ui/line_image.html" with url=line.image_url only %}
+    {% include "includes/cart/product_visual.html" with image_url=line.image_url unit_price_label=line.unit_price_label only %}
     <span class="cart-line__text">
       {% if line.brand %}<span class="cart-line__brand">{{ line.brand }}</span>{% endif %}
       <span class="cart-line__name">{{ line.name|default:line.label }}</span>
       {% if line.variant_label %}<span class="cart-line__meta">{{ line.variant_label }}</span>{% endif %}
-      {% if line.unit_price_label %}<span class="tile__tag cart-line__unit-price">{{ line.unit_price_label }}</span>{% endif %}
       {% for text in line.metadata %}<span class="cart-line__meta">{{ text }}</span>{% endfor %}
     </span>
   </a>

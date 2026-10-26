@@ -1,0 +1,5 @@
+{# Shared portrait crop and overlaid unit-price tag for cart and review. #}
+<span class="cart-line__visual">
+  {% include "includes/ui/line_image.html" with url=image_url only %}
+  {% if unit_price_label %}<span class="tile__tag cart-line__unit-price">{{ unit_price_label }}</span>{% endif %}
+</span>

@@ -27,7 +27,7 @@
 
     <ul class="lines" aria-label="{% trans 'Items' %}">
       {% for line in lines %}
-        {% include "includes/ui/line.html" with line=line.view only %}
+        {% include "includes/ui/line.html" with line=line.view cart_visual=True unit_price_label=line.price_label only %}
       {% endfor %}
     </ul>
 
