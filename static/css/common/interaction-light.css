@@ -262,3 +262,18 @@ details[open] > .menu-dropdown-trigger .ui-icon-svg,
 .glow-accordions .accordion[open] > .accordion__summary { text-shadow: var(--dropdown-title-text-shadow); }
 .glow-accordions .accordion__summary:is(:hover, :focus-visible) .ui-icon-svg,
 .glow-accordions .accordion[open] > .accordion__summary .ui-icon-svg { filter: var(--dropdown-title-icon-filter); }
+
+/* A small lift/puff makes the map destination tangible in both palettes. */
+.find-sweets .line__link :is(.line__name, .line__icon) {
+  transition: transform 180ms ease, color var(--motion-fast), text-shadow var(--motion-fast), filter var(--motion-fast);
+  transform-origin: left center;
+}
+@media (hover: hover) and (pointer: fine) {
+  .find-sweets .line__link:hover .line__name { transform: translateX(3px) scale(1.035); }
+  .find-sweets .line__link:hover .line__icon { transform: translateY(-3px) rotate(-8deg); }
+}
+.find-sweets .line__link:focus-visible .line__name { transform: translateX(3px) scale(1.035); }
+.find-sweets .line__link:focus-visible .line__icon { transform: translateY(-3px) rotate(-8deg); }
+@media (prefers-reduced-motion: reduce) {
+  .find-sweets .line__link :is(.line__name, .line__icon) { transition: none; transform: none !important; }
+}

@@ -1476,8 +1476,7 @@ B2B row totals use Decimal prices from the existing presentation contract;
 unpriced offers stay unpriced. Quantity responses carry confirmed totals,
 and `quantity-stepper.js` updates matching totals across cart surfaces.
 Previous-order buttons, product add buttons and in-cart badges reference
-the shared `--action-secondary-*` roles in both themes. Day uses pale navbar
-blue with blue ink/edge, with blue/gold on hover; night uses stepper-blue
+the shared `--action-secondary-*` roles in both themes. Day uses white with blue ink/edge, with blue/gold on hover; night uses stepper-blue
 with pale ink/edge and gold on hover. Night primary actions use that same
 blue surface with gold text/edge. Navbar addition feedback is gold by day,
 moonlight by night, and shakes the summary without repainting/fading its
@@ -1485,3 +1484,19 @@ cloud pseudo-element. Only the icon carries the temporary glow.
 The cart header has no return arrow; the current cart icon retains its return
 behavior. Previous orders/search stay at the original 36rem; only current
 product rows reach a modest 48rem desktop maximum, with controls at right.
+
+## Shared motion profile
+
+`effects.js` runs after theme selection and before home-arrival. Light and dark
+currently share the same frozen profile: cloud navigation/travel and candy-rain
+celebration. It sets `data-motion-profile` and `data-celebration-profile` for
+CSS, while the controllers read `SwedeSweetsEffects.profile()`. Replace the
+dark profile entry to introduce a dedicated night effect later. Palette stays
+in theme files. Ops does not load the profile; reduced motion keeps its existing
+static/fade alternatives. Night now shares landing breathing, logo travel and
+braking, link travel, active-link/cloud feedback and candy rain.
+
+Day secondary cart controls rest on white, retaining blue ink/edge and blue/gold
+hover. Completed timeline steps use green-500 by day and green-300 by night,
+with their shared completion glow. Find Sweets adds name puff/pin lift to its
+local hover and keyboard focus light; addresses remain stationary.

@@ -1,4 +1,4 @@
-/* Shared day-cloud easter egg: landing's logo and repeated activation of
+/* Shared cloud easter egg: landing's logo and repeated activation of
    the current navbar link. Normal navigation keeps its existing owner. */
 (() => {
   "use strict";
@@ -12,7 +12,7 @@
   rain.setAttribute("aria-hidden", "true");
   const active = new Set();
   const hops = new Map();
-  const isDay = () => root.dataset.theme === "light";
+  const enabled = () => window.SwedeSweetsEffects?.profile().celebration === "candy-rain";
 
   function nudgeCloud(cloud, pseudoElement) {
     if (reduced.matches) return;
@@ -30,7 +30,7 @@
   }
 
   function burst(trigger, cloud, pseudoElement) {
-    if (!isDay()) return;
+    if (!enabled()) return;
     if (!rain.isConnected) document.body.append(rain);
     nudgeCloud(cloud, pseudoElement);
     const box = trigger.getBoundingClientRect();
@@ -72,7 +72,7 @@
   }
 
   document.addEventListener("click", event => {
-    if (!isDay() || event.defaultPrevented || event.button !== 0
+    if (!enabled() || event.defaultPrevented || event.button !== 0
       || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     const logo = event.target.closest(".landing__logo-trigger");
     if (logo) {
@@ -94,7 +94,7 @@
   reduced.addEventListener("change", clear);
   window.addEventListener("pagehide", clear);
   document.addEventListener("public-page-ready", clear);
-  new MutationObserver(() => { if (!isDay()) clear(); }).observe(root, {
+  new MutationObserver(() => { if (!enabled()) clear(); }).observe(root, {
     attributes: true, attributeFilter: ["data-theme"],
   });
 })();

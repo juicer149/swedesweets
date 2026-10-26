@@ -41,6 +41,7 @@
     {# The script runs before CSS loads to avoid flashing the wrong theme. #}
     <script src="{% static 'js/theme.js' %}"></script>
     {% if site_zone != "ops" %}
+      <script src="{% static 'js/effects.js' %}"></script>
       <script src="{% static 'js/home-arrival.js' %}" data-cloud="{% static 'images/clouds/logo.svg' %}"></script>
     {% endif %}
     <script src="{% static 'js/theme-switch.js' %}" defer></script>

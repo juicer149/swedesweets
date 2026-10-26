@@ -73,7 +73,7 @@
     request?.abort();
     const controller = new AbortController(); request = controller;
     remember(); busy = true; resetAnimation();
-    const motion = document.documentElement.dataset.theme === "light" && !reduced.matches;
+    const motion = window.SwedeSweetsEffects?.profile().navigation === "cloud" && !reduced.matches;
     // Start both clouds on activation; never wait for the animation to navigate.
     if (motion) {
       links.filter(link => link.getAttribute("aria-current") === "page")

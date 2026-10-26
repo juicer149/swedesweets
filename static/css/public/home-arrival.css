@@ -1,4 +1,4 @@
-/* Shared-element travel is only enabled for a day logo's native home link.
+/* Shared-element travel is enabled by the shared effects profile.
    The controller skips every unrelated cross-document transition. */
 @view-transition { navigation: none; }
 

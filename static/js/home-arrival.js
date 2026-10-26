@@ -1,13 +1,13 @@
 /* Native home links, with a shared cloud/wordmark flight where supported.
    This head script registers pagereveal before the first rendering chance.
-   Other navigation, night and reduced motion keep their normal behaviour. */
+   Other navigation and reduced motion keep their normal behaviour. */
 (() => {
   "use strict";
   const root = document.documentElement;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const key = "swedesweets-home-flight";
   const cloudURL = document.currentScript.dataset.cloud;
-  const canMove = () => root.dataset.theme === "light" && root.dataset.siteZone !== "ops" && !reduced.matches;
+  const canMove = () => window.SwedeSweetsEffects?.profile().travel === "cloud" && root.dataset.siteZone !== "ops" && !reduced.matches;
   const brandSelector = "a.site-brand[href], a.entrance-header__brand[href]";
   let outgoing = null;
   let started = false;

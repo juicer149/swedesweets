@@ -385,7 +385,7 @@
 }
 
 /* A small breath accompanies the sway; the logo itself stays fixed. */
-:root[data-theme="light"] .landing__logo::before {
+:root[data-motion-profile="cloud"] .landing__logo::before {
   animation: landing-cloud-breathe var(--landing-cloud-sway-time) ease-in-out infinite;
 }
 @keyframes landing-cloud-breathe {
@@ -400,7 +400,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  :root[data-theme="light"] .landing__logo::before { animation: none; }
+  :root[data-motion-profile="cloud"] .landing__logo::before { animation: none; }
 }
 
 

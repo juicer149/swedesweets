@@ -403,7 +403,7 @@
   --order-history-row-marker: var(--menu-chosen);
   --order-progress-complete-shadow: 0 0 3px color-mix(in srgb, var(--order-progress-complete) 28%, transparent), 0 0 9px color-mix(in srgb, var(--order-progress-complete) 20%, transparent), 0 0 18px color-mix(in srgb, var(--order-progress-complete) 12%, transparent);
   --order-progress-complete-dot-shadow: 0 0 9px color-mix(in srgb, var(--order-progress-complete) 35%, transparent), 0 0 18px color-mix(in srgb, var(--order-progress-complete) 18%, transparent);
-  --order-progress-complete: var(--color-green-700);
+  --order-progress-complete: var(--color-green-500);
   --confirm-remove-text: var(--color-red-700);
   /* the red button's word (Clear cart, Remove): a light red, not grey */
   --confirm-danger-action-ink: var(--color-red-100);
@@ -1315,7 +1315,7 @@
 /* Secondary action: pale blue paper with brand-blue ink/edge. Shared by
    quiet day actions such as the product-detail return control. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
-  --action-secondary-bg: var(--theme-nav-rest-ink);
+  --action-secondary-bg: var(--color-white);
   --action-secondary-text: var(--theme-chrome-bg);
   --action-secondary-border: var(--theme-chrome-bg);
   --action-secondary-hover-bg: var(--theme-chrome-bg);
@@ -1334,4 +1334,13 @@
   --catalog-cart-active-bg: var(--action-secondary-hover-bg);
   --catalog-cart-active-ink: var(--action-secondary-hover-text);
   --catalog-cart-active-border: var(--action-secondary-hover-border);
+}
+
+/* Find Sweets emits a local blue light, leaving addresses neutral. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --find-sweets-hover-decoration: none;
+  --find-sweets-pointer-glow: radial-gradient(ellipse, color-mix(in srgb, var(--theme-chrome-bg) 18%, transparent), transparent 72%);
+  --find-sweets-pointer-glow-filter: blur(8px);
+  --find-sweets-pointer-text-shadow: 0 0 10px color-mix(in srgb, var(--theme-chrome-bg) 25%, transparent);
+  --find-sweets-pointer-icon-filter: drop-shadow(0 0 5px color-mix(in srgb, var(--contact-place) 30%, transparent));
 }

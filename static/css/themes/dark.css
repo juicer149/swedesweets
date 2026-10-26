@@ -217,7 +217,7 @@
   --cart-notice-border: color-mix(in srgb, var(--color-status-success-text) 45%, transparent);
   --cart-notice-shadow: 0 0 16px color-mix(in srgb, var(--color-status-success-text) 12%, transparent);
   --order-history-row-marker: var(--menu-chosen);
-  --order-progress-complete: var(--color-green-400);
+  --order-progress-complete: var(--color-green-300);
   --confirm-remove-text: var(--cart-remove-ink);
   /* the red button's word (Clear cart, Remove): a light red, not grey */
   --confirm-danger-action-ink: var(--color-red-100);

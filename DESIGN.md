@@ -876,9 +876,17 @@ underlying page. Navigation controls never unlock payment/cart mutations or
 retry an order submission.
 
 Customer cart additions (including Previous orders and catalog in-cart badges)
-use the theme secondary action: pale blue/blue by day, stepper-blue/pale ink
+use the theme secondary action: white/blue by day, stepper-blue/pale ink
 by night, with gold hover emphasis. Night primary actions keep gold ink and
 edges on the same blue surface as quantity controls. Cart feedback briefly
 shakes and lights its icon (gold by day, moonlight by night), preserving the
 active cloud. Search and Previous orders retain the standard content width;
 only current cart product rows widen moderately, with controls at the right.
+
+Day cart secondary controls now rest on white with blue ink/edge. Completed
+timeline steps use brighter theme greens and a soft glow. Find Sweets names
+puff slightly while their pins lift, with equivalent keyboard focus feedback.
+Day and night currently share cloud/candy motion through `effects.js`; the
+night profile can be replaced later without changing the day profile or colours.
+Night's active mobile navbar destination has larger text. Reduced motion remains
+respected.
