@@ -517,6 +517,17 @@
   --cart-panel-bg: rgb(255 251 241 / 0.995);
 }
 
+/* Customer day catalog labels: blue title, white fields, blue chosen values.
+   The shared day defaults above remain available to ops and night mappings. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --label-band: var(--theme-chrome-bg);
+  --label-band-text: var(--color-white);
+  --catalog-package-text: var(--theme-chrome-bg);
+  --catalog-control-placeholder-text: var(--label-muted);
+  --catalog-control-focus-text: var(--catalog-package-text);
+  --catalog-card-hover-text: var(--label-band-text);
+}
+
 /* Shared controls */
 :root {
   --entrance-field-focus-bg: var(--color-white);

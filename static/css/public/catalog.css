@@ -532,6 +532,13 @@
   font-size: inherit;
 }
 
+/* An unchosen day variant is quieter than a confirmed size or quantity.
+   The native select retains the same distinction without enhancement. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile__picker .ts-control .item[data-value=""],
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile__picker > select:not(.tomselected):required:invalid {
+  color: var(--catalog-control-placeholder-text);
+}
+
 /* Its caret: a small chevron at the right, turned up while open. */
 .tile__picker .ts-wrapper.single .ts-control::after {
   content: "";

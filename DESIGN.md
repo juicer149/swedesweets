@@ -899,3 +899,12 @@ and hides behind the software keyboard instead of lifting. Onboarding retains
 the blue entrance frame; entrance primary actions share a white border.
 Completed timeline steps use bright theme greens and a soft glow. Find Sweets
 names/pins share hover and keyboard emphasis while addresses remain still.
+
+### Day catalog label palette
+
+Customer day cards and product details share a brand-blue title band with
+white text. Their lower variant/quantity fields remain white; fixed packages,
+chosen variants and quantities use the navbar blue. An unchosen variant uses
+muted text, including the native select fallback. Focus retains the full-cell
+blue tint and blue values. Hovered card names remain white on the blue band.
+Night and ops keep their own mappings.

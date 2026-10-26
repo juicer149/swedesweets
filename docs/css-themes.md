@@ -1570,3 +1570,12 @@ Tom Select dropdown. These rules live with their base component definitions,
 rather than as a second override block at the end of catalog.css. Cart base
 and responsive rules likewise own their final layout; obsolete circular-row
 layouts, hidden trash overrides and old filled-flash/halo animations are removed.
+
+## Day catalog label palette
+
+The customer-only mapping beside the shared label defaults in light.css
+connects `--label-band` and `--catalog-package-text` to `--theme-chrome-bg`,
+with white `--label-band-text`. `--catalog-control-placeholder-text` maps to
+`--label-muted` for an empty enhanced/native variant choice; confirmed values
+remain blue. Hover title ink follows the band text, preserving contrast.
+Cards and product details share the palette. Selectors exclude night and ops.
