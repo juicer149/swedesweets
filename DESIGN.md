@@ -96,17 +96,18 @@ the start page's menu) three states are set per theme in common/states.css:
 by night "here" is gold with its light and the crown, the pointer moonlight,
 the rest light blue (see Navigation and chrome). The chosen landing item owns
 its light even when pointer input follows keyboard focus. Ready catalog cart buttons
-use cool moonlight ink/edges, becoming gold with the navbar cart's backlight on hover or
-keyboard focus; success feedback remains green. Catalog card hover is a cool
-moonlit light by night; focused quantity/size fields are gold; available
-controls remain blue.
+use blue ink/edges, becoming moonlight with a cool light on hover or keyboard
+focus by night. Day success feedback is green; night uses moonlight. Catalog
+card hover and focused quantity/size fields share the night moonlight pointer
+palette; gold marks the opened product title/frame instead.
 Dropdown options pair foreground
 and background colours so selected countries and variants remain readable.
 Variable mappings live in [docs/css-themes.md](docs/css-themes.md).
 
 Catalog labels use a gold title band by day and light-blue title text on a
 blue surface by night. Card navigation turns the title/frame blue by day and
-lights its lettering gold by night. Fields keep their ordinary surface until
+lights its lettering moonlight by night. The opened night product instead uses a gold title,
+frame and glow. Fields keep their ordinary surface until
 they receive focus. Price tags and in-cart counts use white/navy/gold by day
 and blue/gold by night; badges have no hover treatment. About's polaroid
 remains light with dark lettering, and photos retain their original colours.
@@ -904,23 +905,30 @@ names/pins share hover and keyboard emphasis while addresses remain still.
 
 ### Catalog label and notification palettes
 
-Day cards/details have an accent-600 name band with primary-950 text; night
-uses light-blue lettering on a dark-blue band. Pointer/keyboard navigation
-changes only the title band/text, frame and light: blue/white by day, gold
-lettering with warm light by night. Form feedback has priority over navigation.
+Day cards/details have an accent-600 name band with primary-950 text. Night
+cards use light-blue title text and a light-blue frame around a dark-blue
+band. Pointer/keyboard navigation changes the title and frame to blue/white
+by day and moonlight with cool light by night. Secondary night cart actions
+share the moonlight hover/focus/pressed palette wherever they are used.
 
-Variant and quantity fields retain the ordinary label surface (white by day,
-blue by night), with blue day values and muted empty choices. Their background
-changes only when their own input is focused/open, including in product detail.
-Secondary cart buttons retain their pale-blue day surface.
+The opened night product instead has a gold title, frame and diffuse light:
+this is the selected product page, rather than a hovered destination. Its
+`--product-title-text`, `--product-label-border`, outline and glow roles stay
+independent from the catalog's pointer palette. Form feedback keeps priority.
+
+Day variant/quantity fields retain their white surface and blue values. Night
+fields have a light-blue surface, dark-blue values and a divider matching the
+dark title band; empty choices are muted. Fields repaint only on their own
+focus/open state, including product detail. Night focus uses moonlight on a
+blue surface. Secondary cart buttons retain their pale-blue day surface.
 
 Price tags and in-cart badges share an information palette: white/primary-950
 with a gold border by day; dark blue with lighter gold ink/edge by night. The
 badge has no hover rule in either theme. Confirmed additions retain their
 separate success feedback; a transient green badge is not a hover state.
 
-`--label-band/text` own the title; `--catalog-fields-bg` owns fields;
-`--catalog-title-pointer-bg/text/border/shadow` own card navigation feedback.
-`--catalog-price-bg/text/border` and `--catalog-badge-bg/ink/border` own the
-information paint independently from action buttons. `--catalog-success-*`
-and the burst tokens own day confirmation feedback. Ops is excluded.
+`--label-band/text/border` own the card title/frame; `--catalog-fields-bg/divider`
+own its fields. `--catalog-title-pointer-bg/text/border/shadow` own navigation
+feedback. Price/badge roles own information independently from action buttons.
+`--catalog-success-*` and the burst tokens own day confirmation feedback. Ops
+is excluded. Day rendered colours are unchanged by the night refinement.

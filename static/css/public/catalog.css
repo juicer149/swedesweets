@@ -446,7 +446,7 @@
 
 .tile__buy {
   border-radius: 0 0 7px 0;
-  border-left: 1.5px dashed var(--color-accent-300);
+  border-left: 1.5px dashed var(--catalog-fields-divider, var(--color-accent-300));
 }
 
 /* The size and how many in one weight and size, on one line. */
@@ -532,11 +532,16 @@
   font-size: inherit;
 }
 
-/* An unchosen day variant is quieter than a confirmed size or quantity.
+/* An unchosen variant is quieter than a confirmed size or quantity.
    The native select retains the same distinction without enhancement. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile__picker .ts-control .item[data-value=""],
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile__picker > select:not(.tomselected):required:invalid {
+:root:not([data-site-zone="ops"]) .tile__picker .ts-control .item[data-value=""],
+:root:not([data-site-zone="ops"]) .tile__picker > select:not(.tomselected):required:invalid {
   color: var(--catalog-control-placeholder-text);
+}
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) .tile__picker .ts-wrapper:is(.focus, .dropdown-active) .item[data-value=""],
+:root[data-theme="dark"]:not([data-site-zone="ops"]) .tile__picker > select:not(.tomselected):required:invalid:focus {
+  color: var(--catalog-control-focus-text);
 }
 
 /* Its caret: a small chevron at the right, turned up while open. */
@@ -899,7 +904,7 @@
 .product__label {
   position: relative;
   background: var(--label-bg);
-  border: 1.5px solid var(--label-border);
+  border: 1.5px solid var(--product-label-border, var(--label-border));
   border-radius: 12px;
   box-shadow: 0 3px 6px rgb(var(--color-row-shadow) / 0.15);
   transform: rotate(-1deg);
@@ -937,7 +942,7 @@
 
 .product__name {
   margin: 0;
-  color: var(--label-band-text);
+  color: var(--product-title-text, var(--label-band-text));
   font-family: var(--font-body);
   font-size: var(--product-name-size, calc(var(--font-size-14) * var(--label-scale)));
   font-weight: 800;
@@ -1060,7 +1065,7 @@
 }
 
 .product__half--quantity {
-  border-left: 1.5px dashed var(--color-accent-300);
+  border-left: 1.5px dashed var(--catalog-fields-divider, var(--color-accent-300));
 }
 
 .product__picker .ts-control,
@@ -1587,7 +1592,7 @@
 .tile__label { box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15), var(--catalog-outline-shadow); }
 /* The opened product's label stands in a faint light by night (outside
    its edge only; themes/dark.css). */
-.product__label { box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15), var(--catalog-outline-shadow), var(--product-label-glow); }
+.product__label { box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15), var(--product-label-outline-shadow, var(--catalog-outline-shadow)), var(--product-label-glow); }
 
 :root:not([data-site-zone="ops"]) .tile__in-cart {
   color: var(--catalog-badge-ink, var(--action-secondary-text));
