@@ -920,3 +920,7 @@ centred against the product information, with mobile removal at the upper-right 
 The compact mobile controls leave room for wrapped product names. A shared
 product visual carries this crop/tag into review and just-placed confirmation.
 Catalog pictures and ordinary historical order rows retain their own layout.
+
+Mobile cart controls now form a centred stack: a larger quantity stepper, then
+the row amount directly beneath it. Desktop retains its inline controls. Unit
+price tags overhang the image's right edge by about one fifth of their width.

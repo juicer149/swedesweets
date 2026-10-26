@@ -11,26 +11,30 @@
       {% for text in line.metadata %}<span class="cart-line__meta">{{ text }}</span>{% endfor %}
     </span>
   </a>
-  {% if line.line_total_label %}
-    <span class="cart-line__price">
-      <strong data-cart-line-total="{{ line.line_id }}">{{ line.line_total_label }}</strong>
-    </span>
-  {% endif %}
-  {% if locked %}
-    <span class="cart-line__quantity">× {{ line.quantity }}</span>
-  {% else %}
-    <form class="cart-line__quantity" method="post" action="{{ line.quantity_url }}"
-      {% if navbar %}data-navbar-cart-quantity-form{% else %}data-current-order-quantity-form{% endif %}
-      data-confirmed-quantity="{{ line.quantity }}">
-      {% csrf_token %}
-      {% if navbar %}
-        {% include "includes/ui/quantity_stepper.html" with id_prefix="navbar-quantity-" id_suffix=line.line_id value=line.quantity compact=True only %}
-      {% else %}
-        {% include "includes/ui/quantity_stepper.html" with id_prefix="quantity-" id_suffix=line.line_id value=line.quantity compact=True only %}
-      {% endif %}
-      <span class="visually-hidden" role="status" aria-live="polite" data-current-order-quantity-status></span>
-      <noscript><button class="quiet-link" type="submit">{% trans "Update quantity" %}</button></noscript>
-    </form>
+  <div class="cart-line__controls">
+    {% if locked %}
+      <span class="cart-line__quantity">× {{ line.quantity }}</span>
+    {% else %}
+      <form class="cart-line__quantity" method="post" action="{{ line.quantity_url }}"
+        {% if navbar %}data-navbar-cart-quantity-form{% else %}data-current-order-quantity-form{% endif %}
+        data-confirmed-quantity="{{ line.quantity }}">
+        {% csrf_token %}
+        {% if navbar %}
+          {% include "includes/ui/quantity_stepper.html" with id_prefix="navbar-quantity-" id_suffix=line.line_id value=line.quantity compact=True only %}
+        {% else %}
+          {% include "includes/ui/quantity_stepper.html" with id_prefix="quantity-" id_suffix=line.line_id value=line.quantity compact=True only %}
+        {% endif %}
+        <span class="visually-hidden" role="status" aria-live="polite" data-current-order-quantity-status></span>
+        <noscript><button class="quiet-link" type="submit">{% trans "Update quantity" %}</button></noscript>
+      </form>
+    {% endif %}
+    {% if line.line_total_label %}
+      <span class="cart-line__price">
+        <strong data-cart-line-total="{{ line.line_id }}">{{ line.line_total_label }}</strong>
+      </span>
+    {% endif %}
+  </div>
+  {% if not locked %}
     {% if navbar %}
       <form class="site-nav-cart-line__remove" method="post" action="{{ line.remove_url }}" data-navbar-cart-remove-form>
         {% csrf_token %}

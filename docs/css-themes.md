@@ -1558,3 +1558,8 @@ across mobile/desktop. Mobile trash is independently anchored upper-right; deskt
 control column. Quantity and amount align to the product text centre. Mobile control widths are compact
 while their vertical tap area remains 2.5rem; long names wrap inside a zero-min
 text column rather than pushing controls beneath the product.
+
+`cart-line__controls` groups quantity and amount for a larger mobile stepper
+with its price centred below; on desktop it uses `display: contents` so the
+existing grid columns remain. Cart/review tags use `right: 0` plus a 20%
+self-width translation, retaining their tilt and readable text.
