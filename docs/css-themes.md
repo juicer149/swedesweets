@@ -1563,3 +1563,20 @@ text column rather than pushing controls beneath the product.
 with its price centred below; on desktop it uses `display: contents` so the
 existing grid columns remain. Cart/review tags use `right: 0` plus a 20%
 self-width translation, retaining their tilt and readable text.
+
+## Static chrome during product transitions; desktop preview overhang
+
+`catalog.js` scopes `catalog-product-transition` to each native product open or
+close transition and removes it on completion/teardown. `catalog-chrome` names
+the existing header subtree; its new capture stays opaque and unanimated while
+the old capture is hidden. Page/product captures keep their existing timings.
+No header DOM or cart fragment is replaced for a product-only navigation.
+
+Desktop navbar preview tags use an 80% self-width shift left from the image's
+left edge. The scrollport gains matching transparent left margin/padding: its
+content remains aligned while the tag can paint outside the panel's border,
+without portals or duplicate labels. Existing vertical scrolling is retained.
+menu-scroll.js measures the sticky footer into `--cart-actions-height`; the
+left extension clips back to the panel edge below that point so scrolled-under
+tags cannot peek out beside the summary. `--cart-sheet-shadow` and `--cart-popover-tag-shadow` supply a subtle
+day shadow and night glow; the rules exclude mobile and full cart pages.

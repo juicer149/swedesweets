@@ -26,6 +26,9 @@
       scroll.classList.add("menu-scroll-ready");
 
       function update() {
+        // The desktop cart's transparent overhang stops above its sticky footer.
+        const footer = scroll.querySelector(":scope > .site-nav-cart__actions");
+        scroll.style.setProperty("--cart-actions-height", `${footer?.offsetHeight || 0}px`);
         const overflow = scroll.scrollHeight - scroll.clientHeight;
         const scrolls = ["auto", "scroll"].includes(getComputedStyle(scroll).overflowY);
         track.hidden = !scrolls || scroll.clientHeight === 0 || overflow <= 1;

@@ -593,3 +593,8 @@
 }
 
 :root[data-theme="dark"]:not([data-site-zone="ops"]) { --cart-price-up: var(--color-green-300); --cart-price-down: var(--color-red-300); }
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+  --cart-sheet-shadow: 0 0 24px color-mix(in srgb, var(--moonlight) 7%, transparent);
+  --cart-popover-tag-shadow: 0 0 8px color-mix(in srgb, var(--moonlight) 12%, transparent);
+}

@@ -422,3 +422,20 @@
 .cart-summary > [hidden], [data-business-cart-subtotal][hidden] { display: none !important; }
 
 :is(.cart-line, .line--cart-review) .cart-line__visual .line__image { width: 100%; height: 100%; border-radius: .5rem; }
+
+/* Desktop preview only: most of the tag hangs off the image's left corner.
+   Extra transparent scroll padding lets it cross the panel edge without a
+   second rendering layer, while the original content/summary alignment stays. */
+@media (min-width: 768px) {
+  .site-nav-cart__popover .cart-panel-scroll {
+    /* Below the sticky summary, clip back to the card edge so tags from
+       scrolled-under rows cannot peek out beside or below the footer. */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 4rem 100%, 4rem calc(100% - var(--cart-actions-height, 7rem)), 0 calc(100% - var(--cart-actions-height, 7rem)));
+    margin-left: calc(-1 * (var(--space-6) + 4rem));
+    padding-left: calc(var(--space-6) + var(--space-1) + 4rem);
+  }
+  .site-nav-cart__popover .cart-line__unit-price {
+    left: 0; right: auto; translate: -80% 0;
+    box-shadow: var(--cart-popover-tag-shadow);
+  }
+}

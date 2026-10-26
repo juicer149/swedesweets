@@ -1526,3 +1526,10 @@
 :root:not([data-site-zone="ops"]) .tile__in-cart:hover {
   color: var(--action-secondary-hover-text); background: var(--action-secondary-hover-bg); border-color: var(--action-secondary-hover-border);
 }
+
+/* Product transitions keep both the header and its fixed mobile links still.
+   Only this local journey opts into the name, leaving home travel independent. */
+.catalog-product-transition .site-header { view-transition-name: catalog-chrome; }
+.catalog-product-transition::view-transition-group(catalog-chrome) { z-index: 100; animation: none; }
+.catalog-product-transition::view-transition-old(catalog-chrome) { display: none; animation: none; }
+.catalog-product-transition::view-transition-new(catalog-chrome) { animation: none; opacity: 1; mix-blend-mode: normal; }

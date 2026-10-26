@@ -478,6 +478,26 @@ function initCatalog() {
     );
   }
 
+  // The mounted header is captured separately from the page crossfade.
+  let productMotion = null;
+  const transitionRoot = document.documentElement;
+  cleanups.push(() => {
+    productMotion?.skipTransition();
+    transitionRoot.classList.remove("catalog-product-transition");
+  });
+  async function productTransition(update) {
+    transitionRoot.classList.add("catalog-product-transition");
+    try {
+      const transition = document.startViewTransition(update);
+      productMotion = transition;
+      transition.ready.catch(() => {});
+      await transition.finished.catch(() => {});
+    } finally {
+      productMotion = null;
+      transitionRoot.classList.remove("catalog-product-transition");
+    }
+  }
+
   function nameTile(tile, on) {
     const id = tile.dataset.productId;
 
@@ -645,12 +665,10 @@ function initCatalog() {
       article.classList.add("product--folded");
       nameTile(tile, true);
 
-      const transition = document.startViewTransition(() => {
+      await productTransition(() => {
         nameTile(tile, false);
         show(page.section, tile);
       });
-
-      await transition.finished.catch(() => {});
       if (controller.signal.aborted) return;
       // Then the label unfolds with what the page adds (clipped while it
       // does).
@@ -689,12 +707,10 @@ function initCatalog() {
       await wait(FOLD_MS);
       if (controller.signal.aborted) return;
 
-      const transition = document.startViewTransition(() => {
+      await productTransition(() => {
         hide();
         nameTile(tile, true);
       });
-
-      await transition.finished.catch(() => {});
       if (controller.signal.aborted) return;
       nameTile(tile, false);
     } else {

@@ -924,3 +924,10 @@ Catalog pictures and ordinary historical order rows retain their own layout.
 Mobile cart controls now form a centred stack: a larger quantity stepper, then
 the row amount directly beneath it. Desktop retains its inline controls. Unit
 price tags overhang the image's right edge by about one fifth of their width.
+
+Opening/closing product details keeps the mounted navbar visually still: it
+has its own non-fading view-transition capture, separate from the page fade.
+In the desktop navbar cart preview only, most of each price tag hangs left of
+the product image (roughly one fifth remains over it). Transparent scroll room
+lets it extend beyond the panel edge. Day uses a faint shadow; night a faint
+moonlit glow. Mobile and full cart/review pages retain their tag placement.
