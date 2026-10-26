@@ -124,7 +124,7 @@
   --theme-entrance-action-bg: var(--color-primary-450);
 
   /* # Secondary buttons: quiet surface, ink/edge and pointer palette */
-  --theme-secondary-bg: var(--color-white);
+  --theme-secondary-bg: var(--color-primary-50);
   --theme-secondary-ink: var(--theme-chrome-bg);
   --theme-secondary-edge: var(--theme-chrome-bg);
   --theme-secondary-pointer-bg: var(--theme-chrome-bg);
@@ -517,15 +517,24 @@
   --cart-panel-bg: rgb(255 251 241 / 0.995);
 }
 
-/* Customer day catalog labels: blue title, white fields, blue chosen values.
+/* Customer day catalog labels: gold information, blue actions and chosen values.
    The shared day defaults above remain available to ops and night mappings. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
-  --label-band: var(--theme-chrome-bg);
-  --label-band-text: var(--color-white);
+  --label-band: var(--color-accent-600);
+  --label-band-text: var(--color-primary-950);
+  --catalog-fields-bg: var(--color-primary-50);
+  --catalog-title-pointer-bg: var(--theme-chrome-bg);
+  --catalog-title-pointer-text: var(--color-white);
+  --catalog-badge-bg: var(--color-accent-600);
+  --catalog-badge-ink: var(--color-primary-950);
+  --catalog-badge-border: var(--color-accent-700);
+  --catalog-success-bg: var(--color-green-100);
+  --catalog-success-band-bg: var(--color-green-700);
+  --catalog-burst-success: var(--color-green-600);
+  --catalog-burst-halo: color-mix(in srgb, var(--catalog-burst-success) 30%, transparent);
   --catalog-package-text: var(--theme-chrome-bg);
   --catalog-control-placeholder-text: var(--label-muted);
   --catalog-control-focus-text: var(--catalog-package-text);
-  --catalog-card-hover-text: var(--label-band-text);
 }
 
 /* Shared controls */
@@ -1311,7 +1320,7 @@
   --day-filter-pointer-bg: var(--color-neutral-300);
 }
 
-/* Secondary action: white paper with brand-blue ink/edge. Shared by
+/* Secondary action: pale blue paper with brand-blue ink/edge. Shared by
    quiet day actions such as the product-detail return control. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
   --action-secondary-bg: var(--theme-secondary-bg);

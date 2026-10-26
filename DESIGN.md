@@ -876,8 +876,9 @@ to the wider desktop clamp; search, Previous orders and contact fields retain
 the standard content width. Review/just-placed confirmation reuse the same
 product visual; historical orders retain their own layout.
 
-Cart additions and in-cart badges use secondary actions: white with blue
-ink/edge by day, stepper-blue with pale ink by night, with gold hover emphasis.
+Cart additions use secondary actions: pale blue with blue ink/edge by day,
+stepper-blue with pale ink by night, with gold hover emphasis. The day
+in-cart badge uses its separate gold information palette.
 The cart close is also secondary; continuing the order remains primary.
 Opening mobile cart/Menu gives the centred trigger its active cloud/halo.
 The current cart icon returns to the browsing URL/scroll recorded before
@@ -902,9 +903,16 @@ names/pins share hover and keyboard emphasis while addresses remain still.
 
 ### Day catalog label palette
 
-Customer day cards and product details share a brand-blue title band with
-white text. Their lower variant/quantity fields remain white; fixed packages,
-chosen variants and quantities use the navbar blue. An unchosen variant uses
-muted text, including the native select fallback. Focus retains the full-cell
-blue tint and blue values. Hovered card names remain white on the blue band.
-Night and ops keep their own mappings.
+Day catalog cards and product details use an accent-600 name band with dark
+blue text. Blue quantities/selected variants and muted empty variants sit on
+primary-50 fields. Secondary cart actions share the primary-50 resting surface.
+The in-cart badge has its own gold information palette, independent of action
+hover colours. Pointer/keyboard navigation turns the card's name band blue
+with white text; variant/quantity interactions keep their existing states.
+Confirmed additions briefly show a green label, cart mark and glow, with a
+green badge before its gold resting state returns. Night remains unchanged.
+
+`--label-band/text` own the title; `--catalog-fields-bg` owns fields;
+`--catalog-title-pointer-bg/text` own navigation feedback; `--catalog-badge-*`
+own information. `--catalog-success-bg/band-bg` and the existing burst tokens
+own confirmed success. Customer day mappings exclude ops and night.

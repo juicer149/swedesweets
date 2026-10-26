@@ -1469,7 +1469,7 @@ in theme files. Ops does not load the profile; reduced motion keeps its existing
 static/fade alternatives. Night shares landing breathing, wordmark/link travel and active-link feedback;
 celebration stays disabled until a dedicated night design is chosen.
 
-Day secondary cart controls rest on white, retaining blue ink/edge and blue/gold
+Day secondary cart controls rest on primary-50, retaining blue ink/edge and blue/gold
 hover. Completed timeline steps use green-500 by day and green-300 by night,
 with their shared completion glow. Find Sweets adds name puff/pin lift to its
 local hover and keyboard focus light; addresses remain stationary.
@@ -1573,9 +1573,16 @@ layouts, hidden trash overrides and old filled-flash/halo animations are removed
 
 ## Day catalog label palette
 
-The customer-only mapping beside the shared label defaults in light.css
-connects `--label-band` and `--catalog-package-text` to `--theme-chrome-bg`,
-with white `--label-band-text`. `--catalog-control-placeholder-text` maps to
-`--label-muted` for an empty enhanced/native variant choice; confirmed values
-remain blue. Hover title ink follows the band text, preserving contrast.
-Cards and product details share the palette. Selectors exclude night and ops.
+Day catalog cards and product details use an accent-600 name band with dark
+blue text. Blue quantities/selected variants and muted empty variants sit on
+primary-50 fields. Secondary cart actions share the primary-50 resting surface.
+The in-cart badge has its own gold information palette, independent of action
+hover colours. Pointer/keyboard navigation turns the card's name band blue
+with white text; variant/quantity interactions keep their existing states.
+Confirmed additions briefly show a green label, cart mark and glow, with a
+green badge before its gold resting state returns. Night remains unchanged.
+
+`--label-band/text` own the title; `--catalog-fields-bg` owns fields;
+`--catalog-title-pointer-bg/text` own navigation feedback; `--catalog-badge-*`
+own information. `--catalog-success-bg/band-bg` and the existing burst tokens
+own confirmed success. Customer day mappings exclude ops and night.

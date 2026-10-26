@@ -246,8 +246,7 @@
   background: var(--color-neutral-300);
 }
 
-/* In the cart already: a small copy of the cart button (light green, dark
-   green edge and cart) with how many, on the picture's other corner. */
+/* In-cart count: information on the picture, with its own theme palette. */
 .tile__in-cart {
   position: absolute;
   top: 0.55rem;
@@ -440,6 +439,7 @@
   justify-content: center;
   min-width: 0;
   padding: 0;
+  background: var(--catalog-fields-bg, transparent);
 }
 
 .tile__size { border-radius: 0 0 0 7px; }
@@ -1048,6 +1048,7 @@
 }
 
 .product__half {
+  background: var(--catalog-fields-bg, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1504,6 +1505,43 @@
   }
 }
 
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile__label {
+  --catalog-card-hover-text: var(--label-band-text);
+}
+/* Keep ink and band in the same state; fading only the ink briefly leaves
+   white lettering on the gold resting band after pointer/focus departure. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile__name a {
+  transition-property: text-shadow;
+}
+
+/* Day card navigation: gold information becomes blue when the card is
+   pointed at or its title receives keyboard focus. Form states own feedback. */
+@media (hover: hover) and (pointer: fine) {
+  :root:not([data-theme="dark"], [data-site-zone="ops"]) .tile:not(.tile--folded):not([data-unfolding]):not(:has(.tile__order:hover, .tile__order[data-state], .ts-wrapper.dropdown-active)):hover .tile__label {
+    --label-band: var(--catalog-title-pointer-bg);
+    --label-band-text: var(--catalog-title-pointer-text);
+  }
+}
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile:not(:has(.tile__order[data-state])):has(.tile__name a:focus-visible) .tile__label {
+  --label-band: var(--catalog-title-pointer-bg);
+  --label-band-text: var(--catalog-title-pointer-text);
+}
+
+/* Confirmed additions get green paint and light, returning to gold afterward.
+   The same state contract is used by cards and the opened product. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.tile__label:has(.tile__order[data-state="done"]), .product__label:has(.product__form[data-state="done"])) {
+  --label-band: var(--catalog-success-band-bg);
+  --label-band-text: var(--color-white);
+  background: var(--catalog-success-bg);
+  border-color: var(--catalog-burst-success);
+  box-shadow: 0 0 18px var(--catalog-burst-halo);
+}
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.tile:has(.tile__order[data-state="done"]), .product:has(.product__form[data-state="done"])) .tile__in-cart {
+  --catalog-badge-bg: var(--catalog-success-bg);
+  --catalog-badge-ink: var(--catalog-burst-success);
+  --catalog-badge-border: var(--catalog-burst-success);
+}
+
 /* The product-name link is the keyboard entry to the same detail page. */
 .tile:not(.tile--folded):has(.tile__name a:focus-visible) .tile__media {
   box-shadow: var(--catalog-card-hover-shadow);
@@ -1545,7 +1583,9 @@
 .product__label { box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.15), var(--catalog-outline-shadow), var(--product-label-glow); }
 
 :root:not([data-site-zone="ops"]) .tile__in-cart {
-  color: var(--action-secondary-text); background: var(--action-secondary-bg); border-color: var(--action-secondary-border);
+  color: var(--catalog-badge-ink, var(--action-secondary-text));
+  background: var(--catalog-badge-bg, var(--action-secondary-bg));
+  border-color: var(--catalog-badge-border, var(--action-secondary-border));
 }
 .catalog__pagination { display: flex; justify-content: center; gap: var(--space-6); margin-top: var(--space-8); }
 .catalog__more [data-catalog-load-more] { min-height: 2.75rem; }
@@ -1553,7 +1593,9 @@
 .catalog__pagination[hidden] { display: none; }
 
 :root:not([data-site-zone="ops"]) .tile__in-cart:hover {
-  color: var(--action-secondary-hover-text); background: var(--action-secondary-hover-bg); border-color: var(--action-secondary-hover-border);
+  color: var(--catalog-badge-ink, var(--action-secondary-hover-text));
+  background: var(--catalog-badge-bg, var(--action-secondary-hover-bg));
+  border-color: var(--catalog-badge-border, var(--action-secondary-hover-border));
 }
 
 /* Product transitions keep both the header and its fixed mobile links still.
