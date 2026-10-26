@@ -104,11 +104,12 @@ Dropdown options pair foreground
 and background colours so selected countries and variants remain readable.
 Variable mappings live in [docs/css-themes.md](docs/css-themes.md).
 
-Catalog labels have a palette per theme: light paper in light, blue surfaces
-with a gold name band in dark. Quantity and variant fields are blue when
-available and gold while focused/open. Fixed weight is neutral; price tags
-keep their own gold ink. About's polaroid remains light with dark lettering,
-and product photos retain their original colours.
+Catalog labels use a gold title band by day and light-blue title text on a
+blue surface by night. Card navigation turns the title/frame blue by day and
+lights its lettering gold by night. Fields keep their ordinary surface until
+they receive focus. Price tags and in-cart counts use white/navy/gold by day
+and blue/gold by night; badges have no hover treatment. About's polaroid
+remains light with dark lettering, and photos retain their original colours.
 
 Layout and behaviour are shared by both themes. The catalog wraps at a readable
 minimum card width, with at most four columns. The detail title scales from
@@ -901,18 +902,25 @@ the blue entrance frame; entrance primary actions share a white border.
 Completed timeline steps use bright theme greens and a soft glow. Find Sweets
 names/pins share hover and keyboard emphasis while addresses remain still.
 
-### Day catalog label palette
+### Catalog label and notification palettes
 
-Day catalog cards and product details use an accent-600 name band with dark
-blue text. Blue quantities/selected variants and muted empty variants sit on
-primary-50 fields. Secondary cart actions share the primary-50 resting surface.
-The in-cart badge has its own gold information palette, independent of action
-hover colours. Pointer/keyboard navigation turns the card's name band blue
-with white text; variant/quantity interactions keep their existing states.
-Confirmed additions briefly show a green label, cart mark and glow, with a
-green badge before its gold resting state returns. Night remains unchanged.
+Day cards/details have an accent-600 name band with primary-950 text; night
+uses light-blue lettering on a dark-blue band. Pointer/keyboard navigation
+changes only the title band/text, frame and light: blue/white by day, gold
+lettering with warm light by night. Form feedback has priority over navigation.
+
+Variant and quantity fields retain the ordinary label surface (white by day,
+blue by night), with blue day values and muted empty choices. Their background
+changes only when their own input is focused/open, including in product detail.
+Secondary cart buttons retain their pale-blue day surface.
+
+Price tags and in-cart badges share an information palette: white/primary-950
+with a gold border by day; dark blue with lighter gold ink/edge by night. The
+badge has no hover rule in either theme. Confirmed additions retain their
+separate success feedback; a transient green badge is not a hover state.
 
 `--label-band/text` own the title; `--catalog-fields-bg` owns fields;
-`--catalog-title-pointer-bg/text` own navigation feedback; `--catalog-badge-*`
-own information. `--catalog-success-bg/band-bg` and the existing burst tokens
-own confirmed success. Customer day mappings exclude ops and night.
+`--catalog-title-pointer-bg/text/border/shadow` own card navigation feedback.
+`--catalog-price-bg/text/border` and `--catalog-badge-bg/ink/border` own the
+information paint independently from action buttons. `--catalog-success-*`
+and the burst tokens own day confirmation feedback. Ops is excluded.

@@ -298,7 +298,7 @@
   --select-option-active-text: var(--color-primary-900);
   --select-option-active-bg: var(--color-primary-100);
   --select-option-selected-text: var(--color-primary-900);
-  --catalog-cart-hover-shadow: var(--state-pointer-box-glow);
+  --catalog-cart-hover-shadow: 0 0 16px color-mix(in srgb, var(--selected-accent) 22%, transparent);
 
   /* 4. Reading, FAQ and contact details */
   --prose-text: var(--text-reading);
@@ -351,12 +351,22 @@
   /* 6. Catalog and labels — deliberate gold/blue surface exceptions stay local */
   --label-bg: var(--surface-bg);
   --label-border: var(--color-accent-700);
-  --label-band: var(--color-accent-700);
+  --label-band: var(--surface-bg);
   --label-line: var(--color-primary-700);
-  --label-band-text: var(--color-primary-950);
+  --label-band-text: var(--interactive-text);
   --label-text: var(--color-accent-200);
   /* Price stays gold; fixed weight is ordinary, non-interactive information. */
   --catalog-price-text: var(--color-accent-400);
+  --catalog-price-bg: var(--label-bg);
+  --catalog-price-border: var(--catalog-price-text);
+  --catalog-badge-bg: var(--catalog-price-bg);
+  --catalog-badge-ink: var(--catalog-price-text);
+  --catalog-badge-border: var(--catalog-price-border);
+  --catalog-fields-bg: var(--label-bg);
+  --catalog-title-pointer-bg: var(--label-band);
+  --catalog-title-pointer-text: var(--selected-accent);
+  --catalog-title-pointer-border: var(--selected-accent);
+  --catalog-title-pointer-shadow: var(--catalog-cart-hover-shadow);
   --catalog-package-text: var(--color-neutral-300);
   --label-muted: var(--color-primary-200);
   --label-success-text: var(--color-status-success-text);
@@ -368,8 +378,8 @@
   --catalog-placeholder-text: #63718f;
   --catalog-placeholder-crown: #63718f;
 
-  /* Card hover: the name sits on gold; the picture shares the warm light. */
-  --catalog-card-hover-text: var(--color-primary-700);
+  /* Card hover: gold lettering and a shared warm light on the blue surface. */
+  --catalog-card-hover-text: var(--selected-accent);
   --catalog-card-hover-sheen: var(--state-pointer-sheen);
   --catalog-outline-shadow: 0 0 10px color-mix(in srgb, var(--label-border) 15%, transparent);
   /* The shelf: blue stripes in the dark, lit along its edge by a faint
@@ -385,7 +395,7 @@
     0 0 90px 20px color-mix(in srgb, var(--color-accent-600) 7%, transparent);
   /* The start page's logo is the moon: a soft halo round it. */
   --landing-moon-halo: radial-gradient(closest-side, color-mix(in srgb, var(--moonlight) 15%, transparent), color-mix(in srgb, var(--moonlight) 6%, transparent) 55%, transparent);
-  --catalog-card-hover-shadow: var(--state-pointer-box-glow);
+  --catalog-card-hover-shadow: var(--catalog-cart-hover-shadow);
 
   /* Quantity/variant fields: interactive blue at rest; gold while focused/open */
   --catalog-control-hover-border: color-mix(in srgb, var(--selected-accent) 45%, transparent);

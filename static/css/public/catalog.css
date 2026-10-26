@@ -223,8 +223,8 @@
   padding: 0.2rem 0.55rem 0.2rem 1.05rem;
 
   color: var(--catalog-price-text);
-  background: var(--label-bg);
-  border: 1.5px solid var(--label-border);
+  background: var(--catalog-price-bg, var(--label-bg));
+  border: 1.5px solid var(--catalog-price-border, var(--label-border));
   border-radius: 7px;
   box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / 0.18);
 
@@ -578,7 +578,10 @@
 
 .tile__size:has(.ts-wrapper:is(.focus, .dropdown-active)),
 .tile__size:has(> .tile__picker > select:focus),
-.tile__buy:has(.tile__quantity:focus) {
+.tile__buy:has(.tile__quantity:focus),
+.product__half:has(.ts-wrapper:is(.focus, .dropdown-active)),
+.product__half:has(.tile__picker > select:focus),
+.product__half:has(.tile__quantity:focus) {
   color: var(--catalog-control-focus-text);
   background: var(--catalog-control-focus-bg);
   box-shadow: inset 0 0 0 1px var(--catalog-control-focus-border);
@@ -1505,26 +1508,30 @@
   }
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile__label {
+:root:not([data-site-zone="ops"]) .tile__label {
   --catalog-card-hover-text: var(--label-band-text);
 }
 /* Keep ink and band in the same state; fading only the ink briefly leaves
    white lettering on the gold resting band after pointer/focus departure. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile__name a {
+:root:not([data-site-zone="ops"]) .tile__name a {
   transition-property: text-shadow;
 }
 
-/* Day card navigation: gold information becomes blue when the card is
-   pointed at or its title receives keyboard focus. Form states own feedback. */
+/* Card navigation changes only the title palette, frame and light.
+   Each field owns its focus paint; confirmed form feedback takes priority. */
 @media (hover: hover) and (pointer: fine) {
-  :root:not([data-theme="dark"], [data-site-zone="ops"]) .tile:not(.tile--folded):not([data-unfolding]):not(:has(.tile__order:hover, .tile__order[data-state], .ts-wrapper.dropdown-active)):hover .tile__label {
+  :root:not([data-site-zone="ops"]) .tile:not(.tile--folded):not([data-unfolding]):not(:has(.tile__order:hover, .tile__order[data-state], .ts-wrapper.dropdown-active)):hover .tile__label {
     --label-band: var(--catalog-title-pointer-bg);
     --label-band-text: var(--catalog-title-pointer-text);
+    border-color: var(--catalog-title-pointer-border);
+    box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / .15), var(--catalog-title-pointer-shadow);
   }
 }
-:root:not([data-theme="dark"], [data-site-zone="ops"]) .tile:not(:has(.tile__order[data-state])):has(.tile__name a:focus-visible) .tile__label {
+:root:not([data-site-zone="ops"]) .tile:not(:has(.tile__order[data-state])):has(.tile__name a:focus-visible) .tile__label {
   --label-band: var(--catalog-title-pointer-bg);
   --label-band-text: var(--catalog-title-pointer-text);
+  border-color: var(--catalog-title-pointer-border);
+  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / .15), var(--catalog-title-pointer-shadow);
 }
 
 /* Confirmed additions get green paint and light, returning to gold afterward.
@@ -1592,11 +1599,7 @@
 
 .catalog__pagination[hidden] { display: none; }
 
-:root:not([data-site-zone="ops"]) .tile__in-cart:hover {
-  color: var(--catalog-badge-ink, var(--action-secondary-hover-text));
-  background: var(--catalog-badge-bg, var(--action-secondary-hover-bg));
-  border-color: var(--catalog-badge-border, var(--action-secondary-hover-border));
-}
+
 
 /* Product transitions keep both the header and its fixed mobile links still.
    Only this local journey opts into the name, leaving home travel independent. */

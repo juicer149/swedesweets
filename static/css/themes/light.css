@@ -522,12 +522,17 @@
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
   --label-band: var(--color-accent-600);
   --label-band-text: var(--color-primary-950);
-  --catalog-fields-bg: var(--color-primary-50);
+  --catalog-fields-bg: var(--label-bg);
   --catalog-title-pointer-bg: var(--theme-chrome-bg);
   --catalog-title-pointer-text: var(--color-white);
-  --catalog-badge-bg: var(--color-accent-600);
-  --catalog-badge-ink: var(--color-primary-950);
-  --catalog-badge-border: var(--color-accent-700);
+  --catalog-title-pointer-border: var(--theme-chrome-bg);
+  --catalog-title-pointer-shadow: 0 0 0 transparent;
+  --catalog-price-text: var(--color-primary-950);
+  --catalog-price-bg: var(--color-white);
+  --catalog-price-border: var(--color-accent-600);
+  --catalog-badge-bg: var(--catalog-price-bg);
+  --catalog-badge-ink: var(--catalog-price-text);
+  --catalog-badge-border: var(--catalog-price-border);
   --catalog-success-bg: var(--color-green-100);
   --catalog-success-band-bg: var(--color-green-700);
   --catalog-burst-success: var(--color-green-600);
