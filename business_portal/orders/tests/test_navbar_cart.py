@@ -139,8 +139,9 @@ def test_navbar_cart_fragment_reads_customer_cart(
     assert "data-checkout-details-form" not in html
     assert f'href="{reverse("business_portal:cart_review")}"' not in html
     assert f'href="{reverse("business_portal:cart")}"' in html
-    # The summary row beside the button: how many products, no prices.
-    summary = html.split('class="cart-summary"', 1)[1].split("</span>\n", 1)[0]
+    # An unpriced cart keeps the count visible; its money slot stays hidden.
+    assert 'data-cart-summary-money hidden' in html
+    summary = html.split('data-cart-summary-products', 1)[1].split("</span>\n", 1)[0]
     assert "Your order" in summary
     assert "1 product" in summary
     assert "Subtotal" not in summary

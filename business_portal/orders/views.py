@@ -52,6 +52,7 @@ from business_portal.selectors import (
     get_portal_customer_for_user,
 )
 from carts.models import CartLine
+from common.cart_price_feedback import cart_price_feedback
 from common.channels import SalesChannel
 from common.http import wants_json
 from customers.models import Customer
@@ -109,6 +110,9 @@ def set_cart_line_quantity(
         request
     )
 
+    previous_subtotal = (
+        build_portal_cart_context(cart=line.cart).subtotal if as_json else None
+    )
     previous_quantity = line.quantity
 
     raw_quantity = request.POST.get(
@@ -185,6 +189,10 @@ def set_cart_line_quantity(
                         (quantity > previous_quantity) - (quantity < previous_quantity)
                     ),
                     "line_total_label": current.line_total_label if current else None,
+                    **cart_price_feedback(
+                        previous_subtotal,
+                        build_portal_cart_context(cart=line.cart).subtotal,
+                    ),
                 }
             )
 
@@ -216,6 +224,9 @@ def remove_cart_line(
     as_json = wants_json(
         request
     )
+
+    before = build_portal_cart_context(cart=line.cart).subtotal if as_json else None
+    cart = line.cart
 
     try:
         remove_customer_cart_line(
@@ -249,6 +260,11 @@ def remove_cart_line(
                     "ok": True,
                     "message": str(message),
                     "cart_line_id": line.id,
+                    "change_direction": -1,
+                    **cart_price_feedback(
+                        before,
+                        build_portal_cart_context(cart=cart).subtotal,
+                    ),
                 }
             )
 
@@ -390,6 +406,10 @@ def add_cart_offer(request):
         user=request.user,
     )
     as_json = wants_json(request)
+    before = (
+        build_portal_cart_context(cart=get_customer_cart(customer=customer)).subtotal
+        if as_json else None
+    )
 
     try:
         commercial_price_id = int(
@@ -464,6 +484,11 @@ def add_cart_offer(request):
             "message": message,
             "cart_line_id": line.id,
             "quantity": line.quantity,
+            "change_direction": 1,
+            **cart_price_feedback(
+                before,
+                build_portal_cart_context(cart=line.cart).subtotal,
+            ),
             "line_html": render_to_string(
                 "business_portal/orders/includes/cart_line.html",
                 {"line": cart_line},

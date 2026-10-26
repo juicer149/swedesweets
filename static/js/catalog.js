@@ -289,6 +289,7 @@ function initCatalog() {
     // The navbar's cart catches the product while the green cart still shows on
     // the tile (almost half a second after it appears), so the two overlap
     // a little.
+    let confirmedPayload = null;
     const onMark = (added) => {
       form.dataset.state = added ? "done" : "failed";
 
@@ -300,7 +301,7 @@ function initCatalog() {
         window.setTimeout(() => {
           document.dispatchEvent(
             new CustomEvent("cart-changed", {
-              detail: { source: "catalog", bump: true },
+              detail: { source: "catalog", bump: true, payload: confirmedPayload },
             })
           );
         }, 450);
@@ -310,7 +311,7 @@ function initCatalog() {
     const { ok, value, error } = await run(
       status,
       "default",
-      () => postAdd(form),
+      async () => { confirmedPayload = await postAdd(form); return confirmedPayload; },
       { onMark }
     );
 

@@ -7,7 +7,7 @@
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const key = "swedesweets-home-flight";
   const cloudURL = document.currentScript.dataset.cloud;
-  const canMove = () => window.SwedeSweetsEffects?.profile().travel === "cloud" && root.dataset.siteZone !== "ops" && !reduced.matches;
+  const canMove = () => ["cloud", "wordmark"].includes(window.SwedeSweetsEffects?.profile().travel) && root.dataset.siteZone !== "ops" && !reduced.matches;
   const brandSelector = "a.site-brand[href], a.entrance-header__brand[href]";
   let outgoing = null;
   let started = false;
@@ -53,6 +53,7 @@
   }
 
   function makeCloud(parent, target = false) {
+    if (window.SwedeSweetsEffects?.profile().travel !== "cloud") return null;
     const element = document.createElement("span");
     element.className = "home-flight-cloud" + (target ? " home-flight-cloud--target" : "");
     element.setAttribute("aria-hidden", "true");
@@ -61,7 +62,7 @@
     return element;
   }
   function warm(event) {
-    if (!canMove() || warmImage || !event.target.closest?.(brandSelector)) return;
+    if (!canMove() || window.SwedeSweetsEffects?.profile().travel !== "cloud" || warmImage || !event.target.closest?.(brandSelector)) return;
     warmImage = new Image(); warmImage.src = cloudURL;
   }
   document.addEventListener("pointerover", warm, true);

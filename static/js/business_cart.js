@@ -112,7 +112,7 @@
           return false;
         }
 
-        showAddedLines([payload]);
+        showAddedLines([payload], payload);
         return true;
       } catch {
         return false;
@@ -121,7 +121,7 @@
 
     // Render confirmed server rows immediately; their green flash and the
     // navbar cart's bump are the feedback, without a separate loading burst.
-    function showAddedLines(lines) {
+    function showAddedLines(lines, payload) {
       const placed = lines
         .map((item) => placeLine(item.line_html, item.cart_line_id))
         .filter(Boolean);
@@ -137,6 +137,7 @@
         lineId: lines.length === 1 ? lines[0].cart_line_id : null,
         quantity: lines.length === 1 ? lines[0].quantity : null,
         bump: true,
+        payload,
       });
     }
 
@@ -224,7 +225,7 @@
 
             return payload;
           },
-          (payload) => showAddedLines([payload])
+          (payload) => showAddedLines([payload], payload)
         );
       } else {
         await runAdd(
@@ -238,11 +239,11 @@
               throw new Error(notes.join(" "));
             }
 
-            return { lines, notes };
+            return { ...payload, lines, notes };
           },
-          ({ lines, notes }) => {
-            showAddedLines(lines);
-            setNote(form, notes);
+          (payload) => {
+            showAddedLines(payload.lines, payload);
+            setNote(form, payload.notes);
           }
         );
       }

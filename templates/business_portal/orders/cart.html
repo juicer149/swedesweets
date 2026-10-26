@@ -82,6 +82,8 @@
       {% endfor %}
     </ul>
 
+    <div class="lines-total" data-business-cart-subtotal{% if not subtotal_label %} hidden{% endif %}><span>{% trans "Subtotal" %}</span><strong data-cart-subtotal>{{ subtotal_label|default:"" }}</strong></div>
+
     <div class="form-actions page__actions page-actions" data-cart-lines {% if not cart_lines %}hidden{% endif %}>
       <form class="page-actions__primary" id="order-flow-review-form" method="post" action="{% url 'business_portal:cart' %}" data-submit-burst data-order-flow-submit>
         {% csrf_token %}
@@ -126,7 +128,7 @@
     {# The phone's sheet: how many products and the way on, held at its #}
     {# bottom (cart-panel.css); the button submits the review form above. #}
     <div class="order-flow-summary" data-cart-lines {% if not cart_lines %}hidden{% endif %}>
-      {% include "includes/cart/summary.html" with count=cart_lines|length only %}
+      {% include "includes/cart/summary.html" with count=cart_lines|length subtotal_label=subtotal_label only %}
       <button class="button button--sm button--solid button--tone-place" type="submit" form="order-flow-review-form" name="intent" value="review_order">{{ submit_label }}</button>
     </div>
 

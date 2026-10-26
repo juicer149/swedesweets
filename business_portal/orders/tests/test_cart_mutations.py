@@ -156,6 +156,8 @@ def test_set_cart_line_quantity_returns_json_success(
         "quantity": 5,
         "change_direction": 1,
         "line_total_label": None,
+        "subtotal_label": None,
+        "subtotal_delta_label": None,
     }
 
     line.refresh_from_db()
@@ -697,6 +699,9 @@ def test_customer_can_remove_cart_line_with_json_response(
         "ok": True,
         "message": "Product removed from your cart.",
         "cart_line_id": line_id,
+        "change_direction": -1,
+        "subtotal_label": "€0.00",
+        "subtotal_delta_label": None,
     }
 
     assert not CartLine.objects.filter(
@@ -722,3 +727,48 @@ def test_quantity_response_recalculates_priced_business_line(client):
     )
     assert response.status_code == 200
     assert response.json()["line_total_label"] == "€37.50"
+
+
+@pytest.mark.django_db
+def test_priced_business_add_and_remove_return_exact_subtotal_changes(client):
+    from decimal import Decimal
+
+    from business_portal.orders.cart_viewmodels import build_portal_cart_context
+    from pricing.tests.factories import price_amount_factory
+
+    customer = _login_customer(client=client)
+    line = _create_cart_line(customer=customer, product=product_factory(), quantity=2)
+    price_amount_factory(commercial_price=line.commercial_price, price=Decimal("7.50"))
+    added = client.post(reverse("business_portal:add_cart_offer"), {
+        "commercial_price_id": line.commercial_price_id,
+    }, HTTP_ACCEPT="application/json").json()
+    assert added["ok"] is True
+    assert added["subtotal_label"] == "€22.50"
+    assert added["subtotal_delta_label"] == "+€7.50"
+    assert added["change_direction"] == 1
+    assert build_portal_cart_context(cart=line.cart).subtotal_label == "€22.50"
+
+    removed = client.post(reverse("business_portal:remove_cart_line", kwargs={
+        "cart_line_id": line.id,
+    }), HTTP_ACCEPT="application/json").json()
+    assert removed["subtotal_label"] == "€0.00"
+    assert removed["subtotal_delta_label"] == "−€22.50"
+    assert removed["change_direction"] == -1
+
+
+@pytest.mark.django_db
+def test_business_subtotal_is_hidden_if_any_line_has_no_price(client):
+    from decimal import Decimal
+
+    from business_portal.orders.cart_viewmodels import build_portal_cart_context
+    from pricing.tests.factories import price_amount_factory
+
+    customer = _login_customer(client=client)
+    line = _create_cart_line(customer=customer, product=product_factory(), quantity=2)
+    price_amount_factory(commercial_price=line.commercial_price, price=Decimal("7.50"))
+    _create_cart_line(
+        customer=customer, product=product_factory(name="Other"), quantity=1
+    )
+    context = build_portal_cart_context(cart=line.cart)
+    assert context.subtotal is None
+    assert context.subtotal_label is None

@@ -15,12 +15,14 @@ from django.utils.translation import (
 )
 from django.views.decorators.http import require_POST
 
+from business.cart_selectors import get_customer_cart
 from business.repeat_services import (
     RepeatOrderResult,
     RepeatOrderSkipReason,
     repeat_order_into_cart,
 )
 from business_portal.orders.cart_viewmodels import (
+    build_portal_cart_context,
     build_portal_cart_lines,
 )
 from business_portal.orders.selectors import (
@@ -29,6 +31,7 @@ from business_portal.orders.selectors import (
 from business_portal.selectors import (
     get_portal_customer_for_user,
 )
+from common.cart_price_feedback import cart_price_feedback
 from common.http import wants_json
 from products.localization import translated_product_name
 
@@ -48,6 +51,11 @@ def repeat_order(
         order_id=order_id,
     )
 
+    before = (
+        build_portal_cart_context(cart=get_customer_cart(customer=customer)).subtotal
+        if wants_json(request) else None
+    )
+
     result = repeat_order_into_cart(
         customer=customer,
         source_order=source_order,
@@ -57,6 +65,7 @@ def repeat_order(
         return _repeat_json_response(
             request,
             result=result,
+            before=before,
         )
 
     if result.added_count:
@@ -101,6 +110,7 @@ def _repeat_json_response(
     request,
     *,
     result: RepeatOrderResult,
+    before,
 ) -> JsonResponse:
     """The cart page's "Order again" (business_cart.js): the lines it
     added or raised, drawn, for the page to put in place; and why any
@@ -131,6 +141,11 @@ def _repeat_json_response(
         {
             "ok": result.has_added_lines,
             "notes": notes,
+            "change_direction": 1,
+            **cart_price_feedback(
+                before,
+                build_portal_cart_context(cart=result.cart).subtotal,
+            ),
             "lines": [
                 {
                     "cart_line_id": line.cart_line_id,

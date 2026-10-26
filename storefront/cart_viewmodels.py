@@ -165,7 +165,7 @@ def build_retail_cart_context(
         cart_lines=tuple(
             built_lines
         ),
-        subtotal=subtotal if built_lines else None,
+        subtotal=subtotal,
         subtotal_label=(
             _format_eur(subtotal)
             if built_lines and subtotal is not None

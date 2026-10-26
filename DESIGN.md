@@ -886,7 +886,7 @@ only current cart product rows widen moderately, with controls at the right.
 Day cart secondary controls now rest on white with blue ink/edge. Completed
 timeline steps use brighter theme greens and a soft glow. Find Sweets names
 puff slightly while their pins lift, with equivalent keyboard focus feedback.
-Day and night currently share cloud/candy motion through `effects.js`; the
+Day and night share navigation motion through `effects.js`; the
 night profile can be replaced later without changing the day profile or colours.
 Night's active mobile navbar destination has larger text. Reduced motion remains
 respected.
@@ -904,3 +904,11 @@ pulse row amounts and subtotal green/red. Only the subtotal shows a brief signed
 change; on phones this appears in the bottom summary. The server computes its
 formatted change with Decimal. Missing prices remain missing, and failed
 mutations never produce optimistic prices. Reduced motion uses colour only.
+
+Cart unit prices reuse the catalog's `.tile__tag` artwork, with no "each" suffix.
+B2B shows a EUR subtotal only when every line is priced; otherwise the summary
+keeps its product count. Confirmed additions (including Tom Select and Order
+again) and removals now carry the same signed price feedback as quantity edits.
+Desktop Save changes has a wider minimum; the listed switch is larger in both
+layouts. Night home/landing travel moves its wordmark without day cloud art;
+logo/current-link spam does not trigger a celebration until its design is chosen.

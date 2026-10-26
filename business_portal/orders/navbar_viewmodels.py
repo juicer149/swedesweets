@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from decimal import Decimal
+
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -54,11 +56,23 @@ def build_business_navbar_cart(
         for line in cart_lines
     )
 
+    prices = [business_cart_line_presentation(
+        line, language_code=effective_language_code
+    ).unit_price for line in cart_lines]
+    subtotal = (
+        sum(
+            (price * line.quantity
+             for price, line in zip(prices, cart_lines, strict=True)),
+            Decimal("0.00"),
+        ) if all(price is not None for price in prices) else None
+    )
+
     return NavbarCart(
         aria_label=_("Cart"),
         title=_("Cart"),
         line_count=len(lines),
         lines=lines,
+        subtotal_label=f"€{subtotal:.2f}" if subtotal is not None else None,
         fragment_url=reverse(
             "business_portal:navbar_cart_fragment"
         ),

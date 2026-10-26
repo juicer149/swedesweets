@@ -8,13 +8,14 @@
   Expects: subtotal_label (or none), count.
 {% endcomment %}
 <span class="cart-summary">
-  {% if subtotal_label %}
+  <span data-cart-summary-money{% if not subtotal_label %} hidden{% endif %}>
     <small class="cart-summary__label">{% trans "Subtotal" %}</small>
-    <strong class="cart-summary__value" data-cart-subtotal>{{ subtotal_label }}</strong>
-  {% else %}
+    <strong class="cart-summary__value" data-cart-subtotal>{{ subtotal_label|default:"" }}</strong>
+  </span>
+  <span data-cart-summary-products{% if subtotal_label %} hidden{% endif %}>
     <small class="cart-summary__label">{% trans "Your order" %}</small>
     <strong class="cart-summary__value" data-cart-summary-count
       data-one="{% blocktrans count count=1 %}{{ count }} product{% plural %}{{ count }} products{% endblocktrans %}"
       data-many="{% blocktrans count count=2 %}{{ count }} product{% plural %}{{ count }} products{% endblocktrans %}">{% blocktrans count count=count %}{{ count }} product{% plural %}{{ count }} products{% endblocktrans %}</strong>
-  {% endif %}
+  </span>
 </span>

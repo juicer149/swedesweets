@@ -1487,14 +1487,14 @@ product rows reach a modest 48rem desktop maximum, with controls at right.
 
 ## Shared motion profile
 
-`effects.js` runs after theme selection and before home-arrival. Light and dark
-currently share the same frozen profile: cloud navigation/travel and candy-rain
-celebration. It sets `data-motion-profile` and `data-celebration-profile` for
+`effects.js` runs after theme selection and before home-arrival. The light profile uses cloud navigation/travel and candy-rain celebration.
+Night shares navigation but uses wordmark-only travel with no injected white
+cloud and no click celebration. It sets `data-motion-profile` and `data-celebration-profile` for
 CSS, while the controllers read `SwedeSweetsEffects.profile()`. Replace the
 dark profile entry to introduce a dedicated night effect later. Palette stays
 in theme files. Ops does not load the profile; reduced motion keeps its existing
-static/fade alternatives. Night now shares landing breathing, logo travel and
-braking, link travel, active-link/cloud feedback and candy rain.
+static/fade alternatives. Night shares landing breathing, wordmark/link travel and active-link feedback;
+celebration stays disabled until a dedicated night design is chosen.
 
 Day secondary cart controls rest on white, retaining blue ink/edge and blue/gold
 hover. Completed timeline steps use green-500 by day and green-300 by night,
@@ -1523,3 +1523,22 @@ using `--cart-price-up/down`, and shows a signed subtotal notice briefly. It
 reapplies only to new DOM after fragment refresh within a bounded window, and
 skips movement for reduced motion. Existing cart controllers still own mutation
 serialization, pending quantities, failed-request rollback and payment locks.
+
+## Cart additions/removals and shared price tags
+
+Cart unit labels use `.tile__tag` directly: the shared outline, hole, rotation
+and theme paint remain in the catalog component, with only static flow placement
+overridden in cart-panel.css. No unit suffix is appended.
+
+`common/cart_price_feedback.py` formats signed Decimal subtotal changes. Retail
+add/remove and business add/quantity/remove/repeat endpoints supply confirmed
+subtotal fields; business additions forward them through business_cart.js too.
+PortalCartContext and the navbar expose a subtotal only when every EUR unit
+price is known. A mixed/unpriced cart keeps its product-count summary; no partial
+amount is presented as the total. Empty carts retain numeric zero for calculating
+a final removal, while the ordinary empty UI still hides the summary. New summary
+markup permits switching between money and count after an in-place mutation.
+
+The dark effects profile has `travel: wordmark` and `celebration: none`. Cloud
+creation/preloading is guarded in home-arrival.js; motion and native navigation
+retain the same owner, and reduced-motion behavior is unchanged.

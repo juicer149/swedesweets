@@ -49,6 +49,15 @@
         pulse(line, record);
       }
     }
+    if (!refreshed && Object.hasOwn(payload, "subtotal_label")) {
+      for (const summary of document.querySelectorAll(".cart-summary")) {
+        summary.querySelector("[data-cart-summary-money]")?.toggleAttribute("hidden", !payload.subtotal_label);
+        summary.querySelector("[data-cart-summary-products]")?.toggleAttribute("hidden", Boolean(payload.subtotal_label));
+      }
+      for (const total of document.querySelectorAll("[data-business-cart-subtotal]")) {
+        total.hidden = !payload.subtotal_label || !total.closest("[data-current-order]")?.querySelector(".cart-line");
+      }
+    }
     if (payload.subtotal_label != null) {
       for (const total of document.querySelectorAll("[data-cart-subtotal]")) {
         if (refreshed && total.textContent.trim() !== payload.subtotal_label) continue;

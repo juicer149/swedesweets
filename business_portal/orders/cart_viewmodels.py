@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from decimal import Decimal
 from typing import Any
 
 from django.urls import reverse
@@ -27,6 +28,7 @@ class PortalCartLine:
     quantity_url: str
     remove_url: str
     line_total_label: str | None = None
+    line_total: Decimal | None = None
 
     @property
     def presentation(self) -> NavbarCartLine:
@@ -69,9 +71,21 @@ class PortalCartContext:
     continue_shopping_url: str
     cancel_url: str
 
+    @property
+    def subtotal(self) -> Decimal | None:
+        if any(line.line_total is None for line in self.cart_lines):
+            return None
+        return sum((line.line_total for line in self.cart_lines), Decimal("0.00"))
+
+    @property
+    def subtotal_label(self) -> str | None:
+        subtotal = self.subtotal
+        return f"€{subtotal:.2f}" if self.cart_lines and subtotal is not None else None
+
     def as_dict(self) -> dict[str, Any]:
         return {
             "cart_lines": self.cart_lines,
+            "subtotal_label": self.subtotal_label,
             "title": self.title,
             "description": self.description,
             "submit_label": self.submit_label,
@@ -225,6 +239,8 @@ def _build_portal_cart_lines(
                 ),
                 quantity=line.quantity,
                 line_total_label=presentation.total_label(line.quantity),
+                line_total=(presentation.unit_price * line.quantity
+                            if presentation.unit_price is not None else None),
                 quantity_url=reverse(
                     "business_portal:set_cart_line_quantity",
                     kwargs={

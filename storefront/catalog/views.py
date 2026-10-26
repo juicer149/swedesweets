@@ -20,6 +20,7 @@ from accounts.roles import AccountRole
 from carts.models import Cart
 from carts.selectors import units_in_cart_by_product_id
 from carts.services import create_cart
+from common.cart_price_feedback import cart_price_feedback
 from common.catalog.pagination import catalog_response
 from common.channels import SalesChannel
 from common.http import wants_json
@@ -37,6 +38,7 @@ from storefront.cart import (
     mark_retail_cart_active,
     mark_retail_cart_created,
 )
+from storefront.cart_viewmodels import build_retail_cart_context
 from storefront.catalog.detail_viewmodels import (
     build_retail_catalog_product_detail_context,
 )
@@ -288,6 +290,9 @@ def add_to_cart(
                 _resolve_cart(request)
             )
 
+            before = (build_retail_cart_context(cart=cart).subtotal
+                      if wants_json(request) else None)
+
             add_retail_cart_line(
                 cart=cart,
                 commercial_price_id=commercial_price_id,
@@ -339,6 +344,10 @@ def add_to_cart(
                 {
                     "ok": True,
                     "message": message,
+                    "change_direction": 1,
+                    **cart_price_feedback(
+                        before, build_retail_cart_context(cart=cart).subtotal
+                    ),
                 }
             )
 

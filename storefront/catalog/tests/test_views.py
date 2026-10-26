@@ -415,6 +415,9 @@ def test_add_to_cart_returns_json_success(client):
     assert response.json() == {
         "ok": True,
         "message": "Generic — Apple added to your cart.",
+        "change_direction": 1,
+        "subtotal_label": "€37.50",
+        "subtotal_delta_label": "+€37.50",
     }
 
 

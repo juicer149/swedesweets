@@ -20,6 +20,7 @@ from django.views.decorators.http import (
 )
 
 from carts.models import Cart, CartLine
+from common.cart_price_feedback import cart_price_feedback
 from common.http import wants_json
 from retail.cart_selectors import (
     get_retail_cart,
@@ -387,6 +388,10 @@ def remove_cart_line(
         cart_line_id=cart_line_id,
     )
 
+    before = (
+        build_retail_cart_context(cart=cart).subtotal if wants_json(request) else None
+    )
+
     try:
         remove_retail_cart_line_service(
             cart=cart,
@@ -408,16 +413,13 @@ def remove_cart_line(
     )
 
     if wants_json(request):
+        after = build_retail_cart_context(cart=cart).subtotal
         return JsonResponse(
             {
                 "ok": True,
                 "message": str(message),
-                # The cart page updates its subtotal as the line folds away.
-                "subtotal_label": (
-                    build_retail_cart_context(
-                        cart=cart,
-                    ).subtotal_label
-                ),
+                "change_direction": -1,
+                **cart_price_feedback(before, after),
             }
         )
 
