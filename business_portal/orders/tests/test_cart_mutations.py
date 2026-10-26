@@ -154,6 +154,7 @@ def test_set_cart_line_quantity_returns_json_success(
         "ok": True,
         "message": "Quantity updated.",
         "quantity": 5,
+        "change_direction": 1,
         "line_total_label": None,
     }
 

@@ -41,3 +41,38 @@
     padding-bottom: var(--space-3);
   }
 }
+
+/* Shared customer form rhythm, including retail delivery details. */
+.customer-form .form-grid { gap: clamp(1.5rem, 3vw, 2rem) var(--space-6); }
+.customer-form .form-field { gap: var(--space-3); }
+.account-edit .page__heading { margin-bottom: clamp(2rem, 5vh, 3rem); }
+.customer-form .pricing-channel { margin-block: clamp(2.5rem, 6vh, 4rem); }
+.customer-form .pricing-channel__title { margin-bottom: var(--space-8); }
+.customer-form > .page__actions { margin-top: var(--space-12); }
+.listing-toggle { display: flex; align-items: center; gap: var(--space-3); width: fit-content; min-height: 2.75rem; cursor: pointer; color: var(--text-strong); font-weight: 700; }
+.listing-toggle .listing-switch { appearance: none; width: 3rem; min-width: 3rem; height: 1.7rem; min-height: 1.7rem; margin: 0; padding: 3px; border: 1px solid var(--action-secondary-border); border-radius: var(--radius-pill); background: var(--surface-muted); cursor: pointer; }
+.listing-switch::before { content: ""; display: block; width: 1.2rem; height: 1.2rem; border-radius: 50%; background: var(--text-muted); transition: transform 160ms ease; }
+.listing-toggle .listing-switch:checked { background: var(--action-primary-bg); border-color: var(--action-primary-border); }
+.listing-switch:checked::before { transform: translateX(1.25rem); background: var(--action-primary-text); }
+.listing-toggle__on { display: none; }
+.listing-switch:checked ~ .listing-toggle__on { display: inline; }
+.listing-switch:checked ~ .listing-toggle__off { display: none; }
+.listing-switch:focus-visible { outline: 3px solid var(--field-focus-color); outline-offset: 3px; }
+.account-edit__save { display: flex; justify-content: center; }
+@media (max-width: 767px) {
+  :root:has([data-account-edit]) .site-header .site-nav__links { display: none !important; }
+  .account-edit { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+  .account-edit__save { position: fixed; z-index: 40; bottom: calc(12px + env(safe-area-inset-bottom)); left: 0; right: 0; padding-inline: var(--space-5); pointer-events: none; }
+  .account-edit .account-edit__save .page__submit { pointer-events: auto; width: fit-content; min-width: min(14rem, 80vw); max-width: calc(100vw - 3rem); box-shadow: 0 4px 20px color-mix(in srgb, var(--page-bg) 75%, transparent); }
+  .account-edit-keyboard .account-edit__save { visibility: hidden; pointer-events: none; }
+  .account-edit-keyboard .account-edit__save .page__submit { pointer-events: none; }
+}
+@media (prefers-reduced-motion: reduce) { .listing-switch::before { transition: none; } }
+
+.listing-toggle .listing-switch:focus { background: var(--surface-muted); box-shadow: none; }
+.listing-toggle .listing-switch:checked:focus { background: var(--action-primary-bg); }
+@media (max-width: 767px) {
+  :root:has([data-account-edit]) .site-menu__trigger[aria-current="page"] { position: fixed; top: 31px; left: 50%; width: 2.75rem; transform: translate(-50%, -50%) !important; }
+}
+
+.account-edit .form-field { scroll-margin-bottom: 7rem; }

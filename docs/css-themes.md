@@ -1500,3 +1500,26 @@ Day secondary cart controls rest on white, retaining blue ink/edge and blue/gold
 hover. Completed timeline steps use green-500 by day and green-300 by night,
 with their shared completion glow. Find Sweets adds name puff/pin lift to its
 local hover and keyboard focus light; addresses remain stationary.
+
+## Customer editing and confirmed price feedback
+
+`public/account.css` scopes spacing to `.customer-form`, shared by Edit store,
+onboarding and retail checkout. ListingSwitch renders one native checkbox with
+switch semantics but preserves the strict existing true/false field contract
+(including omitted = false). Completed edit pages mark Menu current; mobile
+centres its real trigger. Save changes replaces the hidden bottom reading links.
+`account-edit.js` uses VisualViewport only to detect keyboard occlusion: the
+fixed action is hidden behind it, never positioned against the keyboard edge.
+Native form submission and server validation remain the owners of persistence.
+Blue entrance primary buttons use `--entrance-action-primary-border` together
+with their existing entrance background role.
+
+Cart shared line markup displays the unit-price badge inside product text.
+Retail quantity JSON includes `change_direction` and `subtotal_delta_label`,
+computed from server Decimal subtotals. B2B quantity responses include direction
+for priced row feedback, without inventing a subtotal for unpriced orders.
+`cart-price-feedback.js` consumes confirmed responses, pulses row/subtotal ink
+using `--cart-price-up/down`, and shows a signed subtotal notice briefly. It
+reapplies only to new DOM after fragment refresh within a bounded window, and
+skips movement for reduced motion. Existing cart controllers still own mutation
+serialization, pending quantities, failed-request rollback and payment locks.

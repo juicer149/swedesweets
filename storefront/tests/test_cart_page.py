@@ -133,6 +133,18 @@ def test_quantity_update_returns_new_totals_as_json(
     assert payload["quantity"] == 3
     assert payload["line_total_label"] == "€30.00"
     assert payload["subtotal_label"] == "€30.00"
+    assert payload["change_direction"] == 1
+    assert payload["subtotal_delta_label"] == "+€10.00"
+
+    decreased = client.post(
+        reverse("storefront:set_cart_line_quantity", kwargs={"cart_line_id": line.id}),
+        {"quantity": "1"},
+        HTTP_ACCEPT="application/json",
+    ).json()
+    assert decreased["line_total_label"] == "€10.00"
+    assert decreased["subtotal_label"] == "€10.00"
+    assert decreased["change_direction"] == -1
+    assert decreased["subtotal_delta_label"] == "−€20.00"
 
 
 @pytest.mark.django_db

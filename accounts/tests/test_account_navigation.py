@@ -97,6 +97,7 @@ def test_guest_menu_has_login_and_settings_but_no_account(client):
 @pytest.mark.parametrize("route,account_current,cart_current", [
     ("business_portal:index", True, False),
     ("business_portal:orders", True, False),
+    ("business_portal:edit_store", True, False),
     ("business_portal:catalog", False, False),
     ("business_portal:cart", False, True),
 ])

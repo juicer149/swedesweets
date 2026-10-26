@@ -569,6 +569,7 @@
   --action-primary-text-shadow: none;
   --action-primary-icon-filter: none;
   --entrance-action-primary-bg: var(--theme-entrance-action-bg);
+  --entrance-action-primary-border: var(--color-white);
   --interaction-halo-opacity: 1;
   --interaction-selected-opacity: 0;
   --interaction-text-shadow: none;
@@ -1344,3 +1345,5 @@
   --find-sweets-pointer-text-shadow: 0 0 10px color-mix(in srgb, var(--theme-chrome-bg) 25%, transparent);
   --find-sweets-pointer-icon-filter: drop-shadow(0 0 5px color-mix(in srgb, var(--contact-place) 30%, transparent));
 }
+
+:root:not([data-theme="dark"], [data-site-zone="ops"]) { --cart-price-up: var(--color-green-600); --cart-price-down: var(--color-red-600); }

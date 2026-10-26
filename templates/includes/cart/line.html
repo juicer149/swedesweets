@@ -8,13 +8,13 @@
       {% if line.brand %}<span class="cart-line__brand">{{ line.brand }}</span>{% endif %}
       <span class="cart-line__name">{{ line.name|default:line.label }}</span>
       {% if line.variant_label %}<span class="cart-line__meta">{{ line.variant_label }}</span>{% endif %}
+      {% if line.unit_price_label %}<span class="cart-line__unit-price">{% blocktrans with price=line.unit_price_label %}{{ price }} each{% endblocktrans %}</span>{% endif %}
       {% for text in line.metadata %}<span class="cart-line__meta">{{ text }}</span>{% endfor %}
     </span>
   </a>
   {% if line.line_total_label %}
     <span class="cart-line__price">
       <strong data-cart-line-total="{{ line.line_id }}">{{ line.line_total_label }}</strong>
-      {% if line.unit_price_label %}<small>{% blocktrans with price=line.unit_price_label %}{{ price }} each{% endblocktrans %}</small>{% endif %}
     </span>
   {% endif %}
   {% if locked %}

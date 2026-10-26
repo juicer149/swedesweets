@@ -109,6 +109,8 @@ def set_cart_line_quantity(
         request
     )
 
+    previous_quantity = line.quantity
+
     raw_quantity = request.POST.get(
         "quantity",
         "",
@@ -179,6 +181,9 @@ def set_cart_line_quantity(
                     "ok": True,
                     "message": str(message),
                     "quantity": quantity,
+                    "change_direction": (
+                        (quantity > previous_quantity) - (quantity < previous_quantity)
+                    ),
                     "line_total_label": current.line_total_label if current else None,
                 }
             )

@@ -297,6 +297,11 @@ def set_cart_line_quantity(
         cart_line_id=cart_line_id,
     )
 
+    previous_quantity = line.quantity
+    previous_subtotal = (
+        build_retail_cart_context(cart=cart).subtotal if wants_json(request) else None
+    )
+
     try:
         quantity = _parse_quantity(
             request.POST.get(
@@ -342,6 +347,11 @@ def set_cart_line_quantity(
                 "ok": True,
                 "message": str(message),
                 "quantity": updated_line.quantity,
+                "change_direction": (
+                    (updated_line.quantity > previous_quantity)
+                    - (updated_line.quantity < previous_quantity)
+                ),
+                "subtotal_delta_label": cart_context.delta_label(previous_subtotal),
                 "line_total_label": (
                     line_view.line_total_label
                     if line_view is not None

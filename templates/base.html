@@ -110,6 +110,7 @@
     <script src="{% static 'js/menu-scroll.js' %}" defer></script>
     <script src="{% static 'js/responsive-cart.js' %}" defer></script>
     <script src="{% static 'js/quantity-stepper.js' %}" defer></script>
+    {% if site_zone != "ops" %}<script src="{% static 'js/cart-price-feedback.js' %}" defer></script>{% endif %}
     <script src="{% static 'js/checkout-details.js' %}" defer></script>
     <script src="{% static 'js/checkout-city-lookup.js' %}" defer></script>
 

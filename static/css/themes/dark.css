@@ -591,3 +591,5 @@
   --catalog-cart-hover-border: var(--action-secondary-hover-border);
   --catalog-burst-halo: color-mix(in srgb, var(--moonlight) 30%, transparent);
 }
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) { --cart-price-up: var(--color-green-300); --cart-price-down: var(--color-red-300); }

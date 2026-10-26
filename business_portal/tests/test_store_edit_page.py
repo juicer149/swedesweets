@@ -96,3 +96,35 @@ def test_my_account_shows_the_listing_as_a_coloured_fact(client):
 
     assert "account-facts" in content
     assert "status-text--muted facts__status\">Not listed" in content
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("posted", ["false", None])
+def test_listing_switch_can_turn_a_listed_store_off(client, posted):
+    from customers.models import StoreListing
+
+    customer = customer_factory()
+    StoreListing.objects.create(customer=customer, is_listed=True)
+    client.force_login(customer_user_factory(customer=customer))
+    data = {name: getattr(customer, name) for name in (
+        "name", "email", "phone_number", "country", "city", "address_line"
+    )}
+    if posted is not None:
+        data["is_listed"] = posted
+    response = client.post(reverse("business_portal:edit_store"), data)
+    assert response.status_code == 302
+    customer.store_listing.refresh_from_db()
+    assert customer.store_listing.is_listed is False
+    html = client.get(reverse("business_portal:edit_store")).content.decode()
+    switch = html.split('name="is_listed"', 1)[1].split('>', 1)[0]
+    assert 'role="switch"' in switch
+    assert 'checked' not in switch
+
+
+@pytest.mark.django_db
+def test_listing_switch_rejects_unknown_values(client):
+    from business_portal.store.forms import CustomerProfileForm
+
+    form = CustomerProfileForm({"is_listed": "unknown"}, customer=customer_factory())
+    assert not form.is_valid()
+    assert "is_listed" in form.errors

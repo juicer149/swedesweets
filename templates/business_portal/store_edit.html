@@ -4,7 +4,7 @@
 {% block title %}{% trans "Edit store" %} | SwedeSweets{% endblock %}
 
 {% block content %}
-<section class="page-section" aria-labelledby="customer-profile-edit-title">
+<section class="page-section account-edit" data-account-edit aria-labelledby="customer-profile-edit-title">
   <div class="page page--centered page--wide">
     <header class="page__heading">
       <h1 id="customer-profile-edit-title" class="page__lead">
@@ -16,7 +16,7 @@
       </p>
     </header>
 
-    <form method="post" novalidate>
+    <form class="customer-form" method="post" novalidate>
       {% csrf_token %}
 
       {% include "registration/includes/form_errors.html" with form=form only %}
@@ -32,18 +32,24 @@
 
         <div class="form-grid">
           {% for field in form.listing_fields %}
-            {% include "includes/ui/form_field.html" with field=field only %}
+            {% if field.name == "is_listed" %}
+              {% include "includes/ui/listing_toggle.html" with field=field only %}
+            {% else %}
+              {% include "includes/ui/form_field.html" with field=field only %}
+            {% endif %}
           {% endfor %}
         </div>
       </section>
 
       <div class="form-actions page__actions page-actions">
+        <div class="account-edit__save">
         <button
           class="button button--md button--solid button--tone-place page__submit"
           type="submit"
         >
           {% trans "Save changes" %}
         </button>
+        </div>
 
         <div class="page-actions__links">
           <a class="quiet-link" href="{% url 'business_portal:index' %}">
@@ -61,4 +67,5 @@
   {{ block.super }}
 
   <script src="{% static 'js/enhanced_selects.js' %}" defer></script>
+  <script src="{% static 'js/account-edit.js' %}" defer></script>
 {% endblock %}

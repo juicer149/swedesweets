@@ -74,3 +74,5 @@
 .payment-confirmation__contacts { margin-top: var(--space-4); overflow-wrap: anywhere; }
 .cart-details .form-field:has(select[disabled]) { max-width: 18rem; width: 100%; }
 .payment-confirmation > .page__note { text-align: start; }
+
+.cart-details > .form-help { margin-bottom: clamp(2rem, 5vh, 3rem); }

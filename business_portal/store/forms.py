@@ -21,6 +21,22 @@ PORTAL_CUSTOMER_COUNTRY_CHOICES = list(
 )
 
 
+class ListingSwitch(forms.CheckboxInput):
+    """Keep the existing strict true/false field contract with one native switch."""
+
+    def __init__(self):
+        super().__init__(
+            attrs={"role": "switch", "class": "listing-switch"},
+            check_test=lambda value: value is True or value == "true",
+        )
+
+    def format_value(self, value):
+        return "true"
+
+    def value_from_datadict(self, data, files, name):
+        return data.get(name, "false")
+
+
 class CustomerProfileForm(forms.Form):
     name = forms.CharField(
         max_length=MAX_CUSTOMER_NAME_LENGTH,
@@ -139,8 +155,7 @@ class CustomerProfileForm(forms.Form):
     )
 
     # Find Sweets: the public list of shops that sell SwedeSweets.
-    # Same chips as Active/Inactive elsewhere; left out of a post, the
-    # store is not listed.
+    # One switch; omitted from a POST means not listed.
     is_listed = forms.TypedChoiceField(
         required=False,
         choices=(
@@ -155,7 +170,7 @@ class CustomerProfileForm(forms.Form):
             "Let visitors find your store on the public list of shops that "
             "sell SwedeSweets."
         ),
-        widget=forms.RadioSelect(attrs={"class": "radio-chip-group"}),
+        widget=ListingSwitch(),
     )
 
     store_address_line = forms.CharField(

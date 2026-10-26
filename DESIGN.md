@@ -890,3 +890,17 @@ Day and night currently share cloud/candy motion through `effects.js`; the
 night profile can be replaced later without changing the day profile or colours.
 Night's active mobile navbar destination has larger text. Reduced motion remains
 respected.
+
+Customer edit and retail checkout forms share `.customer-form` spacing: more
+room below headings, between fields and around Find Sweets. A native listed
+switch replaces the two radio chips while retaining strict true/false handling.
+Edit store marks Menu current. On phones its Save changes action replaces the
+bottom page links, stays narrow at the foot and is hidden while the software
+keyboard covers that area, rather than lifting above the keyboard. Onboarding
+retains the blue entrance frame; entrance primary actions share a white edge.
+
+Cart unit-price labels sit under product names. Confirmed quantity changes
+pulse row amounts and subtotal green/red. Only the subtotal shows a brief signed
+change; on phones this appears in the bottom summary. The server computes its
+formatted change with Decimal. Missing prices remain missing, and failed
+mutations never produce optimistic prices. Reduced motion uses colour only.

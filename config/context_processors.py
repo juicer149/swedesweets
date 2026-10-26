@@ -91,6 +91,7 @@ def navigation(request):
     context["navbar_account_current"] = not cart_flow and view_name in {
         "business_portal:index",
         "business_portal:orders",
+        "business_portal:edit_store",
         "business_portal:order_detail",
         "accounts:me",
         "password_change",

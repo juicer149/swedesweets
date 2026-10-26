@@ -1,0 +1,11 @@
+{% load i18n %}
+<div class="form-field form-field--full{% if field.errors %} form-field--error{% endif %}">
+  <span class="form-label">{{ field.label }}</span>
+  <label class="listing-toggle" for="{{ field.id_for_label }}">
+    {{ field }}
+    <span class="listing-toggle__on">{% trans "Listed" %}</span>
+    <span class="listing-toggle__off">{% trans "Not listed" %}</span>
+  </label>
+  {% if field.errors %}<div class="form-field__errors" role="alert">{{ field.errors }}</div>
+  {% elif field.help_text %}<div class="form-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>{% endif %}
+</div>

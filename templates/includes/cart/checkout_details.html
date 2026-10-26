@@ -2,7 +2,7 @@
 <section class="cart-details">
   <h2>{% trans "Your details" %}</h2>
   <p class="form-help">{% trans "Where should we send your sweets?" %}</p>
-  <form id="checkout-details-form" method="post" action="{% url 'storefront:checkout' %}" class="checkout-form" data-checkout-details-form data-submit-burst data-order-flow-submit novalidate>
+  <form id="checkout-details-form" method="post" action="{% url 'storefront:checkout' %}" class="checkout-form customer-form" data-checkout-details-form data-submit-burst data-order-flow-submit novalidate>
     {% csrf_token %}
     {% include "registration/includes/form_errors.html" with form=form only %}
     <div class="form-grid">

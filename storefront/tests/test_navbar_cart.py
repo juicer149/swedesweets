@@ -155,6 +155,8 @@ def test_navbar_cart_quantity_updates_owned_line(
         "ok": True,
         "message": "Quantity updated.",
         "quantity": 3,
+        "change_direction": 1,
+        "subtotal_delta_label": "+€20.00",
         "line_total_label": "€30.00",
         "subtotal_label": "€30.00",
     }
