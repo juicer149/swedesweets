@@ -427,7 +427,6 @@
       total.textContent = payload.line_total_label;
     }
   });
-  document.documentElement.classList.add("cart-controls-ready");
 
   document
     .querySelectorAll(

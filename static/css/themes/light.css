@@ -122,8 +122,15 @@
   /* on the blue pages (login, password): a deeper blue, so the button
      stands apart from the page */
   --theme-entrance-action-bg: var(--color-primary-450);
-}
 
+  /* # Secondary buttons: quiet surface, ink/edge and pointer palette */
+  --theme-secondary-bg: var(--color-white);
+  --theme-secondary-ink: var(--theme-chrome-bg);
+  --theme-secondary-edge: var(--theme-chrome-bg);
+  --theme-secondary-pointer-bg: var(--theme-chrome-bg);
+  --theme-secondary-pointer-ink: var(--color-accent-600);
+  --theme-secondary-pointer-edge: var(--theme-chrome-bg);
+}
 
 /* Default palette. Components consume these semantic colours. */
 :root {
@@ -313,7 +320,6 @@
   --shadow-focus-danger: 0 0 0 3px rgb(var(--color-status-danger) / 0.10);
   --shadow-focus-danger-strong: 0 0 0 3px rgb(var(--color-status-danger) / 0.14);
 
-
   /* ==========================================================================
      # The menu
 
@@ -367,10 +373,7 @@
   --menu-cart-feedback-added-ink: var(--color-accent-600);
   --menu-cart-feedback-removed-ink: var(--color-red-300);
   --menu-cart-feedback-count-ink: var(--color-primary-950);
-  --menu-cart-feedback-halo-animation: site-nav-cart-glow-halo 1.6s ease-out;
   --menu-cart-feedback-icon-animation: site-nav-cart-glow-icon 1.6s ease-out;
-  --menu-cart-feedback-halo: radial-gradient(ellipse, color-mix(in srgb, currentColor 26%, transparent), color-mix(in srgb, currentColor 10%, transparent) 40%, transparent 75%);
-  --menu-cart-feedback-halo-filter: blur(10px);
   --menu-cart-feedback-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, currentColor 40%, transparent)) drop-shadow(0 0 8px color-mix(in srgb, currentColor 22%, transparent));
 
   /* Settings and account panels: the menu's own sky (as the navbar and the
@@ -442,12 +445,10 @@
   --menu-choice-idle-opacity: 0.6;
   --account-menu-divider: color-mix(in srgb, var(--menu-ink) 30%, transparent);
 
-
   /* ## Phone bar: the links at the bottom of a phone's screen */
   --menu-bar-bg: var(--menu-bg);
   --menu-bar-edge: var(--menu-edge);
 }
-
 
 /* Page surfaces and shared text. Primitive scales remain unchanged. */
 :root {
@@ -528,7 +529,6 @@
   --stepper-number-bg: var(--color-white);
 }
 
-
 :root {
   --label-success-text: var(--color-green-700);
   --label-danger-text: var(--color-red-700);
@@ -601,7 +601,6 @@
   --faq-question-open-bg: var(--accordion-open-bg);
 
   /* The navbar cart on hover, keyboard focus and while its popover is open. */
-  --menu-cart-glow: 0 0 18px 2px rgb(246 181 30 / 0.32), 0 0 30px 4px rgb(246 181 30 / 0.10);
 }
 
 /* Product image placeholder: independent of labels and body text.
@@ -673,14 +672,10 @@
   --product-label-glow: 0 0 0 transparent;
   --landing-moon-halo: none;
   --catalog-card-hover-shadow: 0 0 14px 1px rgb(38 105 255 / 0.1);
-  --catalog-control-idle-text: var(--color-neutral-700);
-  --catalog-control-idle-bg: transparent;
-  --catalog-control-idle-border: color-mix(in srgb, var(--color-primary-700) 18%, transparent);
   --catalog-control-hover-border: color-mix(in srgb, var(--color-primary-600) 40%, transparent);
   --catalog-control-focus-text: var(--label-text);
   --catalog-control-focus-bg: var(--search-focus-bg);
   --catalog-control-focus-border: var(--search-focus-border);
-  --catalog-control-focus-shadow: var(--search-focus-shadow);
 }
 
 /* Secondary actions and readable entrance/list copy. Light keeps its colours. */
@@ -845,7 +840,6 @@
   --stepper-press-glow: none;
 }
 
-
 /* Filter chips and the status toggles (chips.css): on the public and
    business sites no pills, only the word: the one on dark and lit by a
    warm light behind it, the one pointed at blue with a cool one. Ops keeps
@@ -867,7 +861,6 @@
   --chip-glow-radius: 0;
   --chip-glow-blur: var(--theme-sky-blur);
 }
-
 
 /* =============================================================================
    Ops keeps its look
@@ -912,7 +905,6 @@
   --dropdown-title-hover-text: var(--color-primary-900);
   --dropdown-title-active-text: var(--text-main);
 }
-
 
 /* =============================================================================
    Clouds on the blue (the day's customer pages)
@@ -973,10 +965,6 @@
   --day-close-light-ink: var(--theme-chrome-bg);
   --day-close-light-edge: color-mix(in srgb, var(--theme-chrome-bg) 20%, var(--color-white));
   --day-close-light-hover-bg: var(--color-white);
-  --day-close-blue-bg: color-mix(in srgb, var(--theme-chrome-bg) 86%, var(--color-neutral-650));
-  --day-close-blue-ink: var(--color-white);
-  --day-close-blue-edge: color-mix(in srgb, var(--day-close-blue-bg) 75%, var(--color-white));
-  --day-close-blue-hover-bg: var(--theme-chrome-bg);
   --day-close-hover-ink: var(--color-accent-600);
   --day-close-shadow: 0 2px 5px rgb(3 10 28 / 0.12);
   --day-bar-bg: var(--color-white);
@@ -1016,7 +1004,6 @@
   }
 }
 
-
 /* =============================================================================
    Q & A by day: the questions as the tabs
 
@@ -1054,7 +1041,6 @@
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .faq .accordion__chevron::before {
   content: none;
 }
-
 
 /* =============================================================================
    On the blue by day: white, the darkest blue pointed at, a cloud where you are
@@ -1193,8 +1179,6 @@
   --theme-nav-trigger-cloud-inset: -0.8rem -1.1rem -0.45rem;
 }
 
-
-
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav__link--active, .site-nav__link[aria-current="page"])::after,
 :root:not([data-theme="dark"], [data-site-zone="ops"]) .menu-dropdown-trigger[aria-current="page"]::before {
   inset: var(--theme-nav-cloud-inset);
@@ -1305,6 +1289,8 @@
 
 /* Customer day controls only; night and ops keep their existing mappings. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
+  --cart-price-up: var(--color-green-600);
+  --cart-price-down: var(--color-red-600);
   --day-section-rest-ink: var(--theme-sky-rest-ink);
   --day-section-pointer-ink: var(--theme-chrome-bg);
   --day-section-here-ink: var(--theme-chrome-bg);
@@ -1314,15 +1300,15 @@
   --day-filter-pointer-bg: var(--color-neutral-300);
 }
 
-/* Secondary action: pale blue paper with brand-blue ink/edge. Shared by
+/* Secondary action: white paper with brand-blue ink/edge. Shared by
    quiet day actions such as the product-detail return control. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
-  --action-secondary-bg: var(--color-white);
-  --action-secondary-text: var(--theme-chrome-bg);
-  --action-secondary-border: var(--theme-chrome-bg);
-  --action-secondary-hover-bg: var(--theme-chrome-bg);
-  --action-secondary-hover-text: var(--color-accent-600);
-  --action-secondary-hover-border: var(--theme-chrome-bg);
+  --action-secondary-bg: var(--theme-secondary-bg);
+  --action-secondary-text: var(--theme-secondary-ink);
+  --action-secondary-border: var(--theme-secondary-edge);
+  --action-secondary-hover-bg: var(--theme-secondary-pointer-bg);
+  --action-secondary-hover-text: var(--theme-secondary-pointer-ink);
+  --action-secondary-hover-border: var(--theme-secondary-pointer-edge);
 }
 
 /* Customer add controls use the shared secondary action palette. */
@@ -1346,5 +1332,3 @@
   --find-sweets-pointer-text-shadow: 0 0 10px color-mix(in srgb, var(--theme-chrome-bg) 25%, transparent);
   --find-sweets-pointer-icon-filter: drop-shadow(0 0 5px color-mix(in srgb, var(--contact-place) 30%, transparent));
 }
-
-:root:not([data-theme="dark"], [data-site-zone="ops"]) { --cart-price-up: var(--color-green-600); --cart-price-down: var(--color-red-600); }

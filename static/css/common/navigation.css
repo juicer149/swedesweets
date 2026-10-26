@@ -255,7 +255,6 @@
   outline-offset: 4px;
 }
 
-
 /* =============================================================================
    Navbar cart
    ============================================================================= */
@@ -330,12 +329,10 @@
    Removal uses the same motion with danger ink. Keep the cloud intact. */
 .site-nav-cart__trigger {
   --cart-flash: var(--menu-cart-feedback-added-ink);
-  --cart-flash-bg: var(--color-action-deliver-light-bg);
 }
 
 .site-nav-cart__trigger.is-bumped--removed {
   --cart-flash: var(--menu-cart-feedback-removed-ink);
-  --cart-flash-bg: var(--color-action-danger-light-bg);
 }
 
 .site-nav-cart__trigger.is-bumped {
@@ -361,40 +358,10 @@
   12%, 35% { color: var(--cart-flash); }
 }
 
-@keyframes site-nav-cart-glow-halo {
-  0%, 100% { opacity: 0; }
-  12%, 35% { opacity: 1; }
-  70% { opacity: 0.35; }
-}
-
 @keyframes site-nav-cart-glow-icon {
   12%, 35% {
     color: var(--cart-flash);
     filter: var(--menu-cart-feedback-icon-filter);
-  }
-}
-
-@keyframes site-nav-cart-flash {
-  0%, 100% {
-    /* the button's own colours */
-  }
-
-  /* the colour at once, held a while, then a long soft fade with an
-     afterglow */
-  12%, 35% {
-    color: var(--cart-flash);
-    background: var(--cart-flash-bg);
-    border-color: var(--cart-flash);
-    /* a soft glow, blurred outwards, no ring */
-    box-shadow:
-      0 0 12px 3px color-mix(in srgb, var(--cart-flash) 35%, transparent),
-      0 0 26px 10px color-mix(in srgb, var(--cart-flash-bg) 85%, transparent);
-  }
-
-  70% {
-    box-shadow:
-      0 0 16px 4px color-mix(in srgb, var(--cart-flash) 15%, transparent),
-      0 0 32px 14px color-mix(in srgb, var(--cart-flash-bg) 45%, transparent);
   }
 }
 
@@ -500,29 +467,6 @@
     0 1px 0 rgb(255 255 255 / 0.9) inset;
 }
 
-.site-nav-cart__header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-4);
-
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--line-soft);
-}
-
-.site-nav-cart__title {
-  color: var(--text-blue-deep);
-  font-size: var(--font-size-16);
-  line-height: 1.2;
-}
-
-.site-nav-cart__item-count {
-  color: var(--text-muted);
-  font-size: var(--font-size-14);
-  font-weight: 650;
-  white-space: nowrap;
-}
-
 .site-nav-cart__lines {
   display: grid;
   align-content: start;
@@ -575,19 +519,6 @@
 
 .site-nav-cart-line .line__meta {
   font-size: var(--font-size-12);
-}
-
-.site-nav-cart-line__controls {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-2);
-
-  min-width: 0;
-}
-
-.site-nav-cart-line__quantity {
-  font-size: var(--font-size-14);
 }
 
 .site-nav-cart-line__remove {
@@ -663,7 +594,6 @@
   align-content: center;
 }
 
-
 /* =============================================================================
    Mobile navigation
    The same hover/focus halo, behind the label rather than the icon
@@ -737,10 +667,6 @@
 
   .site-nav-cart-line {
     gap: var(--space-3);
-  }
-
-  .site-nav-cart-line__controls {
-    gap: var(--space-1);
   }
 
   .site-nav-cart__actions {
@@ -823,8 +749,6 @@
     white-space: nowrap;
   }
 
-
-
   .site-nav__link:hover,
   .site-nav__link:focus-visible,
   .site-nav__link--active,
@@ -836,8 +760,6 @@
   .site-nav__link:focus-visible {
     transform: translateY(-1px);
   }
-
-
 
   /* The labels are too small to carry the crown: it sits tilted on the
      icon instead. */
@@ -926,10 +848,6 @@
     gap: var(--space-2);
   }
 
-  .site-nav-cart-line__controls {
-    gap: 0.25rem;
-  }
-
   .site-nav-cart-line__remove-button {
     width: 1.9rem;
     height: 1.9rem;
@@ -943,7 +861,6 @@
     width: 100%;
   }
 }
-
 
 .site-nav-cart-line.line-flash--removed .site-nav-cart-line__remove-button {
   color: var(--cart-remove-hover-ink);

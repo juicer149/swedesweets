@@ -364,11 +364,15 @@
 /* The row: the size (or the package) on the left, how many on the right,
    a dashed line down the middle; the cart button sits on the label's foot
    under it, a little over both. */
+.tile__label:has(> .tile__order) > .tile__name { margin-bottom: 0; }
+
 .tile__order {
   position: relative;
   display: grid;
   grid-template-rows: 1fr;
-  width: 100%;
+  width: calc(100% + 2 * var(--space-2));
+  margin-inline: calc(-1 * var(--space-2));
+  margin-bottom: calc(-1 * var(--tile-foot));
   transition: grid-template-rows 220ms ease;
 }
 
@@ -377,7 +381,7 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: stretch;
   min-height: 0;
-  height: 2.6rem;
+  height: calc(2.6rem + var(--tile-foot));
   transition: height 220ms ease;
 }
 
@@ -435,12 +439,13 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  /* a little below the row's middle: nearer the middle of the white,
-     beside the cart button */
-  padding: 0.35rem var(--space-1) 0;
+  padding: 0;
 }
 
+.tile__size { border-radius: 0 0 0 7px; }
+
 .tile__buy {
+  border-radius: 0 0 7px 0;
   border-left: 1.5px dashed var(--color-accent-300);
 }
 
@@ -461,10 +466,7 @@
 
 /* The same box as the quantity, its quiet line see-through, so the three
    stand on one line. */
-.tile__package,
-.tile__picker {
-  border-bottom: 1.5px solid transparent;
-}
+.tile__package { border-bottom: 1.5px solid transparent; }
 
 /* The size: the site's own dropdown (enhanced_selects.js, Tom Select),
    inside the label so it tilts with it; its closed face quiet, as the
@@ -477,7 +479,10 @@
   justify-content: center;
   width: 100%;
   min-width: 0;
-  min-height: 2.25rem;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-bottom-left-radius: inherit;
 }
 
 .tile__picker > select {
@@ -488,21 +493,25 @@
 
 .tile__picker .ts-wrapper {
   width: 100%;
+  height: 100%;
+  min-height: 0;
+  border-bottom-left-radius: inherit;
 }
 
 .tile__picker .ts-wrapper .ts-control {
   justify-content: center;
-  min-height: 2.25rem;
-  padding: 0 0.95rem 0 0.15rem;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0 1rem 0 .35rem;
 
-  color: var(--catalog-control-idle-text);
-  background: var(--catalog-control-idle-bg);
-  border: 1px solid var(--catalog-control-idle-border);
-  border-radius: 6px;
+  color: var(--catalog-package-text);
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
   box-shadow: none;
 
-  font-size: var(--font-size-16);
-  font-weight: 700;
+  font: 700 var(--font-size-16) / 1.2 var(--font-body);
   cursor: pointer;
 }
 
@@ -512,13 +521,15 @@
   margin-inline: auto;
   color: inherit;
   text-align: center;
+  white-space: normal;
+  overflow-wrap: normal;
 }
 
-/* "Choose size" (the empty choice, shown as the value) quieter. */
+/* The empty choice shares the fixed variant label's size and weight. */
 .tile__picker .ts-wrapper .ts-control .item[data-value=""] {
   color: inherit;
-  opacity: 0.8;
-  font-size: 0.8125rem;
+  opacity: 1;
+  font-size: inherit;
 }
 
 /* Its caret: a small chevron at the right, turned up while open. */
@@ -526,7 +537,7 @@
   content: "";
   position: absolute;
   top: 50%;
-  right: 0.25rem;
+  right: .5rem;
   width: 0.35rem;
   height: 0.35rem;
   margin-top: -0.3rem;
@@ -552,12 +563,19 @@
 .tile__picker .ts-wrapper.dropdown-active .ts-control,
 .tile__picker .ts-control:focus-visible {
   color: var(--catalog-control-focus-text);
-  background: var(--catalog-control-focus-bg);
+  background: transparent;
   border-color: var(--catalog-control-focus-border);
-  box-shadow: var(--catalog-control-focus-shadow);
+  box-shadow: none;
   outline: none;
 }
 
+.tile__size:has(.ts-wrapper:is(.focus, .dropdown-active)),
+.tile__size:has(> .tile__picker > select:focus),
+.tile__buy:has(.tile__quantity:focus) {
+  color: var(--catalog-control-focus-text);
+  background: var(--catalog-control-focus-bg);
+  box-shadow: inset 0 0 0 1px var(--catalog-control-focus-border);
+}
 /* Its list: the site's, a little wider than the half, the empty choice
    left out, sold-out sizes muted. */
 .tile__picker .ts-dropdown {
@@ -595,16 +613,17 @@
   z-index: 6;
 }
 
-/* Quiet full outline at rest; the same stronger focus as the size picker. */
+/* Each lower half is one full-area field; focus paint belongs to the cell. */
 .tile__quantity {
-  width: min(100%, 3.5rem);
-  min-height: 2.25rem;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   padding: 0;
 
-  color: var(--catalog-control-idle-text);
-  background: var(--catalog-control-idle-bg);
-  border: 1px solid var(--catalog-control-idle-border);
-  border-radius: 6px;
+  color: var(--catalog-package-text);
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
   box-shadow: none;
   transition: border-color var(--motion-fast), background var(--motion-fast), color var(--motion-fast), box-shadow var(--motion-fast);
 
@@ -627,25 +646,28 @@
   color: var(--catalog-control-focus-text);
   border-color: var(--catalog-control-focus-border);
   outline: none;
-  background: var(--catalog-control-focus-bg);
-  box-shadow: var(--catalog-control-focus-shadow);
+  background: transparent;
+  box-shadow: none;
 }
 
 /* Native fallback when JavaScript has not enhanced the variant select. */
 .tile__picker > select:not(.tomselected) {
-  min-height: 2.25rem;
-  color: var(--catalog-control-idle-text);
-  background: var(--catalog-control-idle-bg);
-  border: 1px solid var(--catalog-control-idle-border);
-  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  font: 700 var(--font-size-16) / 1.2 var(--font-body);
+  color: var(--catalog-package-text);
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
 }
 
 .tile__picker > select:not(.tomselected):focus {
   color: var(--catalog-control-focus-text);
-  background: var(--catalog-control-focus-bg);
+  background: transparent;
   border-color: var(--catalog-control-focus-border);
   outline: none;
-  box-shadow: var(--catalog-control-focus-shadow);
+  box-shadow: none;
 }
 
 /* The cart button: round, with theme-owned background, edge and icon
@@ -1533,46 +1555,3 @@
 .catalog-product-transition::view-transition-group(catalog-chrome) { z-index: 100; animation: none; }
 .catalog-product-transition::view-transition-old(catalog-chrome) { display: none; animation: none; }
 .catalog-product-transition::view-transition-new(catalog-chrome) { animation: none; opacity: 1; mix-blend-mode: normal; }
-
-/* The label's lower halves are the controls themselves, not small inputs
-   inside a second box. The expanded options keep their shared list styling. */
-.tile__order {
-  width: calc(100% + 2 * var(--space-2));
-  margin-inline: calc(-1 * var(--space-2));
-  margin-bottom: calc(-1 * var(--tile-foot));
-}
-.tile__label:has(> .tile__order) > .tile__name { margin-bottom: 0; }
-.tile__row { height: calc(2.6rem + var(--tile-foot)); }
-.tile__size, .tile__buy { padding: 0; }
-.tile__size { border-radius: 0 0 0 7px; }
-.tile__buy { border-radius: 0 0 7px 0; }
-.tile__picker, .tile__picker .ts-wrapper, .tile__picker .ts-wrapper .ts-control {
-  height: 100%; min-height: 0;
-}
-.tile__picker { border: 0; }
-.tile__picker .ts-wrapper .ts-control,
-.tile__quantity,
-.tile__picker > select:not(.tomselected) {
-  width: 100%; height: 100%; min-height: 0;
-  border: 0; border-radius: inherit; background: transparent; box-shadow: none;
-  font: 700 var(--font-size-16) / 1.2 var(--font-body);
-  color: var(--catalog-package-text);
-}
-.tile__picker .ts-wrapper .ts-control { padding-inline: .35rem 1rem; }
-.tile__picker .ts-wrapper .ts-control .item { white-space: normal; overflow-wrap: normal; }
-.tile__picker .ts-wrapper .ts-control .item[data-value=""] { font-size: inherit; opacity: 1; }
-.tile__picker .ts-wrapper.single .ts-control::after { right: .5rem; }
-.tile__size:has(.ts-wrapper:is(.focus, .dropdown-active)),
-.tile__size:has(> .tile__picker > select:focus),
-.tile__buy:has(.tile__quantity:focus) {
-  color: var(--catalog-control-focus-text);
-  background: var(--catalog-control-focus-bg);
-  box-shadow: inset 0 0 0 1px var(--catalog-control-focus-border);
-}
-.tile__picker .ts-wrapper:is(.focus, .dropdown-active) .ts-control,
-.tile__picker > select:not(.tomselected):focus,
-.tile__quantity:focus {
-  background: transparent; color: var(--catalog-control-focus-text); box-shadow: none;
-}
-.tile__picker, .tile__picker .ts-wrapper, .tile__picker .ts-control { border-bottom-left-radius: inherit; }
-.tile__quantity { border-bottom-right-radius: inherit; }

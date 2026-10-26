@@ -352,7 +352,9 @@ def set_cart_line_quantity(
                     (updated_line.quantity > previous_quantity)
                     - (updated_line.quantity < previous_quantity)
                 ),
-                "subtotal_delta_label": cart_context.delta_label(previous_subtotal),
+                "subtotal_delta_label": cart_price_feedback(
+                    previous_subtotal, cart_context.subtotal
+                )["subtotal_delta_label"],
                 "line_total_label": (
                     line_view.line_total_label
                     if line_view is not None

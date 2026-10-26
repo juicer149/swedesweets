@@ -118,12 +118,6 @@
   transition: background var(--motion-fast), color var(--motion-fast), scale var(--motion-fast);
 }
 
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.site-nav-cart__popover .mobile-menu-close, .product__close) {
-  --day-close-bg: var(--day-close-blue-bg);
-  --day-close-ink: var(--day-close-blue-ink);
-  --day-close-edge: var(--day-close-blue-edge);
-  --day-close-hover-bg: var(--day-close-blue-hover-bg);
-}
 
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.mobile-menu-close, .product__close)::before {
   display: none;
@@ -150,8 +144,9 @@
   }
 }
 
-/* Product return uses the shared secondary-action palette in day mode. */
-:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.product, .catalog__detail) .product__close {
+/* Product return and cart close share the secondary palette by day. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.product, .catalog__detail) .product__close,
+:root:not([data-theme="dark"], [data-site-zone="ops"]) .site-nav-cart__popover .mobile-menu-close {
   --day-close-bg: var(--action-secondary-bg);
   --day-close-ink: var(--action-secondary-text);
   --day-close-edge: var(--action-secondary-border);
@@ -203,12 +198,6 @@
 /* Closing a cart is secondary to continuing the order. Shared action tokens
    keep this quiet cross in step with the other secondary controls. */
 :root:not([data-site-zone="ops"]) .site-nav-cart__popover .mobile-menu-close {
-  --day-close-bg: var(--action-secondary-bg);
-  --day-close-ink: var(--action-secondary-text);
-  --day-close-edge: var(--action-secondary-border);
-  --day-close-hover-bg: var(--action-secondary-hover-bg);
-  --day-close-hover-ink: var(--action-secondary-hover-text);
-  --day-close-hover-edge: var(--action-secondary-hover-border);
   background: var(--action-secondary-bg);
   color: var(--action-secondary-text);
   border-color: var(--action-secondary-border);

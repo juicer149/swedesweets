@@ -556,11 +556,11 @@
     void trigger.offsetWidth; // restart the animation
     trigger.classList.add("is-bumped");
     trigger.classList.toggle("is-bumped--removed", kind === "removed");
-    // The theme selects a filled flash or icon glow; both finish after the jump.
+    // The icon glow ends after the short shake.
     const done = (event) => {
       if (
         event.target !== trigger
-        || !["site-nav-cart-flash", "site-nav-cart-glow"].includes(event.animationName)
+        || event.animationName !== "site-nav-cart-glow"
       ) {
         return;
       }

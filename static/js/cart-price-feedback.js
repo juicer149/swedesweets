@@ -35,7 +35,6 @@
     notice.style.color = color;
     element.classList.add("cart-price-value");
     element.after(notice);
-    parent.classList.add("cart-price-host");
     const fade = notice.animate([{ opacity: 0 }, { opacity: 1, offset: .15 }, { opacity: 1, offset: .5 }, { opacity: 0 }], { duration: 1000, easing: "ease-out" });
     fade.finished.then(() => notice.remove(), () => notice.remove());
   }

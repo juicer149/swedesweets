@@ -357,58 +357,57 @@ function initCatalog() {
   });
 
   function initializeTile(tile) {
-  /* A narrow card says "Size", not "Choose size" (before the site's
-     dropdown takes the select over, on DOMContentLoaded). */
-  for (const select of tile.querySelectorAll("[data-size-select]")) {
-    const empty = select.querySelector('option[value=""][data-short]');
-    const label = select.closest(".tile__label");
+    /* A narrow card says "Size", not "Choose size" (before the site's
+       dropdown takes the select over, on DOMContentLoaded). */
+    for (const select of tile.querySelectorAll("[data-size-select]")) {
+      const empty = select.querySelector('option[value=""][data-short]');
+      const label = select.closest(".tile__label");
 
-    if (empty && label && label.offsetWidth < 200) {
-      empty.textContent = empty.dataset.short;
+      if (empty && label && label.offsetWidth < 200) {
+        empty.textContent = empty.dataset.short;
+      }
     }
-  }
 
-  for (const form of tile.querySelectorAll("[data-catalog-add-form]")) {
-    form.dataset.enhanced = "";
-    // The checks are ours (below): the size's select is hidden behind the
-    // site's dropdown, which the browser could not point at.
-    form.noValidate = true;
+    for (const form of tile.querySelectorAll("[data-catalog-add-form]")) {
+      form.dataset.enhanced = "";
+      // The checks are ours (below): the size's select is hidden behind the
+      // site's dropdown, which the browser could not point at.
+      form.noValidate = true;
 
-    const resetSize = setUpSize(form);
-    const resetQuantity = setUpQuantity(form);
-    const reset = () => {
-      resetSize();
-      resetQuantity();
-    };
+      const resetSize = setUpSize(form);
+      const resetQuantity = setUpQuantity(form);
+      const reset = () => {
+        resetSize();
+        resetQuantity();
+      };
 
-    listen(form, "submit", (event) => {
-      event.preventDefault();
+      listen(form, "submit", (event) => {
+        event.preventDefault();
 
-      if (form.dataset.state) {
-        return;
-      }
-
-      // No size yet: its list opens.
-      const size = form.querySelector("[data-size-select]");
-      if (size && !size.value) {
-        if (size.tomselect) {
-          size.tomselect.focus();
-          size.tomselect.open();
-        } else {
-          size.focus();
+        if (form.dataset.state) {
+          return;
         }
-        return;
-      }
 
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
+        // No size yet: its list opens.
+        const size = form.querySelector("[data-size-select]");
+        if (size && !size.value) {
+          if (size.tomselect) {
+            size.tomselect.focus();
+            size.tomselect.open();
+          } else {
+            size.focus();
+          }
+          return;
+        }
 
-      void addToCart(form, reset);
-    });
-  }
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
 
+        void addToCart(form, reset);
+      });
+    }
 
   }
   tiles.forEach(initializeTile);

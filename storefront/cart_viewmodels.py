@@ -84,14 +84,6 @@ class RetailCartContext:
     open_payment_url: str | None
     subtotal: Decimal | None = None
 
-    def delta_label(self, previous: Decimal | None) -> str | None:
-        if self.subtotal is None or previous is None:
-            return None
-        delta = self.subtotal - previous
-        if not delta:
-            return None
-        return ("+" if delta > 0 else "−") + _format_eur(abs(delta))
-
     def as_dict(self) -> dict[str, Any]:
         return {
             "cart_lines": self.cart_lines,

@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from business_portal.orders.product_presentation import (
+    BusinessOrderLinePresentation,
     business_cart_line_presentation,
 )
 from carts.models import Cart
@@ -48,23 +49,28 @@ def build_business_navbar_cart(
         language_code or "en"
     )
 
+    presentations = tuple(
+        business_cart_line_presentation(line, language_code=effective_language_code)
+        for line in cart_lines
+    )
     lines = tuple(
         _build_business_navbar_cart_line(
             line=line,
+            presentation=presentation,
             language_code=effective_language_code,
         )
-        for line in cart_lines
+        for line, presentation in zip(cart_lines, presentations, strict=True)
     )
-
-    prices = [business_cart_line_presentation(
-        line, language_code=effective_language_code
-    ).unit_price for line in cart_lines]
     subtotal = (
         sum(
-            (price * line.quantity
-             for price, line in zip(prices, cart_lines, strict=True)),
+            (
+                presentation.unit_price * line.quantity
+                for line, presentation in zip(cart_lines, presentations, strict=True)
+            ),
             Decimal("0.00"),
-        ) if all(price is not None for price in prices) else None
+        )
+        if all(presentation.unit_price is not None for presentation in presentations)
+        else None
     )
 
     return NavbarCart(
@@ -118,14 +124,9 @@ def _empty_business_navbar_cart() -> NavbarCart:
 def _build_business_navbar_cart_line(
     *,
     line,
+    presentation: BusinessOrderLinePresentation,
     language_code: str,
 ) -> NavbarCartLine:
-    presentation = (
-        business_cart_line_presentation(
-            line,
-            language_code=language_code,
-        )
-    )
 
     metadata = tuple(
         value

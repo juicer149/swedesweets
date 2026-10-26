@@ -38,15 +38,16 @@ The inks colour text, edges and the lights alike (a pointer's glow is made
 from `--state-pointer-ink`). The crown keeps its gold (`--menu-crown`:
 `--brand-crown`) whatever colour "here" takes. Ops shares light.css but not
 these choices: a block at the end of light.css keeps its navbar and yellow
-buttons as they were. The catalog's green add-to-cart button, the red
-removal and the quantity steppers keep their own colours.
+buttons as they were. Catalog add-to-cart controls use the secondary action palette; red removal
+feedback and quantity controls retain their component mappings.
 
 ## Files
 
 - `static/css/tokens.css`: primitive colour scales, sizes, type and timings.
 - `static/css/public/local-controls.css`: customer day section lettering,
   filter pills and cart/Menu spacing, loaded after shared states and public
-  navigation. All selectors exclude dark and ops.
+  navigation. Day-only selectors exclude dark/ops; the shared cart-close palette
+  also applies to customer night mode.
 - `static/css/themes/light.css`: default semantic colours and the day menu.
 - `static/css/themes/dark.css`: dark palette overrides.
 - `static/css/main.css`: the shared CSS imports.
@@ -330,7 +331,6 @@ Their light defaults are in `themes/light.css`.
 | `--faq-question-open-text` | An open FAQ question's heading |
 | `--faq-question-hover-bg` | A closed FAQ question under the pointer |
 | `--faq-question-open-bg` | The open FAQ question's heading background |
-| `--menu-cart-glow` | Warm shadow reused by primary actions and catalog cards/controls; navbar dropdown icons use `--menu-dropdown-*` |
 
 The FAQ maps its roles onto the common accordion locally, so its colours do not
 change Previous orders. `common/search.css` styles only actual search controls;
@@ -523,14 +523,10 @@ Reduced-motion removes the lift and transitions. Colours live in each theme:
 | `--catalog-card-hover-text` | Product-name link hover/focus text. |
 | `--catalog-card-hover-sheen` | Overlay gradient over the product picture. |
 | `--catalog-card-hover-shadow` | Soft glow around the picture. |
-| `--catalog-control-idle-text` | Quantity and selected/placeholder variant text at rest. |
-| `--catalog-control-idle-border` | Quiet full outline at rest. |
-| `--catalog-control-idle-bg` | Resting field background. |
 | `--catalog-control-hover-border` | Edge when pointed at. |
 | `--catalog-control-focus-text` | Text when editing/selecting (defaults to label text). |
 | `--catalog-control-focus-border` | Focus/open outline (defaults to search focus border). |
 | `--catalog-control-focus-bg` | Focus/open background (defaults to search focus background). |
-| `--catalog-control-focus-shadow` | Focus/open halo (defaults to search focus halo). |
 
 Dark uses `--interactive-text` (primary-200) for idle quantity/variant text
 and uses `--selected-accent` (accent-600) on focus/open. Light uses neutral-700 for legibility on paper.
@@ -569,23 +565,12 @@ Light supplies the original colours as defaults for these roles.
 
 ## Catalog values: editable fields, fixed weight and price
 
-In dark, quantity and the variant picker use `--catalog-control-idle-text`,
-which follows `--interactive-text` (primary-200). Their focus/open state keeps
-`--catalog-control-focus-text` (`--selected-accent`), with a soft gold border
-and warm outer halo. A product without a variant choice renders fixed weight instead of
-a picker; it does not receive an interactive treatment.
-
-| Role | Dark | Scope |
-| --- | --- | --- |
-| `--catalog-control-idle-text` | `--interactive-text` | Editable quantity and variant selector, including its caret and native fallback |
-| `--catalog-control-focus-text` | `--selected-accent` | Quantity focus and focused/open variant selector |
-| `--catalog-package-text` | neutral-300 | Fixed weight/package when there is no variant choice |
-| `--catalog-price-text` | accent-400 | Price tag text; a deeper gold than the accent-200 label ink |
-
-These roles apply to cards and product detail, in both retail and B2B. Light
-keeps its existing appearance by mapping fixed weight and price to `--label-text`.
-Other label text and status colours are unchanged. Variant list options have
-their own roles, described below.
+Catalog card quantity and variant selectors share `--catalog-package-text`
+with fixed package labels. Their selected/focused cell uses
+`--catalog-control-focus-bg/text/border`: a blue surface and theme-specific
+ink/edge. The actual closed control is transparent and borderless, filling
+its label half. Price tags retain `--catalog-price-text`. Expanded option
+rows have separate foreground/background roles, described below.
 
 ## Catalog desktop layout and variant list contrast
 
@@ -738,7 +723,7 @@ selected gold and `--catalog-cart-hover-shadow`; success feedback stays green.
 `--catalog-cart-hover-border` maps directly to `--selected-accent` in dark,
 independently of the navbar's icon-only cart. Card hover uses warm gold sheen
 and shadow. Quantity/size fields remain blue at rest; focus/open uses selected
-gold, a soft gold edge and `--catalog-control-focus-shadow`. Search keeps blue
+gold on the blue cell with a soft inset edge. Search keeps blue
 focus. Catalog pagination has its own 350ms minimum loading time; adding a
 product has no artificial minimum loading or settle delay.
 
@@ -1417,8 +1402,8 @@ geometry and fades the recorded surface colour instead. Arrival uses a 300ms
 cloud-only squash/stretch and 180ms link reveals. The final landing geometry
 is reserved throughout, so the logo does not move again as the links appear.
 Transient names/clouds/inert controls are cleaned on completion, BFCache
-restoration and a bounded fallback. Reduced motion, night, modifier clicks,
-unavailable sessionStorage and normal first visits retain the native path.
+restoration and a bounded fallback. Reduced motion, modifier clicks, unavailable sessionStorage and normal first
+visits retain the native path. Night uses wordmark-only travel without day cloud art.
 
 `data-checkout-flow` is rendered from the existing `navbar_cart_current`
 context on a full flow page. `responsive-cart.js` updates it on adopted flow
@@ -1468,22 +1453,10 @@ forms/selects, keeps loaded cards for reuse and destroys outstanding work on
 page teardown. A load failure retains a manual retry action. Tom Select's
 full offer data is independent of visible catalog cards.
 
-`common/cart-panel.css` owns circular cart pictures, heading alignment,
-responsive row columns and the wider desktop clamp. Mobile puts product text
-above a shared quantity/price row; desktop places all controls on one line.
-Both navbar and page carts expose a separate removal form at every quantity.
-B2B row totals use Decimal prices from the existing presentation contract;
-unpriced offers stay unpriced. Quantity responses carry confirmed totals,
-and `quantity-stepper.js` updates matching totals across cart surfaces.
-Previous-order buttons, product add buttons and in-cart badges reference
-the shared `--action-secondary-*` roles in both themes. Day uses white with blue ink/edge, with blue/gold on hover; night uses stepper-blue
-with pale ink/edge and gold on hover. Night primary actions use that same
-blue surface with gold text/edge. Navbar addition feedback is gold by day,
-moonlight by night, and shakes the summary without repainting/fading its
-cloud pseudo-element. Only the icon carries the temporary glow.
-The cart header has no return arrow; the current cart icon retains its return
-behavior. Previous orders/search stay at the original 36rem; only current
-product rows reach a modest 48rem desktop maximum, with controls at right.
+`common/cart-panel.css` owns the shared cart layout described below. Previous-order
+add/repeat controls and catalog badges consume `--action-secondary-*`; the current
+cart icon returns to the saved browsing page while the lower Continue shopping
+link retains its catalog destination. The cart header has no separate return arrow.
 
 ## Shared motion profile
 
@@ -1514,15 +1487,11 @@ Native form submission and server validation remain the owners of persistence.
 Blue entrance primary buttons use `--entrance-action-primary-border` together
 with their existing entrance background role.
 
-Cart shared line markup displays the unit-price badge inside product text.
-Retail quantity JSON includes `change_direction` and `subtotal_delta_label`,
-computed from server Decimal subtotals. B2B quantity responses include direction
-for priced row feedback, without inventing a subtotal for unpriced orders.
-`cart-price-feedback.js` consumes confirmed responses, pulses row/subtotal ink
-using `--cart-price-up/down`, and shows a signed subtotal notice briefly. It
-reapplies only to new DOM after fragment refresh within a bounded window, and
-skips movement for reduced motion. Existing cart controllers still own mutation
-serialization, pending quantities, failed-request rollback and payment locks.
+`cart-price-feedback.js` consumes confirmed mutation responses and uses
+`--cart-price-up/down` for a row/subtotal pulse. It reapplies only to new DOM
+within a bounded fragment-refresh window. Existing controllers own mutation
+serialization, rollback, pending quantities and payment locks. Reduced motion
+uses colour feedback without movement.
 
 ## Cart additions/removals and shared price tags
 
@@ -1543,42 +1512,61 @@ The dark effects profile has `travel: wordmark` and `celebration: none`. Cloud
 creation/preloading is guarded in home-arrival.js; motion and native navigation
 retain the same owner, and reduced-motion behavior is unchanged.
 
-## Portrait cart media and aligned controls
+## Shared cart layout and price-tag placement
 
-`includes/cart/product_visual.html` owns the image/tag markup shared by the
-editable cart, read-only review and just-placed confirmation. The optional
-`cart_visual` flag flows through generic line templates, so unrelated history
-and ops rows retain their image layout. cart-panel.css positions the visual
-in its own column, crops with `object-fit: cover`, stretches it to the product
-text height (at least 7rem), and overlays the shared `.tile__tag`. Tag tilt and
-hole/padding are reversed independently from its readable text.
+`includes/cart/product_visual.html` owns the portrait crop and `.tile__tag`
+markup shared by editable carts, review and just-placed confirmation. The
+optional `cart_visual` flag keeps historical/ops rows on their ordinary layout.
+Images stretch to the product text's height (at least 7rem) with `object-fit:
+cover`. Tag hole and tilt are reversed without mirroring text.
 
-The cart grid keeps product information, quantity and row amount in one row
-across mobile/desktop. Mobile trash is independently anchored upper-right; desktop retains the final
-control column. Quantity and amount align to the product text centre. Mobile control widths are compact
-while their vertical tap area remains 2.5rem; long names wrap inside a zero-min
-text column rather than pushing controls beneath the product.
+`cart-line__controls` groups quantity/row amount in a mobile column with a
+larger stepper and the price centred below. On desktop `display: contents`
+retains the grid's quantity, amount and removal columns. Mobile trash anchors
+to the upper-right; the controls are inset slightly from that corner.
 
-`cart-line__controls` groups quantity and amount for a larger mobile stepper
-with its price centred below; on desktop it uses `display: contents` so the
-existing grid columns remain. Cart/review tags use `right: 0` plus a 20%
-self-width translation, retaining their tilt and readable text.
+Cart component defaults are defined at the start of cart-panel.css:
 
-## Static chrome during product transitions; desktop preview overhang
+| Token | Purpose | Default |
+|---|---|---|
+| `--cart-content-width` | search, Previous orders, contact fields and timeline | 36rem |
+| `--cart-desktop-width` | wider current cart rows and desktop preview | clamp(content width, 62vw, 48rem) |
+| `--cart-tag-room` | transparent scroll space for preview overhang | space-16 |
+
+Mobile unit tags are centred at the image's top. Desktop page/review tags use
+`right: 0` with 20% self-width translation; desktop navbar preview tags shift
+80% left from the image's left edge. The scrollport has matching transparent
+left margin/padding, retaining content alignment and native vertical scrolling.
+`menu-scroll.js` measures the sticky footer into `--cart-actions-height`; a
+notched clip-path trims the extension below the footer. `--cart-sheet-shadow`
+and `--cart-popover-tag-shadow` supply a subtle day shadow/night glow.
+
+The mobile editor hides its upper subtotal while the fixed summary shows it.
+Delivery notes remain in the content. Cart close uses secondary action tokens,
+leaving Continue to review as the primary action. Open mobile cart/Menu header
+triggers retain their own day engraving/night halo while centred.
+
+## Static chrome during product transitions
 
 `catalog.js` scopes `catalog-product-transition` to each native product open or
-close transition and removes it on completion/teardown. `catalog-chrome` names
-the existing header subtree; its new capture stays opaque and unanimated while
-the old capture is hidden. Page/product captures keep their existing timings.
-No header DOM or cart fragment is replaced for a product-only navigation.
+close and removes it on completion/teardown. The `catalog-chrome` name isolates
+the mounted header: its new capture stays opaque and unanimated while the old
+capture is hidden. Product/page timing remains independent. Product-only
+navigation replaces neither header DOM nor the navbar cart fragment.
 
-Desktop navbar preview tags use an 80% self-width shift left from the image's
-left edge. The scrollport gains matching transparent left margin/padding: its
-content remains aligned while the tag can paint outside the panel's border,
-without portals or duplicate labels. Existing vertical scrolling is retained.
-menu-scroll.js measures the sticky footer into `--cart-actions-height`; the
-left extension clips back to the panel edge below that point so scrolled-under
-tags cannot peek out beside the summary. `--cart-sheet-shadow` and `--cart-popover-tag-shadow` supply a subtle
-day shadow and night glow; the rules exclude mobile and full cart pages.
+## Shared action controls and maintenance
 
-Mobile cart: show the subtotal only in the fixed summary, use secondary action tokens for its close control, centre unit tags over portrait media, and inset quantity controls slightly from the trash corner. Open mobile header cart/menu triggers retain their own active artwork (night uses its halo). Catalog label halves are full-area variant/quantity controls, with shared text sizing and field-wide focus colour; expanded variant options retain the common list.
+Each theme's opening control block defines `--theme-secondary-bg/ink/edge`
+and `--theme-secondary-pointer-bg/ink/edge`, alongside the primary palette.
+`--action-secondary-*` roles map to those controls. Catalog add/repeat buttons,
+in-cart badges and cart/product close controls consume the semantic roles.
+Day customer mappings remain scoped away from ops; night retains its separate
+blue/gold palette. Identical colours alone do not justify sharing roles with
+unrelated statuses or primary actions.
+
+Catalog variant/quantity controls fill their label halves, sharing text size
+and cell-wide focus paint. The variant's expanded list still uses the shared
+Tom Select dropdown. These rules live with their base component definitions,
+rather than as a second override block at the end of catalog.css. Cart base
+and responsive rules likewise own their final layout; obsolete circular-row
+layouts, hidden trash overrides and old filled-flash/halo animations are removed.

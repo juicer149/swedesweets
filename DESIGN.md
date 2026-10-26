@@ -849,87 +849,53 @@ attempt is allowed.
 
 ### Landing exit, catalog batches and cart rows
 
-Day landing links return the wordmark/cloud to the navbar. The four labels
-shrink into their own slots in top-to-bottom order, with 50ms spacing; the
-chosen page then gets its own engraved cloud. Motion preferences, normal
-links, first visits and night keep their existing behaviour.
+Landing links return the wordmark to the navbar, followed by the four labels
+in order. Day travel includes the engraved cloud; night moves the wordmark
+alone. `effects.js` keeps motion separate from palette. Night celebrations
+remain disabled until their design is chosen; day retains candy rain.
+Reduced motion keeps the existing static alternatives.
 
-The catalog initially renders twelve cards. Its text-only search/category
-index covers all available products; the remaining card HTML is fetched in
-twelve-card batches near the bottom, or when a search needs those products.
-Unloaded cards have no DOM/photos to render or fetch. The cart's Tom Select
-options remain a separate complete data set. Without JavaScript, Previous
-and Next page links keep the catalog reachable.
+The catalog renders twelve cards initially. Its complete text-only index
+supports search/category filtering; additional card HTML and images load in
+small batches as needed. Tom Select keeps its separate complete option set.
+Previous/Next links provide the no-JavaScript path. Each label's lower half
+is a full-area variant or quantity field; the expanded variant list keeps
+the shared dropdown styling. Product-only transitions leave the navbar still.
 
-Cart quantity and server-confirmed row total sit next to each other, with a
-separate small trash icon at the right. A circular picture hangs left of the
-product text; Previous orders headings share that text alignment. Desktop
-cart surfaces/rows grow with a clamp while contact details and the timeline
-retain a readable width. Previous-order add/repeat actions reuse the cart
-icon and shared secondary-action palette, as does the catalog in-cart badge.
+Cart rows use portrait rectangular crops to the left of wrapped product text.
+The shared catalog price tag overlays the image without an "each" suffix.
+Mobile tags are centred at the image's top. Desktop page/review tags overhang
+the image's right edge; navbar preview tags hang left, with about one fifth
+remaining over the image and a subtle day shadow/night glow. Scroll clipping
+keeps these tags from leaking below the preview's fixed summary.
 
-The upper quiet arrow and current cart trigger return to the page and scroll
-position recorded before opening the cart. The lower Continue shopping action
-always opens Shop/Catalog. During either full-page return the real cart icon
-travels back to its normal navbar slot. Closing a quick preview stays on its
-underlying page. Navigation controls never unlock payment/cart mutations or
-retry an order submission.
+On mobile a larger quantity stepper and its row amount form a centred stack
+beside the product, slightly inset from the upper-right trash button. Desktop
+keeps quantity, row amount and removal inline. Only current product rows grow
+to the wider desktop clamp; search, Previous orders and contact fields retain
+the standard content width. Review/just-placed confirmation reuse the same
+product visual; historical orders retain their own layout.
 
-Customer cart additions (including Previous orders and catalog in-cart badges)
-use the theme secondary action: white/blue by day, stepper-blue/pale ink
-by night, with gold hover emphasis. Night primary actions keep gold ink and
-edges on the same blue surface as quantity controls. Cart feedback briefly
-shakes and lights its icon (gold by day, moonlight by night), preserving the
-active cloud. Search and Previous orders retain the standard content width;
-only current cart product rows widen moderately, with controls at the right.
+Cart additions and in-cart badges use secondary actions: white with blue
+ink/edge by day, stepper-blue with pale ink by night, with gold hover emphasis.
+The cart close is also secondary; continuing the order remains primary.
+Opening mobile cart/Menu gives the centred trigger its active cloud/halo.
+The current cart icon returns to the browsing URL/scroll recorded before
+entry; the lower Continue shopping action always opens Shop/Catalog. A quick
+preview closes onto its underlying page. No return arrow duplicates this.
 
-Day cart secondary controls now rest on white with blue ink/edge. Completed
-timeline steps use brighter theme greens and a soft glow. Find Sweets names
-puff slightly while their pins lift, with equivalent keyboard focus feedback.
-Day and night share navigation motion through `effects.js`; the
-night profile can be replaced later without changing the day profile or colours.
-Night's active mobile navbar destination has larger text. Reduced motion remains
-respected.
+All successful additions, removals and quantity changes share server-confirmed
+price feedback: row amounts and subtotal pulse green/red; only the subtotal
+shows a short signed change. Mobile displays the subtotal solely in its fixed
+summary. Decimal arithmetic owns amounts. B2B shows a subtotal only when every
+EUR price is known; otherwise it shows the product count. Failed mutations
+never paint optimistic prices. Navbar cart feedback shakes and lights its
+icon (day gold/night moonlight), leaving its active cloud intact.
 
-Customer edit and retail checkout forms share `.customer-form` spacing: more
-room below headings, between fields and around Find Sweets. A native listed
-switch replaces the two radio chips while retaining strict true/false handling.
-Edit store marks Menu current. On phones its Save changes action replaces the
-bottom page links, stays narrow at the foot and is hidden while the software
-keyboard covers that area, rather than lifting above the keyboard. Onboarding
-retains the blue entrance frame; entrance primary actions share a white edge.
-
-Cart unit-price labels sit under product names. Confirmed quantity changes
-pulse row amounts and subtotal green/red. Only the subtotal shows a brief signed
-change; on phones this appears in the bottom summary. The server computes its
-formatted change with Decimal. Missing prices remain missing, and failed
-mutations never produce optimistic prices. Reduced motion uses colour only.
-
-Cart unit prices reuse the catalog's `.tile__tag` artwork, with no "each" suffix.
-B2B shows a EUR subtotal only when every line is priced; otherwise the summary
-keeps its product count. Confirmed additions (including Tom Select and Order
-again) and removals now carry the same signed price feedback as quantity edits.
-Desktop Save changes has a wider minimum; the listed switch is larger in both
-layouts. Night home/landing travel moves its wordmark without day cloud art;
-logo/current-link spam does not trigger a celebration until its design is chosen.
-
-Cart rows use portrait rectangular product crops spanning their product text.
-The unit-price tag overlays the picture's top, tilted left with its hole at
-the right; text is never mirrored. Quantity and row price stay side by side,
-centred against the product information, with mobile removal at the upper-right corner (desktop keeps its right-hand column).
-The compact mobile controls leave room for wrapped product names. A shared
-product visual carries this crop/tag into review and just-placed confirmation.
-Catalog pictures and ordinary historical order rows retain their own layout.
-
-Mobile cart controls now form a centred stack: a larger quantity stepper, then
-the row amount directly beneath it. Desktop retains its inline controls. Unit
-price tags overhang the image's right edge by about one fifth of their width.
-
-Opening/closing product details keeps the mounted navbar visually still: it
-has its own non-fading view-transition capture, separate from the page fade.
-In the desktop navbar cart preview only, most of each price tag hangs left of
-the product image (roughly one fifth remains over it). Transparent scroll room
-lets it extend beyond the panel edge. Day uses a faint shadow; night a faint
-moonlit glow. Mobile and full cart/review pages retain their tag placement.
-
-Mobile cart: show the subtotal only in the fixed summary, use secondary action tokens for its close control, centre unit tags over portrait media, and inset quantity controls slightly from the trash corner. Open mobile header cart/menu triggers retain their own active artwork (night uses its halo). Catalog label halves are full-area variant/quantity controls, with shared text sizing and field-wide focus colour; expanded variant options retain the common list.
+Customer edit/onboarding and retail checkout share `.customer-form` spacing.
+The native listed switch retains strict true/false validation. Edit store
+marks Menu current; on mobile Save changes replaces the bottom reading links
+and hides behind the software keyboard instead of lifting. Onboarding retains
+the blue entrance frame; entrance primary actions share a white border.
+Completed timeline steps use bright theme greens and a soft glow. Find Sweets
+names/pins share hover and keyboard emphasis while addresses remain still.

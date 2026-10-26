@@ -42,8 +42,15 @@
   --theme-action-ink: var(--state-here-ink);
   --theme-action-pointer-ink: var(--state-pointer-ink);
   --theme-action-pressed-ink: var(--state-here-ink);
-}
 
+  /* # Secondary buttons: quiet surface, ink/edge and pointer palette */
+  --theme-secondary-bg: var(--surface-bg);
+  --theme-secondary-ink: var(--interactive-text);
+  --theme-secondary-edge: var(--interactive-border);
+  --theme-secondary-pointer-bg: var(--surface-hover);
+  --theme-secondary-pointer-ink: var(--selected-accent);
+  --theme-secondary-pointer-edge: var(--selected-accent);
+}
 
 /* Dark customer palette. Ops keeps light.
    Shared roles come first; component mappings follow below. Change a shared
@@ -88,6 +95,14 @@
   --dropdown-title-glow-filter: var(--interaction-glow-filter);
   --dropdown-title-text-shadow: var(--interaction-text-shadow);
   --dropdown-title-icon-filter: var(--interaction-icon-filter);
+
+  /* Shared secondary action roles; component mappings follow below. */
+  --action-secondary-bg: var(--theme-secondary-bg);
+  --action-secondary-text: var(--theme-secondary-ink);
+  --action-secondary-border: var(--theme-secondary-edge);
+  --action-secondary-hover-bg: var(--theme-secondary-pointer-bg);
+  --action-secondary-hover-text: var(--theme-secondary-pointer-ink);
+  --action-secondary-hover-border: var(--theme-secondary-pointer-edge);
 
   /* Main actions keep gold ink/edges; hover/focus adds the warm light. */
   --action-primary-bg: var(--theme-action-bg);
@@ -198,7 +213,11 @@
 
   --preferences-trigger-ink: var(--interactive-text);
   --preferences-bg: var(--menu-bg);
+  --cart-price-up: var(--color-green-300);
+  --cart-price-down: var(--color-red-300);
   --cart-sheet-bg: var(--preferences-bg);
+  --cart-sheet-shadow: 0 0 24px color-mix(in srgb, var(--moonlight) 7%, transparent);
+  --cart-popover-tag-shadow: 0 0 8px color-mix(in srgb, var(--moonlight) 12%, transparent);
   /* the cart's cross: light blue on the night sheet (light.css's dark blue
      would vanish) */
   --cart-sheet-close-ink: var(--interactive-text);
@@ -252,12 +271,8 @@
   --menu-cart-feedback-added-ink: var(--moonlight);
   --menu-cart-feedback-removed-ink: var(--color-red-400);
   --menu-cart-feedback-count-ink: var(--color-primary-950);
-  --menu-cart-feedback-halo-animation: site-nav-cart-glow-halo 1.6s ease-out;
   --menu-cart-feedback-icon-animation: site-nav-cart-glow-icon 1.6s ease-out;
-  --menu-cart-feedback-halo: radial-gradient(ellipse, color-mix(in srgb, currentColor 28%, transparent), color-mix(in srgb, currentColor 12%, transparent) 40%, transparent 75%);
-  --menu-cart-feedback-halo-filter: blur(10px);
   --menu-cart-feedback-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, currentColor 40%, transparent)) drop-shadow(0 0 9px color-mix(in srgb, currentColor 25%, transparent));
-  --menu-cart-glow: 0 0 18px 3px rgb(246 181 30 / calc(0.26 * var(--interaction-glow-strength))), 0 0 32px 7px rgb(246 181 30 / calc(0.10 * var(--interaction-glow-strength)));
 
   /* Shared local interactions follow the approved navbar light. */
   /* Painted letters/icons emit locally; opacity scales the tuned radial halo. */
@@ -373,14 +388,10 @@
   --catalog-card-hover-shadow: var(--state-pointer-box-glow);
 
   /* Quantity/variant fields: interactive blue at rest; gold while focused/open */
-  --catalog-control-idle-text: var(--interactive-text);
-  --catalog-control-idle-bg: transparent;
-  --catalog-control-idle-border: color-mix(in srgb, var(--color-primary-200) 22%, transparent);
   --catalog-control-hover-border: color-mix(in srgb, var(--selected-accent) 45%, transparent);
   --catalog-control-focus-text: var(--selected-accent);
   --catalog-control-focus-bg: var(--search-focus-bg);
   --catalog-control-focus-border: color-mix(in srgb, var(--selected-accent) 60%, transparent);
-  --catalog-control-focus-shadow: var(--menu-cart-glow);
 
   /* Variant list: blue on the label surface; dark ink on light active rows. */
   --catalog-option-text: var(--interactive-text);
@@ -411,24 +422,24 @@
 
   /* Catalog add: moonlight ready ink; gold hover/focus/press; muted until size is chosen.
      Its button background sequence is intentionally different from text links. */
-  --catalog-cart-bg: var(--color-primary-750);
-  --catalog-cart-ink: var(--state-rest-ink);
-  --catalog-cart-border: var(--state-rest-ink);
-  --catalog-cart-hover-bg: var(--color-primary-700);
   --catalog-cart-active-bg: var(--surface-bg);
+  --catalog-cart-bg: var(--action-secondary-bg);
+  --catalog-cart-ink: var(--action-secondary-text);
+  --catalog-cart-border: var(--action-secondary-border);
+  --catalog-cart-hover-bg: var(--action-secondary-hover-bg);
+  --catalog-cart-hover-ink: var(--action-secondary-hover-text);
+  --catalog-cart-hover-border: var(--action-secondary-hover-border);
   --catalog-cart-focus: var(--selected-accent);
   --catalog-cart-muted-bg: var(--color-primary-950);
   --catalog-cart-muted-ink: var(--color-neutral-500);
   --catalog-cart-muted-border: var(--color-neutral-500);
-  --catalog-cart-hover-ink: var(--state-pointer-ink);
-  --catalog-cart-hover-border: var(--state-pointer-ink);
   --catalog-cart-active-ink: var(--selected-accent);
   --catalog-cart-active-border: var(--selected-accent);
 
   /* Success burst and destructive feedback keep their existing shade/intensity */
+  --catalog-burst-halo: color-mix(in srgb, var(--moonlight) 30%, transparent);
   --catalog-burst-success: var(--moonlight);
   --catalog-burst-error: #e45f5f;
-  --catalog-burst-halo: rgb(36 143 78 / 0.28);
   --cart-remove-ink: #dc5a5a;
   --cart-remove-hover-ink: var(--danger-text);
   --cart-remove-flash: rgb(210 55 55 / 0.24);
@@ -564,7 +575,6 @@
   --stepper-press-glow: inset 0 0 14px color-mix(in srgb, var(--state-pointer-ink) 30%, transparent);
 }
 
-
 /* Filter chips and the status toggles: the word only, "here" gold with its
    light behind it, the pointer moonlight, the rest light blue. */
 :root[data-theme="dark"]:not([data-site-zone="ops"]) {
@@ -573,28 +583,4 @@
   --chip-here-glow: color-mix(in srgb, var(--state-here-ink) 28%, transparent);
   --chip-pointer-ink: var(--state-pointer-ink);
   --chip-pointer-glow: color-mix(in srgb, var(--state-pointer-ink) 18%, transparent);
-}
-
-/* Secondary cart actions follow the same blue surface as the quantity stepper. */
-:root[data-theme="dark"]:not([data-site-zone="ops"]) {
-  --action-secondary-bg: var(--surface-bg);
-  --action-secondary-text: var(--interactive-text);
-  --action-secondary-border: var(--interactive-border);
-  --action-secondary-hover-bg: var(--surface-hover);
-  --action-secondary-hover-text: var(--selected-accent);
-  --action-secondary-hover-border: var(--selected-accent);
-  --catalog-cart-bg: var(--action-secondary-bg);
-  --catalog-cart-ink: var(--action-secondary-text);
-  --catalog-cart-border: var(--action-secondary-border);
-  --catalog-cart-hover-bg: var(--action-secondary-hover-bg);
-  --catalog-cart-hover-ink: var(--action-secondary-hover-text);
-  --catalog-cart-hover-border: var(--action-secondary-hover-border);
-  --catalog-burst-halo: color-mix(in srgb, var(--moonlight) 30%, transparent);
-}
-
-:root[data-theme="dark"]:not([data-site-zone="ops"]) { --cart-price-up: var(--color-green-300); --cart-price-down: var(--color-red-300); }
-
-:root[data-theme="dark"]:not([data-site-zone="ops"]) {
-  --cart-sheet-shadow: 0 0 24px color-mix(in srgb, var(--moonlight) 7%, transparent);
-  --cart-popover-tag-shadow: 0 0 8px color-mix(in srgb, var(--moonlight) 12%, transparent);
 }
