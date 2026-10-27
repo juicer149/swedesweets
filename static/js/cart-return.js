@@ -41,9 +41,10 @@
     const destination = bottom?.href || saved?.url || fallback;
     if (!destination) return;
     event.preventDefault(); event.stopImmediatePropagation();
-    window.SwedeSweetsHomeTravel?.cartReturn(destination, bottom ? null : saved?.scroll);
-    location.assign(destination);
+    const handled = window.SwedeSweetsHomeTravel?.cartReturn(destination, bottom ? null : saved?.scroll);
+    if (!handled) location.assign(destination);
   }, true);
+  document.addEventListener("cart-navigation-start", remember);
   document.addEventListener("DOMContentLoaded", update);
   document.addEventListener("order-flow-chrome", update);
   document.addEventListener("navbar-cart-refreshed", update);

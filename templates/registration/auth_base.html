@@ -14,7 +14,7 @@ to " entrance-header--aside": the logo smaller, at the left.
 {% block navbar %}
 <header class="entrance-header{% block entrance_header_modifier %}{% endblock %}">
   <a
-    class="entrance-header__brand"
+    class="entrance-header__brand{% block entrance_brand_modifier %}{% endblock %}"
     href="{% url 'index' %}"
     aria-label="{% trans 'SwedeSweets home' %}"
   >

@@ -826,8 +826,9 @@ retain their usual disclosure timing.
 A logo click returns through the same staged journey in both themes, including
 from an open Menu/cart. The page fades onto the landing surface, then the
 navbar rule disappears and the wordmark and links move to their landing
-positions. Icons travel with their text. Links retain rest ink, with only the
-chosen link in pointer ink. The wordmark remains white/moonlight during travel.
+positions. Icons travel with their text as one link. Returning links use
+navbar rest ink and cannot flash a crown before the landing geometry is ready.
+The returning wordmark remains white/moonlight during travel.
 After arrival, day lettering swells into the real cloud and regains its brand
 colours; night lettering flickers briefly into gold like a warming lamp.
 The night first visit shares this flicker. The crown follows the cloud/ink.
@@ -854,10 +855,20 @@ attempt is allowed.
 
 ### Landing exit, catalog batches and cart rows
 
-Landing links return the wordmark, four labels and their icons to the navbar in order.
-The landing background stays until they settle, then selection appears:
-cloud/ink first, crown second, with the navbar rule drawing concurrently; then page surface and
-a reveal from top to bottom. Normal navbar changes remove the crown before
+A landing click removes hover and commits the chosen link's active state
+before departure: day blue on its cloud, night gold with its crown. The whole
+link (icon, text and selection) then travels intact; other links keep navbar
+rest ink. Only the wordmark changes during departure: day white, night light
+blue without its crown. Once the links settle, the navbar rule draws, followed
+by the page surface and a reveal from top to bottom.
+
+The landing cart link shares that journey: wordmark to the corner, cart trigger
+to the header centre, then rule and page. Returning through the current cart
+trigger or the logo reverses the brand/cart flight after fading the page.
+Login first folds the menu and ancillary controls towards the brand, then
+carries the complete logo/cloud to its centred header. The form fades in last.
+Login's cloud keeps the landing proportions at a smaller responsive size;
+returning from login carries that complete brand back without reforming it. Normal navbar changes remove the crown before
 the old cloud and add the new crown after its cloud. `effects.js` keeps motion
 separate from palette; night celebration remains disabled and day candy rain
 is unchanged. Reduced motion keeps its static alternatives.

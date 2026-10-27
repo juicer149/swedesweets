@@ -3,30 +3,7 @@
 The visual principles and ownership overview are in [DESIGN.md](../DESIGN.md).
 This file describes loading, previews and the workflow for implementation.
 
-Status (2026-10-18): the public/B2B dark theme is approved and merged into
-main. FAQ, About, Find Sweets, accounts, carts/checkout and catalog share its
-finished semantic palette and interaction rules. Labels have a separate palette
-per theme; photos and About's polaroid retain their own light surfaces.
-Light remains the default. A full light-theme review and the dark ops rollout
-are still separate work; ops is explicitly held in light mode.
-
-## Theme controls
-
-Each theme file opens with a short block of the choices everything else
-follows; change these first, and tune a single part further down only when
-it must differ:
-
-| Control | What it sets | Day (light.css) | Night (dark.css) |
-|---|---|---|---|
-| `--theme-chrome-bg` | the navbar's surface, and the Menu's, start page's and login pages' around it | primary-400 (the logo's blue) | primary-950 |
-| `--state-rest-ink` | everything clickable on it, at rest: text, edge and light | primary-750 | light blue (`--interactive-text`) |
-| `--state-here-ink` | where you are (with the crown) | gold | gold |
-| `--state-pointer-ink` | what you point at or reach with the keys | primary-950 | moonlight |
-| `--theme-page-bg` | the page | cream (neutral-50) | primary-900 |
-| `--state-page-rest/here/pointer-ink` | the same three on the page (tabs, questions, Find Sweets, chips) | primary-700 / 900 / 600 | as the three above |
-| `--theme-sky-*` | tabs and filter chips: the word at rest (a neutral), a cloud behind it and its ink pointed at and chosen, the cloud's softness (`-blur`), how far it reaches beside the word (`-reach`; the tab row keeps that much room at its ends, so the light is not cut), its size while closed (`-closed`), how far it opens when pointed at (`-peek`: a smaller look at the chosen one's sky) and how long it takes (`--sky-open-time`) | primary-950; the navbar's blue + white pointed at, + gold chosen; 6.5px; 18px; scale(.35, .6); scale(.55, .62); 280ms | (not used: the night keeps its halo, with 1.25rem of room at the row's ends) |
-| `--theme-cloud`, `-shape`, `-inset` | by day on the blue (navbar, Menu, Settings, entrance pages): the white cloud behind where you are (a wide body with a small round top; less wide on phones) | white | (not used) |
-| `--state-rest-ink`, `--state-pointer-ink`, `--state-here-ink` | by day on the blue, a word at rest (white), pointed at or chosen (the darkest blue, no cloud; gold where you are) and where you are (on the white cloud, in the navbar's own blue, as if cut out of it); the start page has no "here". No crown marks a choice (`--marker-crown`) | white; primary-1000; the navbar's blue | (the night's own) |
+S…619 tokens truncated…loud, in the navbar's own blue, as if cut out of it); the start page has no "here". No crown marks a choice (`--marker-crown`) | white; primary-1000; the navbar's blue | (the night's own) |
 | `--theme-nav-cloud-inset` | by day each navbar link (by its icon: `data-nav-cloud`) and the Menu and cart buttons have their own engraved cloud where you are (`static/images/clouds/nav-*.svg`, drawn by `tools/draw_clouds.py`); it stretches with the word, so a longer word only widens it | -0.7rem -1.1rem | (not used) |
 | `--theme-bar-here-crown`, `-scale` | on a phone, the bar of icons at the screen's foot: where you are has no cloud but the gold crown on its icon, its word a little bigger and bolder | accent-600; 1.12 | (the night's own crown) |
 | `--theme-logo-ink`, `-pointer-ink`, `-crown`, `--theme-logo-cloud-inset` | the logo: always on its own engraved cloud (`static/images/clouds/logo.svg`, a plainer `logo-small.svg` in the navbar; `tools/draw_clouds.py`: lumps with their own outline, short curved strokes shading them), in the navbar's blue with its yellow crown; gold pointed at (white would vanish on its cloud) | the navbar's blue; gold; the brand yellow | (as the rest and the pointer) |
@@ -1386,24 +1363,40 @@ keep their default 280ms and reduced motion remains immediate.
 ## Home arrival and checkout chrome
 
 `public/home-arrival.css` and the parser-blocking `home-arrival.js` head
-script own the staged landing/navbar journey in both themes. Session storage
-carries only URL, timestamp, selection, wordmark, label and icon rectangles. Native cross-document
-transitions move `home-wordmark`, `home-link-0..3` and `home-icon-0..3`; without support the same
-recorded geometry drives bounded Web Animations. No cloud is injected into
-the navbar. Modifier clicks, first visits and reduced motion remain native.
+script own landing/navbar, landing/cart and landing/login travel in both themes.
+Session storage carries only URL, time, selection and geometry. Whole link
+snapshots (`home-link-0..3`) include icon, text and active decoration, replacing
+separate icon/label snapshots. `home-wordmark` handles ordinary navigation;
+`home-brand` carries the complete login cloud/wordmark and `home-cart` carries
+the full cart trigger. Bounded Web Animations use the same elements without
+cross-document support. Modifier clicks and reduced motion remain native.
 
-Leaving landing retains its surface during flight, then `data-home-phase`
-advances through selection, surface and content. The selected link grows
-its own cloud/light before its crown, while the navbar rule appears concurrently. The page
-background follows and the visible main region reveals from top to bottom.
-On return the source fades page/panels onto the landing background in 220ms
-without closing panel history first. Links keep rest ink during both directions;
-only the chosen link keeps pointer ink until arrival. Icons share their labels’
-duration and stagger. The wordmark travels in white/moonlight; after arrival
-the day letters swell into the actual cloud and regain brand ink. At night
-the wordmark flickers quickly into gold, also on the first landing visit.
-The crown follows the cloud/ink. Reduced motion disables these effects. Transient names, phases and inert controls clear on completion,
-BFCache restoration and a bounded fallback.
+A landing click commits active before departure, with a 160ms selection beat.
+Day uses navbar blue on the link's own cloud, night gold/crown. Resting links
+use `--home-nav-rest`, mapped to `--theme-nav-rest-ink` by day and
+`--logo-rest-ink` by night. Active reads `--nav-link-here-ink`. Do not substitute
+the broad day `--state-rest-ink`/`--state-pointer-ink`: those are white/navy,
+not the customer navbar's pale blue and active blue. Hover is suppressed for
+the journey. Day wordmark departure is white; night departure uses the navbar
+rest blue without the crown. After flight, `data-home-phase` advances through
+selection (rule drawing), surface, content. The visible page reveals downward.
+
+On return the page/panels fade onto the landing surface in 220ms without
+closing panel history first. Returning wordmarks use white/moonlight until
+arrival, then day letters reform into the real landing cloud or night letters
+flicker quickly into gold. Landing-link crowns are hidden by the incoming root
+class before the streamed markup can paint. The logo crown follows its cloud
+or ink. First-visit night lettering shares the lamp effect. Reduced motion
+turns it off. Names, phases, inert controls and source fold animations clear
+on completion/BFCache, with a bounded watchdog for incomplete arrivals.
+
+Login folds menu/tagline/top/bottom towards the brand in 260ms before navigation.
+Its `entrance-header__brand--landing` modifier reuses the landing cloud art and
+185%/150% cloud-to-wordmark proportions; night retains its halo. Responsive
+wordmark width uses `clamp(7rem, min(35vw, 18dvh), 11rem)`. The form is hidden
+until arrival, then fades in. Reverse login travel carries the existing whole
+brand back; it does not manufacture a second cloud. Other auth headers keep
+their existing geometry.
 
 `data-checkout-flow` is rendered from the existing `navbar_cart_current`
 context on a full flow page. `responsive-cart.js` updates it on adopted flow
@@ -1417,15 +1410,19 @@ resizing and reduced motion retain the shared controller behaviour.
 
 ## Landing exit and cart return travel
 
-`home-arrival.js` also owns landing-to-navbar (`mode: exit`) and current-cart
-return (`mode: cart`). Matching wordmark, `home-link-0..3` and `home-icon-0..3` snapshots
-move into the actual header; labels use 480ms with 45ms offsets, the brand
-650ms, and cart return 360ms. The selected link's own cloud appears after the
-landing exit. Unrelated native transitions are disabled by default. Only a
-recorded journey temporarily opts into cross-document transitions through an
-adopted stylesheet, cleaned after native teardown; fallback animations use
-recorded geometry. This avoids enabling/cancelling transitions for ordinary
-cart, login and account navigation.
+`home-arrival.js` owns landing-to-navbar/cart (`mode: exit`), login (`login`),
+return to landing (`home`) and ordinary browsing cart return (`cart`). The
+brand travels for 650ms; whole links use 600ms with 35ms offsets. Standalone
+cart-to-browsing icon return retains 360ms. Only a recorded journey temporarily
+opts into cross-document transitions via an adopted stylesheet, removed after
+native teardown. Other ordinary navigation keeps its existing controller.
+
+A landing cart click dispatches `cart-navigation-start` before the journey
+consumes the click, allowing `cart-return.js` to remember its true origin.
+Its current-cart handler lets home travel own the whole return, including the
+220ms page fade, logo to landing and cart to its landing corner. Other return
+URLs retain the small icon journey. Duplicate clicks cannot replace a pending
+home record or start competing navigation.
 
 `cart-return.js` stores only a same-origin browsing URL, scroll position and
 timestamp in sessionStorage, before opening the cart. Opening/continuing an

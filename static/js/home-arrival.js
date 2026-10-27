@@ -1,283 +1,268 @@
-/* Native home links, with a shared cloud/wordmark flight where supported.
-   This head script registers pagereveal before the first rendering chance.
-   Other navigation and reduced motion keep their normal behaviour. */
+/* One owner for landing, header, cart and login travel. Only navigation
+   geometry crosses documents; forms and order data remain server-owned. */
 (() => {
   "use strict";
   const root = document.documentElement;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const key = "swedesweets-home-flight";
   const canMove = () => ["cloud", "wordmark"].includes(window.SwedeSweetsEffects?.profile().travel) && root.dataset.siteZone !== "ops" && !reduced.matches;
-  const brandSelector = "a.site-brand[href], a.entrance-header__brand[href]";
-  let outgoing = null;
-  let started = false;
-  let landed = false;
-  let hero = null;
-  let landing = null;
-  let flightSheet = null;
+  const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const rect = element => {
+    if (!element) return null;
+    const b = element.getBoundingClientRect();
+    return b.width > 0 && b.height > 0 ? { x: b.x, y: b.y, width: b.width, height: b.height } : null;
+  };
+  const homeClasses = ["home-flight-source", "home-flight-source-out", "home-flight-departing", "home-flight-target", "home-flight-exit-target", "home-flight-login-target", "cart-flight-target"];
+  let outgoing = null, started = false, landed = false, landing = null, flightSheet = null;
+  const sourceMotions = [];
   function enableNative() {
     if (!("adoptedStyleSheets" in document) || !CSSStyleSheet.prototype.replaceSync) return;
     if (!flightSheet) {
       flightSheet = new CSSStyleSheet();
       flightSheet.replaceSync("@view-transition { navigation: auto; }");
     }
-    if (!document.adoptedStyleSheets.includes(flightSheet)) {
-      document.adoptedStyleSheets = [...document.adoptedStyleSheets, flightSheet];
-    }
+    if (!document.adoptedStyleSheets.includes(flightSheet)) document.adoptedStyleSheets = [...document.adoptedStyleSheets, flightSheet];
   }
   function disableNative() {
     if (flightSheet) document.adoptedStyleSheets = document.adoptedStyleSheets.filter(sheet => sheet !== flightSheet);
   }
-
+  function remember(value) {
+    try { sessionStorage.setItem(key, JSON.stringify(value)); outgoing = value; enableNative(); return true; }
+    catch { return false; }
+  }
   function read() {
     try {
       const value = JSON.parse(sessionStorage.getItem(key));
       if (value?.url !== location.href || Date.now() - value.time > 10000) return null;
-      if (![value.time, value.x, value.y, value.width, value.height].every(Number.isFinite)
-        || value.width <= 0 || value.height <= 0) return null;
       sessionStorage.removeItem(key);
+      if (![value.time, value.x, value.y, value.width, value.height].every(Number.isFinite) || value.width <= 0 || value.height <= 0) return null;
       return value;
     } catch { return null; }
   }
   const incoming = read();
   if (incoming && canMove()) {
     enableNative();
-    root.classList.add(incoming.mode === "exit" ? "home-flight-exit-target" : incoming.mode === "cart" ? "cart-flight-target" : "home-flight-target");
+    root.classList.add(incoming.mode === "exit" ? "home-flight-exit-target" : incoming.mode === "login" ? "home-flight-login-target" : incoming.mode === "cart" ? "cart-flight-target" : "home-flight-target");
     root.dataset.homePhase = "flight";
-    // Wait for the destination geometry, including streamed HTML.
+    if (incoming.cloudBrand) root.dataset.homeCloudBrand = "";
+    if (incoming.cart) root.dataset.homeCart = "";
     const expect = document.createElement("link");
-    expect.rel = "expect"; expect.href = ["exit", "cart"].includes(incoming.mode) ? "#site-ready" : "#landing-ready";
-    expect.setAttribute("blocking", "render");
-    document.head.append(expect);
+    expect.rel = "expect"; expect.href = incoming.mode === "home" ? "#landing-ready" : "#site-ready";
+    expect.setAttribute("blocking", "render"); document.head.append(expect);
   }
-
-  const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
-  function headerEntries() {
-    return [...document.querySelectorAll(".site-header .site-nav__link[href]")].map((anchor, index) => ({
-      url: anchor.href, name: `home-link-${index}`, current: anchor.getAttribute("aria-current") === "page",
-      ...rect(anchor.querySelector(".site-nav__label")), icon: iconRect(anchor, ".site-nav__icon"),
-    }));
-  }
-  document.addEventListener("click", event => {
-    const brand = event.target.closest?.(brandSelector);
-    if (!brand || !canMove() || event.defaultPrevented || event.button !== 0
-      || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey
-      || brand.download || (brand.target && brand.target !== "_self")) return;
-    const url = new URL(brand.href);
-    const art = brand.querySelector(".brand-logo");
-    if (!art || url.origin !== location.origin || url.href === location.href) return;
-    const box = art.getBoundingClientRect();
-    if (outgoing) { event.preventDefault(); return; }
-    outgoing = { mode: "home", url: url.href, time: Date.now(), x: box.x, y: box.y,
-      width: box.width, height: box.height, links: headerEntries() };
-    try { sessionStorage.setItem(key, JSON.stringify(outgoing)); } catch { outgoing = null; return; }
-    enableNative();
-    event.preventDefault();
-    root.classList.add("home-flight-departing");
-    // Fade the page onto the landing surface before moving its navigation.
-    // Open panels travel away with the page; their history is never closed first.
-    void pause(220).then(() => {
-      root.classList.add("home-flight-source");
-      outgoing.links.forEach(entry => {
-        const anchor = [...document.querySelectorAll(".site-header .site-nav__link")].find(link => link.href === entry.url);
-        nameLink(anchor, entry, ".site-nav__label", ".site-nav__icon");
-      });
-      location.assign(url.href);
-    });
-  });
-
-  function iconRect(anchor, selector) {
-    const icon = anchor.querySelector(selector);
-    return icon && icon.getBoundingClientRect().width > 0 ? rect(icon) : null;
-  }
-  function nameLink(anchor, entry, labelSelector, iconSelector) {
-    nameFor(anchor?.querySelector(labelSelector), entry.name);
-    if (entry.icon) nameFor(anchor?.querySelector(iconSelector), entry.name.replace("home-link", "home-icon"));
-    if (anchor) anchor.toggleAttribute("data-home-chosen", !!entry.current);
-  }
-  const rect = element => { const b = element.getBoundingClientRect(); return { x: b.x, y: b.y, width: b.width, height: b.height }; };
   function nameFor(element, name) {
     if (!element) return;
     element.style.viewTransitionName = name; element.dataset.homeTravelName = "";
   }
-  document.addEventListener("click", event => {
-    const link = event.target.closest?.(".landing-menu__link[href]");
-    if (!link || !canMove() || event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey
-      || link.download || (link.target && link.target !== "_self")) return;
-    const url = new URL(link.href), logo = document.querySelector(".landing__logo-art");
-    if (!logo || url.origin !== location.origin) return;
-    const entries = [...document.querySelectorAll(".landing-menu__link")].map((anchor, index) => ({
-      url: anchor.href, name: `home-link-${index}`, current: anchor === link,
-      ...rect(anchor.querySelector(".landing-menu__text")), icon: iconRect(anchor, ".landing-menu__icon"),
-    }));
-    outgoing = { mode: "exit", url: url.href, time: Date.now(), ...rect(logo), links: entries };
-    try { sessionStorage.setItem(key, JSON.stringify(outgoing)); } catch { outgoing = null; return; }
-    enableNative();
-    root.classList.add("home-flight-source-out");
-    document.querySelector("[data-landing]").dataset.homeExit = "";
-    for (const [index, anchor] of [...document.querySelectorAll(".landing-menu__link")].entries()) {
-      nameLink(anchor, entries[index], ".landing-menu__text", ".landing-menu__icon");
-    }
-  }, true);
-
-  // Cart return uses the same native transition owner, avoiding two competing
-  // pageswap handlers. Only geometry is carried, never an order or form.
-  window.SwedeSweetsHomeTravel = { cartReturn(url, scroll = null) {
-    const icon = document.querySelector('.site-header .site-nav-cart__icon');
-    if (!canMove() || !icon) return;
-    outgoing = { mode: "cart", url, time: Date.now(), ...rect(icon), scroll };
-    try { sessionStorage.setItem(key, JSON.stringify(outgoing)); } catch { outgoing = null; return; }
-    enableNative();
-    nameFor(icon, "cart-return-icon");
-  } };
-  function fly(element, from, duration = 600, delay = 0) {
-    const box = element.getBoundingClientRect();
+  function entries(selector, chosen) {
+    return [...document.querySelectorAll(selector)].flatMap((anchor, index) => {
+      const box = rect(anchor);
+      return box ? [{ url: anchor.href, name: `home-link-${index}`, current: chosen ? anchor === chosen : anchor.getAttribute("aria-current") === "page", ...box }] : [];
+    });
+  }
+  function matchLinks(record, selector) {
+    return (record.links || []).flatMap(entry => {
+      const anchor = [...document.querySelectorAll(selector)].find(link => link.href === entry.url && rect(link));
+      if (!anchor) return [];
+      anchor.toggleAttribute("data-home-chosen", entry.current);
+      nameFor(anchor, entry.name); return [[anchor, entry]];
+    });
+  }
+  function normalClick(event, link) {
+    return link && canMove() && !event.defaultPrevented && event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey
+      && !link.download && (!link.target || link.target === "_self") && new URL(link.href).origin === location.origin;
+  }
+  async function animate(element, frames, options) {
+    if (!element) return;
+    const motion = element.animate(frames, options);
+    if (options.fill === "forwards") sourceMotions.push(motion);
+    await motion.finished.catch(() => {});
+  }
+  function fly(element, from, duration = 650, delay = 0) {
+    const box = rect(element);
+    if (!box || !from) return Promise.resolve();
     element.style.transformOrigin = "0 0";
-    return element.animate([
+    return animate(element, [
       { transform: `translate(${from.x - box.x}px, ${from.y - box.y}px) scale(${from.width / box.width}, ${from.height / box.height})` },
       { transform: "none" },
-    ], { duration, delay, easing: "cubic-bezier(.2,.7,.2,1)", fill: "backwards" }).finished.catch(() => {}).then(() => { element.style.transformOrigin = ""; });
+    ], { duration, delay, easing: "cubic-bezier(.2,.7,.2,1)", fill: "backwards" }).then(() => { element.style.transformOrigin = ""; });
   }
-  async function enterNavbar(transition) {
-    const logo = document.querySelector(".site-brand .brand-logo");
+  function headerCart() { return document.querySelector(".site-header .site-nav-cart__trigger"); }
+  function startHome(url) {
+    if (!canMove() || outgoing) return false;
+    const brand = document.querySelector(".site-brand .brand-logo, .entrance-header__brand");
+    const cloudBrand = brand?.matches(".entrance-header__brand--landing");
+    const box = rect(brand);
+    if (!box) return false;
+    const cart = rect(headerCart());
+    const record = { mode: "home", url, time: Date.now(), ...box, cloudBrand, links: entries(".site-header .site-nav__link[href]"), cart };
+    if (!remember(record)) return false;
+    root.classList.add("home-flight-departing");
+    if (cloudBrand) root.dataset.homeCloudBrand = "";
+    void pause(220).then(() => {
+      root.classList.add("home-flight-source");
+      nameFor(brand, cloudBrand ? "home-brand" : "home-wordmark");
+      matchLinks(record, ".site-header .site-nav__link[href]");
+      if (cart) nameFor(headerCart(), "home-cart");
+      location.assign(url);
+    });
+    return true;
+  }
+  document.addEventListener("click", event => {
+    const brand = event.target.closest?.("a.site-brand[href], a.entrance-header__brand[href]");
+    if (!normalClick(event, brand) || brand.href === location.href) return;
+    if (outgoing || startHome(brand.href)) event.preventDefault();
+  });
+  document.addEventListener("click", event => {
+    const link = event.target.closest?.(".landing-menu__link[href], .landing__cart-link[href], a.landing__account[href]");
+    if (!normalClick(event, link)) return;
+    if (outgoing) { event.preventDefault(); return; }
+    landing = document.querySelector("[data-landing]");
+    const login = link.matches(".landing__account"), cart = link.matches(".landing__cart-link");
+    const brand = landing?.querySelector(login ? ".landing__logo" : ".landing__logo-art");
+    const box = rect(brand);
+    if (!box) return;
+    const record = { mode: login ? "login" : "exit", url: link.href, time: Date.now(), ...box,
+      cloudBrand: login, links: login || cart ? [] : entries(".landing-menu__link[href]", link), cart: cart ? rect(link) : null };
+    if (!remember(record)) return;
+    if (cart) document.dispatchEvent(new Event("cart-navigation-start"));
+    event.preventDefault();
+    root.classList.add("home-flight-source-out");
+    if (login) root.dataset.homeCloudBrand = "";
+    if (cart) root.dataset.homeCart = "";
+    landing.dataset.homeExit = login ? "login" : cart ? "cart" : "nav";
+    if (!login && !cart) {
+      matchLinks(record, ".landing-menu__link[href]");
+      link.dataset.homeChosen = "";
+    }
+    if (cart) { link.dataset.homeChosen = ""; nameFor(link, "home-cart"); }
+    nameFor(brand, login ? "home-brand" : "home-wordmark");
+    // Commit the selected state while still on landing, then move it intact.
+    // Login folds its controls towards the cloud before the cloud moves.
+    void (async () => {
+      if (login) {
+        const target = brand.getBoundingClientRect();
+        await Promise.all([...landing.querySelectorAll(".landing__menu, .landing__tagline, .landing__top, .landing__bottom")].map(element => {
+          const b = element.getBoundingClientRect();
+          return animate(element, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: `translate(${target.x + target.width / 2 - b.x - b.width / 2}px, ${target.y + target.height / 2 - b.y - b.height / 2}px) scale(.08)` }],
+            { duration: 260, easing: "ease-in", fill: "forwards" });
+        }));
+      } else await pause(160);
+      location.assign(record.url);
+    })();
+  }, true);
+
+  // Existing cart-return callers can hand over the whole return to landing.
+  // Other browsing destinations retain their small icon-only return.
+  window.SwedeSweetsHomeTravel = { cartReturn(url, scroll = null) {
+    if (outgoing) return true;
+    const home = document.querySelector("a.site-brand[href]")?.href;
+    if (home && new URL(url, location.href).pathname === new URL(home).pathname && startHome(url)) return true;
+    const icon = document.querySelector(".site-header .site-nav-cart__icon"), box = rect(icon);
+    if (!canMove() || !box) return false;
+    if (remember({ mode: "cart", url, time: Date.now(), ...box, scroll })) nameFor(icon, "cart-return-icon");
+    return false;
+  } };
+  async function finishPage() {
+    root.dataset.homePhase = "selection"; // the navbar rule begins here
+    await pause(180);
+    root.dataset.homePhase = "surface";
+    await pause(160);
+    root.dataset.homePhase = "content";
+    const main = document.querySelector("main.site-main");
+    await animate(main, [
+      { opacity: 0, clipPath: "inset(0 0 100% 0)" },
+      { opacity: 1, clipPath: `inset(0 0 ${Math.max(0, (main?.offsetHeight || 0) - innerHeight)}px 0)` },
+    ], { duration: 340, easing: "ease-out", fill: "backwards" });
+    landed = true; reveal();
+  }
+  async function enterPage(transition) {
     if (incoming.mode === "cart") {
       const icon = document.querySelector(".site-header .site-nav-cart__icon, .landing__cart-link .site-nav-cart__icon");
-      if (!icon) { transition?.skipTransition(); landed = true; reveal(); return; }
+      if (!icon) { transition?.skipTransition(); reveal(); return; }
       nameFor(icon, "cart-return-icon");
       if (Array.isArray(incoming.scroll)) scrollTo({ left: incoming.scroll[0], top: incoming.scroll[1], behavior: "instant" });
       if (transition) await transition.finished.catch(() => {}); else await fly(icon, incoming, 360);
       if (Array.isArray(incoming.scroll)) scrollTo({ left: incoming.scroll[0], top: incoming.scroll[1], behavior: "instant" });
-    } else {
-      if (!logo) { transition?.skipTransition(); landed = true; reveal(); return; }
-      nameFor(logo, "home-wordmark");
-      const pairs = [];
-      for (const entry of incoming.links || []) {
-        const anchor = [...document.querySelectorAll(".site-header .site-nav__link[href]")].find(link => link.href === entry.url);
-        const label = anchor?.querySelector(".site-nav__label");
-        if (label) {
-          nameLink(anchor, entry, ".site-nav__label", ".site-nav__icon");
-          const parts = [[label, entry]];
-          const icon = anchor.querySelector(".site-nav__icon");
-          if (entry.icon && icon) parts.push([icon, entry.icon]);
-          pairs.push(parts);
-        }
-      }
-      if (transition) await transition.finished.catch(() => {});
-      else await Promise.all([fly(logo, incoming, 650), ...pairs.flatMap((parts, index) => parts.map(([part, from]) => fly(part, from, 480, index * 50)))]);
+      landed = true; reveal(); return;
     }
-    if (incoming.mode === "exit") {
-      root.dataset.homePhase = "selection";
-      const active = document.querySelector('.site-header .site-nav__link[aria-current="page"]');
-      active?.classList.add("is-nav-arriving");
-      const pop = getComputedStyle(root).getPropertyValue("--public-nav-pop-time").trim();
-      const popMs = parseFloat(pop) * (pop.endsWith("ms") ? 1 : 1000);
-      await pause((Number.isFinite(popMs) ? popMs : 200) + 180);
-      active?.classList.remove("is-nav-arriving");
-      root.dataset.homePhase = "surface";
-      await pause(160);
-      root.dataset.homePhase = "content";
-      const main = document.querySelector("main.site-main");
-      await main?.animate([
-        { opacity: 0, clipPath: "inset(0 0 100% 0)" },
-        { opacity: 1, clipPath: `inset(0 0 ${Math.max(0, main.offsetHeight - innerHeight)}px 0)` },
-      ], { duration: 340, easing: "ease-out", fill: "backwards" }).finished.catch(() => {});
-    }
-    landed = true; reveal();
+    const brand = document.querySelector(incoming.cloudBrand ? ".entrance-header__brand" : ".site-brand .brand-logo");
+    if (!brand) { transition?.skipTransition(); reveal(); return; }
+    nameFor(brand, incoming.cloudBrand ? "home-brand" : "home-wordmark");
+    const pairs = matchLinks(incoming, ".site-header .site-nav__link[href]");
+    if (incoming.cart) { nameFor(headerCart(), "home-cart"); pairs.push([headerCart(), incoming.cart]); }
+    if (transition) await transition.finished.catch(() => {});
+    else await Promise.all([fly(brand, incoming), ...pairs.map(([element, from], index) => fly(element, from, 600, index * 35))]);
+    await finishPage();
   }
-
-  function prepare() {
+  function prepareHome() {
     landing = document.querySelector("[data-landing]");
-    hero = landing?.querySelector(".landing__logo");
-    if (!incoming || !canMove() || !hero) return false;
-    landing.classList.add("landing--seen");
-    landing.dataset.homeArrival = "flying";
+    if (!landing) return null;
+    landing.classList.add("landing--seen"); landing.dataset.homeArrival = "flying";
     for (const element of landing.querySelectorAll(".landing__top, .landing__menu, .landing__bottom")) element.inert = true;
-    for (const entry of incoming.links || []) {
-      const anchor = [...landing.querySelectorAll(".landing-menu__link")].find(link => link.href === entry.url);
-      nameLink(anchor, entry, ".landing-menu__text", ".landing-menu__icon");
-      if (anchor && entry.current) {
-        for (const link of landing.querySelectorAll(".landing-menu__link")) link.classList.toggle("landing-menu__link--chosen", link === anchor);
-      }
+    const brand = landing.querySelector(incoming.cloudBrand ? ".landing__logo" : ".landing__logo-art");
+    nameFor(brand, incoming.cloudBrand ? "home-brand" : "home-wordmark");
+    const pairs = matchLinks(incoming, ".landing-menu__link[href]");
+    for (const [link, entry] of pairs) if (entry.current) {
+      for (const other of landing.querySelectorAll(".landing-menu__link")) other.classList.toggle("landing-menu__link--chosen", other === link);
     }
-    return true;
+    if (incoming.cart) {
+      const cart = landing.querySelector(".landing__cart-link");
+      if (cart) { nameFor(cart, "home-cart"); pairs.push([cart, incoming.cart]); }
+    }
+    return { brand, pairs };
   }
   function reveal() {
-    // Let the native pseudo-tree finish teardown before opting out again.
+    landed = true;
     requestAnimationFrame(() => requestAnimationFrame(disableNative));
-    root.classList.remove("home-flight-target", "home-flight-exit-target", "cart-flight-target");
-    delete root.dataset.homePhase;
+    root.classList.remove(...homeClasses);
+    delete root.dataset.homePhase; delete root.dataset.homeCloudBrand; delete root.dataset.homeCart;
     for (const element of document.querySelectorAll("[data-home-travel-name]")) {
-      element.style.removeProperty("view-transition-name");
-      delete element.dataset.homeTravelName;
+      element.style.removeProperty("view-transition-name"); delete element.dataset.homeTravelName;
     }
     for (const element of document.querySelectorAll("[data-home-chosen]")) element.removeAttribute("data-home-chosen");
-    if (!landing) return;
-    delete landing.dataset.homeArrival;
-    for (const element of landing.querySelectorAll(".landing__top, .landing__menu, .landing__bottom")) element.inert = false;
-  }
-  async function settle() {
-    if (landed) return;
-    landed = true;
-    if (!landing || !canMove()) { reveal(); return; }
-    landing.dataset.homeArrival = "braking";
-    // The actual landing cloud/ink appears only after the wordmark lands.
-    root.dataset.homePhase = "selection";
-    const links = landing.querySelectorAll(".landing__tagline, .landing__top, .landing__bottom");
-    for (const [index, element] of [...links].entries()) {
-      element.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }],
-        { duration: 180, delay: Math.min(index * 25, 100), easing: "ease-out", fill: "backwards" });
+    if (landing) {
+      delete landing.dataset.homeArrival;
+      for (const element of landing.querySelectorAll(".landing__top, .landing__menu, .landing__bottom")) element.inert = false;
     }
-    await pause(620);
-    reveal();
   }
   async function start(transition) {
     if (started) return;
     started = true;
-    if (["exit", "cart"].includes(incoming?.mode) && canMove()) { await enterNavbar(transition); return; }
-    if (!prepare()) { transition?.skipTransition(); reveal(); return; }
-    if (transition) {
-      await transition.finished.catch(() => {});
-    } else {
-      // Browsers without cross-document transitions still get the flight.
-      // Their old document is unavailable, so fade its surface colour to blue.
-      const box = hero.getBoundingClientRect();
-      const flight = hero.animate([
-        { transform: `translate(${incoming.x - box.x}px, ${incoming.y - box.y}px) scale(${incoming.width / box.width}, ${incoming.height / box.height})` },
-        { transform: "none" },
-      ], { duration: 700, easing: "cubic-bezier(.2,.7,.2,1)" });
-      hero.style.transformOrigin = "0 0";
-      const pairs = (incoming.links || []).map(entry => {
-        const anchor = [...landing.querySelectorAll(".landing-menu__link")].find(link => link.href === entry.url);
-        return [[anchor?.querySelector(".landing-menu__text"), entry],
-          [entry.icon && anchor?.querySelector(".landing-menu__icon"), entry.icon]].filter(([part]) => part);
-      });
-      await Promise.all([flight.finished.catch(() => {}), ...pairs.flatMap((parts, index) => parts.map(([part, from]) => fly(part, from, 500, index * 45)))]);
-      hero.style.transformOrigin = "";
+    if (!incoming || !canMove()) { transition?.skipTransition(); reveal(); return; }
+    if (incoming.mode !== "home") { await enterPage(transition); return; }
+    const prepared = prepareHome();
+    if (!prepared) { transition?.skipTransition(); reveal(); return; }
+    if (transition) await transition.finished.catch(() => {});
+    else await Promise.all([fly(prepared.brand, incoming, 700), ...prepared.pairs.map(([element, from], index) => fly(element, from, 600, index * 35))]);
+    landing.dataset.homeArrival = "braking"; root.dataset.homePhase = "selection";
+    for (const element of landing.querySelectorAll(".landing__tagline, .landing__top, .landing__bottom")) {
+      // The returning cart has its own flight, so don't fade its parent.
+      if (incoming.cart && element.matches(".landing__top")) continue;
+      void animate(element, [{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { duration: 180, easing: "ease-out" });
     }
-    void settle();
+    await pause(incoming.cloudBrand ? 180 : 620); reveal();
+  }
+  function watchTransition(transition) {
+    transition?.ready.catch(() => {}); transition?.updateCallbackDone.catch(() => {}); transition?.finished.catch(() => {});
   }
   window.addEventListener("pageswap", event => {
-    // A skipped/disabled native transition rejects ready; it is an expected fallback.
-    event.viewTransition?.ready.catch(() => {});
-    event.viewTransition?.updateCallbackDone.catch(() => {});
-    event.viewTransition?.finished.catch(() => {});
+    watchTransition(event.viewTransition);
     if (!outgoing || !canMove() || event.activation?.entry?.url !== outgoing.url) event.viewTransition?.skipTransition();
   });
   window.addEventListener("pagereveal", event => {
-    event.viewTransition?.ready.catch(() => {});
-    event.viewTransition?.updateCallbackDone.catch(() => {});
-    event.viewTransition?.finished.catch(() => {});
+    watchTransition(event.viewTransition);
     if (!incoming || !canMove()) { event.viewTransition?.skipTransition(); return; }
     void start(event.viewTransition);
   });
   document.addEventListener("DOMContentLoaded", () => {
-    // Fallback for browsers without pagereveal, or a skipped native transition.
     if (incoming) setTimeout(() => { if (!started) void start(null); }, 50);
   });
   window.addEventListener("pageshow", event => {
     if (!event.persisted) return;
-    root.classList.remove("home-flight-source", "home-flight-source-out", "home-flight-departing", "home-flight-target", "home-flight-exit-target", "cart-flight-target");
+    for (const animation of sourceMotions.splice(0)) animation.cancel();
     document.querySelector("[data-home-exit]")?.removeAttribute("data-home-exit");
     reveal(); outgoing = null;
   });
-  if (incoming) setTimeout(() => { if (!landed) { started = true; landed = true; reveal(); } }, 5000);
+  if (incoming) setTimeout(() => { if (!landed) { started = true; reveal(); } }, 5000);
 })();

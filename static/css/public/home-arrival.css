@@ -1,85 +1,147 @@
-/* One staged journey: landing surface, shared lettering, selection, page. */
+/* Palette and timing for the shared landing/header journey. Component states
+   remain theme-owned; these roles deliberately use the navbar's own inks. */
 @view-transition { navigation: none; }
-:root { --home-travel-ink: var(--color-white); --home-link-travel-ink: var(--state-rest-ink); }
-:root[data-theme="dark"] { --home-travel-ink: var(--moonlight); }
-.home-flight-source :is(.site-brand, .entrance-header__brand) .brand-logo,
-.home-flight-target .landing__logo-art,
-.home-flight-source-out .landing__logo-art { view-transition-name: home-wordmark; }
-
-:is(.home-flight-source, .home-flight-departing, .home-flight-source-out) .brand-logo__wordmark,
-.home-flight-target[data-home-phase="flight"] .brand-logo__wordmark,
-.home-flight-exit-target[data-home-phase="flight"] .brand-logo__wordmark {
-  fill: var(--home-travel-ink) !important;
-  transition: none !important;
+:root {
+  --home-nav-rest: var(--theme-nav-rest-ink);
+  --home-nav-active: var(--nav-link-here-ink);
+  --home-brand-travel-ink: var(--color-white);
+  --home-brand-cloud: url("../../images/clouds/logo.svg");
 }
-:is(.home-flight-source, .home-flight-departing, .home-flight-source-out) .brand-logo__crown,
-.home-flight-target[data-home-phase="flight"] .brand-logo__crown { opacity: 0 !important; }
-.landing[data-home-exit] .landing__logo::before,
-.landing[data-home-arrival="flying"] .landing__logo::before { visibility: hidden; }
-.landing[data-home-arrival="flying"] :is(.landing__tagline, .landing__top, .landing__bottom) { opacity: 0; visibility: hidden; }
+:root[data-theme="dark"] {
+  --home-nav-rest: var(--logo-rest-ink);
+  --home-brand-travel-ink: var(--moonlight);
+}
+:root[data-theme="dark"]:is(.home-flight-source-out, .home-flight-exit-target) {
+  --home-brand-travel-ink: var(--logo-rest-ink);
+}
+
+/* Login retains the real landing logo/cloud proportions, independently of
+   the smaller wordmark used by an ordinary navbar. */
+.entrance-header--landing { padding-top: clamp(2.5rem, 7dvh, 4rem); }
+.entrance-header__brand--landing { position: relative; isolation: isolate; }
+.entrance-header__brand--landing .entrance-header__logo {
+  width: clamp(7rem, min(35vw, 18dvh), 11rem);
+}
+:root .entrance-header .entrance-header__brand--landing::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  inset: auto; left: 50%; top: 50%; translate: -50% -50%; width: 185%; height: 150%;
+  background: var(--home-brand-cloud) center / 100% 100% no-repeat;
+  border-radius: 0; opacity: 1; filter: none; transform: none;
+}
+:root[data-theme="dark"] .entrance-header .entrance-header__brand--landing::before {
+  width: 165%; height: auto; aspect-ratio: 1; border-radius: 50%;
+  background: var(--landing-moon-halo);
+}
+
+/* Whole links travel: icon, lettering and selected cloud/gold remain one
+   snapshot, so none of them can pop in at its destination separately. */
+:is(.home-flight-source-out, .home-flight-exit-target) :is(.landing-menu__link, .site-nav__link) {
+  --home-link-ink: var(--home-nav-rest);
+}
+:is(.home-flight-source-out, .home-flight-exit-target) :is(.landing-menu__link, .site-nav__link)[data-home-chosen] {
+  --home-link-ink: var(--home-nav-active);
+}
+:is(.home-flight-source, .home-flight-departing, .home-flight-target[data-home-phase="flight"]) :is(.site-nav__link, .landing-menu__link) {
+  --home-link-ink: var(--home-nav-rest);
+}
+:is(.home-flight-source-out, .home-flight-exit-target, .home-flight-source, .home-flight-departing, .home-flight-target[data-home-phase="flight"]) :is(.landing-menu__link, .site-nav__link),
+:is(.home-flight-source-out, .home-flight-exit-target, .home-flight-source, .home-flight-departing, .home-flight-target[data-home-phase="flight"]) :is(.landing-menu__link, .site-nav__link) :is(.landing-menu__text, .landing-menu__icon, .site-nav__label, .site-nav__icon, .ui-icon-svg) {
+  color: var(--home-link-ink) !important;
+  text-shadow: none !important; filter: none !important; transition: none !important;
+}
+.home-flight-source-out .landing-menu__text { transform: none !important; }
+.home-flight-source-out .landing-menu__link[data-home-chosen] { position: relative; isolation: isolate; }
+.home-flight-source-out .landing-menu__link[data-home-chosen]::before {
+  content: ""; position: absolute; z-index: -1; inset: -.45rem -.75rem;
+  opacity: 1 !important; transform: none; filter: none;
+}
+:root[data-theme="light"].home-flight-source-out .landing-menu__link[data-home-chosen]::before {
+  background: var(--home-link-cloud, url("../../images/clouds/nav-question.svg")) center / 100% 100% no-repeat !important;
+}
+:root[data-theme="light"] [data-nav-cloud="lollipop"] { --home-link-cloud: url("../../images/clouds/nav-lollipop.svg"); }
+:root[data-theme="light"] [data-nav-cloud="map-pin"] { --home-link-cloud: url("../../images/clouds/nav-map-pin.svg"); }
+:root[data-theme="light"] [data-nav-cloud="info"] { --home-link-cloud: url("../../images/clouds/nav-info.svg"); }
+:root[data-theme="dark"].home-flight-source-out .landing-menu__link[data-home-chosen]::before {
+  background: var(--menu-link-glow); filter: blur(6px);
+}
+.home-flight-source-out .landing-menu__link[data-home-chosen] .landing-menu__crown {
+  opacity: 1 !important; transform: none;
+}
+/* Hide destination crowns before the streamed landing markup can paint. */
+.home-flight-target[data-home-phase="flight"] .landing-menu__crown,
+:is(.home-flight-source, .home-flight-departing) .site-nav__label::before,
+:is(.home-flight-source, .home-flight-departing) .site-nav__icon::after { opacity: 0 !important; }
+:is(.home-flight-source, .home-flight-departing) .site-nav__link::after { opacity: 0 !important; }
+
+/* Only the wordmark changes ink during an ordinary trip. Login carries the
+   complete brand, so its cloud, ink and crown keep their existing appearance. */
+:is(.home-flight-source, .home-flight-departing, .home-flight-source-out, .home-flight-target[data-home-phase="flight"], .home-flight-exit-target[data-home-phase="flight"]):not([data-home-cloud-brand]) .brand-logo__wordmark {
+  fill: var(--home-brand-travel-ink) !important; transition: none !important;
+}
+:is(.home-flight-source, .home-flight-departing, .home-flight-source-out, .home-flight-target[data-home-phase="flight"], .home-flight-exit-target[data-home-phase="flight"]):not([data-home-cloud-brand]) .brand-logo__crown {
+  opacity: 0 !important;
+}
+.home-flight-source-out:not([data-home-cloud-brand]) .landing__logo::before,
+.home-flight-target:not([data-home-cloud-brand])[data-home-phase="flight"] .landing__logo::before { visibility: hidden; }
+.home-flight-target:not([data-home-cloud-brand])[data-home-phase="flight"] .landing__logo-art { filter: none !important; }
+.home-flight-target[data-home-phase="flight"] :is(.landing__tagline, .landing__bottom) { opacity: 0; visibility: hidden; }
+.home-flight-target:not([data-home-cart])[data-home-phase="flight"] .landing__top { opacity: 0; visibility: hidden; }
 .landing[data-home-arrival] .landing__logo-trigger { pointer-events: none; }
-.landing[data-home-arrival="flying"] .landing-menu__crown,
-.landing[data-home-exit] .landing-menu__crown { opacity: 0 !important; }
-/* Links keep their rest ink; only the chosen journey uses pointer ink. */
-:is(.home-flight-source, .home-flight-departing, .home-flight-exit-target[data-home-phase="flight"]) .site-nav__link,
-.landing:is([data-home-arrival="flying"], [data-home-exit]) .landing-menu__link { --home-link-travel-ink: var(--state-rest-ink); }
-:is(.home-flight-source, .home-flight-departing) .site-nav__link[aria-current="page"],
-.home-flight-exit-target[data-home-phase="flight"] .site-nav__link[data-home-chosen],
-.landing:is([data-home-arrival="flying"], [data-home-exit]) .landing-menu__link[data-home-chosen] { --home-link-travel-ink: var(--state-pointer-ink); }
-:is(.home-flight-source, .home-flight-departing, .home-flight-exit-target[data-home-phase="flight"]) .site-nav__link,
-:is(.home-flight-source, .home-flight-departing, .home-flight-exit-target[data-home-phase="flight"]) .site-nav__link *,
-.landing:is([data-home-arrival="flying"], [data-home-exit]) .landing-menu__link,
-.landing:is([data-home-arrival="flying"], [data-home-exit]) .landing-menu__link * {
-  color: var(--home-link-travel-ink) !important;
-  text-shadow: none !important;
-  filter: none !important;
+.home-flight-source-out[data-home-cart] .landing__menu { opacity: 0; transition: opacity 140ms; }
+.home-flight-source-out[data-home-cart] .landing__cart-link[data-home-chosen] {
+  position: relative; isolation: isolate; color: var(--home-nav-active) !important;
 }
-.landing[data-home-arrival="braking"] .landing__logo::before { animation: home-cloud-land 420ms ease-out both; }
-.landing[data-home-arrival="braking"] :is(.brand-logo__crown, .landing-menu__link--chosen .landing-menu__crown) { animation: home-crown-land 160ms 440ms ease-out both; }
-.landing[data-home-arrival="braking"] .brand-logo__wordmark { transition: fill 220ms ease-out; }
+.home-flight-source-out[data-home-cart] .landing__cart-link::before {
+  content: ""; position: absolute; z-index: -1; inset: -.8rem -1.1rem -.45rem;
+  opacity: 1; background: url("../../images/clouds/nav-cart.svg") center / 100% 100% no-repeat;
+}
+:root[data-theme="dark"].home-flight-source-out[data-home-cart] .landing__cart-link::before { background: var(--menu-link-glow); }
+.home-flight-departing .site-nav-cart__trigger::before { opacity: 0 !important; }
 
-/* Fade onto the landing colour before the return journey starts. */
+/* Reverse: reveal the landing surface first, remove the rule, then travel. */
 .home-flight-departing body { background: var(--menu-bg); transition: background 180ms ease; }
-.home-flight-departing :is(main.site-main, .catalog__detail, .site-footer, .mobile-menu-viewport, .menu-panel-backdrop) { opacity: 0 !important; pointer-events: none; transition: opacity 160ms ease !important; }
+.home-flight-departing :is(main.site-main, .catalog__detail, .site-footer, .mobile-menu-viewport, .menu-panel-backdrop) {
+  opacity: 0 !important; pointer-events: none; transition: opacity 160ms ease !important;
+}
 .home-flight-departing .site-header { border-bottom-color: transparent; transition: border-color 80ms 140ms; }
-.home-flight-departing .site-nav__label::before,
-.home-flight-departing .site-nav__icon::after { opacity: 0 !important; }
-.home-flight-departing .site-nav__link::after { opacity: 0 !important; transition: opacity 100ms 70ms; }
-
-/* The destination page is present but covered by the landing surface until
-   the words have landed. Then cloud/ink and rule together, then crown, surface and content. */
-.home-flight-exit-target body { transition: background 160ms ease; }
+/* Forward: active was committed on landing. Draw the rule on arrival, then
+   reveal the page surface and its contents. */
+:is(.home-flight-exit-target, .home-flight-login-target) body { transition: background 160ms ease; }
 .home-flight-exit-target:is([data-home-phase="flight"], [data-home-phase="selection"]) body { background: var(--menu-bg); }
-.home-flight-exit-target:is([data-home-phase="flight"], [data-home-phase="selection"], [data-home-phase="surface"]) :is(main.site-main, .site-footer) { opacity: 0; visibility: hidden; }
-.home-flight-exit-target:is([data-home-phase="flight"]) .site-header { border-bottom-color: transparent; }
+:is(.home-flight-exit-target, .home-flight-login-target):is([data-home-phase="flight"], [data-home-phase="selection"], [data-home-phase="surface"]) :is(main.site-main, .site-footer) { opacity: 0; visibility: hidden; }
+.home-flight-exit-target[data-home-phase="flight"] .site-header { border-bottom-color: transparent; }
 .home-flight-exit-target .site-header { transition: border-color 160ms; }
-.home-flight-exit-target[data-home-phase="flight"] .site-nav__link::after,
-.home-flight-exit-target[data-home-phase="flight"] .site-nav__label::before,
-.home-flight-exit-target[data-home-phase="flight"] .site-nav__icon::after { visibility: hidden; }
 .home-flight-exit-target[data-home-phase="content"] .site-footer { animation: home-content-in 220ms ease-out both; }
+.home-flight-login-target[data-home-phase="content"] .page--auth > * { animation: home-content-in 240ms ease-out both; }
+.home-flight-login-target[data-home-phase="content"] .page__actions { animation-delay: 60ms; }
 
-/* Icons and lettering move together: a navbar logo never receives an invented cloud. */
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(root) { z-index: 0; }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-old(root) { animation: home-content-out 160ms ease-out both; }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-new(root) { animation: none; }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-wordmark) { z-index: 2; animation-duration: 650ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+/* Shared cross-document geometry; fallback WAAPI uses the same elements. */
+:is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-group(root) { z-index: 0; }
+:is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-old(root) { animation: home-content-out 160ms ease-out both; }
+:is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-new(root) { animation: none; }
+:is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-group(home-wordmark),
+:is(.home-flight-target, .home-flight-login-target)::view-transition-group(home-brand) { z-index: 2; animation-duration: 650ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-0),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-0),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-1),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-2),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-3) { z-index: 3; animation-duration: 480ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-1) { animation-delay: 45ms; }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-2) { animation-delay: 90ms; }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-3) { animation-delay: 135ms; }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-cart) { z-index: 3; animation-duration: 600ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1) { animation-delay: 35ms; }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2) { animation-delay: 70ms; }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3) { animation-delay: 105ms; }
 .cart-flight-target::view-transition-group(cart-return-icon) { animation-duration: 360ms; animation-timing-function: cubic-bezier(.22,.7,.2,1); z-index: 3; }
 @keyframes home-content-out { to { opacity: 0; } }
 @keyframes home-content-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* The day wordmark swells into its cloud; the night wordmark flickers into
+   gold. A complete cloud carried back from login needs neither conversion. */
+.home-flight-target:not([data-home-cloud-brand]) .landing[data-home-arrival="braking"] .landing__logo::before { animation: home-cloud-land 420ms ease-out both; }
+.home-flight-target:not([data-home-cloud-brand]) .landing[data-home-arrival="braking"] .brand-logo__crown { animation: home-crown-land 160ms 440ms ease-out both; }
+.landing[data-home-arrival] .brand-logo__crown { transform-box: fill-box; transform-origin: center; }
+:root[data-theme="light"].home-flight-target:not([data-home-cloud-brand]) .landing[data-home-arrival="braking"] .landing__logo-art { animation: home-logo-reform 420ms ease-out both; }
+:root[data-theme="light"].home-flight-target:not([data-home-cloud-brand]) .landing[data-home-arrival="braking"] .brand-logo__wordmark { animation: home-logo-ink 420ms ease-out both; }
+:root[data-theme="dark"].home-flight-target:not([data-home-cloud-brand]) .landing[data-home-arrival="braking"] .brand-logo__wordmark,
+:root[data-theme="dark"] .landing:not(.landing--seen) .brand-logo__wordmark { animation: home-lamp-start 420ms linear both; }
 @keyframes home-cloud-land {
   0% { opacity: 0; transform: scale(.28, .2); }
   50% { opacity: 1; transform: scale(1.07, .95); }
@@ -87,50 +149,16 @@
   100% { opacity: 1; transform: scale(1); }
 }
 @keyframes home-crown-land { from { opacity: 0; scale: .4; } to { opacity: 1; scale: 1; } }
-@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
-
-.home-flight-target[data-home-phase="flight"] .landing__logo-art { filter: none !important; }
-
-.landing[data-home-arrival] .brand-logo__crown { transform-box: fill-box; transform-origin: center; }
-
-/* The travelling white letters swell into the real day cloud, then regain
-   their brand ink. The night wordmark starts like a lamp warming up. */
-:root[data-theme="light"] .landing[data-home-arrival="braking"] .landing__logo-art {
-  animation: home-logo-reform 420ms ease-out both;
-}
 @keyframes home-logo-reform {
-  0% { scale: 1; opacity: 1; }
-  24% { scale: 1.16; opacity: .2; }
-  48% { scale: .92; opacity: .45; }
-  100% { scale: 1; opacity: 1; }
+  0% { scale: 1; opacity: 1; } 24% { scale: 1.16; opacity: .2; }
+  48% { scale: .92; opacity: .45; } 100% { scale: 1; opacity: 1; }
 }
-:root[data-theme="light"] .landing[data-home-arrival="braking"] .brand-logo__wordmark {
-  animation: home-logo-ink 420ms ease-out both;
-}
-@keyframes home-logo-ink {
-  0%, 24% { fill: var(--home-travel-ink); }
-  100% { fill: var(--logo-here-ink); }
-}
-:root[data-theme="dark"] .landing[data-home-arrival="braking"] .brand-logo__wordmark,
-:root[data-theme="dark"] .landing:not(.landing--seen) .brand-logo__wordmark {
-  animation: home-lamp-start 420ms linear both;
-}
+@keyframes home-logo-ink { 0%, 24% { fill: var(--home-brand-travel-ink); } 100% { fill: var(--logo-here-ink); } }
 @keyframes home-lamp-start {
   0%, 18%, 36% { fill: var(--moonlight); opacity: .65; }
   10%, 28%, 46%, 100% { fill: var(--logo-here-ink); opacity: 1; }
 }
-@media (max-width: 767px) {
-  /* The selected mobile link normally has no icon. Let its travelling icon
-     arrive above the label, then yield to the active cloud and crown. */
-  .home-flight-exit-target[data-home-phase="flight"] .site-nav__link[aria-current="page"] > .site-nav__icon {
-    display: block; position: absolute; bottom: 100%; left: calc(50% - .65rem);
-    width: 1.3rem; height: 1.3rem;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  .landing .landing__logo::before,
-  .landing .landing__logo-art,
-  .landing .brand-logo__wordmark,
-  .landing .brand-logo__crown,
-  .landing .landing-menu__crown { animation: none !important; }
+  .landing .landing__logo::before, .landing .landing__logo-art,
+  .landing .brand-logo__wordmark, .landing .brand-logo__crown { animation: none !important; }
 }

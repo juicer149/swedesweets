@@ -74,6 +74,7 @@
                 <a
                   class="landing-menu__link{% if forloop.first %} landing-menu__link--chosen{% endif %}"
                   href="{{ item.href }}"
+                  data-nav-cloud="{{ item.icon }}"
                 >
                   {% include "includes/ui/icon_block.html" with name=item.icon class_name="landing-menu__icon" only %}
                   <span class="landing-menu__label">
