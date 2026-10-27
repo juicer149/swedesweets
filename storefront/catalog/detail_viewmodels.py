@@ -30,7 +30,6 @@ from storefront.catalog.viewmodels import (
 class RetailCatalogProductDetailContext:
     catalog_product: CatalogProduct
     product_name: str
-    category_label: str | None
     image_url: str | None
     description: str
     ingredients: str
@@ -51,7 +50,6 @@ class RetailCatalogProductDetailContext:
             "catalog_product": self.catalog_product,
             "product": self.catalog_product.product,
             "product_name": self.product_name,
-            "category_label": self.category_label,
             "image_url": self.image_url,
             "description": self.description,
             "ingredients": self.ingredients,
@@ -98,9 +96,6 @@ def build_retail_catalog_product_detail_context(
     return RetailCatalogProductDetailContext(
         catalog_product=catalog_product,
         product_name=product_name,
-        category_label=_category_label(
-            profile=profile,
-        ),
         image_url=_image_url(profile=profile),
         description=description,
         ingredients=ingredients,
@@ -126,19 +121,6 @@ def build_retail_catalog_product_detail_context(
 
 def _get_product_profile(*, product) -> ProductProfile | None:
     return getattr(product, "profile", None)
-
-
-def _category_label(
-    *,
-    profile: ProductProfile | None,
-) -> str | None:
-    if profile is None:
-        return None
-
-    if not profile.category:
-        return None
-
-    return str(profile.get_category_display())
 
 
 def _image_url(

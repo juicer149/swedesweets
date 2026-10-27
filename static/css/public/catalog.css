@@ -861,6 +861,17 @@
   border-radius: var(--radius-md);
 }
 
+.product__vegan {
+  position: absolute;
+  left: .75rem;
+  bottom: .75rem;
+  margin: 0;
+  color: var(--catalog-vegan-ink);
+  background: var(--catalog-vegan-bg);
+  border-color: var(--catalog-vegan-border);
+  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / .15);
+}
+
 .product__image--empty {
   background: var(--catalog-placeholder-bg);
 }
@@ -942,15 +953,6 @@
   hyphens: auto;
 }
 
-.product__kicker {
-  margin: 0;
-  color: var(--label-muted);
-  font-size: var(--font-size-12);
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-align: center;
-  text-transform: uppercase;
-}
 
 /* The fields under the band, folding (catalog.js: opening over the
    catalog, the label arrives folded to its band and unfolds here). */
@@ -1039,10 +1041,6 @@
   visibility: hidden;
 }
 
-.product__tags {
-  margin: 0;
-  justify-content: center;
-}
 
 .product__row {
   display: grid;
@@ -1095,12 +1093,25 @@
   display: none;
 }
 
-.product__stock {
+.product__stock.tile__tag {
+  top: auto;
+  right: -.5rem;
+  bottom: -.65rem;
+  z-index: 2;
+  max-width: calc(50% - var(--space-6));
   margin: 0;
-  font-size: var(--font-size-14);
-  font-weight: 700;
+  padding: .3rem .6rem .3rem 1rem;
+  color: var(--catalog-stock-ink);
+  background: var(--catalog-stock-bg);
+  border-color: var(--catalog-stock-border);
+  font-size: var(--font-size-12);
   text-align: center;
 }
+
+.product__stock [data-product-stock-text] { color: inherit; }
+.product--folded .product__stock,
+.product__form[data-state] .product__stock { visibility: hidden; }
+
 
 .product__stock[hidden] {
   display: none;
@@ -1139,14 +1150,9 @@
 }
 
 
-/* On a computer the page reads as a triangle, <|: the picture its left
-   point, beside a column of the label above and the tabs and their text
-   below, the picture centred against it. Near the navbar, not in the
-   middle of the screen: the room above, beside and between grows with
-   the screen, a little at a time and never much (clamp on its height);
-   the most between the label and the tabs, so the tabs sit lower on a
-   tall screen. The picture grows with the screen too, never taller than
-   half of it. */
+/* Desktop keeps the picture beside the label and tabs, anchored at the top
+   so changing tab copy cannot recenter it. Size and spacing grow gently with
+   the viewport; the image stays no taller than half the screen. */
 @media (min-width: 768px) {
   .page.product {
     width: min(100%, 980px);
@@ -1157,7 +1163,8 @@
     grid-template-columns:
       minmax(0, clamp(16rem, min(34vw, 50dvh), 28rem))
       minmax(0, 26rem);
-    align-items: center;
+    /* Tab copy changes height; keep the picture anchored to the label. */
+    align-items: start;
     gap: clamp(var(--space-10), 6vw, 5.5rem);
   }
 
@@ -1353,6 +1360,8 @@
     width: min(calc(100% - 4rem), 18rem);
     margin-inline: auto;
   }
+
+  .product__vegan { bottom: 3rem; }
 
   /* As on a card: straight, over the picture's foot. */
   .product__side {

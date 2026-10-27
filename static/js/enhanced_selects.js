@@ -20,6 +20,8 @@
 
   function buildOptionData(option) {
     return {
+      // Retain the native option and its price/stock/deal data on selection.
+      $option: option,
       value: option.value,
       text: optionText(option),
       code: option.dataset.code || "",

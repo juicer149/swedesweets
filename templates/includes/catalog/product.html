@@ -4,7 +4,7 @@
   the catalog card's design: the picture with its price tag and in-cart
   badge (a round × over its corner goes back), and beside it the card's
   label, bigger: the name on the theme's title band, breaking as on the card,
-  then the category, one row in two halves (the size as a
+  then one row in two halves (the size as a
   dropdown, "Choose size" until chosen, or the weight; how many, typed),
   the chosen size's special offer when it has one (ticked, it is the one
   added), the stock, and the round green cart button on the label's foot;
@@ -18,7 +18,7 @@
   Without JavaScript the dropdown is plain and the offer's tick box posts
   its offer in the size's place (the last commercial_price_id wins).
 
-  From the detail viewmodel: product, product_name, category_label,
+  From the detail viewmodel: product, product_name,
   image_url, card (ProductCardVM), initial_offer, page_tabs, cancel_url
   From the page: add_url (where the form posts), add_label (its button)
 {% endcomment %}
@@ -38,6 +38,13 @@
           <img class="product__image" src="{{ image_url }}" alt="{{ product_name }}" style="view-transition-name: product-{{ product.id }}-picture">
         {% else %}
           <span class="product__image product__image--empty" aria-hidden="true" style="view-transition-name: product-{{ product.id }}-picture">{% include "includes/catalog/no_photo.html" %}</span>
+        {% endif %}
+
+        {% if product.vegan %}
+          <span class="product-tag product-tag--vegan product__vegan">
+            {% include "includes/ui/icon_block.html" with name="leaf" size="sm" class_name="product-tag__icon" only %}
+            <span>{% trans "Vegan" %}</span>
+          </span>
         {% endif %}
 
         <span class="tile__in-cart product__in-cart" aria-hidden="true" data-in-cart {% if not card.in_cart_units %}hidden{% endif %} style="view-transition-name: product-{{ product.id }}-in-cart">
@@ -78,19 +85,6 @@
 
           <div class="product__fold" data-product-fold>
           <div class="product__body">
-            {% if category_label %}
-              <p class="product__kicker">{{ category_label }}</p>
-            {% endif %}
-
-            {% if product.vegan %}
-              <p class="product-tag-list product__tags">
-                <span class="product-tag product-tag--vegan">
-                  {% include "includes/ui/icon_block.html" with name="leaf" size="sm" class_name="product-tag__icon" only %}
-                  <span>{% trans "Vegan" %}</span>
-                </span>
-              </p>
-            {% endif %}
-
             <div class="product__row">
               <div class="product__half">
                 {% if card.has_size_choice %}
@@ -171,15 +165,15 @@
               >
               <span data-deal-text>{% if deal %}<b>{{ deal.badge_label }}</b>{% if deal.price_label %} · {{ deal.price_label }}{% endif %}{% endif %}</span>
             </label>
+          </div>
+          </div>
 
-            <p class="product__stock" data-product-stock {% if card.has_size_choice or initial_offer.available_units >= 10 %}hidden{% endif %}>
-              <span
-                class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %}"
-                data-product-stock-text
-              >{{ initial_offer.availability_label }}</span>
-            </p>
-          </div>
-          </div>
+          <p class="tile__tag product__stock" data-product-stock {% if card.has_size_choice or initial_offer.available_units >= 10 %}hidden{% endif %}>
+            <span
+              class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %}"
+              data-product-stock-text
+            >{{ initial_offer.availability_label }}</span>
+          </p>
 
           <button
             class="tile__add product__add-button"

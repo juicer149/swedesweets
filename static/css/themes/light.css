@@ -523,6 +523,13 @@
   --label-band: var(--color-accent-600);
   --label-band-text: var(--color-primary-950);
   --catalog-fields-bg: var(--label-bg);
+  --catalog-close-bg: var(--page-bg);
+  --catalog-vegan-ink: var(--color-green-800);
+  --catalog-vegan-bg: var(--color-green-100);
+  --catalog-vegan-border: var(--color-green-600);
+  --catalog-stock-ink: var(--color-primary-950);
+  --catalog-stock-bg: var(--color-accent-100);
+  --catalog-stock-border: var(--color-accent-700);
   --catalog-title-pointer-bg: var(--color-accent-600);
   --catalog-title-pointer-text: var(--theme-chrome-bg);
   --catalog-title-pointer-border: var(--theme-chrome-bg);

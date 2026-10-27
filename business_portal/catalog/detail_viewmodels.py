@@ -30,7 +30,6 @@ from products.models import (
 class BusinessCatalogProductDetailContext:
     catalog_product: CatalogProduct
     product_name: str
-    category_label: str | None
     image_url: str | None
     description: str
     ingredients: str
@@ -59,9 +58,6 @@ class BusinessCatalogProductDetailContext:
             ),
             "product_name": (
                 self.product_name
-            ),
-            "category_label": (
-                self.category_label
             ),
             "image_url": (
                 self.image_url
@@ -134,11 +130,6 @@ def build_business_catalog_product_detail_context(
             product_name=(
                 product_name
             ),
-            category_label=(
-                _category_label(
-                    profile=profile,
-                )
-            ),
             image_url=(
                 _image_url(
                     profile=profile,
@@ -175,21 +166,6 @@ def _get_product_profile(
         product,
         "profile",
         None,
-    )
-
-
-def _category_label(
-    *,
-    profile: ProductProfile | None,
-) -> str | None:
-    if profile is None:
-        return None
-
-    if not profile.category:
-        return None
-
-    return str(
-        profile.get_category_display()
     )
 
 

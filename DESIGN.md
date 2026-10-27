@@ -935,6 +935,15 @@ including the rounded lower corners and foot around the cart button. Their
 values are vertically centred, and focus paints the entire half rather than
 an inset rectangle. Secondary cart buttons retain their pale-blue day surface.
 
+Detail images stay anchored when Description/Ingredients changes height.
+Vegan sits on the image in an opaque, theme-specific green badge. Categories
+remain catalog filters rather than detail headings. Low stock uses the price
+tag shape at the quantity side's lower edge, clear of the cart button; its
+warm palette has its own roles. These notices do not create extra field rows.
+The day detail close control rests on the page colour. Enhanced selects retain
+their native option elements so variant price, stock and offer metadata
+survives selection.
+
 Price tags and in-cart badges share an information palette: white/primary-950
 with a gold border by day; dark blue with lighter gold ink/edge by night. The
 badge has no hover rule in either theme. Confirmed additions retain their

@@ -155,6 +155,11 @@
   --day-close-hover-edge: var(--action-secondary-hover-border);
 }
 
+/* The product's return control rests on the page, like its night counterpart. */
+:root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.product, .catalog__detail) .product__close {
+  --day-close-bg: var(--catalog-close-bg);
+}
+
 /* The phone bar keeps its clean outline; engraving stays at the paper's
    corners and foot, clear of the words and icons. The active link still
    belongs to the header's cloud, with its crown. */
