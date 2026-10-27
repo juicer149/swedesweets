@@ -1079,7 +1079,7 @@
 }
 
 :root[data-theme="dark"]:not([data-site-zone="ops"]) .product__half {
-  padding-block: var(--space-2) calc(var(--space-2) + var(--product-foot));
+  padding-block: calc(var(--space-2) + var(--product-foot) / 2);
   border-radius: 0 0 0 10px;
 }
 
