@@ -15,7 +15,6 @@ from common.navbar_cart import (
     NavbarCartLine,
 )
 from products.images import product_image_url
-from products.localization import translated_product_name
 
 
 def build_business_navbar_cart(
@@ -57,7 +56,6 @@ def build_business_navbar_cart(
         _build_business_navbar_cart_line(
             line=line,
             presentation=presentation,
-            language_code=effective_language_code,
         )
         for line, presentation in zip(cart_lines, presentations, strict=True)
     )
@@ -125,7 +123,6 @@ def _build_business_navbar_cart_line(
     *,
     line,
     presentation: BusinessOrderLinePresentation,
-    language_code: str,
 ) -> NavbarCartLine:
 
     metadata = tuple(
@@ -144,16 +141,9 @@ def _build_business_navbar_cart_line(
         line_id=line.id,
         product_id=line.commercial_price.product_id,
         label=presentation.catalog_label,
-        name=translated_product_name(product, language_code=language_code),
-        variant_label=(
-            (
-                f"{line.commercial_price.variant.label} · "
-                if line.commercial_price.variant.label
-                else ""
-            )
-            + _("%(weight)s g")
-            % {"weight": line.commercial_price.variant.weight_per_unit}
-        ),
+        name=presentation.name,
+        brand=presentation.brand,
+        variant_label=presentation.variant_label,
         quantity_url=reverse(
             "business_portal:set_cart_line_quantity",
             kwargs={"cart_line_id": line.id},

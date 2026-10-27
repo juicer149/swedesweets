@@ -179,6 +179,9 @@ def test_cart_does_not_show_another_customers_cart(
 def test_cart_line_action_forms_use_the_presented_urls(client):
     customer = _login_customer(client=client)
     line = _create_cart_line(customer=customer, quantity=3)
+    product = line.commercial_price.product
+    product.brand = "Test manufacturer"
+    product.save(update_fields=["brand"])
 
     response = client.get(reverse("business_portal:cart"))
 
@@ -189,6 +192,12 @@ def test_cart_line_action_forms_use_the_presented_urls(client):
     assert f'action="{presented_line.quantity_url}"' in html
     assert f'action="{presented_line.remove_url}"' in html
     assert f'data-cart-line-id="{line.id}"' in html
+    assert presented_line.presentation.name == "Apple"
+    assert presented_line.presentation.brand == "Test manufacturer"
+    assert presented_line.presentation.variant_label == "5000 g"
+    assert '<span class="cart-line__brand">Test manufacturer</span>' in html
+    assert '<span class="cart-line__name">Apple</span>' in html
+    assert '<span class="cart-line__meta">5000 g</span>' in html
 
 
 @pytest.mark.django_db

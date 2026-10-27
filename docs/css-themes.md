@@ -1499,6 +1499,13 @@ Cart unit labels use `.tile__tag` directly: the shared outline, hole, rotation
 and theme paint remain in the catalog component, with only static flow placement
 overridden in cart-panel.css. No unit suffix is appended.
 
+Cart row text stretches to the portrait height: brand at the top, product name
+in the middle and a grouped variant/offer block at the bottom. Names can wrap
+and rows grow with their content; missing metadata leaves no empty labels.
+The shared price feedback makes one larger hop, then holds green/red and fades
+to normal ink over 850ms. Fragment replacement resumes the original timeline,
+including the adjacent signed subtotal notice, rather than restarting it.
+
 `common/cart_price_feedback.py` formats signed Decimal subtotal changes. Retail
 add/remove and business add/quantity/remove/repeat endpoints supply confirmed
 subtotal fields; business additions forward them through business_cart.js too.

@@ -23,7 +23,10 @@
 .cart-line > .cart-line__product > .cart-line__visual { grid-area: picture; }
 :is(.cart-line, .line--cart-review) .cart-line__visual .line__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: .5rem; padding: 0; }
 .cart-line__product { display: contents; }
-.cart-line__text { grid-area: text; display: grid; gap: var(--space-1); min-width: 0; overflow-wrap: anywhere; }
+.cart-line__text { grid-area: text; display: grid; grid-template-rows: auto minmax(min-content, 1fr) auto; gap: var(--space-1); min-width: 0; align-self: stretch; overflow-wrap: anywhere; }
+.cart-line__brand { grid-row: 1; align-self: start; }
+.cart-line__name { grid-row: 2; align-self: center; }
+.cart-line__details { grid-row: 3; align-self: end; display: grid; gap: var(--space-1); }
 .cart-line__controls { display: contents; }
 .cart-line__quantity { margin: 0; min-width: 0; grid-area: quantity; justify-self: end; align-self: center; }
 .cart-line__price { display: grid; gap: var(--space-1); color: var(--cart-amount); text-align: right; grid-area: price; align-self: center; justify-self: end; font-variant-numeric: tabular-nums; }

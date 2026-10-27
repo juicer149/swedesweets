@@ -887,8 +887,13 @@ The current cart icon returns to the browsing URL/scroll recorded before
 entry; the lower Continue shopping action always opens Shop/Catalog. A quick
 preview closes onto its underlying page. No return arrow duplicates this.
 
+Cart row text uses the portrait height: manufacturer at the top, product name
+in the middle, variant and offer information at the bottom.
+
 All successful additions, removals and quantity changes share server-confirmed
-price feedback: row amounts and subtotal pulse green/red; only the subtotal
+price feedback: row amounts and subtotal make one larger hop and hold green/red before
+fading to their normal ink over 850ms; refreshed fragments resume the same
+timeline instead of hopping again; only the subtotal
 shows a short signed change. Mobile displays the subtotal solely in its fixed
 summary. Decimal arithmetic owns amounts. B2B shows a subtotal only when every
 EUR price is known; otherwise it shows the product count. Failed mutations

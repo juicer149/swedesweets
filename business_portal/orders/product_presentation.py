@@ -12,7 +12,7 @@ from pricing.models import (
     PriceAmount,
 )
 from products.catalog import variant_display_name
-from products.localization import translated_product_name
+from products.localization import own_catalog_text, translated_product_name
 from products.models import Product, ProductVariant
 
 _REASON_LABELS = {
@@ -29,6 +29,9 @@ class BusinessOrderLinePresentation:
     offer_label: str | None
     price_label: str | None
     unit_price: Decimal | None = None
+    name: str = ""
+    brand: str = ""
+    variant_label: str = ""
 
     def total_label(self, quantity: int) -> str | None:
         if self.unit_price is None:
@@ -91,6 +94,8 @@ def business_cart_line_presentation(
     """Present one mutable BUSINESS cart line using current offer data."""
 
     commercial_price = line.commercial_price
+    product = commercial_price.product
+    variant = commercial_price.variant
 
     amount = _find_price_amount(
         commercial_price=commercial_price,
@@ -105,6 +110,12 @@ def business_cart_line_presentation(
         ),
         offer_label=_commercial_price_offer_label(
             commercial_price
+        ),
+        name=own_catalog_text(product, language_code=language_code).name or product.name,
+        brand=product.brand,
+        variant_label=(
+            (f"{variant.label} · " if variant.label else "")
+            + _("%(weight)s g") % {"weight": variant.weight_per_unit}
         ),
         unit_price=amount.price if amount is not None else None,
         price_label=_business_price_label(

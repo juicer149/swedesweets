@@ -91,6 +91,7 @@ def test_navbar_cart_fragment_reads_customer_cart(
 
     product = product_factory(
         name="Apple",
+        brand="Test manufacturer",
         weight_per_unit=5000,
     )
 
@@ -125,6 +126,9 @@ def test_navbar_cart_fragment_reads_customer_cart(
 
     assert navbar_line.line_id == line.id
     assert navbar_line.quantity == 3
+    assert navbar_line.name == "Apple"
+    assert navbar_line.brand == "Test manufacturer"
+    assert navbar_line.variant_label == "5000 g"
 
     # Little room: the name and the weight only, no number or unit.
     assert not navbar_line.label.startswith("#")

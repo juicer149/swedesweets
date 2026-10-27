@@ -29,12 +29,18 @@ class PortalCartLine:
     remove_url: str
     line_total_label: str | None = None
     line_total: Decimal | None = None
+    name: str = ""
+    brand: str = ""
+    variant_label: str = ""
 
     @property
     def presentation(self) -> NavbarCartLine:
         return NavbarCartLine(
             line_id=self.cart_line_id,
             label=self.product_label,
+            name=self.name,
+            brand=self.brand,
+            variant_label=self.variant_label,
             product_url=self.product_url,
             image_url=self.image_url,
             metadata=tuple(
@@ -217,6 +223,9 @@ def _build_portal_cart_lines(
         cart_lines.append(
             PortalCartLine(
                 cart_line_id=line.id,
+                name=presentation.name,
+                brand=presentation.brand,
+                variant_label=presentation.variant_label,
                 product_label=(
                     presentation.catalog_label
                 ),

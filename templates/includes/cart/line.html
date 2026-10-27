@@ -7,8 +7,12 @@
     <span class="cart-line__text">
       {% if line.brand %}<span class="cart-line__brand">{{ line.brand }}</span>{% endif %}
       <span class="cart-line__name">{{ line.name|default:line.label }}</span>
-      {% if line.variant_label %}<span class="cart-line__meta">{{ line.variant_label }}</span>{% endif %}
-      {% for text in line.metadata %}<span class="cart-line__meta">{{ text }}</span>{% endfor %}
+      {% if line.variant_label or line.metadata %}
+        <span class="cart-line__details">
+          {% if line.variant_label %}<span class="cart-line__meta">{{ line.variant_label }}</span>{% endif %}
+          {% for text in line.metadata %}<span class="cart-line__meta">{{ text }}</span>{% endfor %}
+        </span>
+      {% endif %}
     </span>
   </a>
   <div class="cart-line__controls">
