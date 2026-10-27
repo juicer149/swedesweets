@@ -524,7 +524,6 @@ Reduced-motion removes the lift and transitions. Colours live in each theme:
 | `--catalog-card-hover-text` | Product-name link hover/focus text. |
 | `--catalog-card-hover-sheen` | Overlay gradient over the product picture. |
 | `--catalog-card-hover-shadow` | Soft glow around the picture. |
-| `--catalog-control-hover-border` | Edge when pointed at. |
 | `--catalog-control-focus-text` | Text when editing/selecting (defaults to label text). |
 | `--catalog-control-focus-border` | Focus/open outline (defaults to search focus border). |
 | `--catalog-control-focus-bg` | Focus/open background (defaults to search focus background). |

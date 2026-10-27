@@ -566,10 +566,6 @@
   transform: rotate(-135deg);
 }
 
-.tile__picker .ts-wrapper:hover .ts-control {
-  border-color: var(--catalog-control-hover-border);
-}
-
 /* Tom Select puts focus/open state on its wrapper. Match the quantity field. */
 .tile__picker .ts-wrapper.focus .ts-control,
 .tile__picker .ts-wrapper.dropdown-active .ts-control,
@@ -651,10 +647,6 @@
 .tile__quantity::-webkit-inner-spin-button {
   margin: 0;
   -webkit-appearance: none;
-}
-
-.tile__quantity:hover:not(:focus) {
-  border-color: var(--catalog-control-hover-border);
 }
 
 .tile__quantity:focus {
@@ -898,9 +890,8 @@
   left: 0.9rem;
 }
 
-/* The card's label, bigger: white with the yellow edge, the name on the
-   yellow band, a little crooked (straight while adding); green when
-   added, red when not. */
+/* The card's label, bigger; themes own the title, frame and field colours.
+   It stays a little crooked except while adding. */
 .product__label {
   position: relative;
   background: var(--label-bg);
@@ -961,7 +952,7 @@
   text-transform: uppercase;
 }
 
-/* The white under the band, folding (catalog.js: opening over the
+/* The fields under the band, folding (catalog.js: opening over the
    catalog, the label arrives folded to its band and unfolds here). */
 @property --product-foot {
   syntax: "<length>";
@@ -973,8 +964,14 @@
   --product-foot: 2.25rem;
 }
 
+/* The detail form shares tile__order behaviour, but not its card overhang.
+   Its fields fill the label, including the space around the cart button. */
 .product__form {
-  padding: 0 var(--space-4) var(--product-foot);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--catalog-fields-bg, var(--label-bg));
+  border-radius: 0 0 10px 10px;
 }
 
 .product__fold {
@@ -987,8 +984,7 @@
   display: grid;
   gap: var(--space-3);
   min-height: 0;
-  padding-top: var(--space-3);
-  transition: padding 260ms ease, opacity 260ms ease;
+  transition: opacity 260ms ease;
 }
 
 .product--folded .product__body,
@@ -1011,7 +1007,6 @@
 }
 
 .product--folded .product__body {
-  padding-top: 0;
   opacity: 0;
 }
 
@@ -1061,33 +1056,12 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  padding: 0 var(--space-1);
-}
-
-/* Night detail fields fill the label just like the catalog card. Reset
-   the card form's inherited overhang as well as the detail's inset. */
-:root[data-theme="dark"]:not([data-site-zone="ops"]) .product__form {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  background: var(--catalog-fields-bg);
-  border-radius: 0 0 10px 10px;
-}
-
-:root[data-theme="dark"]:not([data-site-zone="ops"]) .product__body {
-  padding-top: 0;
-}
-
-:root[data-theme="dark"]:not([data-site-zone="ops"]) .product__half {
-  padding-block: calc(var(--space-2) + var(--product-foot) / 2);
+  padding: calc(var(--space-2) + var(--product-foot) / 2) var(--space-1);
   border-radius: 0 0 0 10px;
 }
 
-:root[data-theme="dark"]:not([data-site-zone="ops"]) .product__half--quantity {
-  border-radius: 0 0 10px 0;
-}
-
 .product__half--quantity {
+  border-radius: 0 0 10px 0;
   border-left: 1.5px dashed var(--catalog-fields-divider, var(--color-accent-300));
 }
 
@@ -1136,12 +1110,6 @@
 .product__add-button.tile__add {
   --tile-add-size: 3.2rem;
 
-  bottom: calc(-1.5px - var(--tile-add-size) / 2);
-}
-
-/* The form's foot is the label's: the button's middle on its edge, riding
-   up with the fold as the foot shrinks. */
-.product__form .product__add-button.tile__add {
   bottom: calc(-1.5px - var(--tile-add-size) / 2);
 }
 

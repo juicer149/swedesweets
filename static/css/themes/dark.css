@@ -403,7 +403,6 @@
   --catalog-card-hover-shadow: var(--catalog-cart-hover-shadow);
 
   /* Pale-blue fields use dark values; focus uses moonlight on the blue surface. */
-  --catalog-control-hover-border: color-mix(in srgb, var(--moonlight) 45%, transparent);
   --catalog-control-focus-text: var(--moonlight);
   --catalog-control-focus-bg: var(--search-focus-bg);
   --catalog-control-focus-border: color-mix(in srgb, var(--moonlight) 60%, transparent);

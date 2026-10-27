@@ -530,6 +530,7 @@
   --product-title-text: var(--theme-chrome-bg);
   --product-label-border: var(--theme-chrome-bg);
   --catalog-card-hover-sheen: none;
+  --catalog-card-hover-shadow: none;
   --catalog-price-text: var(--color-primary-950);
   --catalog-price-bg: var(--color-white);
   --catalog-price-border: var(--color-accent-600);
@@ -700,7 +701,6 @@
   --product-label-glow: 0 0 0 transparent;
   --landing-moon-halo: none;
   --catalog-card-hover-shadow: 0 0 14px 1px rgb(38 105 255 / 0.1);
-  --catalog-control-hover-border: color-mix(in srgb, var(--color-primary-600) 40%, transparent);
   --catalog-control-focus-text: var(--label-text);
   --catalog-control-focus-bg: var(--search-focus-bg);
   --catalog-control-focus-border: var(--search-focus-border);
@@ -981,8 +981,6 @@
   --landing-pointer-glow-filter: var(--chrome-cloud-filter);
   --landing-chosen-glow-opacity: 1;
 
-  /* Day catalog navigation is carried by the label's blue ink and frame. */
-  --catalog-card-hover-shadow: none;
 }
 
 /* Customer day close buttons: quiet circles with their existing colour roles.
