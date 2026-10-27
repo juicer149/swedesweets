@@ -917,6 +917,9 @@ The opened night product instead has a gold title, frame and diffuse light:
 this is the selected product page, rather than a hovered destination. Its
 `--product-title-text`, `--product-label-border`, outline and glow roles stay
 independent from the catalog's pointer palette. Form feedback keeps priority.
+On opening, the clicked label retains its navigation colours through folding
+and travel, then takes the detail palette on landing. Closing resets the
+detail to the resting card palette before it folds and returns.
 
 Day variant/quantity fields retain their white surface and blue values. Night
 fields have a light-blue surface, dark-blue values and a divider matching the

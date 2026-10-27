@@ -636,6 +636,7 @@ function initCatalog() {
     const loading = fetchPage(url);
 
     if (motion && tile) {
+      tile.dataset.catalogOpening = "";
       tile.classList.add("tile--folded");
     }
 
@@ -661,6 +662,7 @@ function initCatalog() {
     document.title = page.title || document.title;
 
     if (motion && tile) {
+      article.dataset.catalogOpening = "";
       article.classList.add("product--folded");
       nameTile(tile, true);
 
@@ -671,6 +673,7 @@ function initCatalog() {
       if (controller.signal.aborted) return;
       // Then the label unfolds with what the page adds (clipped while it
       // does).
+      delete article.dataset.catalogOpening;
       void article.offsetWidth;
       unfold(article, "product--folded");
     } else {
@@ -701,7 +704,9 @@ function initCatalog() {
     const article = detail.querySelector("[data-product-page]");
     const motion = withMotion() && tile && tile.classList.contains("tile--folded");
 
+    if (tile) delete tile.dataset.catalogOpening;
     if (motion && article) {
+      article.dataset.catalogClosing = "";
       article.classList.add("product--folded");
       await wait(FOLD_MS);
       if (controller.signal.aborted) return;

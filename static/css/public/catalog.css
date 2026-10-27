@@ -1562,6 +1562,31 @@
   box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / .15), var(--catalog-title-pointer-shadow);
 }
 
+/* A click owns the navigation palette through the fold and flight, even
+   after hover ends. The detail takes its selected palette when it lands. */
+:root:not([data-site-zone="ops"]) .tile[data-catalog-opening] .tile__label {
+  --label-band: var(--catalog-title-pointer-bg);
+  --label-band-text: var(--catalog-title-pointer-text);
+  border-color: var(--catalog-title-pointer-border);
+  box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / .15), var(--catalog-title-pointer-shadow);
+}
+
+:root:not([data-site-zone="ops"]) .product[data-catalog-opening] .product__label {
+  --label-band: var(--catalog-title-pointer-bg);
+  --product-title-text: var(--catalog-title-pointer-text);
+  --product-label-border: var(--catalog-title-pointer-border);
+  --product-label-outline-shadow: var(--catalog-title-pointer-shadow);
+  --product-label-glow: 0 0 0 transparent;
+}
+
+/* Return to the resting card palette before folding back into the wall. */
+:root:not([data-site-zone="ops"]) .product[data-catalog-closing] .product__label {
+  --product-title-text: var(--label-band-text);
+  --product-label-border: var(--label-border);
+  --product-label-outline-shadow: var(--catalog-outline-shadow);
+  --product-label-glow: 0 0 0 transparent;
+}
+
 /* Confirmed additions get green paint and light, returning to gold afterward.
    The same state contract is used by cards and the opened product. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.tile__label:has(.tile__order[data-state="done"]), .product__label:has(.product__form[data-state="done"])) {
