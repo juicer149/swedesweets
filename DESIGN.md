@@ -905,10 +905,12 @@ names/pins share hover and keyboard emphasis while addresses remain still.
 
 ### Catalog label and notification palettes
 
-Day cards/details have an accent-600 name band with primary-950 text. Night
-cards use light-blue title text and a light-blue frame around a dark-blue
-band. Pointer/keyboard navigation changes the title and frame to blue/white
-by day and moonlight with cool light by night. Secondary night cart actions
+Day cards have an accent-600 name band with primary-950 text. Pointer and
+keyboard navigation retain that band, changing only the title and frame to
+brand blue, without an image glow or sheen. The opened day detail keeps the
+same blue title and frame. Night cards use light-blue title text and a
+light-blue frame around a dark-blue band; navigation changes their title
+and frame to moonlight with cool light. Secondary night cart actions
 share the moonlight hover/focus/pressed palette wherever they are used.
 
 The opened night product instead has a gold title, frame and diffuse light:

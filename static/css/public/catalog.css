@@ -1566,6 +1566,7 @@
    The same state contract is used by cards and the opened product. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) :is(.tile__label:has(.tile__order[data-state="done"]), .product__label:has(.product__form[data-state="done"])) {
   --label-band: var(--catalog-success-band-bg);
+  --product-title-text: var(--color-white);
   --label-band-text: var(--color-white);
   background: var(--catalog-success-bg);
   border-color: var(--catalog-burst-success);

@@ -523,10 +523,13 @@
   --label-band: var(--color-accent-600);
   --label-band-text: var(--color-primary-950);
   --catalog-fields-bg: var(--label-bg);
-  --catalog-title-pointer-bg: var(--theme-chrome-bg);
-  --catalog-title-pointer-text: var(--color-white);
+  --catalog-title-pointer-bg: var(--color-accent-600);
+  --catalog-title-pointer-text: var(--theme-chrome-bg);
   --catalog-title-pointer-border: var(--theme-chrome-bg);
   --catalog-title-pointer-shadow: 0 0 0 transparent;
+  --product-title-text: var(--theme-chrome-bg);
+  --product-label-border: var(--theme-chrome-bg);
+  --catalog-card-hover-sheen: none;
   --catalog-price-text: var(--color-primary-950);
   --catalog-price-bg: var(--color-white);
   --catalog-price-border: var(--color-accent-600);
@@ -978,9 +981,8 @@
   --landing-pointer-glow-filter: var(--chrome-cloud-filter);
   --landing-chosen-glow-opacity: 1;
 
-  /* The catalog's cards pointed at: the sky's blue round them, outside
-     the picture's edge */
-  --catalog-card-hover-shadow: 0 0 18px 4px color-mix(in srgb, var(--theme-chrome-bg) 75%, transparent), 0 0 34px 8px color-mix(in srgb, var(--theme-chrome-bg) 30%, transparent);
+  /* Day catalog navigation is carried by the label's blue ink and frame. */
+  --catalog-card-hover-shadow: none;
 }
 
 /* Customer day close buttons: quiet circles with their existing colour roles.
