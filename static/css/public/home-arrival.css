@@ -1,6 +1,6 @@
 /* One staged journey: landing surface, shared lettering, selection, page. */
 @view-transition { navigation: none; }
-:root { --home-travel-ink: var(--color-white); }
+:root { --home-travel-ink: var(--color-white); --home-link-travel-ink: var(--state-rest-ink); }
 :root[data-theme="dark"] { --home-travel-ink: var(--moonlight); }
 .home-flight-source :is(.site-brand, .entrance-header__brand) .brand-logo,
 .home-flight-target .landing__logo-art,
@@ -20,10 +20,22 @@
 .landing[data-home-arrival] .landing__logo-trigger { pointer-events: none; }
 .landing[data-home-arrival="flying"] .landing-menu__crown,
 .landing[data-home-exit] .landing-menu__crown { opacity: 0 !important; }
-.landing[data-home-arrival="flying"] :is(.landing-menu__link, .landing-menu__text),
-.landing[data-home-exit] :is(.landing-menu__link, .landing-menu__text) { color: var(--home-travel-ink) !important; }
-.landing[data-home-arrival="braking"] .landing__logo::before { animation: home-cloud-land 260ms ease-out both; }
-.landing[data-home-arrival="braking"] :is(.brand-logo__crown, .landing-menu__link--chosen .landing-menu__crown) { animation: home-crown-land 160ms 260ms ease-out both; }
+/* Links keep their rest ink; only the chosen journey uses pointer ink. */
+:is(.home-flight-source, .home-flight-departing, .home-flight-exit-target[data-home-phase="flight"]) .site-nav__link,
+.landing:is([data-home-arrival="flying"], [data-home-exit]) .landing-menu__link { --home-link-travel-ink: var(--state-rest-ink); }
+:is(.home-flight-source, .home-flight-departing) .site-nav__link[aria-current="page"],
+.home-flight-exit-target[data-home-phase="flight"] .site-nav__link[data-home-chosen],
+.landing:is([data-home-arrival="flying"], [data-home-exit]) .landing-menu__link[data-home-chosen] { --home-link-travel-ink: var(--state-pointer-ink); }
+:is(.home-flight-source, .home-flight-departing, .home-flight-exit-target[data-home-phase="flight"]) .site-nav__link,
+:is(.home-flight-source, .home-flight-departing, .home-flight-exit-target[data-home-phase="flight"]) .site-nav__link *,
+.landing:is([data-home-arrival="flying"], [data-home-exit]) .landing-menu__link,
+.landing:is([data-home-arrival="flying"], [data-home-exit]) .landing-menu__link * {
+  color: var(--home-link-travel-ink) !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+.landing[data-home-arrival="braking"] .landing__logo::before { animation: home-cloud-land 420ms ease-out both; }
+.landing[data-home-arrival="braking"] :is(.brand-logo__crown, .landing-menu__link--chosen .landing-menu__crown) { animation: home-crown-land 160ms 440ms ease-out both; }
 .landing[data-home-arrival="braking"] .brand-logo__wordmark { transition: fill 220ms ease-out; }
 
 /* Fade onto the landing colour before the return journey starts. */
@@ -35,38 +47,90 @@
 .home-flight-departing .site-nav__link::after { opacity: 0 !important; transition: opacity 100ms 70ms; }
 
 /* The destination page is present but covered by the landing surface until
-   the words have landed. Then cloud/ink, crown, rule, surface and content. */
+   the words have landed. Then cloud/ink and rule together, then crown, surface and content. */
 .home-flight-exit-target body { transition: background 160ms ease; }
-.home-flight-exit-target:is([data-home-phase="flight"], [data-home-phase="selection"], [data-home-phase="rule"]) body { background: var(--menu-bg); }
-.home-flight-exit-target:is([data-home-phase="flight"], [data-home-phase="selection"], [data-home-phase="rule"], [data-home-phase="surface"]) :is(main.site-main, .site-footer) { opacity: 0; visibility: hidden; }
-.home-flight-exit-target:is([data-home-phase="flight"], [data-home-phase="selection"]) .site-header { border-bottom-color: transparent; }
+.home-flight-exit-target:is([data-home-phase="flight"], [data-home-phase="selection"]) body { background: var(--menu-bg); }
+.home-flight-exit-target:is([data-home-phase="flight"], [data-home-phase="selection"], [data-home-phase="surface"]) :is(main.site-main, .site-footer) { opacity: 0; visibility: hidden; }
+.home-flight-exit-target:is([data-home-phase="flight"]) .site-header { border-bottom-color: transparent; }
 .home-flight-exit-target .site-header { transition: border-color 160ms; }
 .home-flight-exit-target[data-home-phase="flight"] .site-nav__link::after,
 .home-flight-exit-target[data-home-phase="flight"] .site-nav__label::before,
 .home-flight-exit-target[data-home-phase="flight"] .site-nav__icon::after { visibility: hidden; }
-.home-flight-exit-target[data-home-phase="flight"] .site-nav__link,
-.home-flight-exit-target[data-home-phase="flight"] .site-nav__link * { color: var(--home-travel-ink) !important; }
 .home-flight-exit-target[data-home-phase="content"] .site-footer { animation: home-content-in 220ms ease-out both; }
 
-/* Only lettering moves: a navbar logo never receives an invented cloud. */
+/* Icons and lettering move together: a navbar logo never receives an invented cloud. */
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(root) { z-index: 0; }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-old(root) { animation: home-content-out 160ms ease-out both; }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-new(root) { animation: none; }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-wordmark) { z-index: 2; animation-duration: 650ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-0),
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-0),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1),
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-1),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3) { z-index: 3; animation-duration: 480ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1) { animation-delay: 45ms; }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2) { animation-delay: 90ms; }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3) { animation-delay: 135ms; }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-2),
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3),
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-3) { z-index: 3; animation-duration: 480ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1),
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-1) { animation-delay: 45ms; }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2),
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-2) { animation-delay: 90ms; }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3),
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-icon-3) { animation-delay: 135ms; }
 .cart-flight-target::view-transition-group(cart-return-icon) { animation-duration: 360ms; animation-timing-function: cubic-bezier(.22,.7,.2,1); z-index: 3; }
 @keyframes home-content-out { to { opacity: 0; } }
 @keyframes home-content-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes home-cloud-land { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes home-cloud-land {
+  0% { opacity: 0; transform: scale(.28, .2); }
+  50% { opacity: 1; transform: scale(1.07, .95); }
+  76% { transform: scale(.98, 1.03); }
+  100% { opacity: 1; transform: scale(1); }
+}
 @keyframes home-crown-land { from { opacity: 0; scale: .4; } to { opacity: 1; scale: 1; } }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 
 .home-flight-target[data-home-phase="flight"] .landing__logo-art { filter: none !important; }
 
 .landing[data-home-arrival] .brand-logo__crown { transform-box: fill-box; transform-origin: center; }
+
+/* The travelling white letters swell into the real day cloud, then regain
+   their brand ink. The night wordmark starts like a lamp warming up. */
+:root[data-theme="light"] .landing[data-home-arrival="braking"] .landing__logo-art {
+  animation: home-logo-reform 420ms ease-out both;
+}
+@keyframes home-logo-reform {
+  0% { scale: 1; opacity: 1; }
+  24% { scale: 1.16; opacity: .2; }
+  48% { scale: .92; opacity: .45; }
+  100% { scale: 1; opacity: 1; }
+}
+:root[data-theme="light"] .landing[data-home-arrival="braking"] .brand-logo__wordmark {
+  animation: home-logo-ink 420ms ease-out both;
+}
+@keyframes home-logo-ink {
+  0%, 24% { fill: var(--home-travel-ink); }
+  100% { fill: var(--logo-here-ink); }
+}
+:root[data-theme="dark"] .landing[data-home-arrival="braking"] .brand-logo__wordmark,
+:root[data-theme="dark"] .landing:not(.landing--seen) .brand-logo__wordmark {
+  animation: home-lamp-start 420ms linear both;
+}
+@keyframes home-lamp-start {
+  0%, 18%, 36% { fill: var(--moonlight); opacity: .65; }
+  10%, 28%, 46%, 100% { fill: var(--logo-here-ink); opacity: 1; }
+}
+@media (max-width: 767px) {
+  /* The selected mobile link normally has no icon. Let its travelling icon
+     arrive above the label, then yield to the active cloud and crown. */
+  .home-flight-exit-target[data-home-phase="flight"] .site-nav__link[aria-current="page"] > .site-nav__icon {
+    display: block; position: absolute; bottom: 100%; left: calc(50% - .65rem);
+    width: 1.3rem; height: 1.3rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing .landing__logo::before,
+  .landing .landing__logo-art,
+  .landing .brand-logo__wordmark,
+  .landing .brand-logo__crown,
+  .landing .landing-menu__crown { animation: none !important; }
+}

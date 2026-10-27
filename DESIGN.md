@@ -826,8 +826,11 @@ retain their usual disclosure timing.
 A logo click returns through the same staged journey in both themes, including
 from an open Menu/cart. The page fades onto the landing surface, then the
 navbar rule disappears and the wordmark and links move to their landing
-positions. Lettering retains pointer ink during travel. Only after arrival
-does the day cloud appear (or night ink turn gold), followed by the crown.
+positions. Icons travel with their text. Links retain rest ink, with only the
+chosen link in pointer ink. The wordmark remains white/moonlight during travel.
+After arrival, day lettering swells into the real cloud and regains its brand
+colours; night lettering flickers briefly into gold like a warming lamp.
+The night first visit shares this flicker. The crown follows the cloud/ink.
 No extra cloud is attached to the navbar wordmark. The final landing layout
 is reserved throughout. Reduced motion keeps native navigation. Landing
 shows its cart link whenever it holds products, on mobile and desktop.
@@ -851,9 +854,9 @@ attempt is allowed.
 
 ### Landing exit, catalog batches and cart rows
 
-Landing links return the wordmark and four labels to the navbar in order.
+Landing links return the wordmark, four labels and their icons to the navbar in order.
 The landing background stays until they settle, then selection appears:
-cloud/ink first, crown second, followed by the navbar rule, page surface and
+cloud/ink first, crown second, with the navbar rule drawing concurrently; then page surface and
 a reveal from top to bottom. Normal navbar changes remove the crown before
 the old cloud and add the new crown after its cloud. `effects.js` keeps motion
 separate from palette; night celebration remains disabled and day candy rain

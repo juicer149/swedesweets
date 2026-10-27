@@ -1387,19 +1387,22 @@ keep their default 280ms and reduced motion remains immediate.
 
 `public/home-arrival.css` and the parser-blocking `home-arrival.js` head
 script own the staged landing/navbar journey in both themes. Session storage
-carries only URL, timestamp, wordmark and link rectangles. Native cross-document
-transitions move `home-wordmark` and `home-link-0..3`; without support the same
+carries only URL, timestamp, selection, wordmark, label and icon rectangles. Native cross-document
+transitions move `home-wordmark`, `home-link-0..3` and `home-icon-0..3`; without support the same
 recorded geometry drives bounded Web Animations. No cloud is injected into
 the navbar. Modifier clicks, first visits and reduced motion remain native.
 
 Leaving landing retains its surface during flight, then `data-home-phase`
-advances through selection, rule, surface and content. The selected link grows
-its own cloud/light before its crown. The navbar rule then appears, the page
+advances through selection, surface and content. The selected link grows
+its own cloud/light before its crown, while the navbar rule appears concurrently. The page
 background follows and the visible main region reveals from top to bottom.
 On return the source fades page/panels onto the landing background in 220ms
-without closing panel history first. Lettering moves back in pointer ink;
-only after arrival does the real landing cloud/gold ink appear, followed by
-the crown. Transient names, phases and inert controls clear on completion,
+without closing panel history first. Links keep rest ink during both directions;
+only the chosen link keeps pointer ink until arrival. Icons share their labels’
+duration and stagger. The wordmark travels in white/moonlight; after arrival
+the day letters swell into the actual cloud and regain brand ink. At night
+the wordmark flickers quickly into gold, also on the first landing visit.
+The crown follows the cloud/ink. Reduced motion disables these effects. Transient names, phases and inert controls clear on completion,
 BFCache restoration and a bounded fallback.
 
 `data-checkout-flow` is rendered from the existing `navbar_cart_current`
@@ -1415,7 +1418,7 @@ resizing and reduced motion retain the shared controller behaviour.
 ## Landing exit and cart return travel
 
 `home-arrival.js` also owns landing-to-navbar (`mode: exit`) and current-cart
-return (`mode: cart`). Matching wordmark and `home-link-0..3` snapshots
+return (`mode: cart`). Matching wordmark, `home-link-0..3` and `home-icon-0..3` snapshots
 move into the actual header; labels use 480ms with 45ms offsets, the brand
 650ms, and cart return 360ms. The selected link's own cloud appears after the
 landing exit. Unrelated native transitions are disabled by default. Only a

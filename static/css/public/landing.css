@@ -266,10 +266,9 @@
 }
 
 
-/* Coming back in the same visit, or asking for less motion: the menu is
-   simply there. */
-.landing--seen *,
-.landing--seen {
+/* Skip only the first-visit entrance on return; arrival effects keep their
+   own timing and reduced motion is handled below. */
+.landing--seen :is(.landing__menu, .landing-menu li, .landing__top, .landing__bottom) {
   animation: none !important;
 }
 

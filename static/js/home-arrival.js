@@ -54,7 +54,7 @@
   function headerEntries() {
     return [...document.querySelectorAll(".site-header .site-nav__link[href]")].map((anchor, index) => ({
       url: anchor.href, name: `home-link-${index}`, current: anchor.getAttribute("aria-current") === "page",
-      ...rect(anchor.querySelector(".site-nav__label")),
+      ...rect(anchor.querySelector(".site-nav__label")), icon: iconRect(anchor, ".site-nav__icon"),
     }));
   }
   document.addEventListener("click", event => {
@@ -79,12 +79,21 @@
       root.classList.add("home-flight-source");
       outgoing.links.forEach(entry => {
         const anchor = [...document.querySelectorAll(".site-header .site-nav__link")].find(link => link.href === entry.url);
-        nameFor(anchor?.querySelector(".site-nav__label"), entry.name);
+        nameLink(anchor, entry, ".site-nav__label", ".site-nav__icon");
       });
       location.assign(url.href);
     });
   });
 
+  function iconRect(anchor, selector) {
+    const icon = anchor.querySelector(selector);
+    return icon && icon.getBoundingClientRect().width > 0 ? rect(icon) : null;
+  }
+  function nameLink(anchor, entry, labelSelector, iconSelector) {
+    nameFor(anchor?.querySelector(labelSelector), entry.name);
+    if (entry.icon) nameFor(anchor?.querySelector(iconSelector), entry.name.replace("home-link", "home-icon"));
+    if (anchor) anchor.toggleAttribute("data-home-chosen", !!entry.current);
+  }
   const rect = element => { const b = element.getBoundingClientRect(); return { x: b.x, y: b.y, width: b.width, height: b.height }; };
   function nameFor(element, name) {
     if (!element) return;
@@ -97,14 +106,17 @@
     const url = new URL(link.href), logo = document.querySelector(".landing__logo-art");
     if (!logo || url.origin !== location.origin) return;
     const entries = [...document.querySelectorAll(".landing-menu__link")].map((anchor, index) => ({
-      url: anchor.href, name: `home-link-${index}`, ...rect(anchor.querySelector(".landing-menu__text")),
+      url: anchor.href, name: `home-link-${index}`, current: anchor === link,
+      ...rect(anchor.querySelector(".landing-menu__text")), icon: iconRect(anchor, ".landing-menu__icon"),
     }));
     outgoing = { mode: "exit", url: url.href, time: Date.now(), ...rect(logo), links: entries };
     try { sessionStorage.setItem(key, JSON.stringify(outgoing)); } catch { outgoing = null; return; }
     enableNative();
     root.classList.add("home-flight-source-out");
     document.querySelector("[data-landing]").dataset.homeExit = "";
-    for (const [index, anchor] of [...document.querySelectorAll(".landing-menu__link")].entries()) nameFor(anchor.querySelector(".landing-menu__text"), `home-link-${index}`);
+    for (const [index, anchor] of [...document.querySelectorAll(".landing-menu__link")].entries()) {
+      nameLink(anchor, entries[index], ".landing-menu__text", ".landing-menu__icon");
+    }
   }, true);
 
   // Cart return uses the same native transition owner, avoiding two competing
@@ -141,10 +153,16 @@
       for (const entry of incoming.links || []) {
         const anchor = [...document.querySelectorAll(".site-header .site-nav__link[href]")].find(link => link.href === entry.url);
         const label = anchor?.querySelector(".site-nav__label");
-        if (label) { nameFor(label, entry.name); pairs.push([label, entry]); }
+        if (label) {
+          nameLink(anchor, entry, ".site-nav__label", ".site-nav__icon");
+          const parts = [[label, entry]];
+          const icon = anchor.querySelector(".site-nav__icon");
+          if (entry.icon && icon) parts.push([icon, entry.icon]);
+          pairs.push(parts);
+        }
       }
       if (transition) await transition.finished.catch(() => {});
-      else await Promise.all([fly(logo, incoming, 650), ...pairs.map(([label, entry], index) => fly(label, entry, 480, index * 50))]);
+      else await Promise.all([fly(logo, incoming, 650), ...pairs.flatMap((parts, index) => parts.map(([part, from]) => fly(part, from, 480, index * 50)))]);
     }
     if (incoming.mode === "exit") {
       root.dataset.homePhase = "selection";
@@ -154,8 +172,6 @@
       const popMs = parseFloat(pop) * (pop.endsWith("ms") ? 1 : 1000);
       await pause((Number.isFinite(popMs) ? popMs : 200) + 180);
       active?.classList.remove("is-nav-arriving");
-      root.dataset.homePhase = "rule";
-      await pause(100);
       root.dataset.homePhase = "surface";
       await pause(160);
       root.dataset.homePhase = "content";
@@ -177,7 +193,7 @@
     for (const element of landing.querySelectorAll(".landing__top, .landing__menu, .landing__bottom")) element.inert = true;
     for (const entry of incoming.links || []) {
       const anchor = [...landing.querySelectorAll(".landing-menu__link")].find(link => link.href === entry.url);
-      nameFor(anchor?.querySelector(".landing-menu__text"), entry.name);
+      nameLink(anchor, entry, ".landing-menu__text", ".landing-menu__icon");
       if (anchor && entry.current) {
         for (const link of landing.querySelectorAll(".landing-menu__link")) link.classList.toggle("landing-menu__link--chosen", link === anchor);
       }
@@ -193,6 +209,7 @@
       element.style.removeProperty("view-transition-name");
       delete element.dataset.homeTravelName;
     }
+    for (const element of document.querySelectorAll("[data-home-chosen]")) element.removeAttribute("data-home-chosen");
     if (!landing) return;
     delete landing.dataset.homeArrival;
     for (const element of landing.querySelectorAll(".landing__top, .landing__menu, .landing__bottom")) element.inert = false;
@@ -209,7 +226,7 @@
       element.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }],
         { duration: 180, delay: Math.min(index * 25, 100), easing: "ease-out", fill: "backwards" });
     }
-    await pause(440);
+    await pause(620);
     reveal();
   }
   async function start(transition) {
@@ -230,9 +247,10 @@
       hero.style.transformOrigin = "0 0";
       const pairs = (incoming.links || []).map(entry => {
         const anchor = [...landing.querySelectorAll(".landing-menu__link")].find(link => link.href === entry.url);
-        return [anchor?.querySelector(".landing-menu__text"), entry];
-      }).filter(([label]) => label);
-      await Promise.all([flight.finished.catch(() => {}), ...pairs.map(([label, entry], index) => fly(label, entry, 500, index * 45))]);
+        return [[anchor?.querySelector(".landing-menu__text"), entry],
+          [entry.icon && anchor?.querySelector(".landing-menu__icon"), entry.icon]].filter(([part]) => part);
+      });
+      await Promise.all([flight.finished.catch(() => {}), ...pairs.flatMap((parts, index) => parts.map(([part, from]) => fly(part, from, 500, index * 45)))]);
       hero.style.transformOrigin = "";
     }
     void settle();
