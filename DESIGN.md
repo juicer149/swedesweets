@@ -920,7 +920,9 @@ Day variant/quantity fields retain their white surface and blue values. Night
 fields have a light-blue surface, dark-blue values and a divider matching the
 dark title band; empty choices are muted. Fields repaint only on their own
 focus/open state, including product detail. Night focus uses moonlight on a
-blue surface. Secondary cart buttons retain their pale-blue day surface.
+blue surface. Night detail fields extend to the label edges and rounded lower
+corners, including the foot below their values, rather than sitting in inset
+rectangles. Secondary cart buttons retain their pale-blue day surface.
 
 Price tags and in-cart badges share an information palette: white/primary-950
 with a gold border by day; dark blue with lighter gold ink/edge by night. The

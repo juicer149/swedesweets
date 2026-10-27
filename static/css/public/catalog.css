@@ -1064,6 +1064,29 @@
   padding: 0 var(--space-1);
 }
 
+/* Night detail fields fill the label just like the catalog card. Reset
+   the card form's inherited overhang as well as the detail's inset. */
+:root[data-theme="dark"]:not([data-site-zone="ops"]) .product__form {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--catalog-fields-bg);
+  border-radius: 0 0 10px 10px;
+}
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) .product__body {
+  padding-top: 0;
+}
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) .product__half {
+  padding-block: var(--space-2) calc(var(--space-2) + var(--product-foot));
+  border-radius: 0 0 0 10px;
+}
+
+:root[data-theme="dark"]:not([data-site-zone="ops"]) .product__half--quantity {
+  border-radius: 0 0 10px 0;
+}
+
 .product__half--quantity {
   border-left: 1.5px dashed var(--catalog-fields-divider, var(--color-accent-300));
 }
