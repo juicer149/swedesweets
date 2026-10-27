@@ -111,7 +111,9 @@ def business_cart_line_presentation(
         offer_label=_commercial_price_offer_label(
             commercial_price
         ),
-        name=own_catalog_text(product, language_code=language_code).name or product.name,
+        name=(
+            own_catalog_text(product, language_code=language_code).name or product.name
+        ),
         brand=product.brand,
         variant_label=(
             (f"{variant.label} · " if variant.label else "")
