@@ -3,7 +3,30 @@
 The visual principles and ownership overview are in [DESIGN.md](../DESIGN.md).
 This file describes loading, previews and the workflow for implementation.
 
-S…619 tokens truncated…loud, in the navbar's own blue, as if cut out of it); the start page has no "here". No crown marks a choice (`--marker-crown`) | white; primary-1000; the navbar's blue | (the night's own) |
+Status (2026-10-18): the public/B2B dark theme is approved and merged into
+main. FAQ, About, Find Sweets, accounts, carts/checkout and catalog share its
+finished semantic palette and interaction rules. Labels have a separate palette
+per theme; photos and About's polaroid retain their own light surfaces.
+Light remains the default. A full light-theme review and the dark ops rollout
+are still separate work; ops is explicitly held in light mode.
+
+## Theme controls
+
+Each theme file opens with a short block of the choices everything else
+follows; change these first, and tune a single part further down only when
+it must differ:
+
+| Control | What it sets | Day (light.css) | Night (dark.css) |
+|---|---|---|---|
+| `--theme-chrome-bg` | the navbar's surface, and the Menu's, start page's and login pages' around it | primary-400 (the logo's blue) | primary-950 |
+| `--state-rest-ink` | everything clickable on it, at rest: text, edge and light | primary-750 | light blue (`--interactive-text`) |
+| `--state-here-ink` | where you are (with the crown) | gold | gold |
+| `--state-pointer-ink` | what you point at or reach with the keys | primary-950 | moonlight |
+| `--theme-page-bg` | the page | cream (neutral-50) | primary-900 |
+| `--state-page-rest/here/pointer-ink` | the same three on the page (tabs, questions, Find Sweets, chips) | primary-700 / 900 / 600 | as the three above |
+| `--theme-sky-*` | tabs and filter chips: the word at rest (a neutral), a cloud behind it and its ink pointed at and chosen, the cloud's softness (`-blur`), how far it reaches beside the word (`-reach`; the tab row keeps that much room at its ends, so the light is not cut), its size while closed (`-closed`), how far it opens when pointed at (`-peek`: a smaller look at the chosen one's sky) and how long it takes (`--sky-open-time`) | primary-950; the navbar's blue + white pointed at, + gold chosen; 6.5px; 18px; scale(.35, .6); scale(.55, .62); 280ms | (not used: the night keeps its halo, with 1.25rem of room at the row's ends) |
+| `--theme-cloud`, `-shape`, `-inset` | by day on the blue (navbar, Menu, Settings, entrance pages): the white cloud behind where you are (a wide body with a small round top; less wide on phones) | white | (not used) |
+| `--state-rest-ink`, `--state-pointer-ink`, `--state-here-ink` | by day on the blue, a word at rest (white), pointed at or chosen (the darkest blue, no cloud; gold where you are) and where you are (on the white cloud, in the navbar's own blue, as if cut out of it); the start page has no "here". No crown marks a choice (`--marker-crown`) | white; primary-1000; the navbar's blue | (the night's own) |
 | `--theme-nav-cloud-inset` | by day each navbar link (by its icon: `data-nav-cloud`) and the Menu and cart buttons have their own engraved cloud where you are (`static/images/clouds/nav-*.svg`, drawn by `tools/draw_clouds.py`); it stretches with the word, so a longer word only widens it | -0.7rem -1.1rem | (not used) |
 | `--theme-bar-here-crown`, `-scale` | on a phone, the bar of icons at the screen's foot: where you are has no cloud but the gold crown on its icon, its word a little bigger and bolder | accent-600; 1.12 | (the night's own crown) |
 | `--theme-logo-ink`, `-pointer-ink`, `-crown`, `--theme-logo-cloud-inset` | the logo: always on its own engraved cloud (`static/images/clouds/logo.svg`, a plainer `logo-small.svg` in the navbar; `tools/draw_clouds.py`: lumps with their own outline, short curved strokes shading them), in the navbar's blue with its yellow crown; gold pointed at (white would vanish on its cloud) | the navbar's blue; gold; the brand yellow | (as the rest and the pointer) |
@@ -1420,7 +1443,11 @@ native teardown. Other ordinary navigation keeps its existing controller.
 A landing cart click dispatches `cart-navigation-start` before the journey
 consumes the click, allowing `cart-return.js` to remember its true origin.
 Its current-cart handler lets home travel own the whole return, including the
-220ms page fade, logo to landing and cart to its landing corner. Other return
+220ms page fade, logo to landing and cart to its landing corner. During that
+departure the cart cloud fades in 80ms, its crown hides, and the icon uses
+`--home-nav-rest` before its snapshot is taken. The incoming landing cart uses
+the same rest ink throughout flight, so active blue cannot disappear against
+the landing blue (or gold linger in night mode). Other return
 URLs retain the small icon journey. Duplicate clicks cannot replace a pending
 home record or start competing navigation.
 

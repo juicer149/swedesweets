@@ -96,7 +96,20 @@
   opacity: 1; background: url("../../images/clouds/nav-cart.svg") center / 100% 100% no-repeat;
 }
 :root[data-theme="dark"].home-flight-source-out[data-home-cart] .landing__cart-link::before { background: var(--menu-link-glow); }
-.home-flight-departing .site-nav-cart__trigger::before { opacity: 0 !important; }
+/* The current cart normally keeps active blue/gold through aria-current.
+   Remove that ink with its cloud before taking the return snapshot. */
+.home-flight-departing .site-nav-cart__trigger::before { opacity: 0 !important; transition: opacity 80ms ease-out; }
+.home-flight-departing .site-nav-cart__trigger .menu-dropdown-trigger__crown { opacity: 0 !important; }
+:is(.home-flight-departing, .home-flight-source) .site-nav-cart__trigger,
+.home-flight-target[data-home-phase="flight"] .landing__cart-link {
+  color: var(--home-nav-rest) !important;
+  text-shadow: none !important; transition: none !important;
+}
+:is(.home-flight-departing, .home-flight-source) .site-nav-cart__icon,
+.home-flight-target[data-home-phase="flight"] .landing__cart-link .site-nav-cart__icon {
+  color: var(--home-nav-rest) !important;
+  opacity: 1; visibility: visible; filter: none !important;
+}
 
 /* Reverse: reveal the landing surface first, remove the rule, then travel. */
 .home-flight-departing body { background: var(--menu-bg); transition: background 180ms ease; }
