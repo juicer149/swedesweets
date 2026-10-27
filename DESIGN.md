@@ -823,14 +823,14 @@ retain their usual disclosure timing.
 
 ### Returning home and focused checkout navigation
 
-A day logo click follows its normal home link, including when Menu/cart is
-open. The engraved cloud appears at the small wordmark, grows and travels to
-the landing wordmark over 700ms while the blue surface appears underneath.
-At arrival the cloud has a 300ms braking squash/stretch; its lettering stays
-steady and the links appear. Returning this way uses the final landing layout
-rather than replaying the first-visit splash. Night and reduced motion keep
-native navigation. Landing shows its existing cart link whenever it holds
-products, on mobile as well as desktop.
+A logo click returns through the same staged journey in both themes, including
+from an open Menu/cart. The page fades onto the landing surface, then the
+navbar rule disappears and the wordmark and links move to their landing
+positions. Lettering retains pointer ink during travel. Only after arrival
+does the day cloud appear (or night ink turn gold), followed by the crown.
+No extra cloud is attached to the navbar wordmark. The final landing layout
+is reserved throughout. Reduced motion keeps native navigation. Landing
+shows its cart link whenever it holds products, on mobile and desktop.
 
 Cart, review and result keep their current page/sheet design. Their navbar
 hides the ordinary page links, retaining the logo, Menu and the real cart
@@ -851,11 +851,13 @@ attempt is allowed.
 
 ### Landing exit, catalog batches and cart rows
 
-Landing links return the wordmark to the navbar, followed by the four labels
-in order. Day travel includes the engraved cloud; night moves the wordmark
-alone. `effects.js` keeps motion separate from palette. Night celebrations
-remain disabled until their design is chosen; day retains candy rain.
-Reduced motion keeps the existing static alternatives.
+Landing links return the wordmark and four labels to the navbar in order.
+The landing background stays until they settle, then selection appears:
+cloud/ink first, crown second, followed by the navbar rule, page surface and
+a reveal from top to bottom. Normal navbar changes remove the crown before
+the old cloud and add the new crown after its cloud. `effects.js` keeps motion
+separate from palette; night celebration remains disabled and day candy rain
+is unchanged. Reduced motion keeps its static alternatives.
 
 The catalog renders twelve cards initially. Its complete text-only index
 supports search/category filtering; additional card HTML and images load in
@@ -939,7 +941,9 @@ Detail images stay anchored when Description/Ingredients changes height.
 Vegan sits on the image in an opaque, theme-specific green badge. Categories
 remain catalog filters rather than detail headings. Low stock uses the price
 tag shape at the quantity side's lower edge, clear of the cart button; its
-warm palette has its own roles. These notices do not create extra field rows.
+warm palette has its own roles. It straddles the quantity edge, vertically
+centred on the count, with reserved room on narrow screens. These notices
+do not create extra field rows.
 The day detail close control rests on the page colour. Enhanced selects retain
 their native option elements so variant price, stock and offer metadata
 survives selection.
@@ -954,3 +958,17 @@ own its fields. `--catalog-title-pointer-bg/text/border/shadow` own navigation
 feedback. Price/badge roles own information independently from action buttons.
 `--catalog-success-*` and the burst tokens own day confirmation feedback. Ops
 is excluded. Day rendered colours are unchanged by the night refinement.
+
+### Product image delivery
+
+Media stays private and signed. Product URLs are reused for five minutes per
+worker, well inside their one-hour signature lifetime; new/rebuilt objects
+receive private five-minute browser cache headers. Existing bucket objects
+retain their previous headers until rebuilt. Cart images load eagerly and
+Tom Select warms only its visible options. Product transitions briefly wait
+for the display image to decode. On an image error the browser fetches fresh
+HTML from the existing authorised product/current page and retries once with
+its current media URL. Failed retries report a path-only console diagnostic,
+never a signed query. Products without an image retain their normal placeholder.
+These measures cover delayed/expired media requests; production failures still
+need a Network status to distinguish delivery errors from other causes.

@@ -18,6 +18,18 @@
     );
   }
 
+  function warmVisibleImages(control) {
+    const list = control.dropdown_content;
+    if (!list || !control.isOpen) return;
+    const bounds = list.getBoundingClientRect();
+    for (const image of list.querySelectorAll("img")) {
+      const box = image.getBoundingClientRect();
+      if (box.bottom >= bounds.top && box.top <= bounds.bottom + 40) {
+        image.loading = "eager";
+      }
+    }
+  }
+
   function buildOptionData(option) {
     return {
       // Retain the native option and its price/stock/deal data on selection.
@@ -170,6 +182,8 @@
         allowEmptyOption: true,
         closeAfterSelect: true,
         maxOptions: 500,
+        onDropdownOpen() { warmVisibleImages(this); },
+        onType() { requestAnimationFrame(() => warmVisibleImages(this)); },
         placeholder:
           select.getAttribute("placeholder") || "",
         controlInput: hasSearch

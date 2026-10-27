@@ -699,6 +699,8 @@ if USE_S3_MEDIA:
             "default_acl": None,
             "querystring_auth": True,
             "querystring_expire": 3600,
+            # New/rebuilt private images can reuse their signed URL in-browser.
+            "object_parameters": {"CacheControl": "private, max-age=300"},
             "file_overwrite": False,
         },
     }

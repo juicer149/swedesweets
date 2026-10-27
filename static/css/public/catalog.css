@@ -1059,6 +1059,7 @@
 }
 
 .product__half--quantity {
+  position: relative;
   border-radius: 0 0 10px 0;
   border-left: 1.5px dashed var(--catalog-fields-divider, var(--color-accent-300));
 }
@@ -1095,10 +1096,11 @@
 
 .product__stock.tile__tag {
   top: auto;
-  right: -.5rem;
-  bottom: -.65rem;
+  right: -1.25rem;
+  bottom: 50%;
+  translate: 0 50%;
   z-index: 2;
-  max-width: calc(50% - var(--space-6));
+  max-width: calc(50% + var(--space-3));
   margin: 0;
   padding: .3rem .6rem .3rem 1rem;
   color: var(--catalog-stock-ink);
@@ -1375,7 +1377,7 @@
     position: relative;
     z-index: 1;
     justify-self: center;
-    width: min(100%, 19.5rem);
+    width: min(calc(100% - 3rem), 19.5rem);
     margin: -2rem auto 0;
     transform: none;
   }

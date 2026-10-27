@@ -42,8 +42,9 @@
     <script src="{% static 'js/theme.js' %}"></script>
     {% if site_zone != "ops" %}
       <script src="{% static 'js/effects.js' %}"></script>
-      <script src="{% static 'js/home-arrival.js' %}" data-cloud="{% static 'images/clouds/logo.svg' %}"></script>
+      <script src="{% static 'js/home-arrival.js' %}"></script>
     {% endif %}
+    {% if site_zone != "ops" %}<script src="{% static 'js/product-images.js' %}" defer></script>{% endif %}
     <script src="{% static 'js/theme-switch.js' %}" defer></script>
     <script src="{% static 'js/site-menu.js' %}" defer></script>
     {% if site_zone != "ops" %}<script src="{% static 'js/cart-return.js' %}" defer></script>{% endif %}

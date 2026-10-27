@@ -138,7 +138,7 @@
       if (heading) { heading.setAttribute("tabindex", "-1"); heading.focus({ preventScroll: true }); }
       if (motion) {
         void imported.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: duration("--public-page-reveal-time", 160) }).finished.catch(() => {});
-        setTimeout(() => { if (!controller.signal.aborted) resetAnimation(); }, duration("--public-nav-pop-time", 340));
+        setTimeout(() => { if (!controller.signal.aborted) resetAnimation(); }, duration("--public-nav-pop-time", 340) + 180);
       } else resetAnimation();
       document.dispatchEvent(new CustomEvent("public-page-ready", { detail: { page: surface()?.dataset.publicPage, pop, state } }));
     } catch (error) {

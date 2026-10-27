@@ -1385,25 +1385,22 @@ keep their default 280ms and reduced motion remains immediate.
 
 ## Home arrival and checkout chrome
 
-`public/home-arrival.css` and the small parser-blocking `home-arrival.js` head
-script provide the day brand-to-landing transition. A normal, same-origin,
-unmodified brand activation records only the source geometry, timestamp,
-destination and surface colour in a short-lived, consumed sessionStorage
-entry. The source gets an engraved `.home-flight-cloud`; cloud and wordmark
-use the shared names `home-cloud` and `home-wordmark`. No page HTML, checkout
-form values or payment actions are transported by this transition.
+`public/home-arrival.css` and the parser-blocking `home-arrival.js` head
+script own the staged landing/navbar journey in both themes. Session storage
+carries only URL, timestamp, wordmark and link rectangles. Native cross-document
+transitions move `home-wordmark` and `home-link-0..3`; without support the same
+recorded geometry drives bounded Web Animations. No cloud is injected into
+the navbar. Modifier clicks, first visits and reduced motion remain native.
 
-Cross-document View Transitions retain native navigation and animate the
-shared geometry for 700ms while the old page fades into the landing blue.
-`pageswap`/`pagereveal` skip unrelated transitions. A render expectation on
-`#landing-ready` ensures the full landing markup is present before capturing
-it. Without cross-document support the destination animates from the recorded
-geometry and fades the recorded surface colour instead. Arrival uses a 300ms
-cloud-only squash/stretch and 180ms link reveals. The final landing geometry
-is reserved throughout, so the logo does not move again as the links appear.
-Transient names/clouds/inert controls are cleaned on completion, BFCache
-restoration and a bounded fallback. Reduced motion, modifier clicks, unavailable sessionStorage and normal first
-visits retain the native path. Night uses wordmark-only travel without day cloud art.
+Leaving landing retains its surface during flight, then `data-home-phase`
+advances through selection, rule, surface and content. The selected link grows
+its own cloud/light before its crown. The navbar rule then appears, the page
+background follows and the visible main region reveals from top to bottom.
+On return the source fades page/panels onto the landing background in 220ms
+without closing panel history first. Lettering moves back in pointer ink;
+only after arrival does the real landing cloud/gold ink appear, followed by
+the crown. Transient names, phases and inert controls clear on completion,
+BFCache restoration and a bounded fallback.
 
 `data-checkout-flow` is rendered from the existing `navbar_cart_current`
 context on a full flow page. `responsive-cart.js` updates it on adopted flow
@@ -1418,8 +1415,8 @@ resizing and reduced motion retain the shared controller behaviour.
 ## Landing exit and cart return travel
 
 `home-arrival.js` also owns landing-to-navbar (`mode: exit`) and current-cart
-return (`mode: cart`). Matching wordmark/cloud and `home-link-0..3` snapshots
-move into the actual header; labels use 480ms with 50ms offsets, the brand
+return (`mode: cart`). Matching wordmark and `home-link-0..3` snapshots
+move into the actual header; labels use 480ms with 45ms offsets, the brand
 650ms, and cart return 360ms. The selected link's own cloud appears after the
 landing exit. Unrelated native transitions are disabled by default. Only a
 recorded journey temporarily opts into cross-document transitions through an
@@ -1515,9 +1512,9 @@ amount is presented as the total. Empty carts retain numeric zero for calculatin
 a final removal, while the ordinary empty UI still hides the summary. New summary
 markup permits switching between money and count after an in-place mutation.
 
-The dark effects profile has `travel: wordmark` and `celebration: none`. Cloud
-creation/preloading is guarded in home-arrival.js; motion and native navigation
-retain the same owner, and reduced-motion behavior is unchanged.
+The dark effects profile has `travel: wordmark` and `celebration: none`.
+Travel never injects cloud art; the real day landing cloud is revealed only
+on arrival. Both themes share the motion owner and reduced-motion fallback.
 
 ## Shared cart layout and price-tag placement
 
@@ -1621,3 +1618,24 @@ own its fields. `--catalog-title-pointer-bg/text/border/shadow` own navigation
 feedback. Price/badge roles own information independently from action buttons.
 `--catalog-success-*` and the burst tokens own day confirmation feedback. Ops
 is excluded. Day rendered colours are unchanged by the night refinement.
+
+## Private product media and recovery
+
+`products/images.py` reuses each S3 URL for 300 seconds per cache worker,
+leaving most of its 3600-second signature lifetime unused. Storage/bucket and
+unique file name key the cache; replacing an image naturally changes the key.
+New/rebuilt objects use `Cache-Control: private, max-age=300`. Existing bucket
+objects are unchanged. This is URL/browser caching, not preloading the bucket.
+
+`product-images.js` handles card, detail, cart and Tom Select errors. It reads
+fresh HTML through an existing authorised same-origin page, extracts the
+current URL and makes one retry per image. Concurrent failures share a page
+fetch briefly; errors log only the object path. No credentials or form values
+are copied, and no bucket is made public. `data-product-thumbnail-url` lets
+product-page HTML refresh a card/cart thumbnail without downloading the full
+image. Detail transitions wait at most 900ms for display decoding. Cart rows
+are eager; dropdown warming is limited to visible option pictures.
+
+The detached product overlay remains at z-index 90; an open panel backdrop
+sits at 95 on desktop as well as mobile. A mobile cart preview remembers the
+current product URL, so dismissing it preserves the underlying detail/history.

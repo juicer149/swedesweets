@@ -312,9 +312,6 @@ details[data-mobile-menu]:not([data-panel-lit]) .mobile-menu-panel {
   html.catalog--detail-open:not(.mobile-menu-open) .site-header .site-nav__link[aria-current="page"] {
     pointer-events: auto;
   }
-  html.catalog--detail-open.menu-panel-open .menu-panel-backdrop {
-    z-index: 95;
-  }
 }
 .mobile-menu-close [hidden] { display: none; }
 .order-flow-busy .mobile-menu-close { pointer-events: none; opacity: .45; }
@@ -353,3 +350,6 @@ details[data-mobile-menu]:not([data-panel-lit]) .mobile-menu-panel {
   .site-menu__panel .language-switcher__option { font-size: 1.5rem; }
   .site-menu__legend { margin-bottom: var(--space-4); }
 }
+
+/* The detached product overlay sits at 90 on every viewport. */
+html.catalog--detail-open.menu-panel-open .menu-panel-backdrop { z-index: 95; }

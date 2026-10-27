@@ -6,16 +6,13 @@
   const root = document.documentElement;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const key = "swedesweets-home-flight";
-  const cloudURL = document.currentScript.dataset.cloud;
   const canMove = () => ["cloud", "wordmark"].includes(window.SwedeSweetsEffects?.profile().travel) && root.dataset.siteZone !== "ops" && !reduced.matches;
   const brandSelector = "a.site-brand[href], a.entrance-header__brand[href]";
   let outgoing = null;
   let started = false;
   let landed = false;
-  let cloud = null;
   let hero = null;
   let landing = null;
-  let warmImage = null;
   let flightSheet = null;
   function enableNative() {
     if (!("adoptedStyleSheets" in document) || !CSSStyleSheet.prototype.replaceSync) return;
@@ -45,29 +42,21 @@
   if (incoming && canMove()) {
     enableNative();
     root.classList.add(incoming.mode === "exit" ? "home-flight-exit-target" : incoming.mode === "cart" ? "cart-flight-target" : "home-flight-target");
-    // The marker is after the complete landing logo/menu, including streamed HTML.
+    root.dataset.homePhase = "flight";
+    // Wait for the destination geometry, including streamed HTML.
     const expect = document.createElement("link");
-    expect.rel = "expect"; expect.href = incoming.mode ? "#site-ready" : "#landing-ready";
+    expect.rel = "expect"; expect.href = ["exit", "cart"].includes(incoming.mode) ? "#site-ready" : "#landing-ready";
     expect.setAttribute("blocking", "render");
     document.head.append(expect);
   }
 
-  function makeCloud(parent, target = false) {
-    if (window.SwedeSweetsEffects?.profile().travel !== "cloud") return null;
-    const element = document.createElement("span");
-    element.className = "home-flight-cloud" + (target ? " home-flight-cloud--target" : "");
-    element.setAttribute("aria-hidden", "true");
-    element.style.backgroundImage = `url("${cloudURL}")`;
-    parent.append(element);
-    return element;
+  const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+  function headerEntries() {
+    return [...document.querySelectorAll(".site-header .site-nav__link[href]")].map((anchor, index) => ({
+      url: anchor.href, name: `home-link-${index}`, current: anchor.getAttribute("aria-current") === "page",
+      ...rect(anchor.querySelector(".site-nav__label")),
+    }));
   }
-  function warm(event) {
-    if (!canMove() || window.SwedeSweetsEffects?.profile().travel !== "cloud" || warmImage || !event.target.closest?.(brandSelector)) return;
-    warmImage = new Image(); warmImage.src = cloudURL;
-  }
-  document.addEventListener("pointerover", warm, true);
-  document.addEventListener("pointerdown", warm, true);
-  document.addEventListener("focusin", warm);
   document.addEventListener("click", event => {
     const brand = event.target.closest?.(brandSelector);
     if (!brand || !canMove() || event.defaultPrevented || event.button !== 0
@@ -77,14 +66,23 @@
     const art = brand.querySelector(".brand-logo");
     if (!art || url.origin !== location.origin || url.href === location.href) return;
     const box = art.getBoundingClientRect();
-    outgoing = { url: url.href, time: Date.now(), x: box.x, y: box.y,
-      width: box.width, height: box.height, background: getComputedStyle(document.body).backgroundColor };
+    if (outgoing) { event.preventDefault(); return; }
+    outgoing = { mode: "home", url: url.href, time: Date.now(), x: box.x, y: box.y,
+      width: box.width, height: box.height, links: headerEntries() };
     try { sessionStorage.setItem(key, JSON.stringify(outgoing)); } catch { outgoing = null; return; }
     enableNative();
-    root.classList.add("home-flight-source");
-    for (const old of brand.querySelectorAll(".home-flight-cloud")) old.remove();
-    makeCloud(brand);
-    // Do not intercept the link or close its open panel/history first.
+    event.preventDefault();
+    root.classList.add("home-flight-departing");
+    // Fade the page onto the landing surface before moving its navigation.
+    // Open panels travel away with the page; their history is never closed first.
+    void pause(220).then(() => {
+      root.classList.add("home-flight-source");
+      outgoing.links.forEach(entry => {
+        const anchor = [...document.querySelectorAll(".site-header .site-nav__link")].find(link => link.href === entry.url);
+        nameFor(anchor?.querySelector(".site-nav__label"), entry.name);
+      });
+      location.assign(url.href);
+    });
   });
 
   const rect = element => { const b = element.getBoundingClientRect(); return { x: b.x, y: b.y, width: b.width, height: b.height }; };
@@ -106,7 +104,6 @@
     enableNative();
     root.classList.add("home-flight-source-out");
     document.querySelector("[data-landing]").dataset.homeExit = "";
-    makeCloud(logo.closest(".landing__logo"), true);
     for (const [index, anchor] of [...document.querySelectorAll(".landing-menu__link")].entries()) nameFor(anchor.querySelector(".landing-menu__text"), `home-link-${index}`);
   }, true);
 
@@ -139,7 +136,7 @@
       if (Array.isArray(incoming.scroll)) scrollTo({ left: incoming.scroll[0], top: incoming.scroll[1], behavior: "instant" });
     } else {
       if (!logo) { transition?.skipTransition(); landed = true; reveal(); return; }
-      nameFor(logo, "home-wordmark"); cloud = makeCloud(logo.closest(".site-brand"));
+      nameFor(logo, "home-wordmark");
       const pairs = [];
       for (const entry of incoming.links || []) {
         const anchor = [...document.querySelectorAll(".site-header .site-nav__link[href]")].find(link => link.href === entry.url);
@@ -149,11 +146,26 @@
       if (transition) await transition.finished.catch(() => {});
       else await Promise.all([fly(logo, incoming, 650), ...pairs.map(([label, entry], index) => fly(label, entry, 480, index * 50))]);
     }
-    landed = true; reveal();
     if (incoming.mode === "exit") {
+      root.dataset.homePhase = "selection";
       const active = document.querySelector('.site-header .site-nav__link[aria-current="page"]');
-      active?.classList.add("is-nav-arriving"); setTimeout(() => active?.classList.remove("is-nav-arriving"), 220);
+      active?.classList.add("is-nav-arriving");
+      const pop = getComputedStyle(root).getPropertyValue("--public-nav-pop-time").trim();
+      const popMs = parseFloat(pop) * (pop.endsWith("ms") ? 1 : 1000);
+      await pause((Number.isFinite(popMs) ? popMs : 200) + 180);
+      active?.classList.remove("is-nav-arriving");
+      root.dataset.homePhase = "rule";
+      await pause(100);
+      root.dataset.homePhase = "surface";
+      await pause(160);
+      root.dataset.homePhase = "content";
+      const main = document.querySelector("main.site-main");
+      await main?.animate([
+        { opacity: 0, clipPath: "inset(0 0 100% 0)" },
+        { opacity: 1, clipPath: `inset(0 0 ${Math.max(0, main.offsetHeight - innerHeight)}px 0)` },
+      ], { duration: 340, easing: "ease-out", fill: "backwards" }).finished.catch(() => {});
     }
+    landed = true; reveal();
   }
 
   function prepare() {
@@ -163,48 +175,47 @@
     landing.classList.add("landing--seen");
     landing.dataset.homeArrival = "flying";
     for (const element of landing.querySelectorAll(".landing__top, .landing__menu, .landing__bottom")) element.inert = true;
-    cloud = makeCloud(hero, true);
+    for (const entry of incoming.links || []) {
+      const anchor = [...landing.querySelectorAll(".landing-menu__link")].find(link => link.href === entry.url);
+      nameFor(anchor?.querySelector(".landing-menu__text"), entry.name);
+      if (anchor && entry.current) {
+        for (const link of landing.querySelectorAll(".landing-menu__link")) link.classList.toggle("landing-menu__link--chosen", link === anchor);
+      }
+    }
     return true;
   }
   function reveal() {
     // Let the native pseudo-tree finish teardown before opting out again.
     requestAnimationFrame(() => requestAnimationFrame(disableNative));
     root.classList.remove("home-flight-target", "home-flight-exit-target", "cart-flight-target");
+    delete root.dataset.homePhase;
     for (const element of document.querySelectorAll("[data-home-travel-name]")) {
       element.style.removeProperty("view-transition-name");
       delete element.dataset.homeTravelName;
     }
-    for (const element of document.querySelectorAll(".home-flight-cloud")) element.remove();
     if (!landing) return;
     delete landing.dataset.homeArrival;
     for (const element of landing.querySelectorAll(".landing__top, .landing__menu, .landing__bottom")) element.inert = false;
-    cloud?.remove();
   }
   async function settle() {
     if (landed) return;
     landed = true;
     if (!landing || !canMove()) { reveal(); return; }
     landing.dataset.homeArrival = "braking";
-    // A small squash/stretch gives the engraved lobes a braking after-sway;
-    // the lettering remains steady as the menu appears.
-    const brake = cloud?.animate([
-      { transform: "scale(1)" },
-      { transform: "scale(1.08, .92)", offset: .25 },
-      { transform: "scale(.96, 1.04)", offset: .6 },
-      { transform: "scale(1)" },
-    ], { duration: 300, easing: "ease-out" });
-    const links = landing.querySelectorAll(".landing-menu li, .landing__tagline, .landing__top, .landing__bottom");
+    // The actual landing cloud/ink appears only after the wordmark lands.
+    root.dataset.homePhase = "selection";
+    const links = landing.querySelectorAll(".landing__tagline, .landing__top, .landing__bottom");
     for (const [index, element] of [...links].entries()) {
       element.animate([{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }],
         { duration: 180, delay: Math.min(index * 25, 100), easing: "ease-out", fill: "backwards" });
     }
-    await brake?.finished.catch(() => {});
+    await pause(440);
     reveal();
   }
   async function start(transition) {
     if (started) return;
     started = true;
-    if (incoming?.mode && canMove()) { await enterNavbar(transition); return; }
+    if (["exit", "cart"].includes(incoming?.mode) && canMove()) { await enterNavbar(transition); return; }
     if (!prepare()) { transition?.skipTransition(); reveal(); return; }
     if (transition) {
       await transition.finished.catch(() => {});
@@ -217,8 +228,11 @@
         { transform: "none" },
       ], { duration: 700, easing: "cubic-bezier(.2,.7,.2,1)" });
       hero.style.transformOrigin = "0 0";
-      landing.animate([{ backgroundColor: incoming.background }, { backgroundColor: getComputedStyle(landing).backgroundColor }], { duration: 650, easing: "ease-out" });
-      await flight.finished.catch(() => {});
+      const pairs = (incoming.links || []).map(entry => {
+        const anchor = [...landing.querySelectorAll(".landing-menu__link")].find(link => link.href === entry.url);
+        return [anchor?.querySelector(".landing-menu__text"), entry];
+      }).filter(([label]) => label);
+      await Promise.all([flight.finished.catch(() => {}), ...pairs.map(([label, entry], index) => fly(label, entry, 500, index * 45))]);
       hero.style.transformOrigin = "";
     }
     void settle();
@@ -243,10 +257,9 @@
   });
   window.addEventListener("pageshow", event => {
     if (!event.persisted) return;
-    root.classList.remove("home-flight-source", "home-flight-source-out", "home-flight-target", "home-flight-exit-target", "cart-flight-target");
+    root.classList.remove("home-flight-source", "home-flight-source-out", "home-flight-departing", "home-flight-target", "home-flight-exit-target", "cart-flight-target");
     document.querySelector("[data-home-exit]")?.removeAttribute("data-home-exit");
-    for (const element of document.querySelectorAll(".home-flight-cloud")) element.remove();
     reveal(); outgoing = null;
   });
-  if (incoming) setTimeout(() => { if (!landed) { started = true; landed = true; reveal(); } }, 2000);
+  if (incoming) setTimeout(() => { if (!landed) { started = true; landed = true; reveal(); } }, 5000);
 })();

@@ -536,6 +536,9 @@ function initCatalog() {
       throw new Error("not a product");
     }
 
+    // Warm/decode the large image before a transition captures it. A bounded
+    // wait keeps a slow media server from holding navigation indefinitely.
+    await window.SwedeSweetsProductImages?.ready(article);
     return {
       section: article.closest(".page-section") || article,
       title: page.title,

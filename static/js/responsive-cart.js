@@ -156,7 +156,11 @@
     return loading;
   }
   document.addEventListener("toggle", event => {
-    if (event.target === cartMenu() && event.target.open && mobile.matches && !hosted) void loadCart();
+    if (event.target !== cartMenu() || !event.target.open || !mobile.matches) return;
+    // A product overlay changes history without replacing this document.
+    // Its URL, rather than the original catalog URL, owns this preview.
+    if (!directVisit && (!flowUrl || new URL(flowUrl).pathname !== location.pathname)) originUrl = location.href;
+    if (!hosted) void loadCart();
   }, true);
   document.addEventListener("navbar-cart-replacing", preserve);
   document.addEventListener("navbar-cart-refreshed", event => { if (!event.detail?.layoutOnly && hosted) mount(); });

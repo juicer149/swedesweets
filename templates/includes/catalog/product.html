@@ -24,7 +24,7 @@
 {% endcomment %}
 {% with tag=card.price_tag deal=card.only_deal %}
 <section class="page-section" aria-labelledby="product-title">
-  <article class="page product" data-product-page data-product-id="{{ product.id }}">
+  <article class="page product" data-product-page data-product-id="{{ product.id }}" data-product-thumbnail-url="{{ card.image_url|default:'' }}">
     <div class="product__main">
       {# The card's picture and label carry the names the catalog gives the opened card's, so on a computer they float here from it (catalog.js, view transitions). #}
       <div class="product__media">
@@ -145,6 +145,12 @@
                   required
                   data-quantity-input
                 >
+          <p class="tile__tag product__stock" data-product-stock {% if card.has_size_choice or initial_offer.available_units >= 10 %}hidden{% endif %}>
+            <span
+              class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %}"
+              data-product-stock-text
+            >{{ initial_offer.availability_label }}</span>
+          </p>
               </div>
             </div>
 
@@ -168,12 +174,7 @@
           </div>
           </div>
 
-          <p class="tile__tag product__stock" data-product-stock {% if card.has_size_choice or initial_offer.available_units >= 10 %}hidden{% endif %}>
-            <span
-              class="status-text {% if initial_offer.available_units < 10 %}status-text--warning{% else %}status-text--success{% endif %}"
-              data-product-stock-text
-            >{{ initial_offer.availability_label }}</span>
-          </p>
+
 
           <button
             class="tile__add product__add-button"

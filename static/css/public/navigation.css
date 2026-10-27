@@ -128,7 +128,7 @@
 }
 /* Both cloud animations begin on activation, without blocking navigation. */
 :root[data-motion-profile="cloud"]:not([data-site-zone="ops"]) .site-header .site-nav__link.is-nav-leaving::after {
-  animation: nav-cloud-depart 160ms ease-out both;
+  animation: nav-cloud-depart 160ms 80ms ease-out both;
   transition: none;
 }
 @keyframes nav-cloud-depart {
@@ -411,4 +411,19 @@
   :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header[data-mobile-panel] details[open] > .menu-dropdown-trigger {
     color: var(--state-here-ink);
   }
+}
+
+/* Selection arrives in two beats; departure removes the crown first. */
+:root:not([data-site-zone="ops"]) .site-nav__link.is-nav-leaving .site-nav__label::before,
+:root:not([data-site-zone="ops"]) .site-nav__link.is-nav-leaving .site-nav__icon::after {
+  opacity: 0; scale: .4; transition: opacity 70ms, scale 70ms;
+}
+:root:not([data-site-zone="ops"]) .site-nav__link.is-nav-arriving .site-nav__label::before,
+:root:not([data-site-zone="ops"]) .site-nav__link.is-nav-arriving .site-nav__icon::after {
+  animation: nav-crown-pop 160ms var(--public-nav-pop-time) ease-out both;
+}
+@keyframes nav-crown-pop { from { opacity: 0; scale: .4; } to { opacity: 1; scale: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .site-nav__link.is-nav-arriving .site-nav__label::before,
+  .site-nav__link.is-nav-arriving .site-nav__icon::after { animation: none !important; }
 }
