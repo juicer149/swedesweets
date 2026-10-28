@@ -11,7 +11,7 @@
     const brand = document.querySelector(".landing__logo-art");
     if (!brand) return;
     try { sessionStorage.setItem(layoutKey, JSON.stringify({ width: innerWidth, height: innerHeight, language: root.lang, theme: root.dataset.theme,
-      brand: box(brand), cloud: box(document.querySelector(".landing__logo")), cart: box(document.querySelector(".landing__cart-link")),
+      brand: box(brand), cloud: box(document.querySelector(".landing__logo")), cart: box(document.querySelector(".landing__cart-link")), menu: box(document.querySelector(".landing__top .site-menu > summary")),
       links: [...document.querySelectorAll(".landing-menu__link")].map(link => ({ url: link.href, ...box(link) })) })); } catch {}
   }
   function preview(record) {
@@ -22,7 +22,7 @@
       shell.querySelector("a").append(svg); document.body.append(shell); previews.push(shell);
       return { brand: box(shell.querySelector("a")), links: [] };
     }
-    shell.innerHTML = '<header class="site-header"><div class="container"><nav class="site-nav"><a class="site-brand"></a><div class="site-nav__content"><div class="site-nav__links"></div><div class="site-nav__auth"></div></div></nav></div><div class="site-nav-current"></div></header>';
+    shell.innerHTML = '<header class="site-header"><div class="container"><nav class="site-nav"><a class="site-brand"></a><div class="site-nav__content"><div class="site-nav__links"></div><div class="site-nav__auth"></div></div><div class="site-nav-current"></div></nav></div></header>';
     const svg = document.querySelector(".landing__logo-art").cloneNode(true); svg.setAttribute("class", "brand-logo site-brand__logo"); shell.querySelector(".site-brand").append(svg);
     const strip = shell.querySelector(".site-nav__links"), host = shell.querySelector(".site-nav-current");
     for (const original of document.querySelectorAll(".landing-menu__link")) {
@@ -35,16 +35,20 @@
     }
     strip.style.setProperty("--site-nav-count", document.querySelectorAll(".landing-menu__link").length);
     const auth = shell.querySelector(".site-nav__auth"), originalCart = document.querySelector(".landing__cart-link");
-    let cart;
-    if (originalCart) { cart = originalCart.cloneNode(true); cart.className = "site-nav-cart__trigger menu-dropdown-trigger"; auth.append(cart); }
+    const cart = document.createElement("summary");
+    if (originalCart) cart.append(...[...originalCart.childNodes].map(node => node.cloneNode(true)));
+    cart.className = "site-nav-cart__trigger menu-dropdown-trigger";
+    const cartSlot = document.createElement("div"); cartSlot.setAttribute("data-navbar-cart-container", "");
+    const cartDetails = document.createElement("details"); cartDetails.className = "site-nav-cart";
+    cartDetails.append(cart); cartSlot.append(cartDetails); auth.append(cartSlot);
     const menu = document.querySelector(".landing__top .site-menu > summary")?.cloneNode(true);
     if (menu) { const details = document.createElement("details"); details.className = "site-menu"; details.append(menu); auth.append(details); }
-    if (record.cart && cart) {
-      strip.style.display = "none"; cart.style.cssText = "position:absolute;left:50%;top:50%;translate:-50% -50%;";
-    }
+    if (record.cart) strip.style.display = "none";
     shell.querySelectorAll("[id]").forEach(e => e.removeAttribute("id"));
     document.body.append(shell); previews.push(shell);
-    return { brand: box(svg), cart: box(cart), links: [...shell.querySelectorAll(".site-nav__link")].map(link => ({ url: link.href, ...box(link) })) };
+    const cartBox = box(cart), header = box(shell.querySelector(".site-header"));
+    if (record.cart && cartBox && header) { cartBox.x = innerWidth / 2 - cartBox.width / 2; cartBox.y = header.y + header.height / 2 - cartBox.height / 2; }
+    return { brand: box(svg), cart: cartBox, menu: box(menu), links: [...shell.querySelectorAll(".site-nav__link")].map(link => ({ url: link.href, ...box(link) })) };
   }
   function homePreview(record) {
     // Direct visits may not have stored landing geometry yet. Measure the
@@ -63,7 +67,9 @@
     const cart = headerCartClone(); if (cart) shell.querySelector(".landing__top").append(cart);
     shell.querySelectorAll("[id], [data-home-travel-name]").forEach(e => { e.removeAttribute("id"); e.removeAttribute("data-home-travel-name"); e.style.removeProperty("view-transition-name"); });
     document.body.append(shell); previews.push(shell);
-    return { brand: box(record.cloudBrand ? shell.querySelector(".landing__logo") : svg), cart: box(cart), links: [...shell.querySelectorAll(".landing-menu__link")].map(a => ({ url: a.href, ...box(a) })) };
+    const menu = document.querySelector(".site-header .site-menu > summary")?.cloneNode(true);
+    if (menu) { const details = document.createElement("details"); details.className = "site-menu"; details.append(menu); shell.querySelector(".landing__top").append(details); }
+    return { brand: box(record.cloudBrand ? shell.querySelector(".landing__logo") : svg), cart: box(cart), menu: box(menu), links: [...shell.querySelectorAll(".landing-menu__link")].map(a => ({ url: a.href, ...box(a) })) };
   }
   function headerCartClone() {
     const original = document.querySelector(".site-header .site-nav-cart__trigger");
@@ -85,20 +91,25 @@
       try { const saved = JSON.parse(sessionStorage.getItem(layoutKey));
         if (saved?.width === innerWidth && saved.language === root.lang && saved.theme === root.dataset.theme) {
           const resize = b => b && ({ ...b, y: b.y * innerHeight / saved.height });
-          target = { brand: resize(record.cloudBrand ? saved.cloud : saved.brand), cart: resize(saved.cart), links: saved.links.map(b => ({ ...resize(b), url: b.url })) };
+          target = { brand: resize(record.cloudBrand ? saved.cloud : saved.brand), cart: resize(saved.cart), menu: resize(saved.menu), links: saved.links.map(b => ({ ...resize(b), url: b.url })) };
         }
       } catch {}
       if (!target) target = homePreview(record);
     } else { rememberLanding(); target = preview(record); }
     if (!target) return;
-    const delay = record.mode === "home" ? 180 : record.mode === "login" ? 260 : 0;
+    const delay = record.mode === "home" ? 180 : record.mode === "login" ? 260 : 100;
+    record.departureDelay = delay;
     record.motionStartAt = Date.now() + delay;
     record.endAt = record.motionStartAt + 600; record.continuous = true;
     parts = [[elements.brand, record], ...(elements.links || [])];
     if (elements.cart && record.cart) parts.push([elements.cart, record.cart]);
+    if (elements.sideCart && record.sideCart) parts.push([elements.sideCart, record.sideCart]);
+    if (elements.menu && record.menu) parts.push([elements.menu, record.menu]);
     move(elements.brand, target.brand, delay);
     for (const [element, entry] of elements.links || []) move(element, target.links.find(link => link.url === entry.url), delay);
     if (elements.cart) move(elements.cart, target.cart, delay);
+    if (elements.sideCart) move(elements.sideCart, target.cart, delay);
+    if (elements.menu) move(elements.menu, target.menu, delay);
     const waiting = document.createElement("div"); waiting.className = "home-network-wait"; waiting.setAttribute("role", "status");
     const burst = document.querySelector('template[data-status-burst="default"]')?.content.cloneNode(true);
     if (burst) waiting.append(burst);
@@ -109,8 +120,12 @@
   }
   function capture(record) {
     if (!record?.continuous) return;
-    record.remainingAtCapture = Math.max(60, record.endAt - Date.now());
-    record.progressAtCapture = Math.max(0, Math.min(1, (Date.now() - record.motionStartAt) / 600));
+    // Geometry and progress must use the same rendered animation frame, not
+    // wall time (which can run ahead while a new document is being prepared).
+    const elapsed = Number(motions[0]?.currentTime ?? 0) - record.departureDelay;
+    record.delayAtCapture = Math.max(0, -elapsed);
+    record.remainingAtCapture = Math.max(60, 600 - Math.max(0, elapsed));
+    record.progressAtCapture = Math.max(0, Math.min(1, elapsed / 600));
     for (const [element, entry] of parts) { const current = box(element); if (current) Object.assign(entry, current); }
   }
   function continuation(record) {

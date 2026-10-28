@@ -13,13 +13,13 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Keep desktop navigation stable between short and scrolling pages, on
-   the public site and in ops alike (opening a dashboard row that makes the
-   page scroll must not shift it sideways).
+/* Keep desktop navigation stable between landing, entrances and scrolling
+   pages, on the public site and in ops alike. Measurement shells must not
+   toggle the gutter by temporarily introducing a header into the document.
    Mobile sheets hide scrolling: reserving a desktop scrollbar gutter there
    would leave an empty strip along the right edge in desktop mobile previews. */
 @media (min-width: 768px) {
-  html:has(.site-header) {
+  html {
     scrollbar-gutter: stable;
   }
 }

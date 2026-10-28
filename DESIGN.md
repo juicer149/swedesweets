@@ -824,11 +824,16 @@ retain their usual disclosure timing.
 ### Returning home and focused checkout navigation
 
 The browser starts its normal destination request immediately on activation.
-`home-departure.js` moves the existing brand/link/cart while that response is
+`home-departure.js` moves the existing brand, links, cart and Menu while that response is
 pending; no second HTML request or form interception is involved. A recorded
 landing layout (or an inert measurement) supplies target geometry. The next
 document captures the current source rectangles and only completes remaining
-travel time. When the response outlasts the journey, the existing crown burst
+travel time, sampled from the same animation clock as the captured geometry.
+On departure, slogan/login and unused mobile links fade in the first 90–100ms
+before the travel begins. Desktop reserves the same scrollbar gutter on landing
+and entrances as on content pages, including during inert measurements. Cart and
+Menu travel as whole triggers in both directions; their own panel transitions
+do not compete with the journey. When the response outlasts the journey, the existing crown burst
 waits on the landing surface. Reduced motion remains ordinary navigation.
 
 On mobile only the chosen link travels to the header centre. Other links stay

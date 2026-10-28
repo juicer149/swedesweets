@@ -1729,3 +1729,33 @@ the next painted frame, rather than adding a separate 160ms wait.
 Obsolete `.checkout-order`/list styles, `.site-nav__auth-action` selectors and
 `--cart-text-inset` are removed after a template/script reference check.
 `.checkout-order__title` remains for review and delivery confirmation headings.
+
+
+## Landing departure and matching trigger geometry
+
+Desktop `base.css` reserves the scrollbar gutter on every page, rather than
+only when `html:has(.site-header)` matches. The temporary header in an inert
+measurement shell must not change the source page's layout. The mobile current
+link host in that shell lives inside `.site-nav`, matching `current-nav.js`.
+The cart slot is measured even when the landing has no cart link yet.
+
+Slogan and login fade over 90ms before ordinary 600ms travel starts at 100ms;
+unused mobile links fade in the same lead-in. Login retains its 260ms fold and
+return-home its 180ms page fade. These delays overlap the one immediate request.
+`home-menu` and `home-cart` carry whole triggers in both directions. A separate
+`sideCart` rectangle preserves an unselected landing cart without treating an
+ordinary destination as checkout. Checkout target geometry uses the header's
+centre, including its border, just like the panel controller.
+
+Capture reads the source WAAPI animation's `currentTime` for both the remaining
+lead-in and motion progress. `pageswap` captures once; `pagehide` only supplies a
+fallback, so it cannot replace the geometry used by the native old snapshot.
+Named groups animate geometry without the browser's default old/new crossfade.
+The root's forward fade respects the remaining lead-in, and trigger panel
+transitions are suppressed only while the shared journey owns their motion.
+
+Before the incoming journey is prepared, travelling elements keep their layout
+but are hidden. Native `pagereveal` prepares them before its snapshot; the
+WAAPI fallback prepares them on the first animation frame after DOM readiness,
+rather than a 50ms timer. This prevents a final-position flash before fallback
+travel begins. `reveal()` clears this preparation state, including BFCache.

@@ -14,7 +14,7 @@
     return b.width > 0 && b.height > 0 ? { x: b.x, y: b.y, width: b.width, height: b.height } : null;
   };
   const homeClasses = ["home-flight-source", "home-flight-source-out", "home-flight-departing", "home-flight-target", "home-flight-exit-target", "home-flight-login-target", "cart-flight-target"];
-  let outgoing = null, started = false, landed = false, landing = null, flightSheet = null;
+  let outgoing = null, started = false, landed = false, landing = null, flightSheet = null, capturedSwap = false;
   const sourceMotions = [];
   function enableNative() {
     if (!("adoptedStyleSheets" in document) || !CSSStyleSheet.prototype.replaceSync) return;
@@ -89,6 +89,7 @@
     ], { duration, delay, easing: window.SwedeSweetsHomeDeparture?.continuation(incoming) || "cubic-bezier(.2,.7,.2,1)", fill: "backwards" }).then(() => { element.style.transformOrigin = ""; });
   }
   function headerCart() { return document.querySelector(".site-header .site-nav-cart__trigger"); }
+  function headerMenu() { return document.querySelector(".site-header .site-menu > summary"); }
   function startHome(url) {
     if (!canMove() || outgoing) return false;
     const brand = document.querySelector(".site-brand .brand-logo, .entrance-header__brand");
@@ -96,7 +97,7 @@
     const box = rect(brand);
     if (!box) return false;
     const cart = rect(headerCart());
-    const record = { mode: "home", url, time: Date.now(), ...box, cloudBrand, links: entries(".site-header .site-nav__link[href]"), cart };
+    const record = { mode: "home", url, time: Date.now(), ...box, cloudBrand, links: entries(".site-header .site-nav__link[href]"), cart, menu: rect(headerMenu()) };
     if (!remember(record)) return false;
     root.classList.add("home-flight-departing");
     if (cloudBrand) root.dataset.homeCloudBrand = "";
@@ -104,7 +105,8 @@
     nameFor(brand, cloudBrand ? "home-brand" : "home-wordmark");
     const pairs = matchLinks(record, ".site-header .site-nav__link[href]");
     if (cart) nameFor(headerCart(), "home-cart");
-    window.SwedeSweetsHomeDeparture?.start(record, { brand, links: pairs, cart: headerCart() });
+    if (record.menu) nameFor(headerMenu(), "home-menu");
+    window.SwedeSweetsHomeDeparture?.start(record, { brand, links: pairs, cart: headerCart(), menu: headerMenu() });
     remember(record);
     location.assign(url);
     return true;
@@ -124,7 +126,9 @@
     const box = rect(brand);
     if (!box) return;
     const record = { mode: login ? "login" : "exit", url: link.href, time: Date.now(), ...box,
-      cloudBrand: login, links: login || cart ? [] : entries(".landing-menu__link[href]", link), cart: cart ? rect(link) : null };
+      cloudBrand: login, links: login || cart ? [] : entries(".landing-menu__link[href]", link), cart: cart ? rect(link) : null,
+      sideCart: !login && !cart ? rect(landing.querySelector(".landing__cart-link")) : null,
+      menu: !login ? rect(landing.querySelector(".site-menu > summary")) : null };
     if (!remember(record)) return;
     if (cart) document.dispatchEvent(new Event("cart-navigation-start"));
     event.preventDefault();
@@ -138,8 +142,12 @@
       link.dataset.homeChosen = "";
     }
     if (cart) { link.dataset.homeChosen = ""; nameFor(link, "home-cart"); }
+    const sideCart = record.sideCart ? landing.querySelector(".landing__cart-link") : null;
+    const menu = record.menu ? landing.querySelector(".site-menu > summary") : null;
+    if (sideCart) nameFor(sideCart, "home-cart");
+    if (menu) nameFor(menu, "home-menu");
     nameFor(brand, login ? "home-brand" : "home-wordmark");
-    window.SwedeSweetsHomeDeparture?.start(record, { brand, links: pairs, cart: cart ? link : null });
+    window.SwedeSweetsHomeDeparture?.start(record, { brand, links: pairs, cart: cart ? link : null, sideCart, menu });
     remember(record);
     location.assign(record.url);
     // Fold login controls while the request and brand travel are underway.
@@ -200,8 +208,10 @@
     nameFor(brand, incoming.cloudBrand ? "home-brand" : "home-wordmark");
     const pairs = matchLinks(incoming, ".site-header .site-nav__link[href]");
     if (incoming.cart) { nameFor(headerCart(), "home-cart"); pairs.push([headerCart(), incoming.cart]); }
+    if (incoming.sideCart) { nameFor(headerCart(), "home-cart"); pairs.push([headerCart(), incoming.sideCart]); }
+    if (incoming.menu) { nameFor(headerMenu(), "home-menu"); pairs.push([headerMenu(), incoming.menu]); }
     if (transition) await transition.finished.catch(() => {});
-    else await Promise.all([fly(brand, incoming, remaining()), ...pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? 0 : index * 35))]);
+    else await Promise.all([fly(brand, incoming, remaining(), incoming.delayAtCapture || 0), ...pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? incoming.delayAtCapture || 0 : index * 35))]);
     await finishPage();
   }
   function prepareHome() {
@@ -219,6 +229,10 @@
       const cart = landing.querySelector(".landing__cart-link");
       if (cart) { nameFor(cart, "home-cart"); pairs.push([cart, incoming.cart]); }
     }
+    if (incoming.menu) {
+      const menu = landing.querySelector(".site-menu > summary");
+      if (menu) { nameFor(menu, "home-menu"); pairs.push([menu, incoming.menu]); }
+    }
     return { brand, pairs };
   }
   function reveal() {
@@ -226,7 +240,7 @@
     requestAnimationFrame(() => requestAnimationFrame(disableNative));
     root.classList.remove(...homeClasses);
     root.style.removeProperty("--home-travel-remaining"); root.style.removeProperty("--home-travel-stagger"); root.style.removeProperty("--home-travel-easing");
-    delete root.dataset.homePhase; delete root.dataset.homeCloudBrand; delete root.dataset.homeCart;
+    delete root.dataset.homePhase; delete root.dataset.homeCloudBrand; delete root.dataset.homeCart; delete root.dataset.homePrepared;
     for (const element of document.querySelectorAll("[data-home-travel-name]")) {
       element.style.removeProperty("view-transition-name"); delete element.dataset.homeTravelName;
     }
@@ -241,16 +255,17 @@
     started = true;
     if (incoming?.continuous) {
       root.style.setProperty("--home-travel-remaining", `${remaining()}ms`);
-      root.style.setProperty("--home-travel-stagger", "0ms");
+      root.style.setProperty("--home-travel-stagger", `${incoming.delayAtCapture || 0}ms`);
       root.style.setProperty("--home-travel-easing", window.SwedeSweetsHomeDeparture?.continuation(incoming) || "ease-out");
     }
     window.SwedeSweetsCurrentNav?.sync();
     if (!incoming || !canMove()) { transition?.skipTransition(); reveal(); return; }
+    root.dataset.homePrepared = "";
     if (incoming.mode !== "home") { await enterPage(transition); return; }
     const prepared = prepareHome();
     if (!prepared) { transition?.skipTransition(); reveal(); return; }
     if (transition) await transition.finished.catch(() => {});
-    else await Promise.all([fly(prepared.brand, incoming, remaining()), ...prepared.pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? 0 : index * 35))]);
+    else await Promise.all([fly(prepared.brand, incoming, remaining(), incoming.delayAtCapture || 0), ...prepared.pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? incoming.delayAtCapture || 0 : index * 35))]);
     landing.dataset.homeArrival = "braking"; root.dataset.homePhase = "selection";
     for (const element of landing.querySelectorAll(".landing__tagline, .landing__top, .landing__bottom")) {
       // The returning cart has its own flight, so don't fade its parent.
@@ -264,7 +279,7 @@
   }
   window.addEventListener("pageswap", event => {
     watchTransition(event.viewTransition);
-    if (outgoing) { window.SwedeSweetsHomeDeparture?.capture(outgoing); remember(outgoing); }
+    if (outgoing) { window.SwedeSweetsHomeDeparture?.capture(outgoing); remember(outgoing); capturedSwap = true; }
     if (!outgoing || !canMove() || event.activation?.entry?.url !== outgoing.url) event.viewTransition?.skipTransition();
   });
   window.addEventListener("pagereveal", event => {
@@ -273,17 +288,21 @@
     void start(event.viewTransition);
   });
   window.addEventListener("pagehide", () => {
-    if (outgoing) { window.SwedeSweetsHomeDeparture?.capture(outgoing); remember(outgoing); }
+    // pageswap owns the old snapshot. Do not overwrite its geometry with a
+    // second, later sample in pagehide; unsupported browsers use this fallback.
+    if (outgoing && !capturedSwap) { window.SwedeSweetsHomeDeparture?.capture(outgoing); remember(outgoing); }
   });
   document.addEventListener("DOMContentLoaded", () => {
-    if (incoming) setTimeout(() => { if (!started) void start(null); }, 50);
+    // pagereveal owns native snapshots. Fallback starts before a paint, not
+    // after a 50ms timer that can flash all triggers at their final positions.
+    if (incoming) requestAnimationFrame(() => { if (!started) void start(null); });
   });
   window.addEventListener("pageshow", event => {
     if (!event.persisted) return;
     window.SwedeSweetsHomeDeparture?.clear();
     for (const animation of sourceMotions.splice(0)) animation.cancel();
     document.querySelector("[data-home-exit]")?.removeAttribute("data-home-exit");
-    reveal(); outgoing = null;
+    reveal(); outgoing = null; capturedSwap = false;
   });
   if (incoming) setTimeout(() => { if (!landed) { started = true; reveal(); } }, 5000);
 })();
