@@ -823,18 +823,28 @@ retain their usual disclosure timing.
 
 ### Returning home and focused checkout navigation
 
-A logo click returns through the same staged journey in both themes, including
-from an open Menu/cart. The page fades onto the landing surface, then the
-navbar rule disappears and the wordmark and links move to their landing
-positions. Icons travel with their text as one link. Returning links use
-navbar rest ink and cannot flash a crown before the landing geometry is ready.
-The returning wordmark remains white/moonlight during travel.
-After arrival, day lettering swells into the real cloud and regains its brand
-colours; night lettering flickers briefly into gold like a warming lamp.
-The night first visit shares this flicker. The crown follows the cloud/ink.
-No extra cloud is attached to the navbar wordmark. The final landing layout
-is reserved throughout. Reduced motion keeps native navigation. Landing
-shows its cart link whenever it holds products, on mobile and desktop.
+The browser starts its normal destination request immediately on activation.
+`home-departure.js` moves the existing brand/link/cart while that response is
+pending; no second HTML request or form interception is involved. A recorded
+landing layout (or an inert measurement) supplies target geometry. The next
+document captures the current source rectangles and only completes remaining
+travel time. When the response outlasts the journey, the existing crown burst
+waits on the landing surface. Reduced motion remains ordinary navigation.
+
+On mobile only the chosen link travels to the header centre. Other links stay
+out of the flight; after the top header settles, its rule draws and the bottom
+navigation slides up, then the page is revealed. The real current anchor lives
+inside the sticky header while mobile, using `current-nav.js`, and returns to
+its original nav slot on desktop or when inactive. It does not depend on a
+fixed child inside the bottom bar, so toolbar/viewport resizing cannot detach
+it from the header. Normal public navigation keeps the header mounted.
+
+A logo click fades the page onto landing while the request is already running,
+then returns wordmark, selected link and cart. Crowns and clouds cannot flash
+before landing is ready. Returning wordmarks use white/moonlight until arrival,
+then day lettering reforms into its cloud or night lettering flickers into gold.
+Night first visits share the lamp effect. Login carries its whole existing brand.
+Landing shows its cart whenever it holds products, on mobile and desktop.
 
 Cart, review and result keep their current page/sheet design. Their navbar
 hides the ordinary page links, retaining the logo, Menu and the real cart
@@ -986,3 +996,21 @@ its current media URL. Failed retries report a path-only console diagnostic,
 never a signed query. Products without an image retain their normal placeholder.
 These measures cover delayed/expired media requests; production failures still
 need a Network status to distinguish delivery errors from other causes.
+
+
+### Compact cart metadata and night main actions
+
+`products.presentation` shares customer variant metadata between retail and
+business carts: a sole internal variant name is suppressed, food retains its
+weight, and merchandise shows the chosen size without shipping weight. Variant
+choices and translations are prefetched with cart rows. Retail names use the
+current catalog translation too. Historical order snapshots are not rewritten.
+On mobile the name moves above the controls, the stepper's top meets the name's
+bottom, the row amount stays below the stepper and trash remains at the top.
+The mobile cart's grid can shrink within its padded scrollport.
+
+Night primary actions use page/entrance background with blue text/edge on a
+fine-pointer desktop, moonlight at hover and gold text/edge/glow on press.
+Touch uses moonlight text/edge at rest and no sticky hover enlargement/glow.
+These are shared primary roles, including login, reset and business edit actions;
+the entrance reads its own background but shares border and pressed roles.

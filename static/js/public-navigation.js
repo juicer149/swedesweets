@@ -23,7 +23,7 @@
     return Number.isFinite(number) ? number * (value.endsWith("ms") ? 1 : 1000) : fallback;
   };
   const signature = root => JSON.stringify([
-    [...root.querySelectorAll(".site-header .site-nav__link[href]")].map(link => new URL(link.getAttribute("href"), location.origin).pathname),
+    [...root.querySelectorAll(".site-header .site-nav__link[href]")].map(link => new URL(link.getAttribute("href"), location.origin).pathname).sort(),
     root.querySelector("[data-navbar-cart-container]")?.dataset.navbarCartUrl,
     [...root.querySelectorAll("[data-site-menu] a[href], [data-site-menu] form[action]")].map(e => e.getAttribute("href") || e.getAttribute("action")),
   ]);
@@ -114,12 +114,13 @@
       if (!pop) history.pushState({ publicPage: true }, "", destination.href);
       renderedURL = location.href;
       const nextLinks = [...page.querySelectorAll(".site-header .site-nav__link[href]")];
-      links.forEach((link, index) => {
-        const active = nextLinks[index].getAttribute("aria-current") === "page";
+      links.forEach(link => {
+        const active = nextLinks.find(next => new URL(next.getAttribute("href"), location.origin).href === link.href)?.getAttribute("aria-current") === "page";
         link.classList.toggle("site-nav__link--active", active);
         if (active) { link.setAttribute("aria-current", "page"); if (motion) link.classList.add("is-nav-arriving"); }
         else link.removeAttribute("aria-current");
       });
+      document.dispatchEvent(new Event("navigation-current-changed"));
       currentMain.replaceWith(imported);
       committed = true;
       const footer = document.querySelector("footer.site-footer");

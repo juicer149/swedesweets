@@ -160,14 +160,15 @@
 /* The current customer destination occupies the header's centre on phones.
    It is the same link, so native navigation, focus and fetch history agree. */
 @media (max-width: 767px) {
-  .site-header .site-nav__links:has(> [aria-current="page"]) {
+  .site-header:has(.site-nav-current [aria-current="page"]) .site-nav__links {
     grid-template-columns: repeat(calc(var(--site-nav-count, 4) - 1), minmax(0, 1fr));
   }
   .site-header .site-nav__link[aria-current="page"] {
-    position: fixed;
-    top: 31px;
+    position: absolute;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) !important;
+    translate: -50% -50%;
+    transform: none;
     display: block;
     min-height: 0;
     max-width: calc(100vw - 190px);
@@ -243,11 +244,12 @@
   /* A hosted cart may take aria-current while it loads. Keep the fading
      page label in the header until the panel journey has settled. */
   :root:not([data-site-zone="ops"]) .site-header .is-mobile-panel-underlay:not([aria-current="page"]) {
-    position: fixed;
-    top: 31px;
+    position: absolute;
+    top: 50%;
     left: 50%;
     display: block;
-    transform: translate(-50%, -50%) !important;
+    translate: -50% -50%;
+    transform: none;
     min-height: 0;
     min-width: 4.5rem;
     padding: 0.3rem;
@@ -426,4 +428,9 @@
 @media (prefers-reduced-motion: reduce) {
   .site-nav__link.is-nav-arriving .site-nav__label::before,
   .site-nav__link.is-nav-arriving .site-nav__icon::after { animation: none !important; }
+}
+
+@media (max-width: 767px) {
+  .site-nav-current { position: absolute; inset: 0; pointer-events: none; }
+  .site-nav-current > .site-nav__link { pointer-events: auto; }
 }

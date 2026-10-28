@@ -174,6 +174,8 @@
   --button-solid-border-hover: var(--action-primary-hover-border);
   --button-solid-bg-active: var(--action-primary-active-bg);
   --button-solid-border-active: var(--action-primary-active-border);
+  --button-solid-text-active: var(--action-primary-active-text, var(--action-primary-text));
+  --button-solid-shadow-active: var(--action-primary-active-shadow, var(--shadow-pressed));
   --button-solid-shadow-hover: var(--action-primary-shadow);
   --button-solid-transform-hover: var(--action-primary-hover-transform);
   --button-solid-text-shadow-hover: var(--action-primary-text-shadow);
@@ -307,6 +309,8 @@
   --button-solid-border-hover: var(--action-primary-hover-border);
   --button-solid-bg-active: var(--action-primary-active-bg);
   --button-solid-border-active: var(--action-primary-active-border);
+  --button-solid-text-active: var(--action-primary-active-text, var(--action-primary-text));
+  --button-solid-shadow-active: var(--action-primary-active-shadow, var(--shadow-pressed));
   --button-solid-shadow-hover: var(--action-primary-shadow);
   --button-solid-transform-hover: var(--action-primary-hover-transform);
   --button-solid-text-shadow-hover: var(--action-primary-text-shadow);
@@ -353,9 +357,10 @@
 }
 
 .button--solid:active {
+  color: var(--button-solid-text-active, var(--button-solid-text-hover, var(--button-solid-text)));
   background: var(--button-solid-bg-active);
   border-color: var(--button-solid-border-active, var(--button-solid-bg-active));
-  box-shadow: var(--shadow-pressed);
+  box-shadow: var(--button-solid-shadow-active, var(--shadow-pressed));
   transform: translateY(0);
 }
 

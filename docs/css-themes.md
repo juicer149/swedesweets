@@ -257,120 +257,7 @@ light labels keep darker ink on paper. Each has its own status text roles.
 
 The page glow, display lettering's SVG shadows, contact icons, focus states,
 quantity controls and disabled controls also have theme roles. Review the
-page in both themes, with open/focused/error states, on a phone and desktop.
-
-## Verification and review scope
-
-The completed public dark theme was reviewed in Chrome and Firefox on mobile
-and desktop, including navigation, open/focused controls, catalog feedback,
-account/history and cart/checkout states. Light shares layout and behaviour,
-but its full palette review is still pending. Ops dark is not enabled.
-
-The cleanup is intended to preserve rendering: compare component paint,
-geometry and screenshots before/after in both palettes. The initial CSS move
-was also checked against main before the later design changes. Neither check
-is a claim of a loading-speed gain. Use the commands above for current test
-results rather than treating an old test count as a permanent guarantee.
-
-## Shared roles in the dark theme
-
-`themes/dark.css` defines shared roles first, followed by component mappings.
-Primitive colour scales stay in `tokens.css`. Component CSS continues to use
-its existing variables; the dark theme maps those variables to shared roles.
-Shared mappings make coordinated changes explicit. Light supplies the defaults;
-ops currently uses those light definitions.
-
-| Shared role | Component mappings / purpose |
-| --- | --- |
-| `--text-primary` | Ordinary main text and headings |
-| `--text-secondary` | Body/field ink and login/reset information |
-| `--text-reading` | `--prose-text`: About paragraphs and FAQ answers |
-| `--text-muted` | Muted metadata and entrance help |
-| `--interactive-text` | Quiet links, linked names, entrance links, closed FAQ questions and ready/pressed catalog cart ink |
-| `--interactive-text-hover` | Hover/focus for quiet links, linked names and entrance links |
-| `--interactive-text-subtle` | Navbar and footer links |
-| `--interactive-text-strong` | General links, control accents and contact email |
-| `--interactive-border` | Search focus border and catalog cart focus outline |
-| `--surface-bg`, `--surface-muted` | Standard and quiet panels, including label and missing-photo backgrounds |
-| `--surface-hover`, `--surface-active` | Shared field and stepper interaction backgrounds |
-| `--action-primary-bg`, `--action-primary-text` | Normal filled primary button background and text |
-| `--selected-accent` | Selected navigation item |
-| `--color-status-success-text`, `--color-status-warning-text` | Shared green success and orange warning text |
-| `--danger-text` | Strong red failure/removal feedback; general status prose retains its softer `--color-status-danger-text` |
-
-Text roles describe importance and purpose, not font size. Gold action,
-selection and decorative roles remain independent even when their primitive
-colour matches. Search ink, label ink, artwork and other deliberate exceptions
-keep their component-specific primitive references.
-
-To change related interactions together, edit `--interactive-text` near the
-top. To change only entrance links, edit `--entrance-link-text` in the entrance
-section instead. The same pattern applies to surfaces and text. Component
-variables remain available for exceptions; shared roles are not a requirement
-to make every similar-looking colour identical.
-
-Legacy names such as `--text-blue-strong` remain compatible mappings (this one
-uses neutral `--text-secondary` in dark). Layout, selectors, sizes and animation
-rules remain in their component files. The new shared names are defined and
-consumed within the dark theme, so light does not need matching declarations.
-
-## Editing reading text, search and FAQ colours
-
-These roles are grouped and commented in `static/css/themes/dark.css`.
-Their light defaults are in `themes/light.css`.
-
-| Role | Used by |
-|---|---|
-| `--prose-text` | About paragraphs and FAQ answers; excludes question headings and photo captions |
-| `--search-text` | Typed/selected text in catalog search, searchable quick jumps and B2B quick add |
-| `--search-placeholder` | Hints in those search fields, including Tom Select's empty item |
-| `--search-focus-border` | The catalog's inner focus ring and searchable Tom Select's active border |
-| `--search-focus-bg` | Focused/open searchable Tom Select controls |
-| `--search-focus-shadow` | The halo around focused/open searchable Tom Select controls |
-| `--faq-question-text` | A closed FAQ question's heading |
-| `--faq-question-open-text` | An open FAQ question's heading |
-| `--faq-question-hover-bg` | A closed FAQ question under the pointer |
-| `--faq-question-open-bg` | The open FAQ question's heading background |
-
-The FAQ maps its roles onto the common accordion locally, so its colours do not
-change Previous orders. `common/search.css` styles only actual search controls;
-size and sort selects keep their component palette. The generic `--focus-ring`
-continues to control other components, independently of search focus.
-
-## Navbar separator and link hover
-
-`--menu-edge` controls the line between the header and the page. Dark
-mixes it to a muted gold (45% accent-750 into the menu blue), so the edges
-frame quietly and only what is lit shines; the panels' top light keeps
-accent-750 itself. Both palettes
-set it explicitly, independently of `--menu-chosen`. The phone bar's outline
-follows it through `--menu-bar-edge`; override that separately when needed.
-
-Navbar links have no hover underline in either theme. `--menu-link-glow` is
-`none` in light and a soft yellow radial gradient in dark; by night it lights
-the current page, while hover and keyboard focus take the pointer's moonlit
-glow (`--state-pointer-glow`, Here, pointer and rest). On phones the halo sits
-behind the label. The current-page crown and keyboard focus outline remain visible.
-This navbar effect does not change the landing menu's own animation or the
-selected-language marker.
-
-## Night lights
-
-By night three sources light the dark palette, each a role in
-`themes/dark.css` (none by day): `--landing-moon-halo`, a soft moonlight
-halo round the start page's logo (the logo is the moon);
-`--catalog-shelf-glow`, a faint warm light along the catalog's shelf, whose
-stripes are blue at night (`--catalog-shelf-stripe`, `-alt`; yellow by day);
-and `--product-label-glow`, a faint lantern light behind an opened
-product's label, outside its edge only.
-
-## Product photos and product text
-
-`--photo-filter` (none by day; slightly dimmer and less saturated by night)
-applies to product photos on cards, the product page and cart lines, so
-their white backgrounds do not glare on the night palette; About's photos
-keep theirs. `--product-prose-text` colours a product's Description and
-Ingredients (light: body text; dark: moonlight). Catalog cards no longer
+page in both themes, with open/focused/error states…1664 tokens truncated…: moonlight). Catalog cards no longer
 lift on hover; their shadow, sheen and name light show they open.
 
 ## FAQ, missing product photos and customer footer
@@ -1385,41 +1272,47 @@ keep their default 280ms and reduced motion remains immediate.
 
 ## Home arrival and checkout chrome
 
-`public/home-arrival.css` and the parser-blocking `home-arrival.js` head
-script own landing/navbar, landing/cart and landing/login travel in both themes.
-Session storage carries only URL, time, selection and geometry. Whole link
-snapshots (`home-link-0..3`) include icon, text and active decoration, replacing
-separate icon/label snapshots. `home-wordmark` handles ordinary navigation;
-`home-brand` carries the complete login cloud/wordmark and `home-cart` carries
-the full cart trigger. Bounded Web Animations use the same elements without
-cross-document support. Modifier clicks and reduced motion remain native.
+`home-departure.js` and `home-arrival.js` load in the head before rendering.
+The browser's normal document request starts on the click, concurrently with
+source WAAPI travel. No prefetch/refetch pair, cached personalized HTML, body
+replacement or duplicate controller initialization is involved. Native
+cross-document snapshots (or fallback WAAPI) complete only remaining time in
+the next document. `endAt` bounds the journey; pageswap/pagehide record current
+rectangles. The old page shows the existing `status-burst` crown if travel
+finishes before the document arrives. Modifier clicks and reduced motion keep
+normal native behaviour.
 
-A landing click commits active before departure, with a 160ms selection beat.
-Day uses navbar blue on the link's own cloud, night gold/crown. Resting links
-use `--home-nav-rest`, mapped to `--theme-nav-rest-ink` by day and
-`--logo-rest-ink` by night. Active reads `--nav-link-here-ink`. Do not substitute
-the broad day `--state-rest-ink`/`--state-pointer-ink`: those are white/navy,
-not the customer navbar's pale blue and active blue. Hover is suppressed for
-the journey. Day wordmark departure is white; night departure uses the navbar
-rest blue without the crown. After flight, `data-home-phase` advances through
-selection (rule drawing), surface, content. The visible page reveals downward.
+The source keeps only navigation geometry in session storage: `home-wordmark`,
+whole `home-link-0..3`, complete login `home-brand`, and `home-cart`. Mobile
+records only the chosen link; others do not cross the screen towards the bottom
+bar. After flight, phases run selection (rule), bottom (180ms mobile bar rise),
+surface, content. Checkout has no bottom-nav phase. Desktop retains its full
+link journey. Source measurement shells are inert and removed before navigation
+snapshots. A same-width/language/theme landing record supplies return geometry;
+direct visits use an inert layout measurement instead.
 
-On return the page/panels fade onto the landing surface in 220ms without
-closing panel history first. Returning wordmarks use white/moonlight until
-arrival, then day letters reform into the real landing cloud or night letters
-flicker quickly into gold. Landing-link crowns are hidden by the incoming root
-class before the streamed markup can paint. The logo crown follows its cloud
-or ink. First-visit night lettering shares the lamp effect. Reduced motion
-turns it off. Names, phases, inert controls and source fold animations clear
-on completion/BFCache, with a bounded watchdog for incomplete arrivals.
+`current-nav.js` moves the same mobile active anchor into `.site-nav-current`
+inside the real primary nav, with a comment preserving each original slot.
+The host is absolute inside the sticky header; active text uses its centre,
+not a separate fixed visual viewport. The link returns on breakpoint changes,
+checkout entry or deactivation. Public navigation matches active links by URL
+and compares sorted route signatures, preserving the mounted header despite
+this DOM relocation. Scroll/viewport resize does not trigger measurements or
+style writes for the current link.
 
-Login folds menu/tagline/top/bottom towards the brand in 260ms before navigation.
-Its `entrance-header__brand--landing` modifier reuses the landing cloud art and
-185%/150% cloud-to-wordmark proportions; night retains its halo. Responsive
-wordmark width uses `clamp(7rem, min(35vw, 18dvh), 11rem)`. The form is hidden
-until arrival, then fades in. Reverse login travel carries the existing whole
-brand back; it does not manufacture a second cloud. Other auth headers keep
-their existing geometry.
+Navigation rest reads `--theme-nav-rest-ink` by day and `--logo-rest-ink` by
+night. Active reads `--nav-link-here-ink`. A landing click commits active before
+travel; night departure wordmark uses rest blue without its crown. Source home
+travel removes clouds/crowns and restores cart rest ink before motion. Landing
+clouds/crowns stay hidden during incoming flight; night gold/lamp effect starts
+only on arrival. Transient names, measurement nodes, source fold animations,
+waiting burst and inert controls clear on completion/BFCache restoration.
+
+Login folds its ancillary controls in 260ms while the request starts; its
+complete brand then moves for 600ms. `entrance-header__brand--landing` keeps the
+landing cloud proportions (185% width/150% height) at responsive wordmark width
+`clamp(7rem, min(35vw, 18dvh), 11rem)`. Night retains its halo. Form content fades
+in after arrival. Other auth header layouts retain their existing geometry.
 
 `data-checkout-flow` is rendered from the existing `navbar_cart_current`
 context on a full flow page. `responsive-cart.js` updates it on adopted flow
@@ -1433,23 +1326,20 @@ resizing and reduced motion retain the shared controller behaviour.
 
 ## Landing exit and cart return travel
 
-`home-arrival.js` owns landing-to-navbar/cart (`mode: exit`), login (`login`),
-return to landing (`home`) and ordinary browsing cart return (`cart`). The
-brand travels for 650ms; whole links use 600ms with 35ms offsets. Standalone
-cart-to-browsing icon return retains 360ms. Only a recorded journey temporarily
-opts into cross-document transitions via an adopted stylesheet, removed after
-native teardown. Other ordinary navigation keeps its existing controller.
+`home-arrival.js` owns landing-to-navbar/cart (`exit`), login (`login`), return
+to landing (`home`) and icon-only browsing cart return (`cart`). Ordinary
+source travel takes 600ms; return has a 180ms page-fade lead-in and login a
+260ms fold lead-in. Native destination duration is the remaining part of the
+same trip, with a 60ms minimum instead of replaying it after a slow response.
+Only a recorded journey opts into native cross-document navigation; other
+page controllers retain their own existing owners.
 
-A landing cart click dispatches `cart-navigation-start` before the journey
-consumes the click, allowing `cart-return.js` to remember its true origin.
-Its current-cart handler lets home travel own the whole return, including the
-220ms page fade, logo to landing and cart to its landing corner. During that
-departure the cart cloud fades in 80ms, its crown hides, and the icon uses
-`--home-nav-rest` before its snapshot is taken. The incoming landing cart uses
-the same rest ink throughout flight, so active blue cannot disappear against
-the landing blue (or gold linger in night mode). Other return
-URLs retain the small icon journey. Duplicate clicks cannot replace a pending
-home record or start competing navigation.
+A landing cart click dispatches `cart-navigation-start` so `cart-return.js`
+remembers the real origin before the travel owner consumes the click. The
+current cart and logo both return brand/cart to landing; other return URLs
+keep the 360ms icon journey. Cart cloud fades in 80ms before source motion and
+its icon uses the same rest ink on both sides, never active blue against blue.
+Duplicate clicks cannot overwrite a pending record or start competing travel.
 
 `cart-return.js` stores only a same-origin browsing URL, scroll position and
 timestamp in sessionStorage, before opening the cart. Opening/continuing an
@@ -1666,3 +1556,31 @@ are eager; dropdown warming is limited to visible option pictures.
 The detached product overlay remains at z-index 90; an open panel backdrop
 sits at 95 on desktop as well as mobile. A mobile cart preview remembers the
 current product URL, so dismissing it preserves the underlying detail/history.
+
+
+## Mobile cart row alignment and compact variants
+
+`products/presentation.py` supplies shared `cart_choice_label` and
+`cart_variant_label`. An internal name on a sole legacy variant is not shown
+as a customer choice. Food shows grams without duplicating a weight label;
+merchandise shows size without its logistics weight. Both cart channels prefetch
+variants and translations; retail row names now use the current catalog text.
+Existing historical order presentation/snapshots remain separate.
+
+In the mobile cart grid, brand/name occupy the upper text area; details and
+controls share the lower row, and the picture spans both. Zero row gap aligns
+the stepper's top with the name's bottom. Trash remains upper right and row
+amount remains below the stepper. The hosted flow page uses a `minmax(0, 1fr)`
+track and zero minimum width, so its contents fit inside scrollport padding
+on narrow phones.
+
+## Night primary action roles
+
+Night `--theme-action-ink` is blue, `--theme-action-bg` uses the page surface,
+hover ink/edge is moonlight and pressed ink/edge/glow is gold. Primary controls
+consume `--action-primary-active-text` and `--action-primary-active-shadow`
+through shared button variables, for both explicit place and default tones.
+Entrance controls use `--entrance-action-primary-bg` plus optional hover/active
+border roles; day falls back to its existing border. Coarse pointers/no-hover
+map night rest text/edge to moonlight and disable hover glow/transform. All
+palette values stay in the theme, and disabled states retain their own rules.

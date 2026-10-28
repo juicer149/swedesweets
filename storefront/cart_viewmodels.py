@@ -5,7 +5,7 @@ from decimal import Decimal
 from typing import Any
 
 from django.urls import reverse
-from django.utils.translation import gettext
+from django.utils.translation import get_language, gettext
 
 from carts.models import Cart, CartLine
 from common.lines import META_OFFER, META_TOTAL, LineView, meta, metas
@@ -13,6 +13,8 @@ from common.navbar_cart import NavbarCartLine
 from pricing.models import PriceAmount
 from products.catalog import variant_display_name
 from products.images import product_image_url
+from products.localization import own_catalog_text, translated_product_name
+from products.presentation import cart_choice_label, cart_variant_label
 
 
 @dataclass(frozen=True, slots=True)
@@ -188,6 +190,8 @@ def _load_cart_lines(
         )
         .prefetch_related(
             "commercial_price__amounts",
+            "commercial_price__product__variants",
+            "commercial_price__product__translations",
         )
         .order_by("id")
     )
@@ -204,14 +208,17 @@ def _build_line(
 
     return RetailCartLine(
         cart_line_id=line.id,
-        name=product.name,
+        name=(
+            own_catalog_text(product, language_code=get_language() or "en").name
+            or product.name
+        ),
         brand=product.brand,
-        variant_label=commercial_price.variant.label,
+        variant_label=cart_variant_label(product, commercial_price.variant),
         product_id=product.id,
         # "Hoodie — M": the size when the product has several.
         product_label=variant_display_name(
-            product.display_name,
-            commercial_price.variant.label,
+            translated_product_name(product, language_code=get_language() or "en"),
+            cart_choice_label(product, commercial_price.variant),
         ),
         product_url=reverse(
             "storefront:product_detail",

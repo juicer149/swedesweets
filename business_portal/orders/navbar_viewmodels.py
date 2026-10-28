@@ -36,6 +36,7 @@ def build_business_navbar_cart(
         )
         .prefetch_related(
             "commercial_price__amounts",
+            "commercial_price__product__variants",
             "commercial_price__product__translations",
         )
         .order_by("id")

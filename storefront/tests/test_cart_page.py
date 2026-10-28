@@ -259,3 +259,28 @@ def test_the_trash_asks_by_the_products_name_and_removes_in_place(
         f"Remove {retail_price.product.display_name} from the order?"
         in html
     )
+
+
+@pytest.mark.django_db
+def test_french_cart_uses_translation_without_a_legacy_variant_name(
+    client, cart_with_line
+):
+    from django.conf import settings
+
+    from products.models import ProductTranslation, ProductVariant
+
+    _, line = cart_with_line
+    product = line.commercial_price.product
+    variant = line.commercial_price.variant
+    ProductVariant.objects.filter(pk=variant.pk).update(label="Internal Swedish title")
+    ProductTranslation.objects.update_or_create(
+        product=product, language_code="fr", defaults={"name": "Titre français"}
+    )
+    client.cookies[settings.LANGUAGE_COOKIE_NAME] = "fr"
+    response = client.get(reverse("storefront:cart"))
+    (presented,) = response.context["cart_lines"]
+    assert presented.name == "Titre français"
+    assert presented.variant_label == f"{variant.weight_per_unit} g"
+    assert '<span class="cart-line__meta">Internal Swedish title</span>' not in (
+        response.content.decode()
+    )

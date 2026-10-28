@@ -133,15 +133,15 @@
 :is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-old(root) { animation: home-content-out 160ms ease-out both; }
 :is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-new(root) { animation: none; }
 :is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-group(home-wordmark),
-:is(.home-flight-target, .home-flight-login-target)::view-transition-group(home-brand) { z-index: 2; animation-duration: 650ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+:is(.home-flight-target, .home-flight-login-target)::view-transition-group(home-brand) { z-index: 2; animation-duration: var(--home-travel-remaining, 650ms); animation-timing-function: cubic-bezier(.2,.7,.2,1); }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-0),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-cart) { z-index: 3; animation-duration: 600ms; animation-timing-function: cubic-bezier(.2,.7,.2,1); }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1) { animation-delay: 35ms; }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2) { animation-delay: 70ms; }
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3) { animation-delay: 105ms; }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-cart) { z-index: 3; animation-duration: var(--home-travel-remaining, 600ms); animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1) { animation-delay: var(--home-travel-stagger, 35ms); }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2) { animation-delay: var(--home-travel-stagger, 70ms); }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3) { animation-delay: var(--home-travel-stagger, 105ms); }
 .cart-flight-target::view-transition-group(cart-return-icon) { animation-duration: 360ms; animation-timing-function: cubic-bezier(.22,.7,.2,1); z-index: 3; }
 @keyframes home-content-out { to { opacity: 0; } }
 @keyframes home-content-in { from { opacity: 0; } to { opacity: 1; } }
@@ -175,3 +175,22 @@
   .landing .landing__logo::before, .landing .landing__logo-art,
   .landing .brand-logo__wordmark, .landing .brand-logo__crown { animation: none !important; }
 }
+
+/* Measurement shells are inert and never painted or named for transition. */
+.home-measure { position: fixed; inset: 0; visibility: hidden; pointer-events: none; }
+.home-measure .site-header { position: absolute; inset: 0 0 auto; }
+.home-network-wait { position: fixed; inset: 40% 0 auto; display: grid; place-items: center; z-index: 110; pointer-events: none; }
+.home-flight-departing .site-brand::before { display: none !important; }
+.home-flight-departing .site-brand .brand-logo { filter: none !important; }
+@media (max-width: 767px) {
+  .home-flight-source-out .landing-menu__link:not([data-home-chosen]) { opacity: 0; transition: opacity 100ms; }
+  .home-flight-target[data-home-phase="flight"] .landing-menu__link:not([data-home-chosen]) { opacity: 0; }
+  .home-flight-departing .site-nav__links { opacity: 0; translate: 0 120%; transition: opacity 100ms, translate 160ms; }
+  .home-flight-exit-target:is([data-home-phase="flight"], [data-home-phase="selection"]) .site-nav__links { opacity: 0; translate: 0 120%; }
+  .home-flight-exit-target[data-home-phase="bottom"] .site-nav__links { animation: home-bottom-in 180ms ease-out both; }
+  .home-flight-exit-target[data-home-phase="bottom"] :is(main.site-main, .site-footer) { opacity: 0; visibility: hidden; }
+  .home-flight-exit-target[data-home-phase="bottom"] body { background: var(--menu-bg); }
+}
+@keyframes home-bottom-in { from { opacity: 0; translate: 0 120%; } to { opacity: 1; translate: 0 0; } }
+
+.home-flight-source-out:not([data-home-cloud-brand]) .landing__logo-art { filter: none !important; }

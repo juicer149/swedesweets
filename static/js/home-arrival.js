@@ -3,6 +3,7 @@
 (() => {
   "use strict";
   const root = document.documentElement;
+  const mobile = matchMedia("(max-width: 767px)");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const key = "swedesweets-home-flight";
   const canMove = () => ["cloud", "wordmark"].includes(window.SwedeSweetsEffects?.profile().travel) && root.dataset.siteZone !== "ops" && !reduced.matches;
@@ -57,7 +58,7 @@
   function entries(selector, chosen) {
     return [...document.querySelectorAll(selector)].flatMap((anchor, index) => {
       const box = rect(anchor);
-      return box ? [{ url: anchor.href, name: `home-link-${index}`, current: chosen ? anchor === chosen : anchor.getAttribute("aria-current") === "page", ...box }] : [];
+      return box && (!mobile.matches || (chosen ? anchor === chosen : anchor.getAttribute("aria-current") === "page")) ? [{ url: anchor.href, name: `home-link-${index}`, current: chosen ? anchor === chosen : anchor.getAttribute("aria-current") === "page", ...box }] : [];
     });
   }
   function matchLinks(record, selector) {
@@ -99,13 +100,13 @@
     if (!remember(record)) return false;
     root.classList.add("home-flight-departing");
     if (cloudBrand) root.dataset.homeCloudBrand = "";
-    void pause(220).then(() => {
-      root.classList.add("home-flight-source");
-      nameFor(brand, cloudBrand ? "home-brand" : "home-wordmark");
-      matchLinks(record, ".site-header .site-nav__link[href]");
-      if (cart) nameFor(headerCart(), "home-cart");
-      location.assign(url);
-    });
+    root.classList.add("home-flight-source");
+    nameFor(brand, cloudBrand ? "home-brand" : "home-wordmark");
+    const pairs = matchLinks(record, ".site-header .site-nav__link[href]");
+    if (cart) nameFor(headerCart(), "home-cart");
+    window.SwedeSweetsHomeDeparture?.start(record, { brand, links: pairs, cart: headerCart() });
+    remember(record);
+    location.assign(url);
     return true;
   }
   document.addEventListener("click", event => {
@@ -131,13 +132,17 @@
     if (login) root.dataset.homeCloudBrand = "";
     if (cart) root.dataset.homeCart = "";
     landing.dataset.homeExit = login ? "login" : cart ? "cart" : "nav";
+    let pairs = [];
     if (!login && !cart) {
-      matchLinks(record, ".landing-menu__link[href]");
+      pairs = matchLinks(record, ".landing-menu__link[href]");
       link.dataset.homeChosen = "";
     }
     if (cart) { link.dataset.homeChosen = ""; nameFor(link, "home-cart"); }
     nameFor(brand, login ? "home-brand" : "home-wordmark");
-    // Commit the selected state while still on landing, then move it intact.
+    window.SwedeSweetsHomeDeparture?.start(record, { brand, links: pairs, cart: cart ? link : null });
+    remember(record);
+    location.assign(record.url);
+    // Fold login controls while the request and brand travel are underway.
     // Login folds its controls towards the cloud before the cloud moves.
     void (async () => {
       if (login) {
@@ -147,8 +152,7 @@
           return animate(element, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: `translate(${target.x + target.width / 2 - b.x - b.width / 2}px, ${target.y + target.height / 2 - b.y - b.height / 2}px) scale(.08)` }],
             { duration: 260, easing: "ease-in", fill: "forwards" });
         }));
-      } else await pause(160);
-      location.assign(record.url);
+      }
     })();
   }, true);
 
@@ -163,9 +167,14 @@
     if (remember({ mode: "cart", url, time: Date.now(), ...box, scroll })) nameFor(icon, "cart-return-icon");
     return false;
   } };
+  const remaining = () => incoming?.continuous ? Math.max(60, incoming.endAt - Date.now()) : 650;
   async function finishPage() {
     root.dataset.homePhase = "selection"; // the navbar rule begins here
     await pause(180);
+    if (mobile.matches && incoming.mode === "exit" && !incoming.cart) {
+      root.dataset.homePhase = "bottom";
+      await pause(180);
+    }
     root.dataset.homePhase = "surface";
     await pause(160);
     root.dataset.homePhase = "content";
@@ -192,7 +201,7 @@
     const pairs = matchLinks(incoming, ".site-header .site-nav__link[href]");
     if (incoming.cart) { nameFor(headerCart(), "home-cart"); pairs.push([headerCart(), incoming.cart]); }
     if (transition) await transition.finished.catch(() => {});
-    else await Promise.all([fly(brand, incoming), ...pairs.map(([element, from], index) => fly(element, from, 600, index * 35))]);
+    else await Promise.all([fly(brand, incoming, remaining()), ...pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? 0 : index * 35))]);
     await finishPage();
   }
   function prepareHome() {
@@ -216,6 +225,7 @@
     landed = true;
     requestAnimationFrame(() => requestAnimationFrame(disableNative));
     root.classList.remove(...homeClasses);
+    root.style.removeProperty("--home-travel-remaining"); root.style.removeProperty("--home-travel-stagger");
     delete root.dataset.homePhase; delete root.dataset.homeCloudBrand; delete root.dataset.homeCart;
     for (const element of document.querySelectorAll("[data-home-travel-name]")) {
       element.style.removeProperty("view-transition-name"); delete element.dataset.homeTravelName;
@@ -229,12 +239,17 @@
   async function start(transition) {
     if (started) return;
     started = true;
+    if (incoming?.continuous) {
+      root.style.setProperty("--home-travel-remaining", `${remaining()}ms`);
+      root.style.setProperty("--home-travel-stagger", "0ms");
+    }
+    window.SwedeSweetsCurrentNav?.sync();
     if (!incoming || !canMove()) { transition?.skipTransition(); reveal(); return; }
     if (incoming.mode !== "home") { await enterPage(transition); return; }
     const prepared = prepareHome();
     if (!prepared) { transition?.skipTransition(); reveal(); return; }
     if (transition) await transition.finished.catch(() => {});
-    else await Promise.all([fly(prepared.brand, incoming, 700), ...prepared.pairs.map(([element, from], index) => fly(element, from, 600, index * 35))]);
+    else await Promise.all([fly(prepared.brand, incoming, remaining()), ...prepared.pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? 0 : index * 35))]);
     landing.dataset.homeArrival = "braking"; root.dataset.homePhase = "selection";
     for (const element of landing.querySelectorAll(".landing__tagline, .landing__top, .landing__bottom")) {
       // The returning cart has its own flight, so don't fade its parent.
@@ -248,6 +263,7 @@
   }
   window.addEventListener("pageswap", event => {
     watchTransition(event.viewTransition);
+    if (outgoing) { window.SwedeSweetsHomeDeparture?.capture(outgoing); remember(outgoing); }
     if (!outgoing || !canMove() || event.activation?.entry?.url !== outgoing.url) event.viewTransition?.skipTransition();
   });
   window.addEventListener("pagereveal", event => {
@@ -255,11 +271,15 @@
     if (!incoming || !canMove()) { event.viewTransition?.skipTransition(); return; }
     void start(event.viewTransition);
   });
+  window.addEventListener("pagehide", () => {
+    if (outgoing) { window.SwedeSweetsHomeDeparture?.capture(outgoing); remember(outgoing); }
+  });
   document.addEventListener("DOMContentLoaded", () => {
     if (incoming) setTimeout(() => { if (!started) void start(null); }, 50);
   });
   window.addEventListener("pageshow", event => {
     if (!event.persisted) return;
+    window.SwedeSweetsHomeDeparture?.clear();
     for (const animation of sourceMotions.splice(0)) animation.cancel();
     document.querySelector("[data-home-exit]")?.removeAttribute("data-home-exit");
     reveal(); outgoing = null;

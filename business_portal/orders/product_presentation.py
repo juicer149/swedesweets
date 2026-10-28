@@ -14,6 +14,7 @@ from pricing.models import (
 from products.catalog import variant_display_name
 from products.localization import own_catalog_text, translated_product_name
 from products.models import Product, ProductVariant
+from products.presentation import cart_variant_label
 
 _REASON_LABELS = {
     CommercialPrice.Reason.SHORT_DATED: _("Short dated"),
@@ -115,10 +116,7 @@ def business_cart_line_presentation(
             own_catalog_text(product, language_code=language_code).name or product.name
         ),
         brand=product.brand,
-        variant_label=(
-            (f"{variant.label} · " if variant.label else "")
-            + _("%(weight)s g") % {"weight": variant.weight_per_unit}
-        ),
+        variant_label=cart_variant_label(product, variant),
         unit_price=amount.price if amount is not None else None,
         price_label=_business_price_label(
             (

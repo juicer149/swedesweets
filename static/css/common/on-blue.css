@@ -128,9 +128,11 @@ body.on-blue {
    The entrance role keeps both choices in the theme files. */
 .on-blue .button--tone-place {
   --button-solid-bg: var(--entrance-action-primary-bg);
+  --button-solid-bg-hover: var(--entrance-action-primary-hover-bg, var(--action-primary-hover-bg));
+  --button-solid-bg-active: var(--entrance-action-primary-active-bg, var(--action-primary-active-bg));
   --button-solid-border: var(--entrance-action-primary-border);
-  --button-solid-border-hover: var(--entrance-action-primary-border);
-  --button-solid-border-active: var(--entrance-action-primary-border);
+  --button-solid-border-hover: var(--entrance-action-primary-hover-border, var(--entrance-action-primary-border));
+  --button-solid-border-active: var(--entrance-action-primary-active-border, var(--entrance-action-primary-border));
 }
 
 /* Problems have their own theme roles, independent of links and focus. */
