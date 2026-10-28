@@ -82,12 +82,22 @@
   function fly(element, from, duration = 650, delay = 0) {
     const box = rect(element);
     if (!box || !from) return Promise.resolve();
+    const origin = element.style.transformOrigin, transform = element.style.transform;
+    const first = `translate(${from.x - box.x}px, ${from.y - box.y}px) scale(${from.width / box.width}, ${from.height / box.height})`;
+    // Firefox can paint a newly revealed element before its pending WAAPI
+    // effect is applied. Give that first frame the captured position too.
     element.style.transformOrigin = "0 0";
-    return animate(element, [
-      { transform: `translate(${from.x - box.x}px, ${from.y - box.y}px) scale(${from.width / box.width}, ${from.height / box.height})` },
-      { transform: "none" },
-    ], { duration, delay, easing: window.SwedeSweetsHomeDeparture?.continuation(incoming) || "cubic-bezier(.2,.7,.2,1)", fill: "backwards" }).then(() => { element.style.transformOrigin = ""; });
+    element.style.transform = first;
+    const motion = element.animate([{ transform: first }, { transform: "none" }], {
+      duration, delay, easing: window.SwedeSweetsHomeDeparture?.continuation(incoming) || "cubic-bezier(.2,.7,.2,1)", fill: "both",
+    });
+    return motion.finished.catch(() => {}).then(() => {
+      element.style.transform = transform;
+      element.style.transformOrigin = origin;
+      motion.cancel();
+    });
   }
+
   function headerCart() { return document.querySelector(".site-header .site-nav-cart__trigger"); }
   function headerMenu() { return document.querySelector(".site-header .site-menu > summary"); }
   function startHome(url) {
@@ -210,8 +220,10 @@
     if (incoming.cart) { nameFor(headerCart(), "home-cart"); pairs.push([headerCart(), incoming.cart]); }
     if (incoming.sideCart) { nameFor(headerCart(), "home-cart"); pairs.push([headerCart(), incoming.sideCart]); }
     if (incoming.menu) { nameFor(headerMenu(), "home-menu"); pairs.push([headerMenu(), incoming.menu]); }
+    const flights = transition ? [] : [fly(brand, incoming, remaining(), incoming.delayAtCapture || 0), ...pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? incoming.delayAtCapture || 0 : index * 35))];
+    root.dataset.homePrepared = "";
     if (transition) await transition.finished.catch(() => {});
-    else await Promise.all([fly(brand, incoming, remaining(), incoming.delayAtCapture || 0), ...pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? incoming.delayAtCapture || 0 : index * 35))]);
+    else await Promise.all(flights);
     await finishPage();
   }
   function prepareHome() {
@@ -265,12 +277,14 @@
     }
     window.SwedeSweetsCurrentNav?.sync();
     if (!incoming || !canMove()) { transition?.skipTransition(); reveal(); return; }
-    root.dataset.homePrepared = "";
+    document.dispatchEvent(new CustomEvent("order-flow-chrome"));
     if (incoming.mode !== "home") { await enterPage(transition); return; }
     const prepared = prepareHome();
     if (!prepared) { transition?.skipTransition(); reveal(); return; }
+    const flights = transition ? [] : [fly(prepared.brand, incoming, remaining(), incoming.delayAtCapture || 0), ...prepared.pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? incoming.delayAtCapture || 0 : index * 35))];
+    root.dataset.homePrepared = "";
     if (transition) await transition.finished.catch(() => {});
-    else await Promise.all([fly(prepared.brand, incoming, remaining(), incoming.delayAtCapture || 0), ...prepared.pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? incoming.delayAtCapture || 0 : index * 35))]);
+    else await Promise.all(flights);
     landing.dataset.homeArrival = "braking"; root.dataset.homePhase = "selection";
     for (const element of landing.querySelectorAll(".landing__tagline, .landing__top, .landing__bottom")) {
       // The returning cart has its own flight, so don't fade its parent.

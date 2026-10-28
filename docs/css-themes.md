@@ -1778,3 +1778,10 @@ come from the response; existing login/password-toggle handlers are reused.
 Reset submission remains native. Back/Forward swaps forms without intercepting
 Menu-only history changes, and request errors fall back to normal navigation.
 Catalog add buttons are raised by one quarter of their diameter.
+
+The fallback travel now stages its captured transform as an inline first frame
+before revealing incoming elements. WAAPI uses `fill: both`; completion restores
+the original inline styles and cancels the effect together. This prevents a
+pending animation from briefly exposing the element at its destination. The
+incoming chrome synchronizes before target geometry is measured, so checkout
+centering does not become a second movement beneath the cart's travel.
