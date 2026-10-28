@@ -688,7 +688,7 @@
   z-index: 2;
   /* its middle on the label's bottom edge: below the row, the label's
      foot padding and edge, then half itself */
-  bottom: calc(-1 * var(--tile-foot) - 1.5px - var(--tile-add-size) / 2);
+  bottom: calc(-1 * var(--tile-foot) - 1.5px - var(--tile-add-size) / 4);
   left: 50%;
   display: grid;
   place-items: center;

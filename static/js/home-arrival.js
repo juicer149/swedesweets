@@ -35,7 +35,7 @@
     try {
       const value = JSON.parse(sessionStorage.getItem(key));
       if (value?.url !== location.href || Date.now() - value.time > 10000) return null;
-      sessionStorage.removeItem(key);
+
       if (![value.time, value.x, value.y, value.width, value.height].every(Number.isFinite) || value.width <= 0 || value.height <= 0) return null;
       return value;
     } catch { return null; }
@@ -253,6 +253,11 @@
   async function start(transition) {
     if (started) return;
     started = true;
+    // A new document can parse its head before pageswap updates the record.
+    // Re-read at reveal, after the old document has captured its final frame.
+    const latest = read();
+    if (incoming && latest) Object.assign(incoming, latest);
+    try { sessionStorage.removeItem(key); } catch {}
     if (incoming?.continuous) {
       root.style.setProperty("--home-travel-remaining", `${remaining()}ms`);
       root.style.setProperty("--home-travel-stagger", `${incoming.delayAtCapture || 0}ms`);

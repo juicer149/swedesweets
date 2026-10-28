@@ -12,9 +12,9 @@ to " entrance-header--aside": the logo smaller, at the left.
 {% block body_attrs %} class="on-blue"{% endblock %}
 
 {% block navbar %}
-<header class="entrance-header{% block entrance_header_modifier %}{% endblock %}">
+<header class="entrance-header{% block entrance_header_modifier %} entrance-header--landing{% endblock %}">
   <a
-    class="entrance-header__brand{% block entrance_brand_modifier %}{% endblock %}"
+    class="entrance-header__brand{% block entrance_brand_modifier %} entrance-header__brand--landing{% endblock %}"
     href="{% url 'index' %}"
     aria-label="{% trans 'SwedeSweets home' %}"
   >
@@ -29,4 +29,6 @@ to " entrance-header--aside": the logo smaller, at the left.
 
 {% block scripts %}
 <script src="{% static 'js/password-toggle.js' %}" defer></script>
+<script src="{% static 'js/login.js' %}" defer></script>
+<script src="{% static 'js/auth-navigation.js' %}" defer></script>
 {% endblock %}

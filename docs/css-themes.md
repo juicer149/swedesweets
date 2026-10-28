@@ -1759,3 +1759,22 @@ but are hidden. Native `pagereveal` prepares them before its snapshot; the
 WAAPI fallback prepares them on the first animation frame after DOM readiness,
 rather than a 50ms timer. This prevents a final-position flash before fallback
 travel begins. `reveal()` clears this preparation state, including BFCache.
+
+
+## Entrance forms and travel capture timing
+
+The incoming travel record is re-read at reveal: the destination head can run
+before the outgoing pageswap capture. This prevents fallback travel from
+restarting at the original landing coordinates. Panel centring removes both
+the live CSS translate and the trigger's transform (including home travel)
+before calculating its layout slot; non-pixel translate serialization is
+resolved by a synchronous measurement.
+
+`auth_base.html` supplies the landing-sized entrance brand for login and reset
+forms. Its Menu stays in landing's top-right slot. `auth-navigation.js` enhances
+only the explicit login/reset GET links: the header stays mounted while the
+server-rendered form fades and changes height. Form actions and CSRF inputs
+come from the response; existing login/password-toggle handlers are reused.
+Reset submission remains native. Back/Forward swaps forms without intercepting
+Menu-only history changes, and request errors fall back to normal navigation.
+Catalog add buttons are raised by one quarter of their diameter.

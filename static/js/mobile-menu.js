@@ -91,12 +91,42 @@
       pageLink.inert = true;
     }
     const box = trigger.getBoundingClientRect();
-    const shift = getComputedStyle(trigger).translate.split(" ").map(value => parseFloat(value) || 0);
+    const values = getComputedStyle(trigger).translate.split(" ");
+    // Firefox may serialize translate as calc(...), not plain px. parseFloat
+    // then loses the existing offset and repeated sync accumulates movement.
+    const resolve = (value, size) => {
+      if (!value || value === "none") return 0;
+      if (/^-?[\d.]+px$/.test(value)) return parseFloat(value);
+      if (/^-?[\d.]+%$/.test(value)) return parseFloat(value) * size / 100;
+      return null;
+    };
+    let shift = [resolve(values[0], trigger.offsetWidth), resolve(values[1], trigger.offsetHeight)];
+    if (shift.includes(null)) {
+      const old = trigger.style.getPropertyValue("translate"), priority = trigger.style.getPropertyPriority("translate");
+      const transition = trigger.style.getPropertyValue("transition"), transitionPriority = trigger.style.getPropertyPriority("transition");
+      trigger.style.setProperty("transition", "none", "important");
+      trigger.style.setProperty("translate", "none", "important");
+      const rest = trigger.getBoundingClientRect();
+      shift = [box.x - rest.x, box.y - rest.y];
+      if (old) trigger.style.setProperty("translate", old, priority); else trigger.style.removeProperty("translate");
+      trigger.getBoundingClientRect();
+      if (transition) trigger.style.setProperty("transition", transition, transitionPriority); else trigger.style.removeProperty("transition");
+    }
     const bar = header.getBoundingClientRect();
     // Subtract the live translate, including a half-finished movement or a
     // newly refreshed cart fragment, to recover the unchanged layout slot.
-    const x = innerWidth / 2 - (box.left + box.width / 2 - shift[0]);
-    const y = bar.top + bar.height / 2 - (box.top + box.height / 2 - (shift[1] || 0));
+    // Home travel and feedback also transform this very trigger. Recover its
+    // layout rectangle before calculating the panel shift, or repeated sync
+    // mistakes the travelling position for its permanent navbar slot.
+    const style = getComputedStyle(trigger);
+    const matrix = new DOMMatrixReadOnly(style.transform === "none" ? undefined : style.transform);
+    const [ox, oy] = style.transformOrigin.split(" ").map(parseFloat);
+    const corners = [[0, 0], [trigger.offsetWidth, 0], [0, trigger.offsetHeight], [trigger.offsetWidth, trigger.offsetHeight]]
+      .map(([x, y]) => matrix.transformPoint({ x: x - ox, y: y - oy }));
+    const dx = Math.min(...corners.map(p => p.x)) + ox;
+    const dy = Math.min(...corners.map(p => p.y)) + oy;
+    const x = innerWidth / 2 - (box.left - dx + trigger.offsetWidth / 2 - shift[0]);
+    const y = bar.top + bar.height / 2 - (box.top - dy + trigger.offsetHeight / 2 - (shift[1] || 0));
     header.style.setProperty(`--mobile-${key}-shift-x`, `${x}px`);
     header.style.setProperty(`--mobile-${key}-shift-y`, `${y}px`);
     header.dataset.mobilePanel = key;
