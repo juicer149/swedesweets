@@ -1,11 +1,11 @@
 /* Shared local hover/focus light. Themes own its paint; layout stays here.
    Keep the name/question above the halo and leave secondary prose neutral. */
-:is(.menu-panel-link, .section-nav__link, .find-sweets .line__link, .glow-accordions .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand) {
+:is(.menu-panel-link, .section-nav__link, .find-sweets .line__link, .glow-accordions .accordion__summary, .landing-menu__link, .landing__account, .site-brand, .entrance-header__brand) {
   position: relative;
   isolation: isolate;
 }
 
-:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
+:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-brand, .entrance-header__brand)::before {
   content: "";
   position: absolute;
   inset: -0.6rem 0;
@@ -75,12 +75,12 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand):hover::before {
+  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-brand, .entrance-header__brand):hover::before {
     opacity: var(--interaction-halo-opacity);
   }
 }
 
-:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand):focus-visible::before {
+:is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-brand, .entrance-header__brand):focus-visible::before {
   opacity: var(--interaction-halo-opacity);
 }
 
@@ -96,7 +96,7 @@
 }
 
 /* The ink is solid; a small emission follows the actual glyph/icon shape. */
-:is(.menu-panel-link, .section-nav__link, .glow-accordions .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action):is(:hover, :focus-visible),
+:is(.menu-panel-link, .section-nav__link, .glow-accordions .accordion__summary, .landing-menu__link, .landing__account):is(:hover, :focus-visible),
 :is(.section-nav__link--active, .section-nav__link[aria-current="page"],
     .section-nav__link[aria-selected="true"], .section-nav__link[aria-pressed="true"],
     .glow-accordions .accordion[open] > .accordion__summary,
@@ -139,12 +139,12 @@
 @media (forced-colors: active) {
   .site-nav__link::after,
   :is(.glow-accordions .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
-  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
+  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-brand, .entrance-header__brand)::before {
     display: none;
   }
 
   :is(.site-nav__label, .section-nav__link, .find-sweets .line__name,
-      .glow-accordions .accordion__summary, .landing-menu__link, .landing__account, .site-nav__auth-action, .language-switcher__option) {
+      .glow-accordions .accordion__summary, .landing-menu__link, .landing__account, .language-switcher__option) {
     text-shadow: none !important;
   }
 
@@ -162,7 +162,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   :is(.glow-accordions .accordion__summary > span, .find-sweets .line__name, .find-sweets .line__icon)::before,
-  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-nav__auth-action, .site-brand, .entrance-header__brand)::before {
+  :is(.menu-panel-link, .section-nav__link, .landing-menu__link, .landing__account, .site-brand, .entrance-header__brand)::before {
     transition: none;
   }
 }

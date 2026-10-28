@@ -369,15 +369,15 @@
   --catalog-badge-bg: var(--catalog-price-bg);
   --catalog-badge-ink: var(--catalog-price-text);
   --catalog-badge-border: var(--catalog-price-border);
-  --catalog-fields-bg: var(--interactive-text);
+  --catalog-fields-bg: var(--label-bg);
   --catalog-vegan-ink: var(--color-green-200);
   --catalog-vegan-bg: var(--color-green-900);
   --catalog-vegan-border: var(--color-green-600);
   --catalog-stock-ink: var(--color-accent-200);
   --catalog-stock-bg: color-mix(in srgb, var(--color-accent-700) 12%, var(--label-bg));
   --catalog-stock-border: var(--color-accent-700);
-  --catalog-fields-divider: var(--label-band);
-  --catalog-control-placeholder-text: var(--color-primary-700);
+  --catalog-fields-divider: var(--label-line);
+  --catalog-control-placeholder-text: var(--color-neutral-400);
   --product-title-text: var(--selected-accent);
   --product-label-border: var(--selected-accent);
   --product-label-outline-shadow: 0 0 10px color-mix(in srgb, var(--selected-accent) 15%, transparent);
@@ -385,7 +385,8 @@
   --catalog-title-pointer-text: var(--moonlight);
   --catalog-title-pointer-border: var(--moonlight);
   --catalog-title-pointer-shadow: var(--catalog-cart-hover-shadow);
-  --catalog-package-text: var(--color-primary-950);
+  --catalog-static-text: var(--color-neutral-400);
+  --catalog-package-text: var(--interactive-text);
   --label-muted: var(--color-primary-200);
   --label-success-text: var(--color-status-success-text);
   --label-warning-text: var(--color-status-warning-text);
@@ -415,7 +416,7 @@
   --landing-moon-halo: radial-gradient(closest-side, color-mix(in srgb, var(--moonlight) 15%, transparent), color-mix(in srgb, var(--moonlight) 6%, transparent) 55%, transparent);
   --catalog-card-hover-shadow: var(--catalog-cart-hover-shadow);
 
-  /* Pale-blue fields use dark values; focus uses moonlight on the blue surface. */
+  /* Dark fields use blue interactive values; focus uses moonlight. */
   --catalog-control-focus-text: var(--moonlight);
   --catalog-control-focus-bg: var(--search-focus-bg);
   --catalog-control-focus-border: color-mix(in srgb, var(--moonlight) 60%, transparent);
@@ -449,19 +450,19 @@
 
   /* Catalog add: blue ready ink and moonlight hover/focus/press; muted until a size is chosen.
      Its button background sequence is intentionally different from text links. */
-  --catalog-cart-active-bg: var(--surface-bg);
-  --catalog-cart-bg: var(--action-secondary-bg);
-  --catalog-cart-ink: var(--action-secondary-text);
-  --catalog-cart-border: var(--action-secondary-border);
-  --catalog-cart-hover-bg: var(--action-secondary-hover-bg);
-  --catalog-cart-hover-ink: var(--action-secondary-hover-text);
-  --catalog-cart-hover-border: var(--action-secondary-hover-border);
+  --catalog-cart-active-bg: var(--moonlight);
+  --catalog-cart-bg: var(--interactive-text);
+  --catalog-cart-ink: var(--color-primary-950);
+  --catalog-cart-border: var(--interactive-text);
+  --catalog-cart-hover-bg: var(--moonlight);
+  --catalog-cart-hover-ink: var(--color-primary-950);
+  --catalog-cart-hover-border: var(--moonlight);
   --catalog-cart-focus: var(--moonlight);
   --catalog-cart-muted-bg: var(--color-primary-950);
   --catalog-cart-muted-ink: var(--color-neutral-500);
   --catalog-cart-muted-border: var(--color-neutral-500);
-  --catalog-cart-active-ink: var(--action-secondary-hover-text);
-  --catalog-cart-active-border: var(--action-secondary-hover-border);
+  --catalog-cart-active-ink: var(--color-primary-950);
+  --catalog-cart-active-border: var(--moonlight);
 
   /* Success burst and destructive feedback keep their existing shade/intensity */
   --catalog-burst-halo: color-mix(in srgb, var(--moonlight) 30%, transparent);

@@ -86,7 +86,7 @@
     return animate(element, [
       { transform: `translate(${from.x - box.x}px, ${from.y - box.y}px) scale(${from.width / box.width}, ${from.height / box.height})` },
       { transform: "none" },
-    ], { duration, delay, easing: "cubic-bezier(.2,.7,.2,1)", fill: "backwards" }).then(() => { element.style.transformOrigin = ""; });
+    ], { duration, delay, easing: window.SwedeSweetsHomeDeparture?.continuation(incoming) || "cubic-bezier(.2,.7,.2,1)", fill: "backwards" }).then(() => { element.style.transformOrigin = ""; });
   }
   function headerCart() { return document.querySelector(".site-header .site-nav-cart__trigger"); }
   function startHome(url) {
@@ -167,22 +167,22 @@
     if (remember({ mode: "cart", url, time: Date.now(), ...box, scroll })) nameFor(icon, "cart-return-icon");
     return false;
   } };
-  const remaining = () => incoming?.continuous ? Math.max(60, incoming.endAt - Date.now()) : 650;
+  const remaining = () => incoming?.continuous ? Math.max(60, incoming.remainingAtCapture ?? incoming.endAt - Date.now()) : 650;
   async function finishPage() {
     root.dataset.homePhase = "selection"; // the navbar rule begins here
-    await pause(180);
+    await pause(mobile.matches ? 120 : 80);
     if (mobile.matches && incoming.mode === "exit" && !incoming.cart) {
       root.dataset.homePhase = "bottom";
       await pause(180);
     }
     root.dataset.homePhase = "surface";
-    await pause(160);
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     root.dataset.homePhase = "content";
     const main = document.querySelector("main.site-main");
     await animate(main, [
-      { opacity: 0, clipPath: "inset(0 0 100% 0)" },
-      { opacity: 1, clipPath: `inset(0 0 ${Math.max(0, (main?.offsetHeight || 0) - innerHeight)}px 0)` },
-    ], { duration: 340, easing: "ease-out", fill: "backwards" });
+      { opacity: 0, transform: "translateY(6px)" },
+      { opacity: 1, transform: "none" },
+    ], { duration: 220, easing: "ease-out", fill: "backwards" });
     landed = true; reveal();
   }
   async function enterPage(transition) {
@@ -225,7 +225,7 @@
     landed = true;
     requestAnimationFrame(() => requestAnimationFrame(disableNative));
     root.classList.remove(...homeClasses);
-    root.style.removeProperty("--home-travel-remaining"); root.style.removeProperty("--home-travel-stagger");
+    root.style.removeProperty("--home-travel-remaining"); root.style.removeProperty("--home-travel-stagger"); root.style.removeProperty("--home-travel-easing");
     delete root.dataset.homePhase; delete root.dataset.homeCloudBrand; delete root.dataset.homeCart;
     for (const element of document.querySelectorAll("[data-home-travel-name]")) {
       element.style.removeProperty("view-transition-name"); delete element.dataset.homeTravelName;
@@ -242,6 +242,7 @@
     if (incoming?.continuous) {
       root.style.setProperty("--home-travel-remaining", `${remaining()}ms`);
       root.style.setProperty("--home-travel-stagger", "0ms");
+      root.style.setProperty("--home-travel-easing", window.SwedeSweetsHomeDeparture?.continuation(incoming) || "ease-out");
     }
     window.SwedeSweetsCurrentNav?.sync();
     if (!incoming || !canMove()) { transition?.skipTransition(); reveal(); return; }

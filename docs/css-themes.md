@@ -101,8 +101,8 @@ Each part has its own variables pointing at these, so one part can be tuned
 without touching the rest: `--nav-link-*` (the navbar's links),
 `--nav-trigger-*` (the Menu and cart buttons; `--nav-trigger-open-*` while
 their panel is open: by night gold with its light but no crown, the cart's
-count still beside it; on their own page they are "here" with the crown,
-the cart's count stepping aside), `--nav-cart-rest-ink` (the cart button at
+count still beside it; Menu keeps its own-page crown while the cart retains
+its count and never gets one), `--nav-cart-rest-ink` (the cart button at
 rest), `--logo-*` (the logo: rest,
 pointer, here; `--logo-rest-crown-opacity` hides its crown in the navbar by
 night, where the crown is on the page's link instead), `--menu-link-*` (the
@@ -226,8 +226,8 @@ outline. The cart's navbar artwork is 1.375rem with a 12-unit stroke in its
 Both follow here, pointer and rest (above): at rest like the rest of the
 navbar, the pointer's colour when pointed at, lit like "here" without a
 crown while their panel is open (the cart keeps its count beside it), and
-"here" with the crown on their own pages: the cart on the cart and checkout
-pages (its count then steps aside), the Menu on My account, the order
+"here" on their own pages: cart/checkout retains the count without a crown;
+the Menu has its crown on My account, the order
 history and an order's page. `config.context_processors.navigation` selects
 account/profile/history versus cart/checkout destinations; catalog pages
 select neither. `navbar-cart.js` keeps the current-page marker when it
@@ -257,7 +257,120 @@ light labels keep darker ink on paper. Each has its own status text roles.
 
 The page glow, display lettering's SVG shadows, contact icons, focus states,
 quantity controls and disabled controls also have theme roles. Review the
-page in both themes, with open/focused/error states…1664 tokens truncated…: moonlight). Catalog cards no longer
+page in both themes, with open/focused/error states, on a phone and desktop.
+
+## Verification and review scope
+
+The completed public dark theme was reviewed in Chrome and Firefox on mobile
+and desktop, including navigation, open/focused controls, catalog feedback,
+account/history and cart/checkout states. Light shares layout and behaviour,
+but its full palette review is still pending. Ops dark is not enabled.
+
+The cleanup is intended to preserve rendering: compare component paint,
+geometry and screenshots before/after in both palettes. The initial CSS move
+was also checked against main before the later design changes. Neither check
+is a claim of a loading-speed gain. Use the commands above for current test
+results rather than treating an old test count as a permanent guarantee.
+
+## Shared roles in the dark theme
+
+`themes/dark.css` defines shared roles first, followed by component mappings.
+Primitive colour scales stay in `tokens.css`. Component CSS continues to use
+its existing variables; the dark theme maps those variables to shared roles.
+Shared mappings make coordinated changes explicit. Light supplies the defaults;
+ops currently uses those light definitions.
+
+| Shared role | Component mappings / purpose |
+| --- | --- |
+| `--text-primary` | Ordinary main text and headings |
+| `--text-secondary` | Body/field ink and login/reset information |
+| `--text-reading` | `--prose-text`: About paragraphs and FAQ answers |
+| `--text-muted` | Muted metadata and entrance help |
+| `--interactive-text` | Quiet links, linked names, entrance links, closed FAQ questions and ready/pressed catalog cart ink |
+| `--interactive-text-hover` | Hover/focus for quiet links, linked names and entrance links |
+| `--interactive-text-subtle` | Navbar and footer links |
+| `--interactive-text-strong` | General links, control accents and contact email |
+| `--interactive-border` | Search focus border and catalog cart focus outline |
+| `--surface-bg`, `--surface-muted` | Standard and quiet panels, including label and missing-photo backgrounds |
+| `--surface-hover`, `--surface-active` | Shared field and stepper interaction backgrounds |
+| `--action-primary-bg`, `--action-primary-text` | Normal filled primary button background and text |
+| `--selected-accent` | Selected navigation item |
+| `--color-status-success-text`, `--color-status-warning-text` | Shared green success and orange warning text |
+| `--danger-text` | Strong red failure/removal feedback; general status prose retains its softer `--color-status-danger-text` |
+
+Text roles describe importance and purpose, not font size. Gold action,
+selection and decorative roles remain independent even when their primitive
+colour matches. Search ink, label ink, artwork and other deliberate exceptions
+keep their component-specific primitive references.
+
+To change related interactions together, edit `--interactive-text` near the
+top. To change only entrance links, edit `--entrance-link-text` in the entrance
+section instead. The same pattern applies to surfaces and text. Component
+variables remain available for exceptions; shared roles are not a requirement
+to make every similar-looking colour identical.
+
+Legacy names such as `--text-blue-strong` remain compatible mappings (this one
+uses neutral `--text-secondary` in dark). Layout, selectors, sizes and animation
+rules remain in their component files. The new shared names are defined and
+consumed within the dark theme, so light does not need matching declarations.
+
+## Editing reading text, search and FAQ colours
+
+These roles are grouped and commented in `static/css/themes/dark.css`.
+Their light defaults are in `themes/light.css`.
+
+| Role | Used by |
+|---|---|
+| `--prose-text` | About paragraphs and FAQ answers; excludes question headings and photo captions |
+| `--search-text` | Typed/selected text in catalog search, searchable quick jumps and B2B quick add |
+| `--search-placeholder` | Hints in those search fields, including Tom Select's empty item |
+| `--search-focus-border` | The catalog's inner focus ring and searchable Tom Select's active border |
+| `--search-focus-bg` | Focused/open searchable Tom Select controls |
+| `--search-focus-shadow` | The halo around focused/open searchable Tom Select controls |
+| `--faq-question-text` | A closed FAQ question's heading |
+| `--faq-question-open-text` | An open FAQ question's heading |
+| `--faq-question-hover-bg` | A closed FAQ question under the pointer |
+| `--faq-question-open-bg` | The open FAQ question's heading background |
+
+The FAQ maps its roles onto the common accordion locally, so its colours do not
+change Previous orders. `common/search.css` styles only actual search controls;
+size and sort selects keep their component palette. The generic `--focus-ring`
+continues to control other components, independently of search focus.
+
+## Navbar separator and link hover
+
+`--menu-edge` controls the line between the header and the page. Dark
+mixes it to a muted gold (45% accent-750 into the menu blue), so the edges
+frame quietly and only what is lit shines; the panels' top light keeps
+accent-750 itself. Both palettes
+set it explicitly, independently of `--menu-chosen`. The phone bar's outline
+follows it through `--menu-bar-edge`; override that separately when needed.
+
+Navbar links have no hover underline in either theme. `--menu-link-glow` is
+`none` in light and a soft yellow radial gradient in dark; by night it lights
+the current page, while hover and keyboard focus take the pointer's moonlit
+glow (`--state-pointer-glow`, Here, pointer and rest). On phones the halo sits
+behind the label. The current-page crown and keyboard focus outline remain visible.
+This navbar effect does not change the landing menu's own animation or the
+selected-language marker.
+
+## Night lights
+
+By night three sources light the dark palette, each a role in
+`themes/dark.css` (none by day): `--landing-moon-halo`, a soft moonlight
+halo round the start page's logo (the logo is the moon);
+`--catalog-shelf-glow`, a faint warm light along the catalog's shelf, whose
+stripes are blue at night (`--catalog-shelf-stripe`, `-alt`; yellow by day);
+and `--product-label-glow`, a faint lantern light behind an opened
+product's label, outside its edge only.
+
+## Product photos and product text
+
+`--photo-filter` (none by day; slightly dimmer and less saturated by night)
+applies to product photos on cards, the product page and cart lines, so
+their white backgrounds do not glare on the night palette; About's photos
+keep theirs. `--product-prose-text` colours a product's Description and
+Ingredients (light: body text; dark: moonlight). Catalog cards no longer
 lift on hover; their shadow, sheen and name light show they open.
 
 ## FAQ, missing product photos and customer footer
@@ -915,7 +1028,7 @@ its content. The timeline margin is identical for every step.
 
 `navbar_cart_current` and `navbar_cart_locked` cover the complete journey,
 including cart itself and verified placed destinations. Other header selections
-are cleared. The cart count hides while its crown is current. The mobile host
+are cleared. The cart count stays visible and its trigger has no crown. The mobile host
 can still display the existing journey, while desktop cannot open a second
 quick cart. Header icons remain available when sheets open; switching to settings
 or account from a directly visited mobile flow and dismissing it returns to
@@ -1511,8 +1624,8 @@ and travel, then takes the detail palette on landing. Closing resets the
 detail to the resting card palette before it folds and returns.
 
 Day variant/quantity fields retain their white surface and blue values. Night
-fields have a light-blue surface, dark-blue values and a divider matching the
-dark title band; empty choices are muted. Fields repaint only on their own
+fields share the dark title surface, with blue interactive values and a
+quiet divider; fixed weight and empty choices use muted neutral ink. Fields repaint only on their own
 focus/open state, including product detail. Night focus uses moonlight on a
 blue surface. Secondary cart buttons retain their pale-blue day surface.
 
@@ -1584,3 +1697,35 @@ Entrance controls use `--entrance-action-primary-bg` plus optional hover/active
 border roles; day falls back to its existing border. Coarse pointers/no-hover
 map night rest text/edge to moonlight and disable hover glow/transform. All
 palette values stay in the theme, and disabled states retain their own rules.
+
+
+## Quiet labels, cart counts and continuous handoff
+
+The cart template omits `menu-dropdown-trigger__crown`; its current-page count
+is no longer hidden. This does not remove the separate loading/confirmation
+crown or empty-cart illustration. Menu and active page links retain crowns.
+
+`--catalog-static-text` supplies neutral muted fixed-package text in both themes;
+`--catalog-package-text` supplies interactive quantity/variant ink. Night fields
+now read the dark `--label-bg` instead of a pale-blue fill, with blue values and
+neutral empty choices. The night catalog add button has blue fill/dark icon and
+moonlight hover fill. Product detail gold title/frame and focus roles remain.
+
+`mobile-menu.js` holds `.site-header.is-nav-restoring` and the page link's inert
+underlay state while actual summary `translate` transitions finish. It releases
+on their `finished` promises; a new panel invalidates the pending restoration.
+Reduced motion/instant changes restore directly. No extra close-delay timer is
+introduced, and opening keeps its existing timing.
+
+`home-departure.capture` records motion progress and remaining duration at
+handoff. `continuation` splits the original cubic Bezier using de Casteljau and
+normalizes its remaining segment; native snapshots read `--home-travel-easing`
+and fallback WAAPI uses the same curve. A finished source journey settles in
+60ms. Geometry and timing therefore resume from the captured frame instead of
+restarting ease-out partway through. The page uses a 220ms opacity/6px reveal
+with no `clip-path` or page-height measurement. The surface begins fading on
+the next painted frame, rather than adding a separate 160ms wait.
+
+Obsolete `.checkout-order`/list styles, `.site-nav__auth-action` selectors and
+`--cart-text-inset` are removed after a template/script reference check.
+`.checkout-order__title` remains for review and delivery confirmation headings.

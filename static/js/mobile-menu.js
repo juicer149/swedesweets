@@ -48,20 +48,40 @@
   const menuFor = key => [...document.querySelectorAll(selector)].find(menu => menu.dataset.mobileMenu === key);
   const openMenu = () => document.querySelector(`${selector}[open]`);
 
+  let headerRestoreVersion = 0;
+  let headerRestoring = false;
+  function finishHeaderRestore(header) {
+    header.classList.remove("is-nav-restoring");
+    for (const [link, inert] of headerInertBefore) {
+      link.inert = inert; link.classList.remove("is-mobile-panel-underlay");
+    }
+    headerInertBefore.clear(); headerRestoring = false;
+  }
+  function restoreHeader(header) {
+    delete header.dataset.mobilePanel;
+    if (!headerInertBefore.size || headerRestoring) return;
+    const version = ++headerRestoreVersion;
+    if (!mobile.matches || reducedMotion.matches || instant) { finishHeaderRestore(header); return; }
+    headerRestoring = true; header.classList.add("is-nav-restoring");
+    // Removing data-mobile-panel starts the real trigger's return transition.
+    // Keep the old destination hidden until that motion has finished.
+    const movements = [...header.querySelectorAll(".menu-dropdown-trigger")]
+      .flatMap(trigger => trigger.getAnimations())
+      .filter(animation => animation.transitionProperty === "translate");
+    void Promise.all(movements.map(animation => animation.finished.catch(() => {}))).then(() => {
+      if (version === headerRestoreVersion && !header.dataset.mobilePanel) finishHeaderRestore(header);
+    });
+  }
   function syncHeader(key = running ? wanted : openMenu()?.dataset.mobileMenu) {
     const header = document.querySelector(".site-header");
     if (!header || root.dataset.siteZone === "ops") return;
     const flow = root.hasAttribute("data-checkout-flow");
     if (flow && (!mobile.matches || !key)) key = "cart";
     if ((!mobile.matches && !flow) || !["cart", "menu"].includes(key)) {
-      delete header.dataset.mobilePanel;
-      for (const [link, inert] of headerInertBefore) {
-        link.inert = inert;
-        link.classList.remove("is-mobile-panel-underlay");
-      }
-      headerInertBefore.clear();
+      restoreHeader(header);
       return;
     }
+    ++headerRestoreVersion; headerRestoring = false; header.classList.remove("is-nav-restoring");
     const trigger = menuFor(key)?.querySelector(":scope > summary");
     if (!trigger) return;
     const pageLink = header.querySelector('.site-nav__link[aria-current="page"]');

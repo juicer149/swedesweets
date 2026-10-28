@@ -214,46 +214,8 @@
   flex: 0 0 auto;
 }
 
-.site-nav__auth-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 
-  min-height: clamp(1.85rem, 2.2vw, 2.1rem);
-  padding-block: clamp(0.32rem, 0.45vw, 0.45rem);
-  padding-inline: clamp(0.5rem, 0.8vw, 0.85rem);
 
-  color: var(--menu-ink);
-  background: transparent;
-  border: 1px solid var(--menu-line);
-  border-radius: 999px;
-
-  font: inherit;
-  font-size: clamp(0.75rem, 0.82vw, var(--font-size-14));
-  font-weight: 750;
-  line-height: 1;
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-
-  transition:
-    color var(--motion-fast),
-    background var(--motion-fast),
-    border-color var(--motion-fast),
-    transform var(--motion-fast);
-}
-
-.site-nav__auth-action:hover,
-.site-nav__auth-action:focus-visible {
-  color: var(--menu-chosen);
-  border-color: var(--menu-chosen);
-  transform: translateY(-1px);
-}
-
-.site-nav__auth-action:focus-visible {
-  outline: 2px solid var(--color-accent-600);
-  outline-offset: 4px;
-}
 
 /* =============================================================================
    Navbar cart
@@ -635,11 +597,6 @@
     gap: var(--space-1);
   }
 
-  .site-nav__auth-action {
-    min-height: 2rem;
-    padding-inline: var(--space-3);
-    font-size: var(--font-size-14);
-  }
 
   .site-nav-cart__trigger {
     width: 2rem;
@@ -864,9 +821,4 @@
 
 .site-nav-cart-line.line-flash--removed .site-nav-cart-line__remove-button {
   color: var(--cart-remove-hover-ink);
-}
-
-/* The full cart journey is identified by its crown, without a count badge. */
-.site-nav-cart__trigger[aria-current="page"] .site-nav-cart__count {
-  display: none;
 }

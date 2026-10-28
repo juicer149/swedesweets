@@ -502,6 +502,7 @@
   --label-bg: var(--color-white);
   --label-text: var(--color-neutral-900);
   --catalog-price-text: var(--label-text);
+  --catalog-static-text: var(--color-neutral-600);
   --catalog-package-text: var(--label-text);
   /* Variant list: normal rows, light active/selected rows, unavailable sizes. */
   --catalog-option-text: var(--color-primary-900);

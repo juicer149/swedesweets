@@ -457,7 +457,7 @@
 }
 
 .tile__package {
-  color: var(--catalog-package-text);
+  color: var(--catalog-static-text, var(--text-muted));
   display: flex;
   align-items: center;
   min-height: 2.25rem;

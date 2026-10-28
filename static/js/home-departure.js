@@ -92,7 +92,8 @@
     } else { rememberLanding(); target = preview(record); }
     if (!target) return;
     const delay = record.mode === "home" ? 180 : record.mode === "login" ? 260 : 0;
-    record.endAt = Date.now() + delay + 600; record.continuous = true;
+    record.motionStartAt = Date.now() + delay;
+    record.endAt = record.motionStartAt + 600; record.continuous = true;
     parts = [[elements.brand, record], ...(elements.links || [])];
     if (elements.cart && record.cart) parts.push([elements.cart, record.cart]);
     move(elements.brand, target.brand, delay);
@@ -108,11 +109,32 @@
   }
   function capture(record) {
     if (!record?.continuous) return;
+    record.remainingAtCapture = Math.max(60, record.endAt - Date.now());
+    record.progressAtCapture = Math.max(0, Math.min(1, (Date.now() - record.motionStartAt) / 600));
     for (const [element, entry] of parts) { const current = box(element); if (current) Object.assign(entry, current); }
+  }
+  function continuation(record) {
+    const progress = record?.progressAtCapture || 0;
+    if (progress >= .995) return "linear";
+    const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+    // De Casteljau subdivision preserves velocity through a document handoff.
+    const split = t => {
+      const a = mix([0, 0], [.2, .7], t), b = mix([.2, .7], [.2, 1], t), c = mix([.2, 1], [1, 1], t);
+      const d = mix(a, b, t), e = mix(b, c, t);
+      return [mix(d, e, t), e, c];
+    };
+    let lo = 0, hi = 1;
+    for (let i = 0; i < 20; i++) {
+      const mid = (lo + hi) / 2;
+      if (split(mid)[0][0] < progress) lo = mid; else hi = mid;
+    }
+    const [start, a, b] = split((lo + hi) / 2);
+    const normalize = p => p.map((v, i) => (v - start[i]) / (1 - start[i]));
+    return `cubic-bezier(${[...normalize(a), ...normalize(b)].map(v => v.toFixed(6)).join(",")})`;
   }
   function clear() {
     timers.splice(0).forEach(clearTimeout); motions.splice(0).forEach(m => { const target = m.effect?.target; m.cancel(); target?.style.removeProperty("transform-origin"); });
     previews.splice(0).forEach(e => e.remove()); parts = []; root.classList.remove("home-flight-waiting");
   }
-  window.SwedeSweetsHomeDeparture = { start, capture, clear };
+  window.SwedeSweetsHomeDeparture = { start, capture, continuation, clear };
 })();

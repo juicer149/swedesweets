@@ -513,12 +513,12 @@ Detailed mappings are in [CSS themes](docs/css-themes.md).
   the Menu, with its own scrolling content. Retail details follow
   products in the editor. B2B includes Previous orders and product search. The icon is 22px with a
   stronger stroke than the original artwork. Cart/checkout pages retain its
-  selected light and crown; the count moves away from the crown. AJAX refresh
+  selected light and count; the cart never carries a crown. AJAX refresh
   preserves selection, scroll and in-progress contact fields. Added items produce green feedback; removals use red.
   In dark this is the bouncing icon and a diffuse coloured light, without a
   circular fill.
   Light retains the filled flash. An empty cart has no count; an open one
-  keeps it; on the cart page it steps aside for the crown.
+  keeps it, including on the cart page.
 - **Customer footer:** the vector wordmark and crown, phone/mail/social icons,
   with Login for guests. Signed-in identity/logout are omitted;
   My account offers a quiet Log out below Change password as well as the menu.
@@ -658,7 +658,7 @@ pages, while an existing mobile flow stays mounted and open.
 See [CSS themes](docs/css-themes.md) for roles, timings and controller ownership.
 
 The desktop cart icon alone marks every checkout stage, including payment return
-and just-placed B2B order detail. Its count steps aside; its gold light and crown stay.
+and just-placed B2B order detail. Its count remains visible; the active light stays without a crown.
 The quick preview is disabled on cart as well as later stages. Mobile mounts the
 existing flow in that slot, without creating another editable cart. The start
 page's Menu shows its button's light but no top-edge panel emission.
@@ -953,8 +953,8 @@ and travel, then takes the detail palette on landing. Closing resets the
 detail to the resting card palette before it folds and returns.
 
 Day variant/quantity fields retain their white surface and blue values. Night
-fields have a light-blue surface, dark-blue values and a divider matching the
-dark title band; empty choices are muted. Fields repaint only on their own
+fields share the dark title surface, with blue interactive values and a
+quiet divider; fixed weight and empty choices use muted neutral ink. Fields repaint only on their own
 focus/open state, including product detail. Night focus uses moonlight on a
 blue surface. Detail fields share one full-width layout in both themes,
 including the rounded lower corners and foot around the cart button. Their
@@ -1014,3 +1014,23 @@ fine-pointer desktop, moonlight at hover and gold text/edge/glow on press.
 Touch uses moonlight text/edge at rest and no sticky hover enlargement/glow.
 These are shared primary roles, including login, reset and business edit actions;
 the entrance reads its own background but shares border and pressed roles.
+
+
+### Quiet labels and uninterrupted travel
+
+The cart trigger never carries a crown, including checkout and open previews;
+its nonzero count remains visible. Crown loading and order confirmation remain
+separate status components. A sole fixed weight uses neutral muted ink, while
+quantity and selectable variants use blue. Night labels share one dark surface;
+the catalog/detail add button supplies the filled pale-blue action and moonlight
+hover. Open product titles/frames still use gold.
+
+Returning Menu/cart triggers finish their actual translate before the old page
+label fades back in. No independent timer guesses the return duration. Incoming
+navigation resumes the captured remainder of the original easing curve rather
+than starting a new acceleration. Page reveal is a short opacity/6px movement,
+without a height-dependent clipping mask or a separate long surface pause.
+
+Unused checkout order-list styles, the obsolete auth action selectors and the
+unused cart text-inset variable are removed. Delivery heading styles remain:
+checkout review and confirmation still use them.

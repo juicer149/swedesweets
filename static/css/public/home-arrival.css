@@ -99,7 +99,6 @@
 /* The current cart normally keeps active blue/gold through aria-current.
    Remove that ink with its cloud before taking the return snapshot. */
 .home-flight-departing .site-nav-cart__trigger::before { opacity: 0 !important; transition: opacity 80ms ease-out; }
-.home-flight-departing .site-nav-cart__trigger .menu-dropdown-trigger__crown { opacity: 0 !important; }
 :is(.home-flight-departing, .home-flight-source) .site-nav-cart__trigger,
 .home-flight-target[data-home-phase="flight"] .landing__cart-link {
   color: var(--home-nav-rest) !important;
@@ -133,12 +132,12 @@
 :is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-old(root) { animation: home-content-out 160ms ease-out both; }
 :is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-new(root) { animation: none; }
 :is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target)::view-transition-group(home-wordmark),
-:is(.home-flight-target, .home-flight-login-target)::view-transition-group(home-brand) { z-index: 2; animation-duration: var(--home-travel-remaining, 650ms); animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+:is(.home-flight-target, .home-flight-login-target)::view-transition-group(home-brand) { z-index: 2; animation-duration: var(--home-travel-remaining, 650ms); animation-timing-function: var(--home-travel-easing, cubic-bezier(.2,.7,.2,1)); }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-0),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2),
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3),
-:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-cart) { z-index: 3; animation-duration: var(--home-travel-remaining, 600ms); animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+:is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-cart) { z-index: 3; animation-duration: var(--home-travel-remaining, 600ms); animation-timing-function: var(--home-travel-easing, cubic-bezier(.2,.7,.2,1)); }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-1) { animation-delay: var(--home-travel-stagger, 35ms); }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-2) { animation-delay: var(--home-travel-stagger, 70ms); }
 :is(.home-flight-target, .home-flight-exit-target)::view-transition-group(home-link-3) { animation-delay: var(--home-travel-stagger, 105ms); }

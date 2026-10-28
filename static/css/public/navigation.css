@@ -434,3 +434,9 @@
   .site-nav-current { position: absolute; inset: 0; pointer-events: none; }
   .site-nav-current > .site-nav__link { pointer-events: auto; }
 }
+
+/* A closing panel's trigger clears the header centre before the page label
+   returns. mobile-menu.js holds this state until its real translate ends. */
+@media (max-width: 767px) {
+  .site-header.is-nav-restoring .is-mobile-panel-underlay { opacity: 0; pointer-events: none; }
+}

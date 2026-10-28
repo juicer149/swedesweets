@@ -5,7 +5,7 @@
   --cart-desktop-width: clamp(var(--cart-content-width), 62vw, 48rem);
 }
 .site-nav-cart__popover { --cart-tag-room: var(--space-16); }
-.cart-page { --cart-picture: clamp(2.5rem, 4vw, 3.5rem); --cart-row-gap: clamp(.75rem, 1.5vw, 1.5rem); --cart-text-inset: calc(var(--cart-picture) + var(--cart-row-gap)); }
+.cart-page { --cart-picture: clamp(2.5rem, 4vw, 3.5rem); --cart-row-gap: clamp(.75rem, 1.5vw, 1.5rem); }
 .cart-line {
   --cart-picture: clamp(3.25rem, 14vw, 5rem);
   --cart-row-gap: clamp(.5rem, 1.5vw, 1.5rem);
@@ -41,622 +41,390 @@
 .cart-line :is(.line__remove-button, .site-nav-cart-line__remove-button) .ui-icon-block { width: 1rem; height: 1rem; }
 .cart-line :is(.line__remove-button, .site-nav-cart-line__remove-button):is(:hover, :focus-visible) { color: var(--cart-remove-hover); }
 .cart-page .recent-orders { margin-inline: auto; }
-.cart-page .recent-order__lines .line__product { grid-template-columns: var(--cart-picture) min…11876 tokens truncated…t
-                             or reach with the keys)
-     --theme-page-bg         the page under it
-     --state-page-*-ink      the same three on the page (by night the same)
-     --interaction-glow-strength   how strongly the lights shine (0: none)
-     --theme-action-*        the primary buttons: their fill, and the ink of
-                             their text, edge and light at rest, pointed at
-                             and pressed
-   ============================================================================= */
-:root[data-theme="dark"]:not([data-site-zone="ops"]) {
-  /* # The navbar's surface */
-  --theme-chrome-bg: var(--color-primary-950);
-
-  /* # What you can click: rest, here, pointer (text, edge and light) */
-  --state-rest-ink: var(--interactive-text);
-  --state-here-ink: var(--selected-accent);
-  --state-pointer-ink: var(--moonlight);
-  /* the crown marks only "here" */
-  --state-pointer-crown-opacity: 0;
-
-  /* # The page */
-  --theme-page-bg: var(--color-primary-900);
-  --state-page-rest-ink: var(--state-rest-ink);
-  --state-page-here-ink: var(--state-here-ink);
-  --state-page-pointer-ink: var(--state-pointer-ink);
-
-  /* # How strongly the lights shine */
-  --interaction-glow-strength: 0.85;
-
-  /* # Primary buttons: page sky with blue ink; moonlight pointer, gold press. */
-  --theme-action-bg: var(--page-bg);
-  --theme-action-ink: var(--interactive-text);
-  --theme-action-pointer-ink: var(--state-pointer-ink);
-  --theme-action-pressed-ink: var(--state-here-ink);
-
-  /* # Secondary buttons: quiet surface, ink/edge and pointer palette */
-  --theme-secondary-bg: var(--surface-bg);
-  --theme-secondary-ink: var(--interactive-text);
-  --theme-secondary-edge: var(--interactive-border);
-  --theme-secondary-pointer-bg: var(--surface-hover);
-  --theme-secondary-pointer-ink: var(--moonlight);
-  --theme-secondary-pointer-edge: var(--moonlight);
+.cart-page .recent-order__lines .line__product { grid-template-columns: var(--cart-picture) minmax(0,1fr); gap: var(--cart-row-gap); }
+.cart-page .recent-order__lines .line__image { width: var(--cart-picture); height: var(--cart-picture); border-radius: 50%; }
+@media (min-width: 768px) {
+  .cart-line {
+    grid-template-columns: var(--cart-picture) minmax(0, 1fr) auto auto 2.75rem;
+    grid-template-areas: "picture text quantity price remove";
+    column-gap: clamp(.75rem, 1.5vw, 1.5rem);
+  }
+    .cart-line :is(.line__remove, .site-nav-cart-line__remove) { position: static; grid-area: remove; align-self: center; }
+  .cart-line__price { justify-self: start; text-align: left; }
+  .order-flow-page > .page.order-flow-surface.cart-page { width: 100%; max-width: var(--cart-desktop-width); }
+  .cart-page :is(.recent-orders, .cart-quick-add, .cart-details, .page__actions, .order-flow-summary) { width: 100%; max-width: var(--cart-content-width); margin-inline: auto; }
+  .cart-page > .order-progress { max-width: var(--cart-content-width); margin-inline: auto; }
 }
 
-/* Dark customer palette. Ops keeps light.
-   Shared roles come first; component mappings follow below. Change a shared
-   role for a coordinated update, or override one component mapping locally.
-   Explicit primitive/hex values in component sections are intentional palette
-   exceptions, not accidental aliases to an unrelated role of the same colour.
-*/
-:root[data-theme="dark"]:not([data-site-zone="ops"]) {
+@media (max-width: 767px) {
+  .cart-line {
+    grid-template-columns: var(--cart-picture) minmax(0, 1fr) auto;
+    grid-template-areas: "picture text controls";
+    column-gap: clamp(.75rem, 2vw, 1rem);
+  }
+  .cart-line__controls { margin-right: var(--space-2); display: flex; flex-direction: column; grid-area: controls; align-items: center; align-self: center; gap: var(--space-2); }
+  .cart-line__controls :is(.cart-line__quantity, .cart-line__price) { grid-area: auto; align-self: center; text-align: center; }
+    .cart-line :is(.line__remove, .site-nav-cart-line__remove) { top: -.25rem; }
 
-  /* 1. Shared roles — change these to tune the dark palette across components */
-
-  /* Surfaces: page, standard panels, quiet panels and interaction states */
-  --page-bg: var(--theme-page-bg);
-  --surface-bg: var(--color-primary-800);
-  --surface-muted: var(--color-primary-850);
-  --surface-hover: var(--color-primary-750);
-  --surface-active: var(--color-primary-700);
-  --line-soft: #2d3650;
-  --line-strong: #4b5369;
-
-  /* Text hierarchy: importance, not font size */
-  /* Cool near-white: brand, product names and available cart controls. */
-  --moonlight: color-mix(in srgb, var(--color-white) 85%, var(--color-primary-100));
-  --text-primary: var(--color-neutral-100);
-  --text-secondary: var(--color-neutral-200);
-  --text-reading: var(--color-neutral-300);
-  --text-muted: var(--color-neutral-400);
-
-  /* Available interactions: normal, brighter, quieter and high-contrast blue.
-     Border is independent of text so either can be tuned separately. */
-  --interactive-text: var(--color-primary-200);
-  --interactive-text-hover: var(--color-primary-100);
-  --interactive-text-subtle: var(--color-primary-250);
-  --interactive-text-strong: var(--color-primary-150);
-  --interactive-border: var(--color-primary-200);
-
-  /* Shared expandable titles: FAQ, Previous orders and each nested order. */
-  --dropdown-title-text: var(--interactive-text);
-  --dropdown-title-hover-text: var(--state-pointer-ink);
-  --dropdown-title-active-text: var(--selected-accent);
-  --dropdown-title-glow: var(--interaction-glow);
-  --dropdown-title-glow-filter: var(--interaction-glow-filter);
-  --dropdown-title-text-shadow: var(--interaction-text-shadow);
-  --dropdown-title-icon-filter: var(--interaction-icon-filter);
-
-  /* Shared secondary action roles; component mappings follow below. */
-  --action-secondary-bg: var(--theme-secondary-bg);
-  --action-secondary-text: var(--theme-secondary-ink);
-  --action-secondary-border: var(--theme-secondary-edge);
-  --action-secondary-hover-bg: var(--theme-secondary-pointer-bg);
-  --action-secondary-hover-text: var(--theme-secondary-pointer-ink);
-  --action-secondary-hover-border: var(--theme-secondary-pointer-edge);
-
-  /* Main actions keep gold ink/edges; hover/focus adds the warm light. */
-  --action-primary-bg: var(--theme-action-bg);
-  --action-primary-text: var(--theme-action-ink);
-  --action-primary-default-text: var(--action-primary-text);
-  --action-primary-border: var(--action-primary-text);
-  --action-primary-hover-bg: var(--action-primary-bg);
-  --action-primary-hover-text: var(--theme-action-pointer-ink);
-  --action-primary-hover-border: var(--theme-action-pointer-ink);
-  --action-primary-active-bg: var(--page-bg);
-  --action-primary-active-border: var(--theme-action-pressed-ink);
-  --action-primary-shadow: 0 0 15px color-mix(in srgb, var(--selected-accent) 22%, transparent);
-  --action-primary-hover-transform: var(--transform-lift);
-  --action-primary-text-shadow: var(--state-pointer-text-shadow);
-  --action-primary-icon-filter: var(--state-pointer-icon-filter);
-  --action-primary-active-text: var(--selected-accent);
-  --action-primary-active-shadow: 0 0 15px color-mix(in srgb, var(--selected-accent) 25%, transparent);
-  --entrance-action-primary-bg: var(--menu-bg);
-  --entrance-action-primary-hover-bg: var(--menu-bg);
-  --entrance-action-primary-active-bg: var(--menu-bg);
-  --entrance-action-primary-border: var(--action-primary-border);
-  --entrance-action-primary-hover-border: var(--action-primary-hover-border);
-  --entrance-action-primary-active-border: var(--action-primary-active-border);
-  --selected-accent: var(--color-accent-600);
-  --local-selected-accent: var(--color-accent-700);
-
-  /* Status/feedback: shared success, warning and stronger danger ink.
-     The existing soft red for general status prose is kept intentionally.
-     Warning RGB channels match accent-800 (#f39912); keep them in sync. */
-  --color-status-success-text: var(--color-green-400);
-  --color-status-warning-text: var(--color-accent-800);
-  --color-status-warning: 243 153 18;
-  --color-status-danger-text: #ffaaaa;
-  --danger-text: var(--color-red-400);
-  --color-status-info-text: var(--color-primary-150);
-  --color-status-muted-text: #b7b8c4;
-
-  /* Shared table row surfaces: same 15% strength as an open FAQ heading.
-     Placed is brand gold here; warning/error prose keeps its orange role.
-     These roles can serve ops tables when their dark palette is enabled. */
-  /* Clear the generic blue clickable-row hover; use each row's tone instead. */
-  --table-clickable-hover-bg: initial;
-  --table-tone-strength: 15%;
-  --table-tone-hover-strength: 22%;
-  --table-tone-warning-bg: color-mix(in srgb, var(--color-accent-600) var(--table-tone-strength), transparent);
-  --table-tone-warning-hover-bg: color-mix(in srgb, var(--color-accent-600) var(--table-tone-hover-strength), transparent);
-  --table-tone-info-bg: color-mix(in srgb, var(--color-status-info-text) var(--table-tone-strength), transparent);
-  --table-tone-info-hover-bg: color-mix(in srgb, var(--color-status-info-text) var(--table-tone-hover-strength), transparent);
-  --table-tone-success-bg: color-mix(in srgb, var(--color-status-success-text) var(--table-tone-strength), transparent);
-  --table-tone-success-hover-bg: color-mix(in srgb, var(--color-status-success-text) var(--table-tone-hover-strength), transparent);
-  --table-tone-danger-bg: color-mix(in srgb, var(--danger-text) var(--table-tone-strength), transparent);
-  --table-tone-danger-hover-bg: color-mix(in srgb, var(--danger-text) var(--table-tone-hover-strength), transparent);
-
-  /* General focus and text selection: entrance gold focus is a local exception */
-  --focus-ring: var(--color-primary-150);
-  --selection-bg: var(--color-primary-600);
-  --control-accent: var(--interactive-text-strong);
-
-  /* 2. Shared component mappings — compatible names consumed by existing CSS */
-
-  /* Ordinary copy and headings. Legacy text-blue-* names stay compatible;
-     text-blue-strong is neutral field/header ink, not an interaction role. */
-  --text-main: var(--text-primary);
-  --text-strong: var(--text-primary);
-  --text-body: var(--text-secondary);
-  --text-blue: var(--color-primary-100);
-  --text-blue-strong: var(--text-secondary);
-  --text-blue-deep: var(--text-primary);
-  --color-text-heading: var(--text-primary);
-  --page-title-color: var(--text-primary);
-  --color-link: var(--interactive-text-strong);
-  --page-glow: radial-gradient(closest-side, rgb(66 139 255 / 0.08), rgb(66 139 255 / 0.03) 55%, transparent);
-
-  /* Secondary links and linked list/product names */
-  --quiet-link-text: var(--interactive-text);
-  --quiet-link-hover-text: var(--interactive-text-hover);
-  --quiet-link-focus-text: var(--interactive-text-hover);
-  --line-link-text: var(--interactive-text);
-  --line-link-hover-text: var(--interactive-text-hover);
-
-  /* Primary filled buttons and shared controls */
-  --color-action-place-solid: var(--action-primary-bg);
-  --color-accent-text-standard: var(--action-primary-text);
-  --field-hover-bg: var(--surface-hover);
-  --field-active-bg: var(--surface-active);
-  --action-remove-text: var(--color-status-danger-text);
-  --color-expiry-safe-text: var(--text-body);
-
-  /* Local page tabs and sort headings share a deeper selected gold.
-     Available choices and the row edge use the normal interactive blue. */
-  --section-nav-text: var(--interactive-text);
-  --section-nav-hover-text: var(--state-pointer-ink);
-  --section-nav-active-text: var(--selected-accent);
-  --section-nav-marker: var(--local-selected-accent);
-  --table-sort-text: var(--interactive-text);
-  --table-sort-active-text: var(--local-selected-accent);
-  --table-sort-hover-text: var(--interactive-text-hover);
-  --table-sort-active-hover-text: var(--local-selected-accent);
-  --table-sort-marker: var(--local-selected-accent);
-  --table-sort-arrow: currentColor;
-  --table-row-marker: var(--interactive-border);
-
-  /* 3. Navigation and landing */
-  --menu-bg: var(--theme-chrome-bg);
-  --menu-ink: var(--interactive-text-subtle);
-  --menu-chosen: var(--selected-accent);
-
-  /* Header/phone edge is independent of the selected text.
-     The language and cart keep their menu-specific palette/glow. */
-  /* Muted gold: the edges (navbar, phone bar, panels) frame quietly, so
-     what is lit (the chosen, the open icon) is the gold that shines. */
-  --menu-edge: color-mix(in srgb, var(--color-accent-750) 45%, var(--menu-bg));
-  --menu-link-glow: radial-gradient(ellipse at center, rgb(249 181 26 / calc(0.06 * var(--interaction-glow-strength))), rgb(249 181 26 / calc(0.05 * var(--interaction-glow-strength))) 30%, rgb(249 181 26 / calc(0.04 * var(--interaction-glow-strength))) 60%, rgb(249 181 26 / 0) 100%);
-  --menu-link-glow-blur: 10px;
-
-  --preferences-trigger-ink: var(--interactive-text);
-  --preferences-bg: var(--menu-bg);
-  --cart-price-up: var(--color-green-300);
-  --cart-price-down: var(--color-red-300);
-  --cart-sheet-bg: var(--preferences-bg);
-  --cart-sheet-shadow: 0 0 24px color-mix(in srgb, var(--moonlight) 7%, transparent);
-  --cart-popover-tag-shadow: 0 0 8px color-mix(in srgb, var(--moonlight) 12%, transparent);
-  /* the cart's cross: light blue on the night sheet (light.css's dark blue
-     would vanish) */
-  --cart-sheet-close-ink: var(--interactive-text);
-  --cart-sheet-close-hover: var(--selected-accent);
-  /* the summary row's edge by night: a fade, no line */
-  --cart-summary-label: color-mix(in srgb, var(--interactive-text) 70%, transparent);
-  --cart-summary-value: var(--text-strong);
-  --cart-summary-border: transparent;
-  --cart-summary-shadow: none;
-  --cart-summary-fade: 2.5rem;
-  --preferences-ink: var(--text-strong);
-  /* Default crown feedback; cart success keeps its own green override. */
-  --status-burst-halo: color-mix(in srgb, var(--selected-accent) 30%, transparent);
-  --cart-notice-bg: var(--preferences-bg);
-  --cart-notice-text: var(--color-status-success-text);
-  --cart-notice-border: color-mix(in srgb, var(--color-status-success-text) 45%, transparent);
-  --cart-notice-shadow: 0 0 16px color-mix(in srgb, var(--color-status-success-text) 12%, transparent);
-  --order-history-row-marker: var(--menu-chosen);
-  --order-progress-complete: var(--color-green-300);
-  --confirm-remove-text: var(--cart-remove-ink);
-  /* the red button's word (Clear cart, Remove): a light red, not grey */
-  --confirm-danger-action-ink: var(--color-red-100);
-  --order-progress-ready: var(--interactive-text);
-  --order-progress-lit: var(--selected-accent);
-  --order-progress-lit-label: var(--order-progress-lit);
-  --order-progress-shadow: var(--interaction-text-shadow);
-  --order-progress-dot-shadow: 0 0 9px color-mix(in srgb, var(--selected-accent) 25%, transparent);
-  --menu-panel-edge-glow: linear-gradient(to bottom, color-mix(in srgb, var(--color-accent-750) 14%, transparent), color-mix(in srgb, var(--color-accent-750) 4%, transparent) 40%, transparent);
-  --cart-previous-text: var(--dropdown-title-text);
-  --cart-previous-active: var(--dropdown-title-active-text);
-  --cart-previous-glow: var(--dropdown-title-text-shadow);
-  --menu-scroll-thumb: var(--interactive-text);
-  --menu-scroll-track: color-mix(in srgb, var(--interactive-text) 12%, transparent);
-  --preferences-border: var(--menu-edge);
-  --preferences-option: var(--interactive-text);
-  --preferences-selected: var(--selected-accent);
-  --preferences-selected-shadow: var(--interaction-text-shadow);
-  --preferences-selected-glow: var(--menu-link-glow);
-  --preferences-selected-glow-filter: var(--interaction-glow-filter);
-  --preferences-selected-glow-opacity: var(--interaction-selected-opacity);
-  --preferences-hover: var(--selected-accent);
-  --account-menu-text: var(--interactive-text);
-  --account-menu-selected: var(--selected-accent);
-  --menu-dropdown-glow: var(--menu-link-glow);
-  --menu-dropdown-glow-filter: var(--interaction-glow-filter);
-  --menu-dropdown-icon-filter: var(--interaction-icon-filter);
-
-  --menu-cart-ink: var(--moonlight);
-  /* Feedback has no circular fill/ring: a coloured icon lights the space behind it. */
-  --menu-cart-feedback-animation: site-nav-cart-glow;
-  --menu-cart-feedback-added-ink: var(--moonlight);
-  --menu-cart-feedback-removed-ink: var(--color-red-400);
-  --menu-cart-feedback-count-ink: var(--color-primary-950);
-  --menu-cart-feedback-icon-animation: site-nav-cart-glow-icon 1.6s ease-out;
-  --menu-cart-feedback-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, currentColor 40%, transparent)) drop-shadow(0 0 9px color-mix(in srgb, currentColor 25%, transparent));
-
-  /* Shared local interactions follow the approved navbar light. */
-  /* Painted letters/icons emit locally; opacity scales the tuned radial halo. */
-  --interaction-halo-opacity: 1;
-  --interaction-selected-opacity: var(--interaction-halo-opacity);
-  /* Centred shadows follow the glyph shapes, without a directional offset. */
-  --interaction-text-shadow: 0 0 3px rgb(249 181 26 / calc(0.15 * var(--interaction-glow-strength))), 0 0 9px rgb(249 181 26 / calc(0.15 * var(--interaction-glow-strength))), 0 0 18px rgb(249 181 26 / calc(0.15 * var(--interaction-glow-strength)));
-  /* Widen paint rather than element boxes, avoiding horizontal page overflow. */
-  --interaction-glow-filter: blur(var(--interaction-glow-blur)) drop-shadow(-12px 0 4px rgb(249 181 26 / calc(0.45 * var(--interaction-glow-strength)))) drop-shadow(12px 0 4px rgb(249 181 26 / calc(0.45 * var(--interaction-glow-strength))));
-  --menu-crown-shadow: drop-shadow(0 0 4px rgb(249 181 26 / calc(0.40 * var(--interaction-glow-strength)))) drop-shadow(0 0 8px rgb(249 181 26 / calc(0.18 * var(--interaction-glow-strength))));
-  --interaction-icon-filter: drop-shadow(0 0 3px rgb(249 181 26 / calc(0.28 * var(--interaction-glow-strength)))) drop-shadow(0 0 9px rgb(249 181 26 / calc(0.16 * var(--interaction-glow-strength))));
-  --menu-logo: var(--moonlight);
-  --menu-logo-hover: var(--selected-accent);
-  --section-nav-marker-display: none;
-  --find-sweets-hover-text: var(--state-pointer-ink);
-  --find-sweets-hover-icon: var(--state-pointer-ink);
-  --landing-account-hover-decoration: none;
-  --landing-control-hover-ink: var(--menu-chosen);
-  --section-nav-hover-marker: 0%;
-  --section-nav-mobile-hover-marker: 0%;
-  --find-sweets-hover-decoration: none;
-  --select-option-text: var(--interactive-text);
-  --select-option-active-text: var(--color-primary-900);
-  --select-option-active-bg: var(--color-primary-100);
-  --select-option-selected-text: var(--color-primary-900);
-  --catalog-cart-hover-shadow: var(--state-pointer-box-glow);
-
-  /* 4. Reading, FAQ and contact details */
-  --prose-text: var(--text-reading);
-  /* A product's Description and Ingredients: moonlight, as the logo. */
-  --product-prose-text: var(--moonlight);
-  /* Product photos a little dimmer, so their white does not glare at night. */
-  --photo-filter: brightness(0.86) saturate(0.95);
-  --faq-question-text: var(--state-rest-ink);
-  --faq-question-hover-text: var(--dropdown-title-hover-text);
-  --faq-question-open-text: var(--dropdown-title-active-text);
-  --faq-question-hover-bg: transparent;
-  --faq-question-open-bg: transparent;
-
-  /* Decorative lettering, photo paper and category icons retain their own colours */
-  /* The page titles (Q & A, Who we are?): decoration, in moonlight. */
-  --display-shadow: var(--color-primary-750);
-  /* raised, as by day: a dim face, a little moonlight on its upper edge,
-     the night's shadow under it and a faint moonlit glow round it */
-  --display-face: color-mix(in srgb, var(--moonlight) 14%, var(--color-primary-850));
-  --display-light: var(--moonlight);
-  --display-light-opacity: 0.45;
-  --display-underside: var(--color-primary-1000);
-  --display-underside-opacity: 0.35;
-  --display-near-shadow: var(--color-primary-1000);
-  --display-near-shadow-opacity: 0.45;
-  --display-far-shadow: var(--moonlight);
-  --display-far-shadow-opacity: 0.28;
-  --paper-bg: var(--color-neutral-200);
-  --contact-mail: var(--interactive-text-strong);
-  --contact-phone: var(--color-green-400);
-  --contact-place: #e7a096;
-
-  /* 5. Forms, search and entrance pages */
-  --search-text: var(--color-accent-100);
-  --search-placeholder: var(--color-primary-200);
-  --search-focus-border: var(--interactive-border);
-  --search-focus-bg: var(--field-hover-bg);
-  --search-focus-shadow: 0 0 0 3px color-mix(in srgb, var(--search-focus-border) 20%, transparent);
-
-  /* Login/reset: neutral copy, blue links, orange validation and a red error icon */
-  --entrance-field-focus-bg: var(--surface-bg);
-  --entrance-copy-text: var(--text-secondary);
-  --entrance-help-text: var(--text-muted);
-  --entrance-link-text: var(--interactive-text);
-  --entrance-link-hover-text: var(--interactive-text-hover);
-  --entrance-error-text: var(--color-status-warning-text);
-  --entrance-error-mark: var(--color-status-warning-text);
-  --entrance-error-icon: var(--danger-text);
-
-  /* 6. Catalog and labels — deliberate gold/blue surface exceptions stay local */
-  --label-bg: var(--surface-bg);
-  --label-border: var(--interactive-border);
-  --label-band: var(--surface-bg);
-  --label-line: var(--color-primary-700);
-  --label-band-text: var(--interactive-text);
-  --label-text: var(--color-accent-200);
-  /* Price stays gold; fixed weight is ordinary, non-interactive information. */
-  --catalog-price-text: var(--color-accent-400);
-  --catalog-price-bg: var(--label-bg);
-  --catalog-price-border: var(--catalog-price-text);
-  --catalog-badge-bg: var(--catalog-price-bg);
-  --catalog-badge-ink: var(--catalog-price-text);
-  --catalog-badge-border: var(--catalog-price-border);
-  --catalog-fields-bg: var(--interactive-text);
-  --catalog-vegan-ink: var(--color-green-200);
-  --catalog-vegan-bg: var(--color-green-900);
-  --catalog-vegan-border: var(--color-green-600);
-  --catalog-stock-ink: var(--color-accent-200);
-  --catalog-stock-bg: color-mix(in srgb, var(--color-accent-700) 12%, var(--label-bg));
-  --catalog-stock-border: var(--color-accent-700);
-  --catalog-fields-divider: var(--label-band);
-  --catalog-control-placeholder-text: var(--color-primary-700);
-  --product-title-text: var(--selected-accent);
-  --product-label-border: var(--selected-accent);
-  --product-label-outline-shadow: 0 0 10px color-mix(in srgb, var(--selected-accent) 15%, transparent);
-  --catalog-title-pointer-bg: var(--label-band);
-  --catalog-title-pointer-text: var(--moonlight);
-  --catalog-title-pointer-border: var(--moonlight);
-  --catalog-title-pointer-shadow: var(--catalog-cart-hover-shadow);
-  --catalog-package-text: var(--color-primary-950);
-  --label-muted: var(--color-primary-200);
-  --label-success-text: var(--color-status-success-text);
-  --label-warning-text: var(--color-status-warning-text);
-  --label-danger-text: var(--danger-text);
-
-  /* Missing-photo artwork is independent of label ink and normal reading text */
-  --catalog-placeholder-bg: var(--surface-muted);
-  --catalog-placeholder-text: #63718f;
-  --catalog-placeholder-crown: #63718f;
-
-  /* Card hover uses moonlight; gold marks the opened product. */
-  --catalog-card-hover-text: var(--moonlight);
-  --catalog-card-hover-sheen: var(--state-pointer-sheen);
-  --catalog-outline-shadow: 0 0 10px color-mix(in srgb, var(--label-border) 15%, transparent);
-  /* The shelf: blue stripes in the dark, lit along its edge by a faint
-     warm light. Raise or lower the percentages to tune the light. */
-  --catalog-shelf-stripe: var(--color-primary-700);
-  --catalog-shelf-stripe-alt: var(--color-primary-800);
-  --catalog-shelf-glow:
-    0 0 14px 2px color-mix(in srgb, var(--color-accent-750) 22%, transparent),
-    0 0 34px 8px color-mix(in srgb, var(--color-accent-750) 7%, transparent);
-  /* The opened product's label stands in a faint lantern light. */
-  --product-label-glow:
-    0 0 40px 6px color-mix(in srgb, var(--color-accent-600) 14%, transparent),
-    0 0 90px 20px color-mix(in srgb, var(--color-accent-600) 7%, transparent);
-  /* The start page's logo is the moon: a soft halo round it. */
-  --landing-moon-halo: radial-gradient(closest-side, color-mix(in srgb, var(--moonlight) 15%, transparent), color-mix(in srgb, var(--moonlight) 6%, transparent) 55%, transparent);
-  --catalog-card-hover-shadow: var(--catalog-cart-hover-shadow);
-
-  /* Pale-blue fields use dark values; focus uses moonlight on the blue surface. */
-  --catalog-control-focus-text: var(--moonlight);
-  --catalog-control-focus-bg: var(--search-focus-bg);
-  --catalog-control-focus-border: color-mix(in srgb, var(--moonlight) 60%, transparent);
-
-  /* Variant list: blue on the label surface; dark ink on light active rows. */
-  --catalog-option-text: var(--interactive-text);
-  --catalog-option-active-text: var(--color-primary-900);
-  --catalog-option-muted-text: var(--text-muted);
-
-  /* Product-detail close: stronger blue normal icon is a deliberate exception */
-  --catalog-close-ink: var(--color-primary-400);
-  --catalog-close-border: var(--color-primary-400);
-  --catalog-close-bg: var(--surface-bg);
-  /* pointed at: in moonlight, its ring, its cross and a light round it */
-  --catalog-close-hover-ink: var(--moonlight);
-  --catalog-close-hover-bg: var(--surface-hover);
-  --catalog-close-hover-border: var(--moonlight);
-  --catalog-close-hover-shadow:
-    0 0 8px color-mix(in srgb, var(--moonlight) 45%, transparent),
-    0 0 18px color-mix(in srgb, var(--moonlight) 22%, transparent);
-  --catalog-close-hover-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, var(--moonlight) 70%, transparent));
-
-  /* 7. Cart and quantity stepper */
-  --cart-panel-bg: var(--surface-bg);
-  --stepper-bg: var(--surface-bg);
-  --stepper-bg-hover: var(--surface-hover);
-  --stepper-bg-press: var(--surface-active);
-  --stepper-ink: var(--color-primary-100);
-  --stepper-line: var(--state-rest-ink);
-  --stepper-number-bg: var(--surface-bg);
-
-  /* Catalog add: blue ready ink and moonlight hover/focus/press; muted until a size is chosen.
-     Its button background sequence is intentionally different from text links. */
-  --catalog-cart-active-bg: var(--surface-bg);
-  --catalog-cart-bg: var(--action-secondary-bg);
-  --catalog-cart-ink: var(--action-secondary-text);
-  --catalog-cart-border: var(--action-secondary-border);
-  --catalog-cart-hover-bg: var(--action-secondary-hover-bg);
-  --catalog-cart-hover-ink: var(--action-secondary-hover-text);
-  --catalog-cart-hover-border: var(--action-secondary-hover-border);
-  --catalog-cart-focus: var(--moonlight);
-  --catalog-cart-muted-bg: var(--color-primary-950);
-  --catalog-cart-muted-ink: var(--color-neutral-500);
-  --catalog-cart-muted-border: var(--color-neutral-500);
-  --catalog-cart-active-ink: var(--action-secondary-hover-text);
-  --catalog-cart-active-border: var(--action-secondary-hover-border);
-
-  /* Success burst and destructive feedback keep their existing shade/intensity */
-  --catalog-burst-halo: color-mix(in srgb, var(--moonlight) 30%, transparent);
-  --catalog-burst-success: var(--moonlight);
-  --catalog-burst-error: #e45f5f;
-  --cart-remove-ink: #dc5a5a;
-  --cart-remove-hover-ink: var(--danger-text);
-  --cart-remove-flash: rgb(210 55 55 / 0.24);
-  --cart-clear-text: var(--color-red-400);
-  --cart-clear-hover-text: var(--danger-text);
-
-  /* 8. Footer — brand artwork remains independent of interactive text */
-  --footer-logo: var(--color-primary-200);
-  --footer-crown: var(--color-accent-600);
-  --footer-link: var(--interactive-text-subtle);
-  --footer-link-hover: var(--color-accent-500);
+  .cart-line { grid-template-rows: auto auto; grid-template-areas: "picture text text" "picture details controls"; row-gap: 0; }
+  .cart-line__text { display: contents; }
+  .cart-line__brand { grid-column: 2 / -1; grid-row: 1; align-self: start; }
+  .cart-line__name { grid-column: 2 / -1; grid-row: 1; align-self: end; padding-top: 1.7rem; padding-right: 2rem; margin-bottom: 0; }
+  .cart-line__details { grid-area: details; align-self: end; }
+  .cart-line__controls { align-self: start; }
+  .cart-line .quantity-stepper { --size-control-sm: clamp(2.3rem, 6vw, 2.75rem); --stepper-number: 2.1rem; }
+  .cart-line .quantity-stepper__button { min-height: 2.75rem; }
+  .cart-line .quantity-stepper__input { font-size: var(--font-size-16); }
+  .cart-line__price { font-size: var(--font-size-14); }
+  .cart-line__meta { font-size: var(--font-size-12); }
 }
 
-:root[data-theme="dark"]:not([data-site-zone="ops"]) {
-  --cart-total: var(--catalog-price-text);
-  /* the cart's steppers: light blue at rest, moonlight pointed at and
-     pressed (the number stays gold); gold edge while in use */
-  --cart-control-ink: var(--state-rest-ink);
-  --cart-control-border: var(--state-rest-ink);
-  --cart-control-hover: var(--state-pointer-ink);
-  --cart-control-hover-filter: var(--state-pointer-icon-filter);
-  --cart-control-active: var(--state-pointer-ink);
-  --cart-quantity-ink: var(--selected-accent);
-  --find-sweets-name: var(--moonlight);
-  --cart-name: var(--moonlight);
-  --cart-amount: var(--text-primary);
-  --cart-row-line: color-mix(in srgb, var(--interactive-border) 16%, transparent);
-  --cart-remove-hover: var(--color-red-400);
-  --cart-disabled-ink: var(--text-muted);
-  --cart-disabled-bg: var(--surface-muted);
-  --cart-disabled-border: color-mix(in srgb, var(--text-muted) 30%, transparent);
-  --menu-backdrop-bg: rgb(0 4 20 / .65);
-  --field-focus-color: var(--interactive-border);
+/* The unit price belongs to the product; the confirmed row amount follows qty. */
+:is(.cart-line, .line--cart-review) .cart-line__unit-price {
+  position: absolute; z-index: 1; top: .25rem; left: auto; right: 0; translate: 20% 0;
+  width: fit-content; margin: 0; padding: .2rem 1rem .2rem .45rem;
+  font-size: clamp(.65rem, 2vw, .8rem); white-space: nowrap; transform: rotate(-5deg);
+}
+:is(.cart-line, .line--cart-review) .cart-line__unit-price::before { left: auto; right: .45rem; }
+.line--cart-review { --cart-picture: clamp(3.25rem, 14vw, 5rem); }
+.line--cart-review .line__product { grid-template-columns: var(--cart-picture) minmax(0, 1fr); }
+
+@media (max-width: 479px) {
+  .cart-line { row-gap: 0; }
 }
 
-/* Here, pointer and rest by night (themes/light.css explains the parts):
-   here is gold with its light and the crown; the pointer is moonlight, with
-   a moonlit glow and no crown; the rest light blue, the logo too. */
-:root[data-theme="dark"]:not([data-site-zone="ops"]) {
-  --state-pointer-glow: radial-gradient(ellipse at center, color-mix(in srgb, var(--state-pointer-ink) calc(11% * var(--interaction-glow-strength)), transparent), color-mix(in srgb, var(--state-pointer-ink) calc(8% * var(--interaction-glow-strength)), transparent) 30%, color-mix(in srgb, var(--state-pointer-ink) calc(5% * var(--interaction-glow-strength)), transparent) 60%, transparent 100%);
-  --state-pointer-glow-filter: blur(var(--interaction-glow-blur));
-  --state-pointer-text-shadow: 0 0 3px color-mix(in srgb, var(--state-pointer-ink) 30%, transparent), 0 0 9px color-mix(in srgb, var(--state-pointer-ink) 20%, transparent), 0 0 18px color-mix(in srgb, var(--state-pointer-ink) 12%, transparent);
-  --state-pointer-icon-filter: drop-shadow(0 0 3px color-mix(in srgb, var(--state-pointer-ink) 35%, transparent)) drop-shadow(0 0 9px color-mix(in srgb, var(--state-pointer-ink) 18%, transparent));
-
-  --nav-link-pointer-label-filter: none;
-  --nav-trigger-pointer-glow: var(--state-pointer-glow);
-  --nav-trigger-pointer-glow-filter: var(--state-pointer-glow-filter);
-  --nav-trigger-pointer-icon-filter: var(--state-pointer-icon-filter);
-
-  --nav-cart-rest-ink: var(--state-rest-ink);
-  --nav-trigger-open-ink: var(--state-here-ink);
-  --nav-trigger-open-glow: var(--state-here-glow);
-  --nav-trigger-open-glow-filter: var(--state-here-glow-filter);
-  --nav-trigger-open-icon-filter: var(--state-here-icon-filter);
-
-  --logo-rest-ink: var(--state-rest-ink);
-  --logo-rest-crown-opacity: 0;
-  --logo-pointer-ink: var(--state-pointer-ink);
-  --logo-pointer-filter: var(--state-pointer-icon-filter);
-  --logo-here-ink: var(--state-here-ink);
-  --logo-here-filter: drop-shadow(0 0 10px color-mix(in srgb, var(--selected-accent) 35%, transparent));
-  --logo-here-pointer-ink: var(--state-here-ink);
-  --landing-logo-halo: none;
-
-  --menu-link-here-ink: var(--state-here-ink);
-  --menu-link-pointer-ink: var(--state-pointer-ink);
-  --menu-link-pointer-glow: var(--state-pointer-glow);
-  --menu-link-pointer-glow-filter: var(--state-pointer-glow-filter);
-  --menu-link-pointer-text-shadow: var(--state-pointer-text-shadow);
-
-  /* Settings: the choice in use is "here" (gold), the one pointed at the pointer */
-  --menu-choice-active-ink: var(--state-here-ink);
-  --menu-choice-active-glow: color-mix(in srgb, var(--selected-accent) 30%, transparent);
-  --menu-choice-pointer-ink: var(--state-pointer-ink);
-  --menu-choice-pointer-text-shadow: var(--state-pointer-text-shadow);
-  --menu-choice-pointer-glow: var(--state-pointer-glow);
-  --menu-choice-pointer-glow-filter: var(--state-pointer-glow-filter);
-
-  --site-switch-here-ink: var(--state-here-ink);
-  --site-switch-pointer-ink: var(--state-pointer-ink);
-
-  --landing-pointer-ink: var(--state-pointer-ink);
-  --landing-pointer-glow: var(--state-pointer-glow);
-  --landing-pointer-glow-filter: var(--state-pointer-glow-filter);
-  --landing-pointer-text-shadow: var(--state-pointer-text-shadow);
-  --landing-pointer-icon-filter: var(--state-pointer-icon-filter);
-  --landing-account-pointer-ink: var(--state-pointer-ink);
-
-  --cart-sheet-close-hover: var(--state-pointer-ink);
-
-  /* The Menu's box on wider screens: the night sky, no edge */
-  --site-menu-box-bg: var(--color-primary-1000);
-
-  /* The page's own parts (common/states.css) */
-  --state-pointer-box-glow: 0 0 18px 3px color-mix(in srgb, var(--state-pointer-ink) calc(22% * var(--interaction-glow-strength)), transparent), 0 0 32px 7px color-mix(in srgb, var(--state-pointer-ink) calc(8% * var(--interaction-glow-strength)), transparent);
-  --state-pointer-sheen: linear-gradient(135deg, color-mix(in srgb, var(--state-pointer-ink) calc(16% * var(--interaction-glow-strength)), transparent), transparent 65%);
-  /* the shared halo's shape, and the chips' soft light (not the day's
-     cloud) */
-  --section-nav-glow-inset: -0.6rem 0;
-  /* room at the row's ends for the halo, so it is not cut there */
-  --section-nav-glow-room: 1.25rem;
-  --section-nav-glow-closed: none;
-  --section-nav-glow-peek: none;
-  --chip-glow-closed: none;
-  --chip-glow-peek: none;
-  --sky-open-time: var(--motion-fast);
-  --chip-glow-inset: -4px 0;
-  --chip-glow-radius: 50%;
-  --chip-glow-blur: 9px;
-  --section-nav-here-glow: var(--interaction-glow);
-  --section-nav-here-glow-filter: var(--interaction-glow-filter);
-  --section-nav-here-glow-opacity: var(--interaction-selected-opacity);
-  --section-nav-pointer-glow: var(--state-pointer-glow);
-  --section-nav-pointer-glow-filter: var(--state-pointer-glow-filter);
-  --section-nav-pointer-text-shadow: var(--state-pointer-text-shadow);
-  --section-nav-pointer-icon-filter: var(--state-pointer-icon-filter);
-  --dropdown-title-pointer-glow: var(--state-pointer-glow);
-  --dropdown-title-pointer-glow-filter: var(--state-pointer-glow-filter);
-  --dropdown-title-pointer-text-shadow: var(--state-pointer-text-shadow);
-  --dropdown-title-pointer-icon-filter: var(--state-pointer-icon-filter);
-  --dropdown-title-pointer-chevron: var(--state-pointer-ink);
-  --faq-answer-text: var(--state-pointer-ink);
-  --find-sweets-pointer-glow: var(--state-pointer-glow);
-  --find-sweets-pointer-glow-filter: var(--state-pointer-glow-filter);
-  --find-sweets-pointer-text-shadow: var(--state-pointer-text-shadow);
-  --find-sweets-pointer-icon-filter: var(--state-pointer-icon-filter);
-  --catalog-cart-hover-icon-filter: var(--state-pointer-icon-filter);
-  /* the quantity stepper: light blue edge, gold while in use, a moonlit
-     blink when pressed */
-  --stepper-active-line: var(--state-here-ink);
-  --stepper-pointer-ink: var(--state-pointer-ink);
-  --stepper-press-ink: var(--state-pointer-ink);
-  --stepper-press-glow: inset 0 0 14px color-mix(in srgb, var(--state-pointer-ink) 30%, transparent);
+.cart-line__name { color: var(--cart-name); font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
+.cart-line__product:is(:hover, :focus-visible) .cart-line__name { color: var(--menu-chosen); text-shadow: var(--interaction-text-shadow); }
+.cart-line__meta { color: var(--text-muted); font-size: var(--font-size-14); }
+.cart-line__price strong { white-space: nowrap; }
+.quantity-stepper__trash { display: none; }
+.quantity-stepper.is-minimum .quantity-stepper__minus { display: none; }
+.quantity-stepper.is-minimum .quantity-stepper__trash { display: contents; }
+.cart-line.line-flash--folding { padding-block: 0; }
+.cart-line .quantity-stepper { --stepper-bg: var(--surface-bg); --stepper-line: var(--cart-control-border, color-mix(in srgb, var(--cart-name) 38%, transparent)); --stepper-ink: var(--cart-control-ink, var(--cart-name)); }
+.cart-line .quantity-stepper__input { color: var(--cart-quantity-ink, var(--cart-name)); }
+.cart-line .quantity-stepper__button { border: 0; background: transparent; }
+.cart-line .quantity-stepper__button:hover { color: var(--cart-control-hover, var(--menu-chosen)); filter: var(--cart-control-hover-filter, var(--interaction-icon-filter)); }
+.cart-line .quantity-stepper:focus-within { box-shadow: var(--field-focus-shadow); }
+.cart-line .quantity-stepper__input:focus { box-shadow: none; }
+.cart-line__brand { color: var(--text-muted); font-size: var(--font-size-12); letter-spacing: var(--letter-spacing-subtle); }
+.cart-details { width: 100%; max-width: none; margin-inline: auto; margin-top: var(--space-10); padding-top: var(--space-8); border-top: 1px solid var(--cart-row-line); text-align: start; }
+.cart-details h2 { margin: 0 0 var(--space-2); font-family: var(--font-heading); font-size: var(--font-size-24); }
+.cart-details > .form-help { margin-bottom: var(--space-10); }
+.cart-details__help { text-align: center; }
+.checkout-form .button:disabled { color: var(--cart-disabled-ink); background: var(--cart-disabled-bg); border-color: var(--cart-disabled-border); opacity: .6; box-shadow: none; text-shadow: none; cursor: default; }
+/* Details still missing: it looks the same, but a press shows what is
+   left to fill in (checkout-details.js), so it keeps its pointer. */
+.button.is-incomplete:not(:disabled) { color: var(--cart-disabled-ink); background: var(--cart-disabled-bg); border-color: var(--cart-disabled-border); opacity: .6; box-shadow: none; text-shadow: none; }
+.checkout-email-status { color: var(--color-status-warning-text); }
+.site-nav-cart__popover { width: min(38rem, calc(100vw - 8rem)); padding: var(--space-6); background: var(--cart-sheet-bg); border-color: var(--preferences-border); box-shadow: var(--preferences-shadow); display: block; max-height: calc(100dvh - 6rem); border-radius: var(--radius-md); }
+.cart-panel-scroll { max-height: calc(100dvh - 10rem); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding: var(--space-1); }
+.site-nav-cart__lines { overflow: visible; max-height: none; margin: 0; padding: 0; scrollbar-gutter: auto; }
+.site-nav-cart__actions { flex-direction: column; margin-top: var(--space-5); }
+.site-nav-cart__actions .button { width: 100%; }
+@media (max-width: 767px) {
+  .site-nav-cart__popover.mobile-menu-panel { width: 100%; background: transparent; border: 0; border-radius: 0; box-shadow: none; display: block; padding: 0 0 4.75rem; max-height: none; text-align: start; }
+  .cart-panel-scroll { height: 100%; max-height: none; padding: var(--space-6) var(--space-5) var(--space-4); }
+}
+@media (max-width: 479px) {
+  .cart-panel-scroll { padding-inline: var(--space-4); }
 }
 
-/* Filter chips and the status toggles: the word only, "here" gold with its
-   light behind it, the pointer moonlight, the rest light blue. */
-:root[data-theme="dark"]:not([data-site-zone="ops"]) {
-  --chip-rest-ink: var(--state-rest-ink);
-  --chip-here-ink: var(--state-here-ink);
-  --chip-here-glow: color-mix(in srgb, var(--state-here-ink) 28%, transparent);
-  --chip-pointer-ink: var(--state-pointer-ink);
-  --chip-pointer-glow: color-mix(in srgb, var(--state-pointer-ink) 18%, transparent);
+.cart-details .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cart-details .form-field--half { grid-column: span 1; }
+.cart-page .lines-total strong, .site-nav-cart__popover .lines-total strong { color: var(--cart-total); }
+
+/* The editor and preview use the available desktop width for a single row. */
+.cart-details .form-field--quarter,
+.cart-details .form-field--three-quarters { grid-column: span 1; }
+.cart-details__phone { margin-top: var(--space-4); }
+.cart-details .page__actions { margin-top: var(--space-8); }
+.cart-details .cart-details__help { margin-top: var(--space-4); }
+@media (min-width: 768px) {
+  .cart-details .form-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cart-details .form-field--half { grid-column: span 2; }
+  .cart-details .form-field--three-quarters { grid-column: span 3; }
+}
+.cart-panel-scroll > [data-responsive-cart-page] { margin: 0; padding: 0; }
+.cart-panel-scroll .page.cart-page { width: 100%; max-width: none; min-height: 0; margin: 0; padding: 0; }
+.cart-panel-scroll .page.cart-page::before { display: none; }
+
+.cart-panel-scroll { scrollbar-color: var(--menu-scroll-thumb) var(--menu-scroll-track); }
+
+/* Desktop quick preview; mobile hosts the full editor in the same frame. */
+.cart-panel-scroll[aria-busy="true"] { opacity: .65; }
+.cart-page .recent-orders,
+.cart-page .cart-quick-add { margin-bottom: var(--space-10); }
+/* An empty cart (includes/cart/empty.html), in the box, the sheet and on
+   the cart pages: the crown in the placeholder colours of a product without
+   a photo, "Cart is empty", and the way on below. */
+.cart-empty {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--space-4);
+  padding-block: var(--space-8);
+  text-align: center;
+}
+.cart-empty__crown.ui-icon-block {
+  width: 5rem;
+  height: 5rem;
+  /* Optical centring, as in the catalog: the tilted crown leans left. */
+  translate: 7% 0;
+  color: var(--catalog-placeholder-crown);
+}
+.cart-empty__text {
+  margin: 0;
+  color: var(--catalog-placeholder-text);
+  font-size: var(--font-size-16);
+  font-weight: 700;
+}
+.cart-empty .cart-empty__action { margin-top: var(--space-2); }
+
+/* The summary beside the cart's button (includes/cart/summary.html): a
+   small label over the subtotal, or over how many products. */
+.cart-summary {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  line-height: 1.2;
+  text-align: start;
+}
+.cart-summary__label {
+  color: var(--cart-summary-label);
+  font-size: var(--font-size-12);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cart-summary__value {
+  color: var(--cart-summary-value);
+  font-size: var(--font-size-18, 1.125rem);
+  font-weight: 800;
 }
 
-/* Touch has no hover state: keep the main action readable at rest and leave
-   gold for a deliberate press. Desktop retains blue rest and moonlight hover. */
-@media (hover: none), (pointer: coarse) {
-  :root[data-theme="dark"]:not([data-site-zone="ops"]) {
-    --action-primary-text: var(--moonlight);
-    --action-primary-default-text: var(--moonlight);
-    --action-primary-border: var(--moonlight);
-    --action-primary-hover-bg: var(--page-bg);
-    --action-primary-hover-border: var(--moonlight);
-    --action-primary-shadow: none;
-    --action-primary-hover-transform: none;
-    --action-primary-text-shadow: none;
-    --action-primary-icon-filter: none;
+/* The order flow's summary row (the cart pages' .order-flow-summary): only
+   in the phone's sheet, where it is held at the bottom while the cart
+   scrolls under it, with the same edge as the box's row on wider screens.
+   The page's own button for the same step then steps aside. */
+.order-flow-summary { display: none; }
+@media (max-width: 767px) {
+  .site-nav-cart .order-flow-summary:not([hidden]) {
+    position: sticky;
+    bottom: calc(-1 * var(--space-4));
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: var(--space-6) calc(-1 * var(--space-5)) calc(-1 * var(--space-4));
+    padding: var(--space-3) var(--space-5) var(--space-4);
+    background: var(--cart-sheet-bg);
+    border-top: 1px solid transparent;
+    transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+  }
+  .site-nav-cart .order-flow-summary::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: var(--cart-summary-fade);
+    background: linear-gradient(to bottom, transparent, var(--cart-sheet-bg));
+    opacity: 0;
+    transition: opacity var(--motion-fast);
+    pointer-events: none;
+  }
+  .site-nav-cart [data-more-below] .order-flow-summary {
+    border-top-color: var(--cart-summary-border);
+    box-shadow: var(--cart-summary-shadow);
+  }
+  .site-nav-cart [data-more-below] .order-flow-summary::before { opacity: 1; }
+  .site-nav-cart .order-flow-summary .button { width: auto; flex: 0 0 auto; padding-inline: var(--space-6); }
+  .site-nav-cart .order-flow-page[data-flow-step="cart"] :is(.page-actions__primary, .page-actions > .page__submit, .checkout-form .form-actions) {
+    display: none;
+  }
+}
+
+/* The cart's title and corner cross (mobile-menu.css's .panel-title and
+   .panel-corner-close) in the sheet's own ink. On a phone the sheet keeps
+   its circle at the bottom and needs no title. */
+.site-nav-cart__popover {
+  --panel-chrome-ink: var(--cart-sheet-close-ink, var(--account-menu-text));
+  --panel-chrome-hover: var(--cart-sheet-close-hover, var(--account-menu-selected));
+}
+@media (max-width: 767px) {
+  .site-nav-cart__panel-title { display: none; }
+}
+
+/* Wider screens: a centred box like the Menu's, over the dimmed page, with
+   its title fixed at the top and its quiet cross in the corner. A long cart
+   scrolls inside it, under the title, with the panels' own scroll marker
+   (menu-scroll.js) in place of the browser's scrollbar. */
+@media (min-width: 768px) {
+  .site-nav-cart[open] > .mobile-menu-viewport {
+    display: grid;
+    inset: 0;
+    place-items: center;
+    padding: 2.5rem 1rem;
+    overflow: visible;
+  }
+  .site-nav-cart__popover.mobile-menu-panel {
+    position: relative;
+    inset: auto;
+    translate: none;
+    width: min(calc(100vw - 2rem), var(--cart-desktop-width));
+    /* Between a least and a most height, then the list scrolls. */
+    min-height: min(26rem, calc(100dvh - 5rem));
+    max-height: min(44rem, calc(100dvh - 5rem));
+    display: flex;
+    flex-direction: column;
+    padding-block: calc(clamp(1rem, 3dvh, 1.5rem) + 2.25rem) 0;
+    border: 1px solid var(--preferences-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--cart-sheet-shadow, var(--account-menu-shadow));
+  }
+  .site-nav-cart__popover .mobile-menu-close,
+  .site-nav-cart__popover .menu-panel-toplight { display: none; }
+  .site-nav-cart__popover .cart-panel-scroll {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: none;
+    flex: 1 1 auto;
+    padding-bottom: 0;
+  }
+  /* (the list keeps its height and scrolls; it must not shrink to fit) */
+  .site-nav-cart__popover .cart-panel-scroll > * { flex-shrink: 0; }
+  .site-nav-cart__popover .menu-scroll-track {
+    top: calc(clamp(1rem, 3dvh, 1.5rem) + 2.25rem);
+    bottom: calc(clamp(1.5rem, 4dvh, 2.5rem) + 4.5rem);
+    right: 6px;
+  }
+
+  /* The summary row: the subtotal (or how many products) and a smaller
+     button, held at the bottom of the box while the list scrolls under
+     it. With more below, its edge shows: a fade by night, a line and a
+     soft shadow by day (--cart-summary-* in the theme files). */
+  .site-nav-cart__popover .site-nav-cart__actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: auto calc(-1 * (var(--space-6) + var(--space-1))) 0;
+    /* the box's bottom padding is in here, so the button's light has room
+       inside the scrolling list rather than being cut at its edge */
+    padding: var(--space-4) calc(var(--space-6) + var(--space-1)) calc(var(--space-1) + clamp(1.5rem, 4dvh, 2.5rem));
+    /* it now reaches the box's bottom: round with it */
+    border-radius: 0 0 calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px);
+    background: var(--cart-sheet-bg);
+    border-top: 1px solid transparent;
+    transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+  }
+  .site-nav-cart__popover .site-nav-cart__actions::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: var(--cart-summary-fade);
+    background: linear-gradient(to bottom, transparent, var(--cart-sheet-bg));
+    opacity: 0;
+    transition: opacity var(--motion-fast);
+    pointer-events: none;
+  }
+  .site-nav-cart__popover [data-more-below] .site-nav-cart__actions {
+    border-top-color: var(--cart-summary-border);
+    box-shadow: var(--cart-summary-shadow);
+  }
+  .site-nav-cart__popover [data-more-below] .site-nav-cart__actions::before { opacity: 1; }
+  .site-nav-cart__popover .cart-line__unit-price {
+    left: 0; right: auto; translate: -80% 0;
+    box-shadow: var(--cart-popover-tag-shadow);
+  }
+  /* An empty cart has no summary row: the box's bottom padding is here. */
+  .site-nav-cart__popover .site-nav-cart__empty { padding-bottom: clamp(1.5rem, 4dvh, 2.5rem); }
+  .site-nav-cart__popover .site-nav-cart__actions .button {
+    width: auto;
+    padding-inline: var(--space-8);
+  }
+  /* A removed line's red runs edge to edge, to the gold borders: the
+     scroll box (which clips) spans the popover's full width, and its
+     padding puts the lines back where they were. */
+  .site-nav-cart__popover .cart-panel-scroll {
+    margin-inline: calc(-1 * var(--space-6));
+    padding-inline: calc(var(--space-6) + var(--space-1));
+    /* Below the sticky summary, clip back to the card edge so tags from
+       scrolled-under rows cannot peek out beside or below the footer. */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, var(--cart-tag-room) 100%, var(--cart-tag-room) calc(100% - var(--cart-actions-height, 7rem)), 0 calc(100% - var(--cart-actions-height, 7rem)));
+    margin-left: calc(-1 * (var(--space-6) + var(--cart-tag-room)));
+    padding-left: calc(var(--space-6) + var(--space-1) + var(--cart-tag-room));
+  }
+  .site-nav-cart__popover .site-nav-cart-line {
+    --line-flash-room: calc(-1 * (var(--space-6) + var(--space-1)));
+  }
+  .site-nav-cart__popover .site-nav-cart-line.line-flash--removed::before {
+    border-radius: 0;
+  }
+}
+
+.cart-page .recent-orders .accordion__summary { color: var(--cart-previous-text); background: transparent; }
+.cart-page .recent-orders .accordion__chevron { color: inherit; }
+.cart-page .recent-orders .recent-order__title { color: inherit; }
+.cart-page.glow-accordions .accordion[open] > .accordion__summary,
+.cart-page .recent-orders .accordion__summary:focus-visible { color: var(--cart-previous-active); text-shadow: var(--cart-previous-glow); }
+.cart-page.glow-accordions .accordion[open] > .accordion__summary .ui-icon-svg,
+.cart-page .recent-orders .accordion__summary:focus-visible .ui-icon-svg { filter: var(--dropdown-title-icon-filter); }
+@media (hover: hover) and (pointer: fine) {
+  .cart-page .recent-orders .accordion__summary:hover { color: var(--dropdown-title-hover-text); text-shadow: var(--cart-previous-glow); }
+  .cart-page .recent-orders .accordion__summary:hover .ui-icon-svg { filter: var(--dropdown-title-icon-filter); }
+}
+
+/* Empty mobile carts keep their browse action near the bottom. */
+.cart-panel-scroll > [data-order-flow-page] { margin: 0; padding: 0; grid-template-columns: minmax(0, 1fr); }
+.cart-panel-scroll .order-flow-surface { min-width: 0; width: 100%; max-width: none; margin: 0; padding: var(--space-6) 0 0; }
+.cart-panel-scroll .order-flow-surface::before { display: none; }
+.cart-panel-scroll:has(.cart-page--empty) { height: 100%; }
+.cart-panel-scroll > [data-order-flow-page]:has(.cart-page--empty) { display: flex; min-height: 100%; }
+.cart-panel-scroll .cart-page--empty { display: flex; flex: 1; flex-direction: column; align-items: stretch; }
+.cart-page--empty .order-flow-content { display: flex; flex: 1; flex-direction: column; align-items: center; }
+.cart-page--empty .page__message { margin-block: auto; padding-block: var(--space-8); text-align: center; }
+.cart-page--empty .page__actions { margin-top: auto; padding-top: var(--space-6); width: min(100%, 30rem); }
+
+/* The cart owns its scrolling: let an open product search grow its content
+   instead of clipping the result list at the editor's previous height. */
+.cart-quick-add .ts-dropdown { position: static; }
+
+/* All mobile stages reserve the same space above the persistent timeline. */
+.cart-panel-scroll > .order-flow-page > .page.order-flow-surface { padding: var(--space-6) 0 0; }
+
+.cart-line .quantity-stepper__button:active:not(:disabled) { color: var(--cart-control-active, var(--menu-chosen)); }
+
+.order-flow-page .line__name { color: var(--cart-name); }
+
+/* The outer scrollport bounds the sheet. Its inner page must not cut a row's
+   flash at the narrower content edge before it reaches that padding. */
+.cart-panel-scroll > .order-flow-page { overflow-x: visible; }
+.cart-panel-scroll > .order-flow-page .cart-line {
+  --line-flash-room: calc(-1 * var(--space-2));
+}
+
+[data-cart-line-total], [data-cart-subtotal] { display: inline-block; transform-origin: center; }
+.cart-price-host { position: relative; display: inline-block; width: fit-content; }
+.cart-price-host > .cart-price-value { width: fit-content; }
+.cart-price-delta { position: absolute; left: calc(100% + .4rem); top: 0; font-size: var(--font-size-12); font-weight: 700; white-space: nowrap; pointer-events: none; }
+
+.cart-summary > :is([data-cart-summary-money], [data-cart-summary-products]) { display: grid; }
+.cart-summary > [hidden], [data-business-cart-subtotal][hidden] { display: none !important; }
+
+
+/* On phones the fixed summary owns the subtotal. Keep delivery notes visible. */
+@media (max-width: 767px) {
+  .site-nav-cart .order-flow-page[data-flow-step="cart"] .cart-page .lines-total { display: none; }
+  :is(.cart-line, .line--cart-review) .cart-line__unit-price {
+    left: 50%; right: auto; translate: -50% 0;
   }
 }
