@@ -110,9 +110,9 @@
   /* Navigation and its disclosures stay in step at each viewport size. */
   --font-size-nav-link: clamp(0.8125rem, 0.92vw, var(--font-size-16));
   --font-weight-nav-link: 700;
-  /* The navbar's own links and its Menu button: Fredoka reshaped to the logo's
-     letters (tools/build_nav_font.py). One weight, and narrower than Nunito,
-     so it is set a little larger. */
+  /* The navbar's own links and its Menu button: letters drawn from the logo
+     (tools/nav_font.py). One weight, and narrower than Nunito, so it is set
+     a little larger. */
   --font-nav: "SwedeSweets Nav", Fredoka, Nunito, system-ui, sans-serif;
   --font-nav-scale: 1.2;
   --font-weight-nav: 400;

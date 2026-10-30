@@ -1,7 +1,8 @@
-SwedeSweets Nav (swedesweets-nav.woff2) is a modified version of Fredoka, made by
-tools/build_nav_font.py: narrowed, re-weighted and reshaped to the SwedeSweets logo's
-letterforms. As the licence below requires, it is released under the same SIL Open Font
-License 1.1, and it is renamed (it does not use the name Fredoka).
+SwedeSweets Nav (swedesweets-nav.woff2) is built by tools/nav_font.py from
+design/nav-font/nav-font-kit.svg. Its s, S, w, e, d and t are the SwedeSweets
+wordmark's own letters; the letters still marked "draft" in the kit are derived
+from Fredoka. As the licence below requires for those, the font is released under
+the same SIL Open Font License 1.1, and renamed (it does not use the name Fredoka).
 
 Copyright 2016 The Fredoka Project Authors (https://github.com/hafontia/Fredoka-One)
 
