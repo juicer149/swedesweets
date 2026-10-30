@@ -5,12 +5,16 @@
    fredoka.woff2  headings and the start menu; round and glad like the logo.
    sniglet.woff2  the big display titles (Q & A, About): chubby, one weight
                   (ExtraBold); only downloaded on the pages that use it.
+   swedesweets-nav.woff2  the navbar's links: Fredoka narrowed and squared off
+                  to the logo's letterforms (tools/build_nav_font.py); one
+                  weight, thinner than the logo.
    nunito.woff2   everything else; its figures are already equal width, so
                   prices and quantities line up without tabular-nums.
 
    Fredoka and Nunito are variable (one file for every weight) and cut to the Latin
    letters French, Swedish and English need, plus € and arrows. Licence:
-   SIL Open Font License, next to the files.
+   SIL Open Font License, next to the files (the navbar's font is derived
+   from Fredoka, so the same licence).
    ============================================================================= */
 
 @font-face {
@@ -33,6 +37,14 @@
   font-family: "Nunito";
   src: url("../../fonts/nunito.woff2") format("woff2");
   font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SwedeSweets Nav";
+  src: url("../../fonts/swedesweets-nav.woff2") format("woff2");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
