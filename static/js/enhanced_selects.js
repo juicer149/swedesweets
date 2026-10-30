@@ -38,6 +38,7 @@
       text: optionText(option),
       code: option.dataset.code || "",
       name: option.dataset.name || "",
+      brand: option.dataset.brand || "",
       weight: option.dataset.weight || "",
       offerDetail: option.dataset.offerDetail || "",
       image: option.dataset.image || "",
@@ -103,7 +104,6 @@
 
     const meta = [
       data.weight,
-      data.price,
       data.stock,
     ]
       .filter(Boolean)
@@ -116,9 +116,12 @@
 
     return `
       <div class="enhanced-product-option">
-        ${picture}
-
+        <span class="enhanced-product-option__visual">
+          ${picture}
+          ${data.price ? `<span class="tile__tag enhanced-product-option__price">${escape(data.price)}</span>` : ""}
+        </span>
         <div class="enhanced-product-option__text">
+          ${data.brand ? `<div class="enhanced-product-option__brand">${escape(data.brand)}</div>` : ""}
           <div class="enhanced-product-option__main">
             ${escape(data.name || data.text)}
           </div>
@@ -175,11 +178,12 @@
       const hasSearch =
         select.dataset.enhancedSelectSearch !== "false";
 
+      const productSearch = Boolean(select.closest("[data-cart-quick-add]"));
       const tomSelect = new TomSelect(select, {
-        options: buildOptions(select),
+        options: buildOptions(select).filter(option => !productSearch || option.value !== ""),
         items: buildItems(select),
         create: false,
-        allowEmptyOption: true,
+        allowEmptyOption: !productSearch,
         closeAfterSelect: true,
         maxOptions: 500,
         onDropdownOpen() { warmVisibleImages(this); },

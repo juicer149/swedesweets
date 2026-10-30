@@ -36,6 +36,7 @@
   function resetAnimation() {
     for (const link of links) {
       link.classList.remove("is-nav-leaving", "is-nav-arriving");
+      window.SwedeSweetsNavArrival?.clear(link);
     }
   }
   function remember() {
@@ -78,8 +79,7 @@
     if (motion) {
       links.filter(link => link.getAttribute("aria-current") === "page")
         .forEach(link => link.classList.add("is-nav-leaving"));
-      links.find(link => new URL(link.href).pathname === new URL(url).pathname)
-        ?.classList.add("is-nav-arriving");
+      void window.SwedeSweetsNavArrival?.arrive(links.find(link => new URL(link.href).pathname === new URL(url).pathname), { retain: true });
     }
     document.querySelector("main.site-main")?.setAttribute("aria-busy", "true");
     let committed = false;
@@ -117,7 +117,7 @@
       links.forEach(link => {
         const active = nextLinks.find(next => new URL(next.getAttribute("href"), location.origin).href === link.href)?.getAttribute("aria-current") === "page";
         link.classList.toggle("site-nav__link--active", active);
-        if (active) { link.setAttribute("aria-current", "page"); if (motion) link.classList.add("is-nav-arriving"); }
+        if (active) link.setAttribute("aria-current", "page");
         else link.removeAttribute("aria-current");
       });
       document.dispatchEvent(new Event("navigation-current-changed"));

@@ -16,6 +16,7 @@ from business_portal.catalog.viewmodels import (
     build_business_product_cards,
     few_left_label,
 )
+from products.localization import own_catalog_text
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,6 +28,7 @@ class QuickAddOption:
     price_label: str
     stock_label: str
     image_url: str
+    brand: str = ""
 
     @property
     def text(self) -> str:
@@ -36,6 +38,7 @@ class QuickAddOption:
             part
             for part in (
                 self.name,
+                self.brand,
                 self.package_label,
                 self.offer_label,
                 self.price_label,
@@ -50,6 +53,7 @@ class QuickAddOption:
             part
             for part in (
                 self.name,
+                self.brand,
                 self.package_label,
                 self.offer_label,
             )
@@ -61,15 +65,28 @@ def build_cart_quick_add_options(
     *,
     language_code: str,
 ) -> tuple[QuickAddOption, ...]:
+    products = tuple(list_business_catalog_products())
+    brands = {
+        item.product.id: item.product.brand or item.product.manufacturer
+        for item in products
+    }
+    names = {
+        item.product.id: (
+            own_catalog_text(item.product, language_code=language_code).name
+            or item.product.name
+        )
+        for item in products
+    }
     cards = build_business_product_cards(
-        products=list_business_catalog_products(),
+        products=products,
         language_code=language_code,
     )
 
     return tuple(
         QuickAddOption(
             commercial_price_id=offer.commercial_price_id,
-            name=card.name,
+            name=names[card.product_id],
+            brand=brands.get(card.product_id, ""),
             package_label=card.package_label,
             offer_label=offer.badge_label or "",
             price_label=offer.price_label or "",

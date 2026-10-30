@@ -140,10 +140,6 @@
   35% { transform: translate(var(--theme-nav-cloud-sway-distance), -1px) rotate(0.7deg); }
   70% { transform: translate(-1px, 0) rotate(-0.35deg); }
 }
-@keyframes nav-cloud-pop {
-  0% { transform: scale(0.08, 0.25); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
 @media (prefers-reduced-motion: reduce) {
   :root[data-motion-profile="cloud"]:not([data-site-zone="ops"]) .site-nav__label { transition: none; }
   :root[data-motion-profile="cloud"]:not([data-site-zone="ops"]) .site-nav__link .site-nav__label { transform: none !important; }
@@ -395,24 +391,20 @@
   :root[data-motion-profile="cloud"] :is(.landing-menu__text, .site-nav__label) { transition: none; transform: none !important; }
 }
 
-/* A mobile panel's centred trigger owns the active cloud while open.
-   Night retains its own halo; day uses each trigger's engraved artwork. */
-@media (max-width: 767px) {
-  :root:not([data-site-zone="ops"]) .site-header[data-mobile-panel] details[open] > .menu-dropdown-trigger::before {
-    opacity: 1;
-    transform: none;
-    background: var(--nav-trigger-open-glow);
-    filter: var(--nav-trigger-open-glow-filter);
-  }
-  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header[data-mobile-panel] details[open] > .menu-dropdown-trigger::before {
-    inset: -.85rem -1.1rem -.65rem;
-    border-radius: 0;
-    background: var(--nav-cloud-art) center / 100% 100% no-repeat;
-    filter: none;
-  }
-  :root[data-theme="light"]:not([data-site-zone="ops"]) .site-header[data-mobile-panel] details[open] > .menu-dropdown-trigger {
-    color: var(--state-here-ink);
-  }
+/* A selected trigger gets its cloud/halo only after its travel has ended. */
+:root:not([data-site-zone="ops"]) .site-header details[open] > .menu-dropdown-trigger[data-nav-selected]::before {
+  opacity: 1; transform: none;
+  background: var(--nav-trigger-open-glow); filter: var(--nav-trigger-open-glow-filter);
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-header details[open] > .menu-dropdown-trigger[data-nav-selected]::before {
+  inset: -.85rem -1.1rem -.65rem; border-radius: 0;
+  background: var(--nav-cloud-art) center / 100% 100% no-repeat; filter: none;
+}
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-header details[open] > .menu-dropdown-trigger[data-nav-selected] {
+  color: var(--state-here-ink);
+}
+:root:not([data-site-zone="ops"]) .site-header[data-mobile-panel]:not([data-panel-arrived]) .menu-dropdown-trigger::before {
+  opacity: 0; transition: opacity 140ms ease-out;
 }
 
 /* Selection arrives in two beats; departure removes the crown first. */
@@ -439,4 +431,42 @@
    returns. mobile-menu.js holds this state until its real translate ends. */
 @media (max-width: 767px) {
   .site-header.is-nav-restoring .is-mobile-panel-underlay { opacity: 0; pointer-events: none; }
+}
+
+/* One arrival rhythm: hold the pointer puff in flight, swell once more,
+   then let the cloud (or night halo) expand and the crown follow. */
+:root { --public-nav-pop-time: 280ms; --nav-arrival-prelude: 70ms; }
+:root:not([data-site-zone="ops"]) .is-nav-travelling {
+  color: var(--nav-trigger-pointer-ink) !important;
+}
+:root:not([data-site-zone="ops"]) .is-nav-travelling::before { opacity: 0 !important; }
+:root:not([data-site-zone="ops"]) .is-nav-travelling > :is(.site-nav-cart__icon, .site-menu__trigger-label, .ui-icon-svg) {
+  transform: scale(var(--theme-nav-pointer-scale));
+  text-shadow: 0 0 .65px currentColor;
+}
+:root:not([data-site-zone="ops"]) :is(.site-nav__link.is-nav-arriving > .site-nav__label, .menu-dropdown-trigger.is-nav-arriving > .site-nav-cart__icon, .menu-dropdown-trigger.is-nav-arriving > .site-menu__trigger-label, .menu-dropdown-trigger.is-nav-arriving > .ui-icon-svg) {
+  animation: nav-arrival-puff calc(var(--public-nav-pop-time) + var(--nav-arrival-prelude)) ease-out both;
+  transform-origin: center;
+}
+:root[data-motion-profile="cloud"]:not([data-site-zone="ops"]) :is(.site-nav__link.is-nav-arriving::after, .site-header .menu-dropdown-trigger.is-nav-arriving::before) {
+  animation: nav-cloud-pop var(--public-nav-pop-time) var(--nav-arrival-prelude) cubic-bezier(.2,.8,.2,1) both;
+}
+:root:not([data-site-zone="ops"]) .site-nav__link.is-nav-arriving :is(.site-nav__label::before, .site-nav__icon::after) {
+  animation-delay: calc(var(--public-nav-pop-time) + var(--nav-arrival-prelude));
+}
+@keyframes nav-arrival-puff {
+  0% { transform: scale(var(--theme-nav-pointer-scale)); text-shadow: 0 0 .65px currentColor; }
+  24% { transform: scale(1.17); text-shadow: 0 0 1px currentColor; }
+  65% { transform: scale(.98); }
+  100% { transform: scale(1); text-shadow: none; }
+}
+@keyframes nav-cloud-pop {
+  0% { transform: scale(.08, .25); opacity: 0; }
+  65% { transform: scale(1.1, 1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-site-zone="ops"]) :is(.is-nav-arriving, .is-nav-travelling),
+  :root:not([data-site-zone="ops"]) :is(.is-nav-arriving, .is-nav-travelling) > * { animation: none !important; transform: none !important; }
+  :root:not([data-site-zone="ops"]) .menu-dropdown-trigger.is-nav-arriving::before { animation: none !important; }
 }

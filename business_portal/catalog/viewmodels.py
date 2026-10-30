@@ -77,6 +77,7 @@ def _build_business_product_card(
 
     return ProductCardVM(
         product_id=product.id,
+        vegan=product.vegan,
         name=product_name,
         package_label=(
             product.unit_weight_label

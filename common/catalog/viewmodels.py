@@ -82,6 +82,7 @@ class ProductCardVM:
     in_cart_units: int = 0
     # The card's own: just the weight ("4000 g"), no stock unit.
     weight_label: str = ""
+    vegan: bool = False
 
     @property
     def initial_offer(self) -> CatalogOfferVM | None:

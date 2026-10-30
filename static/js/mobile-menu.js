@@ -17,6 +17,7 @@
   let running = false;
   let motion = null;
   let restoreFocus = false;
+  let headerDeparting = false, panelArrival = null;
   // Opened without its motion: the Menu staying in front across a site switch.
   let instant = false;
   // Keep the sheet at its layout-viewport position while an on-screen keyboard
@@ -52,6 +53,7 @@
   let headerRestoring = false;
   function finishHeaderRestore(header) {
     header.classList.remove("is-nav-restoring");
+    for (const trigger of header.querySelectorAll(".is-nav-travelling")) window.SwedeSweetsNavArrival?.clear(trigger);
     for (const [link, inert] of headerInertBefore) {
       link.inert = inert; link.classList.remove("is-mobile-panel-underlay");
     }
@@ -59,6 +61,8 @@
   }
   function restoreHeader(header) {
     delete header.dataset.mobilePanel;
+    delete header.dataset.panelArrived;
+    panelArrival = null;
     if (!headerInertBefore.size || headerRestoring) return;
     const version = ++headerRestoreVersion;
     if (!mobile.matches || reducedMotion.matches || instant) { finishHeaderRestore(header); return; }
@@ -75,10 +79,14 @@
   function syncHeader(key = running ? wanted : openMenu()?.dataset.mobileMenu) {
     const header = document.querySelector(".site-header");
     if (!header || root.dataset.siteZone === "ops") return;
+    if (headerDeparting && !key) return;
     const flow = root.hasAttribute("data-checkout-flow");
     if (flow && (!mobile.matches || !key)) key = "cart";
     if ((!mobile.matches && !flow) || !["cart", "menu"].includes(key)) {
       restoreHeader(header);
+      if (!mobile.matches && key && menuFor(key)?.open) {
+        menuFor(key).querySelector("summary").dataset.navSelected = "";
+      }
       return;
     }
     ++headerRestoreVersion; headerRestoring = false; header.classList.remove("is-nav-restoring");
@@ -90,6 +98,12 @@
       pageLink.classList.add("is-mobile-panel-underlay");
       pageLink.inert = true;
     }
+    if (header.dataset.mobilePanel !== key) {
+      delete header.dataset.panelArrived;
+      panelArrival = null;
+      window.SwedeSweetsNavArrival?.hold(trigger);
+    }
+    if (header.dataset.panelArrived === key) trigger.dataset.navSelected = "";
     const box = trigger.getBoundingClientRect();
     const values = getComputedStyle(trigger).translate.split(" ");
     // Firefox may serialize translate as calc(...), not plain px. parseFloat
@@ -130,6 +144,17 @@
     header.style.setProperty(`--mobile-${key}-shift-x`, `${x}px`);
     header.style.setProperty(`--mobile-${key}-shift-y`, `${y}px`);
     header.dataset.mobilePanel = key;
+    if (menuFor(key)?.open && header.dataset.panelArrived !== key && !panelArrival
+      && !root.matches('.home-flight-exit-target[data-home-phase="flight"], .home-flight-target[data-home-phase="flight"]')) {
+      const pending = {}; panelArrival = pending;
+      void (async () => {
+        await window.SwedeSweetsNavArrival?.movement(trigger);
+        if (panelArrival !== pending || header.dataset.mobilePanel !== key || !menuFor(key)?.open || headerDeparting) return;
+        header.dataset.panelArrived = key;
+        panelArrival = null;
+        void window.SwedeSweetsNavArrival?.arrive(trigger);
+      })();
+    }
   }
 
   function sync() {
@@ -194,7 +219,13 @@
     wanted = key;
     restoreFocus = focus;
     instant = still;
-    syncHeader(wanted);
+    if (!wanted && openMenu()) {
+      headerDeparting = true;
+      panelArrival = null;
+      const header = document.querySelector(".site-header");
+      if (header) delete header.dataset.panelArrived;
+      window.SwedeSweetsNavArrival?.hold(openMenu().querySelector("summary"));
+    } else { headerDeparting = false; syncHeader(wanted); }
     if (running) return;
     running = true;
     let focusTarget = null;
@@ -204,6 +235,8 @@
         const closing = menuFor(active);
         closing?.removeAttribute("data-panel-lit");
         if (!reducedMotion.matches) await new Promise(resolve => setTimeout(resolve, 140));
+        headerDeparting = false;
+        syncHeader(wanted);
         const animation = await animate(menuFor(active), false);
         // Resolve it again: a quantity change may have replaced the fragment.
         const current = menuFor(active);
@@ -218,6 +251,9 @@
         opening.removeAttribute("data-panel-lit");
         opening.open = true;
         sync();
+        if (!mobile.matches && !root.hasAttribute("data-checkout-flow") && opening.closest(".site-header")) {
+          void window.SwedeSweetsNavArrival?.arrive(opening.querySelector("summary"));
+        }
         const animation = await animate(opening, true);
         animation?.cancel();
         if (active === wanted) {
@@ -297,6 +333,7 @@
   });
   document.addEventListener("navbar-cart-refreshed", sync);
   document.addEventListener("order-flow-chrome", sync);
+  document.addEventListener("navigation-travel-finished", sync);
   mobile.addEventListener("change", () => { motion?.finish(); sync(); });
   reducedMotion.addEventListener("change", () => { if (reducedMotion.matches) motion?.finish(); });
   window.addEventListener("resize", sync);

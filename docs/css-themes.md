@@ -1526,9 +1526,9 @@ Cart unit labels use `.tile__tag` directly: the shared outline, hole, rotation
 and theme paint remain in the catalog component, with only static flow placement
 overridden in cart-panel.css. No unit suffix is appended.
 
-Cart row text stretches to the portrait height: brand at the top, product name
-in the middle and a grouped variant/offer block at the bottom. Names can wrap
-and rows grow with their content; missing metadata leaves no empty labels.
+Cart row text forms a compact brand/name/variant group beside a smaller
+portrait crop. Names wrap and rows grow with their content; missing metadata
+leaves no empty labels. The group no longer stretches to the picture height.
 The shared price feedback makes one larger hop, then holds green/red and fades
 to normal ink over 850ms. Fragment replacement resumes the original timeline,
 including the adjacent signed subtotal notice, rather than restarting it.
@@ -1785,3 +1785,35 @@ the original inline styles and cancels the effect together. This prevents a
 pending animation from briefly exposing the element at its destination. The
 incoming chrome synchronizes before target geometry is measured, so checkout
 centering does not become a second movement beneath the cart's travel.
+
+
+## Cart product search and arrival decoration
+
+`cart-product-search.js` progressively enhances only the business cart quick-add
+form. A native dialog contains the live select and Tom Select wrapper, still
+nested in the original form/cart (business_cart.js resolves that ancestry).
+No duplicate search control or second form is created. The launcher remains at
+the original field position, so opening results does not change cart geometry.
+Native form submission remains available without enhancement. Search's Back
+entry is separate from Menu/cart and product history; Escape closes the topmost
+search only. Same-item retries clear the failed selection without submitting it
+again. Only confirmed additions dismiss search. Search modal styling imports
+through public.css and shares existing cart/panel/theme roles.
+
+The modal holds its opening layout-viewport height while the keyboard appears;
+VisualViewport resizes only the results area. Rows keep manufacturer/name/weight
+together, use portrait thumbnails and the catalog unit-price sticker. Search
+option text includes the brand for search but displays it separately from the
+translated product name. ProductCardVM.vegan supplies one shared badge include
+in retail/B2B cards and details, using existing --catalog-vegan-* roles.
+
+`navigation-arrival.js` owns pointer holding and the finite arrival decoration;
+it does not move the anchor or replace the existing FLIP calculations. Panel
+controllers wait for the actual CSS translate, rechecking cancelled/replaced
+transitions, before publishing data-panel-arrived and starting the puff/cloud.
+`data-nav-selected` preserves selection across decoration cleanup; refreshed
+cart summaries inherit it. Transform on the inner text/icon handles the puff,
+while the outer control retains its travel geometry. --public-nav-pop-time and
+--nav-arrival-prelude drive the common cloud/crown rhythm. Landing flight CSS
+hides clouds/crowns until arrival and retains pointer ink/scale on the chosen
+link. Night shares timing while retaining its own halo and palette.

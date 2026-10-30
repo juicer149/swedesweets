@@ -297,3 +297,28 @@ def test_placed_destination_has_no_duplicate_success_banner(client):
     html = response.content.decode()
     assert 'data-order-progress="placed"' in html
     assert 'class="message message--success"' not in html
+
+
+@pytest.mark.django_db
+def test_cart_search_keeps_native_form_and_passes_the_brand_to_options(client):
+    customer = _login_customer(client=client)
+    line = _create_cart_line(customer=customer, quantity=1)
+    product = line.commercial_price.product
+    product.brand = "Search Brand"
+    product.manufacturer = "Factory name"
+    product.save(update_fields=["brand", "manufacturer"])
+    batch_factory(product=product, today=TODAY, quantity=10)
+
+    response = client.get(reverse("business_portal:cart"))
+    option = next(
+        item for item in response.context["quick_add_options"]
+        if item.commercial_price_id == line.commercial_price_id
+    )
+    assert option.brand == "Search Brand"
+    assert option.name == "Apple"
+    assert "Search Brand" in option.search_text
+    html = response.content.decode()
+    assert 'data-brand="Search Brand"' in html
+    assert 'name="commercial_price_id"' in html
+    assert 'data-cart-product-search' in html
+    assert 'data-cart-search-open hidden' in html

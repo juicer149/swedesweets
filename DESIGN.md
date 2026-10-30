@@ -918,8 +918,10 @@ The current cart icon returns to the browsing URL/scroll recorded before
 entry; the lower Continue shopping action always opens Shop/Catalog. A quick
 preview closes onto its underlying page. No return arrow duplicates this.
 
-Cart row text uses the portrait height: manufacturer at the top, product name
-in the middle, variant and offer information at the bottom.
+Cart rows group manufacturer, product name and variant/offer information
+with small gaps beside a slightly smaller portrait crop. The text no longer
+stretches across the full image height. Quantity and the row amount remain
+together to the right.
 
 All successful additions, removals and quantity changes share server-confirmed
 price feedback: row amounts and subtotal make one larger hop and hold green/red before
@@ -1039,3 +1041,29 @@ without a height-dependent clipping mask or a separate long surface pause.
 Unused checkout order-list styles, the obsolete auth action selectors and the
 unused cart text-inset variable are removed. Delivery heading styles remain:
 checkout review and confirmation still use them.
+
+
+### Product search and shared navigation arrival
+
+The business cart's product search opens its own modal above the cart. The
+native select and form remain inside their cart owner; search results scroll
+inside the modal instead of pushing cart rows down. Search rows share compact
+brand/name/weight grouping, a portrait crop and the unit-price sticker. Escape,
+Back or the close control dismisses only search, then returns focus. A confirmed
+addition closes search; failure stays there and permits retrying the same item.
+The keyboard can shorten the visible results without lifting the modal's close
+control. The desktop cart preview keeps a small price-tag overhang at its left
+edge; its picture sits a little farther left while the sticker is slightly inset.
+
+Catalog cards and details share a vegan badge near the top centre of the image,
+between the cart count and price tag. Narrow pictures place it below the corner
+markers so information never overlaps. The badge joins the product transition.
+
+Navigation keeps pointer enlargement during travel. At the destination it swells
+once more, then its cloud grows out behind it; night uses its own halo and ink.
+`navigation-arrival.js` coordinates this decoration without owning geometry.
+Cart/Menu selection waits for actual translate completion, including a replaced
+transition. Closing removes the cloud before return travel; the former page
+label waits for that return. Cart count stays visible and never gains a crown.
+Landing flights retain their existing FLIP/view-transition geometry; ordinary
+navbar selections use the same arrival puff and cloud. Reduced motion is direct.

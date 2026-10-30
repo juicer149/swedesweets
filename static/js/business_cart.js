@@ -150,17 +150,23 @@
       select.tomselect?.close();
       select.tomselect?.blur();
       select.tomselect?.lock();
-      if (!(await addOffer(form))) {
-        // Native fallback retains server validation and its local notice.
-        HTMLFormElement.prototype.submit.call(form);
-        return;
-      }
+      const ok = await addOffer(form);
       delete form.dataset.submitting;
       form.classList.remove("is-adding");
-      if (select.tomselect) {
-        select.tomselect.unlock();
-        select.tomselect.clear(true);
-      } else select.value = "";
+      select.tomselect?.unlock();
+      if (!ok) {
+        if (form.querySelector("[data-cart-product-search]")?.dataset.enhanced === "true") {
+          select.tomselect?.clear(true);
+          form.dispatchEvent(new Event("cart-search-error"));
+        } else {
+          // Ordinary form fallback keeps existing server validation.
+          HTMLFormElement.prototype.submit.call(form);
+        }
+        return;
+      }
+      if (select.tomselect) select.tomselect.clear(true);
+      else select.value = "";
+      form.dispatchEvent(new Event("cart-search-added"));
     });
 
     /* Previous-order actions keep their layout while awaiting the server.

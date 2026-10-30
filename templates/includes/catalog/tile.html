@@ -39,6 +39,8 @@
         <span class="tile__image tile__image--empty">{% include "includes/catalog/no_photo.html" %}</span>
       {% endif %}
 
+      {% include "includes/catalog/vegan_badge.html" with vegan=card.vegan only %}
+
       {# In the cart already: an active cart and how many, top left. #}
       <span class="tile__in-cart" data-in-cart {% if not card.in_cart_units %}hidden{% endif %}>
         {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__in-cart-icon" only %}
@@ -56,7 +58,8 @@
     <div class="tile__body tile__label">
       <h2 class="tile__name"><a href="{{ detail_href }}">{{ card.name }}</a></h2>
 
-      {# The tag and the badge are on the picture, which screen readers skip. #}
+      {# Image overlays are decorative; announce their information here too. #}
+      {% if card.vegan %}<p class="visually-hidden">{% trans "Vegan" %}</p>{% endif %}
       {% if tag %}
         <p class="visually-hidden">{% if tag.deal_label %}{{ tag.deal_label }}, {% endif %}{{ tag.price_label }}</p>
       {% endif %}

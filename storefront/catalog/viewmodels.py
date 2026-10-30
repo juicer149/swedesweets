@@ -71,6 +71,7 @@ def _build_retail_product_card(
 
     return ProductCardVM(
         product_id=product.id,
+        vegan=product.vegan,
         name=product_name,
         package_label=product.unit_weight_label,
         badge_label=None,

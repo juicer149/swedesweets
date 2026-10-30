@@ -446,6 +446,7 @@ function initCatalog() {
     picture: ".tile__image",
     tag: ".tile__tag",
     "in-cart": ".tile__in-cart",
+    vegan: ".catalog-vegan",
     label: ".tile__label",
     // Its own, so it grows from the card's size to the page's as it goes.
     button: ".tile__add",

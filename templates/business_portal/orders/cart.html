@@ -41,6 +41,7 @@
       >
         {% csrf_token %}
 
+        {% include "includes/cart/product_search.html" with hint=quick_add_hint only %}
         <label class="visually-hidden" for="cart-quick-add">{% trans "Add a product" %}</label>
         <select
           id="cart-quick-add"
@@ -54,6 +55,7 @@
             <option
               value="{{ option.commercial_price_id }}"
               data-name="{{ option.name }}"
+              data-brand="{{ option.brand }}"
               data-weight="{{ option.package_label }}"
               data-offer-detail="{{ option.offer_label }}"
               data-price="{{ option.price_label }}"

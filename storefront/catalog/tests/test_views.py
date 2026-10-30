@@ -772,3 +772,23 @@ def test_add_to_cart_returns_404_for_unknown_product(client):
 
     assert response.status_code == 404
     assert not Cart.objects.exists()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("vegan", [True, False])
+def test_catalog_and_detail_share_the_products_vegan_badge(client, vegan):
+    product = product_factory(name="Badge sweets", vegan=vegan)
+    retail_product_price_factory(product=product, enabled=True, price=Decimal("2.50"))
+    retail_inventory_batch_factory(product=product, quantity=10)
+
+    catalog = client.get(reverse("storefront:product_list"))
+    (card,) = catalog.context["product_cards"]
+    assert card.vegan is vegan
+    badge = 'class="product-tag product-tag--vegan catalog-vegan '
+    assert (badge in catalog.content.decode()) is vegan
+
+    detail = client.get(
+        reverse("storefront:product_detail", kwargs={"product_id": product.id})
+    )
+    assert detail.context["card"].vegan is vegan
+    assert (badge in detail.content.decode()) is vegan

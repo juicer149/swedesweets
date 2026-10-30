@@ -1,0 +1,7 @@
+{% load i18n %}
+{% if vegan %}
+  <span class="product-tag product-tag--vegan catalog-vegan {{ class_name }}"{% if product_id %} style="view-transition-name: product-{{ product_id }}-vegan"{% endif %}>
+    {% include "includes/ui/icon_block.html" with name="leaf" size="sm" class_name="product-tag__icon" only %}
+    <span>{% trans "Vegan" %}</span>
+  </span>
+{% endif %}

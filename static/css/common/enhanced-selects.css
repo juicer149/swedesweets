@@ -439,3 +439,13 @@ select.ts-hidden-accessible {
 
 /* Rich option labels follow their row's active/selected contrast pair. */
 .ts-dropdown .option:is(.active, .selected) :is(.enhanced-product-option__main, .enhanced-product-option__meta, .enhanced-product-option__offer) { color: inherit; }
+
+/* A product option shares a cart row's compact text and unit-price sticker. */
+.enhanced-product-option__visual { position: relative; display: block; }
+.enhanced-product-option__brand { color: var(--text-muted); font-size: var(--font-size-12); }
+.enhanced-product-option__price.tile__tag {
+  position: absolute; top: 0; right: -.4rem; left: auto;
+  width: fit-content; padding: .1rem .7rem .1rem .3rem;
+  font-size: .65rem; white-space: nowrap; transform: rotate(-5deg);
+}
+.enhanced-product-option__price.tile__tag::before { width: .25rem; height: .25rem; left: auto; right: .25rem; }

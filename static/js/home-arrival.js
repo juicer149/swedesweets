@@ -188,6 +188,11 @@
   const remaining = () => incoming?.continuous ? Math.max(60, incoming.remainingAtCapture ?? incoming.endAt - Date.now()) : 650;
   async function finishPage() {
     root.dataset.homePhase = "selection"; // the navbar rule begins here
+    document.dispatchEvent(new Event("navigation-travel-finished"));
+    for (const link of document.querySelectorAll('.site-header .site-nav__link[aria-current="page"]')) {
+      void window.SwedeSweetsNavArrival?.arrive(link);
+    }
+    if (incoming.cart && !mobile.matches) void window.SwedeSweetsNavArrival?.arrive(headerCart());
     await pause(mobile.matches ? 120 : 80);
     if (mobile.matches && incoming.mode === "exit" && !incoming.cart) {
       root.dataset.homePhase = "bottom";

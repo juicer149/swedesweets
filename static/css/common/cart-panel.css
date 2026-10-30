@@ -7,7 +7,7 @@
 .site-nav-cart__popover { --cart-tag-room: var(--space-16); }
 .cart-page { --cart-picture: clamp(2.5rem, 4vw, 3.5rem); --cart-row-gap: clamp(.75rem, 1.5vw, 1.5rem); }
 .cart-line {
-  --cart-picture: clamp(3.25rem, 14vw, 5rem);
+  --cart-picture: clamp(3rem, 13vw, 4.5rem);
   --cart-row-gap: clamp(.5rem, 1.5vw, 1.5rem);
   display: grid;
   position: relative;
@@ -19,14 +19,14 @@
   align-items: center;
   column-gap: var(--cart-row-gap);
 }
-.cart-line__visual { position: relative; display: block; width: var(--cart-picture, 4rem); min-height: 7rem; align-self: stretch; isolation: isolate; }
+.cart-line__visual { position: relative; display: block; width: var(--cart-picture, 4rem); min-height: 6.25rem; align-self: stretch; isolation: isolate; }
 .cart-line > .cart-line__product > .cart-line__visual { grid-area: picture; }
 :is(.cart-line, .line--cart-review) .cart-line__visual .line__image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: .5rem; padding: 0; }
 .cart-line__product { display: contents; }
-.cart-line__text { grid-area: text; display: grid; grid-template-rows: auto minmax(min-content, 1fr) auto; gap: var(--space-1); min-width: 0; align-self: stretch; overflow-wrap: anywhere; }
+.cart-line__text { grid-area: text; display: grid; align-content: center; gap: var(--space-1); min-width: 0; align-self: center; overflow-wrap: anywhere; }
 .cart-line__brand { grid-row: 1; align-self: start; }
-.cart-line__name { grid-row: 2; align-self: center; }
-.cart-line__details { grid-row: 3; align-self: end; display: grid; gap: var(--space-1); }
+.cart-line__name { grid-row: 2; }
+.cart-line__details { grid-row: 3; display: grid; gap: var(--space-1); }
 .cart-line__controls { display: contents; }
 .cart-line__quantity { margin: 0; min-width: 0; grid-area: quantity; justify-self: end; align-self: center; }
 .cart-line__price { display: grid; gap: var(--space-1); color: var(--cart-amount); text-align: right; grid-area: price; align-self: center; justify-self: end; font-variant-numeric: tabular-nums; }
@@ -66,12 +66,10 @@
   .cart-line__controls :is(.cart-line__quantity, .cart-line__price) { grid-area: auto; align-self: center; text-align: center; }
     .cart-line :is(.line__remove, .site-nav-cart-line__remove) { top: -.25rem; }
 
-  .cart-line { grid-template-rows: auto auto; grid-template-areas: "picture text text" "picture details controls"; row-gap: 0; }
-  .cart-line__text { display: contents; }
-  .cart-line__brand { grid-column: 2 / -1; grid-row: 1; align-self: start; }
-  .cart-line__name { grid-column: 2 / -1; grid-row: 1; align-self: end; padding-top: 1.7rem; padding-right: 2rem; margin-bottom: 0; }
-  .cart-line__details { grid-area: details; align-self: end; }
-  .cart-line__controls { align-self: start; }
+  .cart-line { align-items: center; }
+  .cart-line__text { grid-area: text; align-self: center; padding-right: .25rem; }
+  .cart-line__name { padding: 0; }
+  .cart-line__controls { padding-top: 1.5rem; }
   .cart-line .quantity-stepper { --size-control-sm: clamp(2.3rem, 6vw, 2.75rem); --stepper-number: 2.1rem; }
   .cart-line .quantity-stepper__button { min-height: 2.75rem; }
   .cart-line .quantity-stepper__input { font-size: var(--font-size-16); }
@@ -86,7 +84,7 @@
   font-size: clamp(.65rem, 2vw, .8rem); white-space: nowrap; transform: rotate(-5deg);
 }
 :is(.cart-line, .line--cart-review) .cart-line__unit-price::before { left: auto; right: .45rem; }
-.line--cart-review { --cart-picture: clamp(3.25rem, 14vw, 5rem); }
+.line--cart-review { --cart-picture: clamp(3rem, 13vw, 4.5rem); }
 .line--cart-review .line__product { grid-template-columns: var(--cart-picture) minmax(0, 1fr); }
 
 @media (max-width: 479px) {
@@ -342,9 +340,10 @@
   }
   .site-nav-cart__popover [data-more-below] .site-nav-cart__actions::before { opacity: 1; }
   .site-nav-cart__popover .cart-line__unit-price {
-    left: 0; right: auto; translate: -80% 0;
+    left: 0; right: auto; translate: -68% 0;
     box-shadow: var(--cart-popover-tag-shadow);
   }
+  .site-nav-cart__popover .cart-line__visual { margin-left: -.35rem; }
   /* An empty cart has no summary row: the box's bottom padding is here. */
   .site-nav-cart__popover .site-nav-cart__empty { padding-bottom: clamp(1.5rem, 4dvh, 2.5rem); }
   .site-nav-cart__popover .site-nav-cart__actions .button {
@@ -394,9 +393,7 @@
 .cart-page--empty .page__message { margin-block: auto; padding-block: var(--space-8); text-align: center; }
 .cart-page--empty .page__actions { margin-top: auto; padding-top: var(--space-6); width: min(100%, 30rem); }
 
-/* The cart owns its scrolling: let an open product search grow its content
-   instead of clipping the result list at the editor's previous height. */
-.cart-quick-add .ts-dropdown { position: static; }
+/* Product search lives in its own modal, outside the cart list flow. */
 
 /* All mobile stages reserve the same space above the persistent timeline. */
 .cart-panel-scroll > .order-flow-page > .page.order-flow-surface { padding: var(--space-6) 0 0; }

@@ -40,12 +40,7 @@
           <span class="product__image product__image--empty" aria-hidden="true" style="view-transition-name: product-{{ product.id }}-picture">{% include "includes/catalog/no_photo.html" %}</span>
         {% endif %}
 
-        {% if product.vegan %}
-          <span class="product-tag product-tag--vegan product__vegan">
-            {% include "includes/ui/icon_block.html" with name="leaf" size="sm" class_name="product-tag__icon" only %}
-            <span>{% trans "Vegan" %}</span>
-          </span>
-        {% endif %}
+        {% include "includes/catalog/vegan_badge.html" with vegan=card.vegan class_name="product__vegan" product_id=card.product_id only %}
 
         <span class="tile__in-cart product__in-cart" aria-hidden="true" data-in-cart {% if not card.in_cart_units %}hidden{% endif %} style="view-transition-name: product-{{ product.id }}-in-cart">
           {% include "includes/ui/icon_block.html" with name="cart" size="sm" class_name="tile__in-cart-icon" only %}

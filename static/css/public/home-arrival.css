@@ -4,11 +4,13 @@
 :root {
   --home-nav-rest: var(--theme-nav-rest-ink);
   --home-nav-active: var(--nav-link-here-ink);
+  --home-nav-pointer: var(--theme-nav-pointer-ink);
   --home-brand-travel-ink: var(--color-white);
   --home-brand-cloud: url("../../images/clouds/logo.svg");
 }
 :root[data-theme="dark"] {
   --home-nav-rest: var(--logo-rest-ink);
+  --home-nav-pointer: var(--moonlight);
   --home-brand-travel-ink: var(--moonlight);
 }
 :root[data-theme="dark"]:is(.home-flight-source-out, .home-flight-exit-target) {
@@ -39,7 +41,7 @@
   --home-link-ink: var(--home-nav-rest);
 }
 :is(.home-flight-source-out, .home-flight-exit-target) :is(.landing-menu__link, .site-nav__link)[data-home-chosen] {
-  --home-link-ink: var(--home-nav-active);
+  --home-link-ink: var(--home-nav-pointer);
 }
 :is(.home-flight-source, .home-flight-departing, .home-flight-target[data-home-phase="flight"]) :is(.site-nav__link, .landing-menu__link) {
   --home-link-ink: var(--home-nav-rest);
@@ -50,6 +52,11 @@
   text-shadow: none !important; filter: none !important; transition: none !important;
 }
 .home-flight-source-out .landing-menu__text { transform: none !important; }
+.home-flight-source-out [data-home-chosen] .landing-menu__text,
+.home-flight-exit-target[data-home-phase="flight"] [data-home-chosen] .site-nav__label {
+  transform: scale(var(--theme-nav-pointer-scale)) !important;
+  text-shadow: 0 0 .65px currentColor !important;
+}
 /* The travel group owns motion; hover and the panel controller must not
    add a second transform/translation transition beneath its snapshot. */
 :is(.home-flight-source-out, .home-flight-departing, .home-flight-target, .home-flight-exit-target) :is(.menu-dropdown-trigger, .landing__cart-link) {
@@ -59,22 +66,13 @@
 .home-flight-source-out:not([data-home-cloud-brand]) :is(.landing__tagline, .landing__bottom) {
   opacity: 0; pointer-events: none; transition: opacity 90ms ease-out;
 }
-.home-flight-source-out .landing-menu__link[data-home-chosen] { position: relative; isolation: isolate; }
-.home-flight-source-out .landing-menu__link[data-home-chosen]::before {
-  content: ""; position: absolute; z-index: -1; inset: -.45rem -.75rem;
-  opacity: 1 !important; transform: none; filter: none;
-}
-:root[data-theme="light"].home-flight-source-out .landing-menu__link[data-home-chosen]::before {
-  background: var(--home-link-cloud, url("../../images/clouds/nav-question.svg")) center / 100% 100% no-repeat !important;
-}
-:root[data-theme="light"] [data-nav-cloud="lollipop"] { --home-link-cloud: url("../../images/clouds/nav-lollipop.svg"); }
-:root[data-theme="light"] [data-nav-cloud="map-pin"] { --home-link-cloud: url("../../images/clouds/nav-map-pin.svg"); }
-:root[data-theme="light"] [data-nav-cloud="info"] { --home-link-cloud: url("../../images/clouds/nav-info.svg"); }
-:root[data-theme="dark"].home-flight-source-out .landing-menu__link[data-home-chosen]::before {
-  background: var(--menu-link-glow); filter: blur(6px);
-}
-.home-flight-source-out .landing-menu__link[data-home-chosen] .landing-menu__crown {
-  opacity: 1 !important; transform: none;
+.home-flight-source-out .landing-menu__link[data-home-chosen]::before,
+.home-flight-source-out .landing-menu__link .landing-menu__crown,
+.home-flight-exit-target[data-home-phase="flight"] .site-nav__link::after,
+.home-flight-exit-target[data-home-phase="flight"] .site-nav__label::before,
+.home-flight-exit-target[data-home-phase="flight"] .site-nav__icon::after,
+.home-flight-exit-target[data-home-phase="flight"] .menu-dropdown-trigger::before {
+  opacity: 0 !important; visibility: hidden;
 }
 /* Hide destination crowns before the streamed landing markup can paint. */
 .home-flight-target[data-home-phase="flight"] .landing-menu__crown,
@@ -97,14 +95,15 @@
 .home-flight-target:not([data-home-cart])[data-home-phase="flight"] .landing__top { opacity: 0; visibility: hidden; }
 .landing[data-home-arrival] .landing__logo-trigger { pointer-events: none; }
 .home-flight-source-out[data-home-cart] .landing__menu { opacity: 0; transition: opacity 140ms; }
-.home-flight-source-out[data-home-cart] .landing__cart-link[data-home-chosen] {
-  position: relative; isolation: isolate; color: var(--home-nav-active) !important;
+.home-flight-source-out[data-home-cart] .landing__cart-link[data-home-chosen],
+.home-flight-exit-target[data-home-cart][data-home-phase="flight"] .site-nav-cart__trigger {
+  color: var(--home-nav-pointer) !important;
 }
-.home-flight-source-out[data-home-cart] .landing__cart-link::before {
-  content: ""; position: absolute; z-index: -1; inset: -.8rem -1.1rem -.45rem;
-  opacity: 1; background: url("../../images/clouds/nav-cart.svg") center / 100% 100% no-repeat;
+.home-flight-source-out[data-home-cart] .landing__cart-link::before { opacity: 0 !important; }
+.home-flight-source-out[data-home-cart] .landing__cart-link .site-nav-cart__icon,
+.home-flight-exit-target[data-home-cart][data-home-phase="flight"] .site-nav-cart__icon {
+  transform: scale(var(--theme-nav-pointer-scale));
 }
-:root[data-theme="dark"].home-flight-source-out[data-home-cart] .landing__cart-link::before { background: var(--menu-link-glow); }
 /* The current cart normally keeps active blue/gold through aria-current.
    Remove that ink with its cloud before taking the return snapshot. */
 .home-flight-departing .site-nav-cart__trigger::before { opacity: 0 !important; transition: opacity 80ms ease-out; }

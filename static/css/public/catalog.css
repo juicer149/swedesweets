@@ -861,15 +861,26 @@
   border-radius: var(--radius-md);
 }
 
-.product__vegan {
+.tile__media { container: catalog-tile / inline-size; }
+.catalog-vegan {
   position: absolute;
-  left: .75rem;
-  bottom: .75rem;
+  z-index: 2;
+  left: 50%;
+  top: .65rem;
+  translate: -50% 0;
   margin: 0;
+  max-width: calc(100% - 5rem);
+  padding: .2rem .45rem;
+  white-space: nowrap;
+  font-size: var(--font-size-12);
   color: var(--catalog-vegan-ink);
   background: var(--catalog-vegan-bg);
   border-color: var(--catalog-vegan-border);
   box-shadow: 0 2px 4px rgb(var(--color-row-shadow) / .15);
+}
+.product__vegan { top: .9rem; }
+@container catalog-tile (max-width: 15rem) {
+  .tile__media .catalog-vegan { top: 3.1rem; max-width: calc(100% - 1rem); }
 }
 
 .product__image--empty {
@@ -1363,7 +1374,7 @@
     margin-inline: auto;
   }
 
-  .product__vegan { bottom: 3rem; }
+  .product__vegan { top: 3.1rem; }
 
   /* As on a card: straight, over the picture's foot. */
   .product__side {
