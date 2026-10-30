@@ -59,9 +59,9 @@ OUT = ROOT / "static" / "fonts" / "swedesweets-wordmark.woff2"
 SVGNS = "http://www.w3.org/2000/svg"
 
 # The characters the titles use, in English and French: "Q & A" / "Q & R"
-# and "Who we are?" / "Qui sommes-nous ?". Add a character here and run
+# (set in lower case by the CSS) and "Who we are?" / "Qui sommes-nous ?". Add a character here and run
 # `kit` (which starts the drawing over) to get a cell for it.
-CHARS = "AQRW" "aehimnorsuw" "&?-"
+CHARS = "AQRW" "aehimnoqrsuw" "&?-"
 SPECIAL = {"À": "Agrave", "ù": "ugrave", "&": "ampersand", "?": "question", "-": "hyphen"}
 
 # Metrics, in the wordmark's units (logo pixels), measured on it.
@@ -70,6 +70,10 @@ XH = 679  # e
 ASC = 760  # D and the S
 DESC = 250
 STROKE = 140  # the wordmark's typical stroke (S 136, e 132, W 193)
+# The drafts' lower case is as tall as the capitals and the & (full unicase,
+# like the wordmark's w), with short ascenders.
+XH_DRAFT = 725  # the &'s height
+ASC_DRAFT = XH_DRAFT + 70
 
 # Kit layout.
 CW, CH, BASE, LEFT, COLS = 1200, 1600, 1150, 150, 7
@@ -377,13 +381,23 @@ def fredoka_drafts(names_chars):
         S = 1000  # px per em while drafting
         font = ImageFont.truetype(path, S)
         out = {}
+        stroke_px = 0.15 * S  # Fredoka 600's stem
+        # Fredoka's real x-height (its 'x'), so the lower case lands on XH_DRAFT
+        # after the strokes are brought to the wordmark's weight (which shrinks it).
+        xim = Image.new("L", (S, 2 * S), 0)
+        ImageDraw.Draw(xim).text((10, int(1.3 * S)), "x", font=font, fill=255, anchor="ls")
+        xs_ = np.where((np.array(xim) > 127).any(1))[0]
+        x_px = xs_.max() - xs_.min() + 1
+        k_lower = XH_DRAFT / x_px
+        for _ in range(3):
+            dy_l = round((STROKE / k_lower - stroke_px) / 2)
+            k_lower = XH_DRAFT / (x_px + 2 * min(dy_l, 0))
         for name, ch in names_chars:
             if ch in ACCENTED:
                 continue
             lower = ch.islower()
-            # caps: Fredoka's cap height (0.70 em) -> CAP; lower case: x-height (0.50 em) -> XH
-            em = (XH / 0.50) if lower else (CAP / 0.70)
-            k = em / S  # units per px
+            # caps: Fredoka's cap height (0.70 em) -> CAP; lower case: its x -> XH_DRAFT
+            k = k_lower if lower else (CAP / 0.70) / S  # units per px
             im = Image.new("L", (int(1.8 * S), int(2.0 * S)), 0)
             ox, oy = int(0.2 * S), int(1.3 * S)
             ImageDraw.Draw(im).text((ox, oy), ch, font=font, fill=255, anchor="ls")
@@ -392,8 +406,7 @@ def fredoka_drafts(names_chars):
             t = m[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
             t = np.array(Image.fromarray((t * 255).astype(np.uint8)).resize(
                 (max(2, int(t.shape[1] * DRAFT_SQUEEZE)), t.shape[0]), Image.LANCZOS)) > 127
-            # bring the stroke to the wordmark's weight: measured stem of Fredoka 600 is ~0.15 em
-            stroke_px = 0.15 * S
+            # bring the stroke to the wordmark's weight
             target_px = STROKE / k
             dx = int(round((target_px - stroke_px * DRAFT_SQUEEZE) / 2))
             dy = int(round((target_px - stroke_px) / 2))
@@ -451,10 +464,10 @@ def warp_lower(p):
     """Keep ascenders and descenders short, as in the wordmark (d is barely taller than e)."""
     q = p.copy()
     y = -q[:, 1]  # height above the baseline
-    asc_src = 0.75 * XH / 0.50
-    up = y > XH
-    y[up] = XH + (y[up] - XH) * (ASC - XH) / (asc_src - XH)
-    desc_src = 0.24 * XH / 0.50
+    asc_src = 0.75 * XH_DRAFT / 0.466
+    up = y > XH_DRAFT
+    y[up] = XH_DRAFT + (y[up] - XH_DRAFT) * (ASC_DRAFT - XH_DRAFT) / (asc_src - XH_DRAFT)
+    desc_src = 0.24 * XH_DRAFT / 0.466
     dn = y < 0
     y[dn] = y[dn] * DESC / desc_src
     q[:, 1] = -y

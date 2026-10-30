@@ -110,8 +110,8 @@
   /* Navigation and its disclosures stay in step at each viewport size. */
   --font-size-nav-link: clamp(0.8125rem, 0.92vw, var(--font-size-16));
   --font-weight-nav-link: 700;
-  /* The page titles of Q & A and About: letters drawn from the logo
-     (tools/wordmark_font.py). */
+  /* The page titles of Q & A and About (.display-title--wordmark): letters
+     drawn from the logo (tools/wordmark_font.py). */
   --font-wordmark: "SwedeSweets Wordmark", Sniglet, Fredoka, Nunito, system-ui, sans-serif;
   --font-size-landing-link: clamp(1.35rem, 4.4dvh, 2.1rem);
 

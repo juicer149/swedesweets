@@ -24,6 +24,46 @@
   filter: url("#display-title-raised");
 }
 
+/* Page titles in the logo's own letters (tools/wordmark_font.py), Q & A
+   and About: flat in the navbar's blue, crisp like the logo itself (the
+   raised filter's shadows blur a coloured face); by night the gold of the
+   crowns, glowing. */
+.display-title--wordmark {
+  color: var(--theme-chrome-bg);
+  font-family: var(--font-wordmark);
+  font-weight: 400;
+  font-synthesis: none;
+  filter: none;
+}
+
+:root[data-theme="dark"] .display-title--wordmark {
+  color: var(--color-accent-600);
+  filter:
+    drop-shadow(0 0 6px rgb(249 181 26 / 0.45))
+    drop-shadow(0 0 22px rgb(249 181 26 / 0.25));
+}
+
+/* The logo's crown, tilted over the title's first letter (the logo has it
+   over its last). On the text's own span, so it follows the first letter
+   wherever the centred line starts. */
+.display-title__crowned {
+  position: relative;
+}
+
+.display-title__crowned::before {
+  content: "";
+  position: absolute;
+  top: -0.36em;
+  left: -0.12em;
+  width: 0.62em;
+  height: 0.59em;
+  background: var(--color-accent-600);
+  -webkit-mask: url("../../images/favicon.svg") center / contain no-repeat;
+  mask: url("../../images/favicon.svg") center / contain no-repeat;
+  transform: rotate(-18deg);
+  pointer-events: none;
+}
+
 .display-title-filter__shadow { flood-color: var(--display-shadow); }
 .display-title-filter__far { flood-color: var(--display-far-shadow); flood-opacity: var(--display-far-shadow-opacity); }
 .display-title-filter__near { flood-color: var(--display-near-shadow); flood-opacity: var(--display-near-shadow-opacity); }
