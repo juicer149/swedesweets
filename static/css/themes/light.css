@@ -617,7 +617,7 @@
   --find-sweets-hover-text: var(--state-page-pointer-ink);
   --find-sweets-hover-icon: var(--contact-place);
   --landing-account-hover-decoration: underline;
-  --landing-control-hover-ink: var(--menu-ink);
+  --landing-control-hover-ink: var(--theme-nav-pointer-ink);
   --interaction-glow: var(--menu-link-glow);
   --interaction-glow-blur: var(--menu-link-glow-blur);
   --interaction-glow-filter: blur(var(--interaction-glow-blur));

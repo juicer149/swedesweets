@@ -30,9 +30,9 @@
     if (!reduced.matches) entry.motion = entry.surface.animate([
       { opacity: 0, transform: "scale(.96)" }, { opacity: 1, transform: "none" },
     ], { duration: 180, easing: "cubic-bezier(.22,.7,.2,1)" });
-    // Focus in the same user gesture so mobile browsers can open the keyboard.
-    entry.select.tomselect.focus();
-    entry.select.tomselect.open();
+    // The complete list is visible without activating a search field or keyboard.
+    entry.add.focus({ preventScroll: true });
+    if (entry.add.disabled) entry.dialog.querySelector("[data-cart-search-close]").focus({ preventScroll: true });
     fitList(entry);
   }
   async function finishClose(entry) {
@@ -79,7 +79,51 @@
         content: dialog.querySelector("[data-cart-search-content]"),
         note: form.querySelector("[data-cart-search-note]"),
       };
-      dialog.querySelector("[data-cart-search-content]").append(select, select.tomselect.wrapper);
+      entry.filter = dialog.querySelector("[data-cart-search-filter]");
+      entry.list = dialog.querySelector("[data-cart-search-list]");
+      entry.add = dialog.querySelector("[data-cart-search-add]");
+      entry.count = dialog.querySelector("[data-cart-search-count]");
+      entry.filter.id = `${title.id}-filter`;
+      dialog.querySelector("[data-cart-search-label]").htmlFor = entry.filter.id;
+      entry.selected = new Set();
+      entry.rows = [];
+      const normalize = value => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
+      const update = () => {
+        entry.add.disabled = entry.selected.size === 0 || Boolean(form.dataset.submitting);
+        entry.count.textContent = entry.selected.size ? String(entry.selected.size) : "";
+        entry.content.inert = Boolean(form.dataset.submitting);
+        entry.filter.disabled = Boolean(form.dataset.submitting);
+      };
+      for (const option of select.options) {
+        if (!option.value) continue;
+        const row = document.createElement("label");
+        row.className = "cart-product-search__row";
+        const check = document.createElement("input");
+        check.type = "checkbox"; check.value = option.value; check.disabled = option.disabled;
+        const rendered = select.tomselect.render("option", select.tomselect.options[option.value]);
+        row.append(check, rendered); entry.list.append(row);
+        entry.rows.push({ row, search: normalize(option.getAttribute("search") || option.textContent) });
+        check.addEventListener("change", () => {
+          if (check.checked) entry.selected.add(check.value); else entry.selected.delete(check.value);
+          update();
+        });
+      }
+      const filter = () => {
+        const terms = normalize(entry.filter.value).trim().split(/\s+/).filter(Boolean);
+        for (const item of entry.rows) item.row.hidden = !terms.every(term => item.search.includes(term));
+        dialog.querySelector("[data-cart-search-empty]").hidden = entry.rows.some(item => !item.row.hidden);
+        entry.content.scrollTop = 0;
+      };
+      entry.filter.addEventListener("input", filter);
+      entry.filter.addEventListener("keydown", event => { if (event.key === "Enter") event.preventDefault(); });
+      entry.add.addEventListener("click", () => {
+        if (form.dataset.submitting || !entry.selected.size) return;
+        form.dispatchEvent(new CustomEvent("cart-search-submit", { bubbles: true, detail: { ids: [...entry.selected] } }));
+        update();
+      });
+      // Hide, but retain the native form owner and its non-dialog fallback.
+      select.tomselect.wrapper.hidden = true;
+      dialog.append(select, select.tomselect.wrapper);
       button.hidden = false;
       button.addEventListener("click", () => open(entry));
       dialog.querySelector("[data-cart-search-close]").addEventListener("click", close);
@@ -90,11 +134,16 @@
         const box = dialog.getBoundingClientRect();
         if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) close();
       });
-      form.addEventListener("cart-search-added", () => { if (active === entry) close(); });
+      form.addEventListener("cart-search-added", () => {
+        entry.selected.clear();
+        for (const check of entry.list.querySelectorAll("input")) check.checked = false;
+        entry.filter.value = ""; filter(); update();
+        if (active === entry) close();
+      });
       form.addEventListener("cart-search-error", () => {
         entry.error.hidden = false;
-        if (active === entry) { select.tomselect.focus(); select.tomselect.open(); }
-        else entry.note.hidden = false;
+        update();
+        if (active !== entry) entry.note.hidden = false;
       });
     }
   }

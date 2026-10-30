@@ -84,10 +84,15 @@
       return line;
     }
 
-    async function postForm(form) {
+    async function postForm(form, ids = null) {
+      const body = new FormData(form);
+      if (ids) {
+        body.delete("commercial_price_id");
+        ids.forEach(id => body.append("commercial_price_id", id));
+      }
       const response = await fetch(form.action, {
         method: "POST",
-        body: new FormData(form),
+        body,
         headers: { Accept: "application/json" },
         credentials: "same-origin",
       });
@@ -118,6 +123,28 @@
         return false;
       }
     }
+
+    root.addEventListener("cart-search-submit", async event => {
+      const form = event.target;
+      if (!form.matches("[data-cart-quick-add]") || form.dataset.submitting) return;
+      const ids = event.detail.ids;
+      if (!Array.isArray(ids) || !ids.length) return;
+      form.dataset.submitting = "true";
+      form.setAttribute("aria-busy", "true");
+      let ok = false;
+      try {
+        const { response, payload } = await postForm(form, ids);
+        if (!response.ok || !payload.ok || !payload.lines?.length) throw new Error("Product selection rejected");
+        showAddedLines(payload.lines, payload);
+        ok = true;
+      } catch {
+        // Preserve selections; never replay a POST through native fallback.
+      } finally {
+        delete form.dataset.submitting;
+        form.removeAttribute("aria-busy");
+        form.dispatchEvent(new Event(ok ? "cart-search-added" : "cart-search-error"));
+      }
+    });
 
     // Render confirmed server rows immediately; their green flash and the
     // navbar cart's bump are the feedback, without a separate loading burst.
@@ -262,7 +289,7 @@
     root.addEventListener("cart-line-removed", updateEmptyState);
   }
   function quickAdd(select) {
-    if (!select) return;
+    if (!select || select.closest("form")?.querySelector('[data-cart-product-search][data-enhanced="true"]')) return;
     initialize();
     const root = select.closest("[data-current-order]");
     const form = select.closest("[data-cart-quick-add]");

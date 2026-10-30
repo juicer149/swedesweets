@@ -1739,7 +1739,7 @@ measurement shell must not change the source page's layout. The mobile current
 link host in that shell lives inside `.site-nav`, matching `current-nav.js`.
 The cart slot is measured even when the landing has no cart link yet.
 
-Slogan and login fade over 90ms before ordinary 600ms travel starts at 100ms;
+Slogan and login fade over 90ms before ordinary 600ms travel starts at 180ms;
 unused mobile links fade in the same lead-in. Login retains its 260ms fold and
 return-home its 180ms page fade. These delays overlap the one immediate request.
 `home-menu` and `home-cart` carry whole triggers in both directions. A separate
@@ -1790,15 +1790,21 @@ centering does not become a second movement beneath the cart's travel.
 ## Cart product search and arrival decoration
 
 `cart-product-search.js` progressively enhances only the business cart quick-add
-form. A native dialog contains the live select and Tom Select wrapper, still
-nested in the original form/cart (business_cart.js resolves that ancestry).
-No duplicate search control or second form is created. The launcher remains at
-the original field position, so opening results does not change cart geometry.
-Native form submission remains available without enhancement. Search's Back
-entry is separate from Menu/cart and product history; Escape closes the topmost
-search only. Same-item retries clear the failed selection without submitting it
-again. Only confirmed additions dismiss search. Search modal styling imports
-through public.css and shares existing cart/panel/theme roles.
+form. A native dialog keeps the select/Tom Select fallback inside its original
+form/cart owner, and uses its safe option renderer for a persistent list of
+native labelled checkboxes. The full list appears without focusing the filter
+or opening the mobile keyboard. Text input filters rows without losing checked
+choices; the shared Add to cart action remains disabled until at least one is
+selected. The launcher stays in place so rows never shift under the dialog.
+
+`business_cart.js` submits the checked offer IDs in one POST. The server validates
+all offers and adds them in one transaction, returning confirmed lines and one
+subtotal delta. Rejection rolls the entire selection back and retains checked
+rows for correction/retry. A failed request is never replayed as a native POST.
+Without enhancement, the existing single-select native form remains available.
+Search's Back entry is separate from Menu/cart/product history; Escape closes
+only the topmost dialog. Successful addition clears choices and closes search.
+Search modal styling imports through public.css and shares cart/panel/theme roles.
 
 The modal holds its opening layout-viewport height while the keyboard appears;
 VisualViewport resizes only the results area. Rows keep manufacturer/name/weight
@@ -1814,6 +1820,21 @@ transitions, before publishing data-panel-arrived and starting the puff/cloud.
 `data-nav-selected` preserves selection across decoration cleanup; refreshed
 cart summaries inherit it. Transform on the inner text/icon handles the puff,
 while the outer control retains its travel geometry. --public-nav-pop-time and
---nav-arrival-prelude drive the common cloud/crown rhythm. Landing flight CSS
-hides clouds/crowns until arrival and retains pointer ink/scale on the chosen
-link. Night shares timing while retaining its own halo and palette.
+--nav-arrival-prelude drive the common cloud/crown rhythm. Desktop preview
+triggers retain pointer feedback without a cloud; the full cart
+sets selection after centring even when its details popup is closed. Mobile
+panels keep their existing centred selected state. Letters/icons stay visible
+as the cloud grows behind them, with only the crown delayed. Landing's chosen
+cloud implodes into resting blue before travel, matching navbar departure.
+Night shares timing while retaining its own halo and palette.
+
+Login carries its lock and lettering as a separate `home-login` FLIP/transition
+group to the actual button label. The button surface and form then fade in;
+the label is never hidden with the rest of the form. Menu/header ownership and
+native auth POSTs are unchanged. Login/reset GET swaps keep the same header.
+Desktop cart-page unit-price stickers share the preview's left overhang and
+theme-owned subtle shadow/glow; mobile retains its centred image tag.
+
+Departure capture includes the chosen cloud's current opacity/transform so a
+fast document handoff continues its implosion rather than flashing a fresh
+fully expanded cloud. The remaining prelude ends before geometry travel.

@@ -425,3 +425,10 @@
     left: 50%; right: auto; translate: -50% 0;
   }
 }
+
+@media (min-width: 768px) {
+  .cart-page .cart-line__unit-price {
+    left: 0; right: auto; translate: -68% 0;
+    box-shadow: var(--cart-popover-tag-shadow);
+  }
+}

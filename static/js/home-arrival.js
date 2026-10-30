@@ -136,6 +136,7 @@
     const box = rect(brand);
     if (!box) return;
     const record = { mode: login ? "login" : "exit", url: link.href, time: Date.now(), ...box,
+      login: login ? rect(link.querySelector("[data-login-travel]")) : null,
       cloudBrand: login, links: login || cart ? [] : entries(".landing-menu__link[href]", link), cart: cart ? rect(link) : null,
       sideCart: !login && !cart ? rect(landing.querySelector(".landing__cart-link")) : null,
       menu: !login ? rect(landing.querySelector(".site-menu > summary")) : null };
@@ -156,6 +157,7 @@
     const menu = record.menu ? landing.querySelector(".site-menu > summary") : null;
     if (sideCart) nameFor(sideCart, "home-cart");
     if (menu) nameFor(menu, "home-menu");
+    if (record.login) nameFor(link.querySelector("[data-login-travel]"), "home-login");
     nameFor(brand, login ? "home-brand" : "home-wordmark");
     window.SwedeSweetsHomeDeparture?.start(record, { brand, links: pairs, cart: cart ? link : null, sideCart, menu });
     remember(record);
@@ -165,7 +167,7 @@
     void (async () => {
       if (login) {
         const target = brand.getBoundingClientRect();
-        await Promise.all([...landing.querySelectorAll(".landing__menu, .landing__tagline, .landing__top, .landing__bottom")].map(element => {
+        await Promise.all([...landing.querySelectorAll(".landing__menu, .landing__tagline, .landing__top")].map(element => {
           const b = element.getBoundingClientRect();
           return animate(element, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: `translate(${target.x + target.width / 2 - b.x - b.width / 2}px, ${target.y + target.height / 2 - b.y - b.height / 2}px) scale(.08)` }],
             { duration: 260, easing: "ease-in", fill: "forwards" });
@@ -192,7 +194,6 @@
     for (const link of document.querySelectorAll('.site-header .site-nav__link[aria-current="page"]')) {
       void window.SwedeSweetsNavArrival?.arrive(link);
     }
-    if (incoming.cart && !mobile.matches) void window.SwedeSweetsNavArrival?.arrive(headerCart());
     await pause(mobile.matches ? 120 : 80);
     if (mobile.matches && incoming.mode === "exit" && !incoming.cart) {
       root.dataset.homePhase = "bottom";
@@ -202,10 +203,11 @@
     await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     root.dataset.homePhase = "content";
     const main = document.querySelector("main.site-main");
-    await animate(main, [
+    if (incoming.mode !== "login") await animate(main, [
       { opacity: 0, transform: "translateY(6px)" },
       { opacity: 1, transform: "none" },
     ], { duration: 220, easing: "ease-out", fill: "backwards" });
+    if (incoming.mode === "login") await pause(240);
     landed = true; reveal();
   }
   async function enterPage(transition) {
@@ -225,6 +227,8 @@
     if (incoming.cart) { nameFor(headerCart(), "home-cart"); pairs.push([headerCart(), incoming.cart]); }
     if (incoming.sideCart) { nameFor(headerCart(), "home-cart"); pairs.push([headerCart(), incoming.sideCart]); }
     if (incoming.menu) { nameFor(headerMenu(), "home-menu"); pairs.push([headerMenu(), incoming.menu]); }
+    const loginLabel = incoming.login && document.querySelector("[data-login-travel]");
+    if (loginLabel) { nameFor(loginLabel, "home-login"); pairs.push([loginLabel, incoming.login]); }
     const flights = transition ? [] : [fly(brand, incoming, remaining(), incoming.delayAtCapture || 0), ...pairs.map(([element, from], index) => fly(element, from, remaining(), incoming.continuous ? incoming.delayAtCapture || 0 : index * 35))];
     root.dataset.homePrepared = "";
     if (transition) await transition.finished.catch(() => {});
@@ -257,6 +261,7 @@
     requestAnimationFrame(() => requestAnimationFrame(disableNative));
     root.classList.remove(...homeClasses);
     root.style.removeProperty("--home-travel-remaining"); root.style.removeProperty("--home-travel-stagger"); root.style.removeProperty("--home-travel-easing");
+    root.style.removeProperty("--home-cloud-start-opacity"); root.style.removeProperty("--home-cloud-start-transform");
     delete root.dataset.homePhase; delete root.dataset.homeCloudBrand; delete root.dataset.homeCart; delete root.dataset.homePrepared;
     for (const element of document.querySelectorAll("[data-home-travel-name]")) {
       element.style.removeProperty("view-transition-name"); delete element.dataset.homeTravelName;
@@ -279,6 +284,10 @@
       root.style.setProperty("--home-travel-remaining", `${remaining()}ms`);
       root.style.setProperty("--home-travel-stagger", `${incoming.delayAtCapture || 0}ms`);
       root.style.setProperty("--home-travel-easing", window.SwedeSweetsHomeDeparture?.continuation(incoming) || "ease-out");
+      if (incoming.departingCloud) {
+        root.style.setProperty("--home-cloud-start-opacity", incoming.departingCloud.opacity);
+        root.style.setProperty("--home-cloud-start-transform", incoming.departingCloud.transform);
+      }
     }
     window.SwedeSweetsCurrentNav?.sync();
     if (!incoming || !canMove()) { transition?.skipTransition(); reveal(); return; }

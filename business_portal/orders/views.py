@@ -4,6 +4,7 @@ from enum import StrEnum
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import (
     get_object_or_404,
@@ -397,9 +398,10 @@ def cart(request):
 @login_required
 @require_POST
 def add_cart_offer(request):
-    """The cart's quick add: one of the catalog's offers, one unit (again
-    adds one more). Asked for JSON (business_cart.js) it answers with the
-    line drawn, for the page to put in place; otherwise back to the cart.
+    """Add one unit of each selected offer in one transaction.
+
+    JSON returns confirmed rows and one subtotal delta. Single-offer callers
+    retain their line fields, and native forms still redirect to the cart.
     """
 
     customer = get_portal_customer_for_user(
@@ -412,33 +414,32 @@ def add_cart_offer(request):
     )
 
     try:
-        commercial_price_id = int(
-            request.POST.get("commercial_price_id", "")
-        )
-    except ValueError:
-        commercial_price_id = None
-
-    offer = (
-        CommercialPrice.objects
-        .select_related("product")
-        .filter(pk=commercial_price_id)
-        .first()
-        if commercial_price_id
-        else None
-    )
-
-    try:
-        if offer is None:
-            raise InvalidBusinessCart(
-                _("Choose a product to add.")
+        raw_ids = request.POST.getlist("commercial_price_id")
+        try:
+            offer_ids = list(dict.fromkeys(int(value) for value in raw_ids))
+        except (ValueError, TypeError):
+            offer_ids = []
+        if not offer_ids or len(raw_ids) > 100:
+            raise InvalidBusinessCart(_("Choose a product to add."))
+        offers = {
+            offer.pk: offer
+            for offer in CommercialPrice.objects.select_related("product").filter(
+                pk__in=offer_ids,
             )
+        }
+        if len(offers) != len(offer_ids):
+            raise InvalidBusinessCart(_("Choose a product to add."))
+        with transaction.atomic():
+            lines = [
+                add_catalog_offer_to_cart(
+                    customer=customer,
+                    product=offers[offer_id].product,
+                    commercial_price_id=offer_id,
+                    quantity=1,
+                )
+                for offer_id in offer_ids
+            ]
 
-        line = add_catalog_offer_to_cart(
-            customer=customer,
-            product=offer.product,
-            commercial_price_id=offer.pk,
-            quantity=1,
-        )
     except InvalidBusinessCart as error:
         message = str(error)
 
@@ -458,44 +459,42 @@ def add_cart_offer(request):
         return redirect("business_portal:cart")
 
     message = _("%(product)s added to your cart.") % {
-        "product": translated_product_name(
-            offer.product,
-            language_code=request.LANGUAGE_CODE,
+        "product": ", ".join(
+            translated_product_name(
+                offers[offer_id].product, language_code=request.LANGUAGE_CODE,
+            )
+            for offer_id in offer_ids
         ),
     }
-
     if not as_json:
-        messages.success(
-            request,
-            message,
-            extra_tags="cart-notice cart-flow-notice",
-        )
+        messages.success(request, message, extra_tags="cart-notice cart-flow-notice")
         return redirect("business_portal:cart")
 
-    cart_line = build_portal_cart_line(
-        cart=line.cart,
-        cart_line_id=line.id,
-        language_code=request.LANGUAGE_CODE,
-    )
-
-    return JsonResponse(
+    rendered_lines = [
         {
-            "ok": True,
-            "message": message,
             "cart_line_id": line.id,
             "quantity": line.quantity,
-            "change_direction": 1,
-            **cart_price_feedback(
-                before,
-                build_portal_cart_context(cart=line.cart).subtotal,
-            ),
             "line_html": render_to_string(
                 "business_portal/orders/includes/cart_line.html",
-                {"line": cart_line},
+                {"line": build_portal_cart_line(
+                    cart=line.cart, cart_line_id=line.id,
+                    language_code=request.LANGUAGE_CODE,
+                )},
                 request=request,
             ),
         }
-    )
+        for line in lines
+    ]
+    return JsonResponse({
+        "ok": True,
+        "message": message,
+        "lines": rendered_lines,
+        **(rendered_lines[0] if len(rendered_lines) == 1 else {}),
+        "change_direction": 1,
+        **cart_price_feedback(
+            before, build_portal_cart_context(cart=lines[0].cart).subtotal,
+        ),
+    })
 
 
 @login_required

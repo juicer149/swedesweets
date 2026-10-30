@@ -97,11 +97,12 @@
       if (!target) target = homePreview(record);
     } else { rememberLanding(); target = preview(record); }
     if (!target) return;
-    const delay = record.mode === "home" ? 180 : record.mode === "login" ? 260 : 100;
+    const delay = record.mode === "home" ? 180 : record.mode === "login" ? 260 : 180;
     record.departureDelay = delay;
     record.motionStartAt = Date.now() + delay;
     record.endAt = record.motionStartAt + 600; record.continuous = true;
     parts = [[elements.brand, record], ...(elements.links || [])];
+    if (record.login) parts.push([document.querySelector("[data-login-travel]"), record.login]);
     if (elements.cart && record.cart) parts.push([elements.cart, record.cart]);
     if (elements.sideCart && record.sideCart) parts.push([elements.sideCart, record.sideCart]);
     if (elements.menu && record.menu) parts.push([elements.menu, record.menu]);
@@ -127,6 +128,11 @@
     record.remainingAtCapture = Math.max(60, 600 - Math.max(0, elapsed));
     record.progressAtCapture = Math.max(0, Math.min(1, elapsed / 600));
     for (const [element, entry] of parts) { const current = box(element); if (current) Object.assign(entry, current); }
+    const chosen = parts.find(([, entry]) => entry.current)?.[0];
+    if (record.mode === "exit" && chosen) {
+      const cloud = getComputedStyle(chosen, "::before");
+      record.departingCloud = { opacity: cloud.opacity, transform: cloud.transform };
+    }
   }
   function continuation(record) {
     const progress = record?.progressAtCapture || 0;

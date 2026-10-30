@@ -772,3 +772,71 @@ def test_business_subtotal_is_hidden_if_any_line_has_no_price(client):
     context = build_portal_cart_context(cart=line.cart)
     assert context.subtotal is None
     assert context.subtotal_label is None
+
+
+@pytest.mark.django_db
+def test_checked_products_add_together_with_one_subtotal_feedback(client):
+    from decimal import Decimal
+
+    from pricing.tests.factories import price_amount_factory
+
+    _login_customer(client=client)
+    offers = [
+        standard_business_offer_factory(
+            product=product_factory(name=f"Checked {index}"),
+        )
+        for index in range(2)
+    ]
+    for offer in offers:
+        price_amount_factory(commercial_price=offer, price=Decimal("7.50"))
+    response = client.post(reverse("business_portal:add_cart_offer"), {
+        "commercial_price_id": [offer.pk for offer in offers],
+    }, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload["lines"]) == 2
+    assert all(line["quantity"] == 1 and line["line_html"] for line in payload["lines"])
+    assert payload["subtotal_label"] == "€15.00"
+    assert payload["subtotal_delta_label"] == "+€15.00"
+
+
+@pytest.mark.django_db
+def test_checked_product_batch_rolls_back_when_later_offer_is_rejected(client):
+    customer = _login_customer(client=client)
+    valid = standard_business_offer_factory(product=product_factory())
+    unavailable = standard_business_offer_factory(
+        product=product_factory(name="Rejected"),
+    )
+    unavailable.enabled = False
+    unavailable.save(update_fields=["enabled"])
+    response = client.post(reverse("business_portal:add_cart_offer"), {
+        "commercial_price_id": [valid.pk, unavailable.pk],
+    }, HTTP_ACCEPT="application/json")
+    assert response.status_code == 400
+    from business.cart_selectors import get_customer_cart
+
+    cart = get_customer_cart(customer=customer)
+    assert cart is None or not cart.lines.exists()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("values", [[], ["bad"], ["0"], ["-1"], ["1"] * 101])
+def test_checked_product_batch_rejects_invalid_selection(client, values):
+    _login_customer(client=client)
+    response = client.post(reverse("business_portal:add_cart_offer"), {
+        "commercial_price_id": values,
+    }, HTTP_ACCEPT="application/json")
+    assert response.status_code == 400
+    assert response.json()["ok"] is False
+
+
+@pytest.mark.django_db
+def test_checked_product_batch_deduplicates_ids(client):
+    _login_customer(client=client)
+    offer = standard_business_offer_factory(product=product_factory())
+    response = client.post(reverse("business_portal:add_cart_offer"), {
+        "commercial_price_id": [offer.pk, offer.pk],
+    }, HTTP_ACCEPT="application/json")
+    assert response.status_code == 200
+    assert len(response.json()["lines"]) == 1
+    assert response.json()["quantity"] == 1

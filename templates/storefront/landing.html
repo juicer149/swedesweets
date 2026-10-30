@@ -99,8 +99,10 @@
         </form>
       {% else %}
         <a class="landing__account" href="{% url 'login' %}">
-          {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
-          <span class="landing__account-label">{% trans "Login" %}</span>
+          <span class="auth-travel-label" data-login-travel>
+            {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
+            <span class="landing__account-label">{% trans "Login" %}</span>
+          </span>
         </a>
       {% endif %}
     </div>

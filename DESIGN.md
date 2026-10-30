@@ -870,18 +870,21 @@ attempt is allowed.
 
 ### Landing exit, catalog batches and cart rows
 
-A landing click removes hover and commits the chosen link's active state
-before departure: day blue on its cloud, night gold with its crown. The whole
-link (icon, text and selection) then travels intact; other links keep navbar
-rest ink. Only the wordmark changes during departure: day white, night light
-blue without its crown. Once the links settle, the navbar rule draws, followed
-by the page surface and a reveal from top to bottom.
+A landing click softly implodes the chosen cloud and returns its text to navbar
+rest ink before travel. The whole link (icon and text) travels intact; other
+links also keep their rest ink. Only the wordmark changes during departure:
+day white, night light blue without its crown. At the destination, lettering
+is already visible as it swells and the cloud grows behind it; only the crown
+follows later. The navbar rule draws, followed by the page surface and a reveal
+from top to bottom.
 
 The landing cart link shares that journey: wordmark to the corner, cart trigger
 to the header centre, then rule and page. Returning through the current cart
 trigger or the logo reverses the brand/cart flight after fading the page.
 Login first folds the menu and ancillary controls towards the brand, then
-carries the complete logo/cloud to its centred header. The form fades in last.
+carries the complete logo/cloud to its centred header. Login's lock and label
+travel separately to the real submit button; the button surface and fields
+fade in last. The light login hover uses the shared pointer ink.
 Login's cloud keeps the landing proportions at a smaller responsive size;
 returning from login carries that complete brand back without reforming it. Normal navbar changes remove the crown before
 the old cloud and add the new crown after its cloud. `effects.js` keeps motion
@@ -897,10 +900,10 @@ the shared dropdown styling. Product-only transitions leave the navbar still.
 
 Cart rows use portrait rectangular crops to the left of wrapped product text.
 The shared catalog price tag overlays the image without an "each" suffix.
-Mobile tags are centred at the image's top. Desktop page/review tags overhang
-the image's right edge; navbar preview tags hang left, with about one fifth
-remaining over the image and a subtle day shadow/night glow. Scroll clipping
-keeps these tags from leaking below the preview's fixed summary.
+Mobile tags are centred at the image's top. Desktop cart-page and preview tags
+hang from the image's left edge with the same overhang and subtle day shadow /
+night glow; review tags keep their image attachment. Scroll clipping keeps
+these tags from leaking below the preview's fixed summary.
 
 On mobile a larger quantity stepper and its row amount form a centred stack
 beside the product, slightly inset from the upper-right trash button. Desktop
@@ -1050,7 +1053,12 @@ native select and form remain inside their cart owner; search results scroll
 inside the modal instead of pushing cart rows down. Search rows share compact
 brand/name/weight grouping, a portrait crop and the unit-price sticker. Escape,
 Back or the close control dismisses only search, then returns focus. A confirmed
-addition closes search; failure stays there and permits retrying the same item.
+addition closes search; failure stays there and retains checked selections.
+The complete list appears without focusing search or raising the keyboard.
+Filtering keeps checked choices, and Add to cart stays disabled until at least
+one offer is selected. One request adds one unit per checked offer atomically:
+a rejected offer rolls the entire selection back. The native one-offer form
+remains the fallback.
 The keyboard can shorten the visible results without lifting the modal's close
 control. The desktop cart preview keeps a small price-tag overhang at its left
 edge; its picture sits a little farther left while the sticker is slightly inset.
@@ -1059,7 +1067,10 @@ Catalog cards and details share a vegan badge near the top centre of the image,
 between the cart count and price tag. Narrow pictures place it below the corner
 markers so information never overlaps. The badge joins the product transition.
 
-Navigation keeps pointer enlargement during travel. At the destination it swells
+Cart/Menu keep pointer enlargement during travel. Desktop previews retain that
+pointer state without a cloud; only the full cart gets its cloud after moving
+to the centre. Mobile panels retain their existing arrival selection.
+At the destination the icon or text swells
 once more, then its cloud grows out behind it; night uses its own halo and ink.
 `navigation-arrival.js` coordinates this decoration without owning geometry.
 Cart/Menu selection waits for actual translate completion, including a replaced

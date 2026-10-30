@@ -35,7 +35,10 @@
         class="button button--md button--solid button--tone-place page__submit"
         type="submit"
       >
-        {% trans "Login" %}
+        <span class="auth-travel-label" data-login-travel>
+          {% include "includes/ui/icon_block.html" with name="lock" size="sm" only %}
+          <span>{% trans "Login" %}</span>
+        </span>
       </button>
 
       <a class="quiet-link" data-auth-link href="{% url 'password_reset' %}">

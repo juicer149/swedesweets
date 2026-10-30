@@ -28,8 +28,8 @@
 
     {% comment %}
       Quick add: any product of the catalog straight into the order. The
-      chosen offer is posted at once and its line put in the page
-      (business_cart.js); without the script the button posts it.
+      enhanced dialog collects checked offers and adds them together
+      (business_cart.js); without the script the button posts one offer.
     {% endcomment %}
     {% if quick_add_options %}
       {% trans "Search for a product to add" as quick_add_hint %}

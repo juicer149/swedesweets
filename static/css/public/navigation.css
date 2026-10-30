@@ -392,15 +392,15 @@
 }
 
 /* A selected trigger gets its cloud/halo only after its travel has ended. */
-:root:not([data-site-zone="ops"]) .site-header details[open] > .menu-dropdown-trigger[data-nav-selected]::before {
+:root:not([data-site-zone="ops"]) .site-header .menu-dropdown-trigger[data-nav-selected]::before {
   opacity: 1; transform: none;
   background: var(--nav-trigger-open-glow); filter: var(--nav-trigger-open-glow-filter);
 }
-:root[data-theme="light"]:not([data-site-zone="ops"]) .site-header details[open] > .menu-dropdown-trigger[data-nav-selected]::before {
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-header .menu-dropdown-trigger[data-nav-selected]::before {
   inset: -.85rem -1.1rem -.65rem; border-radius: 0;
   background: var(--nav-cloud-art) center / 100% 100% no-repeat; filter: none;
 }
-:root[data-theme="light"]:not([data-site-zone="ops"]) .site-header details[open] > .menu-dropdown-trigger[data-nav-selected] {
+:root[data-theme="light"]:not([data-site-zone="ops"]) .site-header .menu-dropdown-trigger[data-nav-selected] {
   color: var(--state-here-ink);
 }
 :root:not([data-site-zone="ops"]) .site-header[data-mobile-panel]:not([data-panel-arrived]) .menu-dropdown-trigger::before {
@@ -469,4 +469,21 @@
   :root:not([data-site-zone="ops"]) :is(.is-nav-arriving, .is-nav-travelling),
   :root:not([data-site-zone="ops"]) :is(.is-nav-arriving, .is-nav-travelling) > * { animation: none !important; transform: none !important; }
   :root:not([data-site-zone="ops"]) .menu-dropdown-trigger.is-nav-arriving::before { animation: none !important; }
+}
+
+/* Desktop previews keep pointer feedback; only the full cart owns a cloud. */
+@media (min-width: 768px) {
+  :root:not([data-checkout-flow], [data-site-zone="ops"]) .site-header details[open] > .menu-dropdown-trigger::before {
+    opacity: 0 !important;
+  }
+}
+/* Lettering stays readable before the cloud expands behind it. Only its
+   crown waits for the end of the pop, never the label itself. */
+:root[data-motion-profile="cloud"]:not([data-site-zone="ops"]) .site-header .is-nav-arriving > :is(.site-nav__label, .site-nav-cart__icon, .site-menu__trigger-label, .ui-icon-svg) {
+  animation-name: nav-arrival-puff, nav-arrival-ink;
+  animation-duration: calc(var(--public-nav-pop-time) + var(--nav-arrival-prelude));
+}
+@keyframes nav-arrival-ink {
+  0%, 20% { color: var(--theme-nav-pointer-ink); }
+  55%, 100% { color: var(--nav-link-here-ink); }
 }

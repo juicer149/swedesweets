@@ -41,7 +41,7 @@
   --home-link-ink: var(--home-nav-rest);
 }
 :is(.home-flight-source-out, .home-flight-exit-target) :is(.landing-menu__link, .site-nav__link)[data-home-chosen] {
-  --home-link-ink: var(--home-nav-pointer);
+  --home-link-ink: var(--home-nav-rest);
 }
 :is(.home-flight-source, .home-flight-departing, .home-flight-target[data-home-phase="flight"]) :is(.site-nav__link, .landing-menu__link) {
   --home-link-ink: var(--home-nav-rest);
@@ -66,9 +66,7 @@
 .home-flight-source-out:not([data-home-cloud-brand]) :is(.landing__tagline, .landing__bottom) {
   opacity: 0; pointer-events: none; transition: opacity 90ms ease-out;
 }
-.home-flight-source-out .landing-menu__link[data-home-chosen]::before,
 .home-flight-source-out .landing-menu__link .landing-menu__crown,
-.home-flight-exit-target[data-home-phase="flight"] .site-nav__link::after,
 .home-flight-exit-target[data-home-phase="flight"] .site-nav__label::before,
 .home-flight-exit-target[data-home-phase="flight"] .site-nav__icon::after,
 .home-flight-exit-target[data-home-phase="flight"] .menu-dropdown-trigger::before {
@@ -132,8 +130,10 @@
 .home-flight-exit-target[data-home-phase="flight"] .site-header { border-bottom-color: transparent; }
 .home-flight-exit-target .site-header { transition: border-color 160ms; }
 .home-flight-exit-target[data-home-phase="content"] .site-footer { animation: home-content-in 220ms ease-out both; }
-.home-flight-login-target[data-home-phase="content"] .page--auth > * { animation: home-content-in 240ms ease-out both; }
-.home-flight-login-target[data-home-phase="content"] .page__actions { animation-delay: 60ms; }
+.home-flight-login-target[data-home-phase="content"] .page--auth > .form-grid,
+.home-flight-login-target[data-home-phase="content"] .page__actions > .quiet-link { animation: home-content-in 240ms ease-out both; }
+.home-flight-login-target[data-home-phase="content"] .page__submit { animation: home-auth-button-in 240ms ease-out both; }
+@keyframes home-auth-button-in { from { background-color: transparent; border-color: transparent; box-shadow: none; } }
 
 /* Shared cross-document geometry; fallback WAAPI uses the same elements. */
 :is(.home-flight-target, .home-flight-exit-target, .home-flight-login-target):not([data-home-prepared]) :is(.site-brand .brand-logo, .site-nav__link, .site-nav-cart__trigger, .site-menu > summary, .landing__logo-art, .landing-menu__link, .landing__cart-link, .entrance-header__brand) {
@@ -231,4 +231,40 @@
   position: absolute;
   top: clamp(var(--space-3), 2.5dvh, var(--space-6));
   right: var(--space-4);
+}
+
+.home-flight-source-out .landing-menu__link[data-home-chosen]::before {
+  animation: nav-cloud-depart 180ms ease-in both;
+}
+.home-flight-exit-target[data-home-phase="flight"] .site-nav__link[data-home-chosen]::after {
+  visibility: visible;
+  animation: home-cloud-implode var(--home-travel-stagger, 1ms) ease-in both;
+}
+/* This animation has to outlive the source page's hover state. */
+.home-flight-source-out .landing-menu__link[data-home-chosen] .landing-menu__text { transform: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .home-flight-source-out .landing-menu__link[data-home-chosen]::before { animation: none; opacity: 0; }
+}
+
+.auth-travel-label { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); }
+/* The real button label travels independently of the form's later reveal. */
+.home-flight-login-target:not([data-home-phase="content"]) main.site-main { opacity: 1; visibility: visible; }
+.home-flight-login-target:not([data-home-phase="content"]) .page--auth > * { visibility: hidden; }
+.home-flight-login-target:not([data-home-phase="content"]) .page__submit {
+  visibility: visible; background: transparent; border-color: transparent; box-shadow: none;
+}
+.home-flight-login-target:not([data-home-phase="content"]) [data-login-travel] {
+  visibility: visible; color: var(--theme-nav-pointer-ink);
+}
+.home-flight-login-target:not([data-home-prepared]) [data-login-travel] { visibility: hidden; }
+.home-flight-login-target::view-transition-group(home-login) {
+  z-index: 3; animation-duration: var(--home-travel-remaining, 600ms); animation-delay: var(--home-travel-stagger, 0ms);
+  animation-timing-function: var(--home-travel-easing, cubic-bezier(.2,.7,.2,1));
+}
+.home-flight-login-target::view-transition-old(home-login) { animation: none; opacity: 0; }
+.home-flight-login-target::view-transition-new(home-login) { animation: none; mix-blend-mode: normal; }
+
+@keyframes home-cloud-implode {
+  from { opacity: var(--home-cloud-start-opacity, 0); transform: var(--home-cloud-start-transform, scale(1)); }
+  to { opacity: 0; transform: scale(.8); }
 }

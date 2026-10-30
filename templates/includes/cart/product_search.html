@@ -9,7 +9,21 @@
     <button type="button" class="panel-corner-close" data-cart-search-close aria-label="{% trans 'Close' %}">
       {% include "includes/ui/icon_block.html" with name="x" size="sm" only %}
     </button>
-    <div class="cart-product-search__content" data-cart-search-content></div>
+    <div class="form-field cart-product-search__filter-field">
+    <label class="visually-hidden" data-cart-search-label>{% trans "Search for a product to add" %}</label>
+    <input type="search" class="cart-product-search__filter" data-cart-search-filter placeholder="{{ hint }}" autocomplete="off">
+    </div>
+    <div class="cart-product-search__content" data-cart-search-content>
+      <div class="cart-product-search__list" data-cart-search-list></div>
+      <p data-cart-search-empty hidden>{% trans "No products match your search." %}</p>
+    </div>
+    <footer class="cart-product-search__actions">
+      <span data-cart-search-count aria-live="polite"></span>
+      <button type="button" class="button button--sm button--solid button--tone-place" data-cart-search-add disabled>
+        {% include "includes/ui/icon_block.html" with name="cart" size="sm" only %}
+        {% trans "Add to cart" %}
+      </button>
+    </footer>
     <p class="message message--error" data-cart-search-error role="alert" hidden>{% trans "Could not add product." %}</p>
   </div>
 </dialog>

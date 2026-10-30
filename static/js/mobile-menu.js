@@ -85,7 +85,9 @@
     if ((!mobile.matches && !flow) || !["cart", "menu"].includes(key)) {
       restoreHeader(header);
       if (!mobile.matches && key && menuFor(key)?.open) {
-        menuFor(key).querySelector("summary").dataset.navSelected = "";
+        window.SwedeSweetsNavArrival?.hold(menuFor(key).querySelector("summary"));
+      } else if (!mobile.matches) {
+        for (const trigger of header.querySelectorAll(".is-nav-travelling")) window.SwedeSweetsNavArrival?.clear(trigger);
       }
       return;
     }
@@ -144,12 +146,12 @@
     header.style.setProperty(`--mobile-${key}-shift-x`, `${x}px`);
     header.style.setProperty(`--mobile-${key}-shift-y`, `${y}px`);
     header.dataset.mobilePanel = key;
-    if (menuFor(key)?.open && header.dataset.panelArrived !== key && !panelArrival
+    if ((menuFor(key)?.open || flow) && header.dataset.panelArrived !== key && !panelArrival
       && !root.matches('.home-flight-exit-target[data-home-phase="flight"], .home-flight-target[data-home-phase="flight"]')) {
       const pending = {}; panelArrival = pending;
       void (async () => {
         await window.SwedeSweetsNavArrival?.movement(trigger);
-        if (panelArrival !== pending || header.dataset.mobilePanel !== key || !menuFor(key)?.open || headerDeparting) return;
+        if (panelArrival !== pending || header.dataset.mobilePanel !== key || (!menuFor(key)?.open && !flow) || headerDeparting) return;
         header.dataset.panelArrived = key;
         panelArrival = null;
         void window.SwedeSweetsNavArrival?.arrive(trigger);
@@ -252,7 +254,7 @@
         opening.open = true;
         sync();
         if (!mobile.matches && !root.hasAttribute("data-checkout-flow") && opening.closest(".site-header")) {
-          void window.SwedeSweetsNavArrival?.arrive(opening.querySelector("summary"));
+          window.SwedeSweetsNavArrival?.hold(opening.querySelector("summary"));
         }
         const animation = await animate(opening, true);
         animation?.cancel();
