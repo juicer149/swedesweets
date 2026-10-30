@@ -1651,3 +1651,16 @@
 .catalog-product-transition::view-transition-group(catalog-chrome) { z-index: 100; animation: none; }
 .catalog-product-transition::view-transition-old(catalog-chrome) { display: none; animation: none; }
 .catalog-product-transition::view-transition-new(catalog-chrome) { animation: none; opacity: 1; mix-blend-mode: normal; }
+
+/* By day the dietary note sits quietly above the label overlap. Night keeps
+   its established badge and placement. These follow the shared badge during
+   the existing card/detail transition. */
+:root[data-theme="light"] .tile__media .catalog-vegan {
+  top: auto; bottom: 1.8rem; max-width: calc(100% - 1rem); box-shadow: none;
+}
+:root[data-theme="light"] .product__vegan {
+  top: auto; bottom: .65rem; max-width: calc(100% - 1rem); box-shadow: none;
+}
+@media (max-width: 767px) {
+  :root[data-theme="light"] .product__vegan { bottom: 1.25rem; }
+}

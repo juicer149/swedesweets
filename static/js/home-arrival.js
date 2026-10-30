@@ -143,6 +143,17 @@
     if (!remember(record)) return;
     if (cart) document.dispatchEvent(new Event("cart-navigation-start"));
     event.preventDefault();
+    // Freeze the *visible* cloud before changing selection/hover ownership.
+    // Touch or a fast click may still have opacity zero; never expand it first.
+    if (!login && !cart && root.dataset.theme === "light") {
+      const cloud = window.SwedeSweetsHomeDeparture.cloudState(link);
+      link.style.setProperty("--home-link-cloud-opacity", cloud.opacity);
+      link.style.setProperty("--home-link-cloud-transform", cloud.transform);
+    }
+    if (!login && root.dataset.theme === "light") {
+      const cloud = getComputedStyle(landing.querySelector(".landing__logo"), "::before");
+      root.style.setProperty("--home-logo-cloud-transform", cloud.transform);
+    }
     root.classList.add("home-flight-source-out");
     if (login) root.dataset.homeCloudBrand = "";
     if (cart) root.dataset.homeCart = "";
@@ -262,6 +273,10 @@
     root.classList.remove(...homeClasses);
     root.style.removeProperty("--home-travel-remaining"); root.style.removeProperty("--home-travel-stagger"); root.style.removeProperty("--home-travel-easing");
     root.style.removeProperty("--home-cloud-start-opacity"); root.style.removeProperty("--home-cloud-start-transform");
+    root.style.removeProperty("--home-logo-cloud-transform");
+    for (const link of document.querySelectorAll("[data-home-chosen]")) {
+      link.style.removeProperty("--home-link-cloud-opacity"); link.style.removeProperty("--home-link-cloud-transform");
+    }
     delete root.dataset.homePhase; delete root.dataset.homeCloudBrand; delete root.dataset.homeCart; delete root.dataset.homePrepared;
     for (const element of document.querySelectorAll("[data-home-travel-name]")) {
       element.style.removeProperty("view-transition-name"); delete element.dataset.homeTravelName;

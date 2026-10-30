@@ -8,6 +8,9 @@
   --home-brand-travel-ink: var(--color-white);
   --home-brand-cloud: url("../../images/clouds/logo.svg");
 }
+:root[data-theme="light"]:is(.home-flight-source-out, .home-flight-exit-target) {
+  --home-brand-travel-ink: var(--logo-rest-ink);
+}
 :root[data-theme="dark"] {
   --home-nav-rest: var(--logo-rest-ink);
   --home-nav-pointer: var(--moonlight);
@@ -86,7 +89,7 @@
 :is(.home-flight-source, .home-flight-departing, .home-flight-source-out, .home-flight-target[data-home-phase="flight"], .home-flight-exit-target[data-home-phase="flight"]):not([data-home-cloud-brand]) .brand-logo__crown {
   opacity: 0 !important;
 }
-.home-flight-source-out:not([data-home-cloud-brand]) .landing__logo::before,
+:root[data-theme="dark"].home-flight-source-out:not([data-home-cloud-brand]) .landing__logo::before,
 .home-flight-target:not([data-home-cloud-brand])[data-home-phase="flight"] .landing__logo::before { visibility: hidden; }
 .home-flight-target:not([data-home-cloud-brand])[data-home-phase="flight"] .landing__logo-art { filter: none !important; }
 .home-flight-target[data-home-phase="flight"] :is(.landing__tagline, .landing__bottom) { opacity: 0; visibility: hidden; }
@@ -267,4 +270,26 @@
 @keyframes home-cloud-implode {
   from { opacity: var(--home-cloud-start-opacity, 0); transform: var(--home-cloud-start-transform, scale(1)); }
   to { opacity: 0; transform: scale(.8); }
+}
+
+/* Day departure starts from the actual pointer cloud, including a partly
+   faded cloud or no cloud on touch. The previous navbar animation is reused
+   in spirit without imposing a fully visible first frame. */
+:root[data-theme="light"].home-flight-source-out .landing-menu__link[data-home-chosen]::before {
+  animation-name: home-link-cloud-out;
+}
+@keyframes home-link-cloud-out {
+  from { opacity: var(--home-link-cloud-opacity, 0); transform: var(--home-link-cloud-transform, scale(1)); }
+  to { opacity: 0; transform: scale(.25, .15); }
+}
+:root[data-theme="light"].home-flight-source-out:not([data-home-cloud-brand]) .landing__logo::before {
+  visibility: visible;
+  animation: home-logo-cloud-out 180ms ease-in both;
+}
+:root[data-theme="light"].home-flight-source-out:not([data-home-cloud-brand]) .brand-logo__wordmark {
+  transition: fill 180ms ease-out !important;
+}
+@keyframes home-logo-cloud-out {
+  from { opacity: 1; transform: var(--home-logo-cloud-transform, scale(1)); }
+  to { opacity: 0; transform: scale(.25, .15); }
 }

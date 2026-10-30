@@ -526,8 +526,8 @@
   --catalog-fields-bg: var(--label-bg);
   --catalog-close-bg: var(--page-bg);
   --catalog-vegan-ink: var(--color-green-800);
-  --catalog-vegan-bg: var(--color-green-100);
-  --catalog-vegan-border: var(--color-green-600);
+  --catalog-vegan-bg: color-mix(in srgb, var(--color-green-100) 45%, var(--page-bg));
+  --catalog-vegan-border: color-mix(in srgb, var(--color-green-600) 30%, var(--page-bg));
   --catalog-stock-ink: var(--color-primary-950);
   --catalog-stock-bg: var(--color-accent-100);
   --catalog-stock-border: var(--color-accent-700);
@@ -840,7 +840,7 @@
   --landing-pointer-text-shadow: var(--interaction-text-shadow);
   --landing-pointer-icon-filter: var(--interaction-icon-filter);
   --landing-pointer-crown-opacity: var(--state-pointer-crown-opacity);
-  --landing-account-pointer-ink: var(--state-pointer-ink);
+  --landing-account-pointer-ink: var(--theme-nav-pointer-ink);
 
   /* The Menu's box on wider screens: the navbar's colour, no edge */
   --site-menu-box-bg: var(--menu-bg);
@@ -1346,7 +1346,7 @@
 
 /* Customer add controls use the shared secondary action palette. */
 :root:not([data-theme="dark"], [data-site-zone="ops"]) {
-  --catalog-cart-bg: var(--action-secondary-bg);
+  --catalog-cart-bg: var(--color-white);
   --catalog-cart-ink: var(--action-secondary-text);
   --catalog-cart-border: var(--action-secondary-border);
   --catalog-cart-hover-bg: var(--action-secondary-hover-bg);

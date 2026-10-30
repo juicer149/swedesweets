@@ -453,7 +453,7 @@
   --catalog-cart-active-bg: var(--moonlight);
   --catalog-cart-bg: var(--interactive-text);
   --catalog-cart-ink: var(--color-primary-950);
-  --catalog-cart-border: var(--interactive-text);
+  --catalog-cart-border: transparent;
   --catalog-cart-hover-bg: var(--moonlight);
   --catalog-cart-hover-ink: var(--color-primary-950);
   --catalog-cart-hover-border: var(--moonlight);

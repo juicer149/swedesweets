@@ -7,6 +7,17 @@
   const root = document.documentElement;
   const box = e => { const b = e?.getBoundingClientRect(); return b?.width && b.height ? { x: b.x, y: b.y, width: b.width, height: b.height } : null; };
   let parts = [], motions = [], previews = [], timers = [];
+  function cloudState(element, pseudo = "::before") {
+    const style = getComputedStyle(element, pseudo);
+    // A pointer layer may have opacity 1 but no artwork. Carrying that
+    // opacity to the navbar's real cloud would invent a flash at handoff.
+    const painted = style.backgroundImage !== "none"
+      || !["transparent", "rgba(0, 0, 0, 0)"].includes(style.backgroundColor);
+    return {
+      opacity: painted && style.visibility !== "hidden" && style.display !== "none" ? style.opacity : "0",
+      transform: style.transform,
+    };
+  }
   function rememberLanding() {
     const brand = document.querySelector(".landing__logo-art");
     if (!brand) return;
@@ -130,8 +141,7 @@
     for (const [element, entry] of parts) { const current = box(element); if (current) Object.assign(entry, current); }
     const chosen = parts.find(([, entry]) => entry.current)?.[0];
     if (record.mode === "exit" && chosen) {
-      const cloud = getComputedStyle(chosen, "::before");
-      record.departingCloud = { opacity: cloud.opacity, transform: cloud.transform };
+      record.departingCloud = cloudState(chosen);
     }
   }
   function continuation(record) {
@@ -157,5 +167,5 @@
     timers.splice(0).forEach(clearTimeout); motions.splice(0).forEach(m => { const target = m.effect?.target; m.cancel(); target?.style.removeProperty("transform-origin"); });
     previews.splice(0).forEach(e => e.remove()); parts = []; root.classList.remove("home-flight-waiting");
   }
-  window.SwedeSweetsHomeDeparture = { start, capture, continuation, clear };
+  window.SwedeSweetsHomeDeparture = { start, capture, continuation, clear, cloudState };
 })();

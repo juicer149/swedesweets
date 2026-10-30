@@ -1078,3 +1078,16 @@ transition. Closing removes the cloud before return travel; the former page
 label waits for that return. Cart count stays visible and never gains a crown.
 Landing flights retain their existing FLIP/view-transition geometry; ordinary
 navbar selections use the same arrival puff and cloud. Reduced motion is direct.
+
+
+Day catalog and landing polish:
+- Vegan notes use a quiet green tint at the bottom of the image, above the
+  label overlap. Night retains its existing badge palette and position.
+- Day catalog/detail add buttons rest on white with blue ink and border;
+  night rests on light blue with no visible border. Existing hover/press
+  palettes and feedback remain shared through --catalog-cart-* tokens.
+- Day Login reads --landing-account-pointer-ink, mapped to the shared white
+  navbar pointer ink. The logo cloud collapses during the departure prelude,
+  while its wordmark changes to navbar rest blue. Departing link clouds start
+  from their actual opacity/transform, so a touch activation cannot create a
+  fully visible cloud just to fade it out.

@@ -1838,3 +1838,26 @@ theme-owned subtle shadow/glow; mobile retains its centred image tag.
 Departure capture includes the chosen cloud's current opacity/transform so a
 fast document handoff continues its implosion rather than flashing a fresh
 fully expanded cloud. The remaining prelude ends before geometry travel.
+
+
+## Day departure paint and quieter catalog markers
+
+--landing-account-pointer-ink is the token consumed by common/states.css for
+landing Login hover; it maps to --theme-nav-pointer-ink by day. Changing only
+--landing-control-hover-ink is insufficient because states.css loads later.
+The day forward journey uses --logo-rest-ink for --home-brand-travel-ink;
+the return journey retains its white-to-cloud reform. The day source cloud
+shrinks over the 180ms prelude while SVG fill transitions to resting blue.
+The real cloud transform is sampled before changing selection, avoiding a
+jump from the breathing animation. Clicked links likewise store their current
+cloud opacity and transform; no departure animation forces opacity to one.
+A layer with no background image or colour carries zero painted opacity even
+if its CSS opacity is one, so navbar artwork cannot flash into an empty layer.
+These source-only values are cleared when restoring a BFCache document.
+
+--catalog-cart-bg is white by day; blue ink/border and existing hover/press
+roles are retained. Night changes only --catalog-cart-border to transparent,
+keeping its light-blue rest fill and moonlight hover. The day vegan badge
+uses its existing green ink with a diluted green background/border, no shadow,
+and bottom placement above the card label overlap. Night badge paint and
+placement are unchanged.
