@@ -1,17 +1,16 @@
-"""The navbar's typeface, drawn from the SwedeSweets wordmark.
+"""A typeface for page titles, drawn from the SwedeSweets wordmark.
 
-    python tools/nav_font.py kit     # writes design/nav-font/nav-font-kit.svg
-    python tools/nav_font.py build   # kit -> static/fonts/swedesweets-nav.woff2
+    python tools/wordmark_font.py kit     # writes design/wordmark-font/wordmark-font-kit.svg
+    python tools/wordmark_font.py build   # kit -> static/fonts/swedesweets-wordmark.woff2
 
 The wordmark (static/images/swedesweets-logo.svg) is the model: "Swede
 Sweets" uses capital-shaped letters for the lower case (W as w, D as d, T as
 t), so the face is close to unicase. `kit` lays out one cell per character
-the navbar's links need (English and French), in the wordmark's own units
+the titles need (the Q & A and About page titles, English and French), in the wordmark's own units
 (logo pixels), ready to open in Figma:
 
-  * s, S, w, e: the wordmark's own paths, untouched;
-  * d and t: cut out of the wordmark's "ed" and "eT" ligatures;
-  * I, l, i, v: derived from the wordmark's T stem, its crown dots and W;
+  * s, w, W, e: the wordmark's own paths, untouched;
+  * i: the wordmark's T stem with one of its crown's dots;
   * every other letter: a rough draft (Fredoka, narrowed to the wordmark's
     proportions) in a paler blue, to redraw in the wordmark's style.
 
@@ -19,13 +18,13 @@ Each cell holds a group `g-<name>` (the glyph: draw anything inside it, any
 number of shapes), a frame `cell-<name>` and guide lines. Keep the frames
 where they are; the baseline is the solid line. In Figma, export the page as
 SVG with "Include id attribute" on, save it over the kit, then run `build`:
-it reads each `g-<name>`, makes the strokes thinner than the logo's
-(--thickness) and writes the font. Spacing is automatic (ink width plus
+it reads each `g-<name>`, sets the stroke weight (--thickness) and writes
+the font. Spacing is automatic (ink width plus
 --sidebearing on each side); there is no kerning.
 
 Needs fonttools (with brotli), Pillow, numpy, scipy and scikit-image
 (development only; the site just serves the .woff2). Fredoka is SIL OFL
-(see static/fonts/SwedeSweetsNav-OFL.txt).
+(see static/fonts/SwedeSweetsWordmark-OFL.txt).
 """
 
 from __future__ import annotations
@@ -55,15 +54,15 @@ from skimage import measure
 ROOT = Path(__file__).resolve().parent.parent
 LOGO = ROOT / "static" / "images" / "swedesweets-logo.svg"
 FREDOKA = ROOT / "static" / "fonts" / "fredoka.woff2"
-KIT = ROOT / "design" / "nav-font" / "nav-font-kit.svg"
-OUT = ROOT / "static" / "fonts" / "swedesweets-nav.woff2"
+KIT = ROOT / "design" / "wordmark-font" / "wordmark-font-kit.svg"
+OUT = ROOT / "static" / "fonts" / "swedesweets-wordmark.woff2"
 SVGNS = "http://www.w3.org/2000/svg"
 
-# The characters the navbar's links use, in English and French
-# (Shop/Boutique, Find Sweets/Où acheter, Q & A/Q & R, About us/À propos,
-# Catalog/Catalogue, Menu, and the staff links).
-CHARS = "ABCFIMOPQRSÀ" "abcdeghilmnopqrstuvwyù" "&"
-SPECIAL = {"À": "Agrave", "ù": "ugrave", "&": "ampersand"}
+# The characters the titles use, in English and French: "Q & A" / "Q & R"
+# and "Who we are?" / "Qui sommes-nous ?". Add a character here and run
+# `kit` (which starts the drawing over) to get a cell for it.
+CHARS = "AQRW" "aehimnorsuw" "&?-"
+SPECIAL = {"À": "Agrave", "ù": "ugrave", "&": "ampersand", "?": "question", "-": "hyphen"}
 
 # Metrics, in the wordmark's units (logo pixels), measured on it.
 CAP = 715  # W
@@ -283,6 +282,7 @@ def logo_glyphs():
     W2 = pick(paths, 700, 1500)
     E2 = pick(paths, 1300, 1500)
     res["upper-S"] = verbatim(S1, ROW1)
+    res["upper-W"] = verbatim(pick(paths, 900, 700), ROW1)
     res["lower-s"] = verbatim(S2, ROW2)
     res["lower-w"] = verbatim(W2, ROW2)
     res["lower-e"] = verbatim(E2, ROW2)
@@ -602,7 +602,7 @@ def build(path: Path, out: Path, thickness: float, sidebearing: int):
         pen.closePath()
     fb_glyphs[".notdef"], metrics[".notdef"] = pen.glyph(), (480, 60)
     fb_glyphs["space"], metrics["space"] = TTGlyphPen(None).glyph(), (int(0.26 * 1000), 0)
-    cmap[0x20] = cmap[0xA0] = "space"
+    cmap[0x20] = cmap[0xA0] = cmap[0x202F] = "space"
     for ch in CHARS:
         name = gname(ch)
         if name not in glyphs:
@@ -650,10 +650,10 @@ def build(path: Path, out: Path, thickness: float, sidebearing: int):
             metrics[n] = (metrics[n][0], glyf[n].xMin)
     fb.setupHorizontalMetrics(metrics)
     fb.setupHorizontalHeader(ascent=900, descent=-260)
-    family = "SwedeSweets Nav"
+    family = "SwedeSweets Wordmark"
     fb.setupNameTable({
         "familyName": family, "styleName": "Regular", "uniqueFontIdentifier": family + " 2.0",
-        "fullName": family, "psName": "SwedeSweetsNav", "version": "Version 2.0",
+        "fullName": family, "psName": "SwedeSweetsWordmark", "version": "Version 2.0",
         "copyright": "Letterforms from the SwedeSweets wordmark; drafts derived from Fredoka, "
                      "Copyright 2013 The Fredoka Project Authors (SIL Open Font License 1.1).",
         "licenseDescription": "This Font Software is licensed under the SIL Open Font License, "
@@ -680,8 +680,8 @@ def main():
     b = sub.add_parser("build", help="kit -> woff2")
     b.add_argument("--kit", type=Path, default=KIT)
     b.add_argument("--out", type=Path, default=OUT)
-    b.add_argument("--thickness", type=float, default=0.14,
-                   help="navbar stroke / cap height (the wordmark's: about 0.20)")
+    b.add_argument("--thickness", type=float, default=0.19,
+                   help="stroke / cap height (the wordmark's: about 0.20; lower is thinner)")
     b.add_argument("--sidebearing", type=int, default=45, help="space each side of a letter, 1/1000 em")
     a = ap.parse_args()
     if a.cmd == "kit":

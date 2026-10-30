@@ -1,7 +1,12 @@
 /* About: the story, polaroid and photo. */
 .display-title--about {
   margin-bottom: clamp(var(--space-5), 4dvh, var(--space-7));
-  font-size: clamp(2.5rem, 11vw, 3.75rem);
+  font-family: var(--font-wordmark);
+  font-size: clamp(2.25rem, 9.5vw, 3.75rem);
+  text-wrap: balance;
+  font-weight: 400;
+  font-synthesis: none;
+  word-spacing: 0;
 }
 
 .page.about {
